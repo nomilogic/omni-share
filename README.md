@@ -64,12 +64,13 @@ src/
 
 
 
-## Available Scripts
+## 🔧 Available Scripts
 npm run dev - Start development server
 npm run build - Create production build
 npm run preview - Preview production build
 npm run type-check - Run TypeScript checks
-🔐 Authentication
+
+## 🔐 Authentication
 Refer to OAUTH_SETUP_GUIDE.md for detailed instructions on setting up OAuth authentication with various social media platforms.
 
 ## 💼 Business Features
