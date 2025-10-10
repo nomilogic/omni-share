@@ -1,0 +1,416 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Theme CSS Variables */
+:root {
+  --theme-primary: #3B82F6;
+  --theme-secondary: #8B5CF6;
+  --theme-accent: #6366F1;
+  --theme-text-primary: #FFFFFF;
+  --theme-text-secondary: rgba(255, 255, 255, 0.9);
+  --theme-text-light: rgba(255, 255, 255, 0.7);
+  --theme-bg-primary: rgb(11, 85, 247);
+  --theme-bg-secondary: rgba(175, 5, 253, 0.199);
+  --theme-bg-trinary: rgba(175, 5, 253, 0.199);
+  --theme-bg-trinary-dark: rgba(118, 80, 227, 0.4);
+  --theme-bg-card: rgb(26, 25, 25, 15);
+  --theme-border: rgba(255, 255, 255, 0.2);
+  --theme-button-primary: #FFFFFF;
+  --theme-button-secondary: rgba(168, 150, 150, 0.2);
+  --theme-button-hover: rgba(255, 255, 255, 0.9);
+  --theme-border-light:white;
+}
+
+.theme-text-primary {}
+
+.h-full-dec-hf {
+  height: calc(100vh - 60px);
+  padding: 0.5rem;
+}
+
+/* Theme Utility Classes */
+.theme-gradient {
+  background: linear-gradient(135deg, var(--theme-primary), var(--theme-secondary), var(--theme-accent));
+}
+
+.theme-bg-primary {
+  background-color: var(--theme-bg-primary);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--theme-border);
+  box-shadow: 0 0px 6px rgba(0, 0, 0, 0.1);
+  
+}
+
+.theme-bg-card {
+  /* background: linear-gradient(to bottom,
+      rgba(0, 0, 0, 0.01) 100%,
+      rgba(0, 0, 0, 0) 0%); */
+  background-color: var(--theme-bg-card);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--theme-border);
+}
+.bg-card {
+  background: linear-gradient(to bottom,
+      rgba(75, 10, 255, 0.35) 100%,
+      rgba(0, 0, 0, 0.7) 0%);
+  /* background-color: var(--theme-bg-card); */
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--theme-border);
+}
+.theme-bg-trinary {
+  background-color: var(--theme-bg-trinary);
+  box-shadow: 0 0px 6px rgba(0, 0, 0, 0.1);
+
+  /* backdrop-filter: blur(10px);
+  border: 1px solid var(--theme-border); */
+}
+.theme-bg-trinary-dark {
+  background-color: var(--theme-bg-trinary-dark);
+  box-shadow: 0 0px 6px rgba(0, 0, 0, 0.1);
+}
+.theme-bg-secondary {
+  background-color: var(--theme-bg-secondary);
+
+}
+.theme-bg-quaternary {
+  background-color: var(--theme-bg-quaternary);
+  box-shadow: 0 0px 6px rgba(0, 0, 0, 0.1);
+
+}
+.theme-bg-pantary {
+  background-color: var(--theme-bg-pantary);
+  box-shadow: 0 0px 6px rgba(0, 0, 0, 0.1);
+
+}
+.theme-bg-light {
+  background-color: var(--theme-bg-light);
+}
+.theme-bg-dark {
+ background-color: var(--theme-bg-dark);
+}
+
+.theme-border-primary {
+  border-color: var(--theme-border-primary);
+
+}
+.theme-border-secondary {
+  border-color: var(--theme-border-secondary);
+
+}
+.theme-border-trinary {
+  border-color: var(--theme-border-trinary);
+  /* backdrop-filter: blur(10px);
+  border: 1px solid var(--theme-border); */
+}
+.theme-border-quaternary {
+  border-color: var(--theme-border-quaternary);
+}
+.theme-border-dark {
+  border-color: var(--theme-border-dark);
+}
+.theme-border-light {
+  border-color: var(--theme-border-light);
+}
+.theme-bg-light-gray {
+  background-color: #fafafa;
+}
+
+.theme-text-primary {
+  color: var(--theme-text-primary);
+}
+
+.theme-text-secondary {
+  color: var(--theme-text-secondary);
+}
+
+
+.theme-text-light {
+  color: var(--theme-text-light);
+}
+
+.theme-button-primary {
+  background-color: var(--theme-button-primary);
+  color: var(--theme-primary);
+  border: 1px solid var(--theme-border);
+}
+
+.theme-button-primary:hover {
+  background-color: var(--theme-button-hover);
+}
+
+.theme-button-secondary {
+  background-color: var(--theme-button-secondary);
+  color: var(--theme-text-primary);
+  border: 1px solid var(--theme-border);
+}
+
+.theme-button-secondary:hover {
+  background-color: var(--theme-bg-card);
+}
+
+.theme-button-hover {
+  background-color: var(--theme-button-hover);
+}
+
+.theme-input {
+  background-color: var(--theme-bg-primary);
+  border: 1px solid var(--theme-border);
+  color: var(--theme-text-primary);
+}
+
+.theme-input:focus {
+  border-color: var(--theme-accent);
+  box-shadow: 0 0 0 1px var(--theme-accent);
+}
+
+.theme-text-accent {
+  color: var(--theme-accent);
+}
+
+.theme-bg-gradient {
+  background: linear-gradient(135deg, var(--theme-primary), var(--theme-secondary), var(--theme-accent));
+}
+
+.theme-gradient {
+  background: linear-gradient(135deg, var(--theme-primary), var(--theme-secondary), var(--theme-accent));
+}
+
+/* Green button theme classes */
+.theme-bg-success {
+  background-color: #10b981;
+  box-shadow: 0 0px 6px rgba(0, 0, 0, 0.1);
+}
+
+.theme-bg-success:hover {
+  background-color: #059669;
+}
+
+/* Red button theme classes */
+.theme-bg-danger {
+  background-color: #ef4444;
+  box-shadow: 0 0px 6px rgba(0, 0, 0, 0.1);
+}
+
+.theme-bg-danger:hover {
+  background-color: #dc2626;
+}
+
+/* Standardized Button Classes - Based on Generate Post Button Pattern */
+/* Primary Button - Main CTA buttons */
+.btn-primary {
+  @apply rounded-full py-2 px-4 font-medium theme-bg-trinary theme-text-light transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2;
+}
+
+.btn-primary:hover:not(:disabled) {
+  @apply opacity-90;
+}
+
+/* Secondary Button - Secondary actions */
+.btn-secondary {
+  @apply rounded-full py-2 px-4 font-medium bg-gray-100 text-gray-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  @apply bg-gray-200;
+}
+
+/* Success Button - Positive actions (connect, publish, etc.) */
+.btn-success {
+  @apply rounded-full py-2 px-4 font-medium theme-bg-success theme-text-light transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2;
+}
+
+/* Danger Button - Destructive actions (disconnect, delete, etc.) */
+.btn-danger {
+  @apply rounded-full py-2 px-4 font-medium theme-bg-danger theme-text-light transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2;
+}
+
+/* Outline variants */
+.btn-outline {
+  @apply rounded-full py-2 px-4 font-medium bg-transparent border-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2;
+}
+
+.btn-outline-primary {
+  @apply btn-outline border-purple-500 text-purple-600;
+}
+
+.btn-outline-primary:hover:not(:disabled) {
+  @apply bg-purple-500 text-white;
+}
+
+.btn-outline-secondary {
+  @apply btn-outline border-gray-300 text-gray-600;
+}
+
+.btn-outline-secondary:hover:not(:disabled) {
+  @apply bg-gray-100;
+}
+
+/* Size variants */
+.btn-sm {
+  @apply text-sm py-1.5 px-3;
+}
+
+.btn-lg {
+  @apply text-lg py-3 px-6;
+}
+
+/* Loading state utility */
+.btn-loading {
+  @apply pointer-events-none opacity-75;
+}
+
+/* Full width variant */
+.btn-full {
+  @apply w-full;
+}
+
+/* Custom animations for carousel */
+@keyframes slide-in-from-top {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-in-from-bottom {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-in {
+  animation-duration: 0.7s;
+  animation-fill-mode: both;
+}
+
+.slide-in-from-top {
+  animation-name: slide-in-from-top;
+}
+
+.slide-in-from-bottom {
+  animation-name: slide-in-from-bottom;
+}
+
+/* Animated background styles */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse-glow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 40px rgb(238, 236, 243, 0.5);
+  }
+}
+
+.animated-bg {
+  background: linear-gradient(-45deg, #bebebf22, #4d4d4e22, #78787811, #dedddd11, #33343411, #e2e4e411);
+  background-size: 400% 400%;
+  animation: gradient-shift 5s ease infinite;
+
+}
+
+.floating-element {
+  animation: float 8s ease-in-out infinite;
+}
+
+.pulse-glow {
+  animation: pulse-glow 12s ease-in-out infinite;
+}
+
+/* Modal scrolling prevention */
+body.modal-open {
+  overflow: hidden !important;
+}
+
+html.modal-open {
+  overflow: hidden !important;
+}
+
+/* Prevent all scrolling when modal is open */
+body.modal-open * {
+  overflow: hidden !important;
+}
+
+/* Allow scrolling only in modal content */
+body.modal-open .modal-content {
+  overflow-y: auto !important;
+  height: auto !important;
+}
+
+body.modal-open .modal-content * {
+  overflow: visible !important;
+}
+.bg-overlay {
+  background-image: url('./assets/bg-overlay.png');
+  /* filter: brightness(0.7); */
+  mix-blend-mode: luminosity;
+  opacity: 0.05;
+  background-size: contain
+}
+
+/* Theme-aware CSS variables for data attributes - used by components that need data-theme approach */
+:root {
+  --primary: #3b82f6;
+  --primary-hover: #2563eb;
+  --secondary: #f1f5f9;
+  --accent: #8b5cf6;
+  --background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  --foreground: #0f172a;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --card: #ffffff;
+  --card-hover: #f8fafc;
+}
+
+[data-theme="dark"] {
+  --primary: #60a5fa;
+  --primary-hover: #3b82f6;
+  --secondary: #334155;
+  --accent: #a78bfa;
+  --background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  --foreground: #f1f5f9;
+  --muted: #94a3b8;
+  --border: #334155;
+  --card: #1e293b;
+  --card-hover: #334155;
+}

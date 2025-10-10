@@ -1,0 +1,17 @@
+/* Smooth transitions for body when preventing scroll during drag operations */
+body {
+  transition: overflow 0.2s ease-in-out;
+}
+
+/* Class applied to body during drag operations to prevent scrolling */
+.drag-no-scroll {
+  overflow: hidden !important;
+  text-overflow: clip !important;
+  white-space: normal !important;
+  transition: overflow 0.2s ease-in-out;
+}
+
+/* Ensure smooth transition when removing the class */
+.drag-no-scroll-exit {
+  transition: overflow 0.2s ease-in-out;
+}

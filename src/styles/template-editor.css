@@ -1,0 +1,86 @@
+/* Custom width utilities for template editor layout */
+.w-3\/10 {
+  width: 30%;
+}
+
+.w-7\/10 {
+  width: 70%;
+}
+
+/* Mobile responsive heights */
+@media (max-width: 1024px) {
+  .template-editor-canvas {
+    height: 50vh;
+  }
+  
+  .template-editor-tools {
+    height: 50vh;
+  }
+}
+
+@media (min-width: 1024px) {
+  .template-editor-canvas {
+    height: 100vh;
+  }
+  
+  .template-editor-tools {
+    height: 100vh;
+  }
+}
+
+/* Custom scrollbar for tools panel */
+.template-editor-scrollable::-webkit-scrollbar {
+  width: 6px;
+}
+
+.template-editor-scrollable::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.template-editor-scrollable::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.template-editor-scrollable::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Range slider custom styling */
+input[type="range"].template-range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 8px;
+  border-radius: 4px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+input[type="range"].template-range:hover {
+  opacity: 1;
+}
+
+input[type="range"].template-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #3b82f6;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+input[type="range"].template-range::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #3b82f6;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
