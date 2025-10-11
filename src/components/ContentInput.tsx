@@ -34,16 +34,14 @@ import { Template } from "../types/templates";
 import { getTemplateById } from "../utils/templates";
 import {
   isVideoFile,
-  generateVideoThumbnail,
-  createVideoThumbnailUrl,
   getVideoAspectRatio,
   is16x9Video,
   is9x16Video,
 } from "../utils/videoUtils";
 import { useLoadingAPI } from "../hooks/useLoadingAPI";
-import { s } from "node_modules/vite/dist/node/types.d-aGj9QkWt";
-import { LoadingTest } from "./LoadingTest";
+
 import API from "@/services/api";
+import { useNavigate } from "react-router-dom";
 
 // Helper function to convert file to base64
 const fileToBase64 = (file: File): Promise<string> => {
@@ -83,6 +81,20 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     executeImageGeneration,
     executeFileUpload,
   } = useLoadingAPI();
+
+  const getCost = () => {
+    switch (selectedPostType) {
+      case "text":
+        return 40;
+      case "image":
+        return 100;
+      default:
+        return 100;
+    }
+  };
+
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState<PostContent>({
     prompt: initialData?.prompt || "",
     tags: initialData?.tags || [],
@@ -725,6 +737,13 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const cost = getCost();
+
+    if (balance < cost) {
+      navigate("/pricing");
+      return;
+    }
 
     if (formData.prompt.trim()) {
       // For text-to-image mode with combined generation enabled, do the combined generation
@@ -1635,7 +1654,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     setAspectRatio(newAspectRatio);
   };
 
-  // Generate AI thumbnail for video when Generate Post is clicked
   const generateThumbnailForPost = async (
     contentDescription: string,
     aspectRatio: number | null
@@ -1655,13 +1673,11 @@ export const ContentInput: React.FC<ContentInputProps> = ({
             ? `${window.location.protocol}//${window.location.host}`
             : "http://localhost:5000/api");
 
-        // Force 16:9 thumbnails regardless of input aspect ratio
         const targetAspectRatio = "16:9";
         const aspectRatioDescription =
           "16:9 horizontal/landscape format (forced)";
         console.log("📐 Forcing thumbnail aspect ratio to 16:9");
 
-        // Enhanced thumbnail prompt with content description and aspect ratio context
         const thumbnailPrompt = `Create a compelling video thumbnail for ${aspectRatioDescription} video about: ${contentDescription.trim()}. Make it eye-catching, professional, and suitable for social media platforms. Include relevant visual elements that represent the content. Do not include any text, words, letters, numbers, captions, watermarks, logos, or typography. Pure imagery only.`;
 
         console.log("📝 Thumbnail prompt:", thumbnailPrompt);
@@ -1675,7 +1691,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           prompt: thumbnailPrompt,
           style: "professional",
           aspectRatio: targetAspectRatio,
-       
         };
 
         console.log("📋 Request body for thumbnail generation:", requestBody);
@@ -1742,17 +1757,13 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     setIsGeneratingImage(true);
     try {
       const result = await executeImageGeneration(async () => {
-    
         const response = await API.generateImage({
-            prompt: `${imageDescription.trim()}. Do not include any text, words, letters, numbers, captions, watermarks, logos, or typography. Pure imagery only.`,
-            style: "professional",
-            aspectRatio: aspectRatio,
-            quality: "standard",
-            model: "gemini-2.5-flash-image-preview",
-          })
-      
-
-       
+          prompt: `${imageDescription.trim()}. Do not include any text, words, letters, numbers, captions, watermarks, logos, or typography. Pure imagery only.`,
+          style: "professional",
+          aspectRatio: aspectRatio,
+          quality: "standard",
+          model: "gemini-2.5-flash-image-preview",
+        });
 
         const result = await response.data;
         console.log("🎨 Image generation API response:", result);
@@ -1776,29 +1787,23 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     prompt: string,
     shouldAutoOpenTemplate: boolean = true
   ): Promise<string | null> => {
-    return await  executeImageGeneration(async () => {
-    
-        const response = await API.generateImage({
-            prompt: `${imageDescription.trim()}. Do not include any text, words, letters, numbers, captions, watermarks, logos, or typography. Pure imagery only.`,
-            style: "professional",
-            aspectRatio: aspectRatio,
-            
-          })
-      
+    return await executeImageGeneration(async () => {
+      const response = await API.generateImage({
+        prompt: `${imageDescription.trim()}. Do not include any text, words, letters, numbers, captions, watermarks, logos, or typography. Pure imagery only.`,
+        style: "professional",
+        aspectRatio: aspectRatio,
+      });
 
-       
-
-        const result = await response.data;
-        console.log("🎨 Image generation API response:", result);
-        if (result.success && result.imageUrl) {
-          await handleAIImageGenerated(result.imageUrl);
-          setImageDescription(""); // Clear the description field
-          return result;
-        } else {
-          throw new Error(result.error || "Image generation failed");
-        }
-      }, "Creating your custom image");
-    
+      const result = await response.data;
+      console.log("🎨 Image generation API response:", result);
+      if (result.success && result.imageUrl) {
+        await handleAIImageGenerated(result.imageUrl);
+        setImageDescription(""); // Clear the description field
+        return result;
+      } else {
+        throw new Error(result.error || "Image generation failed");
+      }
+    }, "Creating your custom image");
   };
 
   // Enhanced combined generation function - generates image and waits for template editor completion
@@ -3197,20 +3202,48 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                           GENERATE POST
                         </div>
                       )}
-                      <div className=" sm:inline-block rounded-full theme-bg-quaternary theme-text-secondary px-2 py-1">
+
+                      <div className="sm:inline-block rounded-full theme-bg-quaternary theme-text-secondary px-2 py-1">
                         <Icon
                           name="wallet"
                           size={14}
                           className="inline mr-1 mt-[-1px]"
                         />
-                        {balance}
+                        {getCost()}
                       </div>
                     </button>
                   </div>
                 </>
               ) : (
                 <div className="flex-1 w-full aspect-video">
-                <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-gray-900 aspect-video"><div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#7650e3] to-[#6366F1]"><button className="bg-white rounded-full p-6 hover:scale-110 transition-transform shadow-2xl"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-play w-12 h-12 text-[#7650e3] ml-1"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg></button></div><div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/70 to-transparent"><p className="text-white text-lg font-semibold">Introduction to Omnishare</p><p className="text-white/80">Learn how to maximize your social media presence</p></div></div>
+                  <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-gray-900 aspect-video">
+                    <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#7650e3] to-[#6366F1]">
+                      <button className="bg-white rounded-full p-6 hover:scale-110 transition-transform shadow-2xl">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          className="lucide lucide-play w-12 h-12 text-[#7650e3] ml-1"
+                        >
+                          <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                      </button>
+                    </div>
+                    <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/70 to-transparent">
+                      <p className="text-white text-lg font-semibold">
+                        Introduction to Omnishare
+                      </p>
+                      <p className="text-white/80">
+                        Learn how to maximize your social media presence
+                      </p>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>

@@ -61,7 +61,7 @@ export interface Profile {
 // }
 
 export interface AppState {
-  user: User | null;
+  user: any | null;
   userPlan: "free" | "ipro" | "business" | null;
   selectedProfile: Profile | null;
   selectedCampaign: Campaign | null;
@@ -267,7 +267,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
         if (persistentToken && expiry && remember === "true") {
           const expiryDate = new Date(expiry);
           if (new Date() > expiryDate) {
-            // Token expired, clear storage
             localStorage.removeItem("auth_token");
             localStorage.removeItem("auth_token_expiry");
             localStorage.removeItem("auth_remember");
@@ -276,7 +275,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
           }
         }
 
-        // Check for session token if no valid persistent token
         const sessionToken = sessionStorage.getItem("auth_token");
         if (!persistentToken && !sessionToken) {
           dispatch({ type: "SET_LOADING", payload: false });
@@ -285,29 +283,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
 
         const authResult = await getCurrentUser();
 
-        // If no authenticated user found, they need to log in
         if (!authResult || !authResult.user) {
-          console.log("🔧 No authenticated user found - user needs to log in");
-          // Don't create demo users - let the user go through proper auth flow
           dispatch({ type: "SET_LOADING", payload: false });
           return;
         }
 
         if (authResult && authResult.user) {
-          const currentUser: User = {
-            id: authResult.user.id,
-            email: authResult.user.email,
-            name: authResult.user.name,
-            profile_type: authResult.user.profile_type,
-            plan: authResult.user.plan,
-            created_at: authResult.user.created_at,
-            user_metadata: {
-              name: authResult.user.name || authResult.user.user_metadata?.name,
-            },
-          };
-          dispatch({ type: "SET_USER", payload: currentUser });
+          dispatch({ type: "SET_USER", payload: authResult.user });
 
-          // Check if user has tier selection and profile setup
           try {
             const profileResponse = await API.getProfile();
 
@@ -318,11 +301,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
                 existingProfile.name &&
                 existingProfile.plan
               ) {
-                // Check if profile is complete based on plan requirements
                 const isProfileComplete =
                   checkProfileCompletion(existingProfile);
 
-                // User has both tier and profile setup
                 dispatch({
                   type: "SET_SELECTED_PROFILE",
                   payload: existingProfile,
@@ -414,12 +395,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     const userId = state.user.id;
     const channel = pusher.subscribe(`wallet-${userId}`);
 
-    channel.bind(
-      "balance-update",
-      (data: { balance: number; deducted: number }) => {
-        dispatch({ type: "SET_BALANCE", payload: data.balance });
-      }
-    );
+    channel.bind("coins-update", (data: { coins: number }) => {
+      dispatch({ type: "SET_BALANCE", payload: data.coins });
+    });
 
     return () => {
       pusher.unsubscribe(`wallet-${userId}`);

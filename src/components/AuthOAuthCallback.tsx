@@ -2,13 +2,14 @@ import React, { useEffect, useRef, useState } from "react";
 import { useSearchParams, useNavigate, useParams } from "react-router-dom";
 import { Loader, CheckCircle, XCircle } from "lucide-react";
 import { handleOAuthCallback } from "../utils/authOAuth";
+import { getCurrentUser } from "@/lib/auth";
 
 interface AuthOAuthCallbackProps {
   onAuthSuccess: (user: any) => void;
 }
 
-export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({ 
-  onAuthSuccess 
+export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
+  onAuthSuccess,
 }) => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -25,11 +26,13 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
     const handleCallback = async () => {
       // Prevent multiple simultaneous OAuth requests and StrictMode double-invoke
       if (hasRunRef.current || isProcessing) {
-        console.log('🔒 OAuth callback already in progress or already handled, skipping...');
+        console.log(
+          "🔒 OAuth callback already in progress or already handled, skipping..."
+        );
         return;
       }
       hasRunRef.current = true;
-      
+
       setIsProcessing(true);
       try {
         const code = searchParams.get("code");
@@ -44,7 +47,7 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
           throw new Error("Missing code or state parameter");
         }
 
-        if (!provider || (provider !== 'google' && provider !== 'facebook')) {
+        if (!provider || (provider !== "google" && provider !== "facebook")) {
           throw new Error("Invalid OAuth provider");
         }
 
@@ -52,61 +55,69 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
 
         // Handle the OAuth callback
         const result = await handleOAuthCallback(provider, code, state);
-        
+
         setStatus("success");
         setMessage(`Successfully authenticated with ${provider}!`);
 
         // Send success message to parent window (popup opener)
         if (window.opener) {
-          window.opener.postMessage({
-            type: 'oauth_success',
-            provider: provider,
-            state: state,
-            result: result
-          }, '*');
-          
+          window.opener.postMessage(
+            {
+              type: "oauth_success",
+              provider: provider,
+              state: state,
+              result: result,
+            },
+            "*"
+          );
+
           // Close the popup after a brief delay with error handling
           setTimeout(() => {
             try {
               window.close();
             } catch (error) {
-              console.warn('Could not close popup window:', error);
+              console.warn("Could not close popup window:", error);
               // Fallback: show user message to close manually
-              setMessage('Authentication successful! You can close this window.');
+              setMessage(
+                "Authentication successful! You can close this window."
+              );
             }
           }, 1000);
         } else {
           // Fallback: store token and call success handler if not in popup
           localStorage.setItem("auth_token", result.token);
           onAuthSuccess(result.user);
-          
+
           // Redirect to content page after a short delay
           setTimeout(() => {
             navigate("/content");
           }, 2000);
         }
-
       } catch (error) {
         console.error("OAuth callback error:", error);
         setStatus("error");
-        const errorMessage = error instanceof Error ? error.message : "Authentication failed";
+        const errorMessage =
+          error instanceof Error ? error.message : "Authentication failed";
         setMessage(errorMessage);
 
         // Send error message to parent window (popup opener)
         if (window.opener) {
-          window.opener.postMessage({
-            type: 'oauth_error',
-            error: errorMessage
-          }, '*');
-          
+          window.opener.postMessage(
+            {
+              type: "oauth_error",
+              error: errorMessage,
+            },
+            "*"
+          );
+
           // Close the popup after a brief delay with error handling
           setTimeout(() => {
             try {
               window.close();
             } catch (error) {
-              console.warn('Could not close popup window:', error);
+              console.warn("Could not close popup window:", error);
               // Fallback: show user message to close manually
-              setMessage('Authentication failed. You can close this window.');
+              setMessage("Authentication failed. You can close this window.");
             }
           }, 2000);
         } else {
@@ -125,9 +136,12 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
 
   const getProviderDisplayName = (provider: string) => {
     switch (provider) {
-      case 'google': return 'Google';
-      case 'facebook': return 'Facebook';
-      default: return provider;
+      case "google":
+        return "Google";
+      case "facebook":
+        return "Facebook";
+      default:
+        return provider;
     }
   };
 
@@ -141,7 +155,10 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
         <div className="absolute bottom-20 right-10 w-24 h-24 bg-white/10 rounded-full animate-pulse"></div>
       </div>
 
-      <div className="max-w-md w-full theme-bg-card rounded-2xl shadow-xl border p-8 text-center relative z-10" style={{ borderColor: "var(--theme-border)" }}>
+      <div
+        className="max-w-md w-full theme-bg-card rounded-2xl shadow-xl border p-8 text-center relative z-10"
+        style={{ borderColor: "var(--theme-border)" }}
+      >
         <div className="mb-6">
           {status === "processing" && (
             <Loader className="w-12 h-12 theme-text-accent animate-spin mx-auto" />
@@ -159,7 +176,8 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
         </div>
 
         <h2 className="text-xl font-semibold theme-text-primary mb-2">
-          {status === "processing" && `Connecting to ${getProviderDisplayName(provider || '')}`}
+          {status === "processing" &&
+            `Connecting to ${getProviderDisplayName(provider || "")}`}
           {status === "success" && "Authentication Successful"}
           {status === "error" && "Authentication Failed"}
         </h2>

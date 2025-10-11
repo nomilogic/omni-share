@@ -4,7 +4,7 @@ import axios, {
   InternalAxiosRequestConfig,
 } from "axios";
 
-const BASE_URL: string = 'http://13.49.240.224/api'
+const BASE_URL: string = "http://13.49.240.224/api";
 
 interface LoginPayload {
   email: string;
@@ -25,12 +25,6 @@ interface ResetPasswordPayload {
   token: string;
   newPassword: string;
 }
-
-interface ConfirmPurchasePayload {
-  packageId: string;
-}
-
-
 
 interface CampaignPayload {
   title: string;
@@ -67,9 +61,14 @@ interface APIInstance extends AxiosInstance {
   otpVerification: (data: any) => Promise<any>;
   forgotPassword: (data: ForgotPasswordPayload) => Promise<any>;
   resetPassword: (data: ResetPasswordPayload) => Promise<any>;
+
+  listAddons: () => Promise<any>;
+  confirmAddons: (data: any) => Promise<any>;
+  buyAddons: (data: any) => Promise<any>;
+
   listPackages: () => Promise<any>;
   buyPackage: (packageId: string) => Promise<any>;
-  confirmPurchase: (data: ConfirmPurchasePayload) => Promise<any>;
+  confirmPurchase: (data: any) => Promise<any>;
   listMedia: () => Promise<any>;
   uploadMedia: (formData: FormData) => Promise<any>;
   deleteMedia: (mediaId: string) => Promise<any>;
@@ -135,7 +134,7 @@ API.login = (data) => API.post("/auth/login", data);
 API.registerUser = (data) => API.post("/auth/register", data);
 API.resendOtp = () => {
   const emailToken: string | null = localStorage.getItem("email_token");
-  API.post("/auth/resend-otp", {
+  API.get("/auth/resend-otp", {
     headers: { verification_token: emailToken ?? "" },
   });
 };
@@ -160,9 +159,14 @@ API.otpVerification = (data) => {
 };
 API.forgotPassword = (data) => API.post("/auth/forgot-password", data);
 API.resetPassword = (data) => API.post("/auth/reset-password", data);
-API.listPackages = () => API.get("/client/packages");
-API.buyPackage = (packageId) => API.post(`/client/packages/buy/${packageId}`);
-API.confirmPurchase = (data) => API.post("/client/packages/confirm", data);
+
+API.listAddons = () => API.get("/client/addons");
+API.buyAddons = (addonId) => API.get(`/client/addons/buy/${addonId}`);
+API.confirmAddons = (id) => API.get(`/client/addons/confirm/${id}`);
+
+API.confirmPurchase = (id) => API.get(`/client/package/confirm/${id}`);
+API.listPackages = () => API.get("/client/package");
+API.buyPackage = (packageId) => API.get(`/client/package/buy/${packageId}`);
 
 API.listMedia = () => API.get("/client/media");
 API.uploadMedia = (formData) => API.post("/client/media/upload", formData);

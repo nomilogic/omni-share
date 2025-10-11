@@ -140,7 +140,6 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
       if (!emailToken) throw new Error("No email token found");
 
       await API.resendOtp();
-      setError("OTP resent successfully");
     } catch (err: unknown) {
       const e = err as Error;
       setError(e.message || "Failed to resend OTP");
