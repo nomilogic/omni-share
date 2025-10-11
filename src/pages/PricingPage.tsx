@@ -246,7 +246,7 @@ export const PricingPage: React.FC = () => {
             addons.map((addon) => (
               <div
                 key={addon.id}
-                className="theme-bg-quaternary rounded-2xl shadow-md border p-6 hover:-translate-y-1 transition-all"
+                className="theme-bg-quaternary rounded-2xl shadow-md border p-4 hover:-translate-y-1 transition-all"
               >
                 <div className="flex justify-center mb-4">
                   <Gift className="w-10 h-10 text-yellow-500" />
@@ -265,7 +265,7 @@ export const PricingPage: React.FC = () => {
                   }}
                   className="w-full py-3 rounded-lg theme-button-primary hover:brightness-110"
                 >
-                  Buy Add-on
+                  Purchase
                 </button>
               </div>
             ))

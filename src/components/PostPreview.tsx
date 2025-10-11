@@ -1298,7 +1298,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                   size={14}
                   className="inline mr-1 mt-[-1px]"
                 />
-                100
+                20
               </div>
             </button>
 
