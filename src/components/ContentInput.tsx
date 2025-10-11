@@ -1695,23 +1695,11 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
         console.log("📋 Request body for thumbnail generation:", requestBody);
 
-        const response = await fetch(`${apiUrl}/ai/generate-image`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(requestBody),
-        });
+        const response = await API.generateImage(requestBody) 
 
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error("❌ Thumbnail generation API error:", errorText);
-          throw new Error(
-            `Failed to generate video thumbnail: ${response.status}`
-          );
-        }
+      
 
-        const result = await response.json();
+        const result = await response.data
         if (!result.success || !result.imageUrl) {
           throw new Error(result.error || "Video thumbnail generation failed");
         }
@@ -1794,7 +1782,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         aspectRatio: aspectRatio,
       });
 
-      const result = await response.data;
+      const result =  response.data;
       console.log("🎨 Image generation API response:", result);
       if (result.success && result.imageUrl) {
         await handleAIImageGenerated(result.imageUrl);

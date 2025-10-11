@@ -1,3 +1,5 @@
+import API from "@/services/api";
+
 interface ScheduleRequest {
   prompt: string;
   category?: string;
@@ -353,25 +355,15 @@ class ScheduleService {
         aspectRatio = '1:1'; // Square for Instagram
       }
 
-      const response = await fetch(`${this.baseUrl}/ai/generate-image`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
+      const response = await  API.generateImage({
           prompt: prompt,
           size: this.getSizeFromAspectRatio(aspectRatio),
           quality: 'hd',
           style: 'professional'
-        })
-      });
+        }) 
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to generate image');
-      }
 
-      const data = await response.json();
+      const data =  response.data
       return data.imageUrl;
     } catch (error) {
       console.error('Error generating image:', error);
