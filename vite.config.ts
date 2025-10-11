@@ -16,4 +16,7 @@ export default defineConfig({
     outDir: path.resolve(__dirname, "dist"),
     emptyOutDir: true,
   },
+  server: {
+    allowedHosts: ["omnishare.ai", "localhost", "www.omnishare.ai"],
+  },
 });
