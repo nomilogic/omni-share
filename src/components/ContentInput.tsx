@@ -75,7 +75,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   selectedPlatforms,
   editMode,
 }) => {
-  const { state, balance } = useAppContext();
+  const { state, balance, generationAmounts } = useAppContext();
+  console.log("generationAmounts", generationAmounts);
   const {
     executeVideoThumbnailGeneration,
     executeImageGeneration,
@@ -83,13 +84,21 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   } = useLoadingAPI();
 
   const getCost = () => {
+    if (!selectedPostType || !generationAmounts) return 0;
+
+    const textPrice = Number(generationAmounts["text"] || 100);
+    const imagePrice = Number(generationAmounts["image"] || 100);
+    const videoPrice = Number(generationAmounts["image"] || 100);
+
     switch (selectedPostType) {
       case "text":
-        return 40;
+        return textPrice * 2;
       case "image":
-        return 100;
+        return imagePrice + textPrice * 3;
+      case "video":
+        return videoPrice + textPrice * 5;
       default:
-        return 100;
+        return textPrice;
     }
   };
 
@@ -1695,11 +1704,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
         console.log("📋 Request body for thumbnail generation:", requestBody);
 
-        const response = await API.generateImage(requestBody) 
+        const response = await API.generateImage(requestBody);
 
-      
-
-        const result = await response.data
+        const result = await response.data;
         if (!result.success || !result.imageUrl) {
           throw new Error(result.error || "Video thumbnail generation failed");
         }
@@ -1782,7 +1789,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         aspectRatio: aspectRatio,
       });
 
-      const result =  response.data;
+      const result = response.data;
       console.log("🎨 Image generation API response:", result);
       if (result.success && result.imageUrl) {
         await handleAIImageGenerated(result.imageUrl);

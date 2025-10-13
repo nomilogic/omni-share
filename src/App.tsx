@@ -23,6 +23,8 @@ import PrivacyPolicy from "./components/PrivacyPolicy";
 import { themeManager } from "./lib/theme";
 import AddonSuccessPage from "./pages/PackageAddonSuccess";
 import PackageSuccessPage from "./pages/PackagePaymentSuccess";
+import TransactionHistory from "./pages/TransectionHistory";
+import GenerationAmountPage from "./pages/GenerationAmountPage";
 
 // OAuth callback wrapper component
 const OAuthCallbackWrapper = () => {
@@ -56,6 +58,7 @@ function App() {
             path="/auth/:provider/callback"
             element={<OAuthCallbackWrapper />}
           />
+
           <Route
             path="/pricing"
             element={
@@ -66,7 +69,9 @@ function App() {
               </ProtectedRoute>
             }
           />
+
           <Route path="/payment/addon/success" element={<AddonSuccessPage />} />
+
           <Route
             path="/payment/package/success"
             element={<PackageSuccessPage />}
@@ -87,6 +92,26 @@ function App() {
               <ProtectedRoute>
                 <AppLayout>
                   <DashboardPage />
+                </AppLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/transaction-history"
+            element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <TransactionHistory />
+                </AppLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/generate-amount"
+            element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <GenerationAmountPage />
                 </AppLayout>
               </ProtectedRoute>
             }

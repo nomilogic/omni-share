@@ -109,6 +109,7 @@ interface APIInstance extends AxiosInstance {
   getHistory: () => Promise<any>;
   readAllHistory: () => Promise<any>;
   unreadHistory: () => Promise<any>;
+  walletTransaction: () => Promise<any>;
   readHistoryById: (postId: any) => Promise<any>;
 }
 
@@ -220,5 +221,7 @@ API.readAllHistory = () => API.get("/client/post-history/history/read-all");
 API.readHistoryById = (postId: any) =>
   API.get(`/client/post-history/history/${postId}/read`);
 API.unreadHistory = () => API.get("/client/post-history/history/unread-count");
+
+API.walletTransaction = () => API.get("/client/wallet-transaction");
 
 export default API;

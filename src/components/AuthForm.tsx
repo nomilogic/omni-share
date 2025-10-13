@@ -14,6 +14,7 @@ interface AuthFormProps {
 export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [loading1, setLoading1] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -133,18 +134,19 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
     }
   };
   const handleResendOtp = async () => {
-    setLoading(true);
+    setLoading1(true);
     setError("");
     try {
       const emailToken = localStorage.getItem("email_token");
       if (!emailToken) throw new Error("No email token found");
 
       await API.resendOtp();
+      setError("OTP resent successfully");
     } catch (err: unknown) {
       const e = err as Error;
       setError(e.message || "Failed to resend OTP");
     } finally {
-      setLoading(false);
+      setLoading1(false);
     }
   };
 
@@ -380,10 +382,10 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
             </button>
             <button
               onClick={handleResendOtp}
-              disabled={loading}
+              disabled={loading1}
               className="w-full px-4 py-2 rounded-lg bg-white text-black disabled:opacity-50"
             >
-              {loading ? "Resending..." : "Resend OTP"}
+              {loading1 ? "Resending..." : "Resend OTP"}
             </button>
           </div>
         </div>

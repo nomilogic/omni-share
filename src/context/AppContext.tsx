@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useReducer, useEffect } from "react";
+import React, {
+  createContext,
+  useContext,
+  useReducer,
+  useEffect,
+  useState,
+} from "react";
 import { getCurrentUser, signInAnonymously } from "../lib/database";
 import { Campaign } from "@shared/schema";
 import { LoadingProvider } from "./LoadingContext";
@@ -443,11 +449,38 @@ export const useAppContext = () => {
     }
   };
 
+  const API_BASE = "http://localhost:80/api/admin/generation-amount"; // 🔧 Update this to your backend
+  // 🔧 Update this to your backend
+
+  const [generationAmounts, setGenerationAmounts] = useState<any>({});
+
+  const fetchData = async () => {
+    try {
+      const res = await fetch(API_BASE);
+      const data = await res.json();
+
+      // Convert array → object (keyed by type)
+      const formattedData = (data.data || []).reduce((acc: any, item: any) => {
+        acc[item.type] = item.amount;
+        return acc;
+      }, {});
+
+      setGenerationAmounts(formattedData);
+    } catch (err) {
+      console.error("Error fetching generation amounts:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return {
+    generationAmounts: generationAmounts,
     state: context.state,
     dispatch: context.dispatch,
     user: context.state.user,
-    balance: context.state.balance, // ✅ added
+    balance: context.state.balance,
     profile: context.state.selectedProfile,
     campaign: context.state.selectedCampaign,
     selectCampaign,

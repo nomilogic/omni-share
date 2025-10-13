@@ -19,6 +19,8 @@ import {
   ChevronDown,
   ChevronUp,
   Plus,
+  HistoryIcon,
+  Coins,
 } from "lucide-react";
 import { useAppContext } from "../../context/AppContext";
 import { useLoading } from "../../context/LoadingContext";
@@ -134,6 +136,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     { name: "Accounts", path: "/accounts", icon: Building2 },
     { name: "History", path: "/history", icon: History },
     { name: "Pricing Plan", path: "/pricing", icon: CreditCard },
+    {
+      name: "Transaction History",
+      path: "/transaction-history",
+      icon: HistoryIcon,
+    },
+    { name: "Generate Amount", path: "/generate-amount", icon: Coins },
     // { name: "Campaigns", path: "/campaigns", icon: Target },
     // { name: "Schedule", path: "/schedule", icon: Calendar },
     // { name: "Settings", path: "/settings", icon: Settings },
