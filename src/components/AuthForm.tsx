@@ -7,6 +7,7 @@ import {
 import Icon from "./Icon";
 import API from "../services/api";
 import { OtpModal } from "./OtpModal";
+import { response } from 'express';
 
 interface AuthFormProps {
   onAuthSuccess: (user: any) => void;
@@ -86,7 +87,9 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
         window.history.pushState({}, "", url.toString());
       }
     } catch (error: any) {
-      setError(error.message);
+      console.error("Authentication error:", error.response.data.message);
+      setError( error.response.data.message || "Authentication failed");
+
     } finally {
       setLoading(false);
     }
@@ -284,10 +287,10 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
 
             {error && (
               <div
-                className="p-3 theme-bg-primary border rounded-lg"
-                style={{ borderColor: "var(--theme-accent)" }}
+                className="mt-[-10px] px-3 "
+                style={{ }}
               >
-                <p className="text-sm theme-text-primary">{error}</p>
+                <div className="text-sm text-red-500">{error}</div>
               </div>
             )}
 
