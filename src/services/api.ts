@@ -120,6 +120,10 @@ export const API = axios.create({
 API.interceptors.request.use(
   (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
     const token = localStorage.getItem("auth_token");
+    const email_token = localStorage.getItem("email_token");
+    if (email_token) {
+      config.headers.set("verification_token", email_token);
+    }
     if (token) {
       if (!config.headers) {
         config.headers = new axios.AxiosHeaders();
