@@ -164,7 +164,7 @@ export const AccountsPage: React.FC = () => {
           console.log("OAuth success for", platform);
           // Close popup from parent window for better browser compatibility
           try {
-            // authWindow?.close();
+           authWindow?.close();
           } catch (error) {
             console.warn("Could not close popup from parent:", error);
           }
@@ -174,7 +174,7 @@ export const AccountsPage: React.FC = () => {
           console.error("OAuth error:", event.data.error);
           // Close popup from parent window for better browser compatibility
           try {
-            // authWindow?.close();
+           authWindow?.close();
           } catch (error) {
             console.warn("Could not close popup from parent:", error);
           }
