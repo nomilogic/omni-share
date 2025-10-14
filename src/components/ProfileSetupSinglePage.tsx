@@ -51,16 +51,30 @@ const ProfileSetupSinglePage: React.FC = () => {
   };
   
   const [formData, setFormData] = useState<ProfileFormData>({
-    fullName: user?.name || '',
+    // Personal Information
+    fullName: user?.full_name || '',
     email: user?.email || '',
     phone: '',
-    planType: getFormPlanType(state.userPlan),
+    
+    // Business Information
+    businessName: '',
+    businessType: '',
+    businessWebsite: '',
+    businessDescription: '',
+    
+    // Social Media Information
     primaryPlatforms: [],
     contentCategories: [],
     postingFrequency: '',
+    
+    // Goals and Preferences
     goals: [],
     targetAudience: '',
-    brandTone: 'professional',
+    brandTone: '',
+    
+    // Additional Settings
+    teamSize: 1,
+    integrations: []
   });
 
   const platformOptions = [
@@ -139,13 +153,13 @@ const ProfileSetupSinglePage: React.FC = () => {
     }
   };
 
-  const isFormValid = () => {
+  const isFormValid = (formData: ProfileFormData): boolean => {
     if (!formData.fullName || !formData.email) return false;
-    if (formData.planType === 'business' && (!formData.businessName || !formData.businessType)) return false;
-    if (formData.primaryPlatforms.length === 0 || !formData.postingFrequency) return false;
-    if (formData.goals.length === 0 || !formData.targetAudience) return false;
-    if (formData.planType === 'free' && !formData.campaignType) return false;
-    if ((formData.planType === 'pro' || formData.planType === 'business') && (!formData.teamSize || !formData.monthlyBudget)) return false;
+    if (!formData.businessName || !formData.businessType) return false;
+    if (formData.primaryPlatforms.length === 0) return false;
+    if (!formData.postingFrequency) return false;
+    if (formData.goals.length === 0) return false;
+    if (!formData.targetAudience || !formData.brandTone) return false;
     return true;
   };
 
@@ -566,9 +580,9 @@ const ProfileSetupSinglePage: React.FC = () => {
             <div className="flex justify-end pt-8 border-t border-gray-200">
               <button
                 type="submit"
-                disabled={!isFormValid() || loading}
+                disabled={!isFormValid(formData) || loading}
                 className={`px-8 py-4 rounded-xl font-semibold text-white text-lg transition-all transform ${
-                  isFormValid() && !loading
+                  isFormValid(formData) && !loading
                     ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 hover:scale-105 shadow-lg'
                     : 'bg-gray-400 cursor-not-allowed'
                 }`}
