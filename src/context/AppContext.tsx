@@ -449,8 +449,7 @@ export const useAppContext = () => {
     }
   };
 
-  const API_BASE = "http://localhost:80/api/admin/generation-amount"; // 🔧 Update this to your backend
-  // 🔧 Update this to your backend
+  const API_BASE = "https://omnishare.ai/server/api/admin/generation-amount"; // 🔧 Update this to your backend
 
   const [generationAmounts, setGenerationAmounts] = useState<any>({});
 

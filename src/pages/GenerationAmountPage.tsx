@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Edit2, Trash2, Loader2, Plus } from "lucide-react";
 
-const API_BASE = "http://localhost:80/api/admin/generation-amount"; // 🔧 Update this to your backend
+const API_BASE = "https://omnishare.ai/server/api/admin/generation-amount"; // 🔧 Update this to your backend
 // 🔧 Update this to your backend
 
 const GenerationAmountPage = () => {
@@ -44,7 +44,7 @@ const GenerationAmountPage = () => {
   // Handle Submit (Create or Update)
   const onSubmit = async (formData: any) => {
     try {
-      const method = editingId ? "PUT" : "POST";
+      const method = editingId ? "PATCH" : "POST";
       const url = editingId ? `${API_BASE}/${editingId}` : API_BASE;
 
       const res: any = await fetch(url, {

@@ -4,7 +4,7 @@ import axios, {
   InternalAxiosRequestConfig,
 } from "axios";
 
-const BASE_URL: string = "http://13.49.240.224/api";
+const BASE_URL: string = "https://omnishare.ai/server/api";
 
 interface LoginPayload {
   email: string;
