@@ -86,7 +86,8 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
         window.history.pushState({}, "", url.toString());
       }
     } catch (error: any) {
-      setError(error.message);
+      console.error("Authentication error:", error.response.data.message);
+      setError(error.response.data.message || "Authentication failed");
     } finally {
       setLoading(false);
     }
@@ -283,11 +284,8 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
             )}
 
             {error && (
-              <div
-                className="p-3 theme-bg-primary border rounded-lg"
-                style={{ borderColor: "var(--theme-accent)" }}
-              >
-                <p className="text-sm theme-text-primary">{error}</p>
+              <div className="mt-[-10px] px-3 " style={{}}>
+                <div className="text-sm text-red-500">{error}</div>
               </div>
             )}
 
@@ -321,7 +319,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
         open={showOtpPopup}
         onClose={() => setShowOtpPopup(false)}
         emailHint="user@example.com"
-        onSuccess={(data) => onAuthSuccess(data)}
+        onSuccess={(data: any) => onAuthSuccess(data)}
         verifyOtp={async (otp) => {
           const res = await API.otpVerification({ otp });
           return res.data.data;
