@@ -4,7 +4,7 @@ import axios, {
   InternalAxiosRequestConfig,
 } from "axios";
 
-const BASE_URL: string = "http://localhost:3000/api";
+const BASE_URL: string = "https://omnishare.ai/server/api";
 
 interface LoginPayload {
   email: string;
@@ -134,10 +134,20 @@ API.interceptors.request.use(
 API.login = (data) => API.post("/auth/login", data);
 API.registerUser = (data) => API.post("/auth/register", data);
 API.resendOtp = () => {
-  const emailToken: string | null = localStorage.getItem("email_token");
+  const emailToken: any = localStorage.getItem("email_token");
   API.get("/auth/resend-otp", {
     headers: { verification_token: emailToken ?? "" },
   });
+};
+
+API.otpVerification = (data) => {
+  const emailToken: any = localStorage.getItem("email_token");
+  console.log("emailToken", emailToken);
+  return API.post(
+    "/auth/verify",
+    { ...data },
+    { headers: { verification_token: emailToken ?? "" } }
+  );
 };
 API.logout = () => {
   const token: any = localStorage.getItem("auth_token");
@@ -150,14 +160,6 @@ API.getUser = () => {
 
 API.userBalance = () => API.get("/auth/user/balance");
 
-API.otpVerification = (data) => {
-  const emailToken: string | null = localStorage.getItem("email_token");
-  return API.post(
-    "/auth/verify",
-    { ...data },
-    { headers: { verification_token: emailToken ?? "" } }
-  );
-};
 API.forgotPassword = (data) => API.post("/auth/forgot-password", data);
 API.resetPassword = (data) => API.post("/auth/reset-password", data);
 
