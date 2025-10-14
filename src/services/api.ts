@@ -120,10 +120,7 @@ export const API = axios.create({
 API.interceptors.request.use(
   (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
     const token = localStorage.getItem("auth_token");
-    const email_token = localStorage.getItem("email_token");
-    if (email_token) {
-      config.headers.set("verification_token", email_token);
-    }
+
     if (token) {
       if (!config.headers) {
         config.headers = new axios.AxiosHeaders();
@@ -138,19 +135,20 @@ API.interceptors.request.use(
 API.login = (data) => API.post("/auth/login", data);
 API.registerUser = (data) => API.post("/auth/register", data);
 API.resendOtp = () => {
-  const emailToken: any = localStorage.getItem("email_token");
-  API.get("/auth/resend-otp", {
-    headers: { verification_token: emailToken ?? "" },
+  const emailToken: any = JSON.parse(
+    JSON.stringify(localStorage.getItem("email_token"))
+  );
+  return API.get("/auth/resend-otp", {
+    headers: { authorization: emailToken ?? "" },
   });
 };
 
 API.otpVerification = (data) => {
   const emailToken: any = localStorage.getItem("email_token");
-  console.log("emailToken", emailToken);
   return API.post(
     "/auth/verify",
     { ...data },
-    { headers: { verification_token: emailToken ?? "" } }
+    { headers: { authorization: emailToken ?? "" } }
   );
 };
 API.logout = () => {
