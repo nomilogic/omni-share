@@ -22,6 +22,7 @@ import {
   getPlatformColors,
   getPlatformDisplayName,
 } from "../utils/platformIcons";
+import { useAppContext } from "@/context/AppContext";
 
 interface PostPreviewProps {
   posts: any[];
@@ -44,6 +45,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
   const [selectedPlatform, setSelectedPlatform] = useState<Platform>(
     generatedPosts[0]?.platform || "facebook"
   );
+  const { generationAmounts } = useAppContext();
   const [copiedPost, setCopiedPost] = useState<string | null>(null);
   const [editingMode, setEditingMode] = useState<boolean>(false);
   const [posts, setPosts] = useState<GeneratedPost[]>(generatedPosts);
@@ -1298,7 +1300,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                   size={14}
                   className="inline mr-1 mt-[-1px]"
                 />
-                100
+                {generationAmounts?.text}
               </div>
             </button>
 

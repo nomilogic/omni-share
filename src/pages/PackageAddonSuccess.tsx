@@ -97,17 +97,14 @@ export default function AddonSuccessPage() {
           </div>
         )}
 
-        {confirmed ||
-          (error && (
-            <div className="mt-6 flex justify-center gap-3">
-              <Link
-                to="/dashboard"
-                className="rounded-lg bg-[#7650e3] px-4 py-2 text-center text-sm font-medium text-white hover:bg-[#7650e3]/80 transition"
-              >
-                Go to Dashboard
-              </Link>
-            </div>
-          ))}
+        <div className="mt-6 flex justify-center gap-3">
+          <Link
+            to="/dashboard"
+            className="rounded-lg bg-[#7650e3] px-4 py-2 text-center text-sm font-medium text-white hover:bg-[#7650e3]/80 transition"
+          >
+            Go to Dashboard
+          </Link>
+        </div>
       </section>
     </main>
   );

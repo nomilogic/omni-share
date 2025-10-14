@@ -105,18 +105,14 @@ export default function PackageSuccessPage() {
           </div>
         )}
 
-        {/* Actions */}
-        {confirmed ||
-          (error && (
-            <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
-              <Link
-                to="/dashboard"
-                className="flex-1 rounded-lg bg-[#7650e3] px-4 py-2 text-center text-sm font-medium text-white hover:bg-[#7650e3]/80 transition"
-              >
-                Go to Dashboard
-              </Link>
-            </div>
-          ))}
+        <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
+          <Link
+            to="/dashboard"
+            className="flex-1 rounded-lg bg-[#7650e3] px-4 py-2 text-center text-sm font-medium text-white hover:bg-[#7650e3]/80 transition"
+          >
+            Go to Dashboard
+          </Link>
+        </div>
       </section>
     </main>
   );
