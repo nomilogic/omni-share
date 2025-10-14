@@ -321,7 +321,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
         open={showOtpPopup}
         onClose={() => setShowOtpPopup(false)}
         emailHint="user@example.com"
-        onSuccess={onAuthSuccess}
+        onSuccess={(data) => onAuthSuccess(data)}
         verifyOtp={async (otp) => {
           const res = await API.otpVerification({ otp });
           return res.data.data;

@@ -6,7 +6,7 @@ import { OtpInput } from "./OtpInput";
 type OtpModalProps = {
   open: boolean;
   onClose: () => void;
-  onSuccess?: (user: { id: string; email?: string }) => void;
+  onSuccess?: any;
   verifyOtp?: (
     otp: string
   ) => Promise<{ token?: string; user?: { id: string; email?: string } }>;
@@ -58,12 +58,12 @@ export function OtpModal({
       setVerifying(true);
       const fn = verifyOtp || (async () => ({ token: undefined }));
       const result = await fn(otp);
+
       if (result?.token) {
-        try {
-          localStorage.setItem("auth_token", result.token!);
-          localStorage.removeItem("email_token");
-        } catch {}
-        onSuccess?.(result.user || { id: "user" });
+        localStorage.setItem("auth_token", result.token!);
+        localStorage.removeItem("email_token");
+
+        onSuccess(result?.user);
         onClose();
       } else {
         throw new Error("OTP verification failed");

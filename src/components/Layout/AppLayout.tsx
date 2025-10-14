@@ -145,7 +145,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     // { name: "Schedule", path: "/schedule", icon: Calendar },
     // { name: "Settings", path: "/settings", icon: Settings },
   ];
-  const [showPackage, setShowPackage] = useState(true);
+  const [showPackage, setShowPackage] = useState(false);
   console.log("user", user);
   return (
     <ResizeContext.Provider value={{ handleResizeMainToFullScreen }}>
