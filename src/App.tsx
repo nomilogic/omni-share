@@ -70,11 +70,22 @@ function App() {
             }
           />
 
-          <Route path="/payment/addon/success" element={<AddonSuccessPage />} />
+          <Route
+            path="/payment/addon/success"
+            element={
+              <ProtectedRoute>
+                <AddonSuccessPage />
+              </ProtectedRoute>
+            }
+          />
 
           <Route
             path="/payment/package/success"
-            element={<PackageSuccessPage />}
+            element={
+              <ProtectedRoute>
+                <PackageSuccessPage />{" "}
+              </ProtectedRoute>
+            }
           />
 
           <Route

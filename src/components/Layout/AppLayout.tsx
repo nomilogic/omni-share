@@ -52,7 +52,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const userMenuRef = useRef<HTMLDivElement>(null);
   const mainContentRef = useRef<HTMLElement>(null);
 
-  // Close notification center when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -146,7 +145,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     // { name: "Schedule", path: "/schedule", icon: Calendar },
     // { name: "Settings", path: "/settings", icon: Settings },
   ];
-
+  const [showPackage, setShowPackage] = useState(true);
+  console.log("user", user);
   return (
     <ResizeContext.Provider value={{ handleResizeMainToFullScreen }}>
       <div className="h-full-dec-hf x-2 relative">
@@ -512,7 +512,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               </div>
 
               {/* Center: Logo + Brand */}
-              <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-0 pointer-events-none select-none mt-[-5px] scale-80 lg:scale-100 mx-[-10px]">
+              <Link
+                to="/dashboard"
+                className="absolute cursor-pointer left-1/2 -translate-x-1/2 flex items-center gap-0 pointer-events-none select-none mt-[-5px] scale-80 lg:scale-100 mx-[-10px]"
+              >
                 <Icon
                   name="logo"
                   size={35}
@@ -521,12 +524,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 <span className="theme-text-primary text-2xl lg:text-[1.6rem] tracking-tight">
                   OMNISHARE
                 </span>
-              </div>
+              </Link>
 
               {/* Right Side */}
               <div className="flex items-center space-x-1">
                 {/* Theme Selector */}
-                <ThemeSelector />
+                {/* <ThemeSelector /> */}
 
                 {/* Notifications */}
                 {/* <div className="relative" ref={notificationRef}>
@@ -546,8 +549,78 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                   />
                 )}
               </div> */}
-                <div>
+                <div className=" flex gap-x-4 items-center">
+                  {user?.wallet && (
+                    <div className="flex justify-between items-center ">
+                      <button
+                        onClick={() => setShowPackage(!showPackage)}
+                        className={`relative inline-flex h-6 w-12 items-center rounded-full transition-colors duration-300 focus:outline-none ${
+                          showPackage ? "bg-indigo-600" : "bg-gray-300"
+                        }`}
+                      >
+                        <span
+                          className={`inline-block h-5 w-5 transform bg-white rounded-full shadow-md transition-transform duration-300 ${
+                            showPackage ? "translate-x-6" : "translate-x-1"
+                          }`}
+                        />
+                      </button>
+                    </div>
+                  )}
                   <WalletBalance balance={balance} />
+                  {user?.wallet && showPackage && (
+                    <div className="mt-6 absolute right-16 top-4 bg-white shadow-md rounded-2xl p-5 border border-gray-100">
+                      <h2 className="text-lg font-semibold text-gray-800 mb-2">
+                        Active Package
+                      </h2>
+                      <div className="flex justify-between gap-2 items-center">
+                        <div>
+                          <h3 className="text-xl font-bold text-indigo-600">
+                            {user?.wallet.package.name}
+                          </h3>
+                          <p className="text-sm text-gray-500 capitalize">
+                            {user?.wallet.package.tier} plan
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm text-gray-400">Expires on</p>
+                          <p className="font-medium text-base text-gray-700">
+                            {new Date(
+                              user?.wallet.expiresAt
+                            ).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="mt-4">
+                        <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+                          <span className="text-gray-600 text-sm">
+                            Package Coins:
+                          </span>
+                          <span className="font-semibold text-gray-800">
+                            {user?.wallet.package.coins}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3 mt-2">
+                          <span className="text-gray-600 text-sm">
+                            Your Remaining Coins:
+                          </span>
+                          <span className="font-semibold text-gray-800">
+                            {balance ?? 0}
+                          </span>
+                        </div>
+                      </div>
+
+                      {user?.wallet.isActive ? (
+                        <div className="mt-4 flex items-center justify-center bg-green-50 text-green-700 rounded-lg py-2 text-sm font-medium">
+                          Active
+                        </div>
+                      ) : (
+                        <div className="mt-4 flex items-center justify-center bg-red-50 text-red-700 rounded-lg py-2 text-sm font-medium">
+                          Expired
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

@@ -58,11 +58,11 @@ export default function PackageSuccessPage() {
   }, [hasSession]);
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-gradient-to-b from-green-100 to-white px-4">
-      <section className="w-full max-w-lg rounded-2xl border border-green-300 bg-white p-8 shadow-xl">
+    <main className="flex min-h-screen items-center justify-center bg-gradient-to-b from-[#7650e3] to-[#7650e3]/80 ">
+      <section className="w-full max-w-lg rounded-2xl border border-[#7650e3]/50 bg-white p-8 shadow-xl">
         {/* Header */}
         <div className="flex flex-col items-center gap-4 text-center">
-          <span className="flex h-16 w-16 items-center justify-center rounded-full bg-green-100 text-green-600 animate-bounce">
+          <span className="flex h-16 w-16 items-center justify-center rounded-full bg-[#7650e3]/40 text-[#7650e3] animate-bounce">
             <svg
               className="h-8 w-8"
               viewBox="0 0 24 24"
@@ -75,7 +75,7 @@ export default function PackageSuccessPage() {
               <path d="M20 7L9 18l-5-5" />
             </svg>
           </span>
-          <h1 className="text-2xl font-bold text-green-700">
+          <h1 className="text-2xl font-bold text-[#7650e3]">
             {loading
               ? "Confirming Purchase..."
               : confirmed
@@ -100,20 +100,23 @@ export default function PackageSuccessPage() {
           </div>
         )}
         {!hasSession && (
-          <div className="my-6 rounded-md border border-dashed bg-green-50 p-4 text-center text-sm text-green-600">
+          <div className="my-6 rounded-md border border-dashed bg-green-50 p-4 text-center text-sm text-[#7650e3]">
             Session ID is missing from the URL query.
           </div>
         )}
 
         {/* Actions */}
-        <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
-          <Link
-            to="/dashboard"
-            className="flex-1 rounded-lg bg-green-600 px-4 py-2 text-center text-sm font-medium text-white hover:bg-green-700 transition"
-          >
-            Go to Dashboard
-          </Link>
-        </div>
+        {confirmed ||
+          (error && (
+            <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
+              <Link
+                to="/dashboard"
+                className="flex-1 rounded-lg bg-[#7650e3] px-4 py-2 text-center text-sm font-medium text-white hover:bg-[#7650e3]/80 transition"
+              >
+                Go to Dashboard
+              </Link>
+            </div>
+          ))}
       </section>
     </main>
   );
@@ -150,8 +153,8 @@ function SessionId({ value }: { value: string }) {
           onClick={copy}
           className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
             copied
-              ? "bg-green-600 text-white hover:bg-green-700"
-              : "bg-green-100 text-green-700 hover:bg-green-200"
+              ? "bg-[#7650e3] text-white hover:bg-[#7650e3]/80"
+              : "bg-[#7650e3]/40 text-[#7650e3] hover:bg-[#7650e3]/50"
           }`}
         >
           {copied ? "Copied" : "Copy"}
