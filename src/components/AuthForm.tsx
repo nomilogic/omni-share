@@ -1,5 +1,9 @@
 import React, { useState, useLayoutEffect } from "react";
-import { initiateGoogleOAuth, initiateFacebookOAuth } from "../utils/authOAuth";
+import {
+  initiateGoogleOAuth,
+  initiateFacebookOAuth,
+  isOAuthConfigured,
+} from "../utils/authOAuth";
 import Icon from "./Icon";
 import API from "../services/api";
 import { OtpModal } from "./OtpModal";
@@ -12,7 +16,12 @@ interface AuthFormProps {
   error?: string | null;
 }
 
-export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess, onForgetPassword, loading: externalLoading, error: externalError }) => {
+export const AuthForm: React.FC<AuthFormProps> = ({
+  onAuthSuccess,
+  onForgetPassword,
+  loading: externalLoading,
+  error: externalError,
+}) => {
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -105,9 +114,10 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess, onForgetPassw
 
     try {
       const result = await initiateGoogleOAuth();
-      localStorage.setItem("auth_token", result.token);
-      console.log("Google OAuth successful, user:", result.user);
-      onAuthSuccess(result.user);
+      console.log("result", result);
+      // localStorage.setItem("auth_token", result.token);
+      // console.log("Google OAuth successful, user:", result.user);
+      // onAuthSuccess(result.user);
     } catch (error: any) {
       console.error("Google OAuth error:", error);
       setError(error.message || "Google authentication failed");
@@ -240,11 +250,15 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess, onForgetPassw
 
             {forgotMode && (
               <div className="space-y-3">
-                <p className="text-sm text-gray-600">Enter your email to receive a password reset link.</p>
+                <p className="text-sm text-gray-600">
+                  Enter your email to receive a password reset link.
+                </p>
                 <input
                   type="email"
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
                   className="w-full px-3 py-2 theme-input rounded-lg focus:outline-none"
                   placeholder="Enter your email"
                 />
@@ -257,9 +271,11 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess, onForgetPassw
                         setLoading(true);
                         await onForgetPassword(formData.email);
                         setForgotMode(false);
-                        setError('If that email exists, a reset link was sent.');
+                        setError(
+                          "If that email exists, a reset link was sent."
+                        );
                       } catch (err: any) {
-                        setError(err?.message || 'Failed to send reset link');
+                        setError(err?.message || "Failed to send reset link");
                       } finally {
                         setLoading(false);
                       }
@@ -279,7 +295,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess, onForgetPassw
               </div>
             )}
 
-            {!isLogin && (
+            {!isLogin && referralId && (
               <div>
                 <label
                   htmlFor="name"
@@ -318,7 +334,9 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess, onForgetPassw
 
             {(error || externalError) && (
               <div className="mt-[-10px] px-3 " style={{}}>
-                <div className="text-sm text-red-500">{error || externalError}</div>
+                <div className="text-sm text-red-500">
+                  {error || externalError}
+                </div>
               </div>
             )}
 
@@ -345,9 +363,8 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess, onForgetPassw
                 : "Already have an account? Sign in"}
             </button>
           </div>
-            <div className="mt-6 grid grid-cols-1 gap-3">
-            {/* Google OAuth Button */}
-            {(
+          {/* <div className="mt-6 grid grid-cols-1 gap-3">
+            {
               <button
                 type="button"
                 onClick={handleGoogleOAuth}
@@ -374,10 +391,9 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess, onForgetPassw
                 </svg>
                 <span className="ml-2">Google</span>
               </button>
-            )}
+            }
 
-            {/* Facebook OAuth Button */}
-            {isOAuthConfigured('facebook') && (
+            {isOAuthConfigured("facebook") && (
               <button
                 type="button"
                 onClick={handleFacebookOAuth}
@@ -390,7 +406,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess, onForgetPassw
                 <span className="ml-2">Facebook</span>
               </button>
             )}
-          </div>
+          </div> */}
         </div>
       )}
 

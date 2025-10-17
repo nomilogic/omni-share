@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Edit2, Trash2, Loader2, Plus } from "lucide-react";
 
-const API_BASE = "https://omnishare.ai/server/api/admin/generation-amount";
+const API_BASE = import.meta.env.VITE_API_URL + "/admin/generation-amount";
 
 const GenerationAmountPage = () => {
   const [generationAmounts, setGenerationAmounts] = useState([]);

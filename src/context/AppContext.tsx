@@ -449,7 +449,7 @@ export const useAppContext = () => {
     }
   };
 
-  const API_BASE = "https://omnishare.ai/server/api/admin/generation-amount"; // 🔧 Update this to your backend
+  const API_BASE = import.meta.env.VITE_API_URL + "/admin/generation-amount";
 
   const [generationAmounts, setGenerationAmounts] = useState<any>({});
 
