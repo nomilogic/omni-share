@@ -11,7 +11,6 @@ import {
 } from "lucide-react";
 import { useAppContext } from "../context/AppContext";
 import API from "../services/api";
-import { response } from "express";
 
 interface UserProfile {
   id: string;

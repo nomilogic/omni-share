@@ -4,7 +4,7 @@ import axios, {
   InternalAxiosRequestConfig,
 } from "axios";
 
-const BASE_URL: string = "https://omnishare.ai/server/api";
+const BASE_URL: string = "https://4q2ddj89-3000.uks1.devtunnels.ms/api";
 
 interface LoginPayload {
   email: string;
@@ -111,6 +111,13 @@ interface APIInstance extends AxiosInstance {
   unreadHistory: () => Promise<any>;
   walletTransaction: () => Promise<any>;
   readHistoryById: (postId: any) => Promise<any>;
+  tiktokGetMe: () => Promise<any>;
+  tiktokUploadInit: (data: any) => Promise<any>;
+  tiktokUploadVideo: (data: any) => Promise<any>;
+  tiktokPublishStatus: (params: any) => Promise<any>;
+  tiktokCompleteUpload: (data: any) => Promise<any>;
+  tiktokAccessToken: (data: any) => Promise<any>;
+  tiktokOauthTokens: () => Promise<any>;
 }
 
 export const API = axios.create({
@@ -227,5 +234,18 @@ API.readHistoryById = (postId: any) =>
 API.unreadHistory = () => API.get("/client/post-history/history/unread-count");
 
 API.walletTransaction = () => API.get("/client/wallet-transaction");
+
+API.tiktokGetMe = () => API.get("/client/tiktok/me");
+API.tiktokUploadInit = (data: any) =>
+  API.post("/client/tiktok/upload-init", data);
+API.tiktokUploadVideo = (data: any) =>
+  API.post("/client/tiktok/upload-video", data);
+API.tiktokPublishStatus = (params: any) =>
+  API.get("/client/tiktok/publish-status", { params });
+API.tiktokCompleteUpload = (data: any) =>
+  API.post("/client/tiktok/complete-upload", data);
+API.tiktokAccessToken = (data: any) =>
+  API.post("/client/tiktok/access-token", data);
+API.tiktokOauthTokens = () => API.get("/client/tiktok/oauth_tokens");
 
 export default API;

@@ -177,6 +177,34 @@ export const SettingsPage: React.FC = () => {
                             </span>
                           </div>
                         </div>
+                        {user?.id && (
+                          <div>
+                            <label className="block text-sm font-medium theme-text-secondary mb-2">
+                              Referral Link
+                            </label>
+                            <div className="flex items-center gap-2">
+                              <input
+                                type="text"
+                                readOnly
+                                value={`${window.location.origin}/auth?referralId=${user.id}`}
+                                className="w-full px-4 py-2 border border-white/20 rounded-lg theme-bg-primary theme-text-primary font-mono"
+                              />
+                              <button
+                                onClick={() => {
+                                  navigator.clipboard.writeText(
+                                    `${window.location.origin}/auth?referralId=${user.id}`
+                                  );
+                                }}
+                                className="theme-button-primary px-3 py-2 rounded-lg text-white hover:theme-button-hover transition"
+                              >
+                                Copy
+                              </button>
+                            </div>
+                            <p className="text-xs theme-text-light mt-1">
+                              Share this link to invite others and earn rewards.
+                            </p>
+                          </div>
+                        )}
                         <button
                           onClick={handleProfileSave}
                           disabled={loading}

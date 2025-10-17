@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Edit2, Trash2, Loader2, Plus } from "lucide-react";
 
-const API_BASE = "https://omnishare.ai/server/api/admin/generation-amount"; // 🔧 Update this to your backend
-// 🔧 Update this to your backend
+const API_BASE = "https://omnishare.ai/server/api/admin/generation-amount";
 
 const GenerationAmountPage = () => {
   const [generationAmounts, setGenerationAmounts] = useState([]);
@@ -108,7 +107,7 @@ const GenerationAmountPage = () => {
 
           {/* Amount Input */}
           <input
-            type="text"
+            type="number"
             placeholder="Enter Amount"
             {...register("amount", { required: true })}
             className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-1 focus:ring-black outline-none text-gray-800 bg-white"

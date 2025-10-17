@@ -1,9 +1,5 @@
-import React, { useState, useEffect } from "react";
-import {
-  initiateGoogleOAuth,
-  initiateFacebookOAuth,
-  isOAuthConfigured,
-} from "../utils/authOAuth";
+import React, { useState, useLayoutEffect } from "react";
+import { initiateGoogleOAuth, initiateFacebookOAuth } from "../utils/authOAuth";
 import Icon from "./Icon";
 import API from "../services/api";
 import { OtpModal } from "./OtpModal";
@@ -15,7 +11,6 @@ interface AuthFormProps {
 export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [loading1, setLoading1] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -24,19 +19,22 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
   const [showOtpPopup, setShowOtpPopup] = useState<boolean>(false);
-  const [otp, setOtp] = useState<string>("");
+  const params = new URLSearchParams(window.location.search);
+  const referralId: any = params.get("referralId");
+  const isVerification = params.get("isVerification");
 
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const isVerification = params.get("isVerification");
-
+  useLayoutEffect(() => {
     if (isVerification === "true" || isVerification === "1") {
       const emailToken = localStorage.getItem("email_token");
       if (emailToken) {
         setShowOtpPopup(true);
       }
     }
-  }, []);
+
+    if (referralId) {
+      setIsLogin(false);
+    }
+  }, [referralId, isVerification]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,6 +74,9 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
           email: formData.email,
           password: formData.password,
           name: formData.name,
+          ...(referralId !== "" && {
+            referralId: referralId ? referralId : "",
+          }),
         });
 
         const result = await response.data.data;
@@ -127,52 +128,8 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
     }
   };
 
-  const handleOtpVerification = async () => {
-    setLoading(true);
-    setError("");
-
-    try {
-      const response = await API.otpVerification({
-        otp,
-      });
-      const result = response.data.data;
-
-      if (result?.token) {
-        setShowOtpPopup(false);
-        localStorage.setItem("auth_token", result.token);
-        localStorage.removeItem("email_token");
-        onAuthSuccess(result.user);
-      } else {
-        throw new Error("OTP verification failed");
-      }
-    } catch (err: unknown) {
-      const e = err as Error;
-      setError(e.message || "OTP verification failed");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleResendOtp = async () => {
-    setLoading1(true);
-    setError("");
-    try {
-      const emailToken = localStorage.getItem("email_token");
-      if (!emailToken) throw new Error("No email token found");
-
-      await API.resendOtp();
-      setError("OTP resent successfully");
-    } catch (err: unknown) {
-      const e = err as Error;
-      setError(e.message || "Failed to resend OTP");
-    } finally {
-      setLoading1(false);
-    }
-  };
-
   return (
-    <div className="w-full max-w-md mx-auto min-h-screen flex items-center justify-center w-full">
-      {/* Animated Background */}
+    <div className="max-w-md mx-auto min-h-screen flex items-center justify-center w-full">
       <div
         className={`absolute inset-0 theme-bg-trinary transition-all duration-1000`}
       >
@@ -203,6 +160,27 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
+            {!isLogin && (
+              <div>
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-medium theme-text-secondary mb-1"
+                >
+                  Full Name
+                </label>
+                <input
+                  id="name"
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
+                  required
+                  className="w-full px-3 py-2 theme-input rounded-lg focus:outline-none"
+                  placeholder="Enter your full name"
+                />
+              </div>
+            )}
             <div>
               <label
                 htmlFor="email"
@@ -249,18 +227,15 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
                   htmlFor="name"
                   className="block text-sm font-medium theme-text-secondary mb-1"
                 >
-                  Full Name
+                  Referral Id
                 </label>
                 <input
                   id="name"
                   type="text"
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
-                  required
-                  className="w-full px-3 py-2 theme-input rounded-lg focus:outline-none"
-                  placeholder="Enter your full name"
+                  value={referralId}
+                  disabled={true}
+                  className="w-full px-3 py-2 theme-input disabled:cursor-not-allowed disabled:text-gray-500 rounded-lg focus:outline-none"
+                  placeholder="Referral Id"
                 />
               </div>
             )}

@@ -1,6 +1,7 @@
 import axios from "axios";
 import { GeneratedPost, Platform } from "../types";
 import API from "../services/api";
+import { post } from "node_modules/axios/index.cjs";
 
 // Facebook
 export async function postToFacebook(
@@ -289,6 +290,7 @@ export async function postToTwitter(params: {
 }
 
 // TikTok
+
 export async function postToTikTok(params: {
   accessToken: string;
   post: GeneratedPost;
@@ -302,52 +304,69 @@ export async function postToTikTok(params: {
     );
   }
 
-  const url = "https://open.tiktokapis.com/v2/post/publish/video/init/";
+  try {
+    const res = await API.tiktokUploadInit({
+      accessToken: params.accessToken,
+      post: {
+        caption: params.post.caption,
+        hashtags: params.post.hashtags,
+        video_url: params.post.imageUrl,
+      },
+    });
 
-  const data = {
-    post_info: {
-      title: params.post.caption.slice(0, 150), // TikTok title limit
-      privacy_level: "MUTUAL_FOLLOW_FRIENDS", // or 'PUBLIC_TO_EVERYONE'
-      disable_duet: false,
-      disable_comment: false,
-      disable_stitch: false,
-      video_cover_timestamp_ms: 1000,
-    },
-    source_info: {
-      source: "FILE_UPLOAD",
-      video_size: 50000000, // Max 50MB
-      chunk_size: 10000000, // 10MB chunks
-      total_chunk_count: 1,
-    },
-  };
+    if (!res.data?.data?.uploadUrl) {
+      throw new SocialPosterError(
+        "Failed to initialize TikTok upload",
+        "tiktok",
+        500,
+        true
+      );
+    }
 
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${params.accessToken}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
+    return res;
+  } catch (error) {
+    console.error("TikTok post error:", error);
+    throw error;
+  }
+}
 
-  if (!response.ok) {
-    const error = await response.json();
+async function getVideoSize(videoUrl: string): Promise<number> {
+  try {
+    const response = await fetch(videoUrl, { method: "HEAD" });
+    const contentLength = response.headers.get("content-length");
+
+    if (!contentLength) {
+      throw new Error("Could not determine video size");
+    }
+
+    const size = parseInt(contentLength, 10);
+    console.log("Determined video size:", size);
+    return size;
+  } catch (error) {
+    console.error("Error getting video size:", error);
     throw new SocialPosterError(
-      `TikTok post failed: ${error.error?.message || "Unknown error"}`,
+      "Failed to get video size",
       "tiktok",
-      response.status,
-      response.status >= 500
+      400,
+      false
     );
   }
+}
 
-  const result = await response.json();
+// FRONTEND
 
-  // Upload video file using the upload URL
-  if (result.data?.upload_url) {
-    await uploadTikTokVideo(result.data.upload_url, params.post.imageUrl);
-  }
+async function uploadTikTokVideo(
+  uploadUrl: string,
+  videoUrl: string
+): Promise<void> {
+  const videoResponse = await fetch(videoUrl);
+  const videoBlob = await videoResponse.blob();
 
-  return result;
+  const formData = new FormData();
+  formData.append("uploadUrl", uploadUrl);
+  formData.append("video", videoBlob);
+
+  await API.tiktokUploadVideo(formData);
 }
 
 // YouTube
@@ -655,9 +674,25 @@ async function postWithRealOAuth(
         // Add real Twitter posting logic here
         throw new Error("Real Twitter posting not implemented yet");
 
-      case "tiktok":
-        // Add real TikTok posting logic here
-        throw new Error("Real TikTok posting not implemented yet");
+      case "tiktok": {
+        try {
+          const videoUrl = post.mediaUrl || post.imageUrl;
+          if (!videoUrl)
+            throw new Error("Missing video URL for TikTok upload.");
+
+          let params = {
+            accessToken,
+            post: { ...post, mediaUrl: videoUrl },
+          };
+
+          const result = await postToTikTok(params);
+
+          return result;
+        } catch (error: any) {
+          console.error("❌ TikTok upload failed:", error.message);
+          throw new Error(`TikTok upload failed: ${error.message}`);
+        }
+      }
 
       default:
         throw new Error(`Unsupported platform: ${post.platform}`);
@@ -767,21 +802,6 @@ async function uploadTwitterMedia(
 }
 
 // Helper function to upload video to TikTok
-async function uploadTikTokVideo(
-  uploadUrl: string,
-  videoUrl: string
-): Promise<void> {
-  const videoResponse = await fetch(videoUrl);
-  const videoBlob = await videoResponse.blob();
-
-  await fetch(uploadUrl, {
-    method: "PUT",
-    body: videoBlob,
-    headers: {
-      "Content-Type": "video/mp4",
-    },
-  });
-}
 
 // Helper functions to get platform-specific IDs
 async function getFacebookPageId(accessToken: string): Promise<string> {

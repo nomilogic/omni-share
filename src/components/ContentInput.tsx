@@ -747,12 +747,12 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const cost = getCost();
+    // const cost = getCost();
 
-    if (balance < cost) {
-      navigate("/pricing");
-      return;
-    }
+    // if (balance < cost) {
+    //   navigate("/pricing");
+    //   return;
+    // }
 
     if (formData.prompt.trim()) {
       // For text-to-image mode with combined generation enabled, do the combined generation
@@ -3117,7 +3117,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                   {ratio.label}
                                 </div>
                               </button>
-                            ))}
+                            ))}{" "}
                           </div>
                         </div>
                       )}

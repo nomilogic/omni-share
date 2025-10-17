@@ -2,9 +2,8 @@ import axios from "axios";
 import { GeneratedPost, Platform } from "../types";
 import API from "../services/api";
 
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+const API_BASE = "https://4q2ddj89-3000.uks1.devtunnels.ms/api/client";
 
-// Enhanced Social Media API Service
 export class SocialMediaAPI {
   private static instance: SocialMediaAPI;
 
@@ -317,6 +316,8 @@ export class SocialMediaAPI {
     videoUrl: string
   ): Promise<any> {
     try {
+      console.log("acc", accessToken);
+      console.log("acc", videoUrl);
       // Step 1: Initialize upload
       const initResponse = await axios.post(`${API_BASE}/tiktok/upload-init`, {
         accessToken,
@@ -342,6 +343,7 @@ export class SocialMediaAPI {
 
       return completeResponse.data;
     } catch (error: any) {
+      console.log("error tiktok", error);
       throw new Error(
         `TikTok post failed: ${error.response?.data?.error || error.message}`
       );
@@ -549,7 +551,7 @@ export class SocialMediaAPI {
     for (const post of posts) {
       const platform = post.platform;
       const accessToken = accessTokens[platform];
-
+      console.log("accessToken", accessToken);
       if (!accessToken) {
         results[platform] = {
           success: false,

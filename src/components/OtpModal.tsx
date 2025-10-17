@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { OtpInput } from "./OtpInput";
 
 type OtpModalProps = {
@@ -27,8 +27,30 @@ export function OtpModal({
   const [resending, setResending] = React.useState(false);
   const [error, setError] = React.useState<string>("");
   const [info, setInfo] = React.useState<string>("");
-  const [remaining, setRemaining] = React.useState<number>(30);
+  const [remaining, setRemaining] = React.useState<number>(40);
+  const [expired, setExpired] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(300); // 5 minutes = 300 seconds
 
+  // Countdown timer
+  useEffect(() => {
+    if (timeLeft <= 0) {
+      setExpired(true);
+      return;
+    }
+
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [timeLeft]);
+
+  // Format mm:ss
+  const formatTime = (seconds: any) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s < 10 ? "0" : ""}${s}`;
+  };
   React.useEffect(() => {
     if (open) {
       setOtp("");
@@ -36,7 +58,7 @@ export function OtpModal({
       setResending(false);
       setError("");
       setInfo("");
-      setRemaining(30);
+      setRemaining(40);
     }
   }, [open]);
 
@@ -85,7 +107,8 @@ export function OtpModal({
       const fn = resendOtp || (async () => {});
       await fn();
       setInfo("OTP resent successfully.");
-      setRemaining(30);
+      setRemaining(40);
+      setTimeLeft(300);
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : "Failed to resend OTP";
       setError(message);
@@ -123,11 +146,22 @@ export function OtpModal({
           <OtpInput
             value={otp}
             onChange={setOtp}
-            disabled={verifying}
+            disabled={verifying || expired}
             aria-describedby="otp-status"
           />
           <div id="otp-status" className="sr-only" aria-live="polite" />
         </div>
+
+        {!expired ? (
+          <p className="mt-2 text-sm theme-text-secondary">
+            OTP expires in{" "}
+            <span className="font-medium">{formatTime(timeLeft)}</span>
+          </p>
+        ) : (
+          <p className="mt-2 text-sm text-red-600">
+            OTP expired. Please request a new one.
+          </p>
+        )}
 
         {error ? (
           <p
