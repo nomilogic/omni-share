@@ -4,7 +4,8 @@ import axios, {
   InternalAxiosRequestConfig,
 } from "axios";
 
-const BASE_URL: string = "https://4q2ddj89-3000.uks1.devtunnels.ms/api";
+const BASE_URL: string = import.meta.env.VITE_API_URL || "https://omnishare.ai/server/api";
+alert(BASE_URL)
 
 interface LoginPayload {
   email: string;
@@ -49,6 +50,18 @@ interface ProfilePayload {
 
 interface UserPayload {
   username: string;
+}
+
+interface ScrapperPayload {
+  url: string;
+}
+
+interface GenerateForgetLinkPayload {
+  email: string;
+}
+
+interface NewPasswordPayload {
+  new_password: string;
 }
 
 interface APIInstance extends AxiosInstance {
@@ -118,6 +131,11 @@ interface APIInstance extends AxiosInstance {
   tiktokCompleteUpload: (data: any) => Promise<any>;
   tiktokAccessToken: (data: any) => Promise<any>;
   tiktokOauthTokens: () => Promise<any>;
+  getProfileData: () => Promise<any>;
+  updateProfileData: (data: any) => Promise<any>;
+  scrapeProfileData: (data: ScrapperPayload) => Promise<any>;
+  generateForgetLink: (data: GenerateForgetLinkPayload) => Promise<any>;
+  setNewPassword: (data: NewPasswordPayload, config?: any) => Promise<any>;
 }
 
 export const API = axios.create({
@@ -234,6 +252,11 @@ API.readHistoryById = (postId: any) =>
 API.unreadHistory = () => API.get("/client/post-history/history/unread-count");
 
 API.walletTransaction = () => API.get("/client/wallet-transaction");
+API.getProfileData = () => API.get("/client/profile");
+API.updateProfileData = (data) => API.patch("/client/profile", data);
+API.scrapeProfileData = (data) => API.get("/client/profile/scrapper", { params: data });
+API.generateForgetLink = (data) => API.post("/auth/generateForgetLink", data);
+API.setNewPassword = (data, config) => API.post("/auth/new-password", data, config);
 
 API.tiktokGetMe = () => API.get("/client/tiktok/me");
 API.tiktokUploadInit = (data: any) =>

@@ -1,603 +1,937 @@
-import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { useAppContext } from '../context/AppContext';
-import { useNavigate } from 'react-router-dom';
-import { User, Building, Globe, Target, Palette, Calendar, Users, DollarSign } from 'lucide-react';
+import React, { useState, useEffect, useRef } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
+import {
+  Globe,
+  Loader2,
+  Wand2,
+  File,
+  Building,
+  User,
+  Target,
+  Share2,
+  Flag,
+} from "lucide-react";
+import API from "../services/api";
+import type { ProfileFormData } from "../types/profile";
 
-interface ProfileFormData {
-  // Personal Information
-  fullName: string;
-  email: string;
-  phone: string;
-  
-  // Plan Selection
-  planType: 'free' | 'pro' | 'business';
-  
-  // Business Information (conditional)
-  businessName?: string;
-  businessType?: string;
-  businessWebsite?: string;
-  businessDescription?: string;
-  
-  // Social Media Information
-  primaryPlatforms: string[];
-  contentCategories: string[];
-  postingFrequency: string;
-  
-  // Goals and Preferences
-  goals: string[];
-  targetAudience: string;
-  brandTone: string;
-  
-  // Free Plan Specific
-  campaignType?: string;
-  
-  // Pro/Business Plan Specific
-  teamSize?: number;
-  monthlyBudget?: string;
-  integrations?: string[];
-}
+const STORAGE_KEY = "profile_form_data";
+
+// Predefined options for form fields
+const businessAdjectives = [
+  "Creative",
+  "NextGen",
+  "Dynamic",
+  "Global",
+  "Smart",
+  "Prime",
+];
+
+const businessNouns = [
+  "Solutions",
+  "Studios",
+  "Tech",
+  "Hub",
+  "Works",
+  "Agency",
+  "Labs",
+];
+
+const platforms = [
+  "Instagram",
+  "LinkedIn",
+  "TikTok",
+  "YouTube",
+  "Facebook",
+  "Pinterest",
+];
+
+const categories = [
+  "Technology",
+  "Lifestyle",
+  "Fashion",
+  "Travel",
+  "Food & Beverage",
+  "Finance",
+  "Health & Wellness",
+  "Education",
+  "Entertainment",
+  "Art & Design",
+];
+
+const profileFormConfig = [
+  {
+    id: "personalInfo",
+    title: "Personal Information",
+    subtext:
+      "Let’s start with the basics — tell us a bit about yourself so we can personalize your experience.",
+    icon: User,
+    fields: [
+      {
+        name: "fullName",
+        label: "Full Name",
+        type: "text",
+        placeholder: "e.g. Sarah Ahmed",
+        required: true,
+      },
+      {
+        name: "email",
+        label: "Email Address",
+        type: "email",
+        placeholder: "e.g. sarah@brandstudio.com",
+        required: false,
+      },
+      {
+        name: "phoneNumber",
+        label: "Phone Number (optional)",
+        type: "tel",
+        placeholder: "e.g. +971 50 123 4567",
+        required: false,
+      },
+    ],
+  },
+  {
+    id: "brandSetup",
+    title: "Brand Setup",
+    subtext:
+      "Share a link to your public profile or website — OmniShare will use it to understand your brand and audience.",
+    icon: Building,
+    fields: [
+      {
+        name: "publicUrl",
+        label: "Public URL (Website or Social Link)",
+        type: "url",
+        placeholder:
+          "e.g. https://instagram.com/brandstudio or https://yourbrand.com",
+        required: false,
+        helperText:
+          "You can add a website, Instagram, LinkedIn, TikTok, Behance, YouTube, or any other public link.",
+      },
+      {
+        name: "brandName",
+        label: "Brand Name",
+        type: "text",
+        placeholder: `e.g. ${businessAdjectives[0]} ${businessNouns[0]}`,
+        required: false,
+      },
+      {
+        name: "brandLogo",
+        label: "Brand Logo / Profile Image",
+        type: "file",
+        placeholder: "Upload or confirm your logo/profile image",
+        required: false,
+      },
+      {
+        name: "brandTone",
+        label: "Brand Tone",
+        type: "select",
+        options: [          "Professional", "Casual", "Friendly", "Formal", "Playful",
+          "Innovative", "Trustworthy", "Luxurious"],
+        required: false,
+      },
+    ],
+  },
+  {
+    id: "targetAudience",
+    title: "Target Audience",
+    subtext:
+      "Based on your public profile, we’ll suggest an audience — you can review or update it.",
+    icon: Target,
+    fields: [
+      {
+        name: "audienceAgeRange",
+        
+        label: "Audience Age Range",
+        type: "checkbox-group",
+        options: ["13-17", "18-24", "25-34", "35-44", "45-54", "55+"],
+        required: false,
+      },
+      {
+        name: "audienceGender",
+        label: "Audience Gender",
+        type: "radio-group",
+       options: ["All Genders", "Primarily Male", "Primarily Female", "Non-Binary Focused"],
+
+        required: false,
+      },
+      {
+        name: "audienceRegions",
+        label: "Audience Location / Region",
+        type: "tags",
+        placeholder: "e.g. UAE, Saudi Arabia, Germany, United Kingdom, Global",
+        required: false,
+      },
+      {
+        name: "audienceInterests",
+        label: "Audience Interests / Industry",
+        type: "tags",
+        placeholder: "e.g. Technology, Fashion, Travel, Food",
+        required: false,
+      },
+      {
+        name: "audienceSegments",
+        label: "Audience Type / Segment",
+        type: "checkbox-group",
+        options: [
+           "Students", "Professionals", "Parents", "Entrepreneurs",
+          "Retirees", "Digital Natives"
+
+        ],
+        required: false,
+      },
+    ],
+  },
+  {
+    id: "content",
+    title: "Content Preferences",
+    subtext:
+      "Tell us what kind of content you create and where you publish — OmniShare will optimize for those platforms.",
+    icon: Share2,
+    fields: [
+      {
+        name: "preferredPlatforms",
+        label: "Primary Platforms",
+        type: "checkbox-group",
+        options: platforms,
+        required: false,
+      },
+      {
+        name: "contentCategories",
+        label: "Content Categories",
+        type: "tags",
+        placeholder: `e.g. ${categories.slice(0, 3).join(", ")}`,
+        required: false,
+      },
+    ],
+  },
+  {
+    id: "goals",
+    title: "Goals & Objectives",
+    subtext:
+      "Why do you post on social platforms? This helps OmniShare personalize your content and recommendations.",
+    icon: Flag,
+    fields: [
+      {
+        name: "primaryPurpose",
+        label: "Primary Purpose of Posting",
+        type: "checkbox-group",
+        options: [
+              "Brand Awareness", "Lead Generation", "Sales Increase",
+          "Customer Engagement", "Community Building", "Thought Leadership",
+
+        ],
+        required: false,
+      },
+      {
+        name: "keyOutcomes",
+        label: "Key Outcomes Expected",
+        type: "checkbox-group",
+        options: [
+             "Increased Followers", "Higher Engagement", "More Website Traffic",
+          "Better Lead Quality", "Improved Brand Image", "Increased Sales",
+
+        ],
+        required: false,
+      },
+      {
+        name: "postingStyle",
+        label: "Posting Style Preference (optional)",
+        type: "select",
+        options: [
+           "Professional & Formal", "Casual & Friendly", "Humorous & Light",
+          "Educational & Informative", "Inspirational & Motivating",
+          "Narrative & Storytelling",
+
+        ],
+        required: false,
+      },
+    ],
+  },
+];
 
 const ProfileSetupSinglePage: React.FC = () => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [urlAnalysisLoading, setUrlAnalysisLoading] = useState(false);
+  const [urlAnalysisError, setUrlAnalysisError] = useState<string | null>(null);
   const { user, updateProfile } = useAuth();
-  const { state } = useAppContext();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  
-  // Convert plan types to match our form interface
-  const getFormPlanType = (contextPlan: 'free' | 'ipro' | 'business' | null) => {
-    if (contextPlan === 'ipro') return 'pro';
-    return contextPlan || 'free';
-  };
-  
-  const [formData, setFormData] = useState<ProfileFormData>({
-    // Personal Information
-    fullName: user?.full_name || '',
-    email: user?.email || '',
-    phone: '',
-    
-    // Business Information
-    businessName: '',
-    businessType: '',
-    businessWebsite: '',
-    businessDescription: '',
-    
-    // Social Media Information
-    primaryPlatforms: [],
-    contentCategories: [],
-    postingFrequency: '',
-    
-    // Goals and Preferences
-    goals: [],
-    targetAudience: '',
-    brandTone: '',
-    
-    // Additional Settings
-    teamSize: 1,
-    integrations: []
+  const [selectedFileName, setSelectedFileName] = useState("");
+
+  // Initialize form data state
+  const [formData, setFormData] = useState<ProfileFormData>(() => {
+    console.log('Initializing form data...');
+    const savedData = localStorage.getItem(STORAGE_KEY);
+    console.log('Saved data from localStorage:', savedData);
+
+    if (savedData) {
+      try {
+        const parsed = JSON.parse(savedData);
+        console.log('Parsed saved data:', parsed);
+        return parsed;
+      } catch (e) {
+        console.error('Error parsing saved data:', e);
+      }
+    }
+
+    const initialData: ProfileFormData = {
+      fullName: user?.full_name || "",
+      email: user?.email || "",
+      phoneNumber: "",
+      publicUrl: "",
+      brandName: "",
+      brandLogo: null,
+      brandTone: "",
+      audienceGender: "",
+      audienceAgeRange: [],
+      audienceRegions: [],
+      audienceInterests: [],
+      audienceSegments: [],
+      contentCategories: [],
+      preferredPlatforms: [],
+      primaryPurpose: [],
+      keyOutcomes: [],
+      postingStyle: "",
+    };
+    return initialData;
   });
 
-  const platformOptions = [
-    'Instagram', 'Facebook', 'Twitter', 'LinkedIn', 'TikTok', 'YouTube', 'Pinterest'
-  ];
+  // Listen for storage changes
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === STORAGE_KEY && e.newValue) {
+        console.log('Storage changed, new value:', e.newValue);
+        try {
+          const newData = JSON.parse(e.newValue);
+          console.log('Setting form data from storage:', newData);
+          setFormData(newData);
+        } catch (err) {
+          console.error('Error parsing storage data:', err);
+        }
+      }
+    };
 
-  const contentCategoryOptions = [
-    'Technology', 'Fashion', 'Food & Beverage', 'Travel', 'Health & Fitness',
-    'Business & Finance', 'Entertainment', 'Education', 'Lifestyle', 'Art & Design'
-  ];
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
 
-  const goalOptions = [
-    'Increase brand awareness', 'Generate leads', 'Drive website traffic',
-    'Boost engagement', 'Build community', 'Increase sales',
-    'Establish thought leadership', 'Customer support'
-  ];
+  // Save to localStorage when form data changes
+  useEffect(() => {
+    console.log('Saving form data to localStorage:', formData);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+  }, [formData]);
+
+  // Force re-render when formData changes
+  useEffect(() => {
+    console.log('Form data changed:', formData);
+    // Use requestAnimationFrame to ensure DOM is updated
+    requestAnimationFrame(() => {
+      // Update all form inputs with current values
+      const form = document.querySelector('form');
+      if (form) {
+        // Update text inputs, selects, and textareas
+        form.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], input[type="url"], select, textarea').forEach((element) => {
+          const input = element as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+          const name = input.name;
+          if (name && name in formData) {
+            input.value = (formData as any)[name] || '';
+          }
+        });
+
+        // Update checkboxes
+        form.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
+          const input = checkbox as HTMLInputElement;
+          const name = input.getAttribute('aria-label');
+          const fieldName = input.closest('[data-field-name]')?.getAttribute('data-field-name');
+          if (fieldName && name && Array.isArray((formData as any)[fieldName])) {
+            input.checked = ((formData as any)[fieldName] as string[]).includes(name);
+          }
+        });
+
+        // Update radio buttons
+        form.querySelectorAll('input[type="radio"]').forEach((radio) => {
+          const input = radio as HTMLInputElement;
+          const name = input.name;
+          if (name && name in formData) {
+            input.checked = input.value === (formData as any)[name];
+          }
+        });
+
+        // Dispatch events to trigger any listeners
+        form.dispatchEvent(new Event('reset'));
+        form.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    });
+  }, [formData]);
+
+  const handleSkip = () => {
+    if (
+      window.confirm(
+        "Are you sure you want to skip profile setup? You can complete it later from your settings."
+      )
+    ) {
+      localStorage.removeItem(STORAGE_KEY);
+      navigate("/content");
+    }
+  };
 
   const handleInputChange = (field: keyof ProfileFormData, value: any) => {
+    console.log(`Setting ${field} to:`, value);
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const handleArrayChange = (field: keyof ProfileFormData, option: string) => {
-    setFormData(prev => {
-      const currentArray = (prev[field] as string[]) || [];
-      const isSelected = currentArray.includes(option);
-      
-      return {
-        ...prev,
-        [field]: isSelected
-          ? currentArray.filter(item => item !== option)
-          : [...currentArray, option]
-      };
+    setFormData((prev: ProfileFormData) => {
+      const currentArray = Array.isArray(prev[field]) ? prev[field] as string[] : [];
+      const newArray = currentArray.includes(option)
+        ? currentArray.filter(i => i !== option)
+        : [...currentArray, option];
+      console.log(`Setting ${field} array to:`, newArray);
+      const updatedData = { ...prev, [field]: newArray };
+      return updatedData;
     });
+  };
+
+  const resetForm = () => {
+    // Clear localStorage and form state
+    localStorage.removeItem(STORAGE_KEY);
+    const emptyForm: ProfileFormData = {
+      fullName: '',
+      email: '',
+      phoneNumber: '',
+      publicUrl: '',
+      brandName: '',
+      brandLogo: null,
+      brandTone: '',
+      audienceGender: '',
+      audienceAgeRange: [],
+      audienceRegions: [],
+      audienceInterests: [],
+      audienceSegments: [],
+      preferredPlatforms: [],
+      primaryPurpose: [],
+      keyOutcomes: [],
+      postingStyle: ''
+    };
+    setFormData(emptyForm);
+  };
+
+  const handleUrlAnalysis = async (url: string) => {
+    if (!url) {
+      setUrlAnalysisError("Please enter a valid URL.");
+      return;
+    }
+    setUrlAnalysisError(null);
+    setUrlAnalysisLoading(true);
+    try {
+      console.log('Starting URL analysis for:', url);
+      const response = await API.scrapeProfileData({ url });
+      console.log('Scraper response:', response);
+      
+      if (response?.data?.success && response?.data?.profile) {
+        // Get the profile data from the response
+        const profile = response.data.profile;
+        console.log('Profile data:', profile);
+        
+        // Get current form data from localStorage
+        const savedData = localStorage.getItem(STORAGE_KEY);
+        console.log('Current localStorage data:', savedData);
+        
+        // Parse current data or use formData as fallback
+        const currentData = savedData ? JSON.parse(savedData) : formData;
+        
+        // Map the scraped data exactly as it comes from the API
+        const updatedData = {
+          ...currentData, // Keep existing data as base
+          
+          // Map fields exactly as they come from the scraper
+          fullName: profile.fullName?.trim() || currentData.fullName,
+          email: profile.email || currentData.email,
+          phoneNumber: profile.phoneNumber || currentData.phoneNumber,
+          businessName: profile.businessName || '',
+          publicUrl: url,
+          brandName: profile.brandName || '',
+          brandLogo: profile.brandLogo || null,
+          brandTone: profile.brandTone || '',
+          
+          // Audience fields
+          audienceGender: profile.audienceGender || '',
+          audienceAgeRange: profile.audienceAgeRange || [],
+          audienceRegions: profile.audienceRegions || [],
+          audienceInterests: profile.audienceInterests || [],
+          audienceSegments: profile.audienceSegments || [],
+          
+          // Platform and content
+          preferredPlatforms: profile.preferredPlatforms || [],
+          contentCategories: profile.contentCategories || [],
+          postingStyle: profile.postingStyle || '',
+          
+          // Purpose and outcomes
+          primaryPurpose: profile.primaryPurpose || [],
+          keyOutcomes: profile.keyOutcomes || [],
+          
+          // Keep posting frequency if it exists
+        };
+
+        console.log('Updated form data to save:', updatedData);
+        
+        // Update both localStorage and form state
+        try {
+          // Update localStorage first
+          const dataToStore = JSON.stringify(updatedData);
+          localStorage.setItem(STORAGE_KEY, dataToStore);
+          
+          // Verify the data was stored correctly
+          const storedData = localStorage.getItem(STORAGE_KEY);
+          console.log('Stored data verification:', storedData);
+          
+          if (storedData !== dataToStore) {
+            console.error('Storage verification failed');
+            throw new Error('Storage verification failed');
+          }
+          
+          // If storage was successful, update the form state
+          console.log('Storage successful, updating form state');
+          setFormData(updatedData);
+          
+        } catch (error) {
+          console.error('Error updating localStorage:', error);
+        }
+        
+        // Force form fields to update
+        requestAnimationFrame(() => {
+          const form = document.querySelector('form');
+          if (form) {
+            form.dispatchEvent(new Event('reset'));
+            form.dispatchEvent(new Event('input', { bubbles: true }));
+          }
+        });
+        console.log('Updated form data:', formData);
+      }
+    } catch (err: any) {
+      console.error("URL analysis failed:", err);
+      setUrlAnalysisError(
+        err?.response?.data?.message || "Failed to analyze URL"
+      );
+    } finally {
+      setUrlAnalysisLoading(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
     try {
-      // Convert plan type back to context format
-      const convertPlanType = (formPlan: 'free' | 'pro' | 'business') => {
-        if (formPlan === 'pro') return 'ipro';
-        return formPlan;
-      };
       
-      const profileData = {
-        full_name: formData.fullName,
-        email: formData.email,
-        phone: formData.phone,
-        plan_type: convertPlanType(formData.planType),
-        business_name: formData.businessName || null,
-        business_type: formData.businessType || null,
-        business_website: formData.businessWebsite || null,
-        business_description: formData.businessDescription || null,
-        primary_platforms: formData.primaryPlatforms,
-        content_categories: formData.contentCategories,
-        posting_frequency: formData.postingFrequency,
-        goals: formData.goals,
-        target_audience: formData.targetAudience,
-        brand_tone: formData.brandTone,
-        campaign_type: formData.campaignType || null,
-        team_size: formData.teamSize || null,
-        monthly_budget: formData.monthlyBudget || null,
-        integrations: formData.integrations || [],
-        profile_completed: true
-      };
-
-      await updateProfile(profileData);
-      navigate('/content');
-    } catch (error) {
-      console.error('Profile update failed:', error);
-      alert('Failed to update profile. Please try again.');
+      const submitData = { ...formData };
+        delete submitData.email;
+        delete submitData.businessName
+      await API.updateProfileData(submitData as any);
+      localStorage.removeItem(STORAGE_KEY);
+      navigate("/content");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to update profile.");
     } finally {
       setLoading(false);
     }
   };
 
-  const isFormValid = (formData: ProfileFormData): boolean => {
-    if (!formData.fullName || !formData.email) return false;
-    if (!formData.businessName || !formData.businessType) return false;
-    if (formData.primaryPlatforms.length === 0) return false;
-    if (!formData.postingFrequency) return false;
-    if (formData.goals.length === 0) return false;
-    if (!formData.targetAudience || !formData.brandTone) return false;
-    return true;
-  };
-
   return (
-    <div className="h-full-dec-hf  x-2 bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4">
+    <div className="px-4 py-0 md:px-4">
       <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div className="bg-white shadow-xl overflow-hidden relative">
           {/* Header */}
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-8 py-6 text-white">
-            <h1 className="text-3xl font-bold mb-2">Complete Your Profile</h1>
-            <p className="text-blue-100">Tell us about yourself to personalize your experience</p>
-          </div>
+          <div className="theme-bg-gradient px-4 pt-6 pb-4 text-white relative">
+            <h1 className="text-3xl font-bold">Complete Your Profile</h1>
+            <p className="text-blue-100">
+              Tell us about yourself to personalize your experience
+            </p>
 
-          <form onSubmit={handleSubmit} className="p-8 space-y-10">
-            {/* Personal Information Section */}
-            <section className="space-y-6">
-              <div className="flex items-center space-x-3 mb-6">
-                <div className="bg-blue-100 p-2 rounded-lg">
-                  <User className="w-6 h-6 text-blue-600" />
-                </div>
-                <h2 className="text-2xl font-bold text-gray-900">Personal Information</h2>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Full Name *
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.fullName}
-                    onChange={(e) => handleInputChange('fullName', e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                    placeholder="Enter your full name"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Email *
-                  </label>
-                  <input
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => handleInputChange('email', e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                    placeholder="Enter your email"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Phone Number
-                  </label>
-                  <input
-                    type="tel"
-                    value={formData.phone}
-                    onChange={(e) => handleInputChange('phone', e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                    placeholder="Enter your phone"
-                  />
-                </div>
-              </div>
-
-              {/* Plan Selection */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">Plan Type *</label>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {[
-                    { value: 'free', label: 'Free Plan', description: 'Basic features' },
-                    { value: 'pro', label: 'Pro Plan', description: 'Advanced features' },
-                    { value: 'business', label: 'Business Plan', description: 'Enterprise features' }
-                  ].map((plan) => (
-                    <div
-                      key={plan.value}
-                      className={`relative border-2 rounded-xl p-4 cursor-pointer transition-all ${
-                        formData.planType === plan.value
-                          ? 'border-blue-500 bg-blue-50 shadow-md'
-                          : 'border-gray-200 hover:border-gray-300 hover:shadow-sm'
-                      }`}
-                      onClick={() => handleInputChange('planType', plan.value)}
-                    >
-                      <div className="flex items-center">
-                        <input
-                          type="radio"
-                          name="planType"
-                          value={plan.value}
-                          checked={formData.planType === plan.value}
-                          onChange={() => handleInputChange('planType', plan.value)}
-                          className="h-5 w-5 text-blue-600"
-                        />
-                        <div className="ml-3">
-                          <div className="font-medium text-gray-900">{plan.label}</div>
-                          <div className="text-sm text-gray-500">{plan.description}</div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </section>
-
-            {/* Business Information (conditional) */}
-            {formData.planType === 'business' && (
-              <section className="space-y-6">
-                <div className="flex items-center space-x-3 mb-6">
-                  <div className="bg-purple-100 p-2 rounded-lg">
-                    <Building className="w-6 h-6 text-purple-600" />
-                  </div>
-                  <h2 className="text-2xl font-bold text-gray-900">Business Information</h2>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Business Name *
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.businessName || ''}
-                      onChange={(e) => handleInputChange('businessName', e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors"
-                      placeholder="Enter business name"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Business Type *
-                    </label>
-                    <select
-                      value={formData.businessType || ''}
-                      onChange={(e) => handleInputChange('businessType', e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors"
-                      required
-                    >
-                      <option value="">Select type</option>
-                      <option value="startup">Startup</option>
-                      <option value="small-business">Small Business</option>
-                      <option value="enterprise">Enterprise</option>
-                      <option value="agency">Agency</option>
-                      <option value="nonprofit">Non-profit</option>
-                      <option value="ecommerce">E-commerce</option>
-                      <option value="consulting">Consulting</option>
-                      <option value="other">Other</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Business Website
-                    </label>
-                    <input
-                      type="url"
-                      value={formData.businessWebsite || ''}
-                      onChange={(e) => handleInputChange('businessWebsite', e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors"
-                      placeholder="https://example.com"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Business Description
-                  </label>
-                  <textarea
-                    value={formData.businessDescription || ''}
-                    onChange={(e) => handleInputChange('businessDescription', e.target.value)}
-                    rows={3}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors"
-                    placeholder="Tell us about your business..."
-                  />
-                </div>
-              </section>
-            )}
-
-            {/* Social Media Setup */}
-            <section className="space-y-6">
-              <div className="flex items-center space-x-3 mb-6">
-                <div className="bg-green-100 p-2 rounded-lg">
-                  <Globe className="w-6 h-6 text-green-600" />
-                </div>
-                <h2 className="text-2xl font-bold text-gray-900">Social Media Setup</h2>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Primary Platforms * (Select all that apply)
-                </label>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  {platformOptions.map((platform) => (
-                    <div
-                      key={platform}
-                      className={`flex items-center p-3 border-2 rounded-lg cursor-pointer transition-all ${
-                        formData.primaryPlatforms.includes(platform)
-                          ? 'border-green-500 bg-green-50'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                      onClick={() => handleArrayChange('primaryPlatforms', platform)}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={formData.primaryPlatforms.includes(platform)}
-                        onChange={() => handleArrayChange('primaryPlatforms', platform)}
-                        className="h-4 w-4 text-green-600 rounded mr-3"
-                      />
-                      <span className="text-sm font-medium">{platform}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Content Categories (Select your interests)
-                </label>
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-                  {contentCategoryOptions.map((category) => (
-                    <div
-                      key={category}
-                      className={`flex items-center p-3 border-2 rounded-lg cursor-pointer transition-all ${
-                        formData.contentCategories.includes(category)
-                          ? 'border-green-500 bg-green-50'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                      onClick={() => handleArrayChange('contentCategories', category)}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={formData.contentCategories.includes(category)}
-                        onChange={() => handleArrayChange('contentCategories', category)}
-                        className="h-4 w-4 text-green-600 rounded mr-3"
-                      />
-                      <span className="text-sm font-medium">{category}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Posting Frequency *
-                  </label>
-                  <select
-                    value={formData.postingFrequency}
-                    onChange={(e) => handleInputChange('postingFrequency', e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
-                    required
-                  >
-                    <option value="">Select frequency</option>
-                    <option value="daily">Daily</option>
-                    <option value="weekly">Weekly</option>
-                    <option value="bi-weekly">Bi-weekly</option>
-                    <option value="monthly">Monthly</option>
-                    <option value="as-needed">As needed</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Brand Tone
-                  </label>
-                  <select
-                    value={formData.brandTone}
-                    onChange={(e) => handleInputChange('brandTone', e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
-                  >
-                    <option value="professional">Professional</option>
-                    <option value="casual">Casual</option>
-                    <option value="friendly">Friendly</option>
-                    <option value="authoritative">Authoritative</option>
-                    <option value="humorous">Humorous</option>
-                    <option value="inspirational">Inspirational</option>
-                  </select>
-                </div>
-              </div>
-            </section>
-
-            {/* Goals & Preferences */}
-            <section className="space-y-6">
-              <div className="flex items-center space-x-3 mb-6">
-                <div className="bg-yellow-100 p-2 rounded-lg">
-                  <Target className="w-6 h-6 text-yellow-600" />
-                </div>
-                <h2 className="text-2xl font-bold text-gray-900">Goals & Preferences</h2>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Goals * (Select all that apply)
-                </label>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {goalOptions.map((goal) => (
-                    <div
-                      key={goal}
-                      className={`flex items-center p-3 border-2 rounded-lg cursor-pointer transition-all ${
-                        formData.goals.includes(goal)
-                          ? 'border-yellow-500 bg-yellow-50'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                      onClick={() => handleArrayChange('goals', goal)}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={formData.goals.includes(goal)}
-                        onChange={() => handleArrayChange('goals', goal)}
-                        className="h-4 w-4 text-yellow-600 rounded mr-3"
-                      />
-                      <span className="text-sm font-medium">{goal}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Target Audience *
-                </label>
-                <textarea
-                  value={formData.targetAudience}
-                  onChange={(e) => handleInputChange('targetAudience', e.target.value)}
-                  rows={3}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors"
-                  placeholder="Describe your target audience... (e.g., Young professionals aged 25-35 interested in technology and lifestyle)"
-                  required
-                />
-              </div>
-            </section>
-
-            {/* Plan-specific sections */}
-            {formData.planType === 'free' && (
-              <section className="space-y-6">
-                <div className="flex items-center space-x-3 mb-6">
-                  <div className="bg-blue-100 p-2 rounded-lg">
-                    <Calendar className="w-6 h-6 text-blue-600" />
-                  </div>
-                  <h2 className="text-2xl font-bold text-gray-900">Campaign Setup</h2>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Campaign Type *
-                  </label>
-                  <select
-                    value={formData.campaignType || ''}
-                    onChange={(e) => handleInputChange('campaignType', e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                    required
-                  >
-                    <option value="">Select campaign type</option>
-                    <option value="brand-awareness">Brand Awareness</option>
-                    <option value="product-launch">Product Launch</option>
-                    <option value="engagement">Engagement Campaign</option>
-                    <option value="seasonal">Seasonal Campaign</option>
-                    <option value="educational">Educational Content</option>
-                  </select>
-                </div>
-              </section>
-            )}
-
-            {(formData.planType === 'pro' || formData.planType === 'business') && (
-              <section className="space-y-6">
-                <div className="flex items-center space-x-3 mb-6">
-                  <div className="bg-indigo-100 p-2 rounded-lg">
-                    <Users className="w-6 h-6 text-indigo-600" />
-                  </div>
-                  <h2 className="text-2xl font-bold text-gray-900">Team & Budget</h2>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Team Size *
-                    </label>
-                    <select
-                      value={formData.teamSize || ''}
-                      onChange={(e) => handleInputChange('teamSize', parseInt(e.target.value))}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                      required
-                    >
-                      <option value="">Select team size</option>
-                      <option value={1}>1 person</option>
-                      <option value={2}>2-5 people</option>
-                      <option value={3}>6-10 people</option>
-                      <option value={4}>11-25 people</option>
-                      <option value={5}>26+ people</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Monthly Budget *
-                    </label>
-                    <select
-                      value={formData.monthlyBudget || ''}
-                      onChange={(e) => handleInputChange('monthlyBudget', e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                      required
-                    >
-                      <option value="">Select budget range</option>
-                      <option value="under-1000">Under $1,000</option>
-                      <option value="1000-5000">$1,000 - $5,000</option>
-                      <option value="5000-10000">$5,000 - $10,000</option>
-                      <option value="10000-25000">$10,000 - $25,000</option>
-                      <option value="over-25000">Over $25,000</option>
-                    </select>
-                  </div>
-                </div>
-              </section>
-            )}
-
-            {/* Submit Button */}
-            <div className="flex justify-end pt-8 border-t border-gray-200">
+            <div className="absolute top-4 right-4">
               <button
-                type="submit"
-                disabled={!isFormValid(formData) || loading}
-                className={`px-8 py-4 rounded-xl font-semibold text-white text-lg transition-all transform ${
-                  isFormValid(formData) && !loading
-                    ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 hover:scale-105 shadow-lg'
-                    : 'bg-gray-400 cursor-not-allowed'
-                }`}
+                onClick={handleSkip}
+                type="button"
+                className="text-sm font-medium theme-text-light underline hover:opacity-90"
               >
-                {loading ? (
-                  <div className="flex items-center">
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
-                    Setting up your profile...
-                  </div>
-                ) : (
-                  'Complete Profile & Get Started'
-                )}
+                Skip for now
               </button>
             </div>
-          </form>
+          </div>
+
+          <div className="p-4">
+            <form onSubmit={handleSubmit} className="space-y-8">
+              {profileFormConfig.map((section) => {
+                return (
+                  <section key={section.id} className="space-y-4">
+                    <div className="flex items-center space-x-3 mb-2">
+                      {section.icon && (
+                        <div className="theme-bg-quaternary p-2 rounded-lg">
+                          {React.createElement(section.icon, {
+                            className: "w-6 h-6 theme-text-secondary",
+                          })}
+                        </div>
+                      )}
+                      <div>
+                        <h2 className="text-xl font-semibold theme-text-secondary">
+                          {section.title}
+                        </h2>
+                        {section.subtext && (
+                          <p className="mt-1 text-sm text-gray-500">
+                            {section.subtext}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {section.fields.map((field) => {
+                        switch (field.type) {
+                          case "text":
+                          case "email":
+                          case "tel":
+                          case "url":
+                            return (
+                              <div key={field.name}>
+                                <label className="block text-sm font-medium theme-text-primary mb-2">
+                                  {field.label} {field.required && "*"}
+                                </label>
+                                <input
+                                  type={field.type}
+                                  value={(formData as any)[field.name] ?? ""}
+                                  onChange={(e) =>
+                                    handleInputChange(
+                                      field.name as any,
+                                      e.target.value
+                                    )
+                                  }
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                  placeholder={field.placeholder || ""}
+                                  required={field.required}
+                                />
+                                {field.helperText && (
+                                  <p className="mt-1 text-sm text-gray-500">
+                                    {field.helperText}
+                                  </p>
+                                )}
+
+                                {field.name === "publicUrl" && (
+                                  <>
+                                    <div className="flex items-center mt-2 gap-2">
+                                      {urlAnalysisLoading ? (
+                                        <div className="flex items-center gap-2 theme-text-secondary">
+                                          <Loader2 className="h-5 w-5 animate-spin" />
+                                          <span className="text-sm">
+                                            Analyzing your URL...
+                                          </span>
+                                        </div>
+                                      ) : (
+                                        <button
+                                          type="button"
+                                          onClick={() =>
+                                            handleUrlAnalysis(
+                                              formData.publicUrl
+                                            )
+                                          }
+                                          className="flex items-center gap-2 theme-text-secondary hover:theme-text-secondary"
+                                          title="Auto-fill from URL"
+                                        >
+                                          <Wand2 className="h-5 w-5" />
+                                          <span className="text-sm">
+                                            Auto-fill from URL
+                                          </span>
+                                        </button>
+                                      )}
+                                    </div>
+                                    {urlAnalysisError && (
+                                      <p className="mt-2 text-sm text-red-600">
+                                        {urlAnalysisError}
+                                      </p>
+                                    )}
+                                  </>
+                                )}
+                              </div>
+                            );
+
+                          case "select":
+                            return (
+                              <div key={field.name} className="w-full">
+                                <label className="block text-sm font-medium theme-text-primary mb-2">
+                                  {field.label} {field.required && "*"}
+                                </label>
+                                <select
+                                  value={(formData as any)[field.name] ?? ""}
+                                  onChange={(e) =>
+                                    handleInputChange(
+                                      field.name as any,
+                                      e.target.value
+                                    )
+                                  }
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                  required={field.required}
+                                >
+                                  <option value="">{`Select ${field.label}`}</option>
+                                  {field.options?.map((opt) => (
+                                    <option key={opt} value={opt}>
+                                      {opt}
+                                    </option>
+                                  ))}
+                                </select>
+                                {field.helperText && (
+                                  <p className="mt-1 text-sm text-gray-500">
+                                    {field.helperText}
+                                  </p>
+                                )}
+                              </div>
+                            );
+
+                          case "checkbox-group":
+                            return (
+                              <div
+                                key={field.name}
+                                className="col-span-1 md:col-span-2"
+                              >
+                                <label className="block text-sm font-medium theme-text-primary mb-2">
+                                  {field.label} {field.required && "*"}
+                                </label>
+                                {field.helperText && (
+                                  <p className="mt-1 text-sm text-gray-500">
+                                    {field.helperText}
+                                  </p>
+                                )}
+                                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
+                                  {field.options?.map((opt) => (
+                                    <div
+                                      key={opt}
+                                      data-field-name={field.name}
+                                      className={`flex items-center p-2 border-2 rounded-lg cursor-pointer ${
+                                        Array.isArray((formData as any)[field.name]) && 
+                                        ((formData as any)[field.name] as string[]).includes(opt)
+                                          ? "theme-border-trinary theme-text-secondary"
+                                          : "border-gray-200"
+                                      }`}
+                                      onClick={() =>
+                                        handleArrayChange(
+                                          field.name as any,
+                                          opt
+                                        )
+                                      }
+                                    >
+                                      <input
+                                        type="checkbox"
+                                        checked={Array.isArray((formData as any)[field.name]) && 
+                                          ((formData as any)[field.name] as string[]).includes(opt)}
+                                        onChange={() =>
+                                          handleArrayChange(
+                                            field.name as any,
+                                            opt
+                                          )
+                                        }
+                                        className="h-4 w-4 theme-checkbox rounded mr-2"
+                                        aria-label={opt}
+                                      />
+                                      <span className="text-sm font-medium">
+                                        {opt}
+                                      </span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            );
+
+                          case "file":
+                            return (
+                              <div key={field.name}>
+                                <label className="block text-sm font-medium theme-text-primary mb-2">
+                                  {field.label} {field.required && "*"}
+                                </label>
+
+                                <label
+                                  htmlFor={`file-upload-${field.name}`}
+                                  className="block cursor-pointer"
+                                >
+                                  <div className="mt-1 flex justify-center p-3 border-2 border-gray-300 border-dashed rounded-lg">
+                                    <div className="space-y-1 justify-center text-center">
+                                      {selectedFileName ? (
+                                        <div className="flex items-center justify-center space-x-2">
+                                          <File className="w-4 h-4 theme-text-secondary" />
+                                          <span className="text-sm theme-text-secondary">
+                                            {selectedFileName}
+                                          </span>
+                                        </div>
+                                      ) : (
+                                        <>
+                                          <svg
+                                            className="mx-auto h-6 w-6 text-gray-400"
+                                            stroke="currentColor"
+                                            fill="none"
+                                            viewBox="0 0 48 48"
+                                            aria-hidden="true"
+                                          >
+                                            <path
+                                              d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                                              strokeWidth={2}
+                                              strokeLinecap="round"
+                                              strokeLinejoin="round"
+                                            />
+                                          </svg>
+                                          <div className="flex text-sm text-gray-600 justify-center">
+                                            <span className="relative bg-white rounded-md font-medium theme-text-secondary">
+                                              Upload a file
+                                            </span>
+                                          </div>
+                                        </>
+                                      )}
+
+                                      <input
+                                        id={`file-upload-${field.name}`}
+                                        name={field.name}
+                                        ref={fileInputRef}
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={(e) => {
+                                          const file = e.target.files?.[0];
+                                          setSelectedFileName(
+                                            file ? file.name : ""
+                                          );
+                                          handleInputChange(
+                                            field.name as any,
+                                            file || null
+                                          );
+                                        }}
+                                        className="sr-only"
+                                        required={field.required}
+                                      />
+                                      <p className="text-xs text-gray-500">
+                                        PNG, JPG, GIF up to 10MB
+                                      </p>
+                                    </div>
+                                  </div>
+                                </label>
+                              </div>
+                            );
+
+                          case "radio-group":
+                            return (
+                              <div
+                                key={field.name}
+                                className="col-span-1 md:col-span-2"
+                              >
+                                <label className="block text-sm font-medium theme-text-primary mb-2">
+                                  {field.label} {field.required && "*"}
+                                </label>
+                                <div className="flex flex-wrap gap-4 mt-2">
+                                  {field.options?.map((opt) => (
+                                    <label
+                                      key={opt}
+                                      className="flex items-center space-x-2 cursor-pointer"
+                                    >
+                                      <input
+                                        type="radio"
+                                        name={field.name}
+                                        value={opt}
+                                        checked={
+                                          (formData as any)[field.name] === opt
+                                        }
+                                        onChange={() =>
+                                          handleInputChange(
+                                            field.name as any,
+                                            opt
+                                          )
+                                        }
+                                        className="h-4 w-4 theme-radio"
+                                      />
+                                      <span className="text-sm font-medium">
+                                        {opt}
+                                      </span>
+                                    </label>
+                                  ))}
+                                </div>
+                              </div>
+                            );
+                         case 'tags':
+  return (
+    <div key={field.name} className="col-span-1 md:col-span-2">
+      <label className="block text-sm font-medium theme-text-primary mb-2">
+        {field.label} {field.required && '*'}
+      </label>
+
+      <div className="flex flex-wrap items-center gap-2 border border-gray-300 rounded-md px-3 py-2 min-h-[44px]">
+        {(formData as any)[field.name]?.map((tag: string, idx: number) => (
+          <span
+            key={idx}
+            className="flex items-center theme-bg-trinary theme-text-light px-2 py-1 rounded-full text-sm"
+          >
+            {tag}
+            <button
+              type="button"
+              onClick={() =>
+                handleInputChange(
+                  field.name as any,
+                  (formData as any)[field.name].filter((_: string, i: number) => i !== idx)
+                )
+              }
+              className="ml-1 theme-text-light"
+              title="Remove tag"
+            >
+              ×
+            </button>
+          </span>
+        ))}
+
+        <input
+          type="text"
+          placeholder={field.placeholder || 'Add a tag and press Space or Enter'}
+          className="flex-grow border-none focus:ring-0 text-sm outline-none min-w-[120px]"
+          onKeyDown={e => {
+            const input = e.target as HTMLInputElement;
+            const value = input.value.trim();
+
+            // Create tag on Enter or Space
+            if ((e.key === 'Enter' || e.key === ' ') && value) {
+              e.preventDefault();
+              const existing = (formData as any)[field.name] || [];
+              const normalized = value.replace(/[^\w\s&,-]/g, ''); // optional clean-up
+              if (normalized && !existing.includes(normalized)) {
+                handleInputChange(field.name as any, [...existing, normalized]);
+              }
+              input.value = '';
+            }
+
+            // Handle backspace to remove last tag when input is empty
+            if (e.key === 'Backspace' && !input.value && (formData as any)[field.name]?.length) {
+              e.preventDefault();
+              const updated = (formData as any)[field.name].slice(0, -1);
+              handleInputChange(field.name as any, updated);
+            }
+          }}
+        />
+      </div>
+
+      {field.helperText && (
+        <p className="mt-1 text-sm text-gray-500">{field.helperText}</p>
+      )}
+    </div>
+  );
+
+                          default:
+                            return null;
+                        }
+                      })}
+                    </div>
+                  </section>
+                );
+              })}
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full theme-bg-gradient text-white py-3 px-6 rounded-lg text-lg font-semibold shadow-sm"
+              >
+                {loading ? "Saving..." : "Complete Profile Setup"}
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </div>

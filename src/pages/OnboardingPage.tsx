@@ -15,7 +15,7 @@ export const OnboardingPage: React.FC = () => {
     <div className="min-h-screen bg-gray-50">
       <Routes>
         <Route path="profile" element={<ProfileSetupSinglePage />} />
-        <Route path="*" element={<Navigate to="/onboarding/profile" replace />} />
+        <Route path="*" element={<Navigate to="/ " replace />} />
       </Routes>
     </div>
   );

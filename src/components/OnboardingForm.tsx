@@ -1,52 +1,171 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-type StringArray = Array<string>;
-
-// Types for form data structure
+// Form data types matching Profile schema
 interface FormData {
-  // SECTION 1: Personal Information
+  // Section 1: Personal Information
   fullName: string;
   email: string;
-  phoneNumber: string;
+  phoneNumber?: string;  // optional
 
-  // SECTION 2: Brand Setup
+  // Section 2: Brand Setup
   publicUrl: string;
   brandName: string;
-  brandLogo: File | null;
+  brandLogo: string | null;
   brandTone: string;
 
-  // SECTION 3: Target Audience
-  audienceAge: string[];
+  // Target Audience
+  audienceAgeRange: string[];
   audienceGender: string;
-  audienceLocation: string[];
+  audienceRegions: string[];
   audienceInterests: string[];
-  audienceType: string[];
+  audienceSegments: string[];
 
-  // SECTION 4: Content Preferences & Goals
+  // Section 3: Content Preferences
   primaryPlatforms: string[];
   contentCategories: string[];
+
+  // Section 4: Goals & Objectives
   primaryPurpose: string[];
   keyOutcomes: string[];
-  postingStyle: string;
+  postingStyle?: string;  // optional
 }
 
-// Interface for smart prefill data
+// Smart prefill data structure from AI analysis
 interface SmartPrefillData {
-  brandName: string;
-  brandLogo: string;
-  toneSuggestion: string;
-  audienceInterests: string[];
-  region: string[];
+  // Brand Identity (auto-detected from URL)
+  brandInfo: {
+    brandName: string;
+    brandLogo: string;
+    brandTone: string;
+  };
+
+  // Audience Analysis (from social profile/website)
+  audienceInsights: {
+    audienceAgeRange: string[];
+    audienceGender: string;
+    audienceRegions: string[];
+    audienceInterests: string[];
+    audienceSegments: string[];
+  };
+
+  // Content & Platform Analysis
+  contentStrategy: {
+    primaryPlatforms: string[];
+    contentCategories: string[];
+    postingStyle: string;
+  };
+
+  // Goals Detection (from bio/content analysis)
+  goalInsights: {
+    primaryPurpose: string[];
+    keyOutcomes: string[];
+  };
 }
 
+// Example AI response format
+const EXAMPLE_AI_RESPONSE = {
+  brandInfo: {
+    brandName: "Tech Innovators",
+    brandLogo: "https://example.com/logo.png",
+    brandTone: "Professional"
+  },
+  audienceInsights: {
+    audienceAgeRange: ["25-34", "35-44"],
+    audienceGender: "All",
+    audienceRegions: ["UAE", "Saudi Arabia"],
+    audienceInterests: ["Technology", "Innovation"],
+    audienceSegments: ["Professionals", "Entrepreneurs"]
+  },
+  contentStrategy: {
+    primaryPlatforms: ["LinkedIn", "Instagram", "Twitter"],
+    contentCategories: ["Technology", "Business"],
+    postingStyle: "Informative"
+  },
+  goalInsights: {
+    primaryPurpose: ["Build personal brand", "Share expertise"],
+    keyOutcomes: ["Generate leads/sales", "Build community"]
+  }
+};
+
+// Form section configuration type
 interface Section {
   title: string;
   subtext: string;
   helperText?: string;
 }
 
-// Form sections configuration
+// Form section configuration
+const SECTIONS: Section[] = [
+  {
+    title: "Personal Information",
+    subtext: "Let's start with the basics — tell us a bit about yourself so we can personalize your experience."
+  },
+  {
+    title: "Brand Setup",
+    subtext: "Share a link to your public profile or website — OmniShare will use it to understand your brand and audience.",
+    helperText: "You can add a website, Instagram, LinkedIn, TikTok, Behance, YouTube, or any other public link."
+  },
+  {
+    title: "Target Audience",
+    subtext: "Based on your public profile, we'll suggest an audience — you can review or update it."
+  },
+  {
+    title: "Content Preferences",
+    subtext: "Tell us what kind of content you create and where you publish — OmniShare will optimize for those platforms."
+  },
+  {
+    title: "Goals & Objectives",
+    subtext: "Why do you post on social platforms? This helps OmniShare personalize your content and recommendations."
+  }
+];
+
+// Form options constants
+// Brand & Tone Options
+const BRAND_TONES = ["Professional", "Playful", "Inspirational", "Casual"];
+
+// Audience Options
+const AGE_RANGES = ["18-24", "25-34", "35-44", "45-54", "55+"];
+const GENDER_OPTIONS = ["Male", "Female", "All", "Prefer not to say"];
+const AUDIENCE_SEGMENTS = ["Professionals", "Students", "Entrepreneurs", "Families", "Influencers"];
+
+// Content & Platform Options
+const PRIMARY_PLATFORMS = ["Instagram", "LinkedIn", "TikTok", "YouTube", "Facebook", "Pinterest"];
+const CONTENT_CATEGORIES = ["Technology", "Lifestyle", "Fashion", "Travel", "Food & Beverage", "Business", "Education", "Entertainment", "Health & Wellness", "Sports"];
+const POSTING_STYLES = ["Informative", "Entertaining", "Inspirational", "Conversational", "Mixed"];
+
+// Goals and Outcomes
+const PRIMARY_PURPOSES = [
+  "Build personal brand",
+  "Promote business", 
+  "Share expertise",
+  "Showcase work",
+  "Sell products/services",
+  "Stay connected"
+];
+const KEY_OUTCOMES = [
+  "Increase followers",
+  "Drive website traffic", 
+  "Generate leads/sales",
+  "Boost engagement",
+  "Build community",
+  "Gain credibility"
+];
+
+// Form options constants
+// Form options constants - defining them once
+const SOCIAL_GOALS = [
+  "Build personal brand",
+  "Promote business",
+  "Share expertise",
+  "Showcase work", 
+  "Sell products/services",
+  "Stay connected"
+];
+
+
+
+// Constants for form sections and options
 const FORM_SECTIONS: Section[] = [
   {
     title: "Personal Information",
@@ -71,87 +190,6 @@ const FORM_SECTIONS: Section[] = [
   }
 ];
 
-// Form options
-const BRAND_TONES = ["Professional", "Playful", "Inspirational", "Casual"];
-const AGE_RANGES = ["18-24", "25-34", "35-44", "45-54", "55+"];
-const GENDER_OPTIONS = ["Male", "Female", "All", "Prefer not to say"];
-const AUDIENCE_TYPES = ["Professionals", "Students", "Entrepreneurs", "Families", "Influencers"];
-const AUDIENCE_INTERESTS = ["Technology", "Fashion", "Travel", "Food"];
-const AUDIENCE_LOCATIONS = ["UAE", "Saudi Arabia", "Germany", "United Kingdom", "Global"];
-const PRIMARY_PLATFORMS = ["Instagram", "LinkedIn", "TikTok", "YouTube", "Facebook", "Pinterest"];
-const CONTENT_CATEGORIES = ["Technology", "Lifestyle", "Fashion", "Travel", "Food & Beverage"];
-const PRIMARY_PURPOSES = [
-  "Build personal brand",
-  "Promote business",
-  "Share expertise",
-  "Showcase work",
-  "Sell products/services",
-  "Stay connected"
-];
-const KEY_OUTCOMES = [
-  "Increase followers",
-  "Drive website traffic",
-  "Generate leads/sales",
-  "Boost engagement",
-  "Build community",
-  "Gain credibility"
-];
-const POSTING_STYLES = ["Informative", "Entertaining", "Inspirational", "Conversational", "Mixed"];
-
-// Constants for form sections and options
-const FORM_SECTIONS: Section[] = [
-  {
-    title: "Personal Information",
-    subtext: "Let's start with the basics — tell us a bit about yourself so we can personalize your experience."
-  },
-  {
-    title: "Brand Setup",
-    subtext: "Share a link to your public profile or website — OmniShare will use it to understand your brand and audience."
-  },
-  {
-    title: "Target Audience",
-    subtext: "Based on your public profile, we'll suggest an audience — you can review or update it."
-  },
-  {
-    title: "Content Preferences",
-    subtext: "Tell us what kind of content you create and where you publish — OmniShare will optimize for those platforms."
-  },
-  {
-    title: "Goals & Objectives",
-    subtext: "Why do you post on social platforms? This helps OmniShare personalize your content and recommendations."
-  }
-];
-
-const OnboardingForm: React.FC = () => {
-  const navigate = useNavigate();
-  // Personal Information
-  fullName: string;
-  email: string;
-  phoneNumber: string;
-
-  // Brand Setup
-  publicUrl: string;
-  brandName: string;
-  brandLogo: string;
-  brandTone: string;
-
-  // Target Audience
-  audienceAge: string[];
-  audienceGender: string;
-  audienceLocation: string[];
-  audienceInterests: string[];
-  audienceType: string[];
-
-  // Content Preferences
-  platforms: string[];
-  contentCategories: string[];
-
-  // Goals
-  primaryPurpose: string[];
-  keyOutcomes: string[];
-  postingStyle: string;
-}
-
 const OnboardingForm: React.FC = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -169,11 +207,11 @@ const OnboardingForm: React.FC = () => {
     brandTone: '',
 
     // Target Audience
-    audienceAge: [],
+    audienceAgeRange: [],
     audienceGender: '',
-    audienceLocation: [],
+    audienceRegions: [],
     audienceInterests: [],
-    audienceType: [],
+    audienceSegments: [],
 
     // Section 3: Content Preferences
     primaryPlatforms: [],
@@ -185,30 +223,7 @@ const OnboardingForm: React.FC = () => {
     postingStyle: ''
   });
 
-  // Form Options
-  const BRAND_TONES = ['Professional', 'Playful', 'Inspirational', 'Casual'];
-  const AGE_RANGES = ['18-24', '25-34', '35-44', '45-54', '55+'];
-  const GENDER_OPTIONS = ['Male', 'Female', 'All', 'Prefer not to say'];
-  const AUDIENCE_TYPES = ['Professionals', 'Students', 'Entrepreneurs', 'Families', 'Influencers'];
-  const PRIMARY_PLATFORMS = ['Instagram', 'LinkedIn', 'TikTok', 'YouTube', 'Facebook', 'Pinterest'];
-  const CONTENT_CATEGORIES = ['Technology', 'Lifestyle', 'Fashion', 'Travel', 'Food & Beverage'];
-  const PRIMARY_PURPOSES = [
-    'Build personal brand',
-    'Promote business',
-    'Share expertise',
-    'Showcase work',
-    'Sell products/services',
-    'Stay connected'
-  ];
-  const KEY_OUTCOMES = [
-    'Increase followers',
-    'Drive website traffic',
-    'Generate leads/sales',
-    'Boost engagement',
-    'Build community',
-    'Gain credibility'
-  ];
-  const POSTING_STYLES = ['Informative', 'Entertaining', 'Inspirational', 'Conversational', 'Mixed'];
+  // Smart prefill logic
 
   // Smart prefill logic
   const handleUrlAnalysis = async (url: string) => {
@@ -217,25 +232,41 @@ const OnboardingForm: React.FC = () => {
       // Simulate AI analysis
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      // This would be an API call in production
-      const smartData: SmartPrefillData = {
-        brandName: 'Auto-detected Brand Name',
-        brandLogo: 'https://example.com/logo.png',
-        toneSuggestion: 'Professional',
-        audienceInterests: ['Technology', 'Innovation'],
-        region: ['UAE', 'Saudi Arabia']
-      };
+      // This would be an API call to the AI service in production
+      const smartData: SmartPrefillData = EXAMPLE_AI_RESPONSE;
 
+      // Update form data with AI insights
       setFormData(prev => ({
         ...prev,
-        brandName: smartData.brandName,
-        brandTone: smartData.toneSuggestion,
-        audienceInterests: smartData.audienceInterests,
-        audienceLocation: smartData.region
+        // Brand Setup
+        brandName: smartData.brandInfo.brandName,
+        brandLogo: smartData.brandInfo.brandLogo,
+        brandTone: smartData.brandInfo.brandTone,
+
+        // Audience Targeting
+        audienceAgeRange: smartData.audienceInsights.audienceAgeRange,
+        audienceGender: smartData.audienceInsights.audienceGender,
+        audienceRegions: smartData.audienceInsights.audienceRegions,
+        audienceInterests: smartData.audienceInsights.audienceInterests,
+        audienceSegments: smartData.audienceInsights.audienceSegments,
+
+        // Content Preferences
+        primaryPlatforms: smartData.contentStrategy.primaryPlatforms,
+        contentCategories: smartData.contentStrategy.contentCategories,
+        postingStyle: smartData.contentStrategy.postingStyle,
+
+        // Goals & Objectives
+        primaryPurpose: smartData.goalInsights.primaryPurpose,
+        keyOutcomes: smartData.goalInsights.keyOutcomes
       }));
 
-      // Show success message
-      alert('Successfully analyzed your profile! Please review the pre-filled information.');
+      // Show success message with details
+      alert('Successfully analyzed your profile!\n\nWe detected:\n' +
+        `• Brand: ${smartData.brandInfo.brandName}\n` +
+        `• Brand Tone: ${smartData.brandInfo.brandTone}\n` +
+        `• Main Platform: ${smartData.contentStrategy.primaryPlatforms[0]}\n` +
+        `• Audience: ${smartData.audienceInsights.audienceSegments.join(', ')}\n\n` +
+        'Please review the pre-filled information and adjust if needed.');
     } catch (error) {
       console.error('Error analyzing URL:', error);
       alert('Could not analyze the URL. Please fill in the information manually.');
@@ -370,7 +401,12 @@ const OnboardingForm: React.FC = () => {
               onChange={(e) => {
                 const file = e.target.files?.[0];
                 if (file) {
-                  setFormData(prev => ({ ...prev, brandLogo: file }));
+                  const reader = new FileReader();
+                  reader.onload = (e) => {
+                    const imageUrl = e.target?.result as string;
+                    setFormData(prev => ({ ...prev, brandLogo: imageUrl }));
+                  };
+                  reader.readAsDataURL(file);
                 }
               }}
               className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
@@ -411,7 +447,7 @@ const OnboardingForm: React.FC = () => {
                   type="checkbox"
                   name="audienceAge"
                   value={age}
-                  checked={formData.audienceAge.includes(age)}
+                  checked={formData.audienceAgeRange.includes(age)}
                   onChange={handleInputChange}
                   className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
@@ -445,10 +481,10 @@ const OnboardingForm: React.FC = () => {
           <select
             multiple
             name="audienceLocation"
-            value={formData.audienceLocation}
+            value={formData.audienceRegions}
             onChange={(e) => {
               const selected = Array.from(e.target.selectedOptions).map(opt => opt.value);
-              setFormData(prev => ({ ...prev, audienceLocation: selected }));
+              setFormData(prev => ({ ...prev, audienceRegions: selected }));
             }}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           >
@@ -463,17 +499,17 @@ const OnboardingForm: React.FC = () => {
         <div>
           <label className="block text-sm font-medium text-gray-700">Audience Type / Segment</label>
           <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
-            {AUDIENCE_TYPES.map(type => (
-              <label key={type} className="inline-flex items-center">
+            {AUDIENCE_SEGMENTS.map((segment: string) => (
+              <label key={segment} className="inline-flex items-center">
                 <input
                   type="checkbox"
-                  name="audienceType"
-                  value={type}
-                  checked={formData.audienceType.includes(type)}
+                  name="audienceSegments"
+                  value={segment}
+                  checked={formData.audienceSegments.includes(segment)}
                   onChange={handleInputChange}
                   className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
-                <span className="ml-2">{type}</span>
+                <span className="ml-2">{segment}</span>
               </label>
             ))}
           </div>
@@ -493,7 +529,7 @@ const OnboardingForm: React.FC = () => {
           <div>
             <label className="block text-sm font-medium text-gray-700">Primary Platforms</label>
             <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
-              {PRIMARY_PLATFORMS.map(platform => (
+              {PRIMARY_PLATFORMS.map((platform: string) => (
                 <label key={platform} className="inline-flex items-center">
                   <input
                     type="checkbox"
@@ -539,17 +575,17 @@ const OnboardingForm: React.FC = () => {
           <div>
             <label className="block text-sm font-medium text-gray-700">Primary Purpose of Posting</label>
             <div className="mt-2 grid grid-cols-2 gap-2">
-              {PRIMARY_PURPOSES.map(purpose => (
-                <label key={purpose} className="inline-flex items-center">
+              {PRIMARY_PURPOSES.map((goal: string) => (
+                <label key={goal} className="inline-flex items-center">
                   <input
                     type="checkbox"
                     name="primaryPurpose"
-                    value={purpose}
-                    checked={formData.primaryPurpose.includes(purpose)}
+                    value={goal}
+                    checked={formData.primaryPurpose.includes(goal)}
                     onChange={handleInputChange}
                     className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                   />
-                  <span className="ml-2">{purpose}</span>
+                  <span className="ml-2">{goal}</span>
                 </label>
               ))}
             </div>

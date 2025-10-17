@@ -169,7 +169,7 @@
 }
 
 .theme-bg-gradient {
-  background: linear-gradient(135deg, var(--theme-primary), var(--theme-secondary), var(--theme-accent));
+  background: linear-gradient(135deg, var(--theme-bg-trinary), var(--theme-accent));
 }
 
 .theme-gradient {
@@ -388,29 +388,99 @@ body.modal-open .modal-content * {
   background-size: contain
 }
 
-/* Theme-aware CSS variables for data attributes - used by components that need data-theme approach */
-:root {
-  --primary: #3b82f6;
-  --primary-hover: #2563eb;
-  --secondary: #f1f5f9;
-  --accent: #8b5cf6;
-  --background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-  --foreground: #0f172a;
-  --muted: #64748b;
-  --border: #e2e8f0;
-  --card: #ffffff;
-  --card-hover: #f8fafc;
+/* Custom Checkbox Styles */
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--theme-border-trinary);
+  border-radius: 4px;
+  background-color: var(--theme-bg-primary);
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-[data-theme="dark"] {
-  --primary: #60a5fa;
-  --primary-hover: #3b82f6;
-  --secondary: #334155;
-  --accent: #a78bfa;
-  --background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-  --foreground: #f1f5f9;
-  --muted: #94a3b8;
-  --border: #334155;
-  --card: #1e293b;
-  --card-hover: #334155;
+input[type="checkbox"]:checked {
+  background-color: var(--theme-accent);
+  border-color: var(--theme-accent);
 }
+
+input[type="checkbox"]:checked::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--theme-text-light);
+  font-size: 14px;
+  font-weight: bold;
+}
+
+input[type="checkbox"]:hover {
+  border-color: var(--theme-accent);
+}
+
+input[type="checkbox"]:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.3);
+}
+
+/* Custom Select (Dropdown) Styles */
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: var(--theme-bg-light);
+  border: 1px solid var(--theme-border-dark);
+  border-radius: 8px;
+  color: var(--theme-text-primary);
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 40px;
+}
+
+select:hover {
+  border-color: var(--theme-accent);
+}
+
+select:focus {
+  outline: none;
+  border-color: var(--theme-accent);
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.3);
+}
+
+select option {
+  background-color: var(--theme-bg-primary);
+  color: var(--theme-text-primary);
+  padding: 8px;
+}
+
+select::selection {
+  background-color: var(--theme-accent);
+  color: var(--theme-text-primary);
+}
+select option {
+  background-color: var(--theme-bg-primary);
+  color: var(--theme-text-primary);
+ 
+  &:checked {
+    background-color: var(--theme-bg-trinary);
+    color: var(--theme-text-light);
+  }
+  
+ 
+}
+/* Custom Combo Box Styles (assuming combo boxes are custom components with input + dropdown) */
+
+/* Theme-aware CSS variables for data attributes - used by components that need data-theme approach */
+
+
