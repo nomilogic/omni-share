@@ -31,6 +31,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   // If user is authenticated but on auth page, redirect based on setup status
   if (location.pathname === '/auth') {
+    return <Navigate to="/content" replace />;
     if (state.hasCompletedOnboarding) {
       return <Navigate to="/content" replace />;
     } else {

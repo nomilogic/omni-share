@@ -199,6 +199,20 @@ export const SettingsPage: React.FC = () => {
                               >
                                 Copy
                               </button>
+                              <button
+                                onClick={() => {
+                                  // lazy import to avoid bundling modal everywhere
+                                  import('../components/InviteShare').then((m) => {
+                                    m.openInviteModal(`${window.location.origin}/auth?referralId=${user.id}`, {
+                                      title: 'Invite a friend',
+                                      description: 'Join me on OmniShare using this invite link',
+                                    });
+                                  });
+                                }}
+                                className="ml-2 px-3 py-2 bg-indigo-600 text-white rounded-lg"
+                              >
+                                Share
+                              </button>
                             </div>
                             <p className="text-xs theme-text-light mt-1">
                               Share this link to invite others and earn rewards.

@@ -15,6 +15,21 @@ export const LandingPage: React.FC = () => {
 
   const handleAuthSuccess = (user: any) => {
     dispatch({ type: "SET_USER", payload: user });
+    try {
+      const profile = user?.profile;
+      if (profile) {
+        dispatch({ type: "SET_SELECTED_PROFILE", payload: profile });
+        if (typeof (profile as any).isOnboarding !== 'undefined') {
+          dispatch({ type: 'SET_ONBOARDING_COMPLETE', payload: (profile as any).isOnboarding });
+        }
+        if ((profile as any).isOnboarding === false) {
+          navigate('/onboarding/profile');
+          return;
+        }
+      }
+    } catch (e) {
+      console.error('Error applying login profile to app state', e);
+    }
     navigate("/content");
   };
 

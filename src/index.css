@@ -130,8 +130,8 @@
 }
 
 .theme-button-primary {
-  background-color: var(--theme-button-primary);
-  color: var(--theme-primary);
+  background-color: var(--theme-button-trinary);
+  color: var(--theme-text-light);
   border: 1px solid var(--theme-border);
 }
 

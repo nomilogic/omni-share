@@ -297,6 +297,31 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
         if (authResult && authResult.user) {
           dispatch({ type: "SET_USER", payload: authResult.user });
 
+          // If the auth response already includes a profile, apply it and avoid
+          // the 'auto-skip onboarding' fallback below which would overwrite
+          // an explicit isOnboarding flag.
+          let profileFromAuth = false;
+          try {
+            const profile = authResult.user?.profile;
+            console.log('AppContext.initializeAuth found profile in authResult.user:', profile);
+            if (profile) {
+              profileFromAuth = true;
+              dispatch({ type: "SET_SELECTED_PROFILE", payload: profile });
+              if (profile.plan) {
+                dispatch({ type: "SET_USER_PLAN", payload: profile.plan });
+              }
+              if (profile.type === "business") {
+                dispatch({ type: "SET_BUSINESS_ACCOUNT", payload: true });
+              }
+              if (typeof (profile as any).isOnboarding !== 'undefined') {
+                // Backend sends `isOnboarding: false` when onboarding is required
+                dispatch({ type: "SET_ONBOARDING_COMPLETE", payload: (profile as any).isOnboarding });
+              }
+            }
+          } catch (e) {
+            console.error('Error applying profile from auth result', e);
+          }
+
           try {
             const profileResponse = await API.getProfile();
 
@@ -352,17 +377,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
               );
             }
           } catch (error) {
-            console.log("Profile check failed, assuming new user:", error);
+            console.log("Profile check failed:", error);
           }
 
-          // New user - automatically set to free plan and skip onboarding
-          dispatch({ type: "SET_USER_PLAN", payload: "free" });
-          dispatch({ type: "SET_TIER_SELECTED", payload: true });
-          dispatch({ type: "SET_PROFILE_SETUP", payload: true });
-          dispatch({ type: "SET_ONBOARDING_COMPLETE", payload: true });
-          console.log(
-            "New user - automatically set to free plan, skipping onboarding"
-          );
+          // New user - only apply the auto-skip onboarding fallback if we did
+          // not already get a profile from the auth response or the profile API.
+          if (!profileFromAuth) {
+            dispatch({ type: "SET_USER_PLAN", payload: "free" });
+            dispatch({ type: "SET_TIER_SELECTED", payload: true });
+            dispatch({ type: "SET_PROFILE_SETUP", payload: true });
+            dispatch({ type: "SET_ONBOARDING_COMPLETE", payload: true });
+            console.log(
+              "New user - automatically set to free plan, skipping onboarding"
+            );
+          }
         }
       } catch (error) {
         console.error("Error initializing auth:", error);

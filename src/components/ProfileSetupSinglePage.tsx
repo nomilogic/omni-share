@@ -542,13 +542,13 @@ const ProfileSetupSinglePage: React.FC = () => {
       <div className="max-w-4xl mx-auto">
         <div className="bg-white shadow-xl overflow-hidden relative">
           {/* Header */}
-          <div className="theme-bg-gradient px-4 pt-6 pb-4 text-white relative">
+          <div className="theme-bg-gradient px-4 pt-6 pb-2 text-white relative">
             <h1 className="text-3xl font-bold">Complete Your Profile</h1>
             <p className="text-blue-100">
               Tell us about yourself to personalize your experience
             </p>
 
-            <div className="absolute top-4 right-4">
+            <div className=" top-4 right-4 flex justify-end">
               <button
                 onClick={handleSkip}
                 type="button"

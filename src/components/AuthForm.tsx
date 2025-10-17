@@ -1,4 +1,5 @@
 import React, { useState, useLayoutEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 import {
   initiateGoogleOAuth,
   initiateFacebookOAuth,
@@ -22,6 +23,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
   loading: externalLoading,
   error: externalError,
 }) => {
+  const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -83,6 +85,21 @@ export const AuthForm: React.FC<AuthFormProps> = ({
           localStorage.removeItem("auth_remember");
         }
         onAuthSuccess(result.user);
+        try {
+          const profile = result.user?.profile;
+          console.log('AuthForm fallback check profile:', profile);
+          if (profile && (profile as any).isOnboarding === false) {
+            import('../lib/navigation').then(({ navigateOnce }) => {
+              navigateOnce(navigate, '/onboarding/profile', { replace: true });
+            }).catch(err => {
+              console.error('failed to load navigation helper', err);
+              navigate('/onboarding/profile', { replace: true });
+            });
+            return;
+          }
+        } catch (e) {
+          console.error('AuthForm fallback redirect check failed', e);
+        }
       } else {
         const response = await API.registerUser({
           email: formData.email,
@@ -135,6 +152,21 @@ export const AuthForm: React.FC<AuthFormProps> = ({
       localStorage.setItem("auth_token", result.token);
       console.log("Facebook OAuth successful, user:", result.user);
       onAuthSuccess(result.user);
+      try {
+        const profile = result.user?.profile;
+        console.log('AuthForm Facebook fallback profile:', profile);
+        if (profile && (profile as any).isOnboarding === false) {
+          import('../lib/navigation').then(({ navigateOnce }) => {
+            navigateOnce(navigate, '/onboarding/profile', { replace: true });
+          }).catch(err => {
+            console.error('failed to load navigation helper', err);
+            navigate('/onboarding/profile', { replace: true });
+          });
+          return;
+        }
+      } catch (e) {
+        console.error('AuthForm Facebook fallback redirect check failed', e);
+      }
     } catch (error: any) {
       console.error("Facebook OAuth error:", error);
       setError(error.message || "Facebook authentication failed");

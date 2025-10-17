@@ -163,7 +163,7 @@ export const PricingPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 mx-auto">
+          <div className="grid md:grid-cols-2 gap-8 mx-auto">
             {packages.map((tier: any) => {
               const isCurrentPlan =
                 activePackage?.packageId === tier.id && activePackage?.isActive;
@@ -184,7 +184,7 @@ export const PricingPage: React.FC = () => {
                   }`}
                 >
                   {isCurrentPlan && (
-                    <span className="absolute top-3 right-3 bg-blue-600 text-white text-[11px] px-2 py-1 rounded-full">
+                    <span className=" bg-blue-600 text-white text-[11px] px-2 py-1 rounded-full">
                       Current Plan
                     </span>
                   )}
