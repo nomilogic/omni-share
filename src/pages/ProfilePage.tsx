@@ -103,7 +103,7 @@ export const ProfilePage: React.FC = () => {
         {!isEditing && (
           <>
             {/* Header */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-8 mb-6">
+            <div className="/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-8 mb-6">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center space-x-4">
                   <div className="relative">
@@ -114,7 +114,7 @@ export const ProfilePage: React.FC = () => {
                         <User className="w-10 h-10 text-white" />
                       )}
                     </div>
-                    <button className="absolute -bottom-1 -right-1 bg-white rounded-full p-2 shadow-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                    <button className="absolute -bottom-1 -right-1  rounded-full p-2 shadow-lg border border-gray-200 hover:bg-gray-50 transition-colors">
                       <Camera className="w-4 h-4 text-gray-600" />
                     </button>
                   </div>
@@ -143,7 +143,7 @@ export const ProfilePage: React.FC = () => {
             {/* Profile Info */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="md:col-span-2">
-                <div className="bg-white rounded-lg p-4">
+                <div className=" rounded-lg p-4">
                   <h3 className="text-lg font-semibold mb-3">About</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -173,7 +173,7 @@ export const ProfilePage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="bg-white rounded-lg p-4 mt-4">
+                <div className=" rounded-lg p-4 mt-4">
                   <h3 className="text-lg font-semibold mb-3">Audience</h3>
                   <div className="space-y-3">
                     <div>
@@ -202,7 +202,7 @@ export const ProfilePage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="bg-white rounded-lg p-4 mt-4">
+                <div className=" rounded-lg p-4 mt-4">
                   <h3 className="text-lg font-semibold mb-3">Content & Goals</h3>
                   <div className="space-y-3">
                     <div>
@@ -231,8 +231,8 @@ export const ProfilePage: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                 <div className="flex flex-row w-full">
-                <div className="bg-white rounded-lg p-4">
+                 <div className="flex flex-row w-full mt-4 gap-6 justify-between">
+                <div className=" rounded-lg p-4">
                   <div className="flex items-center justify-between mb-3">
                     <h4 className="font-semibold">Brand</h4>
                   </div>
@@ -246,14 +246,14 @@ export const ProfilePage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="bg-white rounded-lg p-4">
+                <div className=" rounded-lg p-4">
                   <h4 className="font-semibold mb-2">Wallet</h4>
                   <div className="text-sm text-gray-600">Coins: <span className="font-medium">{profile.wallet?.coins ?? profile.coins ?? 0}</span></div>
                   <div className="text-sm text-gray-600">Package: <span className="font-medium">{profile.wallet?.package?.name ?? profile.wallet?.packageId ?? "Free"}</span></div>
                   <div className="text-sm text-gray-600">Expires: <span className="font-medium">{profile.wallet?.expiresAt ? new Date(profile.wallet.expiresAt).toLocaleDateString() : (profile.wallet?.createdAt ? new Date(profile.wallet.createdAt).toLocaleDateString() : "-")}</span></div>
                 </div>
 
-                <div className="bg-white rounded-lg p-4">
+                <div className=" rounded-lg p-4">
                   <h4 className="font-semibold mb-2">Meta</h4>
                   <div className="text-sm text-gray-600">Onboarding: <span className="font-medium">{profile.isOnboarding ? "In Progress" : "Completed"}</span></div>
                   <div className="text-sm text-gray-600">Joined: <span className="font-medium">{profile.createdAt ? new Date(profile.createdAt).toLocaleDateString() : "-"}</span></div>
@@ -275,7 +275,7 @@ export const ProfilePage: React.FC = () => {
                 Close
               </button>
             </div>
-            <div className="mt-0 bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
+            <div className="mt-0 /80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
               <ProfileSetupSinglePage />
             </div>
           </div>
