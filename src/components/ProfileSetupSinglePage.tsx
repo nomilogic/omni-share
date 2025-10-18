@@ -642,7 +642,7 @@ const ProfileSetupSinglePage: React.FC = () => {
   };
 
   return (
-    <div className="px-4 py-0 md:px-4">
+    <div className="px-0 py-0 md:px-0">
       <div className="max-w-4xl mx-auto">
         <div className="bg-white shadow-xl overflow-hidden relative">
           {/* Header */}
@@ -661,7 +661,7 @@ const ProfileSetupSinglePage: React.FC = () => {
                 Skip for now
               </button>
             </div>
-          </div>``
+          </div>
 
           <div className="p-4">
             <form onSubmit={handleSubmit} className="space-y-8">

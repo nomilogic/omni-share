@@ -225,9 +225,9 @@ export const ProfilePage: React.FC = () => {
                   </div>
                 </div>
               </div>
-                <div className=" rounded-lg p-4 mt-4 col-span-2 flex flex-row justify-between">
+                <div className=" rounded-lg  mt-2 col-span-2 flex flex-col">
                  
-                   <div className="flex items-center space-x-3">
+                   <div className="flex items-center space-x-3 mb-4">
                       {profile.brandLogo ? (
                         <img
                           src={profile.brandLogo}
@@ -260,7 +260,7 @@ export const ProfilePage: React.FC = () => {
                     </div>
                      {(
                           <div>
-                            <label className=" text-sm font-medium theme-text-secondary mb-2">
+                            <label className=" text-lg font-medium theme-text-secondary mt-3 ">
                               Invite Friends for Rewards
                             </label>
                             <div className="flex items-center gap-2">
@@ -306,7 +306,7 @@ export const ProfilePage: React.FC = () => {
          
               <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-3">
               
-                <div className=" rounded-lg p-4 mt-4">
+                <div className=" rounded-lg px-4">
                   <h3 className="text-2xl font-semibold text-purple-600 mb-3">Audience</h3>
                   <div className="space-y-3">
                     <div>
@@ -472,18 +472,18 @@ export const ProfilePage: React.FC = () => {
 
         {/* Inline editor: reuse ProfileSetupSinglePage elements for editing */}
         {isEditing ? (
-          <div>
+          <div className="relative w-full">
             
-            <div className="flex items-center justify-end mb-4">
+            {/* <div className="flex items-center justify-end mb-4 absolute top-2 right-2">
               <button
                 onClick={() => setIsEditing(false)}
-                className="flex items-center px-3 py-1 theme-bg-trinary theme-text-light  rounded-md text-sm hover:bg-gray-200"
+                className=" flex items-center px-3 py-1 theme-bg-trinary theme-text-light  rounded-md text-sm hover:bg-gray-200"
               >
                 <X className="w-4 h-4 mr-2" />
                 Close
               </button>
-            </div>
-            <div className="mt-0 /80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
+            </div> */}
+            <div className="p-0 w-full">
               <ProfileSetupSinglePage />
             </div>
           </div>
