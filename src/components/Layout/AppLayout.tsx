@@ -31,6 +31,7 @@ import { useUnreadPosts } from "../../hooks/useUnreadPosts";
 import Icon from "../Icon";
 import { WalletBalance } from "../WalletBalance";
 import PreloaderOverlay from "../PreloaderOverlay";
+import { ContentTemplate } from './../../lib/postHistoryService';
 
 // Define the props for AppLayout
 interface AppLayoutProps {
@@ -160,6 +161,13 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           >
             {/* Close button */}
             <div className="flex items-center justify-end border-b border-white/20 p-2">
+            {/* complete profile warning  */}
+            <button
+              onClick={() => navigate("/profile")}
+              className="mr-auto px-3 py-1 theme-bg-pantary hover:bg-purple-700 text-white rounded-md text-sm font-medium transition-all animate-pulse"
+            >
+              complete your profile for better experience
+            </button>
               <button
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="rounded-md theme-text-light hover:theme-text-primary"
@@ -173,23 +181,35 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               className="border-b border-white/20 relative"
               ref={userMenuRef}
             >
-              <button
+              <div
                 onClick={() => setShowUserMenu(!showUserMenu)}
+                role="button"
+                tabIndex={0}
                 className="flex items-center space-x-3 mb-1 w-full hover:theme-bg-secondary rounded-md p-2 transition-colors"
               >
-                <img
-                  className="h-10 w-10 rounded-full object-cover border-2 border-white/30 theme-bg-trinary"
-                  src={
-                    user?.avatar_url ||
-                    `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                      user?.user_metadata?.name || user?.email || "User"
-                    )}&background=00000000&color=fff`
-                  }
-                  alt=""
-                />
+                <Link
+                  to="/profile"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowUserMenu(false);
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="inline-block"
+                >
+                  <img
+                    className="h-10 w-10 rounded-full object-cover border-2 border-white/30 theme-bg-trinary"
+                    src={
+                      user?.avatar_url ||
+                      `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                        user?.user_metadata?.name || user?.email || "User"
+                      )}&background=00000000&color=fff`
+                    }
+                    alt=""
+                  />
+                </Link>
                 <div className="flex-1 min-w-0 text-left">
                   <div className="text-md font-medium theme-text-light truncate">
-                    {user?.user_metadata?.name || user?.email || "User"}
+                    {user?.profile?.fullName || user?.email || "User"}
                   </div>
                   <div className="text-sm theme-text-light truncate">
                     {user?.email}
@@ -202,7 +222,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                     <ChevronDown size={40} className="w-8 h-8" />
                   )}
                 </div>
-              </button>
+              </div>
 
               {/* User Menu Dropdown - Themed Style */}
               {
@@ -513,8 +533,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
               {/* Center: Logo + Brand */}
               <Link
-                to="/dashboard"
-                className="absolute cursor-pointer left-1/2 -translate-x-1/2 flex items-center gap-0 pointer-events-none select-none mt-[-5px] scale-80 lg:scale-100 mx-[-10px]"
+                to="/profile"
+                className="absolute left-1/2 -translate-x-1/2 flex items-center gap-0 cursor-pointer mt-[-5px] scale-80 lg:scale-100 mx-[-10px]"
               >
                 <Icon
                   name="logo"
