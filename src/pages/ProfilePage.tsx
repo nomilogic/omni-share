@@ -8,8 +8,11 @@ import {
   Globe,
   MapPin,
   Calendar,
+  Zap,
+  Target,
+  Clock,
 } from "lucide-react";
-  import { Tag } from "lucide-react";
+import { Tag } from "lucide-react";
 import ProfileSetupSinglePage from "../components/ProfileSetupSinglePage";
 import { useAppContext } from "../context/AppContext";
 import API from "../services/api";
@@ -46,7 +49,11 @@ export const ProfilePage: React.FC = () => {
       const res = await API.getProfile();
       if (res?.data?.data) {
         const apiProfile = res.data.data;
-        const merged = { ...state.user, ...(state.user?.profile || {}), ...apiProfile };
+        const merged = {
+          ...state.user,
+          ...(state.user?.profile || {}),
+          ...apiProfile,
+        };
         setProfile(merged);
         dispatch({ type: "SET_SELECTED_PROFILE", payload: apiProfile });
       }
@@ -91,48 +98,65 @@ export const ProfilePage: React.FC = () => {
 
   if (loading && !profile.name) {
     return (
-      <div className="h-full-dec-hf  x-2 bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="h-full-dec-hf  x-2 bg-gradient-to-br from-purple-50 via-white to-purple-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
       </div>
     );
   }
 
   return (
-    <div className="  x-2 bg-gradient-to-br from-blue-50 via-white to-purple-50 p-6">
+    <div className="bg-gradient-to-br from-purple-50 via-white to-purple-50 p-0">
       <div className="w-full mx-auto">
         {!isEditing && (
           <>
             {/* Header */}
-            <div className="/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-8 mb-6">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center space-x-4">
-                  <div className="relative">
-                    <div className="w-20 h-20 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
-                      {profile.avatar ? (
-                        <img src={profile.avatar} alt="Profile" className="w-full h-full rounded-full object-cover" />
-                      ) : (
-                        <User className="w-10 h-10 text-white" />
-                      )}
-                    </div>
-                    <button className="absolute -bottom-1 -right-1  rounded-full p-2 shadow-lg border border-gray-200 hover:bg-gray-50 transition-colors">
-                      <Camera className="w-4 h-4 text-gray-600" />
-                    </button>
-                  </div>
+            <div className="/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-0 mb-6">
+              <div className="flex items-center justify-between mb-6 px-4">
+                <div className="flex items space-x-4">
+                  
                   <div>
-                    <h1 className="text-3xl font-bold text-gray-900">{profile.name || "Your Profile"}</h1>
+                    <h1 className="text-3xl font-bold text-gray-900">
+                      {profile.name || "Your Profile"}
+                    </h1>
                     <p className="text-gray-600">{profile.email}</p>
                     <div className="flex items-center space-x-4 mt-2">
-                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${profile.wallet?.package?.tier === "business" ? "bg-purple-100 text-purple-700" : profile.wallet?.package?.tier === "ipro" ? "bg-blue-100 text-blue-700" : "bg-green-100 text-green-700"}`}>
-                        {String(profile.wallet?.package?.tier || profile.plan || "free").toUpperCase()} Plan
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm font-medium ${
+                          state.user.wallet?.package?.tier === "business"
+                            ? "bg-purple-100 text-purple-700"
+                            : state.user.wallet?.package?.tier === "ipro"
+                            ? "bg-purple-100 text-purple-700"
+                            : "bg-purple-600 text-white"
+                        }`}
+                      >
+                        {String(
+                          state.user.wallet?.package?.tier ||
+                            profile.plan ||
+                            "free"
+                        ).toUpperCase()}{" "}
+                        Plan
                       </span>
-                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${profile.profileType === "business" || profile.userType === "business" ? "bg-indigo-100 text-indigo-700" : "bg-teal-100 text-teal-700"}`}>
-                        {(profile.profileType === "business" || profile.userType === "business") ? "Business" : "Creator"}
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm font-medium ${
+                          profile.profileType === "business" ||
+                          profile.userType === "business"
+                            ? "bg-indigo-100 text-indigo-700"
+                            : "bg-purple-100 text-purple-700"
+                        }`}
+                      >
+                        {profile.profileType === "business" ||
+                        profile.userType === "business"
+                          ? "Business"
+                          : "Creator"}
                       </span>
                     </div>
                   </div>
                 </div>
                 <div className="flex space-x-2">
-                  <button onClick={() => setIsEditing(true)} className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                  <button
+                    onClick={() => setIsEditing(true)}
+                    className="flex items-center px-2 py-2 text-purple-700 text-underline rounded-lg hover:bg-purple-50 transition-colors"
+                  >
                     <Edit3 className="w-4 h-4 mr-2" />
                     Edit Profile
                   </button>
@@ -142,126 +166,306 @@ export const ProfilePage: React.FC = () => {
 
             {/* Profile Info */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="md:col-span-2">
-                <div className=" rounded-lg p-4">
-                  <h3 className="text-lg font-semibold mb-3">About</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
-                      <p className="px-4 py-2 bg-gray-50 rounded-lg">{profile.fullName || profile.name || profile.brandName || "Not set"}</p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 col-span-2">
+                <div className="group relative overflow-hidden rounded-xl border border-border/50 bg-card/50 backdrop-blur-xl p-6 hover:border-purple/50 transition-all">
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <div className="relative flex items-center gap-4">
+                    <div className="p-3 rounded-xl bg-purple/20 text-purple">
+                      <Zap className="w-6 h-6 theme-text-secondary" />
                     </div>
-
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2"><MapPin className="w-4 h-4 inline mr-1" />Location</label>
-                      <p className="px-4 py-2 bg-gray-50 rounded-lg">{profile.location || profile.profileLocation || "Not set"}</p>
-                    </div>
-
-                    <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Bio / Description</label>
-                      <p className="px-4 py-2 bg-gray-50 rounded-lg min-h-[80px]">{profile.profileDescription || profile.bio || profile.brandDescription || "Not set"}</p>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2"><Globe className="w-4 h-4 inline mr-1" />Public URL</label>
-                      <p className="px-4 py-2 bg-gray-50 rounded-lg">{profile.publicUrl ? (<a href={profile.publicUrl} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">{profile.publicUrl}</a>) : ("Not set")}</p>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Brand Tone</label>
-                      <p className="px-4 py-2 bg-gray-50 rounded-lg">{profile.brandTone || "Not set"}</p>
+                      <div className="text-2xl font-bold theme-text-secondary">
+                        {state.user.wallet?.coins ?? profile.coins ?? 0}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        Coins Available
+                      </div>
                     </div>
                   </div>
                 </div>
 
+                <div className="group relative overflow-hidden rounded-xl border border-border/50 bg-card/50 backdrop-blur-xl p-6 hover:border-secondary/50 transition-all">
+                  <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <div className="relative flex items-center gap-4">
+                    <div className="p-3 rounded-xl bg-secondary/20 theme-text-secondary">
+                      <Target className="w-6 h-6 theme-text-secondary" />
+                    </div>
+                    <div>
+                      <div className="text-2xl font-bold theme-text-secondary">
+                        {state.user.wallet?.package?.name || "Free"}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        Current Package
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="group relative overflow-hidden rounded-xl border border-border/50 bg-card/50 backdrop-blur-xl p-6 hover:border-accent/50 transition-all">
+                  <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <div className="relative flex items-center gap-4">
+                    <div className="p-3 rounded-xl bg-accent/20 text-accent">
+                      <Clock className="w-6 h-6 theme-text-secondary" />
+                    </div>
+                    <div>
+                      <div className="text-2xl font-bold theme-text-secondary">
+                        {state.user.wallet?.expiresAt
+                          ? new Date(
+                              state.user.wallet.expiresAt
+                            ).toLocaleDateString("en-US", {
+                              month: "short",
+                              day: "numeric",
+                            })
+                          : "-"}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        Package Expires
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+                <div className=" rounded-lg p-4 mt-4 col-span-2 flex flex-row justify-between">
+                 
+                   <div className="flex items-center space-x-3">
+                      {profile.brandLogo ? (
+                        <img
+                          src={profile.brandLogo}
+                          alt="brand"
+                          className="w-16 h-16 rounded-md object-cover"
+                        />
+                      ) : (
+                        <div className="w-16 h-16 theme-bg-trinary theme-text-light  rounded-md flex items-center justify-center">
+                          <Tag className="w-6 h-6 text-gray-400" />
+                        </div>
+                      )}
+                      <div>
+                        <div className="font-medium">
+                          {profile.brandName || "Not set"}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          {profile.brandTone || "Tone not set"}
+                        </div>
+                        <div className="text-sm mt-2">
+                          <a
+                            href={profile.publicUrl || "#"}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-purple-600 hover:underline"
+                          >
+                            {profile.publicUrl || "Add public URL"}
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                     {(
+                          <div>
+                            <label className=" text-sm font-medium theme-text-secondary mb-2">
+                              Invite Friends for Rewards
+                            </label>
+                            <div className="flex items-center gap-2">
+                              <input
+                                type="text"
+                                readOnly
+                                value={`${window.location.origin}/auth?referralId=${state.user.id}`}
+                                className="w-full px-4 py-2 border border-white/20 rounded-lg theme-bg-primary theme-text-primary font-mono"
+                              />
+                              <button
+                                onClick={() => {
+                                  navigator.clipboard.writeText(
+                                    `${window.location.origin}/auth?referralId=${state.user.id}`
+                                  );
+                                }}
+                                className="px-3 py-2 bg-purple-600 text-white rounded-lg"
+                              >
+                                Copy
+                              </button>
+                              <button
+                                onClick={() => {
+                                  // lazy import to avoid bundling modal everywhere
+                                  import('../components/InviteShare').then((m) => {
+                                    m.openInviteModal(`${window.location.origin}/auth?referralId=${state.user.id}`, {
+                                      title: 'Invite a friend',
+                                      description: 'Join me on OmniShare using this invite link',
+                                    });
+                                  });
+                                }}
+                                className="ml-2 px-3 py-2 bg-purple-600 text-white rounded-lg"
+                              >
+                                Share
+                              </button>
+                            </div>
+                            <p className="text-xs theme-text-light mt-1">
+                              Share this link to invite others and earn rewards.
+                            </p>
+                          </div>
+                        )}
+                    
+</div>
+          
+         
+              <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-3">
+              
                 <div className=" rounded-lg p-4 mt-4">
-                  <h3 className="text-lg font-semibold mb-3">Audience</h3>
+                  <h3 className="text-2xl font-semibold text-purple-600 mb-3">Audience</h3>
                   <div className="space-y-3">
                     <div>
-                      <div className="text-sm text-gray-600 mb-1">Age Ranges</div>
+                      <div className="text-md text-black-600 font-bold mb-1 theme-bg-quant">
+                        Age Ranges
+                      </div>
                       <div className="flex flex-wrap gap-2">
-                        {(Array.isArray(profile.audienceAgeRange) ? profile.audienceAgeRange : []).map((a: string) => (
-                          <span key={a} className="px-2 py-1 bg-gray-100 rounded-full text-sm">{a}</span>
+                        {(Array.isArray(profile.audienceAgeRange)
+                          ? profile.audienceAgeRange
+                          : []
+                        ).map((a: string) => (
+                          <span
+                            key={a}
+                            className="px-2 py-1 theme-bg-trinary theme-text-light  rounded-full text-sm"
+                          >
+                            {a}
+                          </span>
                         ))}
                       </div>
                     </div>
 
                     <div>
-                      <div className="text-sm text-gray-600 mb-1">Gender</div>
-                      <div className="px-2 py-1 bg-gray-100 rounded-full inline-block">{profile.audienceGender || "Not set"}</div>
+                      <div className="text-md text-black-600 font-bold mb-1">Gender</div>
+                      <div className="px-2 py-1  bg-purple-200 text-md text-purple-700  rounded-full inline-block">
+                        {profile.audienceGender || "Not set"}
+                      </div>
                     </div>
 
                     <div>
-                      <div className="text-sm text-gray-600 mb-1">Regions</div>
-                      <div className="flex flex-wrap gap-2">{(Array.isArray(profile.audienceRegions) ? profile.audienceRegions : []).map((r: string) => (<span key={r} className="px-2 py-1 bg-gray-100 rounded-full text-sm">{r}</span>))}</div>
+                      <div className="text-md text-black-600 font-bold mb-1">Regions</div>
+                      <div className="flex flex-wrap gap-2">
+                        {(Array.isArray(profile.audienceRegions)
+                          ? profile.audienceRegions
+                          : []
+                        ).map((r: string) => (
+                          <span
+                            key={r}
+                            className="px-2 py-1  bg-yellow-200 text-md text-purple-700  rounded-full text-sm"
+                          >
+                            {r}
+                          </span>
+                        ))}
+                      </div>
                     </div>
 
                     <div>
-                      <div className="text-sm text-gray-600 mb-1">Interests</div>
-                      <div className="flex flex-wrap gap-2">{(Array.isArray(profile.audienceInterests) ? profile.audienceInterests : []).map((i: string) => (<span key={i} className="px-2 py-1 bg-gray-100 rounded-full text-sm">{i}</span>))}</div>
+                      <div className="text-md text-black-600 font-bold mb-1">
+                        Interests
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {(Array.isArray(profile.audienceInterests)
+                          ? profile.audienceInterests
+                          : []
+                        ).map((i: string) => (
+                          <span
+                            key={i}
+                            className="px-2 py-1  bg-red-200 text-md text-purple-700 rounded-full text-sm"
+                          >
+                            {i}
+                          </span>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
 
                 <div className=" rounded-lg p-4 mt-4">
-                  <h3 className="text-lg font-semibold mb-3">Content & Goals</h3>
+                  <h3 className="text-2xl font-semibold text-purple-600 mb-3">
+                    Content & Goals
+                  </h3>
                   <div className="space-y-3">
                     <div>
-                      <div className="text-sm text-gray-600 mb-1">Preferred Platforms</div>
-                      <div className="flex flex-wrap gap-2">{(Array.isArray(profile.preferredPlatforms) ? profile.preferredPlatforms : []).map((p: string) => (<span key={p} className="px-2 py-1 bg-blue-50 rounded-full text-sm">{p}</span>))}</div>
+                      <div className="text-md text-black-600 font-bold mb-1">
+                        Preferred Platforms
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {(Array.isArray(profile.preferredPlatforms)
+                          ? profile.preferredPlatforms
+                          : []
+                        ).map((p: string) => (
+                          <span
+                            key={p}
+                            className="px-2 py-1 bg-purple-200 rounded-full text-md text-purple-700"
+                          >
+                            {p}
+                          </span>
+                        ))}
+                      </div>
                     </div>
 
                     <div>
-                      <div className="text-sm text-gray-600 mb-1">Content Categories</div>
-                      <div className="flex flex-wrap gap-2">{(Array.isArray(profile.contentCategories) ? profile.contentCategories : []).map((c: string) => (<span key={c} className="px-2 py-1 bg-gray-100 rounded-full text-sm">{c}</span>))}</div>
+                      <div className="text-md text-black-600 font-bold mb-1">
+                        Content Categories
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {(Array.isArray(profile.contentCategories)
+                          ? profile.contentCategories
+                          : []
+                        ).map((c: string) => (
+                          <span
+                            key={c}
+                            className="px-2 py-1 theme-bg-trinary theme-text-light  rounded-full text-sm"
+                          >
+                            {c}
+                          </span>
+                        ))}
+                      </div>
                     </div>
 
                     <div>
-                      <div className="text-sm text-gray-600 mb-1">Primary Purposes</div>
-                      <div className="flex flex-wrap gap-2">{(Array.isArray(profile.primaryPurpose) ? profile.primaryPurpose : []).map((g: string) => (<span key={g} className="px-2 py-1 bg-green-50 rounded-full text-sm">{g}</span>))}</div>
+                      <div className="text-md text-black-600 font-bold mb-1">
+                        Primary Purposes
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {(Array.isArray(profile.primaryPurpose)
+                          ? profile.primaryPurpose
+                          : []
+                        ).map((g: string) => (
+                          <span
+                            key={g}
+                            className="px-2 py-1 bg-yellow-200 text-md text-purple-700 rounded-full text-sm"
+                          >
+                            {g}
+                          </span>
+                        ))}
+                      </div>
                     </div>
 
                     <div>
-                      <div className="text-sm text-gray-600 mb-1">Key Outcomes</div>
-                      <div className="flex flex-wrap gap-2">{(Array.isArray(profile.keyOutcomes) ? profile.keyOutcomes : []).map((k: string) => (<span key={k} className="px-2 py-1 bg-yellow-50 rounded-full text-sm">{k}</span>))}</div>
+                      <div className="text-md text-black-600 font-bold mb-1">
+                        Key Outcomes
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {(Array.isArray(profile.keyOutcomes)
+                          ? profile.keyOutcomes
+                          : []
+                        ).map((k: string) => (
+                          <span
+                            key={k}
+                            className="px-2 py-1 bg-red-200 rounded-full text-md text-purple-700 rounded-full text-sm"
+                          >
+                            {k}
+                          </span>
+                        ))}
+                      </div>
                     </div>
 
                     <div>
-                      <div className="text-sm text-gray-600 mb-1">Posting Style</div>
-                      <div className="px-2 py-1 bg-gray-100 rounded-full inline-block">{profile.postingStyle || "Not set"}</div>
+                      <div className="text-md text-black-600 font-bold mb-1">
+                        Posting Style
+                      </div>
+                      <div className="px-2 py-1 theme-bg-trinary theme-text-light  rounded-full inline-block">
+                        {profile.postingStyle || "Not set"}
+                      </div>
                     </div>
                   </div>
                 </div>
-                 <div className="flex flex-row w-full mt-4 gap-6 justify-between">
-                <div className=" rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <h4 className="font-semibold">Brand</h4>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    {profile.brandLogo ? (<img src={profile.brandLogo} alt="brand" className="w-16 h-16 rounded-md object-cover" />) : (<div className="w-16 h-16 bg-gray-100 rounded-md flex items-center justify-center"><Tag className="w-6 h-6 text-gray-400" /></div>)}
-                    <div>
-                      <div className="font-medium">{profile.brandName || "Not set"}</div>
-                      <div className="text-sm text-gray-500">{profile.brandTone || "Tone not set"}</div>
-                      <div className="text-sm mt-2"><a href={profile.publicUrl || "#"} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">{profile.publicUrl || "Add public URL"}</a></div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className=" rounded-lg p-4">
-                  <h4 className="font-semibold mb-2">Wallet</h4>
-                  <div className="text-sm text-gray-600">Coins: <span className="font-medium">{profile.wallet?.coins ?? profile.coins ?? 0}</span></div>
-                  <div className="text-sm text-gray-600">Package: <span className="font-medium">{profile.wallet?.package?.name ?? profile.wallet?.packageId ?? "Free"}</span></div>
-                  <div className="text-sm text-gray-600">Expires: <span className="font-medium">{profile.wallet?.expiresAt ? new Date(profile.wallet.expiresAt).toLocaleDateString() : (profile.wallet?.createdAt ? new Date(profile.wallet.createdAt).toLocaleDateString() : "-")}</span></div>
-                </div>
-
-                <div className=" rounded-lg p-4">
-                  <h4 className="font-semibold mb-2">Meta</h4>
-                  <div className="text-sm text-gray-600">Onboarding: <span className="font-medium">{profile.isOnboarding ? "In Progress" : "Completed"}</span></div>
-                  <div className="text-sm text-gray-600">Joined: <span className="font-medium">{profile.createdAt ? new Date(profile.createdAt).toLocaleDateString() : "-"}</span></div>
-                </div>
+              
               </div>
-              </div>
-
-             
             </div>
           </>
         )}
@@ -269,8 +473,12 @@ export const ProfilePage: React.FC = () => {
         {/* Inline editor: reuse ProfileSetupSinglePage elements for editing */}
         {isEditing ? (
           <div>
+            
             <div className="flex items-center justify-end mb-4">
-              <button onClick={() => setIsEditing(false)} className="flex items-center px-3 py-1 bg-gray-100 rounded-md text-sm hover:bg-gray-200">
+              <button
+                onClick={() => setIsEditing(false)}
+                className="flex items-center px-3 py-1 theme-bg-trinary theme-text-light  rounded-md text-sm hover:bg-gray-200"
+              >
                 <X className="w-4 h-4 mr-2" />
                 Close
               </button>
@@ -280,8 +488,6 @@ export const ProfilePage: React.FC = () => {
             </div>
           </div>
         ) : null}
-
-    
       </div>
     </div>
   );

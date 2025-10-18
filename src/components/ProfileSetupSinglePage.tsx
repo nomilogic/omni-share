@@ -43,7 +43,6 @@ const platforms = [
   "TikTok",
   "YouTube",
   "Facebook",
-  "Pinterest",
 ];
 
 const categories = [
@@ -261,7 +260,9 @@ const ProfileSetupSinglePage: React.FC = () => {
   // Initialize form data state
   const [formData, setFormData] = useState<ProfileFormData>(() => {
     console.log('Initializing form data...');
-    const savedData = localStorage.getItem(STORAGE_KEY);
+    let savedData = localStorage.getItem(STORAGE_KEY);
+    
+
     console.log('Saved data from localStorage:', savedData);
 
     if (savedData) {
@@ -298,6 +299,8 @@ const ProfileSetupSinglePage: React.FC = () => {
 
   // Listen for storage changes
   useEffect(() => {
+
+    loadProfile(user.profile.publicUrl || "");
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === STORAGE_KEY && e.newValue) {
         console.log('Storage changed, new value:', e.newValue);
@@ -431,7 +434,9 @@ const ProfileSetupSinglePage: React.FC = () => {
       if (response?.data?.success && response?.data?.profile) {
         // Get the profile data from the response
         const profile = response.data.profile;
+       //const profile=user.profile || {};
         console.log('Profile data:', profile);
+
         
         // Get current form data from localStorage
         const savedData = localStorage.getItem(STORAGE_KEY);
@@ -446,12 +451,12 @@ const ProfileSetupSinglePage: React.FC = () => {
           
           // Map fields exactly as they come from the scraper
           fullName: profile.fullName?.trim() || currentData.fullName,
-          email: profile.email || currentData.email,
-          phoneNumber: profile.phoneNumber || currentData.phoneNumber,
-          businessName: profile.businessName || '',
+          // email: profile.email || currentData.email,
+          // phoneNumber: profile.phoneNumber || currentData.phoneNumber,
+          // businessName: profile.businessName || '',
           publicUrl: url,
-          brandName: profile.brandName || '',
-          brandLogo: profile.brandLogo || null,
+          // brandName: profile.brandName || '',
+          // brandLogo: profile.brandLogo || null,
           brandTone: profile.brandTone || '',
           
           // Audience fields
@@ -517,6 +522,105 @@ const ProfileSetupSinglePage: React.FC = () => {
       setUrlAnalysisLoading(false);
     }
   };
+  const loadProfile = async (url: string) => {
+    if (!user.profile.isOnboarding) {
+      //setUrlAnalysisError("Please enter a valid URL.");
+      return;
+    }
+    try {
+      
+        // Get the profile data from the response
+       // const profile = response.data.profile;
+       
+       const profile=user.profile || {};
+
+
+        console.log('Profile data:', profile);
+
+        
+        // Get current form data from localStorage
+        const savedData = localStorage.getItem(STORAGE_KEY);
+        console.log('Current localStorage data:', savedData);
+        
+        // Parse current data or use formData as fallback
+        const currentData = savedData ? JSON.parse(savedData) : formData;
+        
+        // Map the scraped data exactly as it comes from the API
+        const updatedData = {
+          ...currentData, // Keep existing data as base
+          
+          // Map fields exactly as they come from the scraper
+          fullName: profile.fullName?.trim() || currentData.fullName,
+          email: profile.email || currentData.email,
+          phoneNumber: profile.phoneNumber || currentData.phoneNumber,
+          businessName: profile.businessName || '',
+          publicUrl: profile.publicUrl || '',
+          brandName: profile.brandName || '',
+          brandLogo: profile.brandLogo || null,
+          brandTone: profile.brandTone || '',
+          
+          // Audience fields
+          audienceGender: profile.audienceGender || '',
+          audienceAgeRange: profile.audienceAgeRange || [],
+          audienceRegions: profile.audienceRegions || [],
+          audienceInterests: profile.audienceInterests || [],
+          audienceSegments: profile.audienceSegments || [],
+          
+          // Platform and content
+          preferredPlatforms: profile.preferredPlatforms || [],
+          contentCategories: profile.contentCategories || [],
+          postingStyle: profile.postingStyle || '',
+          
+          // Purpose and outcomes
+          primaryPurpose: profile.primaryPurpose || [],
+          keyOutcomes: profile.keyOutcomes || [],
+          
+          // Keep posting frequency if it exists
+        };
+
+        console.log('Updated form data to save:', updatedData);
+        
+        // Update both localStorage and form state
+        try {
+          // Update localStorage first
+          const dataToStore = JSON.stringify(updatedData);
+          localStorage.setItem(STORAGE_KEY, dataToStore);
+          
+          // Verify the data was stored correctly
+          const storedData = localStorage.getItem(STORAGE_KEY);
+          console.log('Stored data verification:', storedData);
+          
+          if (storedData !== dataToStore) {
+            console.error('Storage verification failed');
+            throw new Error('Storage verification failed');
+          }
+          
+          // If storage was successful, update the form state
+          console.log('Storage successful, updating form state');
+          setFormData(updatedData);
+          
+        } catch (error) {
+          console.error('Error updating localStorage:', error);
+        }
+        
+        // Force form fields to update
+        requestAnimationFrame(() => {
+          const form = document.querySelector('form');
+          if (form) {
+            form.dispatchEvent(new Event('reset'));
+            form.dispatchEvent(new Event('input', { bubbles: true }));
+          }
+        });
+        console.log('Updated form data:', formData);
+      }
+      catch (err: any) {
+        console.error("Load profile failed:", err);
+       
+      } finally {
+        // setUrlAnalysisLoading(false);
+      }
+   
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -557,7 +661,7 @@ const ProfileSetupSinglePage: React.FC = () => {
                 Skip for now
               </button>
             </div>
-          </div>
+          </div>``
 
           <div className="p-4">
             <form onSubmit={handleSubmit} className="space-y-8">

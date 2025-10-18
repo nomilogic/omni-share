@@ -9,16 +9,16 @@ exports.default = {
       colors: {
         // Brand colors for different themes
         purple: {
-          50: "#eef2ff",
-          100: "#e0e7ff",
-          200: "#c7d2fe",
-          300: "#a5b4fc",
-          400: "#818cf8",
-          500: "#6366F1",
-          600: "#6366F1",
-          700: "##7551e3",
-          800: "#3730a3",
-          900: "#312e81",
+          50:  '#f5f3ff',
+          100: '#ece9ff',
+          200: '#d7d7fc', // lightest tone (from quaternary)
+          300: '#bda9fb',
+          400: '#a185f7',
+          500: '#8B5CF6', // mid tone (from trinary)
+          600: '#7650e3', // base secondary
+          700: '#633cd3', // deeper pantary tone
+          800: '#4d2ea8',
+          900: '#39237e',
         },
         primary: {
           50: "#eef2ff",
@@ -34,16 +34,16 @@ exports.default = {
         },
       
         blue: {
-          50: "#eef2ff",
-          100: "#e0e7ff",
-          200: "#c7d2fe",
-          300: "#a5b4fc",
-          400: "#818cf8",
-          500: "#6366F1",
-          600: "#6366F1",
-          700: "#4338ca",
-          800: "#3730a3",
-          900: "#312e81",
+          50:  '#f5f3ff',
+          100: '#ece9ff',
+          200: '#d7d7fc', // lightest tone (from quaternary)
+          300: '#bda9fb',
+          400: '#a185f7',
+          500: '#8B5CF6', // mid tone (from trinary)
+          600: '#7650e3', // base secondary
+          700: '#633cd3', // deeper pantary tone
+          800: '#4d2ea8',
+          900: '#39237e',
         },
       
         brand: {

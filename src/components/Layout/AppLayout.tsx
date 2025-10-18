@@ -131,6 +131,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   };
 
   const navigation = [
+    {name:"Profile", path:"/profile", icon:User},
     { name: "Dashboard", path: "/dashboard", icon: Home },
     { name: "Create Content", path: "/content", icon: Plus },
     { name: "Accounts", path: "/accounts", icon: Building2 },
@@ -181,35 +182,23 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               className="border-b border-white/20 relative"
               ref={userMenuRef}
             >
-              <div
+              <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                role="button"
-                tabIndex={0}
                 className="flex items-center space-x-3 mb-1 w-full hover:theme-bg-secondary rounded-md p-2 transition-colors"
               >
-                <Link
-                  to="/profile"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setShowUserMenu(false);
-                    setIsMobileMenuOpen(false);
-                  }}
-                  className="inline-block"
-                >
-                  <img
-                    className="h-10 w-10 rounded-full object-cover border-2 border-white/30 theme-bg-trinary"
-                    src={
-                      user?.avatar_url ||
-                      `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                        user?.user_metadata?.name || user?.email || "User"
-                      )}&background=00000000&color=fff`
-                    }
-                    alt=""
-                  />
-                </Link>
+                <img
+                  className="h-10 w-10 rounded-full object-cover border-2 border-white/30 theme-bg-trinary"
+                  src={
+                    user?.avatar_url ||
+                    `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                      user?.user_metadata?.name || user?.email || "User"
+                    )}&background=00000000&color=fff`
+                  }
+                  alt=""
+                />
                 <div className="flex-1 min-w-0 text-left">
                   <div className="text-md font-medium theme-text-light truncate">
-                    {user?.profile?.fullName || user?.email || "User"}
+                    {user?.profile?.fullName ||  user?.email || "User"}
                   </div>
                   <div className="text-sm theme-text-light truncate">
                     {user?.email}
@@ -222,7 +211,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                     <ChevronDown size={40} className="w-8 h-8" />
                   )}
                 </div>
-              </div>
+              </button>
 
               {/* User Menu Dropdown - Themed Style */}
               {
