@@ -314,15 +314,6 @@ export async function postToTikTok(params: {
       },
     });
 
-    if (!res.data?.data?.uploadUrl) {
-      throw new SocialPosterError(
-        "Failed to initialize TikTok upload",
-        "tiktok",
-        500,
-        true
-      );
-    }
-
     return res;
   } catch (error) {
     console.error("TikTok post error:", error);
@@ -330,46 +321,6 @@ export async function postToTikTok(params: {
   }
 }
 
-async function getVideoSize(videoUrl: string): Promise<number> {
-  try {
-    const response = await fetch(videoUrl, { method: "HEAD" });
-    const contentLength = response.headers.get("content-length");
-
-    if (!contentLength) {
-      throw new Error("Could not determine video size");
-    }
-
-    const size = parseInt(contentLength, 10);
-    console.log("Determined video size:", size);
-    return size;
-  } catch (error) {
-    console.error("Error getting video size:", error);
-    throw new SocialPosterError(
-      "Failed to get video size",
-      "tiktok",
-      400,
-      false
-    );
-  }
-}
-
-// FRONTEND
-
-async function uploadTikTokVideo(
-  uploadUrl: string,
-  videoUrl: string
-): Promise<void> {
-  const videoResponse = await fetch(videoUrl);
-  const videoBlob = await videoResponse.blob();
-
-  const formData = new FormData();
-  formData.append("uploadUrl", uploadUrl);
-  formData.append("video", videoBlob);
-
-  await API.tiktokUploadVideo(formData);
-}
-
-// YouTube
 export async function postToYouTube(params: {
   accessToken: string;
   post: GeneratedPost;
@@ -448,7 +399,6 @@ export async function postToYouTube(params: {
   }
 }
 
-// Enhanced posting function that supports both real and mock OAuth
 export async function postToAllPlatforms(
   posts: GeneratedPost[],
   onProgress?: (
@@ -465,25 +415,16 @@ export async function postToAllPlatforms(
   const errors: string[] = [];
   const successes: string[] = [];
 
-  console.log(`Starting to post to ${posts.length} platforms`);
-
-  // Get the authentication token for API requests
   const token = localStorage.getItem("auth_token");
   if (!token) {
     throw new Error("Authentication token not found. Please log in again.");
   }
 
-  const authHeaders = {
-    Authorization: `Bearer ${token}`,
-    "Content-Type": "application/json",
-  };
-
   for (const post of posts) {
     try {
+      console.log("post", post);
       onProgress?.(post.platform, "pending");
-      console.log(`Attempting to post to ${post.platform}`);
 
-      // Try to get real OAuth tokens using authenticated endpoint
       let realPostResult = null;
       try {
         const tokenResponse = await API.tokenForPlatform(post.platform);
@@ -495,9 +436,6 @@ export async function postToAllPlatforms(
             tokenData.token?.access_token &&
             !tokenData.expired
           ) {
-            console.log(
-              `Found valid OAuth token for ${post.platform}, attempting real post`
-            );
             realPostResult = await postWithRealOAuth(
               post,
               tokenData.token.access_token,
@@ -525,7 +463,6 @@ export async function postToAllPlatforms(
         );
         throw error;
       }
-      console.log("realPostResult", realPostResult);
       if (realPostResult?.success) {
         results[post.platform] = {
           success: true,
@@ -534,12 +471,11 @@ export async function postToAllPlatforms(
           message:
             realPostResult.message || `Successfully posted to ${post.platform}`,
           postId: realPostResult.postId || "Unknown",
+          username: realPostResult.username || "Unknown",
         };
         successes.push(post.platform);
         onProgress?.(post.platform, "success");
-        console.log(`Successfully posted to ${post.platform} via real OAuth`);
 
-        // Save the published post to history
         try {
           await savePublishedPostToHistory(post, realPostResult);
         } catch (historyError: any) {
@@ -610,7 +546,6 @@ export async function postToAllPlatforms(
   return results;
 }
 
-// Function to handle real OAuth posting
 async function postWithRealOAuth(
   post: GeneratedPost,
   accessToken: string,
@@ -619,7 +554,13 @@ async function postWithRealOAuth(
     youtubeChannelId?: string;
     thumbnailUrl?: string;
   }
-): Promise<{ success: boolean; message: string; postId?: string }> {
+): Promise<{
+  success: boolean;
+  message: string;
+  postId?: string;
+  video_id?: string;
+  username?: string;
+}> {
   try {
     switch (post.platform) {
       case "linkedin":
@@ -686,10 +627,15 @@ async function postWithRealOAuth(
           };
 
           const result = await postToTikTok(params);
-
-          return result;
+          console.log("result", result);
+          return {
+            success: true,
+            message: `Successfully posted to TikTok`,
+            postId: result?.data?.data?.data?.publish_id,
+            video_id: result?.data?.data?.video_id,
+            username: result?.data?.data?.username,
+          };
         } catch (error: any) {
-          console.error("❌ TikTok upload failed:", error.message);
           throw new Error(`TikTok upload failed: ${error.message}`);
         }
       }
@@ -706,7 +652,6 @@ async function postWithRealOAuth(
   }
 }
 
-// Enhanced error handling with retry logic
 export class SocialPosterError extends Error {
   constructor(
     message: string,
@@ -757,9 +702,6 @@ async function withRetry<T>(
   throw lastError!;
 }
 
-// Platform-specific utility functions
-
-// Helper function to upload media to Twitter
 async function uploadTwitterMedia(
   accessToken: string,
   imageUrl: string
@@ -914,20 +856,15 @@ function getPostIdFromResult(result: any, platform: string): string {
   }
 }
 
-// Function to save published post to history database
 async function savePublishedPostToHistory(
   post: any,
   publishResult: any
 ): Promise<void> {
   try {
-    console.log(`📝 Saving ${post.platform} post to history database...`);
-
-    // Generate a unique post ID for this publishing session
+    console.log("post", post);
     const postId = `${post.platform}-${Date.now()}-${Math.random()
       .toString(36)
       .substr(2, 9)}`;
-    console.log("publishResult", publishResult);
-    // Get the platform-specific post URL
     let platformUrl = "";
     if (publishResult.postId && publishResult.postId !== "Unknown") {
       switch (post.platform) {
@@ -941,7 +878,6 @@ async function savePublishedPostToHistory(
           }
           break;
         case "facebook":
-          // Facebook URLs are typically facebook.com/:fbpostId
           platformUrl = `https://www.facebook.com/${publishResult.postId}`;
           break;
         case "youtube":
@@ -955,22 +891,21 @@ async function savePublishedPostToHistory(
           platformUrl = `https://twitter.com/user/status/${publishResult.postId}`;
           break;
         case "tiktok":
-          platformUrl = `https://www.tiktok.com/@user/video/${publishResult.postId}`;
+          let videoId = publishResult?.video_id;
+
+          platformUrl = `https://www.tiktok.com/@${publishResult?.username}/video/${videoId}`;
           break;
+
         default:
           platformUrl = `https://${post.platform}.com/posts/${publishResult.postId}`;
           break;
       }
     }
 
-    // Prepare the published URLs object
     const publishedUrls = {
       [post.platform]: platformUrl,
     };
 
-    console.log("publishedUrls", publishedUrls);
-
-    // Save to post history API
     const response = await API.savePublishedUrls({
       postId,
       postContent: post.content || post.caption,
@@ -980,12 +915,7 @@ async function savePublishedPostToHistory(
       imageUrl: post.imageUrl || post.mediaUrl,
     });
 
-    const result = await response.data.data;
-
-    console.log(
-      `✅ Successfully saved ${post.platform} post to history:`,
-      result.message
-    );
+    await response.data.data;
   } catch (error: any) {
     console.error(
       `❌ Failed to save ${post.platform} post to history:`,

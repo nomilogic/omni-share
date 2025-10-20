@@ -1,5 +1,5 @@
 import React, { useState, useLayoutEffect } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import {
   initiateGoogleOAuth,
   initiateFacebookOAuth,
@@ -87,18 +87,22 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         onAuthSuccess(result.user);
         try {
           const profile = result.user?.profile;
-          console.log('AuthForm fallback check profile:', profile);
+          console.log("AuthForm fallback check profile:", profile);
           if (profile && (profile as any).isOnboarding === false) {
-            import('../lib/navigation').then(({ navigateOnce }) => {
-              navigateOnce(navigate, '/onboarding/profile', { replace: true });
-            }).catch(err => {
-              console.error('failed to load navigation helper', err);
-              navigate('/onboarding/profile', { replace: true });
-            });
+            import("../lib/navigation")
+              .then(({ navigateOnce }) => {
+                navigateOnce(navigate, "/onboarding/profile", {
+                  replace: true,
+                });
+              })
+              .catch((err) => {
+                console.error("failed to load navigation helper", err);
+                navigate("/onboarding/profile", { replace: true });
+              });
             return;
           }
         } catch (e) {
-          console.error('AuthForm fallback redirect check failed', e);
+          console.error("AuthForm fallback redirect check failed", e);
         }
       } else {
         const response = await API.registerUser({
@@ -131,12 +135,16 @@ export const AuthForm: React.FC<AuthFormProps> = ({
 
     try {
       const result = await initiateGoogleOAuth();
-      console.log("result", result);
-      // localStorage.setItem("auth_token", result.token);
-      // console.log("Google OAuth successful, user:", result.user);
-      // onAuthSuccess(result.user);
+
+      if (result?.token) {
+        localStorage.setItem("auth_token", result.token);
+        onAuthSuccess(result.user);
+
+        setTimeout(() => {
+          navigate("/content");
+        }, 2000);
+      }
     } catch (error: any) {
-      console.error("Google OAuth error:", error);
       setError(error.message || "Google authentication failed");
     } finally {
       setLoading(false);
@@ -154,18 +162,20 @@ export const AuthForm: React.FC<AuthFormProps> = ({
       onAuthSuccess(result.user);
       try {
         const profile = result.user?.profile;
-        console.log('AuthForm Facebook fallback profile:', profile);
+        console.log("AuthForm Facebook fallback profile:", profile);
         if (profile && (profile as any).isOnboarding === false) {
-          import('../lib/navigation').then(({ navigateOnce }) => {
-            navigateOnce(navigate, '/onboarding/profile', { replace: true });
-          }).catch(err => {
-            console.error('failed to load navigation helper', err);
-            navigate('/onboarding/profile', { replace: true });
-          });
+          import("../lib/navigation")
+            .then(({ navigateOnce }) => {
+              navigateOnce(navigate, "/onboarding/profile", { replace: true });
+            })
+            .catch((err) => {
+              console.error("failed to load navigation helper", err);
+              navigate("/onboarding/profile", { replace: true });
+            });
           return;
         }
       } catch (e) {
-        console.error('AuthForm Facebook fallback redirect check failed', e);
+        console.error("AuthForm Facebook fallback redirect check failed", e);
       }
     } catch (error: any) {
       console.error("Facebook OAuth error:", error);
@@ -395,8 +405,8 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                 : "Already have an account? Sign in"}
             </button>
           </div>
-          {/* <div className="mt-6 grid grid-cols-1 gap-3">
-            {
+          <div className="mt-6 grid grid-cols-1 gap-3">
+            {isOAuthConfigured("google") && (
               <button
                 type="button"
                 onClick={handleGoogleOAuth}
@@ -423,7 +433,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                 </svg>
                 <span className="ml-2">Google</span>
               </button>
-            }
+            )}
 
             {isOAuthConfigured("facebook") && (
               <button
@@ -438,7 +448,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                 <span className="ml-2">Facebook</span>
               </button>
             )}
-          </div> */}
+          </div>
         </div>
       )}
 

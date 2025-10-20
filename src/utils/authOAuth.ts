@@ -1,8 +1,3 @@
-/**
- * OAuth Authentication Utilities
- * Handles Google and Facebook OAuth flows for user registration and login
- */
-
 export interface OAuthUser {
   id: string;
   email: string;
@@ -22,21 +17,17 @@ export interface OAuthConfig {
   };
 }
 
-// OAuth configuration
 export const oauthConfig: OAuthConfig = {
   google: {
     clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID || "",
-    redirectUri: "http://localhost:5000/auth/google/callback",
+    redirectUri: `${window.location.origin}/auth/google/callback`,
   },
   facebook: {
     appId: import.meta.env.VITE_FACEBOOK_APP_ID || "",
-    redirectUri: "http://localhost:5000/auth/facebook/callback",
+    redirectUri: `${window.location.origin}/auth/facebook/callback`,
   },
 };
 
-/**
- * Generate a random state parameter for OAuth security
- */
 export const generateOAuthState = (): string => {
   return (
     Math.random().toString(36).substring(2, 15) +
@@ -44,25 +35,16 @@ export const generateOAuthState = (): string => {
   );
 };
 
-/**
- * Store OAuth state in localStorage
- */
 export const storeOAuthState = (state: string): void => {
-  localStorage.setItem("oauth_state", state);
+  sessionStorage.setItem("oauth_state", state);
 };
 
-/**
- * Verify OAuth state from localStorage
- */
 export const verifyOAuthState = (state: string): boolean => {
-  const storedState = localStorage.getItem("oauth_state");
-  localStorage.removeItem("oauth_state");
+  const storedState = sessionStorage.getItem("oauth_state");
+  sessionStorage.removeItem("oauth_state");
   return storedState === state;
 };
 
-/**
- * Initiate Google OAuth flow in popup window
- */
 export const initiateGoogleOAuth = (): Promise<{
   token: string;
   user: any;
@@ -84,13 +66,10 @@ export const initiateGoogleOAuth = (): Promise<{
 
       const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
 
-      // Debug logs
       console.log("🔍 OAuth Debug Info:");
-      console.log("window.location.origin:", window.location.origin);
+      console.log("Frontend Origin:", window.location.origin);
       console.log("Redirect URI:", oauthConfig.google.redirectUri);
-      console.log("Full Auth URL:", authUrl);
 
-      // Open popup
       const popup = window.open(
         authUrl,
         "google_oauth",
@@ -109,8 +88,19 @@ export const initiateGoogleOAuth = (): Promise<{
       };
 
       const messageListener = (event: MessageEvent) => {
+        // Verify origin for security
+        if (event.origin !== window.location.origin) {
+          console.warn("Message from untrusted origin:", event.origin);
+          return;
+        }
+
         try {
-          if (!event.data || typeof event.data !== "object") return;
+          console.log("📨 Received message:", event.data);
+
+          if (!event.data || typeof event.data !== "object") {
+            console.warn("Invalid event data structure");
+            return;
+          }
 
           if (
             event.data.type === "oauth_success" &&
@@ -122,7 +112,6 @@ export const initiateGoogleOAuth = (): Promise<{
               return;
             }
 
-            // Ensure we got proper JSON
             if (!event.data.result || typeof event.data.result !== "object") {
               cleanup();
               reject(
@@ -134,12 +123,14 @@ export const initiateGoogleOAuth = (): Promise<{
             cleanup();
             resolve(event.data.result);
           } else if (event.data.type === "oauth_error") {
+            console.error("❌ OAuth error:", event.data.error);
             cleanup();
             reject(
               new Error(event.data.error || "Google authentication failed")
             );
           }
         } catch (err) {
+          console.error("Message handler error:", err);
           cleanup();
           reject(new Error("Unexpected error during OAuth message handling"));
         }
@@ -147,7 +138,6 @@ export const initiateGoogleOAuth = (): Promise<{
 
       window.addEventListener("message", messageListener);
 
-      // Detect popup closure
       const checkClosed = setInterval(() => {
         if (popup.closed) {
           cleanup();
@@ -162,72 +152,91 @@ export const initiateGoogleOAuth = (): Promise<{
   });
 };
 
-/**
- * Initiate Facebook OAuth flow in popup window
- */
 export const initiateFacebookOAuth = (): Promise<{
   token: string;
   user: any;
 }> => {
   return new Promise((resolve, reject) => {
-    const state = generateOAuthState();
-    storeOAuthState(state);
+    try {
+      const state = generateOAuthState();
+      storeOAuthState(state);
 
-    const params = new URLSearchParams({
-      client_id: oauthConfig.facebook.appId,
-      redirect_uri: oauthConfig.facebook.redirectUri,
-      response_type: "code",
-      scope: "email,public_profile",
-      state: state,
-    });
+      const params = new URLSearchParams({
+        client_id: oauthConfig.facebook.appId,
+        redirect_uri: oauthConfig.facebook.redirectUri,
+        response_type: "code",
+        scope: "email,public_profile",
+        state: state,
+      });
 
-    const authUrl = `https://www.facebook.com/v18.0/dialog/oauth?${params.toString()}`;
+      const authUrl = `https://www.facebook.com/v18.0/dialog/oauth?${params.toString()}`;
 
-    // Open popup window
-    const popup = window.open(
-      authUrl,
-      "facebook_oauth",
-      "width=500,height=600,scrollbars=yes,resizable=yes"
-    );
+      const popup = window.open(
+        authUrl,
+        "facebook_oauth",
+        "width=500,height=600,scrollbars=yes,resizable=yes"
+      );
 
-    if (!popup) {
-      reject(new Error("Popup blocked. Please allow popups for this site."));
-      return;
-    }
+      if (!popup) {
+        reject(new Error("Popup blocked. Please allow popups for this site."));
+        return;
+      }
 
-    // Listen for messages from popup
-    const messageListener = (event: MessageEvent) => {
-      if (
-        event.data.type === "oauth_success" &&
-        event.data.provider === "facebook"
-      ) {
-        // Verify state in parent window
-        if (!verifyOAuthState(event.data.state)) {
-          window.removeEventListener("message", messageListener);
-          popup.close();
-          reject(new Error("Invalid OAuth state parameter"));
+      const cleanup = () => {
+        window.removeEventListener("message", messageListener);
+        clearInterval(checkClosed);
+        if (!popup.closed) popup.close();
+      };
+
+      const messageListener = (event: MessageEvent) => {
+        if (event.origin !== window.location.origin) {
+          console.warn("Message from untrusted origin:", event.origin);
           return;
         }
-        window.removeEventListener("message", messageListener);
-        popup.close();
-        resolve(event.data.result);
-      } else if (event.data.type === "oauth_error") {
-        window.removeEventListener("message", messageListener);
-        popup.close();
-        reject(new Error(event.data.error || "Facebook authentication failed"));
-      }
-    };
 
-    window.addEventListener("message", messageListener);
+        try {
+          if (
+            event.data.type === "oauth_success" &&
+            event.data.provider === "facebook"
+          ) {
+            if (!verifyOAuthState(event.data.state)) {
+              cleanup();
+              reject(new Error("Invalid OAuth state parameter"));
+              return;
+            }
 
-    // Handle popup closure
-    const checkClosed = setInterval(() => {
-      if (popup.closed) {
-        clearInterval(checkClosed);
-        window.removeEventListener("message", messageListener);
-        reject(new Error("Authentication cancelled"));
-      }
-    }, 1000);
+            console.log("✅ Facebook OAuth success");
+            cleanup();
+            resolve(event.data.result);
+          } else if (event.data.type === "oauth_error") {
+            console.error("❌ Facebook OAuth error:", event.data.error);
+            cleanup();
+            reject(
+              new Error(event.data.error || "Facebook authentication failed")
+            );
+          }
+        } catch (err) {
+          console.error("Message handler error:", err);
+          cleanup();
+          reject(new Error("Unexpected error during OAuth message handling"));
+        }
+      };
+
+      window.addEventListener("message", messageListener);
+
+      const checkClosed = setInterval(() => {
+        if (popup.closed) {
+          cleanup();
+          reject(new Error("Authentication cancelled"));
+        }
+      }, 1000);
+    } catch (err: any) {
+      reject(
+        new Error(
+          err?.message || "Unexpected error initializing Facebook OAuth"
+        )
+      );
+    }
   });
 };
 
@@ -239,17 +248,17 @@ export const handleOAuthCallback = async (
   code: string,
   state: string
 ): Promise<{ token: string; user: any }> => {
-  // Skip state verification here since it will be done in parent window
-  // The popup doesn't have access to parent's localStorage
-
   try {
-    const response = await fetch(`/api/auth/oauth/${provider}`, {
+    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+
+    const response = await fetch(`${apiUrl}/client/oauth/${provider}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         code,
+        state,
         redirectUri:
           provider === "google"
             ? oauthConfig.google.redirectUri
@@ -257,19 +266,25 @@ export const handleOAuthCallback = async (
       }),
     });
 
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      throw new Error(
+        error.error || `${provider} OAuth failed: ${response.status}`
+      );
+    }
+
     const result = await response.json();
 
-    if (!response.ok) {
-      throw new Error(result.error || `${provider} OAuth failed`);
-    }
-
     if (!result.token || !result.user) {
-      throw new Error("Invalid response from OAuth server");
+      throw new Error(
+        "Invalid response from OAuth server: missing token or user"
+      );
     }
 
+    console.log(`✅ ${provider} OAuth response:`, result);
     return result;
   } catch (error) {
-    console.error(`${provider} OAuth error:`, error);
+    console.error(`❌ ${provider} OAuth error:`, error);
     throw error;
   }
 };

@@ -179,7 +179,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
           console.log("OAuth success for", platform);
           // Close popup from parent window for better browser compatibility
           try {
-           authWindow?.close();
+            authWindow?.close();
           } catch (error) {
             console.warn("Could not close popup from parent:", error);
           }
@@ -189,7 +189,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
           console.error("OAuth error:", event.data.error);
           // Close popup from parent window for better browser compatibility
           try {
-           authWindow?.close();
+            authWindow?.close();
           } catch (error) {
             console.warn("Could not close popup from parent:", error);
           }
@@ -284,7 +284,6 @@ export const PublishPosts: React.FC<PublishProps> = ({
         (platform, status) => {
           setPublishProgress((prev) => ({ ...prev, [platform]: status }));
 
-          // If successful, immediately disable and unselect the platform
           if (status === "success") {
             setPublishedPlatforms((prev) => [...prev, platform as Platform]);
             setSelectedPlatforms((prev) => prev.filter((p) => p !== platform));

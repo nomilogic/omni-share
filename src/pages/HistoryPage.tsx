@@ -472,7 +472,6 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
                 </select>
               </div>
 
-              {/* Time Period Filter */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Time Period
@@ -489,7 +488,6 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
                 </select>
               </div>
 
-              {/* Sort By */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Sort By
@@ -507,7 +505,6 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
               </div>
             </div>
 
-            {/* Reset Filters Button */}
             {hasActiveFilters && (
               <div className="mt-4 flex justify-end">
                 <button
@@ -522,7 +519,6 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
           </div>
         )}
 
-        {/* Active Filters Summary */}
         {hasActiveFilters && (
           <div className="max-w-4xl mx-auto mb-4">
             <div className="flex items-center gap-2 text-sm text-gray-600">
@@ -555,7 +551,6 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
         )}
       </div>
 
-      {/* Content */}
       <div className="w-full lg:max-w-4xl mx-auto ">
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
@@ -626,9 +621,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
                           : "text-blue-600 hover:bg-blue-100"
                       }`}
                       title={post.isRead ? "Read" : "Mark as read"}
-                    >
-                      {/* {post.isRead ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />} */}
-                    </button>
+                    ></button>
                     <a
                       href={post.postUrl}
                       target="_blank"
@@ -641,7 +634,6 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
                   </div>
                 </div>
 
-                {/* Link Preview Card */}
                 <a
                   href={post.postUrl}
                   target="_blank"
@@ -650,10 +642,8 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
                   onClick={() => !post.isRead && markAsRead(post.id)}
                 >
                   <div className="flex">
-                    {/* Media Thumbnail */}
                     {renderThumbnail(post)}
 
-                    {/* Content */}
                     <div className="flex-1 p-4 min-w-0">
                       <div className="flex items-start justify-between">
                         <div className="flex-1 min-w-0">
@@ -664,7 +654,8 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
                             {post.metadata?.description || post.content}
                           </p>
                           <p className="text-xs text-gray-500 mb-2 capitalize">
-                            {post.platform} • {new URL(post.postUrl).hostname}
+                            {post.platform} •{" "}
+                            {post.postUrl && new URL(post.postUrl).hostname}
                           </p>
                         </div>
                       </div>

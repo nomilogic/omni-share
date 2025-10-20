@@ -37,13 +37,7 @@ const businessNouns = [
   "Labs",
 ];
 
-const platforms = [
-  "Instagram",
-  "LinkedIn",
-  "TikTok",
-  "YouTube",
-  "Facebook",
-];
+const platforms = ["Instagram", "LinkedIn", "TikTok", "YouTube", "Facebook"];
 
 const categories = [
   "Technology",
@@ -116,7 +110,7 @@ const profileFormConfig = [
       {
         name: "brandLogo",
         label: "Brand Logo / Profile Image",
-        type: "file",
+        type: "text",
         placeholder: "Upload or confirm your logo/profile image",
         required: false,
       },
@@ -124,8 +118,16 @@ const profileFormConfig = [
         name: "brandTone",
         label: "Brand Tone",
         type: "select",
-        options: [          "Professional", "Casual", "Friendly", "Formal", "Playful",
-          "Innovative", "Trustworthy", "Luxurious"],
+        options: [
+          "Professional",
+          "Casual",
+          "Friendly",
+          "Formal",
+          "Playful",
+          "Innovative",
+          "Trustworthy",
+          "Luxurious",
+        ],
         required: false,
       },
     ],
@@ -139,7 +141,7 @@ const profileFormConfig = [
     fields: [
       {
         name: "audienceAgeRange",
-        
+
         label: "Audience Age Range",
         type: "checkbox-group",
         options: ["13-17", "18-24", "25-34", "35-44", "45-54", "55+"],
@@ -149,7 +151,12 @@ const profileFormConfig = [
         name: "audienceGender",
         label: "Audience Gender",
         type: "radio-group",
-       options: ["All Genders", "Primarily Male", "Primarily Female", "Non-Binary Focused"],
+        options: [
+          "All Genders",
+          "Primarily Male",
+          "Primarily Female",
+          "Non-Binary Focused",
+        ],
 
         required: false,
       },
@@ -172,9 +179,12 @@ const profileFormConfig = [
         label: "Audience Type / Segment",
         type: "checkbox-group",
         options: [
-           "Students", "Professionals", "Parents", "Entrepreneurs",
-          "Retirees", "Digital Natives"
-
+          "Students",
+          "Professionals",
+          "Parents",
+          "Entrepreneurs",
+          "Retirees",
+          "Digital Natives",
         ],
         required: false,
       },
@@ -215,9 +225,12 @@ const profileFormConfig = [
         label: "Primary Purpose of Posting",
         type: "checkbox-group",
         options: [
-              "Brand Awareness", "Lead Generation", "Sales Increase",
-          "Customer Engagement", "Community Building", "Thought Leadership",
-
+          "Brand Awareness",
+          "Lead Generation",
+          "Sales Increase",
+          "Customer Engagement",
+          "Community Building",
+          "Thought Leadership",
         ],
         required: false,
       },
@@ -226,9 +239,12 @@ const profileFormConfig = [
         label: "Key Outcomes Expected",
         type: "checkbox-group",
         options: [
-             "Increased Followers", "Higher Engagement", "More Website Traffic",
-          "Better Lead Quality", "Improved Brand Image", "Increased Sales",
-
+          "Increased Followers",
+          "Higher Engagement",
+          "More Website Traffic",
+          "Better Lead Quality",
+          "Improved Brand Image",
+          "Increased Sales",
         ],
         required: false,
       },
@@ -237,10 +253,12 @@ const profileFormConfig = [
         label: "Posting Style Preference (optional)",
         type: "select",
         options: [
-           "Professional & Formal", "Casual & Friendly", "Humorous & Light",
-          "Educational & Informative", "Inspirational & Motivating",
+          "Professional & Formal",
+          "Casual & Friendly",
+          "Humorous & Light",
+          "Educational & Informative",
+          "Inspirational & Motivating",
           "Narrative & Storytelling",
-
         ],
         required: false,
       },
@@ -259,19 +277,18 @@ const ProfileSetupSinglePage: React.FC = () => {
 
   // Initialize form data state
   const [formData, setFormData] = useState<ProfileFormData>(() => {
-    console.log('Initializing form data...');
+    console.log("Initializing form data...");
     let savedData = localStorage.getItem(STORAGE_KEY);
-    
 
-    console.log('Saved data from localStorage:', savedData);
+    console.log("Saved data from localStorage:", savedData);
 
     if (savedData) {
       try {
         const parsed = JSON.parse(savedData);
-        console.log('Parsed saved data:', parsed);
+        console.log("Parsed saved data:", parsed);
         return parsed;
       } catch (e) {
-        console.error('Error parsing saved data:', e);
+        console.error("Error parsing saved data:", e);
       }
     }
 
@@ -299,55 +316,69 @@ const ProfileSetupSinglePage: React.FC = () => {
 
   // Listen for storage changes
   useEffect(() => {
-
     loadProfile(user.profile.publicUrl || "");
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === STORAGE_KEY && e.newValue) {
-        console.log('Storage changed, new value:', e.newValue);
+        console.log("Storage changed, new value:", e.newValue);
         try {
           const newData = JSON.parse(e.newValue);
-          console.log('Setting form data from storage:', newData);
+          console.log("Setting form data from storage:", newData);
           setFormData(newData);
         } catch (err) {
-          console.error('Error parsing storage data:', err);
+          console.error("Error parsing storage data:", err);
         }
       }
     };
 
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
   // Save to localStorage when form data changes
   useEffect(() => {
-    console.log('Saving form data to localStorage:', formData);
+    console.log("Saving form data to localStorage:", formData);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
   }, [formData]);
 
   // Force re-render when formData changes
   useEffect(() => {
-    console.log('Form data changed:', formData);
+    console.log("Form data changed:", formData);
     // Use requestAnimationFrame to ensure DOM is updated
     requestAnimationFrame(() => {
       // Update all form inputs with current values
-      const form = document.querySelector('form');
+      const form = document.querySelector("form");
       if (form) {
         // Update text inputs, selects, and textareas
-        form.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], input[type="url"], select, textarea').forEach((element) => {
-          const input = element as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
-          const name = input.name;
-          if (name && name in formData) {
-            input.value = (formData as any)[name] || '';
-          }
-        });
+        form
+          .querySelectorAll(
+            'input[type="text"], input[type="email"], input[type="tel"], input[type="url"], select, textarea'
+          )
+          .forEach((element) => {
+            const input = element as
+              | HTMLInputElement
+              | HTMLSelectElement
+              | HTMLTextAreaElement;
+            const name = input.name;
+            if (name && name in formData) {
+              input.value = (formData as any)[name] || "";
+            }
+          });
 
         // Update checkboxes
         form.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
           const input = checkbox as HTMLInputElement;
-          const name = input.getAttribute('aria-label');
-          const fieldName = input.closest('[data-field-name]')?.getAttribute('data-field-name');
-          if (fieldName && name && Array.isArray((formData as any)[fieldName])) {
-            input.checked = ((formData as any)[fieldName] as string[]).includes(name);
+          const name = input.getAttribute("aria-label");
+          const fieldName = input
+            .closest("[data-field-name]")
+            ?.getAttribute("data-field-name");
+          if (
+            fieldName &&
+            name &&
+            Array.isArray((formData as any)[fieldName])
+          ) {
+            input.checked = ((formData as any)[fieldName] as string[]).includes(
+              name
+            );
           }
         });
 
@@ -361,8 +392,8 @@ const ProfileSetupSinglePage: React.FC = () => {
         });
 
         // Dispatch events to trigger any listeners
-        form.dispatchEvent(new Event('reset'));
-        form.dispatchEvent(new Event('input', { bubbles: true }));
+        form.dispatchEvent(new Event("reset"));
+        form.dispatchEvent(new Event("input", { bubbles: true }));
       }
     });
   }, [formData]);
@@ -380,14 +411,16 @@ const ProfileSetupSinglePage: React.FC = () => {
 
   const handleInputChange = (field: keyof ProfileFormData, value: any) => {
     console.log(`Setting ${field} to:`, value);
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleArrayChange = (field: keyof ProfileFormData, option: string) => {
     setFormData((prev: ProfileFormData) => {
-      const currentArray = Array.isArray(prev[field]) ? prev[field] as string[] : [];
+      const currentArray = Array.isArray(prev[field])
+        ? (prev[field] as string[])
+        : [];
       const newArray = currentArray.includes(option)
-        ? currentArray.filter(i => i !== option)
+        ? currentArray.filter((i) => i !== option)
         : [...currentArray, option];
       console.log(`Setting ${field} array to:`, newArray);
       const updatedData = { ...prev, [field]: newArray };
@@ -399,14 +432,14 @@ const ProfileSetupSinglePage: React.FC = () => {
     // Clear localStorage and form state
     localStorage.removeItem(STORAGE_KEY);
     const emptyForm: ProfileFormData = {
-      fullName: '',
-      email: '',
-      phoneNumber: '',
-      publicUrl: '',
-      brandName: '',
+      fullName: "",
+      email: "",
+      phoneNumber: "",
+      publicUrl: "",
+      brandName: "",
       brandLogo: null,
-      brandTone: '',
-      audienceGender: '',
+      brandTone: "",
+      audienceGender: "",
       audienceAgeRange: [],
       audienceRegions: [],
       audienceInterests: [],
@@ -414,7 +447,7 @@ const ProfileSetupSinglePage: React.FC = () => {
       preferredPlatforms: [],
       primaryPurpose: [],
       keyOutcomes: [],
-      postingStyle: ''
+      postingStyle: "",
     };
     setFormData(emptyForm);
   };
@@ -427,28 +460,27 @@ const ProfileSetupSinglePage: React.FC = () => {
     setUrlAnalysisError(null);
     setUrlAnalysisLoading(true);
     try {
-      console.log('Starting URL analysis for:', url);
+      console.log("Starting URL analysis for:", url);
       const response = await API.scrapeProfileData({ url });
-      console.log('Scraper response:', response);
-      
+      console.log("Scraper response:", response);
+
       if (response?.data?.success && response?.data?.profile) {
         // Get the profile data from the response
         const profile = response.data.profile;
-       //const profile=user.profile || {};
-        console.log('Profile data:', profile);
+        //const profile=user.profile || {};
+        console.log("Profile data:", profile);
 
-        
         // Get current form data from localStorage
         const savedData = localStorage.getItem(STORAGE_KEY);
-        console.log('Current localStorage data:', savedData);
-        
+        console.log("Current localStorage data:", savedData);
+
         // Parse current data or use formData as fallback
         const currentData = savedData ? JSON.parse(savedData) : formData;
-        
+
         // Map the scraped data exactly as it comes from the API
         const updatedData = {
           ...currentData, // Keep existing data as base
-          
+
           // Map fields exactly as they come from the scraper
           fullName: profile.fullName?.trim() || currentData.fullName,
           // email: profile.email || currentData.email,
@@ -457,61 +489,60 @@ const ProfileSetupSinglePage: React.FC = () => {
           publicUrl: url,
           // brandName: profile.brandName || '',
           // brandLogo: profile.brandLogo || null,
-          brandTone: profile.brandTone || '',
-          
+          brandTone: profile.brandTone || "",
+
           // Audience fields
-          audienceGender: profile.audienceGender || '',
+          audienceGender: profile.audienceGender || "",
           audienceAgeRange: profile.audienceAgeRange || [],
           audienceRegions: profile.audienceRegions || [],
           audienceInterests: profile.audienceInterests || [],
           audienceSegments: profile.audienceSegments || [],
-          
+
           // Platform and content
           preferredPlatforms: profile.preferredPlatforms || [],
           contentCategories: profile.contentCategories || [],
-          postingStyle: profile.postingStyle || '',
-          
+          postingStyle: profile.postingStyle || "",
+
           // Purpose and outcomes
           primaryPurpose: profile.primaryPurpose || [],
           keyOutcomes: profile.keyOutcomes || [],
-          
+
           // Keep posting frequency if it exists
         };
 
-        console.log('Updated form data to save:', updatedData);
-        
+        console.log("Updated form data to save:", updatedData);
+
         // Update both localStorage and form state
         try {
           // Update localStorage first
           const dataToStore = JSON.stringify(updatedData);
           localStorage.setItem(STORAGE_KEY, dataToStore);
-          
+
           // Verify the data was stored correctly
           const storedData = localStorage.getItem(STORAGE_KEY);
-          console.log('Stored data verification:', storedData);
-          
+          console.log("Stored data verification:", storedData);
+
           if (storedData !== dataToStore) {
-            console.error('Storage verification failed');
-            throw new Error('Storage verification failed');
+            console.error("Storage verification failed");
+            throw new Error("Storage verification failed");
           }
-          
+
           // If storage was successful, update the form state
-          console.log('Storage successful, updating form state');
+          console.log("Storage successful, updating form state");
           setFormData(updatedData);
-          
         } catch (error) {
-          console.error('Error updating localStorage:', error);
+          console.error("Error updating localStorage:", error);
         }
-        
+
         // Force form fields to update
         requestAnimationFrame(() => {
-          const form = document.querySelector('form');
+          const form = document.querySelector("form");
           if (form) {
-            form.dispatchEvent(new Event('reset'));
-            form.dispatchEvent(new Event('input', { bubbles: true }));
+            form.dispatchEvent(new Event("reset"));
+            form.dispatchEvent(new Event("input", { bubbles: true }));
           }
         });
-        console.log('Updated form data:', formData);
+        console.log("Updated form data:", formData);
       }
     } catch (err: any) {
       console.error("URL analysis failed:", err);
@@ -528,108 +559,100 @@ const ProfileSetupSinglePage: React.FC = () => {
       return;
     }
     try {
-      
-        // Get the profile data from the response
-       // const profile = response.data.profile;
-       
-       const profile=user.profile || {};
+      // Get the profile data from the response
+      // const profile = response.data.profile;
 
+      const profile = user.profile || {};
 
-        console.log('Profile data:', profile);
+      console.log("Profile data:", profile);
 
-        
-        // Get current form data from localStorage
-        const savedData = localStorage.getItem(STORAGE_KEY);
-        console.log('Current localStorage data:', savedData);
-        
-        // Parse current data or use formData as fallback
-        const currentData = savedData ? JSON.parse(savedData) : formData;
-        
-        // Map the scraped data exactly as it comes from the API
-        const updatedData = {
-          ...currentData, // Keep existing data as base
-          
-          // Map fields exactly as they come from the scraper
-          fullName: profile.fullName?.trim() || currentData.fullName,
-          email: profile.email || currentData.email,
-          phoneNumber: profile.phoneNumber || currentData.phoneNumber,
-          businessName: profile.businessName || '',
-          publicUrl: profile.publicUrl || '',
-          brandName: profile.brandName || '',
-          brandLogo: profile.brandLogo || null,
-          brandTone: profile.brandTone || '',
-          
-          // Audience fields
-          audienceGender: profile.audienceGender || '',
-          audienceAgeRange: profile.audienceAgeRange || [],
-          audienceRegions: profile.audienceRegions || [],
-          audienceInterests: profile.audienceInterests || [],
-          audienceSegments: profile.audienceSegments || [],
-          
-          // Platform and content
-          preferredPlatforms: profile.preferredPlatforms || [],
-          contentCategories: profile.contentCategories || [],
-          postingStyle: profile.postingStyle || '',
-          
-          // Purpose and outcomes
-          primaryPurpose: profile.primaryPurpose || [],
-          keyOutcomes: profile.keyOutcomes || [],
-          
-          // Keep posting frequency if it exists
-        };
+      // Get current form data from localStorage
+      const savedData = localStorage.getItem(STORAGE_KEY);
+      console.log("Current localStorage data:", savedData);
 
-        console.log('Updated form data to save:', updatedData);
-        
-        // Update both localStorage and form state
-        try {
-          // Update localStorage first
-          const dataToStore = JSON.stringify(updatedData);
-          localStorage.setItem(STORAGE_KEY, dataToStore);
-          
-          // Verify the data was stored correctly
-          const storedData = localStorage.getItem(STORAGE_KEY);
-          console.log('Stored data verification:', storedData);
-          
-          if (storedData !== dataToStore) {
-            console.error('Storage verification failed');
-            throw new Error('Storage verification failed');
-          }
-          
-          // If storage was successful, update the form state
-          console.log('Storage successful, updating form state');
-          setFormData(updatedData);
-          
-        } catch (error) {
-          console.error('Error updating localStorage:', error);
+      // Parse current data or use formData as fallback
+      const currentData = savedData ? JSON.parse(savedData) : formData;
+
+      // Map the scraped data exactly as it comes from the API
+      const updatedData = {
+        ...currentData, // Keep existing data as base
+
+        // Map fields exactly as they come from the scraper
+        fullName: profile.fullName?.trim() || currentData.fullName,
+        email: profile.email || currentData.email,
+        phoneNumber: profile.phoneNumber || currentData.phoneNumber,
+        businessName: profile.businessName || "",
+        publicUrl: profile.publicUrl || "",
+        brandName: profile.brandName || "",
+        brandLogo: profile.brandLogo || null,
+        brandTone: profile.brandTone || "",
+
+        // Audience fields
+        audienceGender: profile.audienceGender || "",
+        audienceAgeRange: profile.audienceAgeRange || [],
+        audienceRegions: profile.audienceRegions || [],
+        audienceInterests: profile.audienceInterests || [],
+        audienceSegments: profile.audienceSegments || [],
+
+        // Platform and content
+        preferredPlatforms: profile.preferredPlatforms || [],
+        contentCategories: profile.contentCategories || [],
+        postingStyle: profile.postingStyle || "",
+
+        // Purpose and outcomes
+        primaryPurpose: profile.primaryPurpose || [],
+        keyOutcomes: profile.keyOutcomes || [],
+
+        // Keep posting frequency if it exists
+      };
+
+      console.log("Updated form data to save:", updatedData);
+
+      // Update both localStorage and form state
+      try {
+        // Update localStorage first
+        const dataToStore = JSON.stringify(updatedData);
+        localStorage.setItem(STORAGE_KEY, dataToStore);
+
+        // Verify the data was stored correctly
+        const storedData = localStorage.getItem(STORAGE_KEY);
+        console.log("Stored data verification:", storedData);
+
+        if (storedData !== dataToStore) {
+          console.error("Storage verification failed");
+          throw new Error("Storage verification failed");
         }
-        
-        // Force form fields to update
-        requestAnimationFrame(() => {
-          const form = document.querySelector('form');
-          if (form) {
-            form.dispatchEvent(new Event('reset'));
-            form.dispatchEvent(new Event('input', { bubbles: true }));
-          }
-        });
-        console.log('Updated form data:', formData);
+
+        // If storage was successful, update the form state
+        console.log("Storage successful, updating form state");
+        setFormData(updatedData);
+      } catch (error) {
+        console.error("Error updating localStorage:", error);
       }
-      catch (err: any) {
-        console.error("Load profile failed:", err);
-       
-      } finally {
-        // setUrlAnalysisLoading(false);
-      }
-   
+
+      // Force form fields to update
+      requestAnimationFrame(() => {
+        const form = document.querySelector("form");
+        if (form) {
+          form.dispatchEvent(new Event("reset"));
+          form.dispatchEvent(new Event("input", { bubbles: true }));
+        }
+      });
+      console.log("Updated form data:", formData);
+    } catch (err: any) {
+      console.error("Load profile failed:", err);
+    } finally {
+      // setUrlAnalysisLoading(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
-      
       const submitData = { ...formData };
-        delete submitData.email;
-        delete submitData.businessName
+      delete submitData.email;
+      delete submitData.businessName;
       await API.updateProfileData(submitData as any);
       localStorage.removeItem(STORAGE_KEY);
       navigate("/content");
@@ -809,8 +832,14 @@ const ProfileSetupSinglePage: React.FC = () => {
                                       key={opt}
                                       data-field-name={field.name}
                                       className={`flex items-center p-2 border-2 rounded-lg cursor-pointer ${
-                                        Array.isArray((formData as any)[field.name]) && 
-                                        ((formData as any)[field.name] as string[]).includes(opt)
+                                        Array.isArray(
+                                          (formData as any)[field.name]
+                                        ) &&
+                                        (
+                                          (formData as any)[
+                                            field.name
+                                          ] as string[]
+                                        ).includes(opt)
                                           ? "theme-border-trinary theme-text-secondary"
                                           : "border-gray-200"
                                       }`}
@@ -823,8 +852,16 @@ const ProfileSetupSinglePage: React.FC = () => {
                                     >
                                       <input
                                         type="checkbox"
-                                        checked={Array.isArray((formData as any)[field.name]) && 
-                                          ((formData as any)[field.name] as string[]).includes(opt)}
+                                        checked={
+                                          Array.isArray(
+                                            (formData as any)[field.name]
+                                          ) &&
+                                          (
+                                            (formData as any)[
+                                              field.name
+                                            ] as string[]
+                                          ).includes(opt)
+                                        }
                                         onChange={() =>
                                           handleArrayChange(
                                             field.name as any,
@@ -953,70 +990,108 @@ const ProfileSetupSinglePage: React.FC = () => {
                                 </div>
                               </div>
                             );
-                         case 'tags':
-  return (
-    <div key={field.name} className="col-span-1 md:col-span-2">
-      <label className="block text-sm font-medium theme-text-primary mb-2">
-        {field.label} {field.required && '*'}
-      </label>
+                          case "tags":
+                            return (
+                              <div
+                                key={field.name}
+                                className="col-span-1 md:col-span-2"
+                              >
+                                <label className="block text-sm font-medium theme-text-primary mb-2">
+                                  {field.label} {field.required && "*"}
+                                </label>
 
-      <div className="flex flex-wrap items-center gap-2 border border-gray-300 rounded-md px-3 py-2 min-h-[44px]">
-        {(formData as any)[field.name]?.map((tag: string, idx: number) => (
-          <span
-            key={idx}
-            className="flex items-center theme-bg-trinary theme-text-light px-2 py-1 rounded-full text-sm"
-          >
-            {tag}
-            <button
-              type="button"
-              onClick={() =>
-                handleInputChange(
-                  field.name as any,
-                  (formData as any)[field.name].filter((_: string, i: number) => i !== idx)
-                )
-              }
-              className="ml-1 theme-text-light"
-              title="Remove tag"
-            >
-              ×
-            </button>
-          </span>
-        ))}
+                                <div className="flex flex-wrap items-center gap-2 border border-gray-300 rounded-md px-3 py-2 min-h-[44px]">
+                                  {(formData as any)[field.name]?.map(
+                                    (tag: string, idx: number) => (
+                                      <span
+                                        key={idx}
+                                        className="flex items-center theme-bg-trinary theme-text-light px-2 py-1 rounded-full text-sm"
+                                      >
+                                        {tag}
+                                        <button
+                                          type="button"
+                                          onClick={() =>
+                                            handleInputChange(
+                                              field.name as any,
+                                              (formData as any)[
+                                                field.name
+                                              ].filter(
+                                                (_: string, i: number) =>
+                                                  i !== idx
+                                              )
+                                            )
+                                          }
+                                          className="ml-1 theme-text-light"
+                                          title="Remove tag"
+                                        >
+                                          ×
+                                        </button>
+                                      </span>
+                                    )
+                                  )}
 
-        <input
-          type="text"
-          placeholder={field.placeholder || 'Add a tag and press Space or Enter'}
-          className="flex-grow border-none focus:ring-0 text-sm outline-none min-w-[120px]"
-          onKeyDown={e => {
-            const input = e.target as HTMLInputElement;
-            const value = input.value.trim();
+                                  <input
+                                    type="text"
+                                    placeholder={
+                                      field.placeholder ||
+                                      "Add a tag and press Space or Enter"
+                                    }
+                                    className="flex-grow border-none focus:ring-0 text-sm outline-none min-w-[120px]"
+                                    onKeyDown={(e) => {
+                                      const input =
+                                        e.target as HTMLInputElement;
+                                      const value = input.value.trim();
 
-            // Create tag on Enter or Space
-            if ((e.key === 'Enter' || e.key === ' ') && value) {
-              e.preventDefault();
-              const existing = (formData as any)[field.name] || [];
-              const normalized = value.replace(/[^\w\s&,-]/g, ''); // optional clean-up
-              if (normalized && !existing.includes(normalized)) {
-                handleInputChange(field.name as any, [...existing, normalized]);
-              }
-              input.value = '';
-            }
+                                      // Create tag on Enter or Space
+                                      if (
+                                        (e.key === "Enter" || e.key === " ") &&
+                                        value
+                                      ) {
+                                        e.preventDefault();
+                                        const existing =
+                                          (formData as any)[field.name] || [];
+                                        const normalized = value.replace(
+                                          /[^\w\s&,-]/g,
+                                          ""
+                                        ); // optional clean-up
+                                        if (
+                                          normalized &&
+                                          !existing.includes(normalized)
+                                        ) {
+                                          handleInputChange(field.name as any, [
+                                            ...existing,
+                                            normalized,
+                                          ]);
+                                        }
+                                        input.value = "";
+                                      }
 
-            // Handle backspace to remove last tag when input is empty
-            if (e.key === 'Backspace' && !input.value && (formData as any)[field.name]?.length) {
-              e.preventDefault();
-              const updated = (formData as any)[field.name].slice(0, -1);
-              handleInputChange(field.name as any, updated);
-            }
-          }}
-        />
-      </div>
+                                      // Handle backspace to remove last tag when input is empty
+                                      if (
+                                        e.key === "Backspace" &&
+                                        !input.value &&
+                                        (formData as any)[field.name]?.length
+                                      ) {
+                                        e.preventDefault();
+                                        const updated = (formData as any)[
+                                          field.name
+                                        ].slice(0, -1);
+                                        handleInputChange(
+                                          field.name as any,
+                                          updated
+                                        );
+                                      }
+                                    }}
+                                  />
+                                </div>
 
-      {field.helperText && (
-        <p className="mt-1 text-sm text-gray-500">{field.helperText}</p>
-      )}
-    </div>
-  );
+                                {field.helperText && (
+                                  <p className="mt-1 text-sm text-gray-500">
+                                    {field.helperText}
+                                  </p>
+                                )}
+                              </div>
+                            );
 
                           default:
                             return null;

@@ -55,11 +55,10 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
 
         // Handle the OAuth callback
         const result = await handleOAuthCallback(provider, code, state);
-
+        console.log("result", result);
         setStatus("success");
         setMessage(`Successfully authenticated with ${provider}!`);
 
-        // Send success message to parent window (popup opener)
         if (window.opener) {
           window.opener.postMessage(
             {
@@ -71,36 +70,31 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
             "*"
           );
 
-          // Close the popup after a brief delay with error handling
           setTimeout(() => {
             try {
               window.close();
             } catch (error) {
               console.warn("Could not close popup window:", error);
-              // Fallback: show user message to close manually
               setMessage(
                 "Authentication successful! You can close this window."
               );
             }
           }, 1000);
         } else {
-          // Fallback: store token and call success handler if not in popup
+          console.log("result 12113123", result);
           localStorage.setItem("auth_token", result.token);
           onAuthSuccess(result.user);
 
-          // Redirect to content page after a short delay
           setTimeout(() => {
             navigate("/content");
           }, 2000);
         }
       } catch (error) {
-        console.error("OAuth callback error:", error);
-        setStatus("error");
+        console.error("error", error);
         const errorMessage =
           error instanceof Error ? error.message : "Authentication failed";
         setMessage(errorMessage);
 
-        // Send error message to parent window (popup opener)
         if (window.opener) {
           window.opener.postMessage(
             {
@@ -121,7 +115,6 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
             }
           }, 2000);
         } else {
-          // Fallback: redirect to login page after error
           setTimeout(() => {
             navigate("/auth");
           }, 3000);
