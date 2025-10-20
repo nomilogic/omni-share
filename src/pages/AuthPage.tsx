@@ -83,12 +83,23 @@ export const AuthPage: React.FC = () => {
   }
 
   return (
-    <AuthForm
-      onAuthSuccess={handleAuthSuccess}
-      onForgetPassword={handleForgetPassword}
-      onResetPassword={(token: string, password: string) => handleResetPassword(token, password)}
-      loading={loading}
-      error={error}
-    />
+    <div className="flex min-h-screen flex-col relative">
+      <div className="flex-grow">
+        <AuthForm
+          onAuthSuccess={handleAuthSuccess}
+          onForgetPassword={handleForgetPassword}
+          onResetPassword={(token: string, password: string) => handleResetPassword(token, password)}
+          loading={loading}
+          error={error}
+        />
+      </div>
+<footer className="w-full border-t bg-transparent px-4 py-4 text-center text-sm text-gray-500 ">
+        <div className="max-w-3xl mx-auto flex flex-col items-center gap-2 sm:flex-row sm:justify-center sm:gap-4">
+          <span>© {new Date().getFullYear()} OMNISHARE</span>
+          <a href="/privacy" className="text-primary hover:underline">Privacy</a>
+          <a href="/terms" className="text-primary hover:underline">Terms</a>
+        </div>
+      </footer>
+    </div>
   );
 };

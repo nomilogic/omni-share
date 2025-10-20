@@ -39,12 +39,22 @@ export const LandingPage: React.FC = () => {
 
   if (showAuth) {
     return (
-      <div className="w-full flex h-full-dec-hf  x-2 theme-gradient from-blue-50 to-indigo-100 items-center justify-center">
-        <div className="w-full max-w-md p-6">
-          <div className="text-center text-white"></div>
-          <AuthForm onAuthSuccess={handleAuthSuccess} />
-        </div>
+      <>
+    
+      <div className="w-full flex min-h-screen x-2 theme-gradient from-blue-50 to-indigo-100 items-center justify-center flex-col relative">
+          <AuthForm onAuthSuccess={handleAuthSuccess}  />
+           <footer className="flex w-full  absolute bg-transparent px-4 py-4 text-sm text-white justify-between z-10 bottom-0 flex-row">
+          <div>© {new Date().getFullYear()} OMNISHARE</div>
+          <div>
+          <a href="/privacy" className="">Privacy</a>&nbsp;  | &nbsp;
+          <a href="/terms" className="">Terms</a>
+          
+          </div>
+      </footer> 
+        
       </div>
+      
+      </>
     );
   }
 
