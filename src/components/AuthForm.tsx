@@ -369,7 +369,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                   htmlFor="rememberMe"
                   className="ml-2 block text-sm theme-text-secondary"
                 >
-                  Remember me for 
+                  Remember me for 30 days
                 </label>
               </div>
             )}
@@ -406,7 +406,9 @@ export const AuthForm: React.FC<AuthFormProps> = ({
             </button>
           </div>
           <div className="mt-6 grid grid-cols-1 gap-3">
-            {isOAuthConfigured("google") && (
+            {
+            // isOAuthConfigured("google") && 
+            (
               <button
                 type="button"
                 onClick={handleGoogleOAuth}
