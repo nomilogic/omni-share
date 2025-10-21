@@ -632,7 +632,6 @@ async function postWithRealOAuth(
             success: true,
             message: `Successfully posted to TikTok`,
             postId: result?.data?.data?.data?.publish_id,
-            video_id: result?.data?.data?.video_id,
             username: result?.data?.data?.username,
           };
         } catch (error: any) {
@@ -893,7 +892,7 @@ async function savePublishedPostToHistory(
         case "tiktok":
           let videoId = publishResult?.video_id;
 
-          platformUrl = `https://www.tiktok.com/@${publishResult?.username}/video/${videoId}`;
+          platformUrl = `https://www.tiktok.com/@${publishResult?.username}/video/${publishResult?.postId}`;
           break;
 
         default:
