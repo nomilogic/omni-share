@@ -369,7 +369,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                   htmlFor="rememberMe"
                   className="ml-2 block text-sm theme-text-secondary"
                 >
-                  Remember me for 30 days
+                  Remember me for 
                 </label>
               </div>
             )}
@@ -463,6 +463,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         }}
         resendOtp={API.resendOtp}
       />
+  
     </div>
   );
 };
