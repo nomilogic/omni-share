@@ -303,7 +303,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
           let profileFromAuth = false;
           try {
             const profile = authResult.user?.profile;
-            console.log('AppContext.initializeAuth found profile in authResult.user:', profile);
+            console.log(
+              "AppContext.initializeAuth found profile in authResult.user:",
+              profile
+            );
             if (profile) {
               profileFromAuth = true;
               dispatch({ type: "SET_SELECTED_PROFILE", payload: profile });
@@ -313,13 +316,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
               if (profile.type === "business") {
                 dispatch({ type: "SET_BUSINESS_ACCOUNT", payload: true });
               }
-              if (typeof (profile as any).isOnboarding !== 'undefined') {
+              if (typeof (profile as any).isOnboarding !== "undefined") {
                 // Backend sends `isOnboarding: false` when onboarding is required
-                dispatch({ type: "SET_ONBOARDING_COMPLETE", payload: (profile as any).isOnboarding });
+                dispatch({
+                  type: "SET_ONBOARDING_COMPLETE",
+                  payload: (profile as any).isOnboarding,
+                });
               }
             }
           } catch (e) {
-            console.error('Error applying profile from auth result', e);
+            console.error("Error applying profile from auth result", e);
           }
 
           try {
@@ -477,14 +483,12 @@ export const useAppContext = () => {
     }
   };
 
-  const API_BASE = import.meta.env.VITE_API_URL + "/admin/generation-amount";
-
   const [generationAmounts, setGenerationAmounts] = useState<any>({});
 
   const fetchData = async () => {
     try {
-      const res = await fetch(API_BASE);
-      const data = await res.json();
+      const res = await API.getGenerateAmount();
+      const data = await res.data;
 
       // Convert array → object (keyed by type)
       const formattedData = (data.data || []).reduce((acc: any, item: any) => {

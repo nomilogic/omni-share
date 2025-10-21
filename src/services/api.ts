@@ -132,6 +132,10 @@ interface APIInstance extends AxiosInstance {
   tiktokAccessToken: (data: any) => Promise<any>;
   tiktokOauthTokens: () => Promise<any>;
   getProfileData: () => Promise<any>;
+  getGenerateAmount: () => Promise<any>;
+  createGenerateAmount: (data: any) => Promise<any>;
+  updateGenerateAmount: (id: any, data: any) => Promise<any>;
+  deleteGenerateAmount: (id: any) => Promise<any>;
   updateProfileData: (data: any) => Promise<any>;
   scrapeProfileData: (data: ScrapperPayload) => Promise<any>;
   generateForgetLink: (data: GenerateForgetLinkPayload) => Promise<any>;
@@ -272,5 +276,12 @@ API.tiktokCompleteUpload = (data: any) =>
 API.tiktokAccessToken = (data: any) =>
   API.post("/client/tiktok/access-token", data);
 API.tiktokOauthTokens = () => API.get("/client/tiktok/oauth_tokens");
+API.getGenerateAmount = () => API.get("/admin/generation-amount");
+API.updateGenerateAmount = (id: any, data: any) =>
+  API.patch(`/admin/generation-amount/${id}`, data);
+API.createGenerateAmount = (data: any) =>
+  API.post("/admin/generation-amount", data);
+API.deleteGenerateAmount = (id: any) =>
+  API.delete(`/admin/generation-amount/${id}`);
 
 export default API;
