@@ -322,14 +322,14 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                         setLoading(false);
                       }
                     }}
-                    className="px-4 py-2 bg-purple-600 text-white rounded"
+                    className="px-4 py-1.5 bg-purple-600 text-white rounded-md"
                   >
                     Send Reset Link
                   </button>
                   <button
                     type="button"
                     onClick={() => setForgotMode(false)}
-                    className="px-4 py-2 border rounded"
+                    className="px-4 py-1.5 border rounded-md"
                   >
                     Cancel
                   </button>
