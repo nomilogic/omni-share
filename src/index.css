@@ -135,6 +135,12 @@
   border: 1px solid var(--theme-border);
 }
 
+.theme-button-trinary {
+  background-color: var(--theme-button-light);
+  color: var(--theme-text-secondary);
+  border: 1px solid var(--theme-border);
+}
+
 .theme-button-primary:hover {
   background-color: var(--theme-button-hover);
 }

@@ -217,7 +217,7 @@ function HomePage() {
                 Contact
               </button>
               <button
-                onClick={() => (window.location.href = "/app")}
+                onClick={() => (window.location.href = "/auth")}
                 className="bg-[#7650e3] text-white px-6 py-2 rounded-full hover:bg-[#633cd3] transition-all transform hover:scale-105 shadow-lg"
               >
                 Get Started
@@ -274,7 +274,7 @@ function HomePage() {
                   Contact
                 </button>
                 <button
-                  onClick={() => (window.location.href = "/app")}
+                  onClick={() => (window.location.href = "/auth")}
                   className="block w-full text-left px-3 py-2 bg-blue-600 text-white hover:bg-blue-700"
                 >
                   Get Started
@@ -362,7 +362,7 @@ function HomePage() {
           </div>
 
           <button
-            onClick={() => (window.location.href = "/app")}
+            onClick={() => (window.location.href = "/auth")}
             className="bg-white text-[#7650e3] px-8 py-4 rounded-full text-lg font-semibold hover:bg-[#d7d7fc] transition-all transform hover:scale-105 shadow-2xl inline-flex items-center space-x-2"
             style={{ transform: `translateY(${scrollY * 0.2}px)` }}
           >
@@ -545,7 +545,7 @@ function HomePage() {
                 </div>
               </div>
               <button
-                onClick={() => (window.location.href = "/app?plan=basic")}
+                onClick={() => (window.location.href = "/auth?plan=basic")}
                 className="w-full bg-[#7650e3] text-white py-3 my-3 rounded-full hover:bg-[#7650e3)] transition-all font-semibold"
               >
                 Get Started
@@ -601,7 +601,7 @@ function HomePage() {
                 </div>
               </div>
               <button
-                onClick={() => (window.location.href = "/app?plan=pro")}
+                onClick={() => (window.location.href = "/auth?plan=pro")}
                 className="w-full bg-white text-[#7650e3] py-3 my-3 rounded-full hover:bg-[#d7d7fc] transition-all font-semibold"
               >
                 Get Started

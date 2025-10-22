@@ -179,28 +179,28 @@ export const PricingPage: React.FC = () => {
               return (
                 <div
                   key={tier.id}
-                  className={`relative theme-bg-quaternary rounded-2xl shadow-lg border theme-border p-6 transition-all hover:-translate-y-1 hover:shadow-xl duration-300 ${
+                  className={`bg-gradient-to-br from-[#7650e3] to-[#6366F1] rounded-2xl shadow-2xl p-8 transform hover:scale-105 transition-all relative ${
                     isCurrentPlan ? "ring-2 ring-blue-500" : ""
                   }`}
                 >
                   {isCurrentPlan && (
-                    <span className=" bg-blue-600 text-white text-[11px] px-2 py-1 rounded-full">
+                    <span className="bg-yellow-400 text-gray-900 px-4 py-1 rounded-full text-sm font-bold">
                       Current Plan
                     </span>
                   )}
 
-                  <h3 className="text-2xl font-bold mb-2 text-center">
+                  <h3 className="text-3xl font-bold mb-2 text-center text-yellow-400">
                     {tier.name}
                   </h3>
-                  <p className="text-center text-2xl font-bold mb-5">
+                  <p className="text-center text-2xl font-bold mb-5 text-white">
                     ${tier.amount}/month
                   </p>
 
                   <ul className="space-y-3 mb-6 min-h-56">
                     {tier.features?.map((f: string, i: number) => (
                       <li key={i} className="flex items-start">
-                        <Check className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
-                        {f}
+                        <Check className="w-6 h-6 text-yellow-400 mr-3 flex-shrink-0" />
+                        <span className="text-white">{f}</span>
                       </li>
                     ))}
                   </ul>
@@ -210,10 +210,10 @@ export const PricingPage: React.FC = () => {
                     disabled={
                       loadingPackage || isCurrentPlan || disableDowngrade
                     }
-                    className={`w-full py-3 rounded-lg flex items-center justify-center gap-2 ${
+                    className={`w-full bg-white text-[#7650e3] py-3 my-3 rounded-full transition-all font-semibold ${
                       isCurrentPlan || disableDowngrade
-                        ? "bg-gray-300 cursor-not-allowed text-gray-500"
-                        : "theme-button-primary hover:brightness-110"
+                        ? " bg-white text-[#7650e3]"
+                        : " bg-[white] text-[#7650e3]"
                     }`}
                   >
                     {loadingPackage && selectedPlan?.id === tier.id ? (
@@ -237,7 +237,7 @@ export const PricingPage: React.FC = () => {
       )}
 
       {activeTab === "addons" && (
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 gap-8">
           {addons.length === 0 ? (
             <p className="col-span-3 text-center text-gray-500">
               No add-ons available
@@ -246,16 +246,18 @@ export const PricingPage: React.FC = () => {
             addons.map((addon) => (
               <div
                 key={addon.id}
-                className="theme-bg-quaternary rounded-2xl shadow-md border p-6 hover:-translate-y-1 transition-all"
+                className="bg-gradient-to-br from-[#7650e3] to-[#6366F1] rounded-2xl shadow-2xl p-8 transform hover:scale-105 transition-all relative"
               >
                 <div className="flex justify-center mb-4">
-                  <Gift className="w-10 h-10 text-yellow-500" />
+                  <Gift className="w-10 h-10 text-yellow-400" />
                 </div>
-                <h3 className="text-2xl font-semibold text-center mb-2">
+                <h3 className="text-2xl font-semibold text-center mb-2 text-white">
                   {addon.title}
                 </h3>
-                <p className="text-center mb-3">{addon.coins} Coins</p>
-                <p className="text-center text-3xl font-bold mb-6">
+                <p className="text-center mb-3 text-yellow-400 font-bold text-3xl">
+                  {addon.coins} Coins
+                </p>
+                <p className="text-center text-2xl font-bold mb-6 text-white">
                   ${addon.amount}
                 </p>
                 <button
@@ -263,7 +265,7 @@ export const PricingPage: React.FC = () => {
                     setSelectedAddon(addon);
                     setAddonConfirmOpen(true);
                   }}
-                  className="w-full py-3 rounded-lg theme-button-primary hover:brightness-110"
+                  className="w-full py-3 rounded-lg theme-button-trinary font-semibold hover:brightness-110 transition-all"
                 >
                   Buy Add-on
                 </button>

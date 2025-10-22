@@ -61,7 +61,8 @@ console.log("hasLanded in App.tsx:", hasLanded);
     <AppProvider>
       <AuthProvider>
         <Routes>
-         <Route path="/" element={showlanded() ? <HomePage /> : <LandingPage />} />  
+         {/* <Route path="/" element={showlanded() ? <HomePage /> : <LandingPage />} />   */}
+         <Route path="/" element={<HomePage />} />  
 
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />

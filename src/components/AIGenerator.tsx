@@ -144,20 +144,24 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
 
 
   return (
-    <div className="max-w-full mx-auto bg-white rounded-2xl shadow-lg m-6 h-fit ">
+    <div className="max-w-full mx-auto bg-white rounded-2xl shadow-lg m-6 h-fit px-6 py-8">
       <div className="text-center mb-8">
         <div className="w-12 h-12 aspect-square bg-gradient-to-r from-blue-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
           <Brain className="w-8 h-8 text-blue-600" />
         </div>
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">AI is Crafting Your Posts</h2>
-        <p className="text-gray-600">Creating optimized content for each platform</p>
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">
+          AI is Crafting Your Posts
+        </h2>
+        <p className="text-gray-600">
+          Creating optimized content for each platform
+        </p>
       </div>
 
       <div className="space-y-6">
         {/* Progress Bar */}
         <div className="bg-gray-100 rounded-full h-3 overflow-hidden">
           <div
-            className="bg-gradient-to-r from-blue-500 to-purple-500 h-full transition-all duration-1000 ease-out"
+            className="bg-gradient-to-r from-[#1666fb] to-purple-500 h-full transition-all duration-1000 ease-out"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -166,7 +170,11 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
         {currentPlatform && (
           <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-xl border border-blue-200">
             <div className="flex items-center justify-center space-x-4">
-              <div className={`w-12 h-12 aspect-square rounded-full shadow-lg flex items-center justify-center animate-bounce text-white ${getPlatformColors(currentPlatform)}`}>
+              <div
+                className={`w-12 h-12 aspect-square rounded-full shadow-lg flex items-center justify-center animate-bounce text-white ${getPlatformColors(
+                  currentPlatform
+                )}`}
+              >
                 {(() => {
                   const IconComponent = getPlatformIcon(currentPlatform);
                   return IconComponent ? (
@@ -185,9 +193,15 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
                 </p>
               </div>
               <div className="flex space-x-1">
-                <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-                <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+                <div className="w-2 h-2 bg-[#1666fb] rounded-full animate-pulse"></div>
+                <div
+                  className="w-2 h-2 bg-[#1666fb] rounded-full animate-pulse"
+                  style={{ animationDelay: "0.2s" }}
+                ></div>
+                <div
+                  className="w-2 h-2 bg-[#1666fb] rounded-full animate-pulse"
+                  style={{ animationDelay: "0.4s" }}
+                ></div>
               </div>
             </div>
           </div>
@@ -198,22 +212,40 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
           <div className="bg-white border border-gray-200 p-4 rounded-lg">
             <Sparkles className="w-6 h-6 text-yellow-500 mb-2" />
             <h3 className="font-medium text-gray-900">Smart Optimization</h3>
-            <p className="text-sm text-gray-600">Tailoring content for each platform's unique audience</p>
+            <p className="text-sm text-gray-600">
+              Tailoring content for each platform's unique audience
+            </p>
           </div>
           <div className="bg-white border border-gray-200 p-4 rounded-lg">
             <Zap className="w-6 h-6 text-blue-500 mb-2" />
             <h3 className="font-medium text-gray-900">Hashtag Research</h3>
-            <p className="text-sm text-gray-600">Finding trending and relevant hashtags</p>
+            <p className="text-sm text-gray-600">
+              Finding trending and relevant hashtags
+            </p>
           </div>
           <div className="bg-white border border-gray-200 p-4 rounded-lg">
             <Brain className="w-6 h-6 text-purple-500 mb-2" />
             <h3 className="font-medium text-gray-900">Tone Analysis</h3>
-            <p className="text-sm text-gray-600">Matching your brand voice perfectly</p>
+            <p className="text-sm text-gray-600">
+              Matching your brand voice perfectly
+            </p>
           </div>
         </div>
 
         <div className="text-center text-sm text-gray-500">
-          <p>Processing {contentData?.selectedPlatforms?.length || contentData?.platforms?.length || 1} platform{(contentData?.selectedPlatforms?.length || contentData?.platforms?.length || 1) > 1 ? 's' : ''}...</p>
+          <p>
+            Processing{" "}
+            {contentData?.selectedPlatforms?.length ||
+              contentData?.platforms?.length ||
+              1}{" "}
+            platform
+            {(contentData?.selectedPlatforms?.length ||
+              contentData?.platforms?.length ||
+              1) > 1
+              ? "s"
+              : ""}
+            ...
+          </p>
         </div>
       </div>
     </div>

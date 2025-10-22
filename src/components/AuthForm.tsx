@@ -154,7 +154,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
 
         setTimeout(() => {
           navigate("/content");
-        }, 2000);
+        },0);
       }
     } catch (error: any) {
       setError(error.message || "Google authentication failed");

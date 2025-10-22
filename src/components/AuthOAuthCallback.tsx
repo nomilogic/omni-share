@@ -79,7 +79,7 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
                 "Authentication successful! You can close this window."
               );
             }
-          }, 1000);
+          }, 400);
         } else {
           console.log("result 12113123", result);
           localStorage.setItem("auth_token", result.token);
@@ -87,7 +87,7 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
 
           setTimeout(() => {
             navigate("/content");
-          }, 2000);
+          }, 10);
         }
       } catch (error) {
         console.error("error", error);

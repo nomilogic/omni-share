@@ -61,11 +61,11 @@ export const getPlatformIcon = (platform: Platform) => {
 // Get platform colors for text, borders, etc.
 export const getPlatformColors = (platform: Platform) => {
   const colors = {
-    facebook: "bg-blue-600 border-blue-200 text-blue-600",
+    facebook: "bg-[#1666fb] border-blue-200 text-[blue-600]",
     instagram:
       "bg-gradient-to-r from-purple-500 to-pink-500 border-purple-200 text-purple-600",
     twitter: "bg-black border-gray-300 text-black",
-    linkedin: "bg-blue-700 border-blue-200 text-blue-700",
+    linkedin: "bg-[#1266bf] border-blue-200 text-blue-700",
     tiktok: "bg-black border-gray-300 text-black",
     youtube: "bg-red-600 border-red-200 text-red-600",
   };
@@ -75,10 +75,10 @@ export const getPlatformColors = (platform: Platform) => {
 // Get platform background colors for icon containers
 export const getPlatformIconBackgroundColors = (platform: Platform) => {
   const colors = {
-    facebook: "bg-blue-700",
+    facebook: "bg-[#1666fb]",
     instagram: "bg-gradient-to-r from-purple-500 to-pink-500",
     twitter: "bg-black",
-    linkedin: "bg-blue-600",
+    linkedin: "bg-[#1266bf]",
     tiktok: "bg-black",
     youtube: "bg-red-600",
   };

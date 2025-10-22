@@ -105,12 +105,12 @@ export const ProfilePage: React.FC = () => {
   }
 
   return (
-    <div className="bg-gradient-to-br from-purple-50 via-white to-purple-50 p-0">
+    <div className="bg-gradient-to-br from-purple-50 via-white to-purple-50 p-0 w-full">
       <div className="w-full mx-auto">
         {!isEditing && (
           <>
             {/* Header */}
-            <div className="/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-0 mb-6">
+            <div className="/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-0 mb-6 w-full">
               <div className="flex items-center justify-between mb-6 px-4">
                 <div className="flex items space-x-4">
                   
