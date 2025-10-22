@@ -370,7 +370,9 @@ export const AuthForm: React.FC<AuthFormProps> = ({
             </button>
           </div>
           <div className="mt-6 grid grid-cols-1 gap-3">
-            {isOAuthConfigured("google") && (
+            {
+            // isOAuthConfigured("google") && 
+            (
               <button
                 type="button"
                 onClick={handleGoogleOAuth}
@@ -491,6 +493,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         }}
         resendOtp={API.resendOtp}
       />
+  
     </div>
   );
 };
