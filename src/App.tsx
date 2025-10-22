@@ -25,6 +25,7 @@ import AddonSuccessPage from "./pages/PackageAddonSuccess";
 import PackageSuccessPage from "./pages/PackagePaymentSuccess";
 import TransactionHistory from "./pages/TransectionHistory";
 import GenerationAmountPage from "./pages/GenerationAmountPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 
 // OAuth callback wrapper component
 const OAuthCallbackWrapper = () => {
@@ -127,15 +128,14 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
 
           <Route
             path="/profile/*"
             element={
-              // Changed from /campaigns/* to /profile/*
               <ProtectedRoute>
                 <AppLayout>
-                  <ProfilePage />{" "}
-                  {/* Changed from CompaniesPage to ProfilePage */}
+                  <ProfilePage />
                 </AppLayout>
               </ProtectedRoute>
             }

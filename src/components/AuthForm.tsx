@@ -19,10 +19,22 @@ interface AuthFormProps {
 
 export const AuthForm: React.FC<AuthFormProps> = ({
   onAuthSuccess,
-  onForgetPassword,
   loading: externalLoading,
   error: externalError,
 }) => {
+  const onForgetPassword = async (email: string) => {
+    setLoading(true);
+    try {
+      await API.generateForgetLink({ email });
+      alert("If that email exists, a reset link has been sent.");
+    } catch (err: any) {
+      console.error("generateForgetLink failed", err);
+      setError(err?.response?.data?.message || "Failed to send reset link");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -194,7 +206,6 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         <div className="absolute inset-0 theme-bg-trinary from-black/30 via-transparent to-transparent bg-overlay "></div>
       </div>
 
-      {/* Floating Elements */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-20 left-10 w-20 h-20 bg-white/10 rounded-full animate-pulse"></div>
         <div className="absolute top-40 right-20 w-16 h-16 bg-white/20 rounded-full animate-bounce"></div>
@@ -202,7 +213,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         <div className="absolute bottom-20 right-10 w-24 h-24 bg-white/10 rounded-full animate-pulse"></div>
       </div>
 
-      {!showOtpPopup && (
+      {!showOtpPopup && !forgotMode && (
         <div
           className="theme-bg-card rounded-xl shadow-lg p-6 border w-full"
           style={{ borderColor: "var(--theme-border)" }}
@@ -287,53 +298,6 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                 >
                   Forgot password?
                 </button>
-              </div>
-            )}
-
-            {forgotMode && (
-              <div className="space-y-3">
-                <p className="text-sm text-gray-600">
-                  Enter your email to receive a password reset link.
-                </p>
-                <input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) =>
-                    setFormData({ ...formData, email: e.target.value })
-                  }
-                  className="w-full px-3 py-2 theme-input rounded-lg focus:outline-none"
-                  placeholder="Enter your email"
-                />
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={async () => {
-                      if (!onForgetPassword) return;
-                      try {
-                        setLoading(true);
-                        await onForgetPassword(formData.email);
-                        setForgotMode(false);
-                        setError(
-                          "If that email exists, a reset link was sent."
-                        );
-                      } catch (err: any) {
-                        setError(err?.message || "Failed to send reset link");
-                      } finally {
-                        setLoading(false);
-                      }
-                    }}
-                    className="px-4 py-1.5 bg-purple-600 text-white rounded-md"
-                  >
-                    Send Reset Link
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setForgotMode(false)}
-                    className="px-4 py-1.5 border rounded-md"
-                  >
-                    Cancel
-                  </button>
-                </div>
               </div>
             )}
 
@@ -448,6 +412,70 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                 <span className="ml-2">Facebook</span>
               </button>
             )}
+          </div>
+        </div>
+      )}
+
+      {forgotMode && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="otp-title"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm animate-fadeIn"
+        >
+          <div className="w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-6 md:p-8 relative animate-slideUp">
+            <h2 className="text-2xl font-bold theme-text-secondary text-center mb-2">
+              Forgot Password
+            </h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400 text-center mb-6">
+              Enter your registered email address below. We’ll send you a link
+              to reset your password.
+            </p>
+
+            <div className="space-y-4">
+              <input
+                type="email"
+                value={formData.email}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
+                className="w-full px-4 py-2.5 text-gray-800 dark:text-gray-100 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder-gray-400"
+                placeholder="Enter your email"
+              />
+
+              <div className="flex gap-3 justify-center">
+                <button
+                  type="button"
+                  onClick={async () => {
+                    try {
+                      setLoading(true);
+                      await onForgetPassword(formData.email);
+                      setError("Email link was sent.");
+                    } catch (err: any) {
+                      setError(err?.message || "Failed to send reset link");
+                    } finally {
+                      setLoading(false);
+                    }
+                  }}
+                  disabled={loading}
+                  className={`px-5 py-2 rounded-lg text-white font-medium transition-all duration-200 ${
+                    loading
+                      ? "bg-purple-400 cursor-not-allowed"
+                      : "bg-purple-600 hover:bg-purple-700 shadow-md hover:shadow-lg"
+                  }`}
+                >
+                  {loading ? "Sending..." : "Send Link"}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setForgotMode(false)}
+                  className="px-5 py-2 rounded-lg border border-gray-300 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
