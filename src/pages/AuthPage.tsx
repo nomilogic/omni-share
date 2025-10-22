@@ -79,17 +79,16 @@ export const AuthPage: React.FC = () => {
           error={error}
         />
       </div>
-      <footer className="w-full border-t bg-transparent px-4 py-4 text-center text-sm text-gray-500 ">
-        <div className="max-w-3xl mx-auto flex flex-col items-center gap-2 sm:flex-row sm:justify-center sm:gap-4">
+
+      <footer className="w-full px-4 py-4 text-center text-sm theme-text-light absolute bottom-0">
+        <div className="max-w-full mx-auto flex md:flex-row items-center gap-2 md:justify-between justify-center flex-col">
           <span>© {new Date().getFullYear()} OMNISHARE</span>
-          <a href="/privacy" className="text-primary hover:underline">
-            Privacy
-          </a>
-          <a href="/terms" className="text-primary hover:underline">
-            Terms
-          </a>
+          <div><a href="/privacy" className="text-primary hover:underline">Privacy</a>&nbsp; | &nbsp; 
+          <a href="/terms" className="text-primary hover:underline">Terms</a>
+          </div>
         </div>
       </footer>
     </div>
   );
 };
+    

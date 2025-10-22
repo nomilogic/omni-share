@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { OnboardingCarousel } from "../components/OnboardingCarousel";
 import { AuthForm } from "../components/AuthForm";
 import { useAppContext } from "../context/AppContext";
@@ -9,6 +9,9 @@ export const LandingPage: React.FC = () => {
   const { dispatch } = useAppContext();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    localStorage.setItem('hasLanded', 'true');
+  })
   const handleGetStarted = () => {
     setShowAuth(true);
   };
@@ -40,20 +43,23 @@ export const LandingPage: React.FC = () => {
   if (showAuth) {
     return (
       <>
-    
-      <div className="w-full flex min-h-screen x-2 theme-gradient from-blue-50 to-indigo-100 items-center justify-center flex-col relative">
-          <AuthForm onAuthSuccess={handleAuthSuccess}  />
-           <footer className="flex w-full  absolute bg-transparent px-4 py-4 text-sm text-white justify-between z-10 bottom-0 flex-row">
-          <div>© {new Date().getFullYear()} OMNISHARE</div>
-          <div>
-          <a href="/privacy" className="">Privacy</a>&nbsp;  | &nbsp;
-          <a href="/terms" className="">Terms</a>
-          
-          </div>
-      </footer> 
-        
-      </div>
-      
+        <div className="w-full flex min-h-screen x-2 theme-gradient from-blue-50 to-indigo-100 items-center justify-center flex-col relative">
+          <AuthForm onAuthSuccess={handleAuthSuccess} />
+          <footer className="w-full px-4 py-4 text-center text-sm theme-text-light absolute bottom-0">
+            <div className="max-w-full mx-auto flex md:flex-row items-center gap-2 md:justify-between justify-center flex-col">
+              <span>© {new Date().getFullYear()} OMNISHARE</span>
+              <div>
+                <a href="/privacy" className="text-primary hover:underline">
+                  Privacy
+                </a>
+                &nbsp; | &nbsp;
+                <a href="/terms" className="text-primary hover:underline">
+                  Terms
+                </a>
+              </div>
+            </div>
+          </footer>
+        </div>
       </>
     );
   }

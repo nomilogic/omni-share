@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { AppProvider, useAppContext } from "./context/AppContext";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -26,10 +26,12 @@ import PackageSuccessPage from "./pages/PackagePaymentSuccess";
 import TransactionHistory from "./pages/TransectionHistory";
 import GenerationAmountPage from "./pages/GenerationAmountPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
+import HomePage from "./pages/HomePage";
 
 // OAuth callback wrapper component
 const OAuthCallbackWrapper = () => {
   const { dispatch } = useAppContext();
+  
 
   const handleAuthSuccess = (user: any) => {
     dispatch({ type: "SET_USER", payload: user });
@@ -38,20 +40,32 @@ const OAuthCallbackWrapper = () => {
 
   return <AuthOAuthCallback onAuthSuccess={handleAuthSuccess} />;
 };
+//goto landing page only once
 
 function App() {
+let hasLanded: any;
+
   useEffect(() => {
     themeManager.initialize();
+hasLanded = localStorage.getItem('hasLanded');
+console.log("hasLanded in App.tsx:", hasLanded);
+
   }, []);
+  let showlanded=()=>{
+    hasLanded = localStorage.getItem('hasLanded');
+  //  alert("hasLanded in showlandend:"+ hasLanded);
+    return hasLanded;
+  }
 
   return (
     <AppProvider>
       <AuthProvider>
         <Routes>
-          <Route path="/" element={<LandingPage />} />
+         <Route path="/" element={showlanded() ? <HomePage /> : <LandingPage />} />  
 
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/home" element={<HomePage />} />
 
           <Route path="/oauth/:platform/callback" element={<OAuthCallback />} />
 
