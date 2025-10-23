@@ -585,7 +585,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
                           >
                             <div className="relative">
                               <input
-                                className="text-green-500 focus:ring-green-400 sr-only"
+                                className="text-green-500 focus:ring-green-400 none absolute opacity-0 w-0 h-0"
                                 type="checkbox"
                                 checked={selectedPlatforms.includes(
                                   post.platform
