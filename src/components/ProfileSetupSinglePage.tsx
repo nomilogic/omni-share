@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import API from "../services/api";
 import type { ProfileFormData } from "../types/profile";
+import { useAppContext } from "../context/AppContext";
 
 const STORAGE_KEY = "profile_form_data";
 
@@ -66,7 +67,6 @@ const profileFormConfig = [
         type: "text",
         placeholder: "e.g. Sarah Ahmed",
         required: true,
-        error: errors.fullName,
       },
       {
         name: "email",
@@ -74,7 +74,6 @@ const profileFormConfig = [
         type: "email",
         placeholder: "e.g. sarah@brandstudio.com",
         required: false,
-        error: errors.email,
       },
       {
         name: "phoneNumber",
@@ -82,7 +81,6 @@ const profileFormConfig = [
         type: "tel",
         placeholder: "e.g. +971 50 123 4567",
         required: false,
-        error: errors.phoneNumber,
       },
     ],
   },
@@ -274,6 +272,7 @@ const ProfileSetupSinglePage: React.FC = () => {
   const [urlAnalysisLoading, setUrlAnalysisLoading] = useState(false);
   const [urlAnalysisError, setUrlAnalysisError] = useState<string | null>(null);
   const { user, updateProfile } = useAuth();
+  const { setProfileEditing } = useAppContext();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [selectedFileName, setSelectedFileName] = useState("");
@@ -448,16 +447,18 @@ const ProfileSetupSinglePage: React.FC = () => {
   }, [formData]);
 
   const handleSkip = () => {
-    if (
-      window.confirm(
-        "Are you sure you want to skip profile setup? You can complete it later from your settings."
-      )
-    ) {
-      localStorage.removeItem(STORAGE_KEY);
-      navigate("/profile");
-    }
+    // if (
+    //   window.confirm(
+    //     "Are you sure you want to skip profile setup? You can complete it later from your settings."
+    //   )
+    // ) {
+      
+    //  // navigate("/content");
+    // }
+    localStorage.removeItem(STORAGE_KEY);
+    // close the editor via context and navigate to content
+    setProfileEditing(false);
   };
-
   const handleInputChange = (field: keyof ProfileFormData, value: any) => {
     console.log(`Setting ${field} to:`, value);
     // Clear error when user starts typing
@@ -735,10 +736,11 @@ const ProfileSetupSinglePage: React.FC = () => {
 
       await API.updateProfileData(cleanData);
       localStorage.removeItem(STORAGE_KEY);
+      setProfileEditing(false);
       navigate("/content");
     } catch (err) {
       console.error(err);
-      alert("Failed to update profile.");
+     // alert("Failed to update profile.");
     } finally {
       setLoading(false);
     }
@@ -772,7 +774,7 @@ const ProfileSetupSinglePage: React.FC = () => {
                 type="button"
                 className="text-sm font-medium theme-text-light underline hover:opacity-90"
               >
-                Skip for now
+                Skip
               </button>
             </div>
           </div>

@@ -80,6 +80,7 @@ export interface AppState {
   hasTierSelected: boolean;
   hasProfileSetup: boolean;
   balance: number;
+  isProfileEditing?: boolean;
 }
 
 import { Platform } from "../types";
@@ -103,6 +104,7 @@ type AppAction =
   | { type: "SET_ONBOARDING_COMPLETE"; payload: boolean }
   | { type: "SET_TIER_SELECTED"; payload: boolean }
   | { type: "SET_PROFILE_SETUP"; payload: boolean }
+  | { type: "SET_PROFILE_EDITING"; payload: boolean }
   | { type: "RESET_STATE" }
   | { type: "SET_BUSINESS_ACCOUNT"; payload: boolean }
   | { type: "SET_BALANCE"; payload: number };
@@ -238,6 +240,8 @@ function appReducer(state: AppState, action: AppAction): AppState {
       return { ...state, hasTierSelected: action.payload };
     case "SET_PROFILE_SETUP":
       return { ...state, hasProfileSetup: action.payload };
+    case "SET_PROFILE_EDITING":
+      return { ...state, isProfileEditing: action.payload };
     case "RESET_STATE":
       // Clear localStorage when resetting state
       setStoredContentData(null);
@@ -516,5 +520,6 @@ export const useAppContext = () => {
     campaign: context.state.selectedCampaign,
     selectCampaign,
     logout,
+    setProfileEditing: (v: boolean) => context.dispatch({ type: 'SET_PROFILE_EDITING', payload: v }),
   };
 };

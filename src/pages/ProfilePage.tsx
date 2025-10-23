@@ -32,8 +32,8 @@ interface UserProfile {
 }
 
 export const ProfilePage: React.FC = () => {
-  const { state, dispatch } = useAppContext();
-  const [isEditing, setIsEditing] = useState(false);
+  const { state, dispatch, setProfileEditing } = useAppContext();
+  const isEditing = !!state.isProfileEditing;
   const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState<any>({});
 
@@ -74,9 +74,9 @@ export const ProfilePage: React.FC = () => {
       setLoading(true);
       const response = await API.updateProfile(profile);
 
-      const updatedProfile = await response.data.data;
-      setProfile(updatedProfile);
-      setIsEditing(false);
+  const updatedProfile = await response.data.data;
+  setProfile(updatedProfile);
+  setProfileEditing(false);
 
       if (!state.hasCompletedOnboarding) {
         dispatch({ type: "SET_ONBOARDING_COMPLETE", payload: true });
@@ -154,7 +154,7 @@ export const ProfilePage: React.FC = () => {
                 </div>
                 <div className="flex space-x-2">
                   <button
-                    onClick={() => setIsEditing(true)}
+                    onClick={() => setProfileEditing(true)}
                     className="flex items-center px-2 py-2 text-purple-700 text-underline rounded-lg hover:bg-purple-50 transition-colors"
                   >
                     <Edit3 className="w-4 h-4 mr-2" />
@@ -476,7 +476,7 @@ export const ProfilePage: React.FC = () => {
             
             {/* <div className="flex items-center justify-end mb-4 absolute top-2 right-2">
               <button
-                onClick={() => setIsEditing(false)}
+                onClick={() => setProfileEditing(false)}
                 className=" flex items-center px-3 py-1 theme-bg-trinary theme-text-light  rounded-md text-sm hover:bg-gray-200"
               >
                 <X className="w-4 h-4 mr-2" />

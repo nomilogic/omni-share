@@ -158,7 +158,7 @@ function HomePage() {
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20 flex-row-reverse">
+          <div className="flex justify-between items-center h-20 flex-row-reverse mds:flex-row">
             <div className="flex items-center space-x-2">
              
 
