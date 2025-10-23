@@ -248,7 +248,7 @@ export const ProfilePage: React.FC = () => {
                         </div>
                         <div className="text-sm mt-2">
                           <a
-                            href={profile.publicUrl || "#"}
+                            href={profile?.publicUrl || "#"}
                             target="_blank"
                             rel="noreferrer"
                             className="text-purple-600 hover:underline"
@@ -471,7 +471,7 @@ export const ProfilePage: React.FC = () => {
         )}
 
         {/* Inline editor: reuse ProfileSetupSinglePage elements for editing */}
-        {isEditing ? (
+        {isEditing &&  (
           <div className="relative w-full">
             
             {/* <div className="flex items-center justify-end mb-4 absolute top-2 right-2">
@@ -487,7 +487,7 @@ export const ProfilePage: React.FC = () => {
               <ProfileSetupSinglePage />
             </div>
           </div>
-        ) : null}
+        ) }
       </div>
     </div>
   );

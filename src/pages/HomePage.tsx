@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Menu, X, ChevronDown, Play, Check, Share2, Zap, BarChart3, Calendar, Video, Sparkles, Star, ChevronLeft, ChevronRight, Users, TrendingUp } from 'lucide-react';
 import Icon from '../components/Icon';
+import { useNavigate } from 'react-router-dom';
 
 function HomePage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -9,6 +10,7 @@ function HomePage() {
   const [currentReviewIndex, setCurrentReviewIndex] = useState(0);
   const [slideDirection, setSlideDirection] = useState<'left' | 'right' | null>(null);
   const [showContactForm, setShowContactForm] = useState(false);
+  const navigate= useNavigate();
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
@@ -217,7 +219,7 @@ function HomePage() {
                 Contact
               </button>
               <button
-                onClick={() => (window.location.href = "/auth")}
+                onClick={() => navigate("/auth")}
                 className="bg-[#7650e3] text-white px-6 py-2 rounded-full hover:bg-[#633cd3] transition-all transform hover:scale-105 shadow-lg"
               >
                 Get Started
@@ -274,7 +276,7 @@ function HomePage() {
                   Contact
                 </button>
                 <button
-                  onClick={() => (window.location.href = "/auth")}
+                  onClick={() => navigate("/auth")}
                   className="block w-full text-left px-3 py-2 bg-blue-600 text-white hover:bg-blue-700"
                 >
                   Get Started
@@ -362,7 +364,7 @@ function HomePage() {
           </div>
 
           <button
-            onClick={() => (window.location.href = "/auth")}
+            onClick={() => navigate("/auth")}
             className="bg-white text-[#7650e3] px-8 py-4 rounded-full text-lg font-semibold hover:bg-[#d7d7fc] transition-all transform hover:scale-105 shadow-2xl inline-flex items-center space-x-2"
             style={{ transform: `translateY(${scrollY * 0.2}px)` }}
           >

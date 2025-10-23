@@ -66,6 +66,7 @@ const profileFormConfig = [
         type: "text",
         placeholder: "e.g. Sarah Ahmed",
         required: true,
+        error: errors.fullName,
       },
       {
         name: "email",
@@ -73,6 +74,7 @@ const profileFormConfig = [
         type: "email",
         placeholder: "e.g. sarah@brandstudio.com",
         required: false,
+        error: errors.email,
       },
       {
         name: "phoneNumber",
@@ -80,6 +82,7 @@ const profileFormConfig = [
         type: "tel",
         placeholder: "e.g. +971 50 123 4567",
         required: false,
+        error: errors.phoneNumber,
       },
     ],
   },
@@ -110,7 +113,7 @@ const profileFormConfig = [
       {
         name: "brandLogo",
         label: "Brand Logo / Profile Image",
-        type: "text",
+        type: "file",
         placeholder: "Upload or confirm your logo/profile image",
         required: false,
       },
@@ -274,6 +277,52 @@ const ProfileSetupSinglePage: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [selectedFileName, setSelectedFileName] = useState("");
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  
+  const validateForm = () => {
+    const newErrors: { [key: string]: string } = {};
+
+    // Required field validation
+    if (!formData.fullName || formData.fullName.trim().length < 2) {
+      newErrors.fullName = "Full name is required (minimum 2 characters)";
+    }
+
+    // Email format validation (if provided)
+    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Please enter a valid email address";
+    }
+
+    // Phone number format validation (if provided)
+    if (formData.phoneNumber && !/^[+\d\s-()]{10,}$/.test(formData.phoneNumber)) {
+      newErrors.phoneNumber = "Please enter a valid phone number";
+    }
+
+    // URL format validation (if provided)
+    if (formData.publicUrl && !/^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?$/.test(formData.publicUrl)) {
+      newErrors.publicUrl = "Please enter a valid URL";
+    }
+
+    // Brand name validation (if provided)
+    if (formData.brandName && formData.brandName.trim().length < 2) {
+      newErrors.brandName = "Brand name must be at least 2 characters";
+    }
+
+    // Audience validation
+    if (formData.audienceAgeRange && formData.audienceAgeRange.length === 0) {
+      newErrors.audienceAgeRange = "Please select at least one age range";
+    }
+
+    if (formData.preferredPlatforms && formData.preferredPlatforms.length === 0) {
+      newErrors.preferredPlatforms = "Please select at least one platform";
+    }
+
+    if (formData.primaryPurpose && formData.primaryPurpose.length === 0) {
+      newErrors.primaryPurpose = "Please select at least one primary purpose";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   // Initialize form data state
   const [formData, setFormData] = useState<ProfileFormData>(() => {
@@ -316,7 +365,7 @@ const ProfileSetupSinglePage: React.FC = () => {
 
   // Listen for storage changes
   useEffect(() => {
-    loadProfile(user.profile.publicUrl || "");
+    loadProfile(user.profile?.publicUrl || "");
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === STORAGE_KEY && e.newValue) {
         console.log("Storage changed, new value:", e.newValue);
@@ -405,12 +454,16 @@ const ProfileSetupSinglePage: React.FC = () => {
       )
     ) {
       localStorage.removeItem(STORAGE_KEY);
-      navigate("/content");
+      navigate("/profile");
     }
   };
 
   const handleInputChange = (field: keyof ProfileFormData, value: any) => {
     console.log(`Setting ${field} to:`, value);
+    // Clear error when user starts typing
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: '' }));
+    }
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -447,6 +500,7 @@ const ProfileSetupSinglePage: React.FC = () => {
       preferredPlatforms: [],
       primaryPurpose: [],
       keyOutcomes: [],
+      contentCategories: [],
       postingStyle: "",
     };
     setFormData(emptyForm);
@@ -553,6 +607,8 @@ const ProfileSetupSinglePage: React.FC = () => {
       setUrlAnalysisLoading(false);
     }
   };
+
+ 
   const loadProfile = async (url: string) => {
     if (!user.profile.isOnboarding) {
       //setUrlAnalysisError("Please enter a valid URL.");
@@ -648,12 +704,36 @@ const ProfileSetupSinglePage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate form before submission
+    if (!validateForm()) {
+      // Scroll to first error
+      const firstError = Object.keys(errors)[0];
+      const errorElement = document.querySelector(`[name="${firstError}"]`);
+      if (errorElement) {
+        errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return;
+    }
+
     setLoading(true);
     try {
       const submitData = { ...formData };
-      delete submitData.email;
-      delete submitData.businessName;
-      await API.updateProfileData(submitData as any);
+      const form = document.querySelector("form");  
+      const formD = new FormData(form as HTMLFormElement);
+      const fileBase64 = await convertFileToBase64(formD.get("brandLogo"));
+      submitData.brandLogo = fileBase64 as string;
+      
+      // Create a clean copy without email and optional fields
+      const cleanData = {
+        ...submitData,
+        email: undefined,
+        businessName: undefined
+      };
+      delete cleanData.email;
+      delete (cleanData as any).businessName;
+
+      await API.updateProfileData(cleanData);
       localStorage.removeItem(STORAGE_KEY);
       navigate("/content");
     } catch (err) {
@@ -663,6 +743,17 @@ const ProfileSetupSinglePage: React.FC = () => {
       setLoading(false);
     }
   };
+  
+  const convertFileToBase64=async (file:any)=>{ 
+  return new Promise((resolve, reject) => {
+    const reader:any = new FileReader();
+    console.log("Converting file to base64:", reader.result);  
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
 
   return (
     <div className="px-0 py-0 md:px-0">

@@ -7,7 +7,7 @@ export interface ProfileFormData {
   // Brand Information
   brandName: string;
   brandTone: string;
-  brandLogo: string | null;
+  brandLogo: File | string | null;
   publicUrl: string;
 
   // Audience Information
