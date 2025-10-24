@@ -163,7 +163,7 @@ export const PricingPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8 mx-auto">
+          <div className="grid xl:grid-cols-3 lg:grid-cols-2  gap-8 mx-auto">
             {packages.map((tier: any) => {
               const isCurrentPlan =
                 activePackage?.packageId === tier.id && activePackage?.isActive;
@@ -183,13 +183,13 @@ export const PricingPage: React.FC = () => {
                     isCurrentPlan ? "ring-2 ring-blue-500" : ""
                   }`}
                 >
-                  {isCurrentPlan && (<div className="absolute flex justify-center top-[-10px] left-0 right-0">
-                  
-                    <span className="bg-yellow-400 text-gray-900 px-4 py-1 rounded-full text-sm font-bold ">
-                      Current Plan
-                    </span>
-                  
-</div>)}
+                  {isCurrentPlan && (
+                    <div className="absolute flex justify-center top-[-10px] left-0 right-0">
+                      <span className="bg-yellow-400 text-gray-900 px-4 py-1 rounded-full text-sm font-bold ">
+                        Current Plan
+                      </span>
+                    </div>
+                  )}
                   <h3 className="text-3xl font-bold mb-2 text-center text-yellow-400">
                     {tier.name}
                   </h3>
