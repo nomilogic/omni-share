@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { historyRefreshService } from "../services/historyRefreshService";
+import API from "@/services/api";
 
 export const useUnreadPosts = () => {
   const [unreadCount, setUnreadCount] = useState(0);
@@ -7,6 +8,14 @@ export const useUnreadPosts = () => {
 
   const fetchUnreadCount = async () => {
     setLoading(false);
+    try {
+      API.unreadHistory().then((res) => {
+        setUnreadCount(res.data.data.unreadCount || 0);
+        setLoading(false);
+      });
+    } catch (error) {
+      console.error("Error fetching unread count:", error); 
+    }
   };
 
   useEffect(() => {
@@ -29,8 +38,11 @@ export const useUnreadPosts = () => {
     };
   }, []);
 
-  const markAllAsRead = () => {
-    setUnreadCount(0);
+  const markAllAsRead = async () => {
+   return API.readAllHistory().then((e) => {
+      setUnreadCount(0);
+    });
+    
   };
 
   return {

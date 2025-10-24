@@ -183,28 +183,19 @@ export const PricingPage: React.FC = () => {
                     isCurrentPlan ? "ring-2 ring-blue-500" : ""
                   }`}
                 >
-                  {isCurrentPlan && (
-                    <span className="bg-yellow-400 text-gray-900 px-4 py-1 rounded-full text-sm font-bold">
+                  {isCurrentPlan && (<div className="absolute flex justify-center top-[-10px] left-0 right-0">
+                  
+                    <span className="bg-yellow-400 text-gray-900 px-4 py-1 rounded-full text-sm font-bold ">
                       Current Plan
                     </span>
-                  )}
-
+                  
+</div>)}
                   <h3 className="text-3xl font-bold mb-2 text-center text-yellow-400">
                     {tier.name}
                   </h3>
                   <p className="text-center text-2xl font-bold mb-5 text-white">
                     ${tier.amount}/month
                   </p>
-
-                  <ul className="space-y-3 mb-6 min-h-56">
-                    {tier.features?.map((f: string, i: number) => (
-                      <li key={i} className="flex items-start">
-                        <Check className="w-6 h-6 text-yellow-400 mr-3 flex-shrink-0" />
-                        <span className="text-white">{f}</span>
-                      </li>
-                    ))}
-                  </ul>
-
                   <button
                     onClick={() => handleChoosePlan(tier)}
                     disabled={
@@ -212,7 +203,7 @@ export const PricingPage: React.FC = () => {
                     }
                     className={`w-full bg-white text-[#7650e3] py-3 my-3 rounded-full transition-all font-semibold ${
                       isCurrentPlan || disableDowngrade
-                        ? " bg-white text-[#7650e3]"
+                        ? " bg-white text-[#7650e3] opacity-50 cursor-not-allowed"
                         : " bg-[white] text-[#7650e3]"
                     }`}
                   >
@@ -222,13 +213,21 @@ export const PricingPage: React.FC = () => {
                         Processing...
                       </>
                     ) : isCurrentPlan ? (
-                      "Current Plan"
+                      "Active"
                     ) : disableDowngrade ? (
                       "Locked"
                     ) : (
                       "Upgrade"
                     )}
                   </button>
+                  <ul className="space-y-3 mb-6 min-h-56">
+                    {tier.features?.map((f: string, i: number) => (
+                      <li key={i} className="flex items-start">
+                        <Check className="w-6 h-6 text-yellow-400 mr-3 flex-shrink-0" />
+                        <span className="text-white">{f}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               );
             })}

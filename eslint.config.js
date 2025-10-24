@@ -26,6 +26,7 @@ export default tseslint.config(
 
       // 👇 turn off no-explicit-any
       "@typescript-eslint/no-explicit-any": "off",
+       'no-console': ['error', { allow: ['warn', 'error'] }],
     },
   }
 );

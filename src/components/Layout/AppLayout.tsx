@@ -108,23 +108,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     e.stopPropagation();
 
     try {
-      const token = localStorage.getItem("auth_token");
-      if (!token) return;
-
-      // API call to mark all as read
-      const response = await fetch("/api/post-history/history/read-all", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (response.ok) {
-        // Update local unread count immediately
-        markAllUnreadAsRead();
-        console.log("📚 All posts marked as read from sidebar badge");
-      }
+      await markAllUnreadAsRead();
     } catch (error) {
       console.error("Error marking all posts as read:", error);
     }
