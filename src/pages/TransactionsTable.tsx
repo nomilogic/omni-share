@@ -1,54 +1,46 @@
 import React from "react";
+import { Download } from "lucide-react";
+import API from "@/services/api";
 
-const TransactionsTable = ({ data }: any) => {
+const TransactionsHistoryBox = ({ data }: any) => {
   return (
-    <div className="w-full bg-[#7650e3] border border-gray-200 rounded-2xl shadow-sm p-6">
-      <h2 className="text-xl font-semibold text-white mb-4">
-        Recent Transactions
+    <div className="w-full bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
+      <h2 className="text-xl font-semibold text-gray-800 mb-4">
+        Transaction History
       </h2>
 
-      <div className="overflow-x-auto h-[75vh] overflow-scroll ">
-        <table className="w-full border-collapse ">
-          <thead className="sticky top-0 ">
-            <tr className="bg-gray-50 text-black text-sm uppercase tracking-wide">
-              <th className="px-4 py-3 text-left font-medium">User</th>
-              <th className="px-4 py-3 text-left font-medium">Package</th>
-              <th className="px-4 py-3 text-left font-medium">Coins</th>
-              <th className="px-4 py-3 text-left font-medium">Amount</th>
-              <th className="px-4 py-3 text-left font-medium">Type</th>
-              <th className="px-4 py-3 text-left font-medium">Status</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {data.map((item: any) => (
-              <tr
-                key={item.id}
-                className="border-t border-gray-100 hover:bg-black transition-colors"
-              >
-                <td className="px-4 py-3 text-white font-medium">
+      <div className="flex flex-col gap-4 h-[70vh] overflow-y-auto pr-2">
+        {data.length === 0 ? (
+          <p className="text-gray-500 text-center mt-10">
+            No transactions found.
+          </p>
+        ) : (
+          data.map((item: any) => (
+            <div
+              key={item.id}
+              className="bg-gray-50 border border-gray-200 rounded-xl p-4 flex justify-between items-center hover:shadow-md transition-all duration-200"
+            >
+              <div className="flex flex-col">
+                <span className="font-semibold text-gray-800">
                   {item.user.name}
-                  <div className="text-xs text-white ">{item.user.email}</div>
-                </td>
+                </span>
+                <span className="text-sm text-gray-500">{item.user.email}</span>
 
-                <td className="px-4 py-3 text-white">
-                  {item.package.name}
-                  <div className="text-xs text-white  capitalize">
-                    {item.package.tier}
+                <div className="mt-2 text-sm text-gray-600">
+                  <div>
+                    <span className="font-medium">Package:</span>{" "}
+                    {item.package.name} ({item.package.tier})
                   </div>
-                </td>
+                  <div>
+                    <span className="font-medium">Coins:</span>{" "}
+                    {item.coins.toLocaleString()}
+                  </div>
+                  <div>
+                    <span className="font-medium">Amount:</span> ${item.amount}
+                  </div>
+                </div>
 
-                <td className="px-4 py-3 text-white">
-                  {item.coins.toLocaleString()}
-                </td>
-
-                <td className="px-4 py-3 font-medium text-white">
-                  ${item.amount}
-                </td>
-
-                <td className="px-4 py-3 capitalize text-white">{item.type}</td>
-
-                <td className="px-4 py-3">
+                <div className="mt-2">
                   <span
                     className={`px-2 py-1 rounded-full text-xs font-semibold ${
                       item.status === "succeeded"
@@ -58,14 +50,29 @@ const TransactionsTable = ({ data }: any) => {
                   >
                     {item.status}
                   </span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                  <span className="ml-3 text-xs text-gray-500 capitalize">
+                    {item.type}
+                  </span>
+                </div>
+              </div>
+
+              <button
+                onClick={async () => {
+                  const res: any = await API.downloadWalletTransaction(
+                    item.stripePaymentIntentId
+                  );
+                  window.open(res.data.receiptUrl, "_blank");
+                }}
+                className="flex items-center gap-2 bg-[#7650e3] text-white px-4 py-2 rounded-lg hover:bg-[#6540d0] transition"
+              >
+                <span className="text-sm font-medium">Receipt Link</span>
+              </button>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
 };
 
-export default TransactionsTable;
+export default TransactionsHistoryBox;

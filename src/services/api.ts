@@ -124,6 +124,7 @@ interface APIInstance extends AxiosInstance {
   readAllHistory: () => Promise<any>;
   unreadHistory: () => Promise<any>;
   walletTransaction: () => Promise<any>;
+  downloadWalletTransaction: (id: any) => Promise<any>;
   readHistoryById: (postId: any) => Promise<any>;
   tiktokGetMe: () => Promise<any>;
   tiktokUploadInit: (data: any) => Promise<any>;
@@ -258,6 +259,9 @@ API.readHistoryById = (postId: any) =>
 API.unreadHistory = () => API.get("/client/post-history/history/unread-count");
 
 API.walletTransaction = () => API.get("/client/wallet-transaction");
+API.downloadWalletTransaction = (id: any) =>
+  API.get(`/client/wallet-transaction/${id}`);
+
 API.getProfileData = () => API.get("/client/profile");
 API.updateProfileData = (data) => API.patch("/client/profile", data);
 API.scrapeProfileData = (data) =>
