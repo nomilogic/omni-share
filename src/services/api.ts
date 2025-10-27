@@ -80,6 +80,7 @@ interface APIInstance extends AxiosInstance {
   buyAddons: (data: any) => Promise<any>;
 
   listPackages: () => Promise<any>;
+  cancelPackage: () => Promise<any>;
   buyPackage: (packageId: string) => Promise<any>;
   confirmPurchase: (data: any) => Promise<any>;
   listMedia: () => Promise<any>;
@@ -201,6 +202,7 @@ API.confirmAddons = (id) => API.get(`/client/addons/confirm/${id}`);
 API.confirmPurchase = (id) => API.get(`/client/package/confirm/${id}`);
 API.listPackages = () => API.get("/client/package");
 API.buyPackage = (packageId) => API.get(`/client/package/buy/${packageId}`);
+API.cancelPackage = () => API.delete(`/client/package`);
 
 API.listMedia = () => API.get("/client/media");
 API.uploadMedia = (formData) => API.post("/client/media/upload", formData);

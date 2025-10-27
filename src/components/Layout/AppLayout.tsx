@@ -31,7 +31,8 @@ import { useUnreadPosts } from "../../hooks/useUnreadPosts";
 import Icon from "../Icon";
 import { WalletBalance } from "../WalletBalance";
 import PreloaderOverlay from "../PreloaderOverlay";
-import { ContentTemplate } from './../../lib/postHistoryService';
+import { ContentTemplate } from "./../../lib/postHistoryService";
+import API from "@/services/api";
 
 // Define the props for AppLayout
 interface AppLayoutProps {
@@ -115,7 +116,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   };
 
   const navigation = [
-    {name:"Profile", path:"/profile", icon:User},
+    { name: "Profile", path: "/profile", icon: User },
     { name: "Dashboard", path: "/dashboard", icon: Home },
     { name: "Create Content", path: "/content", icon: Plus },
     { name: "Accounts", path: "/accounts", icon: Building2 },
@@ -127,12 +128,19 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       icon: HistoryIcon,
     },
     { name: "Generate Amount", path: "/generate-amount", icon: Coins },
-    // { name: "Campaigns", path: "/campaigns", icon: Target },
-    // { name: "Schedule", path: "/schedule", icon: Calendar },
-    // { name: "Settings", path: "/settings", icon: Settings },
   ];
   const [showPackage, setShowPackage] = useState(false);
-  console.log("user", user);
+  const [isCanceled, setIsCanceled] = useState(false);
+  const cancelSubscription = async () => {
+    try {
+      setIsCanceled(true);
+      await API.cancelPackage();
+      window.location.reload();
+    } catch (error) {
+    } finally {
+      setIsCanceled(false);
+    }
+  };
   return (
     <ResizeContext.Provider value={{ handleResizeMainToFullScreen }}>
       <div className="h-full-dec-hf x-2 relative">
@@ -146,13 +154,13 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           >
             {/* Close button */}
             <div className="flex items-center justify-end border-b border-white/20 p-2">
-            {/* complete profile warning  */}
-            <button
-              onClick={() => navigate("/profile")}
-              className="mr-auto px-3 py-1 theme-bg-pantary hover:bg-purple-700 text-white rounded-md text-sm font-medium transition-all animate-pulse"
-            >
-              complete your profile for better experience
-            </button>
+              {/* complete profile warning  */}
+              <button
+                onClick={() => navigate("/profile")}
+                className="mr-auto px-3 py-1 theme-bg-pantary hover:bg-purple-700 text-white rounded-md text-sm font-medium transition-all animate-pulse"
+              >
+                complete your profile for better experience
+              </button>
               <button
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="rounded-md theme-text-light hover:theme-text-primary"
@@ -182,7 +190,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 />
                 <div className="flex-1 min-w-0 text-left">
                   <div className="text-md font-medium theme-text-light truncate">
-                    {user?.profile?.fullName ||  user?.email || "User"}
+                    {user?.profile?.fullName || user?.email || "User"}
                   </div>
                   <div className="text-sm theme-text-light truncate">
                     {user?.email}
@@ -504,7 +512,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 </button>
               </div>
 
-              {/* Center: Logo + Brand */}
               <Link
                 to="/profile"
                 className="absolute left-1/2 -translate-x-1/2 flex items-center gap-0 cursor-pointer mt-[-5px] scale-80 lg:scale-100 mx-[-10px]"
@@ -543,74 +550,87 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 )}
               </div> */}
                 <div className=" flex gap-x-4 items-center">
-                  {user?.wallet && (
-                    <div className="flex justify-between items-center ">
-                      <button
-                        onClick={() => setShowPackage(!showPackage)}
-                        className={`relative inline-flex h-6 w-12 items-center rounded-full transition-colors duration-300 focus:outline-none ${
-                          showPackage ? "bg-indigo-600" : "bg-gray-300"
-                        }`}
-                      >
-                        <span
-                          className={`inline-block h-5 w-5 transform bg-white rounded-full shadow-md transition-transform duration-300 ${
-                            showPackage ? "translate-x-6" : "translate-x-1"
-                          }`}
-                        />
-                      </button>
-                    </div>
-                  )}
-                  <WalletBalance balance={balance} />
-                  {user?.wallet && showPackage && (
-                    <div className="mt-6 absolute right-16 top-4 bg-white shadow-md rounded-2xl p-5 border border-gray-100">
-                      <h2 className="text-lg font-semibold text-gray-800 mb-2">
-                        Active Package
-                      </h2>
-                      <div className="flex justify-between gap-2 items-center">
-                        <div>
-                          <h3 className="text-xl font-bold text-indigo-600">
-                            {user?.wallet.package.name}
-                          </h3>
-                          <p className="text-sm text-gray-500 capitalize">
-                            {user?.wallet.package.tier} plan
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-sm text-gray-400">Expires on</p>
-                          <p className="font-medium text-base text-gray-700">
-                            {new Date(
-                              user?.wallet.expiresAt
-                            ).toLocaleDateString()}
-                          </p>
-                        </div>
-                      </div>
+                  <WalletBalance
+                    setShowPackage={() => setShowPackage(!showPackage)}
+                    balance={balance}
+                  />
+                  {showPackage && (
+                    <div className="mt-6 absolute w-[350px] right-8 top-4 bg-white shadow-md rounded-2xl p-5 border border-gray-100">
+                      {user?.wallet?.package ? (
+                        <>
+                          <h2 className="text-lg font-semibold text-gray-800 mb-2">
+                            Active Package
+                          </h2>
 
-                      <div className="mt-4">
-                        <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
-                          <span className="text-gray-600 text-sm">
-                            Package Coins:
-                          </span>
-                          <span className="font-semibold text-gray-800">
-                            {user?.wallet.package.coins}
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3 mt-2">
-                          <span className="text-gray-600 text-sm">
-                            Your Remaining Coins:
-                          </span>
-                          <span className="font-semibold text-gray-800">
-                            {balance ?? 0}
-                          </span>
-                        </div>
-                      </div>
+                          <div className="flex justify-between gap-2 items-center">
+                            <div>
+                              <h3 className="text-xl font-bold text-indigo-600">
+                                {user.wallet.package.name}
+                              </h3>
+                              <p className="text-sm text-gray-500 capitalize">
+                                {user.wallet.package.tier} plan
+                              </p>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-sm text-gray-400">
+                                Expires on
+                              </p>
+                              <p className="font-medium text-base text-gray-700">
+                                {user.wallet.expiresAt
+                                  ? new Date(
+                                      user.wallet.expiresAt
+                                    ).toLocaleDateString()
+                                  : "N/A"}
+                              </p>
+                            </div>
+                          </div>
 
-                      {user?.wallet.isActive ? (
-                        <div className="mt-4 flex items-center justify-center bg-green-50 text-green-700 rounded-lg py-2 text-sm font-medium">
-                          Active
-                        </div>
+                          <div className="mt-4">
+                            <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+                              <span className="text-gray-600 text-sm">
+                                Package Coins:
+                              </span>
+                              <span className="font-semibold text-gray-800">
+                                {user.wallet.package.coins ?? 0}
+                              </span>
+                            </div>
+                          </div>
+
+                          <Link
+                            to="/pricing"
+                            onClick={() => setShowPackage(false)}
+                            className="mt-4 flex items-center justify-center w-full bg-green-50 text-green-700 rounded-lg py-2 text-sm font-medium"
+                          >
+                            Upgrade Package
+                          </Link>
+
+                          <button
+                            onClick={cancelSubscription}
+                            disabled={isCanceled}
+                            className="mt-4 flex items-center justify-center w-full bg-red-50 text-red-700 rounded-lg py-2 text-sm font-medium"
+                          >
+                            {isCanceled
+                              ? "Canceling..."
+                              : "Cancel Subscription"}
+                          </button>
+                        </>
                       ) : (
-                        <div className="mt-4 flex items-center justify-center bg-red-50 text-red-700 rounded-lg py-2 text-sm font-medium">
-                          Expired
-                        </div>
+                        <>
+                          <h2 className="text-lg font-semibold text-gray-800 mb-2">
+                            No Active Package
+                          </h2>
+                          <p className="text-gray-500 text-sm mb-4">
+                            You currently don’t have any active package. Upgrade
+                            to unlock premium features.
+                          </p>
+                          <Link
+                            to="/pricing"
+                            onClick={() => setShowPackage(false)}
+                            className="flex items-center justify-center w-full bg-green-50 text-green-700 rounded-lg py-2 text-sm font-medium"
+                          >
+                            View Packages
+                          </Link>
+                        </>
                       )}
                     </div>
                   )}

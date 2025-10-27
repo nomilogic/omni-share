@@ -106,9 +106,9 @@ export function OtpModal({
       setResending(true);
       const fn = resendOtp || (async () => {});
       await fn();
-      setInfo("OTP resent successfully.");
-      setRemaining(40);
+      setExpired(false);
       setTimeLeft(300);
+      setRemaining(40);
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : "Failed to resend OTP";
       setError(message);

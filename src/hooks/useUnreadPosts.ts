@@ -14,35 +14,18 @@ export const useUnreadPosts = () => {
         setLoading(false);
       });
     } catch (error) {
-      console.error("Error fetching unread count:", error); 
+      console.error("Error fetching unread count:", error);
     }
   };
 
   useEffect(() => {
     fetchUnreadCount();
-
-    // Poll for updates every 30 seconds
-    const interval = setInterval(fetchUnreadCount, 30000);
-
-    // Register with global refresh service
-    const unregister = historyRefreshService.registerRefreshCallback(() => {
-      console.log(
-        "🔔 Unread posts count refresh triggered from global service"
-      );
-      fetchUnreadCount();
-    });
-
-    return () => {
-      clearInterval(interval);
-      unregister();
-    };
   }, []);
 
   const markAllAsRead = async () => {
-   return API.readAllHistory().then((e) => {
+    return API.readAllHistory().then((e) => {
       setUnreadCount(0);
     });
-    
   };
 
   return {

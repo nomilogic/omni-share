@@ -147,7 +147,7 @@ export const PricingPage: React.FC = () => {
               : "border-transparent text-gray-500 hover:text-blue-600"
           }`}
         >
-          Add-ons
+          Credits{" "}
         </button>
       </div>
 
@@ -236,7 +236,7 @@ export const PricingPage: React.FC = () => {
       )}
 
       {activeTab === "addons" && (
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid xl:grid-cols-3  md:grid-cols-2 gap-8">
           {addons.length === 0 ? (
             <p className="col-span-3 text-center text-gray-500">
               No add-ons available
@@ -245,7 +245,7 @@ export const PricingPage: React.FC = () => {
             addons.map((addon) => (
               <div
                 key={addon.id}
-                className="bg-gradient-to-br from-[#7650e3] to-[#6366F1] rounded-2xl shadow-2xl p-8 transform hover:scale-105 transition-all relative"
+                className="bg-gradient-to-br from-[#7650e3] to-[#6366F1] rounded-2xl shadow-2xl p-6 transform hover:scale-105 transition-all relative"
               >
                 <div className="flex justify-center mb-4">
                   <Gift className="w-10 h-10 text-yellow-400" />
@@ -264,9 +264,9 @@ export const PricingPage: React.FC = () => {
                     setSelectedAddon(addon);
                     setAddonConfirmOpen(true);
                   }}
-                  className="w-full py-3 rounded-lg theme-button-trinary font-semibold hover:brightness-110 transition-all"
+                  className="w-full py-2 rounded-lg theme-button-trinary font-semibold hover:brightness-110 transition-all"
                 >
-                  Buy Add-on
+                  Purchase
                 </button>
               </div>
             ))
@@ -335,7 +335,7 @@ export const PricingPage: React.FC = () => {
               <button
                 onClick={() => handleSelectPlan(selectedPlan)}
                 disabled={loadingPackage}
-                className="px-5 py-2 rounded-lg theme-button-primary hover:brightness-110 flex items-center gap-2"
+                className="px-5 py-2 rounded-lg bg-white  theme-text-primary flex items-center gap-2"
               >
                 {loadingPackage ? (
                   <Loader2 className="animate-spin w-4 h-4" />

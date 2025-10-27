@@ -2,16 +2,16 @@ import React from "react";
 
 import Icon from "./Icon";
 
-export const WalletBalance = ({ balance }: any) => {
+export const WalletBalance = ({ balance, setShowPackage }: any) => {
   return (
     <div className="flex items-center gap-0 theme-text-secondary text-xs font-semibold">
-      <div className="rounded p-0">
+      <button onClick={setShowPackage} className="rounded p-0">
         <Icon
           name="wallet"
           size={25}
           className="inline m-1 theme-text-secondary shadow-sm"
         />
-      </div>
+      </button>
       <div>
         <div className="text-[1rem] font-bold theme-text-primary">
           {balance}
