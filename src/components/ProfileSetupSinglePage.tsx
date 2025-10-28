@@ -458,6 +458,7 @@ const ProfileSetupSinglePage: React.FC = () => {
     localStorage.removeItem(STORAGE_KEY);
     // close the editor via context and navigate to content
     setProfileEditing(false);
+    navigate("/profile");
   };
   const handleInputChange = (field: keyof ProfileFormData, value: any) => {
     console.log(`Setting ${field} to:`, value);

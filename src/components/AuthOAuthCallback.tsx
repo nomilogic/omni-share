@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSearchParams, useNavigate, useParams } from "react-router-dom";
-import { Loader, CheckCircle, XCircle } from "lucide-react";
 import { handleOAuthCallback } from "../utils/authOAuth";
 import { getCurrentUser } from "@/lib/auth";
+import { CheckCircle, Loader, XCircle } from "lucide-react";
+// import { LinkedInIcon } from "../icons";
 
 interface AuthOAuthCallbackProps {
   onAuthSuccess: (user: any) => void;
@@ -27,7 +28,7 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
       // Prevent multiple simultaneous OAuth requests and StrictMode double-invoke
       if (hasRunRef.current || isProcessing) {
         console.log(
-          "🔒 OAuth callback already in progress or already handled, skipping..."
+          "OAuth callback already in progress or already handled, skipping..."
         );
         return;
       }
@@ -47,7 +48,7 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
           throw new Error("Missing code or state parameter");
         }
 
-        if (!provider || (provider !== "google" && provider !== "facebook")) {
+        if (!provider || (provider !== "google" && provider !== "facebook" && provider !== "linkedin")) {
           throw new Error("Invalid OAuth provider");
         }
 
@@ -133,6 +134,8 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
         return "Google";
       case "facebook":
         return "Facebook";
+      case "linkedin":
+        return "LinkedIn";
       default:
         return provider;
     }
@@ -197,3 +200,12 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
     </div>
   );
 };
+
+const LinkedInIconWrapper: React.FC = () => {
+  return (
+    <div className="flex items-center justify-center">
+      {/* <LinkedInIcon className="w-8 h-8" /> */}
+    </div>
+  );
+}
+

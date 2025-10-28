@@ -3,9 +3,9 @@ export interface OAuthUser {
   email: string;
   name: string;
   picture?: string;
-  provider: "google" | "facebook";
+  provider: "google" | "facebook" | "linkedin";
 }
-
+ 
 export interface OAuthConfig {
   google: {
     clientId: string;
@@ -15,8 +15,12 @@ export interface OAuthConfig {
     appId: string;
     redirectUri: string;
   };
-}
-
+  linkedin: {
+    clientId: string;
+    redirectUri: string;
+  };
+ }
+ 
 export const oauthConfig: OAuthConfig = {
   google: {
     clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID || "",
@@ -26,8 +30,14 @@ export const oauthConfig: OAuthConfig = {
     appId: import.meta.env.VITE_FACEBOOK_APP_ID || "",
     redirectUri: `${window.location.origin}/auth/facebook/callback`,
   },
+  linkedin: {
+    clientId: import.meta.env.VITE_LINKEDIN_CLIENT_ID || "",
+    redirectUri: `${window.location.origin}/auth/linkedin/callback`,
+   // redirectUri: `https://omnishare.ai/server/api/client/oauth/linkedin/callback`,
+   // redirectUri: `https://4q2ddj89-3000.uks1.devtunnels.ms/api/client/oauth/linkedin/callback`,
+  },
 };
-
+ 
 export const generateOAuthState = (): string => {
   return (
     Math.random().toString(36).substring(2, 15) +
@@ -240,16 +250,95 @@ export const initiateFacebookOAuth = (): Promise<{
   });
 };
 
+export const initiateLinkedInOAuth = (): Promise<{
+  token: string;
+  user: any;
+}> => {
+  return new Promise((resolve, reject) => {
+    try {
+      const state = generateOAuthState();
+      storeOAuthState(state);
+
+      const params = new URLSearchParams({
+        response_type: "code",
+        client_id: oauthConfig.linkedin.clientId,
+        redirect_uri: oauthConfig.linkedin.redirectUri,
+        scope:"openid profile email w_member_social",
+        state,
+      });
+
+      const authUrl = `https://www.linkedin.com/oauth/v2/authorization?${params.toString()}`;
+      alert(authUrl);
+      const popup = window.open(
+        authUrl,
+        "linkedin_oauth",
+        "width=500,height=600,scrollbars=yes,resizable=yes"
+      );
+
+      if (!popup) {
+        reject(new Error("Popup blocked. Please allow popups for this site."));
+        return;
+      }
+
+      const cleanup = () => {
+        window.removeEventListener("message", messageListener);
+        clearInterval(checkClosed);
+        if (!popup.closed) popup.close();
+      };
+
+      const messageListener = (event: MessageEvent) => {
+        if (event.origin !== window.location.origin) {
+          console.warn("Message from untrusted origin:", event.origin);
+          return;
+        }
+
+        try {
+          if (
+            event.data?.type === "oauth_success" &&
+            event.data?.provider === "linkedin"
+          ) {
+            if (!verifyOAuthState(event.data.state)) {
+              cleanup();
+              reject(new Error("Invalid OAuth state parameter"));
+              return;
+            }
+
+            cleanup();
+            resolve(event.data.result);
+          } else if (event.data?.type === "oauth_error") {
+            cleanup();
+            reject(new Error(event.data.error || "LinkedIn authentication failed"));
+          }
+        } catch (err) {
+          cleanup();
+          reject(new Error("Unexpected error during OAuth message handling"));
+        }
+      };
+
+      window.addEventListener("message", messageListener);
+
+      const checkClosed = setInterval(() => {
+        if (popup.closed) {
+          cleanup();
+          reject(new Error("Authentication cancelled or popup closed"));
+        }
+      }, 1000);
+    } catch (err: any) {
+      reject(new Error(err?.message || "Unexpected error initializing LinkedIn OAuth"));
+    }
+  });
+};
+
 /**
  * Handle OAuth callback and exchange code for user data
  */
 export const handleOAuthCallback = async (
-  provider: "google" | "facebook",
+  provider: "google" | "facebook" | "linkedin",
   code: string,
   state: string
 ): Promise<{ token: string; user: any }> => {
   try {
-    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
     const response = await fetch(`${apiUrl}/client/oauth/${provider}`, {
       method: "POST",
@@ -262,7 +351,9 @@ export const handleOAuthCallback = async (
         redirectUri:
           provider === "google"
             ? oauthConfig.google.redirectUri
-            : oauthConfig.facebook.redirectUri,
+            : provider === "facebook"
+            ? oauthConfig.facebook.redirectUri
+            : oauthConfig.linkedin.redirectUri,
       }),
     });
 
@@ -292,12 +383,15 @@ export const handleOAuthCallback = async (
 /**
  * Check if OAuth is properly configured
  */
-export const isOAuthConfigured = (provider: "google" | "facebook"): boolean => {
+export const isOAuthConfigured = (provider: "google" | "facebook" | "linkedin"): boolean => {
   if (provider === "google") {
     return !!oauthConfig.google.clientId;
   }
   if (provider === "facebook") {
     return !!oauthConfig.facebook.appId;
+  }
+  if (provider === "linkedin") {
+    return !!oauthConfig.linkedin.clientId;
   }
   return false;
 };
