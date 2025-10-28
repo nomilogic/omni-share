@@ -268,7 +268,7 @@ export const initiateLinkedInOAuth = (): Promise<{
       });
 
       const authUrl = `https://www.linkedin.com/oauth/v2/authorization?${params.toString()}`;
-      alert(authUrl);
+     // alert(authUrl);
       const popup = window.open(
         authUrl,
         "linkedin_oauth",
