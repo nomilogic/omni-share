@@ -58,10 +58,7 @@ const TransactionsHistoryBox = ({ data }: any) => {
 
               <button
                 onClick={async () => {
-                  const res: any = await API.downloadWalletTransaction(
-                    item.stripePaymentIntentId
-                  );
-                  window.open(res.data.receiptUrl, "_blank");
+                  window.open(item.stripeCheckoutUrl, "_blank");
                 }}
                 className="flex items-center gap-2 bg-[#7650e3] text-white px-4 py-2 rounded-lg hover:bg-[#6540d0] transition"
               >
