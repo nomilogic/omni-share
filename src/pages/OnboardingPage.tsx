@@ -1,7 +1,7 @@
-import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import ProfileSetupSinglePage from '../components/ProfileSetupSinglePage';
-import { useAppContext } from '../context/AppContext';
+import React from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import ProfileSetupSinglePage from "../components/ProfileSetupSinglePage";
+import { useAppContext } from "../context/AppContext";
 
 export const OnboardingPage: React.FC = () => {
   const { state } = useAppContext();

@@ -277,7 +277,7 @@ const ProfileSetupSinglePage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [selectedFileName, setSelectedFileName] = useState("");
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  
+
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
 
@@ -292,12 +292,20 @@ const ProfileSetupSinglePage: React.FC = () => {
     }
 
     // Phone number format validation (if provided)
-    if (formData.phoneNumber && !/^[+\d\s-()]{10,}$/.test(formData.phoneNumber)) {
+    if (
+      formData.phoneNumber &&
+      !/^[+\d\s-()]{10,}$/.test(formData.phoneNumber)
+    ) {
       newErrors.phoneNumber = "Please enter a valid phone number";
     }
 
     // URL format validation (if provided)
-    if (formData.publicUrl && !/^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?$/.test(formData.publicUrl)) {
+    if (
+      formData.publicUrl &&
+      !/^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?$/.test(
+        formData.publicUrl
+      )
+    ) {
       newErrors.publicUrl = "Please enter a valid URL";
     }
 
@@ -311,7 +319,10 @@ const ProfileSetupSinglePage: React.FC = () => {
       newErrors.audienceAgeRange = "Please select at least one age range";
     }
 
-    if (formData.preferredPlatforms && formData.preferredPlatforms.length === 0) {
+    if (
+      formData.preferredPlatforms &&
+      formData.preferredPlatforms.length === 0
+    ) {
       newErrors.preferredPlatforms = "Please select at least one platform";
     }
 
@@ -452,7 +463,7 @@ const ProfileSetupSinglePage: React.FC = () => {
     //     "Are you sure you want to skip profile setup? You can complete it later from your settings."
     //   )
     // ) {
-      
+
     //  // navigate("/content");
     // }
     localStorage.removeItem(STORAGE_KEY);
@@ -463,7 +474,7 @@ const ProfileSetupSinglePage: React.FC = () => {
     console.log(`Setting ${field} to:`, value);
     // Clear error when user starts typing
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
+      setErrors((prev) => ({ ...prev, [field]: "" }));
     }
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -609,7 +620,6 @@ const ProfileSetupSinglePage: React.FC = () => {
     }
   };
 
- 
   const loadProfile = async (url: string) => {
     if (!user.profile.isOnboarding) {
       //setUrlAnalysisError("Please enter a valid URL.");
@@ -712,7 +722,7 @@ const ProfileSetupSinglePage: React.FC = () => {
       const firstError = Object.keys(errors)[0];
       const errorElement = document.querySelector(`[name="${firstError}"]`);
       if (errorElement) {
-        errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        errorElement.scrollIntoView({ behavior: "smooth", block: "center" });
       }
       return;
     }
@@ -720,16 +730,16 @@ const ProfileSetupSinglePage: React.FC = () => {
     setLoading(true);
     try {
       const submitData = { ...formData };
-      const form = document.querySelector("form");  
+      const form = document.querySelector("form");
       const formD = new FormData(form as HTMLFormElement);
       const fileBase64 = await convertFileToBase64(formD.get("brandLogo"));
       submitData.brandLogo = fileBase64 as string;
-      
+
       // Create a clean copy without email and optional fields
       const cleanData = {
         ...submitData,
         email: undefined,
-        businessName: undefined
+        businessName: undefined,
       };
       delete cleanData.email;
       delete (cleanData as any).businessName;
@@ -740,22 +750,21 @@ const ProfileSetupSinglePage: React.FC = () => {
       navigate("/content");
     } catch (err) {
       console.error(err);
-     // alert("Failed to update profile.");
+      // alert("Failed to update profile.");
     } finally {
       setLoading(false);
     }
   };
-  
-  const convertFileToBase64=async (file:any)=>{ 
-  return new Promise((resolve, reject) => {
-    const reader:any = new FileReader();
-    console.log("Converting file to base64:", reader.result);  
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
 
+  const convertFileToBase64 = async (file: any) => {
+    return new Promise((resolve, reject) => {
+      const reader: any = new FileReader();
+      console.log("Converting file to base64:", reader.result);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
 
   return (
     <div className="px-0 py-0 md:px-0">

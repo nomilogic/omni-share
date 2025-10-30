@@ -31,7 +31,6 @@ import HomePage from "./pages/HomePage";
 // OAuth callback wrapper component
 const OAuthCallbackWrapper = () => {
   const { dispatch } = useAppContext();
-  
 
   const handleAuthSuccess = (user: any) => {
     dispatch({ type: "SET_USER", payload: user });
@@ -43,26 +42,25 @@ const OAuthCallbackWrapper = () => {
 //goto landing page only once
 
 function App() {
-let hasLanded: any;
+  let hasLanded: any;
 
   useEffect(() => {
     themeManager.initialize();
-hasLanded = localStorage.getItem('hasLanded');
-console.log("hasLanded in App.tsx:", hasLanded);
-
+    hasLanded = localStorage.getItem("hasLanded");
+    console.log("hasLanded in App.tsx:", hasLanded);
   }, []);
-  let showlanded=()=>{
-    hasLanded = localStorage.getItem('hasLanded');
-  //  alert("hasLanded in showlandend:"+ hasLanded);
+  let showlanded = () => {
+    hasLanded = localStorage.getItem("hasLanded");
+    //  alert("hasLanded in showlandend:"+ hasLanded);
     return hasLanded;
-  }
+  };
 
   return (
     <AppProvider>
       <AuthProvider>
         <Routes>
-         {/* <Route path="/" element={showlanded() ? <HomePage /> : <LandingPage />} />   */}
-         <Route path="/" element={<HomePage />} />  
+          {/* <Route path="/" element={showlanded() ? <HomePage /> : <LandingPage />} />   */}
+          <Route path="/" element={<HomePage />} />
 
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />

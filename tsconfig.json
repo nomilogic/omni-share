@@ -2,9 +2,10 @@
   "compilerOptions": {
     "target": "ES2022",
     "module": "ESNext",
-   "lib": ["esnext", "dom", "dom.iterable"],
+    "lib": ["esnext", "dom", "dom.iterable"],
     "tsBuildInfoFile": "./node_modules/typescript/tsbuildinfo",
     "jsx": "preserve",
+
     "moduleResolution": "bundler",
     "esModuleInterop": true,
     "skipLibCheck": true,
