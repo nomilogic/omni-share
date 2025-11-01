@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import {
   initiateGoogleOAuth,
   initiateFacebookOAuth,
+  initiateLinkedInOAuth,
   isOAuthConfigured,
 } from "../utils/authOAuth";
 import Icon from "./Icon";
@@ -154,7 +155,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
 
         setTimeout(() => {
           navigate("/content");
-        },0);
+        }, 0);
       }
     } catch (error: any) {
       setError(error.message || "Google authentication failed");
@@ -192,6 +193,37 @@ export const AuthForm: React.FC<AuthFormProps> = ({
     } catch (error: any) {
       console.error("Facebook OAuth error:", error);
       setError(error.message || "Facebook authentication failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLinkedInOAuth = async () => {
+    setLoading(true);
+    setError("");
+
+    try {
+      const result = await initiateLinkedInOAuth();
+      if (result?.token) {
+        localStorage.setItem("auth_token", result.token);
+        onAuthSuccess(result.user);
+
+        const profile = result.user?.profile;
+        if (profile && (profile as any).isOnboarding === false) {
+          import("../lib/navigation")
+            .then(({ navigateOnce }) => {
+              navigateOnce(navigate, "/onboarding/profile", { replace: true });
+            })
+            .catch(() => {
+              navigate("/onboarding/profile", { replace: true });
+            });
+          return;
+        }
+
+        navigate("/content");
+      }
+    } catch (error: any) {
+      setError(error?.message || "LinkedIn authentication failed");
     } finally {
       setLoading(false);
     }
@@ -414,6 +446,20 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                 <span className="ml-2">Facebook</span>
               </button>
             )}
+
+            {(
+              <button
+                type="button"
+                onClick={handleLinkedInOAuth}
+                disabled={loading}
+                className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                <svg className="w-5 h-5 mt-[-4px]" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5zM.2 8.98h4.6V24H.2V8.98zM9.98 8.98h4.4v2.06h.06c.61-1.16 2.1-2.38 4.32-2.38 4.62 0 5.47 3.04 5.47 6.99V24h-4.6v-6.92c0-1.65-.03-3.78-2.3-3.78-2.31 0-2.66 1.8-2.66 3.67V24h-4.6V8.98z" fill="#0A66C2"/>
+                </svg>
+                <span className="ml-2">LinkedIn</span>
+              </button>
+            )}
           </div>
         </div>
       )}
@@ -493,7 +539,6 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         }}
         resendOtp={API.resendOtp}
       />
-  
     </div>
   );
 };

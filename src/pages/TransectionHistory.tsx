@@ -9,7 +9,7 @@ const TransactionHistory = () => {
     const fetchHistory = async () => {
       try {
         const response = await API.walletTransaction();
-        const data = await response.data.data;
+        const data = await response.data.transactions;
         setHistory(data);
       } catch (error) {
         console.error("Error fetching history:", error);

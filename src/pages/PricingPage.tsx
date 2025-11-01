@@ -91,7 +91,10 @@ export const PricingPage: React.FC = () => {
     try {
       const res = await API.buyPackage(plan.id);
       const redirectUrl = res?.data?.data?.url;
-      if (redirectUrl) window.location.href = redirectUrl;
+      if (redirectUrl) {
+        window.location.href = redirectUrl;
+        localStorage.clear();
+      }
     } catch (error) {
       console.error(error);
     } finally {
@@ -139,16 +142,18 @@ export const PricingPage: React.FC = () => {
         >
           Packages
         </button>
-        <button
-          onClick={() => handleTabChange("addons")}
-          className={`px-6 py-3 font-semibold transition-all border-b-2 ${
-            activeTab === "addons"
-              ? "border-blue-600 text-blue-600"
-              : "border-transparent text-gray-500 hover:text-blue-600"
-          }`}
-        >
-          Credits{" "}
-        </button>
+        {activePackage?.package?.tier !== "free" && (
+          <button
+            onClick={() => handleTabChange("addons")}
+            className={`px-6 py-3 font-semibold transition-all border-b-2 ${
+              activeTab === "addons"
+                ? "border-blue-600 text-blue-600"
+                : "border-transparent text-gray-500 hover:text-blue-600"
+            }`}
+          >
+            Credits{" "}
+          </button>
+        )}
       </div>
 
       {activeTab === "" && (
@@ -235,11 +240,11 @@ export const PricingPage: React.FC = () => {
         </>
       )}
 
-      {activeTab === "addons" && (
+      {activePackage?.package?.tier !== "free" && activeTab === "addons" && (
         <div className="grid xl:grid-cols-3  md:grid-cols-2 gap-8">
           {addons.length === 0 ? (
             <p className="col-span-3 text-center text-gray-500">
-              No add-ons available
+              No credits available
             </p>
           ) : (
             addons.map((addon) => (
