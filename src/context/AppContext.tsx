@@ -470,6 +470,15 @@ export const useAppContext = () => {
     context.dispatch({ type: "SET_SELECTED_CAMPAIGN", payload: campaign });
   };
 
+  const refreshUser = async () => {
+    const authResult = await getCurrentUser();
+
+    if (authResult && authResult.user) {
+      context.dispatch({ type: "SET_USER", payload: authResult.user });
+      return;
+    }
+  };
+
   const logout = async () => {
     try {
       await API.logout();
@@ -513,6 +522,7 @@ export const useAppContext = () => {
   return {
     generationAmounts: generationAmounts,
     state: context.state,
+    refreshUser: refreshUser,
     dispatch: context.dispatch,
     user: context.state.user,
     balance: context.state.balance,
@@ -520,6 +530,7 @@ export const useAppContext = () => {
     campaign: context.state.selectedCampaign,
     selectCampaign,
     logout,
-    setProfileEditing: (v: boolean) => context.dispatch({ type: 'SET_PROFILE_EDITING', payload: v }),
+    setProfileEditing: (v: boolean) =>
+      context.dispatch({ type: "SET_PROFILE_EDITING", payload: v }),
   };
 };

@@ -8,7 +8,7 @@ import API from "../services/api";
 import { useSearchParams } from "react-router-dom";
 
 export const PricingPage: React.FC = () => {
-  const { state } = useAppContext();
+  const { state, refreshUser } = useAppContext();
 
   const [packages, setPackages] = useState<any[]>([]);
   const [addons, setAddons] = useState<any[]>([]);
@@ -116,6 +116,7 @@ export const PricingPage: React.FC = () => {
         window.location.href = redirectUrl;
         localStorage.clear();
       }
+      setTimeout(() => refreshUser(), 50);
     } catch (error) {
       console.error("Failed to buy package:", error);
       alert("Something went wrong while processing your purchase.");
@@ -128,6 +129,7 @@ export const PricingPage: React.FC = () => {
 
   const handleUpdatePackage = async (selectedPlan: any) => {
     setLoadingPackage(true);
+    setTimeout(() => refreshUser(), 50);
     try {
       await API.requestUpgradePackage(selectedPlan.id);
     } catch (error) {
@@ -135,7 +137,6 @@ export const PricingPage: React.FC = () => {
       setLoadingPackage(false);
       setConfirmOpen(false);
       setSelectedPlan(null);
-      window.location.reload();
     }
   };
   const handleRequestDowngrade = async () => {
@@ -146,6 +147,7 @@ export const PricingPage: React.FC = () => {
       setDowngradeRequestOpen(false);
       setDowngradeReason("");
       setSelectedPlan(null);
+      setTimeout(() => refreshUser(), 50);
     } catch (error) {
       console.error("Request downgrade failed:", error);
       alert("Failed to request downgrade");
@@ -159,11 +161,13 @@ export const PricingPage: React.FC = () => {
     try {
       await API.cancelDowngradeRequest();
       setCancelDowngradeOpen(false);
+      setTimeout(() => refreshUser(), 50);
     } catch (error) {
       console.error("Cancel downgrade failed:", error);
       alert("Failed to cancel downgrade request");
     } finally {
       setDowngradeLoading(false);
+      setCancelDowngradeOpen(false);
     }
   };
 
@@ -171,11 +175,13 @@ export const PricingPage: React.FC = () => {
     try {
       setIsCanceled(true);
       await API.cancelPackage();
+      setTimeout(() => refreshUser(), 50);
     } catch (error) {
       console.error("Cancel subscription failed:", error);
       alert("Unable to cancel subscription");
     } finally {
       setIsCanceled(false);
+      setCancelPackageOpen(false);
     }
   };
 
@@ -183,11 +189,13 @@ export const PricingPage: React.FC = () => {
     try {
       setIsCanceled(true);
       await API.reactivatePackage();
+      setTimeout(() => refreshUser(), 50);
     } catch (error) {
       console.error("Reactivation failed:", error);
       alert("Unable to reactivate subscription");
     } finally {
       setIsCanceled(false);
+      setReactivateOpen(false);
     }
   };
 
@@ -198,6 +206,7 @@ export const PricingPage: React.FC = () => {
       const res = await API.buyAddons(selectedAddon.id);
       const redirectUrl = res?.data?.data?.checkoutUrl;
       if (redirectUrl) window.location.href = redirectUrl;
+      setTimeout(() => refreshUser(), 50);
     } catch (error) {
       console.error("Buy addon failed:", error);
       alert("Something went wrong while buying add-on");
