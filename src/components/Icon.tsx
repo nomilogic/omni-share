@@ -11,7 +11,7 @@ import PlayIcon from '../assets/play-icon-01.svg';
 import LogoIcon from '../assets/logo-icon-01.svg';
 import WalletIcon from '../assets/wallet-icon-01.svg'; // Example external URL
 import TextToImageIcon from '../assets/text-to-image-icon-01.svg'; // Placeholder, replace with actual icon
-
+import ShareIcon from '../assets/share.svg'; // Placeholder, replace with actual icon
 // Define the available icon names
 export type IconName = 
   | 'text-post'
@@ -23,7 +23,9 @@ export type IconName =
   | 'play'
   | 'logo'
   | 'wallet'
-  | 'text-to-image'; // New icon name
+  | 'text-to-image'
+  | 'share'; 
+// New icon name
 
 // Map icon names to their respective SVG imports
 const iconMap: Record<IconName, string> = {
@@ -37,6 +39,7 @@ const iconMap: Record<IconName, string> = {
   'logo': LogoIcon,
   'wallet': WalletIcon,
   'text-to-image': TextToImageIcon, // Placeholder, replace with actual icon
+  'share': ShareIcon, // Placeholder, replace with actual icon
 };
 
 interface IconProps {
