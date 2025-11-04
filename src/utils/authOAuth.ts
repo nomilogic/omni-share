@@ -5,7 +5,7 @@ export interface OAuthUser {
   picture?: string;
   provider: "google" | "facebook" | "linkedin";
 }
- 
+
 export interface OAuthConfig {
   google: {
     clientId: string;
@@ -19,8 +19,8 @@ export interface OAuthConfig {
     clientId: string;
     redirectUri: string;
   };
- }
- 
+}
+
 export const oauthConfig: OAuthConfig = {
   google: {
     clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID || "",
@@ -33,11 +33,11 @@ export const oauthConfig: OAuthConfig = {
   linkedin: {
     clientId: import.meta.env.VITE_LINKEDIN_CLIENT_ID || "",
     redirectUri: `${window.location.origin}/auth/linkedin/callback`,
-   // redirectUri: `https://omnishare.ai/server/api/client/oauth/linkedin/callback`,
-   // redirectUri: `https://4q2ddj89-3000.uks1.devtunnels.ms/api/client/oauth/linkedin/callback`,
+    // redirectUri: `https://omnishare.ai/server/api/client/oauth/linkedin/callback`,
+    // redirectUri: `https://4q2ddj89-3000.uks1.devtunnels.ms/api/client/oauth/linkedin/callback`,
   },
 };
- 
+
 export const generateOAuthState = (): string => {
   return (
     Math.random().toString(36).substring(2, 15) +
@@ -55,7 +55,9 @@ export const verifyOAuthState = (state: string): boolean => {
   return storedState === state;
 };
 
-export const initiateGoogleOAuth = (): Promise<{
+export const initiateGoogleOAuth = (
+  referralId?: string
+): Promise<{
   token: string;
   user: any;
 }> => {
@@ -66,6 +68,7 @@ export const initiateGoogleOAuth = (): Promise<{
 
       const params = new URLSearchParams({
         client_id: oauthConfig.google.clientId,
+        referralId: referralId || "",
         redirect_uri: oauthConfig.google.redirectUri,
         response_type: "code",
         scope: "openid email profile",
@@ -75,10 +78,6 @@ export const initiateGoogleOAuth = (): Promise<{
       });
 
       const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
-
-      console.log("🔍 OAuth Debug Info:");
-      console.log("Frontend Origin:", window.location.origin);
-      console.log("Redirect URI:", oauthConfig.google.redirectUri);
 
       const popup = window.open(
         authUrl,
@@ -250,7 +249,9 @@ export const initiateFacebookOAuth = (): Promise<{
   });
 };
 
-export const initiateLinkedInOAuth = (): Promise<{
+export const initiateLinkedInOAuth = (
+  referralId: any
+): Promise<{
   token: string;
   user: any;
 }> => {
@@ -262,13 +263,14 @@ export const initiateLinkedInOAuth = (): Promise<{
       const params = new URLSearchParams({
         response_type: "code",
         client_id: oauthConfig.linkedin.clientId,
+        referralId: referralId || "",
         redirect_uri: oauthConfig.linkedin.redirectUri,
-        scope:"openid profile email w_member_social",
+        scope: "openid profile email w_member_social",
         state,
       });
 
       const authUrl = `https://www.linkedin.com/oauth/v2/authorization?${params.toString()}`;
-     // alert(authUrl);
+      // alert(authUrl);
       const popup = window.open(
         authUrl,
         "linkedin_oauth",
@@ -307,7 +309,9 @@ export const initiateLinkedInOAuth = (): Promise<{
             resolve(event.data.result);
           } else if (event.data?.type === "oauth_error") {
             cleanup();
-            reject(new Error(event.data.error || "LinkedIn authentication failed"));
+            reject(
+              new Error(event.data.error || "LinkedIn authentication failed")
+            );
           }
         } catch (err) {
           cleanup();
@@ -324,7 +328,11 @@ export const initiateLinkedInOAuth = (): Promise<{
         }
       }, 1000);
     } catch (err: any) {
-      reject(new Error(err?.message || "Unexpected error initializing LinkedIn OAuth"));
+      reject(
+        new Error(
+          err?.message || "Unexpected error initializing LinkedIn OAuth"
+        )
+      );
     }
   });
 };
@@ -383,7 +391,9 @@ export const handleOAuthCallback = async (
 /**
  * Check if OAuth is properly configured
  */
-export const isOAuthConfigured = (provider: "google" | "facebook" | "linkedin"): boolean => {
+export const isOAuthConfigured = (
+  provider: "google" | "facebook" | "linkedin"
+): boolean => {
   if (provider === "google") {
     return !!oauthConfig.google.clientId;
   }

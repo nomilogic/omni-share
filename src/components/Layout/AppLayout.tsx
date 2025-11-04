@@ -141,6 +141,16 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       setIsCanceled(false);
     }
   };
+  const reactivateSubscription = async () => {
+    try {
+      setIsCanceled(true);
+      await API.reactivatePackage();
+      window.location.reload();
+    } catch (error) {
+    } finally {
+      setIsCanceled(false);
+    }
+  };
   return (
     <ResizeContext.Provider value={{ handleResizeMainToFullScreen }}>
       <div className="h-full-dec-hf x-2 relative">
@@ -528,27 +538,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
               {/* Right Side */}
               <div className="flex items-center space-x-1">
-                {/* Theme Selector */}
-                {/* <ThemeSelector /> */}
-
-                {/* Notifications */}
-                {/* <div className="relative" ref={notificationRef}>
-                <button
-                  onClick={() => setShowNotifications(!showNotifications)}
-                  className="p-2 theme-text-primary hover:theme-text-secondary relative"
-                >
-                  <Bell className="w-5 h-5" />
-                  <span className="absolute -top-0.5 -right-0.5 h-5 w-5 bg-red-500 rounded-full flex items-center justify-center text-xs text-white">
-                    3
-                  </span>
-                </button>
-                {showNotifications && (
-                  <NotificationCenter
-                    onClose={() => setShowNotifications(false)}
-                    userId={user?.id}
-                  />
-                )}
-              </div> */}
                 <div className=" flex gap-x-4 items-center">
                   <WalletBalance
                     setShowPackage={() => setShowPackage(!showPackage)}
@@ -559,7 +548,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                       {user?.wallet?.package ? (
                         <>
                           <h2 className="text-lg font-semibold text-gray-800 mb-2">
-                            Active Package
+                            {user.wallet.cancelRequested
+                              ? "Package Cancellation Scheduled"
+                              : "Active Package"}
                           </h2>
 
                           <div className="flex justify-between gap-2 items-center">
@@ -585,34 +576,40 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                             </div>
                           </div>
 
-                          <div className="mt-4">
-                            <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
-                              <span className="text-gray-600 text-sm">
-                                Package Coins:
-                              </span>
-                              <span className="font-semibold text-gray-800">
-                                {user.wallet.package.coins ?? 0}
-                              </span>
-                            </div>
-                          </div>
-
-                          <Link
-                            to="/pricing"
-                            onClick={() => setShowPackage(false)}
-                            className="mt-4 flex items-center justify-center w-full bg-green-50 text-green-700 rounded-lg py-2 text-sm font-medium"
-                          >
-                            Upgrade Package
-                          </Link>
-
-                          <button
-                            onClick={cancelSubscription}
-                            disabled={isCanceled}
-                            className="mt-4 flex items-center justify-center w-full bg-red-50 text-red-700 rounded-lg py-2 text-sm font-medium"
-                          >
-                            {isCanceled
-                              ? "Canceling..."
-                              : "Cancel Subscription"}
-                          </button>
+                          {!user?.wallet?.cancelRequested && (
+                            <Link
+                              to="/pricing"
+                              onClick={() => setShowPackage(false)}
+                              className="mt-4 flex items-center justify-center w-full bg-green-50 text-green-700 rounded-lg py-2 text-sm font-medium"
+                            >
+                              Upgrade Package
+                            </Link>
+                          )}
+                          {/* {user.wallet.package.tier !== "free" && (
+                            <>
+                              {user.wallet.cancelRequested ? (
+                                <button
+                                  onClick={reactivateSubscription}
+                                  disabled={isCanceled}
+                                  className="mt-4 flex items-center justify-center w-full bg-blue-50 text-blue-700 rounded-lg py-2 text-sm font-medium"
+                                >
+                                  {isCanceled
+                                    ? "Reactivating..."
+                                    : "Reactivate Subscription"}
+                                </button>
+                              ) : (
+                                <button
+                                  onClick={cancelSubscription}
+                                  disabled={isCanceled}
+                                  className="mt-4 flex items-center justify-center w-full bg-red-50 text-red-700 rounded-lg py-2 text-sm font-medium"
+                                >
+                                  {isCanceled
+                                    ? "Canceling..."
+                                    : "Cancel Subscription"}
+                                </button>
+                              )}
+                            </>
+                          )} */}
                         </>
                       ) : (
                         <>

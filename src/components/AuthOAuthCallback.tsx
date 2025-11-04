@@ -1,9 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSearchParams, useNavigate, useParams } from "react-router-dom";
 import { handleOAuthCallback } from "../utils/authOAuth";
-import { getCurrentUser } from "@/lib/auth";
 import { CheckCircle, Loader, XCircle } from "lucide-react";
-// import { LinkedInIcon } from "../icons";
 
 interface AuthOAuthCallbackProps {
   onAuthSuccess: (user: any) => void;
@@ -48,7 +46,12 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
           throw new Error("Missing code or state parameter");
         }
 
-        if (!provider || (provider !== "google" && provider !== "facebook" && provider !== "linkedin")) {
+        if (
+          !provider ||
+          (provider !== "google" &&
+            provider !== "facebook" &&
+            provider !== "linkedin")
+        ) {
           throw new Error("Invalid OAuth provider");
         }
 
@@ -207,5 +210,4 @@ const LinkedInIconWrapper: React.FC = () => {
       {/* <LinkedInIcon className="w-8 h-8" /> */}
     </div>
   );
-}
-
+};

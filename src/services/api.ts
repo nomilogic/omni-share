@@ -81,7 +81,11 @@ interface APIInstance extends AxiosInstance {
 
   listPackages: () => Promise<any>;
   cancelPackage: () => Promise<any>;
+  cancelDowngradeRequest: () => Promise<any>;
+  requestDowngrade: (id: any) => Promise<any>;
+  reactivatePackage: () => Promise<any>;
   buyPackage: (packageId: string) => Promise<any>;
+  requestUpgradePackage: (packageId: string) => Promise<any>;
   confirmPurchase: (data: any) => Promise<any>;
   listMedia: () => Promise<any>;
   uploadMedia: (formData: FormData) => Promise<any>;
@@ -203,7 +207,11 @@ API.confirmAddons = (id) => API.get(`/client/addons/confirm/${id}`);
 API.confirmPurchase = (id) => API.get(`/client/package/confirm/${id}`);
 API.listPackages = () => API.get("/client/package");
 API.buyPackage = (packageId) => API.get(`/client/package/buy/${packageId}`);
-API.cancelPackage = () => API.delete(`/client/package`);
+API.requestUpgradePackage = (id) => API.get(`/client/package/upgrade/${id}`);
+API.cancelPackage = () => API.delete(`/client/package/cancel`);
+API.reactivatePackage = () => API.get(`/client/package/reactivate`);
+API.requestDowngrade = (id: any) => API.get(`/client/package/downgrade/${id}`);
+API.cancelDowngradeRequest = () => API.delete(`/client/package/downgrade`);
 
 API.listMedia = () => API.get("/client/media");
 API.uploadMedia = (formData) => API.post("/client/media/upload", formData);

@@ -2,10 +2,10 @@
 
 import type React from "react";
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { Check, AlertTriangle, Gift, Loader2 } from "lucide-react";
+import { Check, Loader2, Calendar, X, Gift } from "lucide-react";
 import { useAppContext } from "../context/AppContext";
 import API from "../services/api";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 export const PricingPage: React.FC = () => {
   const { state } = useAppContext();
@@ -23,28 +23,33 @@ export const PricingPage: React.FC = () => {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [addonConfirmOpen, setAddonConfirmOpen] = useState(false);
 
+  const [downgradeRequestOpen, setDowngradeRequestOpen] = useState(false);
+  const [cancelDowngradeOpen, setCancelDowngradeOpen] = useState(false);
+  const [reactivateOpen, setReactivateOpen] = useState(false);
+  const [cancelPackageOpen, setCancelPackageOpen] = useState(false);
+
+  const [downgradeLoading, setDowngradeLoading] = useState(false);
+  const [downgradeReason, setDowngradeReason] = useState("");
+
   const [selectedPlan, setSelectedPlan] = useState<any | null>(null);
   const [selectedAddon, setSelectedAddon] = useState<any | null>(null);
 
   const [isDowngradeBlocked, setIsDowngradeBlocked] = useState(false);
 
-  const activePackage = state?.user?.wallet;
+  const [isCanceled, setIsCanceled] = useState(false);
 
-  const handleTabChange = (tab: "" | "addons") => {
-    setActiveTab(tab);
-    setSearchParams({ tab }); // updates URL query
-  };
+  const activePackage = state?.user?.wallet;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const packagesRes = await API.listPackages();
-        setPackages(packagesRes.data.data);
+        setPackages(packagesRes.data.data || []);
 
         const addonsRes = await API.listAddons();
-        setAddons(addonsRes.data.data);
+        setAddons(addonsRes.data.data || []);
       } catch (error) {
-        console.error(error);
+        console.error("Failed to load packages/addons:", error);
       }
     };
     fetchData();
@@ -60,8 +65,23 @@ export const PricingPage: React.FC = () => {
     return getTierById(activePackage.packageId);
   }, [activePackage?.packageId, getTierById]);
 
+  const hasPendingDowngrade = !!activePackage?.downgradeRequested;
+  const pendingDowngradePackage = useMemo(() => {
+    if (!hasPendingDowngrade) return null;
+    return getTierById(activePackage?.downgradeRequested);
+  }, [hasPendingDowngrade, activePackage?.downgradeRequested, getTierById]);
+
+  const hasCancelRequested = !!activePackage?.cancelRequested;
+
+  const handleTabChange = (tab: "" | "addons") => {
+    setActiveTab(tab);
+    setSearchParams({ tab });
+  };
+
   const handleChoosePlan = (plan: any) => {
     if (loadingPackage) return;
+
+    if (hasCancelRequested || hasPendingDowngrade) return;
 
     if (!currentTier) {
       setSelectedPlan(plan);
@@ -78,7 +98,8 @@ export const PricingPage: React.FC = () => {
       new Date(activePackage.expiredAt) < new Date();
 
     if (!isUpgrade && !currentExpired) {
-      setIsDowngradeBlocked(true);
+      setSelectedPlan(plan);
+      setDowngradeRequestOpen(true);
       return;
     }
 
@@ -86,7 +107,7 @@ export const PricingPage: React.FC = () => {
     setConfirmOpen(true);
   };
 
-  const handleSelectPlan = async (plan: any) => {
+  const handleSubscribe = async (plan: any) => {
     setLoadingPackage(true);
     try {
       const res = await API.buyPackage(plan.id);
@@ -96,11 +117,77 @@ export const PricingPage: React.FC = () => {
         localStorage.clear();
       }
     } catch (error) {
-      console.error(error);
+      console.error("Failed to buy package:", error);
+      alert("Something went wrong while processing your purchase.");
     } finally {
       setLoadingPackage(false);
       setConfirmOpen(false);
       setSelectedPlan(null);
+    }
+  };
+
+  const handleUpdatePackage = async (selectedPlan: any) => {
+    setLoadingPackage(true);
+    try {
+      await API.requestUpgradePackage(selectedPlan.id);
+    } catch (error) {
+    } finally {
+      setLoadingPackage(false);
+      setConfirmOpen(false);
+      setSelectedPlan(null);
+      window.location.reload();
+    }
+  };
+  const handleRequestDowngrade = async () => {
+    if (!selectedPlan) return;
+    setDowngradeLoading(true);
+    try {
+      await API.requestDowngrade(selectedPlan.id);
+      setDowngradeRequestOpen(false);
+      setDowngradeReason("");
+      setSelectedPlan(null);
+    } catch (error) {
+      console.error("Request downgrade failed:", error);
+      alert("Failed to request downgrade");
+    } finally {
+      setDowngradeLoading(false);
+    }
+  };
+
+  const handleCancelDowngradeRequest = async () => {
+    setDowngradeLoading(true);
+    try {
+      await API.cancelDowngradeRequest();
+      setCancelDowngradeOpen(false);
+    } catch (error) {
+      console.error("Cancel downgrade failed:", error);
+      alert("Failed to cancel downgrade request");
+    } finally {
+      setDowngradeLoading(false);
+    }
+  };
+
+  const cancelSubscription = async () => {
+    try {
+      setIsCanceled(true);
+      await API.cancelPackage();
+    } catch (error) {
+      console.error("Cancel subscription failed:", error);
+      alert("Unable to cancel subscription");
+    } finally {
+      setIsCanceled(false);
+    }
+  };
+
+  const reactivateSubscription = async () => {
+    try {
+      setIsCanceled(true);
+      await API.reactivatePackage();
+    } catch (error) {
+      console.error("Reactivation failed:", error);
+      alert("Unable to reactivate subscription");
+    } finally {
+      setIsCanceled(false);
     }
   };
 
@@ -112,7 +199,7 @@ export const PricingPage: React.FC = () => {
       const redirectUrl = res?.data?.data?.checkoutUrl;
       if (redirectUrl) window.location.href = redirectUrl;
     } catch (error) {
-      console.error(error);
+      console.error("Buy addon failed:", error);
       alert("Something went wrong while buying add-on");
     } finally {
       setLoadingAddon(false);
@@ -124,35 +211,91 @@ export const PricingPage: React.FC = () => {
   const handleClosePopup = () => {
     setConfirmOpen(false);
     setAddonConfirmOpen(false);
+    setDowngradeRequestOpen(false);
+    setCancelDowngradeOpen(false);
+    setReactivateOpen(false);
+    setCancelPackageOpen(false);
     setSelectedPlan(null);
     setSelectedAddon(null);
     setIsDowngradeBlocked(false);
+    setDowngradeReason("");
+  };
+
+  const formatDate = (date: Date | null) => {
+    if (!date) return "";
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
   };
 
   return (
     <div className="bg-white w-full h-full rounded-xl shadow-md px-8 py-10 min-h-[70vh] transition-colors">
-      <div className="flex justify-center mb-10 border-b border-gray-200">
-        <button
-          onClick={() => handleTabChange("")}
-          className={`px-6 py-3 font-semibold transition-all border-b-2 ${
-            activeTab === ""
-              ? "border-blue-600 text-blue-600"
-              : "border-transparent text-gray-500 hover:text-blue-600"
-          }`}
-        >
-          Packages
-        </button>
-        {activePackage?.package?.tier !== "free" && (
+      <div className="flex justify-between items-center mb-10 border-b border-gray-200 pb-4">
+        <div className="flex flex-1">
           <button
-            onClick={() => handleTabChange("addons")}
+            onClick={() => handleTabChange("")}
             className={`px-6 py-3 font-semibold transition-all border-b-2 ${
-              activeTab === "addons"
+              activeTab === ""
                 ? "border-blue-600 text-blue-600"
                 : "border-transparent text-gray-500 hover:text-blue-600"
             }`}
           >
-            Credits{" "}
+            Packages
           </button>
+          {activePackage?.package?.tier !== "free" && !hasCancelRequested && (
+            <button
+              onClick={() => handleTabChange("addons")}
+              className={`px-6 py-3 font-semibold transition-all border-b-2 ${
+                activeTab === "addons"
+                  ? "border-blue-600 text-blue-600"
+                  : "border-transparent text-gray-500 hover:text-blue-600"
+              }`}
+            >
+              Credits
+            </button>
+          )}
+        </div>
+
+        {hasCancelRequested && (
+          <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-lg px-4 py-2">
+            <Calendar className="w-4 h-4 text-red-600" />
+            <span className="text-sm font-medium text-red-900">
+              Your subscription will be canceled on{" "}
+              {formatDate(
+                activePackage?.expiredAt
+                  ? new Date(activePackage.expiredAt)
+                  : null
+              )}
+            </span>
+            <button
+              onClick={() => setReactivateOpen(true)}
+              className="ml-2 text-red-600 hover:text-red-900 font-medium text-sm underline"
+            >
+              Reactivate
+            </button>
+          </div>
+        )}
+
+        {hasPendingDowngrade && !hasCancelRequested && (
+          <div className="flex items-center gap-2 bg-orange-50 border border-orange-200 rounded-lg px-4 py-2">
+            <Calendar className="w-4 h-4 text-orange-600" />
+            <span className="text-sm font-medium text-orange-900">
+              Downgrade to {pendingDowngradePackage?.name} scheduled for{" "}
+              {formatDate(
+                activePackage?.expiredAt
+                  ? new Date(activePackage.expiredAt)
+                  : null
+              )}
+            </span>
+            <button
+              onClick={() => setCancelDowngradeOpen(true)}
+              className="ml-2 text-orange-600 hover:text-orange-900 font-medium text-sm underline"
+            >
+              Cancel
+            </button>
+          </div>
         )}
       </div>
 
@@ -168,10 +311,12 @@ export const PricingPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="grid xl:grid-cols-3 lg:grid-cols-2  gap-8 mx-auto">
+          <div className="grid xl:grid-cols-3 lg:grid-cols-2 gap-8 mx-auto">
             {packages.map((tier: any) => {
               const isCurrentPlan =
                 activePackage?.packageId === tier.id && activePackage?.isActive;
+              const isPendingDowngradePackage =
+                activePackage?.downgradeRequested === tier.id;
 
               const nextAmount = Number(tier.amount ?? 0);
               const currentAmount = Number(currentTier?.amount ?? 0);
@@ -179,60 +324,134 @@ export const PricingPage: React.FC = () => {
               const currentExpired =
                 activePackage?.expiredAt &&
                 new Date(activePackage.expiredAt) < new Date();
-              const disableDowngrade = isLowerPlan && !currentExpired;
+
+              const isLockedByCancel = hasCancelRequested && !isCurrentPlan;
+              const isLockedByDowngrade =
+                hasPendingDowngrade &&
+                !isCurrentPlan &&
+                !isPendingDowngradePackage;
+
+              const isFree = tier.amount === 0;
 
               return (
                 <div
                   key={tier.id}
-                  className={`bg-gradient-to-br from-[#7650e3] to-[#6366F1] rounded-2xl shadow-2xl p-8 transform hover:scale-105 transition-all relative ${
-                    isCurrentPlan ? "ring-2 ring-blue-500" : ""
-                  }`}
+                  className={`rounded-2xl overflow-hidden shadow-lg transition-transform duration-300 ${
+                    !isLockedByCancel && !isLockedByDowngrade
+                      ? "hover:shadow-2xl hover:-translate-y-2"
+                      : ""
+                  } ${
+                    isLockedByCancel || isLockedByDowngrade
+                      ? "opacity-60 cursor-not-allowed"
+                      : "opacity-100"
+                  } relative`}
                 >
-                  {isCurrentPlan && (
-                    <div className="absolute flex justify-center top-[-10px] left-0 right-0">
-                      <span className="bg-yellow-400 text-gray-900 px-4 py-1 rounded-full text-sm font-bold ">
-                        Current Plan
+                  <div className="bg-gradient-to-br from-[#c7bdef] to-[#c7bdef] px-10 py-10 h-64 text-center relative">
+                    {/* Badges */}
+                    {(isCurrentPlan ||
+                      isPendingDowngradePackage ||
+                      isLockedByCancel ||
+                      isLockedByDowngrade) && (
+                      <div className="absolute top-3 right-3 flex justify-center">
+                        <span
+                          className={`px-4 py-1.5 rounded-full text-xs font-semibold ${
+                            isCurrentPlan
+                              ? "bg-[#542ed2] text-white"
+                              : isPendingDowngradePackage
+                              ? "bg-orange-400 text-gray-900"
+                              : "bg-gray-500 text-white"
+                          }`}
+                        >
+                          {isCurrentPlan
+                            ? "Current Plan"
+                            : isPendingDowngradePackage
+                            ? "Pending Downgrade"
+                            : "Locked"}
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Plan Name */}
+                    <h3 className="text-[#542ed2] text-3xl font-semibold mb-3">
+                      {tier.name}
+                    </h3>
+
+                    {/* Price */}
+                    <div className="flex items-baseline justify-center gap-1 mb-6">
+                      <span className="text-[#542ed2] font-bold text-xl">
+                        $
+                      </span>
+                      <span className="text-[40px] font-bold text-[#542ed2]">
+                        {tier.amount}
+                      </span>
+                      <span className="text-3xl font-medium text-[#542ed2]">
+                        / {isFree ? "Forever" : "Month"}
                       </span>
                     </div>
-                  )}
-                  <h3 className="text-3xl font-bold mb-2 text-center text-yellow-400">
-                    {tier.name}
-                  </h3>
-                  <p className="text-center text-2xl font-bold mb-5 text-white">
-                    ${tier.amount}/month
-                  </p>
-                  <button
-                    onClick={() => handleChoosePlan(tier)}
-                    disabled={
-                      loadingPackage || isCurrentPlan || disableDowngrade
-                    }
-                    className={`w-full bg-white text-[#7650e3] py-3 my-3 rounded-full transition-all font-semibold ${
-                      isCurrentPlan || disableDowngrade
-                        ? " bg-white text-[#7650e3] opacity-50 cursor-not-allowed"
-                        : " bg-[white] text-[#7650e3]"
-                    }`}
-                  >
-                    {loadingPackage && selectedPlan?.id === tier.id ? (
-                      <>
-                        <Loader2 className="animate-spin w-4 h-4" />
-                        Processing...
-                      </>
-                    ) : isCurrentPlan ? (
-                      "Active"
-                    ) : disableDowngrade ? (
-                      "Locked"
-                    ) : (
-                      "Upgrade"
+
+                    {/* CTA Button */}
+                    {!isFree && (
+                      <button
+                        onClick={() => {
+                          if (hasCancelRequested && isCurrentPlan)
+                            setReactivateOpen(true);
+                          else if (isPendingDowngradePackage)
+                            setCancelDowngradeOpen(true);
+                          else if (isCurrentPlan && !hasPendingDowngrade)
+                            setCancelPackageOpen(true);
+                          else handleChoosePlan(tier);
+                        }}
+                        disabled={
+                          loadingPackage ||
+                          isLockedByCancel ||
+                          isLockedByDowngrade
+                        }
+                        className={`w-full py-3 px-6 rounded-lg font-semibold transition-all text-base bg-[#542ed2] text-white hover:bg-[#542ed2] disabled:opacity-50 ${
+                          isLockedByCancel || isLockedByDowngrade
+                            ? "cursor-not-allowed opacity-60"
+                            : "cursor-pointer"
+                        }`}
+                      >
+                        {loadingPackage && selectedPlan?.id === tier.id
+                          ? "Processing..."
+                          : isCurrentPlan && hasCancelRequested
+                          ? "Reactivate Package"
+                          : isCurrentPlan && !hasPendingDowngrade
+                          ? "Cancel Package"
+                          : isCurrentPlan
+                          ? "Active"
+                          : isPendingDowngradePackage
+                          ? "Cancel Downgrade"
+                          : isLowerPlan
+                          ? "Downgrade"
+                          : "Upgrade"}
+                      </button>
                     )}
-                  </button>
-                  <ul className="space-y-3 mb-6 min-h-56">
-                    {tier.features?.map((f: string, i: number) => (
-                      <li key={i} className="flex items-start">
-                        <Check className="w-6 h-6 text-yellow-400 mr-3 flex-shrink-0" />
-                        <span className="text-white">{f}</span>
-                      </li>
-                    ))}
-                  </ul>
+                  </div>
+
+                  {/* Features / Ideal For */}
+                  <div className="bg-gray-50 px-8 py-8">
+                    <div className="mb-6 pb-6 border-b-2 border-purple-600 text-center">
+                      <p className="text-xl font-bold text-[#542ed2] mb-2">
+                        Ideal for:
+                      </p>
+                      <p className="text-lg text-gray-800 font-medium">
+                        {tier.idealFor ??
+                          "Small agency, growing business, content team"}
+                      </p>
+                    </div>
+
+                    <ul className="space-y-4">
+                      {tier.features?.map((feature: string, idx: number) => (
+                        <li key={idx} className="flex items-start gap-3">
+                          <Check className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                          <span className="text-sm text-gray-800">
+                            {feature}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
               );
             })}
@@ -279,73 +498,72 @@ export const PricingPage: React.FC = () => {
         </div>
       )}
 
-      {isDowngradeBlocked && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="theme-bg-quaternary border theme-border rounded-2xl shadow-2xl w-full max-w-md p-8">
-            <AlertTriangle className="w-10 h-10 text-yellow-500 mb-4 mx-auto" />
-            <h2 className="text-2xl font-semibold theme-text-primary mb-3 text-center">
-              Downgrade Unavailable
-            </h2>
-            <p className="theme-text-secondary text-center mb-6">
-              You can only downgrade after your current plan expires.
-            </p>
-            <div className="flex justify-center">
+      {reactivateOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">
+                Reactivate Your Subscription
+              </h2>
               <button
                 onClick={handleClosePopup}
-                className="px-5 py-2 rounded-lg theme-button-primary"
+                className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
               >
-                Okay
+                <X className="w-6 h-6 text-gray-600" />
               </button>
             </div>
-          </div>
-        </div>
-      )}
 
-      {/* Package Upgrade Popup */}
-      {confirmOpen && selectedPlan && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="theme-bg-quaternary border theme-border rounded-2xl shadow-2xl w-full max-w-md p-8">
-            <h2 className="text-2xl font-semibold theme-text-primary mb-3 text-center">
-              Confirm Upgrade
-            </h2>
-            <p className="theme-text-secondary text-center mb-6">
-              You are about to upgrade to <strong>{selectedPlan.name}</strong>{" "}
-              for <strong>${selectedPlan.amount}</strong> per month.
+            <p className="text-gray-700 mb-4">
+              Are you sure you want to reactivate your subscription? Your{" "}
+              <span className="font-semibold">{currentTier?.name}</span> plan
+              will continue to be billed.
             </p>
 
-            <div className="theme-bg-light p-4 rounded-lg text-sm theme-text-secondary mb-6">
-              <p className="mb-2 font-semibold theme-text-primary">
-                Important Information:
+            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-4">
+              <p className="text-sm text-gray-700">
+                <span className="font-semibold text-gray-900">Plan:</span>{" "}
+                <span className="text-blue-600 font-semibold">
+                  {currentTier?.name}
+                </span>
               </p>
-              <ul className="list-disc pl-4 space-y-1">
-                <li>Upgrades take effect immediately after payment.</li>
-                <li>Remaining time from your current plan will be adjusted.</li>
-                <li>
-                  Billing renews automatically every month unless canceled.
-                </li>
-                <li>
-                  By proceeding, you agree to our Terms of Service and Billing
-                  Policy.
-                </li>
-              </ul>
+              <p className="text-sm text-gray-700 mt-2">
+                <span className="font-semibold text-gray-900">
+                  Monthly Cost:
+                </span>{" "}
+                <span className="text-blue-600 font-semibold">
+                  ${currentTier?.amount}/month
+                </span>
+              </p>
             </div>
 
-            <div className="flex justify-end gap-3">
+            <div className="bg-gray-50 rounded-xl p-4 mb-6">
+              <p className="text-xs text-gray-600 leading-relaxed">
+                <span className="font-semibold block mb-2">What happens:</span>•
+                Your {currentTier?.name} plan will continue to be active
+                <br />• Billing will resume at ${currentTier?.amount}/month
+                <br />• You will have full access to all plan features
+              </p>
+            </div>
+
+            <div className="flex gap-3 justify-end">
               <button
                 onClick={handleClosePopup}
-                className="px-4 py-2 rounded-lg bg-gray-200 theme-text-primary hover:bg-gray-300"
+                className="px-6 py-3 border border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
               >
-                Cancel
+                Keep Canceled
               </button>
               <button
-                onClick={() => handleSelectPlan(selectedPlan)}
-                disabled={loadingPackage}
-                className="px-5 py-2 rounded-lg bg-white  theme-text-primary flex items-center gap-2"
+                onClick={reactivateSubscription}
+                disabled={isCanceled}
+                className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
-                {loadingPackage ? (
-                  <Loader2 className="animate-spin w-4 h-4" />
+                {isCanceled ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Reactivating...
+                  </>
                 ) : (
-                  "Confirm Upgrade"
+                  "Yes, Reactivate"
                 )}
               </button>
             </div>
@@ -353,48 +571,374 @@ export const PricingPage: React.FC = () => {
         </div>
       )}
 
-      {/* Add-on Purchase Popup */}
+      {cancelDowngradeOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">
+                Cancel Downgrade Request
+              </h2>
+              <button
+                onClick={handleClosePopup}
+                className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <X className="w-6 h-6 text-gray-600" />
+              </button>
+            </div>
+
+            <p className="text-gray-700 mb-4">
+              Are you sure you want to cancel your downgrade request? You will{" "}
+              <span className="font-semibold">
+                continue with your current plan
+              </span>{" "}
+              after expiration.
+            </p>
+
+            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-4">
+              <p className="text-sm text-gray-700">
+                <span className="font-semibold text-gray-900">
+                  Current Plan:
+                </span>{" "}
+                <span className="text-blue-600 font-semibold">
+                  {currentTier?.name}
+                </span>
+              </p>
+              <p className="text-sm text-gray-700 mt-2">
+                <span className="font-semibold text-gray-900">
+                  Planned Downgrade:
+                </span>{" "}
+                <span className="text-orange-600 font-semibold">
+                  {pendingDowngradePackage?.name}
+                </span>
+              </p>
+              <p className="text-sm text-gray-700 mt-2">
+                <span className="font-semibold text-gray-900">
+                  Current Monthly Cost:
+                </span>{" "}
+                <span className="text-blue-600 font-semibold">
+                  ${currentTier?.amount}/month
+                </span>
+              </p>
+            </div>
+
+            <div className="bg-gray-50 rounded-xl p-4 mb-6">
+              <p className="text-xs text-gray-600 leading-relaxed">
+                <span className="font-semibold block mb-2">What happens:</span>•
+                Your current {currentTier?.name} plan will continue after{" "}
+                {formatDate(
+                  activePackage?.expiredAt
+                    ? new Date(activePackage.expiredAt)
+                    : null
+                )}
+                <br />• Billing will continue at ${currentTier?.amount}/month
+                <br />• You can request downgrade again anytime
+              </p>
+            </div>
+
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={handleClosePopup}
+                className="px-6 py-3 border border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+              >
+                Keep Downgrade
+              </button>
+              <button
+                onClick={handleCancelDowngradeRequest}
+                disabled={downgradeLoading}
+                className="px-6 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                {downgradeLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Canceling...
+                  </>
+                ) : (
+                  "Yes, Cancel Request"
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {downgradeRequestOpen && selectedPlan && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-8 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">
+                Request Downgrade
+              </h2>
+              <button
+                onClick={handleClosePopup}
+                className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <X className="w-6 h-6 text-gray-600" />
+              </button>
+            </div>
+
+            <p className="text-gray-700 mb-4">
+              You are requesting to downgrade to{" "}
+              <span className="font-semibold">{selectedPlan.name}</span>. Fill a
+              short reason (optional) to help us improve.
+            </p>
+
+            <textarea
+              value={downgradeReason}
+              onChange={(e) => setDowngradeReason(e.target.value)}
+              placeholder="Tell us why you want to downgrade (optional)"
+              className="w-full min-h-[120px] p-3 border rounded-lg mb-4"
+            />
+
+            <div className="flex items-center gap-3 mb-4">
+              <input
+                id="block-now"
+                type="checkbox"
+                checked={isDowngradeBlocked}
+                onChange={(e) => setIsDowngradeBlocked(e.target.checked)}
+                className="w-4 h-4"
+              />
+              <label htmlFor="block-now" className="text-sm text-gray-600">
+                Apply downgrade immediately when possible (if supported)
+              </label>
+            </div>
+
+            <div className="bg-gray-50 rounded-xl p-4 mb-6 text-sm text-gray-600">
+              <p className="font-semibold mb-2">Note</p>
+              <p>
+                Downgrade will be scheduled at plan expiry. You can cancel it
+                anytime before it is applied.
+              </p>
+            </div>
+
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={handleClosePopup}
+                className="px-6 py-3 border border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+              >
+                Back
+              </button>
+              <button
+                onClick={handleRequestDowngrade}
+                disabled={downgradeLoading}
+                className="px-6 py-3 bg-orange-600 text-white rounded-lg font-semibold hover:bg-orange-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                {downgradeLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Requesting...
+                  </>
+                ) : (
+                  "Request Downgrade"
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {confirmOpen && selectedPlan && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-md animate-fadeIn">
+          <div className="theme-bg-quaternary border theme-border rounded-3xl shadow-2xl w-full max-w-md p-8 relative overflow-hidden">
+            {/* Accent gradient at top */}
+            <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-blue-500 via-yellow-400 to-blue-500 animate-gradient" />
+
+            {/* Header */}
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                <Gift className="text-yellow-400 w-6 h-6" />
+                Confirm Plan
+              </h2>
+              <button
+                onClick={handleClosePopup}
+                className="p-2 hover:bg-gray-100 rounded-full transition-all duration-200"
+              >
+                <X className="w-5 h-5 text-gray-600" />
+              </button>
+            </div>
+
+            {/* Plan Details */}
+            <div className="mb-5 bg-gray-50 border border-gray-200 rounded-xl p-4">
+              <p className="text-sm text-gray-600 mb-1">You're selecting:</p>
+              <h3 className="text-lg font-semibold text-gray-900">
+                {selectedPlan.name}
+              </h3>
+              <p className="text-sm font-medium text-gray-500">
+                ${selectedPlan.amount}/month
+              </p>
+            </div>
+
+            {/* Features */}
+            <ul className="mb-5 text-sm space-y-2">
+              {selectedPlan.features?.map((f: string, i: number) => (
+                <li key={i} className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-green-500 shrink-0 mt-[2px]" />
+                  <span className="text-gray-700">{f}</span>
+                </li>
+              ))}
+            </ul>
+
+            {/* Conditional message */}
+            {activePackage?.package?.tier !== "free" ? (
+              <div className="mb-6 bg-yellow-50 border border-yellow-200 text-yellow-800 text-sm rounded-xl p-3">
+                <p>
+                  You’re <strong>upgrading</strong> your current plan — you’ll
+                  also receive your previous package coins with this upgrade.
+                </p>
+              </div>
+            ) : (
+              <div className="mb-6 bg-blue-50 border border-blue-200 text-blue-800 text-sm rounded-xl p-3">
+                <p>
+                  You’re starting a <strong>new subscription</strong>. This plan
+                  begins fresh with the listed features and coins.
+                </p>
+              </div>
+            )}
+
+            {/* Buttons */}
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={handleClosePopup}
+                className="px-5 py-2.5 border border-gray-300 rounded-xl font-semibold text-gray-700 hover:bg-gray-100 bg-gray-50 transition-all duration-200"
+              >
+                Back
+              </button>
+
+              <button
+                onClick={() => {
+                  if (activePackage?.package?.tier === "free") {
+                    handleSubscribe(selectedPlan);
+                  } else {
+                    handleUpdatePackage(selectedPlan);
+                  }
+                }}
+                disabled={loadingPackage}
+                className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-semibold shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loadingPackage ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  "Proceed to Checkout"
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {addonConfirmOpen && selectedAddon && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <div className="theme-bg-quaternary border theme-border rounded-2xl shadow-2xl w-full max-w-md p-8">
-            <h2 className="text-2xl font-semibold theme-text-primary mb-3 text-center">
-              Confirm Add-on
-            </h2>
-            <p className="theme-text-secondary text-center mb-6">
-              You are about to buy <strong>{selectedAddon.title}</strong> for{" "}
-              <strong>${selectedAddon.amount}</strong>.
-            </p>
-
-            <div className="theme-bg-light p-4 rounded-lg text-sm theme-text-secondary mb-6">
-              <p className="mb-2 font-semibold theme-text-primary">
-                Important Information:
-              </p>
-              <ul className="list-disc pl-4 space-y-1">
-                <li>Purchase takes effect immediately after payment.</li>
-                <li>Coins/benefits will be added instantly to your account.</li>
-                <li>
-                  By proceeding, you agree to our Terms of Service and Billing
-                  Policy.
-                </li>
-              </ul>
-            </div>
-
-            <div className="flex justify-end gap-3">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">Buy Add-on</h2>
               <button
                 onClick={handleClosePopup}
-                className="px-4 py-2 rounded-lg bg-gray-200 theme-text-primary hover:bg-gray-300"
+                className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
               >
-                Cancel
+                <X className="w-6 h-6 text-gray-600" />
+              </button>
+            </div>
+
+            <div className="mb-4">
+              <p className="text-sm text-gray-700">Add-on:</p>
+              <h3 className="text-xl font-semibold">{selectedAddon.name}</h3>
+              <p className="text-sm text-gray-600">${selectedAddon.amount}</p>
+            </div>
+
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={handleClosePopup}
+                className="px-6 py-3 border border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+              >
+                Back
               </button>
               <button
                 onClick={handleBuyAddon}
                 disabled={loadingAddon}
-                className="px-5 py-2 rounded-lg theme-button-primary hover:brightness-110 flex items-center gap-2"
+                className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
                 {loadingAddon ? (
-                  <Loader2 className="animate-spin w-4 h-4" />
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Redirecting...
+                  </>
                 ) : (
-                  "Confirm Purchase"
+                  "Buy Add-on"
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {cancelPackageOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">
+                Cancel Your Subscription
+              </h2>
+              <button
+                onClick={handleClosePopup}
+                className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <X className="w-6 h-6 text-gray-600" />
+              </button>
+            </div>
+
+            <p className="text-gray-700 mb-4">
+              We're sorry to see you go! Are you sure you want to cancel your{" "}
+              <span className="font-semibold">{currentTier?.name}</span> plan?
+            </p>
+
+            <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-4">
+              <p className="text-sm text-gray-700">
+                <span className="font-semibold text-gray-900">Plan:</span>{" "}
+                <span className="text-red-600 font-semibold">
+                  {currentTier?.name}
+                </span>
+              </p>
+              <p className="text-sm text-gray-700 mt-2">
+                <span className="font-semibold text-gray-900">
+                  Monthly Cost:
+                </span>{" "}
+                <span className="text-red-600 font-semibold">
+                  ${currentTier?.amount}/month
+                </span>
+              </p>
+            </div>
+
+            <div className="bg-gray-50 rounded-xl p-4 mb-6">
+              <p className="text-xs text-gray-600 leading-relaxed">
+                <span className="font-semibold block mb-2">What happens:</span>•
+                Your {currentTier?.name} plan will be canceled
+                <br />• You will lose access to premium features
+                <br />• Your subscription will end at the next billing cycle
+                <br />• You can reactivate anytime
+              </p>
+            </div>
+
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={handleClosePopup}
+                className="px-6 py-3 border border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+              >
+                Keep Plan
+              </button>
+              <button
+                onClick={cancelSubscription}
+                disabled={isCanceled}
+                className="px-6 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                {isCanceled ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Canceling...
+                  </>
+                ) : (
+                  "Yes, Cancel Plan"
                 )}
               </button>
             </div>
