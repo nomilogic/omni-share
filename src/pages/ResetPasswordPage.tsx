@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import API from "../services/api";
+import { ArrowLeftIcon } from "lucide-react";
+import Icon from "../components/Icon";
 
 const ResetPasswordPage: React.FC = () => {
   const [password, setPassword] = useState("");
@@ -41,32 +43,25 @@ const ResetPasswordPage: React.FC = () => {
 
   return (
     <div className="max-w-md mx-auto min-h-screen flex items-center justify-center w-full">
-      <div
-        className={`absolute inset-0 theme-bg-trinary transition-all duration-1000`}
-      >
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="absolute inset-0 theme-bg-trinary from-black/30 via-transparent to-transparent bg-overlay "></div>
-      </div>
-
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-20 left-10 w-20 h-20 bg-white/10 rounded-full animate-pulse"></div>
-        <div className="absolute top-40 right-20 w-16 h-16 bg-white/20 rounded-full animate-bounce"></div>
-        <div className="absolute bottom-40 left-20 w-12 h-12 bg-white/15 rounded-full animate-ping"></div>
-        <div className="absolute bottom-20 right-10 w-24 h-24 bg-white/10 rounded-full animate-pulse"></div>
-      </div>
-
-      {/* Card */}
-      <div className="relative z-10 w-full max-w-md bg-white dark:bg-gray-900 shadow-2xl rounded-2xl p-8 border border-white/20 backdrop-blur-lg animate-fadeIn">
-        <h2 className="text-2xl font-bold text-center theme-text-secondary  mb-2">
+      <div className="relative z-10 w-full max-w-md bg-slate-50/50  shadow-xl rounded-2xl py-12 px-8 border border-slate-200/70 backdrop-blur-sm">
+        <div className="flex items-center justify-center mb-8">
+          <div className="text-center flex gap-2 items-center ">
+            <div className="w-12 h-12   ">
+              <Icon name="logo" size={50} />
+            </div>
+            <h1 className="text-2xl  theme-text-primary">{"OMNISHARE"}</h1>
+          </div>
+        </div>
+        <h2 className="text-xl font-bold text-center text-gray-800  mb-1">
           Reset Your Password
         </h2>
-        <p className="text-sm text-gray-500 dark:text-gray-400 text-center mb-6">
+        <p className="text-base text-gray-400 text-center mb-8">
           Enter your new password below.
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+            <label className="block text-sm font-medium mb-1 text-black dark:text-gray-300">
               New Password
             </label>
             <input
@@ -74,13 +69,13 @@ const ResetPasswordPage: React.FC = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all duration-200"
+              className="w-full px-4 py-2 rounded-lg border-2 border-purple-300  dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all duration-200"
               placeholder="Enter new password"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+            <label className="block text-sm font-medium mb-1 text-black dark:text-gray-300">
               Confirm Password
             </label>
             <input
@@ -88,7 +83,7 @@ const ResetPasswordPage: React.FC = () => {
               value={confirm}
               onChange={(e) => setConfirm(e.target.value)}
               required
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all duration-200"
+              className="w-full px-4 py-2 rounded-lg border-2 border-purple-300  dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all duration-200"
               placeholder="Re-enter password"
             />
           </div>
@@ -103,7 +98,7 @@ const ResetPasswordPage: React.FC = () => {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-2.5 rounded-lg font-medium text-white transition-all duration-300 ${
+            className={`w-full py-2 rounded-lg  font-semibold text-white transition-all duration-300 ${
               loading
                 ? "bg-purple-400 cursor-not-allowed"
                 : "bg-purple-600 hover:bg-purple-700 shadow-lg hover:shadow-xl"
@@ -112,16 +107,6 @@ const ResetPasswordPage: React.FC = () => {
             {loading ? "Updating..." : "Set New Password"}
           </button>
         </form>
-
-        <div className="text-center mt-4">
-          <button
-            type="button"
-            onClick={() => navigate("/auth")}
-            className="text-sm text-gray-600 dark:text-gray-400 hover:text-purple-600 transition-colors duration-200"
-          >
-            Back to Login
-          </button>
-        </div>
       </div>
     </div>
   );

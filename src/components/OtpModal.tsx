@@ -29,23 +29,19 @@ export function OtpModal({
   const [info, setInfo] = React.useState<string>("");
   const [remaining, setRemaining] = React.useState<number>(40);
   const [expired, setExpired] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(300); // 5 minutes = 300 seconds
+  const [timeLeft, setTimeLeft] = useState(300);
 
-  // Countdown timer
   useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => prev - 1);
+    }, 1000);
     if (timeLeft <= 0) {
       setExpired(true);
       return;
     }
-
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => prev - 1);
-    }, 1000);
-
     return () => clearInterval(timer);
   }, [timeLeft]);
 
-  // Format mm:ss
   const formatTime = (seconds: any) => {
     const m = Math.floor(seconds / 60);
     const s = seconds % 60;
@@ -102,12 +98,11 @@ export function OtpModal({
     if (remaining > 0) return;
     setError("");
     setInfo("");
+    setResending(true);
     try {
-      setResending(true);
-      const fn = resendOtp || (async () => {});
-      await fn();
-      setExpired(false);
+      await resendOtp();
       setTimeLeft(300);
+      setExpired(false);
       setRemaining(40);
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : "Failed to resend OTP";
