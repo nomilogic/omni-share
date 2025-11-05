@@ -44,7 +44,6 @@ export const AuthForm: React.FC<AuthFormProps> = ({
   const [error, setError] = useState("");
   const [showOtpPopup, setShowOtpPopup] = useState<boolean>(false);
   const [successMessage, setSuccessMessage] = useState("");
-  const [resetToken, setResetToken] = useState("");
 
   const params = new URLSearchParams(window.location.search);
   const referralId: any = params.get("referralId");
@@ -521,12 +520,14 @@ export const AuthForm: React.FC<AuthFormProps> = ({
 
           {mode === "forgotPassword" && (
             <form onSubmit={handleForgotPasswordSubmit} className="space-y-4">
-              <h2 className="text-lg font-semibold text-gray-800 mb-2">
-                Forgot Password
-              </h2>
-              <p className="text-sm text-gray-600 mb-6">
-                Enter your registered email address below.
-              </p>
+              <div>
+                <h2 className="text-xl font-bold text-center text-gray-800  mb-1">
+                  Forgot Password
+                </h2>
+                <p className="text-base text-gray-400 text-center mb-8">
+                  Enter your registered email address below.
+                </p>
+              </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
