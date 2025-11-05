@@ -424,7 +424,7 @@ export const PricingPage: React.FC = () => {
                         {loadingPackage && selectedPlan?.id === tier.id
                           ? "Processing..."
                           : isCurrentPlan && hasCancelRequested
-                          ? "Reactivate Package"
+                          ? "Reactivate"
                           : isCurrentPlan && !hasPendingDowngrade
                           ? "Cancel Package"
                           : isCurrentPlan
@@ -432,8 +432,8 @@ export const PricingPage: React.FC = () => {
                           : isPendingDowngradePackage
                           ? "Cancel Downgrade"
                           : isLowerPlan
-                          ? "Downgrade"
-                          : "Upgrade"}
+                          ? "Switch"
+                          : "Switch"}
                       </button>
                     )}
                   </div>

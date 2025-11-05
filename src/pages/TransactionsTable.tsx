@@ -16,77 +16,79 @@ const TransactionsHistoryBox = ({ data }: any) => {
           data.map((item: any) => (
             <div
               key={item.id}
-              className="bg-gray-50 border border-gray-200 rounded-xl p-4 flex justify-between items-center hover:shadow-md transition-all duration-200"
+              className="w-full  border-2 border-purple-600 rounded-2xl p-6 bg-white shadow-sm hover:shadow-lg transition-all duration-300"
             >
-              <div className="flex flex-col">
-                <div className="mt-2 text-sm text-gray-600">
-                  <div>
-                    <span className="font-medium">Package:</span>{" "}
-                    {item.package?.name || "N/A"} ({item.package?.tier || "N/A"}
-                    )
-                  </div>
-                  <div>
-                    <span className="font-medium">Coins:</span>{" "}
-                    {item.coins?.toLocaleString() || 0}
-                  </div>
-                  <div>
-                    <span className="font-medium">Amount:</span> $
-                    {item.amount || item.amountPaid || 0}
-                  </div>
-                  <div>
-                    <span className="font-medium">Billing Reason:</span>{" "}
-                    {item.billingReason || "N/A"}
-                  </div>
-                  <div>
-                    <span className="font-medium">Date:</span>{" "}
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-bold text-purple-600">
+                  Standard Monthly Subscription
+                </h2>
+                {item.hostedInvoiceUrl ? (
+                  <button
+                    onClick={() => window.open(item.hostedInvoiceUrl, "_blank")}
+                    className="bg-purple-700 hover:bg-purple-800 text-white font-semibold px-3 py-1 text-sm rounded-md transition-colors"
+                  >
+                    Invoice
+                  </button>
+                ) : (
+                  <button
+                    disabled
+                    className="bg-gray-300 text-black font-semibold px-5 py-2 rounded-lg cursor-not-allowed"
+                  >
+                    {item.autoRenewal ? "Auto-Renewed" : "No Receipt"}
+                  </button>
+                )}
+              </div>
+
+              <div className="space-y-3 text-sm text-black">
+                <div className="flex items-center justify-between">
+                  <span className="font-medium">Price</span>
+                  <span className="font-semibold">
+                    ${item.amount || item.amountPaid || 0}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <span className="font-medium">Purchased at</span>
+                  <span className="font-semibold">
                     {item.createdAt
                       ? new Date(item.createdAt).toLocaleString()
                       : "N/A"}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <span className="font-medium">Purchased code</span>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() =>
+                        navigator.clipboard.writeText(
+                          item.transactionId || item.id
+                        )
+                      }
+                      className="p-0.5 hover:bg-gray-100 rounded transition-colors"
+                      title="Copy to clipboard"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4 text-purple-600"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M8 16h8m-8-4h8m-8-4h8m2 12H6a2 2 0 01-2-2V6a2 2 0 012-2h6l6 6v10a2 2 0 01-2 2z"
+                        />
+                      </svg>
+                    </button>
+                    <span className="text-purple-600 font-medium">
+                      {item.transactionId || item.id}
+                    </span>
                   </div>
                 </div>
-
-                {/* Status & Type */}
-                <div className="mt-2 flex items-center gap-3">
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                      item.status === "paid" || item.status === "succeeded"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-red-100 text-red-700"
-                    }`}
-                  >
-                    {item.status}
-                  </span>
-                  {item.type && (
-                    <span className="text-xs text-gray-500 capitalize">
-                      {item.type}
-                    </span>
-                  )}
-                  {item.autoRenewal && (
-                    <span className="px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-700">
-                      Auto-Renewed
-                    </span>
-                  )}
-                </div>
               </div>
-
-              {/* Invoice Button */}
-              {item.hostedInvoiceUrl ? (
-                <button
-                  onClick={() => window.open(item.hostedInvoiceUrl, "_blank")}
-                  className="flex items-center gap-2 bg-[#7650e3] text-white px-4 py-2 rounded-lg hover:bg-[#6540d0] transition"
-                >
-                  <span className="text-sm font-medium">Invoice Link</span>
-                </button>
-              ) : (
-                <button
-                  disabled
-                  className="flex items-center gap-2 bg-gray-300 text-gray-700 px-4 py-2 rounded-lg cursor-not-allowed"
-                >
-                  <span className="text-sm font-medium">
-                    {item.autoRenewal ? "Auto-Renewed" : "No Receipt"}
-                  </span>
-                </button>
-              )}
             </div>
           ))
         )}
