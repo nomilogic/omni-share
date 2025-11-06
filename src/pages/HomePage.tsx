@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Menu, X, ChevronDown, Play, Check, Share2, Zap, BarChart3, Calendar, Video, Sparkles, Star, ChevronLeft, ChevronRight, Users, TrendingUp } from 'lucide-react';
 import Icon from '../components/Icon';
 import { useNavigate } from 'react-router-dom';
+import LogoWhiteText from '../assets/logo-white-text.svg'
 
 function HomePage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -160,19 +161,21 @@ function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20 flex-row-reverse mds:flex-row">
             <div className="flex items-center space-x-2">
-             
-
               <Icon
-                name="logo"
+                name="logo-white"
                 size={35}
-                className={`ml-0 lg:ml-0 mt-1 lg:scale-105 ${ scrollY < 50 ? "brightness-[20]" : "" }`}
+                className={`ml-0 lg:ml-0 mt-1 lg:scale-105 ${
+                  scrollY < 50 ? "" : ""
+                }`}
               />
               <span
                 className={`${
                   scrollY > 50 ? "text-[#000]" : "text-white"
                 } text-2xl lg:text-[1.6rem] tracking-tight`}
               >
-                OMNISHARE
+                <span className="theme-text-primary text-2xl lg:text-[1.6rem] tracking-tight">
+                  <img src={LogoWhiteText} alt="Logo" className="h-5" />
+                </span>
               </span>
             </div>
 

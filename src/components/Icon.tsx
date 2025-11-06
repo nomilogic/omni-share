@@ -18,6 +18,7 @@ import SpiralLogo from '../assets/spiral-logo.svg';
 import QuestionMark from '../assets/question-mark.svg';
 import Crown from '../assets/crown.svg';
 import SpiralGrey from '../assets/spiral-grey.svg';
+import LogoWhite from '../assets/logo-white.svg';
 
 // Define the available icon names
 export type IconName =
@@ -37,7 +38,9 @@ export type IconName =
   | "spiral-logo"
   | "question-mark"
   | "share"
-  | "spiral-grey";
+  | "spiral-grey"
+  | "logo-white"
+  ;
 // New icon name
 
 // Map icon names to their respective SVG imports
@@ -58,7 +61,8 @@ const iconMap: Record<IconName, string> = {
   'manage-subs': ManageSubs,
   'spiral-logo': SpiralLogo,
   'question-mark': QuestionMark,
-  'spiral-grey' : SpiralGrey
+  'spiral-grey' : SpiralGrey,
+  'logo-white' : LogoWhite
 };
 
 interface IconProps {
