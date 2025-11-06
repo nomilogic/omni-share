@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { useAppContext } from "../../context/AppContext";
 import { useLoading } from "../../context/LoadingContext";
+import { useSubscriptionModal } from "../../context/SubscriptionModalContext";
 import { NotificationCenter } from "../NotificationCenter";
 import { ThemeSelector } from "../ThemeSelector";
 import { useTheme } from "../../hooks/useTheme";
@@ -51,7 +52,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [showManageSubscription, setShowManageSubscription] = useState(false);
+  const { showManageSubscription, openManageSubscription, closeManageSubscription } = useSubscriptionModal();
   const notificationRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const mainContentRef = useRef<HTMLElement>(null);
@@ -124,12 +125,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     { name: "Accounts", path: "/accounts", icon: Building2 },
     { name: "History", path: "/history", icon: History },
     { name: "Pricing Plan", path: "/pricing", icon: CreditCard },
-    {
-      name: "Transaction History",
-      path: "/transaction-history",
-      icon: HistoryIcon,
-    },
-    { name: "Generate Amount", path: "/generate-amount", icon: Coins },
+    // {
+    //   name: "Transaction History",
+    //   path: "/transaction-history",
+    //   icon: HistoryIcon,
+    // },
+    // { name: "Generate Amount", path: "/generate-amount", icon: Coins },
   ];
   const [showPackage, setShowPackage] = useState(false);
   const [isCanceled, setIsCanceled] = useState(false);
@@ -162,19 +163,19 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
         <div className="relative z-10">
           <div
-            className={`fixed inset-y-0 left-0 z-50 w-full md:w-[20%] theme-bg-trinary border-r border-white/10 transform ${
+            className={`fixed inset-y-0 left-0 z-50 w-full md:w-[17%] theme-bg-trinary border-r border-white/10 transform ${
               isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
             } transition-transform duration-300 ease-in-out`}
           >
             {/* Close button */}
             <div className="flex items-center justify-end border-b border-white/20 p-2">
               {/* complete profile warning  */}
-              <button
+              {/* <button
                 onClick={() => navigate("/profile")}
                 className="mr-auto px-3 py-1 theme-bg-pantary hover:bg-purple-700 text-white rounded-md text-md font-medium transition-all animate-pulse"
               >
                 complete your profile for better experience
-              </button>
+              </button> */}
               <button
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="rounded-md theme-text-light hover:theme-text-primary"
@@ -666,7 +667,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
                           {/* Buttons */}
                           <button
-                            onClick={() => setShowManageSubscription(true)}
+                            onClick={() => openManageSubscription()}
                             className="w-full py-2.5 text-lg font-semibold rounded-lg border flex items-center justify-center gap-2 transition  hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
                             style={{ borderColor: "#7650e3", color: "#7650e3" }}
                           >
@@ -681,7 +682,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                           <Link
                             to="/pricing"
                             onClick={() => setShowPackage(false)}
-                            className="w-full mt-3  py-[9.5px] text-lg font-semibold rounded-lg flex items-center justify-center gap-2  text-white bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] border"
+                            className="w-full mt-3 py-[9.5px] text-lg font-semibold rounded-lg flex items-center justify-center gap-2  text-white bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] border upgrade"
                           >
                             <div className="hover:filter-omni h-full w-full text-center">
                               <Icon
@@ -709,7 +710,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           <main
             id="mainContent"
             ref={mainContentRef}
-            className="py-0 h-full-dec-hf overflow-auto theme-bg-card lg:px-[20%]"
+            className="py-0 h-full-dec-hf overflow-auto theme-bg-card lg:px-[17%] md:px-[10%]"
           >
             <div className="w-full mx-auto sm:px-0 lg:px-0 overflow-fit">
               <div className="p-0">{children}</div>
@@ -723,19 +724,19 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         {/* Manage Subscription Modal */}
         <ManageSubscriptionModal
           isOpen={showManageSubscription}
-          onClose={() => setShowManageSubscription(false)}
+          onClose={closeManageSubscription}
           onUpdatePayment={() => {
             setShowPackage(false);
-            setShowManageSubscription(false);
+            closeManageSubscription();
             navigate("/billing");
           }}
           onViewInvoices={() => {
             setShowPackage(false);
-            setShowManageSubscription(false);
+            closeManageSubscription();
             navigate("/invoices");
           }}
           onCancelSubscription={() => {
-            setShowManageSubscription(false);
+            closeManageSubscription();
             try {
               (cancelSubscription as any) && cancelSubscription();
             } catch (e) {
@@ -744,7 +745,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           }}
           onAddCoins={() => {
             setShowPackage(false);
-            setShowManageSubscription(false);
+            closeManageSubscription();
             navigate("/wallet");
           }}
         />

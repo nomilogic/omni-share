@@ -6,7 +6,7 @@ const ModalIllustration = () => (
     <img
       src={ModalIllustrationPng}
       alt="Pause Illustration"
-      className="w-full h-full object-contain"
+      className="w-full h-full object-contain md:object-bottom px-5"
     />
   </div>
 );

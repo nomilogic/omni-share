@@ -443,6 +443,18 @@ input[type="checkbox"]:focus {
   box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.3);
 }
 
+.upgrade
+{
+    &:hover {
+        /* The '&' refers to the .button element itself */
+      cursor: pointer;
+      div
+      {
+          filter: brightness(0) saturate(100%) invert(32%) sepia(98%) saturate(1952%) hue-rotate(239deg) brightness(90%) contrast(96%);
+      }
+      }
+
+}
 /* Custom Select (Dropdown) Styles */
 select {
   appearance: none;
