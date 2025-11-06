@@ -98,14 +98,13 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
             <img
               src={Illustration}
               alt="Manage subscription illustration"
-              className="w-full h-full object-contain md:p-20 rounded-2xl"
+              className="w-full h-full object-contain px-20 md:px-10 rounded-2xl object-bottom"
             />
           </div>
 
           {/* Right: Actions */}
-          <div className="md:w-1/2 p-6 z- relative">
+          <div className="md:w-1/2 p-6 z-10">
             {/* Loading Overlay */}
-            <LoadingOverlay />
             
             {/* Close button as a purple circle in top-right */}
             <button
@@ -210,7 +209,7 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
             <img
               src={Transactions}
               alt="Manage subscription illustration"
-              className="w-full h-full object-contain md:p-20 rounded-2xl"
+              className="w-full h-full object-contain md:p-20 rounded-2xl object-bottom"
             />
           </div>
 
@@ -219,7 +218,7 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
             {/* Close button as a purple circle in top-right */}
             <button
               onClick={_onClose}
-              className="absolute right-4 top-4 w-7 h-7 z-[1000] rounded-full border-[3px] border-[#7650e3] flex items-center justify-center text-[#7650e3] bg-[#F7F5FB] transition-shadow"
+              className="absolute right-4 top-4 w-7 h-7 z-1000 rounded-full border border-[#7650e3] flex items-center justify-center text-[#7650e3] bg-[#F7F5FB] transition-shadow border-[3px]"
               aria-label="Close manage subscription dialog"
             >
               <X className="w-5 h-5  color-[#7650e3] stroke-[#7650e3] stroke-[3] " />

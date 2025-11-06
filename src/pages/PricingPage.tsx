@@ -7,6 +7,8 @@ import { useAppContext } from "../context/AppContext";
 import API from "../services/api";
 import { useSearchParams } from "react-router-dom";
 import Icon from "../components/Icon";
+import { useSubscriptionModal } from "../context/SubscriptionModalContext";
+import { useConfirmPlan } from "../context/ConfirmPlanContext";
 
 export const PricingPage: React.FC = () => {
   const { state, refreshUser } = useAppContext();
@@ -73,6 +75,8 @@ export const PricingPage: React.FC = () => {
   }, [hasPendingDowngrade, activePackage?.downgradeRequested, getTierById]);
 
   const hasCancelRequested = !!activePackage?.cancelRequested;
+
+  const { openManageSubscription } = useSubscriptionModal();
 
   const handleTabChange = (tab: "" | "addons") => {
     setActiveTab(tab);
@@ -241,14 +245,14 @@ export const PricingPage: React.FC = () => {
   };
 
   return (
-    <div className="bg-white w-full h-full rounded-lg shadow-md px-5 py-10 min-h-[70vh] transition-colors">
-      <div className="flex justify-between items-center mb-10 border-b border-gray-200 pb-4">
+    <div className="bg-white w-full h-full rounded-lg shadow-md px-5 py-10 min-h-[70vh] transition-colors ">
+      <div className="flex justify-between items-center mb-10 border-b border-gray-200 ">
         <div className="flex flex-1">
           <button
             onClick={() => handleTabChange("")}
-            className={`px-6 py-3 font-semibold transition-all border-b-2 ${
+            className={`px-6 py-3 font-semibold transition-all border-b-2 rounded-t-lg ${
               activeTab === ""
-                ? "border-[ #7650e3] text-[#7650e3]"
+                ? "border-[#7650e3] text-white bg-[#7650e3]"
                 : "border-transparent text-[#7650e3] hover:text-[#7650e3]"
             }`}
           >
@@ -257,9 +261,9 @@ export const PricingPage: React.FC = () => {
           {activePackage?.package?.tier !== "free" && !hasCancelRequested && (
             <button
               onClick={() => handleTabChange("addons")}
-              className={`px-6 py-3 font-semibold transition-all border-b-2 ${
+              className={`px-6 py-3 font-semibold transition-all border-b-2 rounded-t-lg ${
                 activeTab === "addons"
-                  ? "border-[ #7650e3] text-[#7650e3]"
+                  ? "border-[#7650e3] text-white bg-[#7650e3]"
                   : "border-transparent text-[#7650e3] hover:text-[#7650e3]"
               }`}
             >
@@ -408,7 +412,7 @@ export const PricingPage: React.FC = () => {
                           else if (isPendingDowngradePackage)
                             setCancelDowngradeOpen(true);
                           else if (isCurrentPlan && !hasPendingDowngrade)
-                            setCancelPackageOpen(true);
+                            openManageSubscription();
                           else handleChoosePlan(tier);
                         }}
                         disabled={
@@ -491,7 +495,7 @@ export const PricingPage: React.FC = () => {
                         {addon.coins.toLocaleString()}
                       </div>
                       {addon.isSale && (
-                        <span className="bg-indigo-600 text-white px-2 py-0.5 rounded text-sm font-semibold">
+                        <span className="bg-[#7650e3] text-white px-2 py-0.5 rounded text-sm font-semibold">
                           Flash Sale
                         </span>
                       )}
@@ -776,10 +780,10 @@ export const PricingPage: React.FC = () => {
       )}
 
       {confirmOpen && selectedPlan && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-md animate-fadeIn">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-md animate-fadeIn h-[100%]">
           <div className="theme-bg-quaternary border theme-border rounded-3xl shadow-2xl w-full max-w-md p-8 relative overflow-hidden">
             {/* Accent gradient at top */}
-            <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[ #7650e3] via-yellow-400 to-[ #7650e3] animate-gradient" />
+            <div className="absolute inset-x-0 top-0 h-1  animate-gradient" />
 
             {/* Header */}
             <div className="flex justify-between items-center mb-6">
@@ -819,7 +823,7 @@ export const PricingPage: React.FC = () => {
 
             {/* Conditional message */}
             {activePackage?.package?.tier !== "free" ? (
-              <div className="mb-6 bg-yellow-50 border border-yellow-200 text-yellow-800 text-sm rounded-lg  p-3">
+              <div className="mb-6 text-sm rounded-lg text-[#7650e3]  p-3">
                 <p>
                   You’re <strong>upgrading</strong> your current plan — you’ll
                   also receive your previous package coins with this upgrade.
