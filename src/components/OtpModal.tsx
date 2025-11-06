@@ -32,15 +32,24 @@ export function OtpModal({
   const [timeLeft, setTimeLeft] = useState(300);
 
   useEffect(() => {
+    if (!open) return;
+
+    setExpired(false);
+    setTimeLeft(300);
+
     const timer = setInterval(() => {
-      setTimeLeft((prev) => prev - 1);
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          setExpired(true);
+          return 0;
+        }
+        return prev - 1;
+      });
     }, 1000);
-    if (timeLeft <= 0) {
-      setExpired(true);
-      return;
-    }
+
     return () => clearInterval(timer);
-  }, [timeLeft]);
+  }, [open]);
 
   const formatTime = (seconds: any) => {
     const m = Math.floor(seconds / 60);

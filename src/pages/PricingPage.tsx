@@ -440,12 +440,12 @@ export const PricingPage: React.FC = () => {
                   </div>
 
                   <div className="bg-gray-50 px-8 py-8">
-                    <div className="mb-6 pb-6 border-b-2 border-purple-600 text-center">
-                      <p className="text-xl font-bold text-[#7650e3] mb-2">
+                    <div className="mb-6 pb-6 border-b-2 border-purple-600  h-28 text-center">
+                      <p className="text-xl font-bold text-[#7650e3] mb-2 ">
                         Ideal for:
                       </p>
                       <p className="text-lg text-gray-800 font-medium">
-                        {tier.idealFor ??
+                        {tier.title ??
                           "Small agency, growing business, content team"}
                       </p>
                     </div>
@@ -491,7 +491,7 @@ export const PricingPage: React.FC = () => {
                         {addon.coins.toLocaleString()}
                       </div>
                       {addon.isSale && (
-                        <span className="bg-indigo-600 text-white px-2 py-0.5 rounded text-sm font-semibold">
+                        <span className="bg-[#7650e3] text-white px-2 py-0.5 rounded text-sm font-semibold">
                           Flash Sale
                         </span>
                       )}
