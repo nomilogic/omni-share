@@ -2,12 +2,9 @@ import React from "react";
 
 const TransactionsHistoryBox = ({ data }: any) => {
   return (
-    <div className="w-full bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
-      <h2 className="text-xl font-semibold text-gray-800 mb-4">
-        Transaction History
-      </h2>
 
-      <div className="flex flex-col gap-4 h-[70vh] overflow-y-auto pr-2">
+
+      <div className="flex flex-col gap-4 w-full pr-2  bg-transparent">
         {data.length === 0 ? (
           <p className="text-gray-500 text-center mt-10">
             No transactions found.
@@ -93,7 +90,6 @@ const TransactionsHistoryBox = ({ data }: any) => {
           ))
         )}
       </div>
-    </div>
   );
 };
 

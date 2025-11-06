@@ -12,19 +12,32 @@ import LogoIcon from '../assets/logo-icon-01.svg';
 import WalletIcon from '../assets/wallet-icon-01.svg'; // Example external URL
 import TextToImageIcon from '../assets/text-to-image-icon-01.svg'; // Placeholder, replace with actual icon
 import ShareIcon from '../assets/share.svg'; // Placeholder, replace with actual icon
+import WhiteDiamond from '../assets/white-diamond.svg';
+import ManageSubs from '../assets/manage-subscription-icon-01.svg';
+import SpiralLogo from '../assets/spiral-logo.svg';
+import QuestionMark from '../assets/question-mark.svg';
+import Crown from '../assets/crown.svg';
+import SpiralGrey from '../assets/spiral-grey.svg';
+
 // Define the available icon names
-export type IconName = 
-  | 'text-post'
-  | 'image-post' 
-  | 'video-post'
-  | 'upload' // Alias for 'click-to-browse'
-  | 'connect-accounts'
-  | 'edit-post'
-  | 'play'
-  | 'logo'
-  | 'wallet'
-  | 'text-to-image'
-  | 'share'; 
+export type IconName =
+  | "text-post"
+  | "image-post"
+  | "video-post"
+  | "upload" // Alias for 'click-to-browse'
+  | "connect-accounts"
+  | "edit-post"
+  | "play"
+  | "logo"
+  | "wallet"
+  | "text-to-image"
+  | "crown"
+  | "white-diamond"
+  | "manage-subs"
+  | "spiral-logo"
+  | "question-mark"
+  | "share"
+  | "spiral-grey";
 // New icon name
 
 // Map icon names to their respective SVG imports
@@ -40,6 +53,12 @@ const iconMap: Record<IconName, string> = {
   'wallet': WalletIcon,
   'text-to-image': TextToImageIcon, // Placeholder, replace with actual icon
   'share': ShareIcon, // Placeholder, replace with actual icon
+  'crown': Crown,
+  'white-diamond': WhiteDiamond,
+  'manage-subs': ManageSubs,
+  'spiral-logo': SpiralLogo,
+  'question-mark': QuestionMark,
+  'spiral-grey' : SpiralGrey
 };
 
 interface IconProps {
@@ -98,3 +117,4 @@ const getHueRotation = (color: string): number => {
 };
 
 export default Icon;
+

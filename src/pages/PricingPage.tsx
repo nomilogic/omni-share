@@ -6,6 +6,7 @@ import { Check, Loader2, Calendar, X, Gift } from "lucide-react";
 import { useAppContext } from "../context/AppContext";
 import API from "../services/api";
 import { useSearchParams } from "react-router-dom";
+import Icon from "../components/Icon";
 
 export const PricingPage: React.FC = () => {
   const { state, refreshUser } = useAppContext();
@@ -247,8 +248,8 @@ export const PricingPage: React.FC = () => {
             onClick={() => handleTabChange("")}
             className={`px-6 py-3 font-semibold transition-all border-b-2 ${
               activeTab === ""
-                ? "border-blue-600 text-blue-600"
-                : "border-transparent text-gray-500 hover:text-blue-600"
+                ? "border-[ #7650e3] text-[ #7650e3]"
+                : "border-transparent text-gray-500 hover:text-[ #7650e3]"
             }`}
           >
             Packages
@@ -258,8 +259,8 @@ export const PricingPage: React.FC = () => {
               onClick={() => handleTabChange("addons")}
               className={`px-6 py-3 font-semibold transition-all border-b-2 ${
                 activeTab === "addons"
-                  ? "border-blue-600 text-blue-600"
-                  : "border-transparent text-gray-500 hover:text-blue-600"
+                  ? "border-[ #7650e3] text-[ #7650e3]"
+                  : "border-transparent text-gray-500 hover:text-[ #7650e3]"
               }`}
             >
               Credits
@@ -365,7 +366,7 @@ export const PricingPage: React.FC = () => {
                         <span
                           className={`px-4 py-1.5 rounded-full text-xs font-semibold ${
                             isCurrentPlan
-                              ? "bg-[#542ed2] text-white"
+                              ? "bg-[#7650e3] text-white"
                               : isPendingDowngradePackage
                               ? "bg-orange-400 text-gray-900"
                               : "bg-gray-500 text-white"
@@ -381,19 +382,19 @@ export const PricingPage: React.FC = () => {
                     )}
 
                     {/* Plan Name */}
-                    <h3 className="text-[#542ed2] text-3xl font-semibold mb-3">
+                    <h3 className="text-[#7650e3] text-3xl font-semibold mb-3">
                       {tier.name}
                     </h3>
 
                     {/* Price */}
                     <div className="flex items-baseline justify-center gap-1 mb-6">
-                      <span className="text-[#542ed2] font-bold text-xl">
+                      <span className="text-[#7650e3] font-bold text-xl">
                         $
                       </span>
-                      <span className="text-[40px] font-bold text-[#542ed2]">
+                      <span className="text-[40px] font-bold text-[#7650e3]">
                         {tier.amount}
                       </span>
-                      <span className="text-3xl font-medium text-[#542ed2]">
+                      <span className="text-3xl font-medium text-[#7650e3]">
                         / {isFree ? "Forever" : "Month"}
                       </span>
                     </div>
@@ -415,7 +416,7 @@ export const PricingPage: React.FC = () => {
                           isLockedByCancel ||
                           isLockedByDowngrade
                         }
-                        className={`w-full py-3 px-6 rounded-lg font-semibold transition-all text-base bg-[#542ed2] text-white hover:bg-[#542ed2] disabled:opacity-50 ${
+                        className={`w-full py-3 px-6 rounded-lg font-semibold transition-all text-base bg-[#7650e3] text-white hover:bg-[#7650e3] disabled:opacity-50 ${
                           isLockedByCancel || isLockedByDowngrade
                             ? "cursor-not-allowed opacity-60"
                             : "cursor-pointer"
@@ -441,7 +442,7 @@ export const PricingPage: React.FC = () => {
                   {/* Features / Ideal For */}
                   <div className="bg-gray-50 px-8 py-8">
                     <div className="mb-6 pb-6 border-b-2 border-purple-600 text-center">
-                      <p className="text-xl font-bold text-[#542ed2] mb-2">
+                      <p className="text-xl font-bold text-[#7650e3] mb-2">
                         Ideal for:
                       </p>
                       <p className="text-lg text-gray-800 font-medium">
@@ -478,29 +479,38 @@ export const PricingPage: React.FC = () => {
             addons.map((addon) => (
               <div
                 key={addon.id}
-                className="bg-gradient-to-br from-[#7650e3] to-[#6366F1] rounded-2xl shadow-2xl p-6 transform hover:scale-105 transition-all relative"
+                className="rounded-xl border-3 border-gray-200 border-b-[0px] shadow-xl border-2 transform  transition-all relative min-w-[350px] pt-3"
               >
-                <div className="flex justify-center mb-4">
-                  <Gift className="w-10 h-10 text-yellow-400" />
+                <div className="text-left  font-medium text-3xl p-4 pt-2 pb-[4rem]">
+                  {addon.coins.toLocaleString()}
+                  <span className="text-lg theme-bg-trinary inline-block text-white px-1 ml-1 font-semibold">
+                    {" "}
+                    Flash Sale
+                  </span>
+                    <div className="text-[1.2rem] text-gray-800 mt-[-3px] w-full ">
+                      Total: {addon.coins - (addon.coins * 25) / 100} +
+                      <span className=" text-[#7650e3]  inline-block">
+                        {" "}
+                        {(addon.coins * 25) / 100} Bonus
+                      </span>
+                    </div>
+                  <Icon name="spiral-grey" className="absolute top-2 right-2"  size={130}/>
                 </div>
-                <h3 className="text-2xl font-semibold text-center mb-2 text-white">
-                  {addon.title}
-                </h3>
-                <p className="text-center mb-3 text-yellow-400 font-bold text-3xl">
-                  {addon.coins} Coins
-                </p>
-                <p className="text-center text-2xl font-bold mb-6 text-white">
-                  ${addon.amount}
-                </p>
-                <button
-                  onClick={() => {
-                    setSelectedAddon(addon);
-                    setAddonConfirmOpen(true);
-                  }}
-                  className="w-full py-2 rounded-lg theme-button-trinary font-semibold hover:brightness-110 transition-all"
-                >
-                  Purchase
-                </button>
+
+                <div className="flex justify-between theme-bg-quaternary items-center p-2 rounded-b-xl">
+                  <p className="text-center text-2xl font-bold text-[#7650e3] ml-3">
+                    ${addon.amount.toLocaleString()}
+                  </p>
+                  <button
+                    onClick={() => {
+                      setSelectedAddon(addon);
+                      setAddonConfirmOpen(true);
+                    }}
+                    className="rounded-lg theme-bg-light font-semibold w-fit p-1 px-3 h-fit text-lg border-2 border-[#7650e3] text-[#7650e3] hover:bg-[#7650e3] hover:text-white"
+                  >
+                    Purchase
+                  </button>
+                </div>
               </div>
             ))
           )}
@@ -531,7 +541,7 @@ export const PricingPage: React.FC = () => {
             <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-4">
               <p className="text-sm text-gray-700">
                 <span className="font-semibold text-gray-900">Plan:</span>{" "}
-                <span className="text-blue-600 font-semibold">
+                <span className="text-[ #7650e3] font-semibold">
                   {currentTier?.name}
                 </span>
               </p>
@@ -539,7 +549,7 @@ export const PricingPage: React.FC = () => {
                 <span className="font-semibold text-gray-900">
                   Monthly Cost:
                 </span>{" "}
-                <span className="text-blue-600 font-semibold">
+                <span className="text-[ #7650e3] font-semibold">
                   ${currentTier?.amount}/month
                 </span>
               </p>
@@ -564,7 +574,7 @@ export const PricingPage: React.FC = () => {
               <button
                 onClick={reactivateSubscription}
                 disabled={isCanceled}
-                className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                className="px-6 py-3 bg-[ #7650e3] text-white rounded-lg font-semibold hover:bg-[ #7650e3] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
                 {isCanceled ? (
                   <>
@@ -608,7 +618,7 @@ export const PricingPage: React.FC = () => {
                 <span className="font-semibold text-gray-900">
                   Current Plan:
                 </span>{" "}
-                <span className="text-blue-600 font-semibold">
+                <span className="text-[ #7650e3] font-semibold">
                   {currentTier?.name}
                 </span>
               </p>
@@ -624,7 +634,7 @@ export const PricingPage: React.FC = () => {
                 <span className="font-semibold text-gray-900">
                   Current Monthly Cost:
                 </span>{" "}
-                <span className="text-blue-600 font-semibold">
+                <span className="text-[ #7650e3] font-semibold">
                   ${currentTier?.amount}/month
                 </span>
               </p>
@@ -749,7 +759,7 @@ export const PricingPage: React.FC = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-md animate-fadeIn">
           <div className="theme-bg-quaternary border theme-border rounded-3xl shadow-2xl w-full max-w-md p-8 relative overflow-hidden">
             {/* Accent gradient at top */}
-            <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-blue-500 via-yellow-400 to-blue-500 animate-gradient" />
+            <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[ #7650e3] via-yellow-400 to-[ #7650e3] animate-gradient" />
 
             {/* Header */}
             <div className="flex justify-between items-center mb-6">
@@ -795,7 +805,7 @@ export const PricingPage: React.FC = () => {
                 </p>
               </div>
             ) : (
-              <div className="mb-6 bg-blue-50 border border-blue-200 text-blue-800 text-sm rounded-xl p-3">
+              <div className="mb-6 bg-blue-50 border border-blue-200 text-[ #7650e3] text-sm rounded-xl p-3">
                 <p>
                   You’re starting a <strong>new subscription</strong>. This plan
                   begins fresh with the listed features and coins.
@@ -821,7 +831,7 @@ export const PricingPage: React.FC = () => {
                   }
                 }}
                 disabled={loadingPackage}
-                className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-semibold shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-2.5 bg-gradient-to-r from-[ #7650e3] to-indigo-600 text-white rounded-xl font-semibold shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loadingPackage ? (
                   <>
@@ -866,7 +876,7 @@ export const PricingPage: React.FC = () => {
               <button
                 onClick={handleBuyAddon}
                 disabled={loadingAddon}
-                className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                className="px-6 py-3 bg-[ #7650e3] text-white rounded-lg font-semibold hover:bg-[ #7650e3] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
                 {loadingAddon ? (
                   <>

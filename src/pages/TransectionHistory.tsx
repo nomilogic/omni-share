@@ -19,7 +19,7 @@ const TransactionHistory = () => {
     fetchHistory();
   }, []);
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="w-full">
       <TransactionsTable data={history} />
     </div>
   );
