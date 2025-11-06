@@ -5,6 +5,7 @@ import Transactions from "../assets/transactions.png";
 import SubscriptionPauseModal from './SubscriptionPauseModal';
 import { AccountsPage } from './../pages/AccountsPage';
 import TransactionHistory from '@/pages/TransectionHistory';
+import { useNavigate } from 'react-router-dom';
 
 interface ManageSubscriptionModalProps {
   isOpen: boolean;
@@ -28,6 +29,8 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
   const [showManageSubscription, setShowManageSubscription] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [loadingAction, setLoadingAction] = useState<string>('');
+  const navigate = useNavigate();
+
 
   if (!isOpen) return null;
 
@@ -167,7 +170,11 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
                       
                       switch (action.key) {
                         case "update":
-                          actionFn = () => onUpdatePayment?.();
+                          actionFn = () => {
+                            onUpdatePayment?.()
+                            setIsModalOpen(false);
+                            navigate("/pricing");
+                          };
                           actionMessage = "Updating payment method";
                           break;
                         case "invoices":
@@ -201,7 +208,7 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
           </div>
         </div>
       </div>
-    {showTransactions &&  <div className="absolute w-full md:max-w-3xl lg:max-w-5xl md:rounded-2xl overflow-hidden shadow-2xl bg-white h-full md:h-[60vh] ">
+    {showTransactions &&  <div className="absolute w-full md:max-w-3xl lg:max-w-5xl md:rounded-2xl overflow-hidden shadow-2xl bg-white h-full md:h-[60vh] z-50">
         <div className="flex flex-col md:flex-row  md:h-fit">
           {/* Left: Illustration */}
           <div className=" bg-[#7650e3] p-0 flex items-center justify-center h-[30vh] md:h-auto md:w-1/2">
