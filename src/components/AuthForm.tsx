@@ -14,6 +14,8 @@ import Icon from "./Icon";
 import API from "../services/api";
 import { OtpModal } from "./OtpModal";
 import { ArrowLeftIcon, Mail } from "lucide-react";
+import logoText from "../assets/logo-text.svg";
+
 
 interface AuthFormProps {
   onAuthSuccess: (user: any) => void;
@@ -291,7 +293,9 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                 <div className="w-12 h-12   ">
                   <Icon name="logo" size={50} />
                 </div>
-                <h1 className="text-2xl  theme-text-primary">{"OMNISHARE"}</h1>
+                <span className="theme-text-primary text-2xl lg:text-[1.6rem] tracking-tight">
+                  <img src={logoText} alt="Logo" className="h-5" />
+                </span>
               </div>
             </div>
             {mode !== "login" && <div className="w-5" />}
