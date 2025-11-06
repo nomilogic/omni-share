@@ -35,6 +35,7 @@ import PreloaderOverlay from "../PreloaderOverlay";
 import { ManageSubscriptionModal } from "../ManageSubscriptionModal";
 import { ContentTemplate } from "./../../lib/postHistoryService";
 import API from "@/services/api";
+import logoText from "../../assets/logo-text.svg";
 
 // Define the props for AppLayout
 interface AppLayoutProps {
@@ -536,8 +537,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                   size={35}
                   className="ml-0 lg:ml-0 mt-1 lg:scale-105"
                 />
-                <span className="theme-text-primary text-2xl lg:text-[1.6rem] tracking-tight">
-                  OMNISHARE
+                <span className="theme-text-primary text-2xl lg:text-[1.6rem] tracking-tight ml-2">
+               <img src={logoText} alt="Logo" className="h-4" />
                 </span>
               </Link>
 
