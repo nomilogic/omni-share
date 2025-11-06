@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .filter-omni {
+    filter: brightness(0) saturate(100%) invert(32%) sepia(98%) saturate(1952%) hue-rotate(239deg) brightness(90%) contrast(96%);
+  }
+}
 /* Theme CSS Variables */
 :root {
   --theme-primary: #3B82F6;
@@ -14,7 +19,7 @@
   --theme-bg-secondary: rgba(175, 5, 253, 0.199);
   --theme-bg-trinary: rgba(175, 5, 253, 0.199);
   --theme-bg-trinary-dark: rgba(118, 80, 227, 0.4);
-  --theme-bg-card: rgb(26, 25, 25, 15);
+  --theme-bg-card: rgb(26, 25, 25, 15); 
   --theme-border: rgba(255, 255, 255, 0.2);
   --theme-button-primary: #FFFFFF;
   --theme-button-secondary: rgba(168, 150, 150, 0.2);
@@ -358,6 +363,10 @@
 .floating-element {
   animation: float 8s ease-in-out infinite;
 }
+.filter-omni
+{
+  filter: brightness(0) saturate(100%) invert(32%) sepia(98%) saturate(1952%) hue-rotate(239deg) brightness(90%) contrast(96%);
+}
 
 .pulse-glow {
   animation: pulse-glow 12s ease-in-out infinite;
@@ -474,6 +483,8 @@ select::selection {
   background-color: var(--theme-accent);
   color: var(--theme-text-primary);
 }
+
+
 select option {
   background-color: var(--theme-bg-primary);
   color: var(--theme-text-primary);

@@ -134,6 +134,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const [showPackage, setShowPackage] = useState(false);
   const [isCanceled, setIsCanceled] = useState(false);
   const cancelSubscription = async () => {
+
+    alert("cancel")
     try {
       setIsCanceled(true);
       await API.cancelPackage();
@@ -169,7 +171,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               {/* complete profile warning  */}
               <button
                 onClick={() => navigate("/profile")}
-                className="mr-auto px-3 py-1 theme-bg-pantary hover:bg-purple-700 text-white rounded-md text-sm font-medium transition-all animate-pulse"
+                className="mr-auto px-3 py-1 theme-bg-pantary hover:bg-purple-700 text-white rounded-md text-md font-medium transition-all animate-pulse"
               >
                 complete your profile for better experience
               </button>
@@ -204,7 +206,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                   <div className="text-md font-medium theme-text-light truncate">
                     {user?.profile?.fullName || user?.email || "User"}
                   </div>
-                  <div className="text-sm theme-text-light truncate">
+                  <div className="text-md theme-text-light truncate">
                     {user?.email}
                   </div>
                 </div>
@@ -329,10 +331,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             <div className="absolute bottom-0 left-0 right-0">
               <div className="w-full mx-auto p-2">
                 <div className="text-center flex flex-col items-center justify-center">
-                  <div className="theme-text-light text-sm mb-1">
+                  <div className="theme-text-light text-md mb-1">
                     © 2025 OMNI SHARE
                   </div>
-                  <div className="flex justify-center space-x-1 text-sm theme-text-light mb-1">
+                  <div className="flex justify-center space-x-1 text-md theme-text-light mb-1">
                     <Link
                       to="/privacy"
                       className="hover:theme-text-primary transition-colors duration-200"
@@ -564,12 +566,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 <div className="flex gap-x-4 items-center">
                   <WalletBalance
                     setShowPackage={() => setShowPackage(!showPackage)}
-                    balance={balance}
+                    balance={balance.toLocaleString()}
                   />
 
                   {showPackage && (
                     <div
-                      className="absolute sm:w-1/4 lg:right-2 top-4 mt-6 rounded-2xl shadow-md p-6 border"
+                      className="absolute left-0 right-0 lg:left-auto top-4 mt-6 rounded-2xl shadow-xl p-6 border lg:w-[400px] w-full"
                       style={{
                         backgroundColor: "#F9F8FB",
                         borderColor: "#F1F0F4",
@@ -578,21 +580,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                       {user?.wallet?.package ? (
                         <>
                           {/* Header */}
-                          <div className="flex justify-between items-start mb-4">
+                          <div className="flex justify-between items-start ">
                             <div className="flex items-center gap-2">
                               {/* Diamond icon */}
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="30"
-                                height="30"
-                              >
-                                <path
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  fill="#7650e3"
-                                  transform="translate(-30 -15)"
-                                  d="M57.3,27.2l-0.7-0.8c-1.1-1.3-2.3-2.5-3.4-3.8c-0.2-0.2-0.4-0.3-0.7-0.3c0,0,0,0,0,0c-2,0-3.9,0-5.9,0h-2.7      c-2.1,0-4.1,0-6.2,0c-0.3,0-0.5,0.1-0.7,0.3c-1,1.1-1.9,2.1-2.9,3.2l-1.3,1.5c-0.3,0.4-0.3,0.6,0,1l0.5,0.5      c0.4,0.5,0.9,1,1.3,1.5c0.4,0.4,3.6,4,6.3,7.1c1.4,1.6,2.7,3.1,3.6,4c0.2,0.2,0.3,0.3,0.6,0.3c0.2,0,0.4-0.2,0.6-0.3l11.6-13.1      C57.7,27.9,57.7,27.7,57.3,27.2z M50.5,27.2l2.2-3.2l2.9,3.2H50.5z M49.6,29l0-0.2c0-0.1,0.1-0.3,0.1-0.4c0,0,0,0,0.1,0      c1.2,0,2.3,0,3.5,0h2.3l-2.9,3.2c-2.4,2.7-5,5.7-5.6,6.3l-0.6,0.7L49.6,29z M46.4,23.6h5l-2.2,3.2L46.4,23.6z M48.4,28.4      l-3.4,10.7l-3.4-10.7H48.4z M42.3,27.2l2.8-3.3l2.8,3.3H42.3z M34.6,27.2l2.9-3.2l2.2,3.2H34.6z M38.7,23.6h5L41,26.8L38.7,23.6      z M36.1,28.4c1.4,0,2.9,0,4.3,0c0,0,0,0,0,0c0,0,0.1,0,0.1,0c0,0,0,0,0,0.1c0.8,2.6,1.6,5.2,2.4,7.8l0.7,2.3      c-2.4-2.7-7.8-8.8-9.1-10.2H36.1z"
-                                />
-                              </svg>
+                              <Icon name="crown" size={24} />
                               <h2 className="text-base font-semibold text-gray-800">
                                 My Plan
                               </h2>
@@ -600,7 +591,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                 className="text-gray-400 cursor-pointer text-xs"
                                 title="Current subscription details"
                               >
-                                ?
+                                <Icon name="question-mark" size={16} />
                               </span>
                             </div>
 
@@ -613,8 +604,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                           </div>
 
                           {/* Renewal info */}
-                          <p className="text-sm text-gray-400 mb-4">
-                            Renewing in:{" "}
+                          <p className="text-sm text-gray-700 mb-4 ml-8 font-medium mt-[-5px] ">
+                            Renewing on:{" "}
                             <span className="text-gray-700 font-medium">
                               {user.wallet.expiresAt
                                 ? new Date(
@@ -631,53 +622,41 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                           {/* Coins and referral coins */}
                           <div className="space-y-3 mb-5">
                             <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2 text-gray-800 text-sm">
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  viewBox="0 0 24 24"
-                                  stroke="#7650e3"
-                                  strokeWidth="1"
-                                  fill="none"
-                                  width="30"
-                                  height="30"
-                                >
-                                  <circle cx="12" cy="12" r="8"></circle>
-                                  <path
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="#7650e3"
-                                    transform="translate(-19 -52) scale(0.7)"
-                                    d="M51.4,89.1c0-0.6-0.2-1.2-0.6-1.6l-0.1-0.1c-0.2-0.2-0.4-0.4-0.6-0.5l-4.9-2.9c-0.8-0.5-1.8-0.5-2.6,0      l-4.9,2.8c-0.8,0.5-1.3,1.3-1.3,2.2v5.6c0,0.9,0.4,1.7,1.2,2.2l0,0c0.1,0,0.5,0.3,5,2.9c0.4,0.2,0.8,0.3,1.3,0.3      c0.5,0,0.9-0.1,1.3-0.3l4.9-2.8c0.8-0.5,1.3-1.3,1.3-2.2L51.4,89.1z M43.1,99.1l-2.7-1.6c0.1,0,0.2,0,0.3,0      c1.8,0.1,3.3-0.2,4.5-0.9c1.3-0.7,2.1-1.9,2.5-3.5l0-0.1c0.1-0.4,0.2-0.8,0.2-1.2c0-1-0.4-1.9-1-2.7c0.4,0.2,0.8,0.4,1.2,0.6      c0.6,0.4,1.1,1,1.5,1.6c0.6,1.1,0.9,2.2,1,2.7c0,0.2,0,0.3,0,0.4l0,0.1c0,0.6-0.3,1.2-0.9,1.5l-4.9,2.8      C44.2,99.4,43.6,99.4,43.1,99.1z M50.5,89.1l0,2.4c-0.1-0.2-0.2-0.3-0.3-0.5c-0.6-0.9-1.3-1.6-2.2-2.1c-1.1-0.6-2.4-0.9-4-0.9      h-0.2c-0.5,0-1.1,0.1-1.6,0.3c1.3-0.9,3.2-1.1,4.6-1l0.2,0c1.1,0.1,2.1,0.3,2.5,0.3c0.1,0,0.1,0,0.2,0.1l0,0      C50.3,88.1,50.5,88.6,50.5,89.1z M44.1,88.9C45.7,89,47,90.3,47,92c0,0.3,0,0.6-0.1,0.9l0,0.1c-0.4,1.3-1.6,2.1-3,2.1      c-1.7,0-3.1-1.4-3.1-3.1l0-0.1c0.1-1.7,1.4-3,3.1-3L44.1,88.9z M47.6,86.5l-0.6,0c-1,0-1.9,0-2.7,0.2c-0.8,0.2-1.6,0.4-2.1,0.8      c-0.1,0.1-0.3,0.2-0.4,0.3C40.5,88.7,40,90,40,91.8V92c0,0.9,0.3,1.8,0.9,2.5c-1.1-0.5-1.9-1.2-2.5-2.2c-0.9-1.4-1-2.9-1.1-3.2      v0c0-0.6,0.3-1.2,0.9-1.5l4.9-2.8c0.3-0.1,0.6-0.2,0.9-0.2c0.3,0,0.6,0.1,0.9,0.2l2.9,1.7C47.7,86.5,47.6,86.5,47.6,86.5z       M37.3,92.2c0.7,1.4,2.1,3,4.5,3.5l0,0c0.1,0,0.3,0.1,0.4,0.1l1.6,0.1l0,0c0.4,0,0.8-0.1,1.2-0.2c-0.1,0.1-0.2,0.2-0.4,0.2      c-2.5,1.4-6.2,0.4-6.6,0.3c0,0,0,0,0,0c-0.5-0.3-0.8-0.9-0.8-1.5V92.2z"
-                                  />
-                                </svg>
-                                Coins
+                              <div className="flex items-center gap-2 text-gray-800 text-md font-medium">
+                                <Icon name="spiral-logo" className="mr-1" />
+                                Omni Coins
                                 <span
                                   className="text-gray-400 text-xs cursor-pointer"
                                   title="Coins info"
                                 >
-                                  ?
+                                  <Icon name="question-mark" size={16} />
                                 </span>
                               </div>
                               <p
-                                className="text-sm font-semibold"
+                                className="text-md font-semibold"
                                 style={{ color: "#7650e3" }}
                               >
-                                {user.wallet.coins ?? 0}/ {user.wallet.package.coinLimit}
+                                {user.wallet.coins.toLocaleString() ?? 0}/{" "}
+                                {user.wallet.package.coinLimit.toLocaleString()}
                               </p>
                             </div>
 
                             <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2 text-gray-800 text-sm">
-                                <Icon name="share" className="scale-[0.8] mr-2"/>
+                              <div className="flex items-center gap-2 text-md text-gray-800 font-medium ">
+                                <Icon
+                                  name="share"
+                                  className="scale-[0.8] mr-1"
+                                />
                                 Referral Coins
                                 <span
                                   className="text-gray-400 text-xs cursor-pointer"
                                   title="Referral info"
                                 >
-                                  ?
+                                  <Icon name="question-mark" size={16} />
                                 </span>
                               </div>
                               <p
-                                className="text-sm font-semibold"
+                                className="text-md font-semibold"
                                 style={{ color: "#7650e3" }}
                               >
                                 0/100
@@ -688,44 +667,34 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                           {/* Buttons */}
                           <button
                             onClick={() => setShowManageSubscription(true)}
-                            className="w-full py-2.5 text-sm font-semibold rounded-lg border flex items-center justify-center gap-2 transition"
+                            className="w-full py-2.5 text-lg font-semibold rounded-lg border flex items-center justify-center gap-2 transition  hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
                             style={{ borderColor: "#7650e3", color: "#7650e3" }}
                           >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="#7650e3"
-                              strokeWidth="1.8"
-                              className="w-5 h-5"
-                            >
-                              <circle cx="9" cy="8" r="3" />
-                              <path d="M4 21v-2a4 4 0 014-4h0a4 4 0 014 4v2m4-7h5l-2.5-3M18 14l2.5 3" />
-                            </svg>
+                            <Icon
+                              name="manage-subs"
+                              size={25}
+                              className="filter-omni"
+                            />
                             Manage Subscription
                           </button>
 
                           <Link
                             to="/pricing"
                             onClick={() => setShowPackage(false)}
-                            className="w-full mt-3 py-2.5 text-sm font-semibold rounded-lg flex items-center justify-center gap-2 transition text-white"
-                            style={{ backgroundColor: "#7650e3" }}
+                            className="w-full mt-3  py-[9.5px] text-lg font-semibold rounded-lg flex items-center justify-center gap-2  text-white bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] border"
                           >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="white"
-                              strokeWidth="2"
-                              className="w-5 h-5"
-                            >
-                              <path d="M12 19V5m0 0l-4 4m4-4l4 4" />
-                            </svg>
-                            Upgrade
+                            <div className="hover:filter-omni h-full w-full text-center">
+                              <Icon
+                                name="white-diamond"
+                                size={25}
+                                className="mr-2"
+                              />
+                              Upgrade
+                            </div>
                           </Link>
                         </>
                       ) : (
-                        <p className="text-gray-500 text-sm text-center">
+                        <p className="text-gray-500 text-md text-center">
                           No active package found
                         </p>
                       )}
@@ -758,25 +727,25 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           onUpdatePayment={() => {
             setShowPackage(false);
             setShowManageSubscription(false);
-            navigate('/billing');
+            navigate("/billing");
           }}
           onViewInvoices={() => {
             setShowPackage(false);
             setShowManageSubscription(false);
-            navigate('/invoices');
+            navigate("/invoices");
           }}
           onCancelSubscription={() => {
             setShowManageSubscription(false);
             try {
               (cancelSubscription as any) && cancelSubscription();
             } catch (e) {
-              console.error('cancelSubscription not available', e);
+              console.error("cancelSubscription not available", e);
             }
           }}
           onAddCoins={() => {
             setShowPackage(false);
             setShowManageSubscription(false);
-            navigate('/wallet');
+            navigate("/wallet");
           }}
         />
         <PreloaderOverlay loadingState={loadingState} />
