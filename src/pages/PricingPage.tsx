@@ -426,7 +426,7 @@ export const PricingPage: React.FC = () => {
                           : isCurrentPlan && hasCancelRequested
                           ? "Reactivate"
                           : isCurrentPlan && !hasPendingDowngrade
-                          ? "Cancel"
+                          ? "Manage"
                           : isCurrentPlan
                           ? "Active"
                           : isPendingDowngradePackage
