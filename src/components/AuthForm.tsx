@@ -65,7 +65,9 @@ export const AuthForm: React.FC<AuthFormProps> = ({
   const onForgetPassword = async (email: string) => {
     setLoading(true);
     try {
-      await API.generateForgetLink({ email });
+      let res = await API.generateForgetLink({ email });
+
+      localStorage.setItem("email_token", res.data.data.token);
       setSuccessMessage("If that email exists, a reset link has been sent.");
       setError("");
     } catch (err: any) {

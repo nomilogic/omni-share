@@ -1,7 +1,6 @@
-import React, { useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import API from "../services/api";
-import { ArrowLeftIcon } from "lucide-react";
 import Icon from "../components/Icon";
 
 const ResetPasswordPage: React.FC = () => {
@@ -11,9 +10,14 @@ const ResetPasswordPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
 
-  const token = searchParams.get("token");
+  const token = localStorage.getItem("email_token");
+
+  useEffect(() => {
+    if (!token) {
+      navigate("/auth");
+    }
+  }, [token, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,7 +36,9 @@ const ResetPasswordPage: React.FC = () => {
         { headers: { authorization: token } }
       );
       setSuccess("Password has been reset successfully!");
-      setTimeout(() => navigate("/auth"), 1500);
+
+      localStorage.removeItem("email_token");
+      setTimeout(() => navigate("/auth"), 500);
     } catch (err: any) {
       console.error("Reset password error", err);
       setError(err?.response?.data?.message || "Failed to reset password");
@@ -40,7 +46,6 @@ const ResetPasswordPage: React.FC = () => {
       setLoading(false);
     }
   };
-
   return (
     <div className="max-w-md mx-auto min-h-screen flex items-center justify-center w-full">
       <div className="relative z-10 w-full max-w-md bg-slate-50/50  shadow-xl rounded-2xl py-12 px-8 border border-slate-200/70 backdrop-blur-sm">
