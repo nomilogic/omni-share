@@ -241,7 +241,7 @@ export const PricingPage: React.FC = () => {
   };
 
   return (
-    <div className="bg-white w-full h-full rounded-lg shadow-md px-8 py-10 min-h-[70vh] transition-colors">
+    <div className="bg-white w-full h-full rounded-lg shadow-md px-5 py-10 min-h-[70vh] transition-colors">
       <div className="flex justify-between items-center mb-10 border-b border-gray-200 pb-4">
         <div className="flex flex-1">
           <button
@@ -269,7 +269,7 @@ export const PricingPage: React.FC = () => {
         </div>
 
         {hasCancelRequested && (
-          <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-lg px-4 py-2">
+          <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-lg px-5 py-2">
             <Calendar className="w-4 h-4 text-[#7650e3]" />
             <span className="text-sm font-medium text-red-900">
               Your subscription will be canceled on{" "}
@@ -289,7 +289,7 @@ export const PricingPage: React.FC = () => {
         )}
 
         {hasPendingDowngrade && !hasCancelRequested && (
-          <div className="flex items-center gap-2 bg-orange-50 border border-orange-200 rounded-lg px-4 py-2">
+          <div className="flex items-center gap-2 bg-orange-50 border border-orange-200 rounded-lg px-5 py-2">
             <Calendar className="w-4 h-4 text-orange-600" />
             <span className="text-sm font-medium text-orange-900">
               Downgrade to {pendingDowngradePackage?.name} scheduled for{" "}
@@ -311,7 +311,7 @@ export const PricingPage: React.FC = () => {
 
       {activeTab === "" && (
         <>
-          <div className="text-center mb-12">
+          {/* <div className="text-center mb-12">
             <h1 className="text-4xl font-bold theme-text-primary mb-4">
               Choose Your Plan
             </h1>
@@ -319,9 +319,9 @@ export const PricingPage: React.FC = () => {
               Select the perfect plan to supercharge your social media content
               creation with AI
             </p>
-          </div>
+          </div> */}
 
-          <div className="grid xl:grid-cols-3 lg:grid-cols-2 gap-8 mx-auto">
+          <div className="grid xl:grid-cols-3 lg:grid-cols-2 gap-5 mx-auto">
             {packages.map((tier: any) => {
               const isCurrentPlan =
                 activePackage?.packageId === tier.id && activePackage?.isActive;
@@ -364,7 +364,7 @@ export const PricingPage: React.FC = () => {
                       isLockedByDowngrade) && (
                       <div className="absolute top-3 right-3 flex justify-center">
                         <span
-                          className={`px-4 py-1.5 rounded-full text-xs font-semibold ${
+                          className={`px-5 py-1.5 rounded-full text-xs font-semibold ${
                             isCurrentPlan
                               ? "bg-[#7650e3] text-white"
                               : isPendingDowngradePackage
@@ -469,53 +469,70 @@ export const PricingPage: React.FC = () => {
       )}
 
       {activePackage?.package?.tier !== "free" && activeTab === "addons" && (
-        <div className="grid xl:grid-cols-3  md:grid-cols-2 gap-8">
+        <div className="grid xl:grid-cols-3  md:grid-cols-2 gap-5">
           {addons.length === 0 ? (
             <p className="col-span-3 text-center text-[#7650e3]">
               No credits available
             </p>
           ) : (
-            addons.map((addon) => (
-              <div
-                key={addon.id}
-                className="rounded-lg border-3 border-gray-200 border-b-[0px] shadow-xl border-2 transform  transition-all relative min-w-[350px] pt-3"
-              >
-                <div className="text-left  font-medium text-3xl p-4 pt-2 pb-[4rem]">
-                  {addon.coins.toLocaleString()}
-                  <span className="text-lg theme-bg-trinary inline-block text-white px-1 ml-1 font-semibold">
-                    {" "}
-                    Flash Sale
-                  </span>
-                  <div className="text-[1.2rem] text-gray-800 mt-[-3px] w-full ">
-                    Total: {addon.coins - (addon.coins * 25) / 100} +
-                    <span className=" text-[#7650e3]  inline-block">
-                      {" "}
-                      {(addon.coins * 25) / 100} Bonus
-                    </span>
-                  </div>
-                  <Icon
-                    name="spiral-grey"
-                    className="absolute top-2 right-2"
-                    size={130}
-                  />
-                </div>
+            addons.map((addon) => {
+              const hasSale = addon.isSale;
+              const bonusAmount = addon.bonus || 0;
+              const totalCoins = addon.coins + bonusAmount;
 
-                <div className="flex justify-between theme-bg-quaternary items-center p-2 rounded-b-xl">
-                  <p className="text-center text-2xl font-bold text-[#7650e3] ml-3">
-                    ${addon.amount.toLocaleString()}
-                  </p>
-                  <button
-                    onClick={() => {
-                      setSelectedAddon(addon);
-                      setAddonConfirmOpen(true);
-                    }}
-                    className="rounded-lg theme-bg-light font-semibold w-fit p-1 px-3 h-fit text-lg border-2 border-[#7650e3] text-[#7650e3] hover:bg-[#7650e3] hover:text-white"
-                  >
-                    Purchase
-                  </button>
+              return (
+                <div
+                  key={addon.id}
+                  className="rounded-lg border-3 border-gray-200 shadow-xl transform transition-all relative w-full pt-3"
+                >
+                  <div className="text-left font-medium text-3xl px-5 py-2  pb-[4rem]">
+                    <div className="flex items-center gap-2 mb-1">
+                      <div className="text-[25px] font-semibold text-gray-900">
+                        {addon.coins.toLocaleString()}
+                      </div>
+                      {addon.isSale && (
+                        <span className="bg-indigo-600 text-white px-2 py-0.5 rounded text-sm font-semibold">
+                          Flash Sale
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-[1.05rem] text-gray-800 -mt-[10px]  w-full">
+                      {hasSale ? (
+                        <>
+                          Total: {addon.coins.toLocaleString()} +{" "}
+                          <span className="text-[#7650e3] inline-block">
+                            {bonusAmount.toLocaleString()} Bonus
+                          </span>
+                        </>
+                      ) : (
+                        <>Total: {totalCoins.toLocaleString()}</>
+                      )}
+                    </div>
+
+                    <Icon
+                      name="spiral-grey"
+                      className="absolute top-5 right-5"
+                      size={120}
+                    />
+                  </div>
+
+                  <div className="flex justify-between theme-bg-quaternary items-center px-5  py-2 rounded-b-xl">
+                    <p className="text-center text-2xl font-bold text-[#7650e3] ">
+                      ${addon.amount.toLocaleString()}
+                    </p>
+                    <button
+                      onClick={() => {
+                        setSelectedAddon(addon);
+                        setAddonConfirmOpen(true);
+                      }}
+                      className="rounded-lg theme-bg-light  w-fit p-1 px-3 h-fit font-bold text-lg border-2 border-[#7650e3] text-[#7650e3] hover:bg-[#7650e3] hover:text-white"
+                    >
+                      Purchase
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
       )}
