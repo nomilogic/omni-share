@@ -7,7 +7,7 @@ export const WalletBalance = ({ balance, setShowPackage }: any) => {
     <div className="flex items-center gap-0 theme-text-secondary text-xs font-semibold">
       <button onClick={setShowPackage} className="rounded p-0">
         <Icon
-          name="wallet"
+          name="spiral-logo"
           size={25}
           className="inline m-1 theme-text-secondary shadow-sm"
         />

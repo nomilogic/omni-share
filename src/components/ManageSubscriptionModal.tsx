@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, CreditCard, FileText, ChevronRight, PlusCircle, Subscript } from 'lucide-react';
+import { X, CreditCard, FileText, ChevronRight, PlusCircle, Subscript, Loader } from 'lucide-react';
 import Illustration from "../assets/manarge-subscription-img.png";
 import Transactions from "../assets/transactions.png";
 import SubscriptionPauseModal from './SubscriptionPauseModal';
@@ -26,10 +26,23 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showTransactions, setShowTransactions] = useState(false);
   const [showManageSubscription, setShowManageSubscription] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingAction, setLoadingAction] = useState<string>('');
 
   if (!isOpen) return null;
 
- const onViewInvoices = () => {
+  const handleAction = async (action: () => void | Promise<void>, actionName: string) => {
+    try {
+      setLoadingAction(actionName);
+      setIsLoading(true);
+      await action();
+    } finally {
+      setIsLoading(false);
+      setLoadingAction('');
+    }
+  };
+
+  const onViewInvoices = () => {
     setShowManageSubscription(false);
     setShowTransactions(true);
   }
@@ -38,8 +51,23 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
     setShowManageSubscription(false);
     setShowTransactions(false);
     onClose();
-     setIsModalOpen(false);
+    setIsModalOpen(false);
   }
+
+  const LoadingOverlay = () => {
+    if (!isLoading) return null;
+    
+    return (
+      <div className="absolute inset-0 bg-white/80 backdrop-blur-[1px] z-50 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <Loader className="w-8 h-8 text-[#7650e3] animate-spin" />
+          <p className="text-[#7650e3] text-sm font-medium animate-pulse">
+            {loadingAction}...
+          </p>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="fixed inset-0 z-[260] flex items-center justify-center p-0">
@@ -62,10 +90,10 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
         onPause={() => {}}
       />
 
-      <div className="relative w-full md:max-w-3xl lg:max-w-5xl md:rounded-2xl overflow-hidden shadow-2xl bg-white h-full md:h-auto w">
-        <div className="flex flex-col md:flex-row  md:h-fit">
+      <div className="relative w-full md:max-w-3xl lg:max-w-5xl md:rounded-2xl overflow-hidden shadow-2xl bg-white h-full md:h-[60vh]">
+        <div className="flex flex-col md:flex-row  md:h-full">
           {/* Left: Illustration */}
-          <div className=" bg-[#7650e3] p-0 flex items-center justify-center h-[30vh] md:h-auto md:w-1/2">
+          <div className=" bg-[#7650e3] p-0 flex items-center justify-center h-[30vh] md:h-full md:w-1/2">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={Illustration}
@@ -75,14 +103,18 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
           </div>
 
           {/* Right: Actions */}
-          <div className="md:w-1/2 p-6 z-">
+          <div className="md:w-1/2 p-6 z- relative">
+            {/* Loading Overlay */}
+            <LoadingOverlay />
+            
             {/* Close button as a purple circle in top-right */}
             <button
               onClick={_onClose}
-              className="absolute right-4 top-4 w-7 h-7 z-1000 rounded-full border border-[#7650e3] flex items-center justify-center text-[#7650e3] bg-[#F7F5FB] transition-shadow border-[3px]"
+              className="absolute right-4 top-4 w-7 h-7 z-[1000] rounded-full border-[#7650e3] flex items-center justify-center text-[#7650e3] bg-[#F7F5FB] transition-shadow border-[3px]"
               aria-label="Close manage subscription dialog"
+              disabled={isLoading}
             >
-              <X className="w-5 h-5  color-[#7650e3] stroke-[#7650e3] stroke-[3] " />
+              <X className="w-5 h-5 color-[#7650e3] stroke-[#7650e3] stroke-[3]" />
             </button>
 
             <div className="mb-20">
@@ -128,17 +160,34 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
                 return (
                   <button
                     key={action.key}
-                    onClick={() => {
+                    onClick={async () => {
                       setSelected(action.key);
-                      // call external handlers after slight delay to show selection
-                      setTimeout(() => {
-                        if (action.key === "update")
-                          onUpdatePayment && onUpdatePayment();
-                        if (action.key === "invoices")
-                          onViewInvoices && onViewInvoices();
-                        if (action.key === "cancel") setIsModalOpen(true);
-                        if (action.key === "coins") onAddCoins && onAddCoins();
-                      }, 120);
+                      // Define action and message based on key
+                      let actionFn: () => void | Promise<void>;
+                      let actionMessage: string;
+                      
+                      switch (action.key) {
+                        case "update":
+                          actionFn = () => onUpdatePayment?.();
+                          actionMessage = "Updating payment method";
+                          break;
+                        case "invoices":
+                          actionFn = onViewInvoices;
+                          actionMessage = "Loading invoices";
+                          break;
+                        case "cancel":
+                          actionFn = () => setIsModalOpen(true);
+                          actionMessage = "Preparing cancellation";
+                          break;
+                        case "coins":
+                          actionFn = () => onAddCoins?.();
+                          actionMessage = "Adding Omni Coins";
+                          break;
+                        default:
+                          return;
+                      }
+                      
+                      await handleAction(actionFn, actionMessage);
                     }}
                     className={`${commonClasses} ${buttonClass}`}
                   >
@@ -153,7 +202,7 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
           </div>
         </div>
       </div>
-    {showTransactions &&  <div className="absolute w-full md:max-w-4xl lg:max-w-6xl md:rounded-2xl overflow-hidden shadow-2xl bg-[#F7F5FB] h-full md:h-auto ">
+    {showTransactions &&  <div className="absolute w-full md:max-w-3xl lg:max-w-5xl md:rounded-2xl overflow-hidden shadow-2xl bg-white h-full md:h-[60vh] ">
         <div className="flex flex-col md:flex-row  md:h-fit">
           {/* Left: Illustration */}
           <div className=" bg-[#7650e3] p-0 flex items-center justify-center h-[30vh] md:h-auto md:w-1/2">
@@ -170,7 +219,7 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
             {/* Close button as a purple circle in top-right */}
             <button
               onClick={_onClose}
-              className="absolute right-4 top-4 w-7 h-7 z-1000 rounded-full border border-[#7650e3] flex items-center justify-center text-[#7650e3] bg-[#F7F5FB] transition-shadow border-[3px]"
+              className="absolute right-4 top-4 w-7 h-7 z-[1000] rounded-full border-[3px] border-[#7650e3] flex items-center justify-center text-[#7650e3] bg-[#F7F5FB] transition-shadow"
               aria-label="Close manage subscription dialog"
             >
               <X className="w-5 h-5  color-[#7650e3] stroke-[#7650e3] stroke-[3] " />

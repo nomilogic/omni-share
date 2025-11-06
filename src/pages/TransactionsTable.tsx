@@ -5,23 +5,23 @@ const TransactionsHistoryBox = ({ data }: any) => {
 
 
       <div className="flex flex-col gap-4 w-full pr-2  bg-transparent">
-        {data.length === 0 ? (
+        {(data?.length === 0 || !data) ? (
           <p className="text-gray-500 text-center mt-10">
             No transactions found.
           </p>
         ) : (
-          data.map((item: any) => (
+          data?.map((item: any) => (
             <div
-              key={item.id}
+              key={item?.id}
               className="w-full  border-2 border-purple-600 rounded-2xl p-6 bg-white shadow-sm hover:shadow-lg transition-all duration-300"
             >
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold text-purple-600">
                   Standard Monthly Subscription
                 </h2>
-                {item.hostedInvoiceUrl ? (
+                {item?.hostedInvoiceUrl ? (
                   <button
-                    onClick={() => window.open(item.hostedInvoiceUrl, "_blank")}
+                    onClick={() => window.open(item?.hostedInvoiceUrl, "_blank")}
                     className="bg-purple-700 hover:bg-purple-800 text-white font-semibold px-3 py-1 text-sm rounded-md transition-colors"
                   >
                     Invoice
@@ -31,7 +31,7 @@ const TransactionsHistoryBox = ({ data }: any) => {
                     disabled
                     className="bg-gray-300 text-black font-semibold px-5 py-2 rounded-lg cursor-not-allowed"
                   >
-                    {item.autoRenewal ? "Auto-Renewed" : "No Receipt"}
+                    {item?.autoRenewal ? "Auto-Renewed" : "No Receipt"}
                   </button>
                 )}
               </div>
@@ -40,15 +40,15 @@ const TransactionsHistoryBox = ({ data }: any) => {
                 <div className="flex items-center justify-between">
                   <span className="font-medium">Price</span>
                   <span className="font-semibold">
-                    ${item.amount || item.amountPaid || 0}
+                    ${item?.amount || item?.amountPaid || 0}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between">
                   <span className="font-medium">Purchased at</span>
                   <span className="font-semibold">
-                    {item.createdAt
-                      ? new Date(item.createdAt).toLocaleString()
+                    {item?.createdAt
+                      ? new Date(item?.createdAt).toLocaleString()
                       : "N/A"}
                   </span>
                 </div>
@@ -59,7 +59,7 @@ const TransactionsHistoryBox = ({ data }: any) => {
                     <button
                       onClick={() =>
                         navigator.clipboard.writeText(
-                          item.transactionId || item.id
+                          item?.transactionId || item?.id
                         )
                       }
                       className="p-0.5 hover:bg-gray-100 rounded transition-colors"
@@ -81,7 +81,7 @@ const TransactionsHistoryBox = ({ data }: any) => {
                       </svg>
                     </button>
                     <span className="text-purple-600 font-medium">
-                      {item.transactionId || item.id}
+                      {item?.transactionId || item?.id}
                     </span>
                   </div>
                 </div>
