@@ -130,9 +130,9 @@ export const PricingPage: React.FC = () => {
 
   const handleUpdatePackage = async (selectedPlan: any) => {
     setLoadingPackage(true);
-    setTimeout(() => refreshUser(), 50);
     try {
       await API.requestUpgradePackage(selectedPlan.id);
+      setTimeout(() => refreshUser(), 50);
     } catch (error) {
     } finally {
       setLoadingPackage(false);
@@ -427,19 +427,18 @@ export const PricingPage: React.FC = () => {
                           : isCurrentPlan && hasCancelRequested
                           ? "Reactivate"
                           : isCurrentPlan && !hasPendingDowngrade
-                          ? "Cancel Package"
+                          ? "Cancel"
                           : isCurrentPlan
                           ? "Active"
                           : isPendingDowngradePackage
                           ? "Cancel Downgrade"
                           : isLowerPlan
-                          ? "Switch"
-                          : "Switch"}
+                          ? "Switch Plan"
+                          : "Switch Plan"}
                       </button>
                     )}
                   </div>
 
-                  {/* Features / Ideal For */}
                   <div className="bg-gray-50 px-8 py-8">
                     <div className="mb-6 pb-6 border-b-2 border-purple-600 text-center">
                       <p className="text-xl font-bold text-[#7650e3] mb-2">
