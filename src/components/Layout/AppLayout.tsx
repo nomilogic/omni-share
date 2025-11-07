@@ -218,10 +218,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                     user?.avatarUrl
                       ? user?.avatarUrl
                       : `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                          user?.user_metadata?.name || user?.email || "User"
+                          user?.profile?.fullName || user?.email || "User"
                         )}&background=00000000&color=fff`
                   }
-                  alt=""
+                  alt={user?.profile?.fullName}
                 />
                 <div className="flex-1 min-w-0 text-left">
                   <div className="text-md font-medium theme-text-light truncate">
