@@ -1938,7 +1938,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
               <div className="space-y-2 mb-1">
                 {/* Post Type Selection */}
                 <div className="z-50 ">
-                  <label className="block text-sm font-medium theme-text-primary mb-1">
+                  <label className="block text-sm font-semibold theme-text-primary mb-2">
                     Select Post Type
                   </label>
                   <div className="grid grid-cols-3 gap-2 ">
@@ -1954,12 +1954,12 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         (formData.media || formData.mediaUrl) &&
                         selectedPostType !== "text"
                       }
-                      className={`  border transition-all duration-200 text-center p-3 ${
+                      className={`  border transition-all duration-200 text-center px-2 py-3 rounded-md ${
                         (formData.media || formData.mediaUrl) &&
                         selectedPostType !== "text"
                           ? "theme-bg-primary opacity-50 cursor-not-allowed"
                           : selectedPostType === "text"
-                          ? "theme-bg-trinary theme-text-light shadow-lg"
+                          ? "theme-bg-trinary theme-text-light shadow-md"
                           : "theme-bg-primary "
                       }`}
                     >
@@ -2010,13 +2010,13 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         selectedPostType !== "image" &&
                         !formData.media?.type?.startsWith("image/")
                       }
-                      className={` relative  border transition-all duration-200 text-center p-3 ${
+                      className={` relative  border transition-all duration-200 text-center px-2 py-3 rounded-md ${
                         (formData.media || formData.mediaUrl) &&
                         selectedPostType !== "image" &&
                         !formData.media?.type?.startsWith("image/")
                           ? "theme-bg-primary opacity-50 cursor-not-allowed"
                           : selectedPostType === "image"
-                          ? "theme-bg-trinary theme-text-light shadow-lg"
+                          ? "theme-bg-trinary theme-text-light shadow-md"
                           : "theme-bg-primary theme-text-primary"
                       }`}
                     >
@@ -2163,13 +2163,13 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         selectedPostType !== "video" &&
                         !isVideoFile(formData.media)
                       }
-                      className={`relative border transition-all duration-200 text-center p-3 ${
+                      className={`relative border transition-all duration-200 text-center px-2 py-3 rounded-md ${
                         (formData.media || formData.mediaUrl) &&
                         selectedPostType !== "video" &&
                         !isVideoFile(formData.media)
                           ? "theme-bg-primary opacity-50 cursor-not-allowed"
                           : selectedPostType === "video"
-                          ? "theme-bg-trinary theme-text-light shadow-lg"
+                          ? "theme-bg-trinary theme-text-light shadow-md"
                           : "theme-bg-primary theme-text-primary"
                       }`}
                     >
@@ -3210,8 +3210,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                   </div>
                 </>
               ) : (
-                <div className="flex-1 w-full aspect-video">
-                  <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-gray-900 aspect-video">
+                <div className="flex-1 w-full aspect-video mt-2">
+                  <div className="relative rounded-lg overflow-hidden shadow-2xl bg-gray-900 aspect-video">
                     <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#7650e3] to-[#6366F1]">
                       <button className="bg-white rounded-full p-6 hover:scale-110 transition-transform shadow-2xl">
                         <svg

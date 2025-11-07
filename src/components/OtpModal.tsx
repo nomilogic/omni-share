@@ -2,7 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 import { OtpInput } from "./OtpInput";
-
+import Icon from "./Icon";
+import logoText from "../assets/logo-text.svg";
+import { ArrowLeftIcon } from "lucide-react";
 type OtpModalProps = {
   open: boolean;
   onClose: () => void;
@@ -128,25 +130,32 @@ export function OtpModal({
       role="dialog"
       aria-modal="true"
       aria-labelledby="otp-title"
-      className="fixed inset-0 z-50 flex items-center justify-center "
+      className="fixed inset-0 z-50 flex md:items-center justify-center px-4 pt-8 "
     >
-      <div className="w-full max-w-sm rounded-lg bg-white p-6 shadow-lg">
-        <div className="flex items-start justify-between">
-          <h2
-            id="otp-title"
-            className="theme-text-secondary text-xl font-semibold text-card-foreground"
+      <div className="w-full max-w-sm md:rounded-lg md:bg-white sm:p-6 md:shadow-lg">
+        <div className={`flex  relative  justify-center gap-2 mb-5`}>
+          <button
+            onClick={() => {}}
+            className="absolute left-0 top-3 sm:-left-1"
           >
-            Verify your email
-          </h2>
+            <ArrowLeftIcon className="w-8 sm:w-9 md:w-10 text-purple-600" />
+          </button>
+          <div className="text-center flex gap-2 items-center">
+            <Icon name="logo" size={50} />
+            <span className="theme-text-primary text-lg sm:text-xl md:text-2xl lg:text-[1.6rem] tracking-tight">
+              <img
+                src={logoText || "/placeholder.svg"}
+                alt="Logo"
+                className="h-4 sm:h-5 md:h-5"
+              />
+            </span>
+          </div>
         </div>
+        <h2 className="text-center text-sm sm:text-base font-medium text-black">
+          Verify your email
+        </h2>
 
-        {emailHint ? (
-          <p className="mt-1 text-sm theme-text-secondary">
-            We sent a one-time code to your email .
-          </p>
-        ) : null}
-
-        <div className="mt-4">
+        <div className="mt-5">
           <OtpInput
             value={otp}
             onChange={setOtp}
@@ -155,7 +164,11 @@ export function OtpModal({
           />
           <div id="otp-status" className="sr-only" aria-live="polite" />
         </div>
-
+        {emailHint ? (
+          <p className="mt-1 text-sm theme-text-secondary">
+            We sent a one-time code to your email .
+          </p>
+        ) : null}
         {!expired ? (
           <p className="mt-2 text-sm theme-text-secondary">
             OTP expires in{" "}

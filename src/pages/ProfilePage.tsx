@@ -43,40 +43,15 @@ export const ProfilePage: React.FC = () => {
       setProfile(merged);
     }
   }, [state?.user]);
-  const loadProfile = async () => {
-    try {
-      setLoading(true);
-      const res = await API.getProfile();
-      if (res?.data?.data) {
-        const apiProfile = res.data.data;
-        const merged = {
-          ...state.user,
-          ...(state.user?.profile || {}),
-          ...apiProfile,
-        };
-        setProfile(merged);
-        dispatch({ type: "SET_SELECTED_PROFILE", payload: apiProfile });
-      }
-    } catch (err) {
-      console.debug("Profile load failed, using available user state", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadProfile();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const handleSave = async () => {
     try {
       setLoading(true);
       const response = await API.updateProfile(profile);
 
-  const updatedProfile = await response.data.data;
-  setProfile(updatedProfile);
-  setProfileEditing(false);
+      const updatedProfile = await response.data.data;
+      setProfile(updatedProfile);
+      setProfileEditing(false);
 
       if (!state.hasCompletedOnboarding) {
         dispatch({ type: "SET_ONBOARDING_COMPLETE", payload: true });
@@ -105,15 +80,13 @@ export const ProfilePage: React.FC = () => {
   }
 
   return (
-    <div className="bg-gradient-to-br from-purple-50 via-white to-purple-50 p-0 w-full">
+    <div className="bg-gradient-to-br p-0 w-full ">
       <div className="w-full mx-auto">
         {!isEditing && (
           <>
-            {/* Header */}
-            <div className="/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-0 mb-6 w-full">
-              <div className="flex items-center justify-between mb-6 px-4">
+            <div className=" backdrop-blur-sm rounded-2xl shadow-xl border border-slate-200/80 p-0 mb-6 w-full my-10">
+              <div className="flex items-center justify-between  px-4 py-6">
                 <div className="flex items space-x-4">
-                  
                   <div>
                     <h1 className="text-3xl font-bold text-gray-900">
                       {profile.name || "Your Profile"}
@@ -201,113 +174,119 @@ export const ProfilePage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="group relative overflow-hidden rounded-xl border border-border/50 bg-card/50 backdrop-blur-xl p-6 hover:border-accent/50 transition-all">
-                  <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                  <div className="relative flex items-center gap-4">
-                    <div className="p-3 rounded-xl bg-accent/20 text-accent">
-                      <Clock className="w-6 h-6 theme-text-secondary" />
-                    </div>
-                    <div>
-                      <div className="text-2xl font-bold theme-text-secondary">
-                        {state.user.wallet?.expiresAt
-                          ? new Date(
-                              state.user.wallet.expiresAt
-                            ).toLocaleDateString("en-US", {
-                              month: "short",
-                              day: "numeric",
-                            })
-                          : "-"}
+                {
+                  <div className="group relative overflow-hidden rounded-xl border border-border/50 bg-card/50 backdrop-blur-xl p-6 hover:border-accent/50 transition-all">
+                    <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div className="relative flex items-center gap-4">
+                      <div className="p-3 rounded-xl bg-accent/20 text-accent">
+                        <Clock className="w-6 h-6 theme-text-secondary" />
                       </div>
-                      <div className="text-sm text-muted-foreground">
-                        Package Expires
+                      <div>
+                        <div className="text-2xl font-bold theme-text-secondary">
+                          {state?.user?.wallet?.package?.tier == "free"
+                            ? "No Expire"
+                            : state.user.wallet?.expiresAt
+                            ? new Date(
+                                state.user.wallet.expiresAt
+                              ).toLocaleDateString("en-US", {
+                                month: "short",
+                                day: "numeric",
+                              })
+                            : "-"}
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          Package Expires
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                }
               </div>
-                <div className=" rounded-lg  mt-2 col-span-2 flex flex-col">
-                 
-                   <div className="flex items-center space-x-3 mb-4">
-                      {profile.brandLogo ? (
-                        <img
-                          src={profile.brandLogo}
-                          alt="brand"
-                          className="w-16 h-16 rounded-md object-cover"
-                        />
-                      ) : (
-                        <div className="w-16 h-16 theme-bg-trinary theme-text-light  rounded-md flex items-center justify-center">
-                          <Tag className="w-6 h-6 text-gray-400" />
-                        </div>
-                      )}
-                      <div>
-                        <div className="font-medium">
-                          {profile.brandName || "Not set"}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          {profile.brandTone || "Tone not set"}
-                        </div>
-                        <div className="text-sm mt-2">
-                          <a
-                            href={profile?.publicUrl || "#"}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="text-purple-600 hover:underline"
-                          >
-                            {profile.publicUrl || "Add public URL"}
-                          </a>
-                        </div>
-                      </div>
+              <div className=" rounded-lg  mt-2 col-span-2 flex flex-col">
+                <div className="flex items-center space-x-3 mb-4">
+                  {profile.brandLogo ? (
+                    <img
+                      src={profile.brandLogo}
+                      alt="brand"
+                      className="w-16 h-16 rounded-md object-cover"
+                    />
+                  ) : (
+                    <div className="w-16 h-16 theme-bg-trinary theme-text-light  rounded-md flex items-center justify-center">
+                      <Tag className="w-6 h-6 text-gray-400" />
                     </div>
-                     {(
-                          <div>
-                            <label className=" text-lg font-medium theme-text-secondary mt-3 ">
-                              Invite Friends for Rewards
-                            </label>
-                            <div className="flex items-center gap-2">
-                              <input
-                                type="text"
-                                readOnly
-                                value={`${window.location.origin}/auth?referralId=${state.user.id}`}
-                                className="w-full px-4 py-2 border border-white/20 rounded-lg theme-bg-primary theme-text-primary font-mono"
-                              />
-                              <button
-                                onClick={() => {
-                                  navigator.clipboard.writeText(
-                                    `${window.location.origin}/auth?referralId=${state.user.id}`
-                                  );
-                                }}
-                                className="px-3 py-2 bg-purple-600 text-white rounded-lg"
-                              >
-                                Copy
-                              </button>
-                              <button
-                                onClick={() => {
-                                  // lazy import to avoid bundling modal everywhere
-                                  import('../components/InviteShare').then((m) => {
-                                    m.openInviteModal(`${window.location.origin}/auth?referralId=${state.user.id}`, {
-                                      title: 'Invite a friend',
-                                      description: 'Join me on OmniShare using this invite link',
-                                    });
-                                  });
-                                }}
-                                className="ml-2 px-3 py-2 bg-purple-600 text-white rounded-lg"
-                              >
-                                Share
-                              </button>
-                            </div>
-                            <p className="text-xs theme-text-light mt-1">
-                              Share this link to invite others and earn rewards.
-                            </p>
-                          </div>
-                        )}
-                    
-</div>
-          
-         
+                  )}
+                  <div>
+                    <div className="font-medium">
+                      {profile.brandName || "Not set"}
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      {profile.brandTone || "Tone not set"}
+                    </div>
+                    <div className="text-sm mt-2">
+                      <a
+                        href={profile?.publicUrl || "#"}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-purple-600 hover:underline"
+                      >
+                        {profile.publicUrl || "Add public URL"}
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                {
+                  <div>
+                    <label className=" text-lg font-medium theme-text-secondary mt-3 ">
+                      Invite Friends for Rewards
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        readOnly
+                        value={`${window.location.origin}/auth?referralId=${state.user.id}`}
+                        className="w-full px-4 py-2 border border-white/20 rounded-lg theme-bg-primary theme-text-primary font-mono"
+                      />
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(
+                            `${window.location.origin}/auth?referralId=${state.user.id}`
+                          );
+                        }}
+                        className="px-3 py-2 bg-purple-600 text-white rounded-lg"
+                      >
+                        Copy
+                      </button>
+                      <button
+                        onClick={() => {
+                          // lazy import to avoid bundling modal everywhere
+                          import("../components/InviteShare").then((m) => {
+                            m.openInviteModal(
+                              `${window.location.origin}/auth?referralId=${state.user.id}`,
+                              {
+                                title: "Invite a friend",
+                                description:
+                                  "Join me on OmniShare using this invite link",
+                              }
+                            );
+                          });
+                        }}
+                        className="ml-2 px-3 py-2 bg-purple-600 text-white rounded-lg"
+                      >
+                        Share
+                      </button>
+                    </div>
+                    <p className="text-xs theme-text-light mt-1">
+                      Share this link to invite others and earn rewards.
+                    </p>
+                  </div>
+                }
+              </div>
+
               <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-3">
-              
                 <div className=" rounded-lg px-4">
-                  <h3 className="text-2xl font-semibold text-purple-600 mb-3">Audience</h3>
+                  <h3 className="text-2xl font-semibold text-purple-600 mb-3">
+                    Audience
+                  </h3>
                   <div className="space-y-3">
                     <div>
                       <div className="text-md text-black-600 font-bold mb-1 theme-bg-quant">
@@ -329,14 +308,18 @@ export const ProfilePage: React.FC = () => {
                     </div>
 
                     <div>
-                      <div className="text-md text-black-600 font-bold mb-1">Gender</div>
+                      <div className="text-md text-black-600 font-bold mb-1">
+                        Gender
+                      </div>
                       <div className="px-2 py-1  bg-purple-200 text-md text-purple-700  rounded-full inline-block">
                         {profile.audienceGender || "Not set"}
                       </div>
                     </div>
 
                     <div>
-                      <div className="text-md text-black-600 font-bold mb-1">Regions</div>
+                      <div className="text-md text-black-600 font-bold mb-1">
+                        Regions
+                      </div>
                       <div className="flex flex-wrap gap-2">
                         {(Array.isArray(profile.audienceRegions)
                           ? profile.audienceRegions
@@ -464,30 +447,18 @@ export const ProfilePage: React.FC = () => {
                     </div>
                   </div>
                 </div>
-              
               </div>
             </div>
           </>
         )}
 
-        {/* Inline editor: reuse ProfileSetupSinglePage elements for editing */}
-        {isEditing &&  (
+        {isEditing && (
           <div className="relative w-full">
-            
-            {/* <div className="flex items-center justify-end mb-4 absolute top-2 right-2">
-              <button
-                onClick={() => setProfileEditing(false)}
-                className=" flex items-center px-3 py-1 theme-bg-trinary theme-text-light  rounded-md text-sm hover:bg-gray-200"
-              >
-                <X className="w-4 h-4 mr-2" />
-                Close
-              </button>
-            </div> */}
             <div className="p-0 w-full">
               <ProfileSetupSinglePage />
             </div>
           </div>
-        ) }
+        )}
       </div>
     </div>
   );

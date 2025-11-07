@@ -121,7 +121,7 @@ const ResetPasswordPage: React.FC = () => {
           </p>
 
           <button
-            onClick={() => router("/auth/forgot")}
+            onClick={() => router("/auth")}
             className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
           >
             Request New Link

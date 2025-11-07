@@ -123,7 +123,7 @@ export function OtpInput({
           pattern="[0-9]*"
           autoComplete="one-time-code"
           aria-label={`Digit ${i + 1}`}
-          className="h-12 rounded-md border border-theme-text-secondary ring-theme-text-secondary bg-white text-card-foreground text-center text-lg font-medium outline-none focus:ring-2 focus:ring-ring focus:border-ring    disabled:opacity-50 disabled:cursor-not-allowed"
+          className="md:h-12 h-10 rounded-md border border-theme-text-secondary ring-theme-text-secondary bg-white text-card-foreground text-center text-lg font-medium outline-none focus:ring-2 focus:ring-ring focus:border-ring    disabled:opacity-50 disabled:cursor-not-allowed"
           value={chars[i] === " " ? "" : chars[i]}
           onChange={(e) => handleChange(i, e)}
           onKeyDown={(e) => handleKeyDown(i, e)}

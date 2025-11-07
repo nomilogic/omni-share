@@ -1,8 +1,9 @@
+"use client";
+
 import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import {
-  Globe,
   Loader2,
   Wand2,
   File,
@@ -12,8 +13,10 @@ import {
   Share2,
   Flag,
 } from "lucide-react";
+import { FieldName, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import API from "../services/api";
-import type { ProfileFormData } from "../types/profile";
+import { profileFormSchema, ProfileFormData } from "./profileFormSchema";
 import { useAppContext } from "../context/AppContext";
 
 const STORAGE_KEY = "profile_form_data";
@@ -58,7 +61,7 @@ const profileFormConfig = [
     id: "personalInfo",
     title: "Personal Information",
     subtext:
-      "Let’s start with the basics — tell us a bit about yourself so we can personalize your experience.",
+      "Let's start with the basics — tell us a bit about yourself so we can personalize your experience.",
     icon: User,
     fields: [
       {
@@ -137,12 +140,11 @@ const profileFormConfig = [
     id: "targetAudience",
     title: "Target Audience",
     subtext:
-      "Based on your public profile, we’ll suggest an audience — you can review or update it.",
+      "Based on your public profile, we'll suggest an audience — you can review or update it.",
     icon: Target,
     fields: [
       {
         name: "audienceAgeRange",
-
         label: "Audience Age Range",
         type: "checkbox-group",
         options: ["13-17", "18-24", "25-34", "35-44", "45-54", "55+"],
@@ -158,7 +160,6 @@ const profileFormConfig = [
           "Primarily Female",
           "Non-Binary Focused",
         ],
-
         required: false,
       },
       {
@@ -271,93 +272,66 @@ const ProfileSetupSinglePage: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [urlAnalysisLoading, setUrlAnalysisLoading] = useState(false);
   const [urlAnalysisError, setUrlAnalysisError] = useState<string | null>(null);
-  const { user, updateProfile } = useAuth();
-  const { setProfileEditing } = useAppContext();
+  const { user } = useAuth();
+  const { setProfileEditing, refreshUser } = useAppContext();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [selectedFileName, setSelectedFileName] = useState("");
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-  const validateForm = () => {
-    const newErrors: { [key: string]: string } = {};
+  console.log("updateProfile", user);
+  const getDefaultValues = (): ProfileFormData => {
+    // Prefer live user profile first
+    if (user?.profile) {
+      const profile = user.profile;
 
-    // Required field validation
-    if (!formData.fullName || formData.fullName.trim().length < 2) {
-      newErrors.fullName = "Full name is required (minimum 2 characters)";
+      return {
+        fullName: profile.fullName || user.full_name || "",
+        phoneNumber: profile.phoneNumber || "",
+        publicUrl: profile.publicUrl || "",
+        brandName: profile.brandName || "",
+        brandLogo: profile.brandLogo || null,
+        brandTone: profile.brandTone || "",
+        audienceGender: profile.audienceGender || "",
+        audienceAgeRange: profile.audienceAgeRange || [],
+        audienceRegions: profile.audienceRegions || [],
+        audienceInterests: profile.audienceInterests || [],
+        audienceSegments: profile.audienceSegments || [],
+        preferredPlatforms: profile.preferredPlatforms || [],
+        primaryPurpose: profile.primaryPurpose || [],
+        keyOutcomes: profile.keyOutcomes || [],
+        contentCategories: profile.contentCategories || [],
+        postingStyle: profile.postingStyle || "",
+      };
     }
 
-    // Email format validation (if provided)
-    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email address";
-    }
-
-    // Phone number format validation (if provided)
-    if (
-      formData.phoneNumber &&
-      !/^[+\d\s-()]{10,}$/.test(formData.phoneNumber)
-    ) {
-      newErrors.phoneNumber = "Please enter a valid phone number";
-    }
-
-    // URL format validation (if provided)
-    if (
-      formData.publicUrl &&
-      !/^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?$/.test(
-        formData.publicUrl
-      )
-    ) {
-      newErrors.publicUrl = "Please enter a valid URL";
-    }
-
-    // Brand name validation (if provided)
-    if (formData.brandName && formData.brandName.trim().length < 2) {
-      newErrors.brandName = "Brand name must be at least 2 characters";
-    }
-
-    // Audience validation
-    if (formData.audienceAgeRange && formData.audienceAgeRange.length === 0) {
-      newErrors.audienceAgeRange = "Please select at least one age range";
-    }
-
-    if (
-      formData.preferredPlatforms &&
-      formData.preferredPlatforms.length === 0
-    ) {
-      newErrors.preferredPlatforms = "Please select at least one platform";
-    }
-
-    if (formData.primaryPurpose && formData.primaryPurpose.length === 0) {
-      newErrors.primaryPurpose = "Please select at least one primary purpose";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  // Initialize form data state
-  const [formData, setFormData] = useState<ProfileFormData>(() => {
-    console.log("Initializing form data...");
-    let savedData = localStorage.getItem(STORAGE_KEY);
-
-    console.log("Saved data from localStorage:", savedData);
-
+    // Fallback to localStorage
+    const savedData = localStorage.getItem(STORAGE_KEY);
     if (savedData) {
       try {
         const parsed = JSON.parse(savedData);
-        console.log("Parsed saved data:", parsed);
-        return parsed;
+        return {
+          ...parsed,
+          audienceAgeRange: parsed.audienceAgeRange || [],
+          audienceRegions: parsed.audienceRegions || [],
+          audienceInterests: parsed.audienceInterests || [],
+          audienceSegments: parsed.audienceSegments || [],
+          contentCategories: parsed.contentCategories || [],
+          preferredPlatforms: parsed.preferredPlatforms || [],
+          primaryPurpose: parsed.primaryPurpose || [],
+          keyOutcomes: parsed.keyOutcomes || [],
+        };
       } catch (e) {
         console.error("Error parsing saved data:", e);
       }
     }
 
-    const initialData: ProfileFormData = {
+    return {
       fullName: user?.full_name || "",
       email: user?.email || "",
       phoneNumber: "",
       publicUrl: "",
       brandName: "",
-      brandLogo: null,
+      brandLogo: "",
       brandTone: "",
       audienceGender: "",
       audienceAgeRange: [],
@@ -370,132 +344,41 @@ const ProfileSetupSinglePage: React.FC = () => {
       keyOutcomes: [],
       postingStyle: "",
     };
-    return initialData;
+  };
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm<ProfileFormData>({
+    resolver: zodResolver(profileFormSchema),
+    mode: "onBlur",
+    defaultValues: getDefaultValues(),
   });
 
-  // Listen for storage changes
-  useEffect(() => {
-    loadProfile(user.profile?.publicUrl || "");
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === STORAGE_KEY && e.newValue) {
-        console.log("Storage changed, new value:", e.newValue);
-        try {
-          const newData = JSON.parse(e.newValue);
-          console.log("Setting form data from storage:", newData);
-          setFormData(newData);
-        } catch (err) {
-          console.error("Error parsing storage data:", err);
-        }
-      }
-    };
+  const formData = watch();
 
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
-  }, []);
-
-  // Save to localStorage when form data changes
   useEffect(() => {
-    console.log("Saving form data to localStorage:", formData);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
   }, [formData]);
 
-  // Force re-render when formData changes
-  useEffect(() => {
-    console.log("Form data changed:", formData);
-    // Use requestAnimationFrame to ensure DOM is updated
-    requestAnimationFrame(() => {
-      // Update all form inputs with current values
-      const form = document.querySelector("form");
-      if (form) {
-        // Update text inputs, selects, and textareas
-        form
-          .querySelectorAll(
-            'input[type="text"], input[type="email"], input[type="tel"], input[type="url"], select, textarea'
-          )
-          .forEach((element) => {
-            const input = element as
-              | HTMLInputElement
-              | HTMLSelectElement
-              | HTMLTextAreaElement;
-            const name = input.name;
-            if (name && name in formData) {
-              input.value = (formData as any)[name] || "";
-            }
-          });
-
-        // Update checkboxes
-        form.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
-          const input = checkbox as HTMLInputElement;
-          const name = input.getAttribute("aria-label");
-          const fieldName = input
-            .closest("[data-field-name]")
-            ?.getAttribute("data-field-name");
-          if (
-            fieldName &&
-            name &&
-            Array.isArray((formData as any)[fieldName])
-          ) {
-            input.checked = ((formData as any)[fieldName] as string[]).includes(
-              name
-            );
-          }
-        });
-
-        // Update radio buttons
-        form.querySelectorAll('input[type="radio"]').forEach((radio) => {
-          const input = radio as HTMLInputElement;
-          const name = input.name;
-          if (name && name in formData) {
-            input.checked = input.value === (formData as any)[name];
-          }
-        });
-
-        // Dispatch events to trigger any listeners
-        form.dispatchEvent(new Event("reset"));
-        form.dispatchEvent(new Event("input", { bubbles: true }));
-      }
-    });
-  }, [formData]);
-
   const handleSkip = () => {
-    // if (
-    //   window.confirm(
-    //     "Are you sure you want to skip profile setup? You can complete it later from your settings."
-    //   )
-    // ) {
-
-    //  // navigate("/content");
-    // }
     localStorage.removeItem(STORAGE_KEY);
-    // close the editor via context and navigate to content
     setProfileEditing(false);
     navigate("/profile");
   };
-  const handleInputChange = (field: keyof ProfileFormData, value: any) => {
-    console.log(`Setting ${field} to:`, value);
-    // Clear error when user starts typing
-    if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: "" }));
-    }
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
 
-  const handleArrayChange = (field: keyof ProfileFormData, option: string) => {
-    setFormData((prev: ProfileFormData) => {
-      const currentArray = Array.isArray(prev[field])
-        ? (prev[field] as string[])
-        : [];
-      const newArray = currentArray.includes(option)
-        ? currentArray.filter((i) => i !== option)
-        : [...currentArray, option];
-      console.log(`Setting ${field} array to:`, newArray);
-      const updatedData = { ...prev, [field]: newArray };
-      return updatedData;
-    });
+  const handleArrayChange = (fieldName: string, option: string) => {
+    const currentArray = (formData as any)[fieldName] || [];
+    const newArray = currentArray.includes(option)
+      ? currentArray.filter((i: string) => i !== option)
+      : [...currentArray, option];
+    setValue(fieldName as keyof ProfileFormData, newArray as any);
   };
 
   const resetForm = () => {
-    // Clear localStorage and form state
     localStorage.removeItem(STORAGE_KEY);
     const emptyForm: ProfileFormData = {
       fullName: "",
@@ -503,7 +386,7 @@ const ProfileSetupSinglePage: React.FC = () => {
       phoneNumber: "",
       publicUrl: "",
       brandName: "",
-      brandLogo: null,
+      brandLogo: "",
       brandTone: "",
       audienceGender: "",
       audienceAgeRange: [],
@@ -516,7 +399,9 @@ const ProfileSetupSinglePage: React.FC = () => {
       contentCategories: [],
       postingStyle: "",
     };
-    setFormData(emptyForm);
+    Object.keys(emptyForm).forEach((key) => {
+      setValue(key as keyof ProfileFormData, (emptyForm as any)[key]);
+    });
   };
 
   const handleUrlAnalysis = async (url: string) => {
@@ -532,84 +417,41 @@ const ProfileSetupSinglePage: React.FC = () => {
       console.log("Scraper response:", response);
 
       if (response?.data?.success && response?.data?.profile) {
-        // Get the profile data from the response
         const profile = response.data.profile;
-        //const profile=user.profile || {};
         console.log("Profile data:", profile);
 
-        // Get current form data from localStorage
-        const savedData = localStorage.getItem(STORAGE_KEY);
-        console.log("Current localStorage data:", savedData);
-
-        // Parse current data or use formData as fallback
-        const currentData = savedData ? JSON.parse(savedData) : formData;
-
-        // Map the scraped data exactly as it comes from the API
-        const updatedData = {
-          ...currentData, // Keep existing data as base
-
-          // Map fields exactly as they come from the scraper
-          fullName: profile.fullName?.trim() || currentData.fullName,
-          // email: profile.email || currentData.email,
-          // phoneNumber: profile.phoneNumber || currentData.phoneNumber,
-          // businessName: profile.businessName || '',
+        // FIX 4: Ensure arrays are never undefined
+        const updatedData: ProfileFormData = {
+          fullName: profile.fullName?.trim() || formData.fullName,
+          phoneNumber: formData.phoneNumber,
           publicUrl: url,
-          // brandName: profile.brandName || '',
-          // brandLogo: profile.brandLogo || null,
-          brandTone: profile.brandTone || "",
-
-          // Audience fields
-          audienceGender: profile.audienceGender || "",
-          audienceAgeRange: profile.audienceAgeRange || [],
-          audienceRegions: profile.audienceRegions || [],
-          audienceInterests: profile.audienceInterests || [],
-          audienceSegments: profile.audienceSegments || [],
-
-          // Platform and content
-          preferredPlatforms: profile.preferredPlatforms || [],
-          contentCategories: profile.contentCategories || [],
-          postingStyle: profile.postingStyle || "",
-
-          // Purpose and outcomes
-          primaryPurpose: profile.primaryPurpose || [],
-          keyOutcomes: profile.keyOutcomes || [],
-
-          // Keep posting frequency if it exists
+          brandName: formData.brandName,
+          brandLogo: formData.brandLogo,
+          brandTone: profile.brandTone || formData.brandTone,
+          audienceGender: profile.audienceGender || formData.audienceGender,
+          audienceAgeRange:
+            profile.audienceAgeRange || formData.audienceAgeRange || [],
+          audienceRegions:
+            profile.audienceRegions || formData.audienceRegions || [],
+          audienceInterests:
+            profile.audienceInterests || formData.audienceInterests || [],
+          audienceSegments:
+            profile.audienceSegments || formData.audienceSegments || [],
+          preferredPlatforms:
+            profile.preferredPlatforms || formData.preferredPlatforms || [],
+          contentCategories:
+            profile.contentCategories || formData.contentCategories || [],
+          postingStyle: profile.postingStyle || formData.postingStyle,
+          primaryPurpose:
+            profile.primaryPurpose || formData.primaryPurpose || [],
+          keyOutcomes: profile.keyOutcomes || formData.keyOutcomes || [],
         };
 
-        console.log("Updated form data to save:", updatedData);
-
-        // Update both localStorage and form state
-        try {
-          // Update localStorage first
-          const dataToStore = JSON.stringify(updatedData);
-          localStorage.setItem(STORAGE_KEY, dataToStore);
-
-          // Verify the data was stored correctly
-          const storedData = localStorage.getItem(STORAGE_KEY);
-          console.log("Stored data verification:", storedData);
-
-          if (storedData !== dataToStore) {
-            console.error("Storage verification failed");
-            throw new Error("Storage verification failed");
-          }
-
-          // If storage was successful, update the form state
-          console.log("Storage successful, updating form state");
-          setFormData(updatedData);
-        } catch (error) {
-          console.error("Error updating localStorage:", error);
-        }
-
-        // Force form fields to update
-        requestAnimationFrame(() => {
-          const form = document.querySelector("form");
-          if (form) {
-            form.dispatchEvent(new Event("reset"));
-            form.dispatchEvent(new Event("input", { bubbles: true }));
-          }
+        Object.keys(updatedData).forEach((key) => {
+          setValue(key as keyof ProfileFormData, (updatedData as any)[key]);
         });
-        console.log("Updated form data:", formData);
+
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedData));
       }
     } catch (err: any) {
       console.error("URL analysis failed:", err);
@@ -621,137 +463,29 @@ const ProfileSetupSinglePage: React.FC = () => {
     }
   };
 
-  const loadProfile = async (url: string) => {
-    if (!user.profile.isOnboarding) {
-      //setUrlAnalysisError("Please enter a valid URL.");
-      return;
-    }
-    try {
-      // Get the profile data from the response
-      // const profile = response.data.profile;
-
-      const profile = user.profile || {};
-
-      console.log("Profile data:", profile);
-
-      // Get current form data from localStorage
-      const savedData = localStorage.getItem(STORAGE_KEY);
-      console.log("Current localStorage data:", savedData);
-
-      // Parse current data or use formData as fallback
-      const currentData = savedData ? JSON.parse(savedData) : formData;
-
-      // Map the scraped data exactly as it comes from the API
-      const updatedData = {
-        ...currentData, // Keep existing data as base
-
-        // Map fields exactly as they come from the scraper
-        fullName: profile.fullName?.trim() || currentData.fullName,
-        email: profile.email || currentData.email,
-        phoneNumber: profile.phoneNumber || currentData.phoneNumber,
-        businessName: profile.businessName || "",
-        publicUrl: profile.publicUrl || "",
-        brandName: profile.brandName || "",
-        brandLogo: profile.brandLogo || null,
-        brandTone: profile.brandTone || "",
-
-        // Audience fields
-        audienceGender: profile.audienceGender || "",
-        audienceAgeRange: profile.audienceAgeRange || [],
-        audienceRegions: profile.audienceRegions || [],
-        audienceInterests: profile.audienceInterests || [],
-        audienceSegments: profile.audienceSegments || [],
-
-        // Platform and content
-        preferredPlatforms: profile.preferredPlatforms || [],
-        contentCategories: profile.contentCategories || [],
-        postingStyle: profile.postingStyle || "",
-
-        // Purpose and outcomes
-        primaryPurpose: profile.primaryPurpose || [],
-        keyOutcomes: profile.keyOutcomes || [],
-
-        // Keep posting frequency if it exists
-      };
-
-      console.log("Updated form data to save:", updatedData);
-
-      // Update both localStorage and form state
-      try {
-        // Update localStorage first
-        const dataToStore = JSON.stringify(updatedData);
-        localStorage.setItem(STORAGE_KEY, dataToStore);
-
-        // Verify the data was stored correctly
-        const storedData = localStorage.getItem(STORAGE_KEY);
-        console.log("Stored data verification:", storedData);
-
-        if (storedData !== dataToStore) {
-          console.error("Storage verification failed");
-          throw new Error("Storage verification failed");
-        }
-
-        // If storage was successful, update the form state
-        console.log("Storage successful, updating form state");
-        setFormData(updatedData);
-      } catch (error) {
-        console.error("Error updating localStorage:", error);
-      }
-
-      // Force form fields to update
-      requestAnimationFrame(() => {
-        const form = document.querySelector("form");
-        if (form) {
-          form.dispatchEvent(new Event("reset"));
-          form.dispatchEvent(new Event("input", { bubbles: true }));
-        }
-      });
-      console.log("Updated form data:", formData);
-    } catch (err: any) {
-      console.error("Load profile failed:", err);
-    } finally {
-      // setUrlAnalysisLoading(false);
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Validate form before submission
-    if (!validateForm()) {
-      // Scroll to first error
-      const firstError = Object.keys(errors)[0];
-      const errorElement = document.querySelector(`[name="${firstError}"]`);
-      if (errorElement) {
-        errorElement.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
-      return;
-    }
-
+  const onSubmit = async (data: ProfileFormData) => {
     setLoading(true);
     try {
-      const submitData = { ...formData };
+      const submitData = { ...data };
       const form = document.querySelector("form");
       const formD = new FormData(form as HTMLFormElement);
       const fileBase64 = await convertFileToBase64(formD.get("brandLogo"));
-      submitData.brandLogo = fileBase64 as string;
+      if (fileBase64) {
+        submitData.brandLogo = fileBase64 as any;
+      }
 
-      // Create a clean copy without email and optional fields
       const cleanData = {
         ...submitData,
-        email: undefined,
-        businessName: undefined,
       };
-      delete cleanData.email;
-      delete (cleanData as any).businessName;
 
       await API.updateProfileData(cleanData);
       localStorage.removeItem(STORAGE_KEY);
       setProfileEditing(false);
+      refreshUser();
+
       navigate("/content");
     } catch (err) {
       console.error(err);
-      // alert("Failed to update profile.");
     } finally {
       setLoading(false);
     }
@@ -759,16 +493,18 @@ const ProfileSetupSinglePage: React.FC = () => {
 
   const convertFileToBase64 = async (file: any) => {
     return new Promise((resolve, reject) => {
-      const reader: any = new FileReader();
-      console.log("Converting file to base64:", reader.result);
+      if (!file) {
+        resolve(null);
+        return;
+      }
+      const reader = new FileReader();
       reader.onload = () => resolve(reader.result);
       reader.onerror = reject;
       reader.readAsDataURL(file);
     });
   };
-
   return (
-    <div className="px-0 py-0 md:px-0">
+    <div className="px-0 py-0 md:px-0 bg-transparent">
       <div className="max-w-4xl mx-auto">
         <div className="bg-white shadow-xl overflow-hidden relative">
           {/* Header */}
@@ -778,7 +514,7 @@ const ProfileSetupSinglePage: React.FC = () => {
               Tell us about yourself to personalize your experience
             </p>
 
-            <div className=" top-4 right-4 flex justify-end">
+            <div className="top-4 right-4 flex justify-end">
               <button
                 onClick={handleSkip}
                 type="button"
@@ -790,7 +526,7 @@ const ProfileSetupSinglePage: React.FC = () => {
           </div>
 
           <div className="p-4">
-            <form onSubmit={handleSubmit} className="space-y-8">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
               {profileFormConfig.map((section) => {
                 return (
                   <section key={section.id} className="space-y-4">
@@ -816,6 +552,9 @@ const ProfileSetupSinglePage: React.FC = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {section.fields.map((field) => {
+                        const fieldName = field.name as FieldName;
+                        const fieldError = errors[fieldName];
+
                         switch (field.type) {
                           case "text":
                           case "email":
@@ -828,20 +567,23 @@ const ProfileSetupSinglePage: React.FC = () => {
                                 </label>
                                 <input
                                   type={field.type}
-                                  value={(formData as any)[field.name] ?? ""}
-                                  onChange={(e) =>
-                                    handleInputChange(
-                                      field.name as any,
-                                      e.target.value
-                                    )
-                                  }
-                                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                  {...register(fieldName)}
+                                  className={`w-full px-3 py-2 border rounded-md ${
+                                    fieldError
+                                      ? "border-red-500"
+                                      : "border-gray-300"
+                                  }`}
                                   placeholder={field.placeholder || ""}
-                                  required={field.required}
                                 />
                                 {field.helperText && (
                                   <p className="mt-1 text-sm text-gray-500">
                                     {field.helperText}
+                                  </p>
+                                )}
+
+                                {fieldError && (
+                                  <p className="mt-1 text-sm text-red-600">
+                                    {String(fieldError.message || "")}
                                   </p>
                                 )}
 
@@ -860,7 +602,7 @@ const ProfileSetupSinglePage: React.FC = () => {
                                           type="button"
                                           onClick={() =>
                                             handleUrlAnalysis(
-                                              formData.publicUrl
+                                              formData.publicUrl || ""
                                             )
                                           }
                                           className="flex items-center gap-2 theme-text-secondary hover:theme-text-secondary"
@@ -890,15 +632,12 @@ const ProfileSetupSinglePage: React.FC = () => {
                                   {field.label} {field.required && "*"}
                                 </label>
                                 <select
-                                  value={(formData as any)[field.name] ?? ""}
-                                  onChange={(e) =>
-                                    handleInputChange(
-                                      field.name as any,
-                                      e.target.value
-                                    )
-                                  }
-                                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                                  required={field.required}
+                                  {...register(fieldName)}
+                                  className={`w-full px-3 py-2 border rounded-md ${
+                                    fieldError
+                                      ? "border-red-500"
+                                      : "border-gray-300"
+                                  }`}
                                 >
                                   <option value="">{`Select ${field.label}`}</option>
                                   {field.options?.map((opt) => (
@@ -910,6 +649,11 @@ const ProfileSetupSinglePage: React.FC = () => {
                                 {field.helperText && (
                                   <p className="mt-1 text-sm text-gray-500">
                                     {field.helperText}
+                                  </p>
+                                )}
+                                {fieldError && (
+                                  <p className="mt-1 text-sm text-red-600">
+                                    {String(fieldError.message || "")}
                                   </p>
                                 )}
                               </div>
@@ -930,56 +674,46 @@ const ProfileSetupSinglePage: React.FC = () => {
                                   </p>
                                 )}
                                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
-                                  {field.options?.map((opt) => (
-                                    <div
-                                      key={opt}
-                                      data-field-name={field.name}
-                                      className={`flex items-center p-2 border-2 rounded-lg cursor-pointer ${
-                                        Array.isArray(
-                                          (formData as any)[field.name]
-                                        ) &&
-                                        (
-                                          (formData as any)[
-                                            field.name
-                                          ] as string[]
-                                        ).includes(opt)
-                                          ? "theme-border-trinary theme-text-secondary"
-                                          : "border-gray-200"
-                                      }`}
-                                      onClick={() =>
-                                        handleArrayChange(
-                                          field.name as any,
-                                          opt
-                                        )
-                                      }
-                                    >
-                                      <input
-                                        type="checkbox"
-                                        checked={
-                                          Array.isArray(
-                                            (formData as any)[field.name]
-                                          ) &&
-                                          (
-                                            (formData as any)[
-                                              field.name
-                                            ] as string[]
-                                          ).includes(opt)
+                                  {field.options?.map((opt) => {
+                                    const fieldValue = formData[fieldName];
+                                    const isChecked =
+                                      Array.isArray(fieldValue) &&
+                                      fieldValue.includes(opt);
+
+                                    return (
+                                      <div
+                                        key={opt}
+                                        data-field-name={field.name}
+                                        className={`flex items-center p-2 border-2 rounded-lg cursor-pointer ${
+                                          isChecked
+                                            ? "theme-border-trinary theme-text-secondary"
+                                            : "border-gray-200"
+                                        }`}
+                                        onClick={() =>
+                                          handleArrayChange(field.name, opt)
                                         }
-                                        onChange={() =>
-                                          handleArrayChange(
-                                            field.name as any,
-                                            opt
-                                          )
-                                        }
-                                        className="h-4 w-4 theme-checkbox rounded mr-2"
-                                        aria-label={opt}
-                                      />
-                                      <span className="text-sm font-medium">
-                                        {opt}
-                                      </span>
-                                    </div>
-                                  ))}
+                                      >
+                                        <input
+                                          type="checkbox"
+                                          checked={isChecked}
+                                          onChange={() =>
+                                            handleArrayChange(field.name, opt)
+                                          }
+                                          className="h-4 w-4 theme-checkbox rounded mr-2"
+                                          aria-label={opt}
+                                        />
+                                        <span className="text-sm font-medium">
+                                          {opt}
+                                        </span>
+                                      </div>
+                                    );
+                                  })}
                                 </div>
+                                {fieldError && (
+                                  <p className="mt-2 text-sm text-red-600">
+                                    {String(fieldError.message || "")}
+                                  </p>
+                                )}
                               </div>
                             );
 
@@ -990,68 +724,85 @@ const ProfileSetupSinglePage: React.FC = () => {
                                   {field.label} {field.required && "*"}
                                 </label>
 
-                                <label
-                                  htmlFor={`file-upload-${field.name}`}
-                                  className="block cursor-pointer"
-                                >
-                                  <div className="mt-1 flex justify-center p-3 border-2 border-gray-300 border-dashed rounded-lg">
-                                    <div className="space-y-1 justify-center text-center">
-                                      {selectedFileName ? (
-                                        <div className="flex items-center justify-center space-x-2">
-                                          <File className="w-4 h-4 theme-text-secondary" />
-                                          <span className="text-sm theme-text-secondary">
-                                            {selectedFileName}
-                                          </span>
-                                        </div>
-                                      ) : (
-                                        <>
-                                          <svg
-                                            className="mx-auto h-6 w-6 text-gray-400"
-                                            stroke="currentColor"
-                                            fill="none"
-                                            viewBox="0 0 48 48"
-                                            aria-hidden="true"
-                                          >
-                                            <path
-                                              d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                                              strokeWidth={2}
-                                              strokeLinecap="round"
-                                              strokeLinejoin="round"
-                                            />
-                                          </svg>
-                                          <div className="flex text-sm text-gray-600 justify-center">
-                                            <span className="relative bg-white rounded-md font-medium theme-text-secondary">
-                                              Upload a file
-                                            </span>
-                                          </div>
-                                        </>
-                                      )}
-
-                                      <input
-                                        id={`file-upload-${field.name}`}
-                                        name={field.name}
-                                        ref={fileInputRef}
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={(e) => {
-                                          const file = e.target.files?.[0];
-                                          setSelectedFileName(
-                                            file ? file.name : ""
-                                          );
-                                          handleInputChange(
-                                            field.name as any,
-                                            file || null
-                                          );
-                                        }}
-                                        className="sr-only"
-                                        required={field.required}
+                                <div className="mt-1 flex flex-col items-center justify-center p-4 border-2 border-gray-300 border-dashed rounded-lg relative overflow-hidden">
+                                  {/* Preview if exists */}
+                                  {formData[fieldName] ? (
+                                    <div className="flex flex-col items-center space-y-2">
+                                      <img
+                                        src={formData[fieldName]} // URL or base64 preview
+                                        alt="Uploaded logo preview"
+                                        className="w-full h-full object-cover rounded-md shadow-md border border-gray-200"
                                       />
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          setValue(fieldName, null as any);
+                                          setSelectedFileName("");
+                                        }}
+                                        className="text-xs text-red-500 hover:underline"
+                                      >
+                                        Remove
+                                      </button>
+                                    </div>
+                                  ) : (
+                                    // Placeholder
+                                    <label
+                                      htmlFor={`file-upload-${field.name}`}
+                                      className="flex flex-col items-center justify-center cursor-pointer"
+                                    >
+                                      <svg
+                                        className="mx-auto h-8 w-8 text-gray-400"
+                                        stroke="currentColor"
+                                        fill="none"
+                                        viewBox="0 0 48 48"
+                                        aria-hidden="true"
+                                      >
+                                        <path
+                                          d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                                          strokeWidth={2}
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                        />
+                                      </svg>
+                                      <span className="mt-2 text-sm theme-text-secondary">
+                                        Click to upload
+                                      </span>
                                       <p className="text-xs text-gray-500">
                                         PNG, JPG, GIF up to 10MB
                                       </p>
-                                    </div>
-                                  </div>
-                                </label>
+                                    </label>
+                                  )}
+
+                                  {/* Hidden file input */}
+                                  <input
+                                    id={`file-upload-${field.name}`}
+                                    {...register(fieldName)}
+                                    ref={fileInputRef}
+                                    type="file"
+                                    accept="image/*"
+                                    className="sr-only"
+                                    onChange={(e) => {
+                                      const file = e.target.files?.[0];
+                                      if (!file) return;
+
+                                      setSelectedFileName(file.name);
+
+                                      const reader = new FileReader();
+                                      reader.onloadend = () => {
+                                        const base64String =
+                                          reader.result as string;
+                                        setValue(fieldName, base64String); // set base64 preview
+                                      };
+                                      reader.readAsDataURL(file);
+                                    }}
+                                  />
+                                </div>
+
+                                {fieldError && (
+                                  <p className="mt-2 text-sm text-red-600">
+                                    {String(fieldError.message || "")}
+                                  </p>
+                                )}
                               </div>
                             );
 
@@ -1072,17 +823,8 @@ const ProfileSetupSinglePage: React.FC = () => {
                                     >
                                       <input
                                         type="radio"
-                                        name={field.name}
+                                        {...register(fieldName)}
                                         value={opt}
-                                        checked={
-                                          (formData as any)[field.name] === opt
-                                        }
-                                        onChange={() =>
-                                          handleInputChange(
-                                            field.name as any,
-                                            opt
-                                          )
-                                        }
                                         className="h-4 w-4 theme-radio"
                                       />
                                       <span className="text-sm font-medium">
@@ -1091,8 +833,14 @@ const ProfileSetupSinglePage: React.FC = () => {
                                     </label>
                                   ))}
                                 </div>
+                                {fieldError && (
+                                  <p className="mt-2 text-sm text-red-600">
+                                    {String(fieldError.message || "")}
+                                  </p>
+                                )}
                               </div>
                             );
+
                           case "tags":
                             return (
                               <div
@@ -1104,34 +852,37 @@ const ProfileSetupSinglePage: React.FC = () => {
                                 </label>
 
                                 <div className="flex flex-wrap items-center gap-2 border border-gray-300 rounded-md px-3 py-2 min-h-[44px]">
-                                  {(formData as any)[field.name]?.map(
-                                    (tag: string, idx: number) => (
-                                      <span
-                                        key={idx}
-                                        className="flex items-center theme-bg-trinary theme-text-light px-2 py-1 rounded-full text-sm"
-                                      >
-                                        {tag}
-                                        <button
-                                          type="button"
-                                          onClick={() =>
-                                            handleInputChange(
-                                              field.name as any,
-                                              (formData as any)[
-                                                field.name
-                                              ].filter(
+                                  {Array.isArray(formData[fieldName]) &&
+                                    (formData[fieldName] as string[]).map(
+                                      (tag: string, idx: number) => (
+                                        <span
+                                          key={idx}
+                                          className="flex items-center theme-bg-trinary theme-text-light px-2 py-1 rounded-full text-sm"
+                                        >
+                                          {tag}
+                                          <button
+                                            type="button"
+                                            onClick={() => {
+                                              const current = formData[
+                                                fieldName
+                                              ] as string[];
+                                              const updated = current.filter(
                                                 (_: string, i: number) =>
                                                   i !== idx
-                                              )
-                                            )
-                                          }
-                                          className="ml-1 theme-text-light"
-                                          title="Remove tag"
-                                        >
-                                          ×
-                                        </button>
-                                      </span>
-                                    )
-                                  )}
+                                              );
+                                              setValue(
+                                                fieldName,
+                                                updated as any
+                                              );
+                                            }}
+                                            className="ml-1 theme-text-light"
+                                            title="Remove tag"
+                                          >
+                                            ×
+                                          </button>
+                                        </span>
+                                      )
+                                    )}
 
                                   <input
                                     type="text"
@@ -1145,44 +896,42 @@ const ProfileSetupSinglePage: React.FC = () => {
                                         e.target as HTMLInputElement;
                                       const value = input.value.trim();
 
-                                      // Create tag on Enter or Space
                                       if (
                                         (e.key === "Enter" || e.key === " ") &&
                                         value
                                       ) {
                                         e.preventDefault();
                                         const existing =
-                                          (formData as any)[field.name] || [];
+                                          (formData[fieldName] as string[]) ||
+                                          [];
                                         const normalized = value.replace(
                                           /[^\w\s&,-]/g,
                                           ""
-                                        ); // optional clean-up
+                                        );
                                         if (
                                           normalized &&
                                           !existing.includes(normalized)
                                         ) {
-                                          handleInputChange(field.name as any, [
+                                          setValue(fieldName, [
                                             ...existing,
                                             normalized,
-                                          ]);
+                                          ] as any);
                                         }
                                         input.value = "";
                                       }
 
-                                      // Handle backspace to remove last tag when input is empty
                                       if (
                                         e.key === "Backspace" &&
                                         !input.value &&
-                                        (formData as any)[field.name]?.length
+                                        Array.isArray(formData[fieldName]) &&
+                                        (formData[fieldName] as string[]).length
                                       ) {
                                         e.preventDefault();
-                                        const updated = (formData as any)[
-                                          field.name
-                                        ].slice(0, -1);
-                                        handleInputChange(
-                                          field.name as any,
-                                          updated
-                                        );
+                                        const current = formData[
+                                          fieldName
+                                        ] as string[];
+                                        const updated = current.slice(0, -1);
+                                        setValue(fieldName, updated as any);
                                       }
                                     }}
                                   />
@@ -1191,6 +940,11 @@ const ProfileSetupSinglePage: React.FC = () => {
                                 {field.helperText && (
                                   <p className="mt-1 text-sm text-gray-500">
                                     {field.helperText}
+                                  </p>
+                                )}
+                                {fieldError && (
+                                  <p className="mt-2 text-sm text-red-600">
+                                    {String(fieldError.message || "")}
                                   </p>
                                 )}
                               </div>
@@ -1208,7 +962,7 @@ const ProfileSetupSinglePage: React.FC = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full theme-bg-gradient text-white py-3 px-6 rounded-lg text-lg font-semibold shadow-sm"
+                className="w-full theme-bg-gradient disabled:bg-purple-600/50 disabled:cursor-not-allowed text-white py-3 px-6 rounded-lg text-lg font-semibold shadow-sm disabled:opacity-50"
               >
                 {loading ? "Saving..." : "Complete Profile Setup"}
               </button>
@@ -1219,5 +973,4 @@ const ProfileSetupSinglePage: React.FC = () => {
     </div>
   );
 };
-
 export default ProfileSetupSinglePage;
