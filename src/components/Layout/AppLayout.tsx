@@ -177,7 +177,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             } transition-transform duration-300 ease-in-out`}
           >
             {/* Close button */}
-            <div className="flex items-center justify-between border-b border-white/20 p-2">
+            <div className="flex items-center justify-between border-b border-white/20 p-2 py-3 ">
               <span className="flex items-center">
                 <Icon
                   name="spiral-logo"
@@ -210,7 +210,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             >
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                className="flex items-center space-x-3 mb-0 w-full hover:theme-bg-secondary rounded-md p-2 pl-3 transition-colors"
+                className="flex items-center space-x-3 mb-0 w-full hover:theme-bg-secondary rounded-md p-2 pl-4 transition-colors"
               >
                 <img
                   className="h-10 w-10 rounded-full object-cover border-2 border-white/30 theme-bg-trinary"
