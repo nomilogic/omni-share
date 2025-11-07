@@ -80,15 +80,15 @@ export const AuthPage: React.FC = () => {
         />
       </div>
 
-      <footer className="w-full px-4 py-4 text-center text-sm theme-text-light absolute bottom-0">
-        <div className="max-w-full mx-auto flex md:flex-row items-center gap-2 md:justify-between justify-center flex-col">
+      <footer className="w-full px-4 py-4  text-center text-sm theme-text-light absolute bottom-0 z-10 md:block hidden">
+        <div className="max-w-full mx-auto flex md:flex-row items-center gap-2 md:justify-between justify-center flex-col  text-blue-600">
           <span>© {new Date().getFullYear()} OMNISHARE</span>
           <div>
-            <a href="/privacy" className="text-primary hover:underline">
+            <a href="/privacy" className="hover:underline">
               Privacy
             </a>
             &nbsp; | &nbsp;
-            <a href="/terms" className="text-primary hover:underline">
+            <a href="/terms" className="hover:underline">
               Terms
             </a>
           </div>
@@ -97,4 +97,3 @@ export const AuthPage: React.FC = () => {
     </div>
   );
 };
-    

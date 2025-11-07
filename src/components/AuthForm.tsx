@@ -16,7 +16,6 @@ import { OtpModal } from "./OtpModal";
 import { ArrowLeftIcon, Mail } from "lucide-react";
 import logoText from "../assets/logo-text.svg";
 
-
 interface AuthFormProps {
   onAuthSuccess: (user: any) => void;
   onForgetPassword?: (email: string) => Promise<void>;
@@ -34,7 +33,6 @@ export const AuthForm: React.FC<AuthFormProps> = ({
 }) => {
   const navigate = useNavigate();
   const [mode, setMode] = useState<AuthMode>("login");
-  const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -59,7 +57,6 @@ export const AuthForm: React.FC<AuthFormProps> = ({
       }
     }
     if (referralId) {
-      setIsLogin(false);
       setMode("signup");
     }
   }, [referralId, isVerification]);
@@ -67,9 +64,9 @@ export const AuthForm: React.FC<AuthFormProps> = ({
   const onForgetPassword = async (email: string) => {
     setLoading(true);
     try {
-      let res = await API.generateForgetLink({ email });
+      const res = await API.generateForgetLink({ email });
 
-      localStorage.setItem("email_token", res.data.data.token);
+      localStorage.setItem("forgot_token", res.data.data.token);
       setSuccessMessage("If that email exists, a reset link has been sent.");
       setError("");
     } catch (err: any) {
@@ -265,10 +262,10 @@ export const AuthForm: React.FC<AuthFormProps> = ({
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+    <div className="min-h-screen w-full flex md:items-center justify-center bg-gray-100 px-3 py-4 sm:px-4 sm:py-6 md:py-8">
       {!showOtpPopup && (
-        <div className="relative z-10 w-full max-w-md bg-white  shadow-xl rounded-2xl py-12 px-8 border border-slate-200/70 backdrop-blur-sm">
-          <div className="flex items-center justify-between mb-10">
+        <div className="z-10 w-full md:max-w-md md:bg-white md:shadow-xl rounded-2xl py-6  md:py-12  sm:px-6 md:px-8 md:border md:border-slate-200/70 md:backdrop-blur-sm">
+          <div className="flex relative items-center justify-center mb-6 sm:mb-8 md:mb-10">
             {mode !== "login" && (
               <button
                 onClick={() => {
@@ -282,40 +279,42 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                     confirmPassword: "",
                   });
                 }}
+                className="absolute left-0 sm:-left-1"
               >
-                <ArrowLeftIcon className="w-10  text-purple-600" />
+                <ArrowLeftIcon className="w-8 sm:w-9 md:w-10 text-purple-600" />
               </button>
             )}
             <div
-              className={`flex items-center gap-2 ${
+              className={`flex items-center gap-2 relative ${
                 mode !== "login" ? "" : "mx-auto"
               }`}
             >
-              <div className="text-center flex gap-2 items-center ">
-                <div className="w-12 h-12   ">
-                  <Icon name="logo" size={50} />
-                </div>
-                <span className="theme-text-primary text-2xl lg:text-[1.6rem] tracking-tight">
-                  <img src={logoText} alt="Logo" className="h-5" />
+              <div className="text-center flex gap-2 items-center">
+                <Icon name="logo" size={50} />
+                <span className="theme-text-primary text-lg sm:text-xl md:text-2xl lg:text-[1.6rem] tracking-tight">
+                  <img
+                    src={logoText || "/placeholder.svg"}
+                    alt="Logo"
+                    className="h-4 sm:h-5 md:h-5"
+                  />
                 </span>
               </div>
             </div>
-            {mode !== "login" && <div className="w-5" />}
           </div>
 
           {mode === "login" && (
-            <div className="space-y-6">
-              <h2 className="text-center text-base font-medium text-black">
+            <div className="space-y-4 sm:space-y-5 md:space-y-6">
+              <h2 className="text-center text-sm sm:text-base md:text-base font-medium text-black">
                 Sign up or Login with
               </h2>
-              <div className="space-y-3">
+              <div className="space-y-2 sm:space-y-3">
                 <button
                   onClick={handleGoogleOAuth}
                   disabled={loading}
-                  className="w-full border-2 border-purple-600 rounded-lg py-3 flex items-center justify-center gap-2 hover:bg-purple-50 transition font-medium text-gray-700 disabled:opacity-50"
+                  className="w-full border-2 border-purple-600 rounded-lg py-2.5 sm:py-3 flex items-center justify-center gap-2 hover:bg-purple-50 transition font-medium text-sm sm:text-base text-gray-700 disabled:opacity-50"
                 >
                   <svg
-                    className="w-5 h-5"
+                    className="w-4 h-4 sm:w-5 sm:h-5"
                     viewBox="0 0 24 24"
                     fill="currentColor"
                   >
@@ -336,54 +335,66 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                       fill="#EA4335"
                     />
                   </svg>
-                  Google
+                  <span className="hidden sm:inline">Google</span>
+                  <span className="sm:hidden text-xs">Google</span>
                 </button>
 
                 {isOAuthConfigured("facebook") && (
                   <button
                     onClick={handleFacebookOAuth}
                     disabled={loading}
-                    className="w-full border-2 border-purple-600 rounded-lg py-3 flex items-center justify-center gap-2 hover:bg-purple-50 transition font-medium text-gray-700 disabled:opacity-50"
+                    className="w-full border-2 border-purple-600 rounded-lg py-2.5 sm:py-3 flex items-center justify-center gap-2 hover:bg-purple-50 transition font-medium text-sm sm:text-base text-gray-700 disabled:opacity-50"
                   >
-                    <svg className="w-5 h-5" fill="#1877F2" viewBox="0 0 24 24">
+                    <svg
+                      className="w-4 h-4 sm:w-5 sm:h-5"
+                      fill="#1877F2"
+                      viewBox="0 0 24 24"
+                    >
                       <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
                     </svg>
-                    Facebook
+                    <span className="hidden sm:inline">Facebook</span>
+                    <span className="sm:hidden text-xs">Facebook</span>
                   </button>
                 )}
 
                 <button
                   onClick={handleLinkedInOAuth}
                   disabled={loading}
-                  className="w-full border-2 border-purple-600 rounded-lg py-3 flex items-center justify-center gap-2 hover:bg-purple-50 transition font-medium text-gray-700 disabled:opacity-50"
+                  className="w-full border-2 border-purple-600 rounded-lg py-2.5 sm:py-3 flex items-center justify-center gap-2 hover:bg-purple-50 transition font-medium text-sm sm:text-base text-gray-700 disabled:opacity-50"
                 >
-                  <svg className="w-5 h-5" fill="#0A66C2" viewBox="0 0 24 24">
+                  <svg
+                    className="w-4 h-4 sm:w-5 sm:h-5"
+                    fill="#0A66C2"
+                    viewBox="0 0 24 24"
+                  >
                     <path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5zM.2 8.98h4.6V24H.2V8.98zM9.98 8.98h4.4v2.06h.06c.61-1.16 2.1-2.38 4.32-2.38 4.62 0 5.47 3.04 5.47 6.99V24h-4.6v-6.92c0-1.65-.03-3.78-2.3-3.78-2.31 0-2.66 1.8-2.66 3.67V24h-4.6V8.98z" />
                   </svg>
-                  LinkedIn
+                  <span className="hidden sm:inline">LinkedIn</span>
+                  <span className="sm:hidden text-xs">LinkedIn</span>
                 </button>
 
                 <button
                   onClick={() => setMode("signup")}
-                  className="w-full border-2 border-purple-600 rounded-lg py-3 flex items-center justify-center gap-2 hover:bg-purple-50 transition font-medium text-gray-700"
+                  className="w-full border-2 border-purple-600 rounded-lg py-2.5 sm:py-3 flex items-center justify-center gap-2 hover:bg-purple-50 transition font-medium text-sm sm:text-base text-gray-700"
                 >
-                  <Mail className="w-5 h-5" />
-                  Continue with Email
+                  <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <span className="hidden sm:inline">Continue with Email</span>
+                  <span className="sm:hidden text-xs">Email</span>
                 </button>
               </div>
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-gray-300"></div>
                 </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500 font-medium">
+                <div className="relative flex justify-center text-xs sm:text-sm">
+                  <span className="px-2 sm:p-2 rounded-full bg-white text-gray-500 font-medium">
                     OR
                   </span>
                 </div>
               </div>
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
                     Email
                   </label>
                   <input
@@ -393,11 +404,11 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                     value={formData.email}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-2.5 border-2 border-purple-300 rounded-lg focus:outline-none focus:border-purple-600 transition"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm border-2 border-purple-300 rounded-lg focus:outline-none focus:border-purple-600 transition"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
                     Password
                   </label>
                   <input
@@ -407,19 +418,19 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                     value={formData.password}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-2.5 border-2 border-purple-300 rounded-lg focus:outline-none focus:border-purple-600 transition"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm border-2 border-purple-300 rounded-lg focus:outline-none focus:border-purple-600 transition"
                   />
                 </div>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2.5 rounded-lg transition disabled:opacity-50"
+                  className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 sm:py-2.5 text-sm sm:text-base rounded-lg transition disabled:opacity-50"
                 >
                   {loading ? "Signing in..." : "Sign in"}
                 </button>
               </form>
 
-              <div className="flex items-center justify-between text-sm">
+              <div className="flex flex-col gap-3 sm:flex-row sm:gap-2 sm:items-center sm:justify-between text-xs sm:text-sm">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
@@ -427,20 +438,22 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                     onChange={(e) => setRememberMe(e.target.checked)}
                     className="rounded"
                   />
-                  <span className="text-gray-600">Remember me For 30 Days</span>
+                  <span className="text-gray-600 text-xs sm:text-sm">
+                    Remember me For 30 Days
+                  </span>
                 </label>
                 <button
                   onClick={() => {
                     setMode("forgotPassword");
                     setError("");
                   }}
-                  className="text-purple-600 hover:underline font-medium"
+                  className="text-purple-600 hover:underline font-medium text-xs sm:text-sm text-left sm:text-right"
                 >
                   Forgot Password
                 </button>
               </div>
               {(error || externalError) && (
-                <p className="text-red-500 text-sm text-center">
+                <p className="text-red-500 text-xs sm:text-sm text-center">
                   {error || externalError}
                 </p>
               )}
@@ -448,9 +461,9 @@ export const AuthForm: React.FC<AuthFormProps> = ({
           )}
 
           {mode === "signup" && (
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
                   Name
                 </label>
                 <input
@@ -460,12 +473,12 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                   value={formData.name}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-4 py-2.5 border-2 border-purple-300 rounded-lg focus:outline-none focus:border-purple-600 transition"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm border-2 border-purple-300 rounded-lg focus:outline-none focus:border-purple-600 transition"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
                   Email
                 </label>
                 <input
@@ -475,12 +488,12 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                   value={formData.email}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-4 py-2.5 border-2 border-purple-300 rounded-lg focus:outline-none focus:border-purple-600 transition"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm border-2 border-purple-300 rounded-lg focus:outline-none focus:border-purple-600 transition"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
                   Password
                 </label>
                 <input
@@ -490,20 +503,20 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                   value={formData.password}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-4 py-2.5 border-2 border-purple-300 rounded-lg focus:outline-none focus:border-purple-600 transition"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm border-2 border-purple-300 rounded-lg focus:outline-none focus:border-purple-600 transition"
                 />
               </div>
 
               {referralId && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
                     Referral Id
                   </label>
                   <input
                     type="text"
                     value={referralId}
                     disabled
-                    className="w-full px-4 py-2.5 border-2 border-purple-300 rounded-lg disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm border-2 border-purple-300 rounded-lg disabled:bg-gray-100 disabled:cursor-not-allowed"
                   />
                 </div>
               )}
@@ -511,13 +524,13 @@ export const AuthForm: React.FC<AuthFormProps> = ({
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2.5 rounded-lg transition disabled:opacity-50"
+                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 sm:py-2.5 text-sm sm:text-base rounded-lg transition disabled:opacity-50"
               >
                 {loading ? "Creating account..." : "Sign Up"}
               </button>
 
               {(error || externalError) && (
-                <p className="text-red-500 text-sm text-center">
+                <p className="text-red-500 text-xs sm:text-sm text-center">
                   {error || externalError}
                 </p>
               )}
@@ -525,18 +538,21 @@ export const AuthForm: React.FC<AuthFormProps> = ({
           )}
 
           {mode === "forgotPassword" && (
-            <form onSubmit={handleForgotPasswordSubmit} className="space-y-4">
+            <form
+              onSubmit={handleForgotPasswordSubmit}
+              className="space-y-4 sm:space-y-5"
+            >
               <div>
-                <h2 className="text-xl font-bold text-center text-gray-800  mb-1">
+                <h2 className="text-lg sm:text-xl font-bold text-center text-gray-800 mb-1">
                   Forgot Password
                 </h2>
-                <p className="text-base text-gray-400 text-center mb-8">
+                <p className="text-sm sm:text-base text-gray-400 text-center mb-6 sm:mb-8">
                   Enter your registered email address below.
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
                   Email
                 </label>
                 <input
@@ -546,21 +562,21 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                   value={formData.email}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-4 py-2.5 border-2 border-purple-300 rounded-lg focus:outline-none focus:border-purple-600 transition"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm border-2 border-purple-300 rounded-lg focus:outline-none focus:border-purple-600 transition"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2.5 rounded-lg transition disabled:opacity-50"
+                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 sm:py-2.5 text-sm sm:text-base rounded-lg transition disabled:opacity-50"
               >
                 {loading ? "Sending..." : "Forgot Password"}
               </button>
 
               {(error || externalError || successMessage) && (
                 <p
-                  className={`text-sm text-center ${
+                  className={`text-xs sm:text-sm text-center ${
                     successMessage ? "text-green-600" : "text-red-500"
                   }`}
                 >
@@ -571,13 +587,16 @@ export const AuthForm: React.FC<AuthFormProps> = ({
           )}
 
           {mode === "resetPassword" && (
-            <form onSubmit={handleResetPasswordSubmit} className="space-y-4">
-              <h2 className="text-lg font-semibold text-gray-800 mb-6">
+            <form
+              onSubmit={handleResetPasswordSubmit}
+              className="space-y-4 sm:space-y-5"
+            >
+              <h2 className="text-base sm:text-lg font-semibold text-gray-800 mb-4 sm:mb-6">
                 Reset Your Password
               </h2>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
                   New Password
                 </label>
                 <input
@@ -587,12 +606,12 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                   value={formData.password}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-4 py-2.5 border-2 border-purple-300 rounded-lg focus:outline-none focus:border-purple-600 transition"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm border-2 border-purple-300 rounded-lg focus:outline-none focus:border-purple-600 transition"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
                   Confirm Password
                 </label>
                 <input
@@ -602,26 +621,26 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-4 py-2.5 border-2 border-purple-300 rounded-lg focus:outline-none focus:border-purple-600 transition"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm border-2 border-purple-300 rounded-lg focus:outline-none focus:border-purple-600 transition"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2.5 rounded-lg transition disabled:opacity-50"
+                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 sm:py-2.5 text-sm sm:text-base rounded-lg transition disabled:opacity-50"
               >
                 {loading ? "Resetting..." : "Set New Password"}
               </button>
 
               {successMessage && (
-                <p className="text-sm text-green-600 text-center">
+                <p className="text-xs sm:text-sm text-green-600 text-center">
                   {successMessage}
                 </p>
               )}
 
               {(error || externalError) && (
-                <p className="text-red-500 text-sm text-center">
+                <p className="text-red-500 text-xs sm:text-sm text-center">
                   {error || externalError}
                 </p>
               )}

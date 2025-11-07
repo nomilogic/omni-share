@@ -169,7 +169,7 @@ export function OtpModal({
 
         {error ? (
           <p
-            className="mt-3 text-sm theme-text-secondary"
+            className="mt-3 text-sm text-red-500"
             role="alert"
             aria-live="assertive"
           >
@@ -177,7 +177,7 @@ export function OtpModal({
           </p>
         ) : null}
         {info ? (
-          <p className="mt-3 text-sm theme-text-secondary" aria-live="polite">
+          <p className="mt-3 text-sm text-green-600" aria-live="polite">
             {info}
           </p>
         ) : null}
