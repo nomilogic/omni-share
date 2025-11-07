@@ -106,7 +106,7 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
           </div>
 
           {/* Right: Actions */}
-          <div className="md:w-1/2 p-6 z-10">
+          <div className="md:w-1/2 p-4 z-10 flex flex-grow flex-col ">
             {/* Loading Overlay */}
             
             {/* Close button as a purple circle in top-right */}
@@ -119,8 +119,8 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
               <X className="w-5 h-5 color-[#7650e3] stroke-[#7650e3] stroke-[3]" />
             </button>
 
-            <div className="mb-20">
-              <h3 className="text-md font-semibold text-[#7650e3]">
+            <div className="mb-[10vh]">
+              <h3 className="text-xl font-semibold text-[#7650e3]">
                 Manage Subscription
               </h3>
             </div>
@@ -221,7 +221,7 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
           </div>
 
           {/* Right: Actions */}
-          <div className="md:w-1/2 p-6 z-">
+          <div className="md:w-1/2 p-4 z-10 flex flex-grow flex-col">
             {/* Close button as a purple circle in top-right */}
             <button
               onClick={_onClose}
@@ -232,7 +232,7 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
             </button>
 
             <div className="">
-              <h3 className="text-2xl font-semibold text-[#7650e3]">
+              <h3 className="text-xl font-semibold text-[#7650e3]">
                 View Invoices
               </h3>
             </div>

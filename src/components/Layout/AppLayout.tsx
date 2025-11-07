@@ -137,7 +137,13 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const [isCanceled, setIsCanceled] = useState(false);
   const cancelSubscription = async () => {
 
-    alert("cancel")
+   // alert("cancel")
+
+   // alert box to accept cancelation
+   if (window.confirm("Are you sure you want to cancel your subscription?")) {
+      cancelSubscription();
+    }
+
     try {
       setIsCanceled(true);
       await API.cancelPackage();
@@ -511,7 +517,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             </div>
           </div>
           {/* Top Navigation */}
-          <div className="sticky top-0 z-10 backdrop-blur-lg border-b border-white/20 px-4 py-2 pb-2">
+          <div className="sticky top-0 z-10 backdrop-blur-lg border-b border-white/20 md:px-4 md:py-2 md:pb-2">
             <div className="relative flex items-center justify-between mt-0">
               {/* Left: Mobile menu button */}
               <div className="flex items-center">
@@ -532,12 +538,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 to="/profile"
                 className="absolute left-1/2 -translate-x-1/2 flex items-center gap-0 cursor-pointer mt-[-5px] scale-80 lg:scale-100 mx-[-10px]"
               >
-                <Icon
-                  name="logo"
-                  size={35}
-                  className="ml-0 lg:ml-0 mt-1 lg:scale-105"
-                />
-                <span className="theme-text-primary text-2xl lg:text-[1.6rem] tracking-tight ml-2">
+             
+                <span className="theme-text-primary text-2xl  tracking-tight ml-2 mt-2">
                <img src={logoText} alt="Logo" className="h-4" />
                 </span>
               </Link>
