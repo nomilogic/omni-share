@@ -377,7 +377,8 @@ export const AuthForm: React.FC<AuthFormProps> = ({
 
                 <button
                   onClick={() => setMode("signup")}
-                  className="w-full border-2 border-purple-600 rounded-lg py-2.5 sm:py-3 flex items-center justify-center gap-2 hover:bg-purple-50 transition font-medium text-sm sm:text-base text-gray-700"
+                  disabled={loading}
+                  className="w-full border-2 border-purple-600 rounded-lg py-2.5 sm:py-3 flex items-center justify-center gap-2 hover:bg-purple-50 transition font-medium text-sm sm:text-base text-gray-700 disabled:opacity-50"
                 >
                   <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
                   <span className="hidden sm:inline">Continue with Email</span>
@@ -432,7 +433,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                 </button>
               </form>
 
-              <div className="flex flex-col gap-3 sm:flex-row sm:gap-2 sm:items-center sm:justify-between text-xs sm:text-sm">
+              <div className="flex  gap-3  sm:gap-2 items-center justify-between text-xs sm:text-sm">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
