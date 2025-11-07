@@ -546,10 +546,10 @@ export const AuthForm: React.FC<AuthFormProps> = ({
               className="space-y-4 sm:space-y-5"
             >
               <div>
-                <h2 className="text-lg sm:text-xl font-bold text-center text-gray-800 mb-1">
+                <h2 className="text-center text-sm sm:text-base md:text-base font-medium text-black">
                   Forgot Password
                 </h2>
-                <p className="text-sm sm:text-base text-gray-400 text-center mb-6 sm:mb-8">
+                <p className="text-center text-sm sm:text-base md:text-base  text-gray-500">
                   Enter your registered email address below.
                 </p>
               </div>
