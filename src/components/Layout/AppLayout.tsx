@@ -197,7 +197,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               </button> */}
               <button
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="rounded-md theme-text-light hover:theme-text-primary mr-3"
+                className="rounded-md theme-text-light hover:theme-text-primary mr-1"
               >
                 <X className="w-6 h-6" />
               </button>
@@ -210,7 +210,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             >
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                className="flex items-center space-x-3 mb-0 w-full hover:theme-bg-secondary rounded-md p-2 px-4 transition-colors"
+                className="flex items-center space-x-3 mb-0 w-full hover:theme-bg-secondary rounded-md p-2 pl-3 transition-colors"
               >
                 <img
                   className="h-10 w-10 rounded-full object-cover border-2 border-white/30 theme-bg-trinary"
@@ -230,7 +230,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                     {user?.email}
                   </div>
                 </div>
-                <div className="theme-text-light">
+                <div className="theme-text-light ">
                   {showUserMenu ? (
                     <ChevronUp size={40} className="w-8 h-8" />
                   ) : (
