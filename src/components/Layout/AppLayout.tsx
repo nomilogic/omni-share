@@ -38,7 +38,6 @@ import API from "@/services/api";
 import logoText from "../../assets/logo-text.svg";
 import LogoWhiteText from "../../assets/logo-white-text.svg";
 
-
 // Define the props for AppLayout
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -55,7 +54,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const { showManageSubscription, openManageSubscription, closeManageSubscription } = useSubscriptionModal();
+  const {
+    showManageSubscription,
+    openManageSubscription,
+    closeManageSubscription,
+  } = useSubscriptionModal();
   const notificationRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const mainContentRef = useRef<HTMLElement>(null);
@@ -138,11 +141,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const [showPackage, setShowPackage] = useState(false);
   const [isCanceled, setIsCanceled] = useState(false);
   const cancelSubscription = async () => {
+    // alert("cancel")
 
-   // alert("cancel")
-
-   // alert box to accept cancelation
-   if (window.confirm("Are you sure you want to cancel your subscription?")) {
+    // alert box to accept cancelation
+    if (window.confirm("Are you sure you want to cancel your subscription?")) {
       cancelSubscription();
     }
 
@@ -168,8 +170,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   return (
     <ResizeContext.Provider value={{ handleResizeMainToFullScreen }}>
       <div className="h-full-dec-hf x-2 relative">
-        {/* Themed Background */}
-
         <div className="relative z-10">
           <div
             className={`fixed inset-y-0 left-0 z-50 w-full md:w-[17%] theme-bg-trinary border-r border-white/10 transform ${
@@ -215,10 +215,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 <img
                   className="h-10 w-10 rounded-full object-cover border-2 border-white/30 theme-bg-trinary"
                   src={
-                    user?.avatar_url ||
-                    `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                      user?.user_metadata?.name || user?.email || "User"
-                    )}&background=00000000&color=fff`
+                    user?.avatarUrl
+                      ? user?.avatarUrl
+                      : `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                          user?.user_metadata?.name || user?.email || "User"
+                        )}&background=00000000&color=fff`
                   }
                   alt=""
                 />
@@ -255,8 +256,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                   <div className="px-4 py-3 border-b border-white/20">
                     <div className="flex items-center space-x-3">
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm theme-text-light opacity-70 truncate">
-                          {user.wallet.package.name || "FREE"} Plan
+                        <p className="text-sm theme-text-light capitalize opacity-70 truncate">
+                          {user.wallet.package.tier} Plan
                         </p>
                       </div>
                     </div>
@@ -529,12 +530,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           </div>
           {/* Top Navigation */}
           <div className="sticky top-0 z-10 backdrop-blur-lg border-b border-white/20 md:px-4 md:py-2 md:pb-2">
-            <div className="relative flex items-center justify-between mt-0">
+            <div className="relative flex items-center justify-between mt-0 pb-2 relative">
               {/* Left: Mobile menu button */}
               <div className="flex items-center">
                 <button
                   onClick={() => setIsMobileMenuOpen(true)}
-                  className="p-1 rounded-md theme-text-primary hover:theme-text-secondary relative"
+                  className=" rounded-md theme-text-primary hover:theme-text-secondary relative"
                 >
                   <Menu className="w-6 h-6" />
                   {unreadCount > 0 && (
@@ -545,13 +546,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 </button>
               </div>
 
-              <Link
-                to="/profile"
-                className="absolute left-1/2 -translate-x-1/2 flex items-center gap-0 cursor-pointer mt-[-5px] scale-80 lg:scale-100 mx-[-10px]"
-              >
-                <span className="theme-text-primary text-2xl  tracking-tight ml-2 mt-2">
-                  <img src={logoText} alt="Logo" className="h-4" />
-                </span>
+              <Link to="/profile" className="theme-text-primary text-2xl  ml-2">
+                <img src={logoText} alt="Logo" className="h-4" />
               </Link>
 
               {/* Right Side */}
@@ -605,20 +601,20 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                 className="text-gray-400 cursor-pointer text-xs"
                                 title="Current subscription details"
                               >
-                                <Icon name="question-mark" size={16} />
+                                <Icon name="question-mark" size={18} />
                               </span>
                             </div>
 
                             <span
-                              className="text-lg font-semibold uppercase"
+                              className="text-base font-semibold uppercase"
                               style={{ color: "#7650e3" }}
                             >
-                              {user.wallet.package.name || "FREE"}
+                              {user.wallet?.package?.name || "FREE"}
                             </span>
                           </div>
 
                           {/* Renewal info */}
-                          <p className="text-sm text-gray-700 mb-4 ml-8 font-medium mt-[-5px] ">
+                          <p className="text-sm text-gray-700 mb-4 ml-8 font-medium mt-[-1px] ">
                             Renewing on:{" "}
                             <span className="text-gray-700 font-medium">
                               {user.wallet.expiresAt
@@ -633,8 +629,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                             </span>
                           </p>
 
-                          {/* Coins and referral coins */}
-                          <div className="space-y-3 mb-5">
+                          <div className="md:space-y-6 space-y-4 mb-5">
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-2 text-gray-800 text-md font-medium">
                                 <Icon name="spiral-logo" className="mr-1" />
@@ -643,11 +638,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                   className="text-gray-400 text-xs cursor-pointer"
                                   title="Coins info"
                                 >
-                                  <Icon name="question-mark" size={16} />
+                                  <Icon name="question-mark" size={18} />
                                 </span>
                               </div>
                               <p
-                                className="text-md font-semibold"
+                                className="text-base font-semibold"
                                 style={{ color: "#7650e3" }}
                               >
                                 {user.wallet.coins.toLocaleString() ?? 0}/{" "}
@@ -666,14 +661,14 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                   className="text-gray-400 text-xs cursor-pointer"
                                   title="Referral info"
                                 >
-                                  <Icon name="question-mark" size={16} />
+                                  <Icon name="question-mark" size={18} />
                                 </span>
                               </div>
                               <p
-                                className="text-md font-semibold"
+                                className="text-base font-semibold"
                                 style={{ color: "#7650e3" }}
                               >
-                                0/100
+                                0
                               </p>
                             </div>
                           </div>
@@ -681,12 +676,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                           {/* Buttons */}
                           <button
                             onClick={() => openManageSubscription()}
-                            className="w-full py-2.5 text-md font-semibold rounded-lg border flex items-center justify-center gap-2 transition  hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
+                            className="w-full py-2 text-md font-semibold rounded-lg border flex items-center justify-center gap-2 transition  hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
                             style={{ borderColor: "#7650e3", color: "#7650e3" }}
                           >
                             <Icon
                               name="manage-subs"
-                              f
                               size={20}
                               className="filter-omni"
                             />
@@ -696,7 +690,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                           <Link
                             to="/pricing"
                             onClick={() => setShowPackage(false)}
-                            className="w-full mt-3 p-2.5 text-md font-semibold rounded-lg flex items-center justify-center gap-2  text-white bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] border upgrade"
+                            className="w-full mt-3 p-2 text-md font-semibold rounded-lg flex items-center justify-center gap-2  text-white bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] border upgrade"
                           >
                             <div className="hover:filter-omni h-full w-full text-center">
                               <Icon
@@ -734,8 +728,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           {/* Footer */}
         </div>
 
-        {/* Global Preloader Overlay */}
-        {/* Manage Subscription Modal */}
         <ManageSubscriptionModal
           isOpen={showManageSubscription}
           onClose={closeManageSubscription}
