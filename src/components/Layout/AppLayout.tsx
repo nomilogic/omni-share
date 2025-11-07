@@ -264,7 +264,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                       </div>
                       <div className="flex-1">
                         <p className="font-medium">Settings</p>
-                        <p className="text-xs theme-text-light opacity-70">
+                        <p className="text-sm theme-text-light opacity-70">
                           Manage your account
                         </p>
                       </div>
@@ -284,7 +284,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                       </div>
                       <div className="flex-1">
                         <p className="font-medium">Logout</p>
-                        <p className="text-xs theme-text-light opacity-70">
+                        <p className="text-sm theme-text-light opacity-70">
                           Logout of your account
                         </p>
                       </div>
