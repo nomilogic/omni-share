@@ -67,6 +67,8 @@ export const AuthForm: React.FC<AuthFormProps> = ({
       const res = await API.generateForgetLink({ email });
 
       localStorage.setItem("forgot_token", res.data.data.token);
+      localStorage.setItem("forgot_token_time", Date.now().toString());
+
       setSuccessMessage("If that email exists, a reset link has been sent.");
       setError("");
     } catch (err: any) {

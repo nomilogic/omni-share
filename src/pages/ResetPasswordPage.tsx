@@ -12,10 +12,61 @@ const ResetPasswordPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+  const [expired, setExpired] = useState(false);
+  const [remainingTime, setRemainingTime] = useState<number>(0);
+
   const router = useNavigate();
 
-  const token =
-    typeof window !== "undefined" ? localStorage.getItem("forgot_token") : null;
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const savedToken = localStorage.getItem("forgot_token");
+    const tokenTime = localStorage.getItem("forgot_token_time");
+
+    if (savedToken && tokenTime) {
+      const tokenTimestamp = parseInt(tokenTime);
+      const now = Date.now();
+      const diff = now - tokenTimestamp;
+
+      const expireTime = 5 * 60 * 1000; // 5 minutes in ms
+
+      if (diff >= expireTime) {
+        // token expired
+        localStorage.removeItem("forgot_token");
+        localStorage.removeItem("forgot_token_time");
+        setExpired(true);
+      } else {
+        setToken(savedToken);
+        setRemainingTime(expireTime - diff);
+
+        const interval = setInterval(() => {
+          const timeLeft = expireTime - (Date.now() - tokenTimestamp);
+          if (timeLeft <= 0) {
+            clearInterval(interval);
+            localStorage.removeItem("forgot_token");
+            localStorage.removeItem("forgot_token_time");
+            setToken(null);
+            setExpired(true);
+            setRemainingTime(0);
+          } else {
+            setRemainingTime(timeLeft);
+          }
+        }, 1000);
+
+        return () => clearInterval(interval);
+      }
+    } else {
+      setExpired(true);
+    }
+  }, []);
+
+  const formatTime = (ms: number) => {
+    const totalSeconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,6 +78,14 @@ const ResetPasswordPage: React.FC = () => {
       return;
     }
 
+    if (!token) {
+      setError(
+        "This link has expired. Please request a new password reset link."
+      );
+      setExpired(true);
+      return;
+    }
+
     setLoading(true);
     try {
       await API.setNewPassword(
@@ -35,6 +94,7 @@ const ResetPasswordPage: React.FC = () => {
       );
       setSuccess("Password has been reset successfully!");
       localStorage.removeItem("forgot_token");
+      localStorage.removeItem("forgot_token_time");
       setTimeout(() => router("/auth"), 1000);
     } catch (err: any) {
       console.error("Reset password error", err);
@@ -46,7 +106,7 @@ const ResetPasswordPage: React.FC = () => {
 
   return (
     <main className="min-h-screen w-full flex md:items-center md:justify-center bg-gray-100 px-4 py-8 sm:px-6 sm:py-12 md:px-8">
-      {token ? (
+      {!token || expired ? (
         <div className="w-full md:max-w-md md:bg-white md:rounded-2xl md:shadow-xl md:p-8 flex flex-col items-center text-center md:border md:border-gray-200">
           <div className="text-center flex justify-center mb-8 gap-2 items-center">
             <Icon name="logo" size={50} />
@@ -86,6 +146,11 @@ const ResetPasswordPage: React.FC = () => {
           <p className="text-gray-500 text-sm sm:text-base text-center mb-6">
             Enter your new password below.
           </p>
+
+          {/* Timer Display */}
+          <div className="text-center mb-4 font-medium text-purple-700">
+            Link expires in: {formatTime(remainingTime)}
+          </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
