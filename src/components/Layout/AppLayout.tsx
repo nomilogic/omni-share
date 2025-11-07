@@ -529,8 +529,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             </div>
           </div>
           {/* Top Navigation */}
-          <div className="sticky top-0 z-10 backdrop-blur-lg border-b border-white/20 md:px-4 md:py-2 md:pb-2">
-            <div className="relative flex items-center justify-between mt-0 pb-2 relative">
+          <div className="sticky top-0 z-10 backdrop-blur-lg border-b border-white/20 md:px-4 md:py-2 md:pb-2 px-2">
+            <div className="relative flex items-center justify-between mt-0 pb-2 ">
               {/* Left: Mobile menu button */}
               <div className="flex items-center">
                 <button

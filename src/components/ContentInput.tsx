@@ -1886,7 +1886,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   };
 
   return (
-    <div className="w-full mx-auto  rounded-xl border border-white/10 p-2 m0 ">
+    <div className="w-full mx-auto  rounded-xl border border-white/10   ">
       {/* Hide the main form when template editor is open */}
       {!showTemplateEditor && (
         <>
@@ -1941,7 +1941,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                   <label className="block text-sm font-semibold theme-text-primary mb-2">
                     Select Post Type
                   </label>
-                  <div className="grid grid-cols-3 gap-2 ">
+                  <div className="grid grid-cols-3 gap-3 text-sm md:text-base">
                     {/* Text Post */}
                     <button
                       type="button"
@@ -1977,7 +1977,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         </div>
                         <div>
                           <h3
-                            className={`font-semibold text-md leading-[1.05rem] mt-1 ${
+                            className={`font-semibold leading-[1.05rem] mt-1  ${
                               selectedPostType === "text"
                                 ? "text-white"
                                 : "theme-text-primary"
@@ -2034,7 +2034,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         </div>
                         <div>
                           <h3
-                            className={`font-semibold text-md leading-[1.05rem] mt-1 p-0 ${
+                            className={`font-semibold text-md leading-[1.05rem] mt-1 text p-0 ${
                               selectedPostType === "image"
                                 ? "text-white"
                                 : "theme-text-primary"
@@ -2084,7 +2084,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               </div>
                               <div>
                                 <h3
-                                  className={`font-semibold text-sm leading-[1.05rem] mt-1
+                                  className={`font-semibold text-sm leading-[1.05rem] mt-1 text
                         
                         ${
                           selectedImageMode === "upload"
@@ -2128,7 +2128,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               </div>
                               <div>
                                 <h3
-                                  className={`font-semibold text-sm leading-[1.05rem] mt-1 ${
+                                  className={`font-semibold text-sm leading-[1.05rem] mt-1 text ${
                                     selectedImageMode === "textToImage"
                                       ? "text-white"
                                       : "theme-text-secondary"
@@ -2187,7 +2187,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         </div>
                         <div>
                           <h3
-                            className={`font-semibold text-md leading-[1.05rem] mt-1 p-0 ${
+                            className={`font-semibold text-md leading-[1.05rem] mt-1 text p-0 ${
                               selectedPostType === "video"
                                 ? "text-white"
                                 : "theme-text-primary"
@@ -2236,7 +2236,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               </div>
                               <div>
                                 <h3
-                                  className={`font-semibold text-sm leading-[1.05rem] mt-1 ${
+                                  className={`font-semibold text-sm leading-[1.05rem] mt-1 text ${
                                     selectedVideoMode === "upload"
                                       ? "text-white"
                                       : "theme-text-secondary"
@@ -2282,7 +2282,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               </div>
                               <div>
                                 <h3
-                                  className={`font-semibold text-sm leading-[1.05rem] mt-1 ${
+                                  className={`font-semibold text-sm leading-[1.05rem] mt-1 text ${
                                     selectedVideoMode === "uploadShorts"
                                       ? "text-white"
                                       : "theme-text-secondary"
