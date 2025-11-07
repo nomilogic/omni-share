@@ -133,7 +133,7 @@ const SubscriptionPauseModal = ({ isVisible, onClose, onPause, onCancel }) => {
           {/* Buttons */}
           <div className="space-y-2">
             <button
-              className="w-full py-2 px-4 flex justify-between items-center text-white bg-[#7650e3] rounded-xl font-semibold text-base hover:bg-[#6941C6] transition duration-200 shadow-lg  border-2 border-[#7F56D9]"
+              className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold p-2.5 text-sm sm:text-base rounded-lg transition disabled:opacity-50 flex justify-between items-center border-2 border-[#7F56D9]"
               onClick={onPause}
             >
               <span>Continue with Subscription</span>
@@ -141,7 +141,7 @@ const SubscriptionPauseModal = ({ isVisible, onClose, onPause, onCancel }) => {
             </button>
 
             <button
-              className="w-full py-2 px-4 flex justify-between items-center text-[#7F56D9] bg-white border-2 border-[#7F56D9] rounded-xl font-semibold text-base hover:bg-[#F9F5FF] transition duration-200 shadow-md"
+              className=" w-full hover:bg-[#d7d7fc] hover:text-[#7650e3]  text-[#7650e3] font-semibold p-2.5  text-sm sm:text-base rounded-lg transition disabled:opacity-50 flex justify-between items-center  border-2 border-[#7F56D9]"
               onClick={onCancel}
             >
               <span>Proceed with Cancelation</span>

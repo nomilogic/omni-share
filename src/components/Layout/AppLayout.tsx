@@ -243,8 +243,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                   <div className="px-4 py-3 border-b border-white/20">
                     <div className="flex items-center space-x-3">
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs theme-text-light opacity-70 truncate">
-                          {user?.subscription_tier || user?.tier || "Free Tier"}
+                        <p className="text-sm theme-text-light opacity-70 truncate">
+                          {user.wallet.package.name || "FREE"} Plan
                         </p>
                       </div>
                     </div>
@@ -318,7 +318,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     <div className="flex items-center">
-                      <Icon className="mr-3 h-5 w-5" />
+                      <Icon size={20} className="mr-3" />
                       {item.name}
                     </div>
                     {showBadge && (
@@ -538,9 +538,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 to="/profile"
                 className="absolute left-1/2 -translate-x-1/2 flex items-center gap-0 cursor-pointer mt-[-5px] scale-80 lg:scale-100 mx-[-10px]"
               >
-             
                 <span className="theme-text-primary text-2xl  tracking-tight ml-2 mt-2">
-               <img src={logoText} alt="Logo" className="h-4" />
+                  <img src={logoText} alt="Logo" className="h-4" />
                 </span>
               </Link>
 
@@ -671,12 +670,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                           {/* Buttons */}
                           <button
                             onClick={() => openManageSubscription()}
-                            className="w-full py-2.5 text-lg font-semibold rounded-lg border flex items-center justify-center gap-2 transition  hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
+                            className="w-full py-2.5 text-md font-semibold rounded-lg border flex items-center justify-center gap-2 transition  hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
                             style={{ borderColor: "#7650e3", color: "#7650e3" }}
                           >
                             <Icon
-                              name="manage-subs"
-                              size={25}
+                              name="manage-subs"f
+                              size={20}
                               className="filter-omni"
                             />
                             Manage Subscription
@@ -685,12 +684,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                           <Link
                             to="/pricing"
                             onClick={() => setShowPackage(false)}
-                            className="w-full mt-3 py-[9.5px] text-lg font-semibold rounded-lg flex items-center justify-center gap-2  text-white bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] border upgrade"
+                            className="w-full mt-3 p-2.5 text-md font-semibold rounded-lg flex items-center justify-center gap-2  text-white bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] border upgrade"
                           >
                             <div className="hover:filter-omni h-full w-full text-center">
                               <Icon
                                 name="white-diamond"
-                                size={25}
+                                size={20}
                                 className="mr-2"
                               />
                               Upgrade
