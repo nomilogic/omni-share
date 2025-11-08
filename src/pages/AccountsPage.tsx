@@ -164,7 +164,7 @@ export const AccountsPage: React.FC = () => {
           console.log("OAuth success for", platform);
           // Close popup from parent window for better browser compatibility
           try {
-           authWindow?.close();
+            authWindow?.close();
           } catch (error) {
             console.warn("Could not close popup from parent:", error);
           }
@@ -174,7 +174,7 @@ export const AccountsPage: React.FC = () => {
           console.error("OAuth error:", event.data.error);
           // Close popup from parent window for better browser compatibility
           try {
-           authWindow?.close();
+            authWindow?.close();
           } catch (error) {
             console.warn("Could not close popup from parent:", error);
           }
@@ -254,7 +254,7 @@ export const AccountsPage: React.FC = () => {
           </p>
 
           {/* Connection Status Summary */}
-          <div className="mb-2 p-2 bg-blue-50 border border-blue-200 rounded-lg">
+          <div className="mb-2 p-2 bg-blue-50 border border-blue-200 rounded-md">
             <p className="text-sm text-blue-800">
               <span className="font-medium">{connectedPlatforms.length}</span>{" "}
               of <span className="font-medium">{ALL_PLATFORMS.length}</span>{" "}
@@ -264,7 +264,7 @@ export const AccountsPage: React.FC = () => {
 
           {/* Connection Alert */}
           {connectedPlatforms.length === 0 && (
-            <div className="mb-8 p-4 theme-bg-quaternary rounded-xl border border-purple-200">
+            <div className="mb-8 p-4 theme-bg-quaternary rounded-md border border-purple-200">
               <div className="flex items-start gap-3">
                 <div className="w-5 h-5">
                   <Icon
@@ -296,7 +296,7 @@ export const AccountsPage: React.FC = () => {
             return (
               <div
                 key={platform}
-                className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors"
+                className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-md hover:bg-gray-50 transition-colors"
               >
                 <div className="flex items-center gap-2">
                   {/* Platform Icon */}
@@ -330,7 +330,7 @@ export const AccountsPage: React.FC = () => {
                       <button
                         onClick={() => handleConnect(platform)}
                         disabled={isConnecting}
-                        className="p-2 text-gray-500 hover:text-blue-600 disabled:opacity-50 rounded-lg hover:bg-gray-100"
+                        className="p-2 text-slate-500 hover:text-blue-600 disabled:opacity-50 rounded-md hover:bg-gray-100"
                         title="Refresh connection"
                       >
                         <RefreshCw className="w-4 h-4" />
@@ -338,7 +338,7 @@ export const AccountsPage: React.FC = () => {
                       <button
                         onClick={() => handleDisconnect(platform)}
                         disabled={isConnecting}
-                        className="p-2 text-gray-500 hover:text-red-600 disabled:opacity-50 rounded-lg hover:bg-gray-100"
+                        className="p-2 text-slate-500 hover:text-red-600 disabled:opacity-50 rounded-md hover:bg-gray-100"
                         title="Disconnect"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -386,7 +386,7 @@ export const AccountsPage: React.FC = () => {
         {/* Platform-specific options */}
         {connectedPlatforms.includes("facebook") &&
           facebookPages.length > 0 && (
-            <div className="mb-6 p-2 bg-blue-50 border border-blue-200 rounded-xl">
+            <div className="mb-6 p-2 bg-blue-50 border border-blue-200 rounded-md">
               <h4 className="font-medium text-blue-900 mb-2">
                 Facebook Page Selection
               </h4>
@@ -396,7 +396,7 @@ export const AccountsPage: React.FC = () => {
               <select
                 value={selectedFacebookPage}
                 onChange={(e) => setSelectedFacebookPage(e.target.value)}
-                className="w-full p-3 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full p-3 border border-blue-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 {facebookPages.map((page) => (
                   <option key={page.id} value={page.id}>
@@ -409,7 +409,7 @@ export const AccountsPage: React.FC = () => {
 
         {connectedPlatforms.includes("youtube") &&
           youtubeChannels.length > 0 && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
               <h4 className="font-medium text-red-900 mb-2">
                 YouTube Channel Selection
               </h4>
@@ -419,7 +419,7 @@ export const AccountsPage: React.FC = () => {
               <select
                 value={selectedYoutubeChannel}
                 onChange={(e) => setSelectedYoutubeChannel(e.target.value)}
-                className="w-full p-3 border border-red-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                className="w-full p-3 border border-red-300 rounded-md focus:ring-2 focus:ring-red-500 focus:border-transparent"
               >
                 {youtubeChannels.map((channel) => (
                   <option key={channel.id} value={channel.id}>
@@ -432,7 +432,7 @@ export const AccountsPage: React.FC = () => {
 
         {/* Error Messages */}
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
             <p className="text-red-800 text-sm">{error}</p>
           </div>
         )}

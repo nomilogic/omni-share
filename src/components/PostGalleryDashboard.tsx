@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Search, 
-  Filter, 
-  Grid3X3, 
-  List, 
-  Heart, 
-  Archive, 
-  Copy, 
-  Play, 
-  Image, 
-  Video, 
+import React, { useState, useEffect } from "react";
+import {
+  Search,
+  Filter,
+  Grid3X3,
+  List,
+  Heart,
+  Archive,
+  Copy,
+  Play,
+  Image,
+  Video,
   Eye,
   Download,
   Share2,
@@ -26,15 +26,20 @@ import {
   ChevronDown,
   Trash2,
   Edit,
-  MoreHorizontal
-} from 'lucide-react';
+  MoreHorizontal,
+} from "lucide-react";
 
-import { postHistoryService, PostGalleryItem, ContentTemplate, PostContent } from '../lib/postHistoryService';
-import { mediaAssetService, MediaAsset } from '../lib/mediaAssetService';
-import { AIModelSelector } from './AIModelSelector';
-import { MediaDetailModal } from './MediaDetailModal';
-import { VideoPlayerModal } from './VideoPlayerModal';
-import { ContentInput } from './ContentInput'; // Assuming ContentInput is in this path
+import {
+  postHistoryService,
+  PostGalleryItem,
+  ContentTemplate,
+  PostContent,
+} from "../lib/postHistoryService";
+import { mediaAssetService, MediaAsset } from "../lib/mediaAssetService";
+import { AIModelSelector } from "./AIModelSelector";
+import { MediaDetailModal } from "./MediaDetailModal";
+import { VideoPlayerModal } from "./VideoPlayerModal";
+import { ContentInput } from "./ContentInput"; // Assuming ContentInput is in this path
 
 interface PostGalleryDashboardProps {
   campaignId: string;
@@ -43,23 +48,23 @@ interface PostGalleryDashboardProps {
   onCreateTemplate?: (postId: string) => void;
 }
 
-type ViewMode = 'gallery' | 'list' | 'media' | 'templates' | 'analytics';
-type MediaType = 'all' | 'image' | 'video' | 'audio';
-type SortBy = 'date' | 'performance' | 'popularity';
+type ViewMode = "gallery" | "list" | "media" | "templates" | "analytics";
+type MediaType = "all" | "image" | "video" | "audio";
+type SortBy = "date" | "performance" | "popularity";
 
 export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
   campaignId,
   onSelectPost,
   onReusePost,
-  onCreateTemplate
+  onCreateTemplate,
 }) => {
   // State management
-  const [viewMode, setViewMode] = useState<ViewMode>('gallery');
+  const [viewMode, setViewMode] = useState<ViewMode>("gallery");
   const [posts, setPosts] = useState<PostGalleryItem[]>([]);
   const [mediaAssets, setMediaAssets] = useState<MediaAsset[]>([]);
   const [templates, setTemplates] = useState<ContentTemplate[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
   const [editingPost, setEditingPost] = useState<PostGalleryItem | null>(null); // State to manage editing
 
@@ -70,15 +75,15 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
     status: [] as string[],
     favorites: false,
     canReuse: false,
-    mediaType: 'all' as MediaType,
-    sortBy: 'date' as SortBy,
-    dateRange: { start: '', end: '' }
+    mediaType: "all" as MediaType,
+    sortBy: "date" as SortBy,
+    dateRange: { start: "", end: "" },
   });
 
   // Video generation
   const [showVideoGenerator, setShowVideoGenerator] = useState(false);
   const [videoGenerating, setVideoGenerating] = useState(false);
-  const [selectedAiModel, setSelectedAiModel] = useState('runway-gen-2');
+  const [selectedAiModel, setSelectedAiModel] = useState("runway-gen-2");
   const [showFilters, setShowFilters] = useState(false);
 
   // Media detail modal
@@ -93,35 +98,43 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
     setLoading(true);
     try {
       switch (viewMode) {
-        case 'gallery':
-        case 'list':
-          const { items } = await postHistoryService.getPostGallery(campaignId, {
-            categories: filters.categories,
-            platforms: filters.platforms,
-            status: filters.status as any[],
-            favorites: filters.favorites || undefined,
-            canReuse: filters.canReuse || undefined,
-            sortBy: filters.sortBy,
-            limit: 50
-          });
+        case "gallery":
+        case "list":
+          const { items } = await postHistoryService.getPostGallery(
+            campaignId,
+            {
+              categories: filters.categories,
+              platforms: filters.platforms,
+              status: filters.status as any[],
+              favorites: filters.favorites || undefined,
+              canReuse: filters.canReuse || undefined,
+              sortBy: filters.sortBy,
+              limit: 50,
+            }
+          );
           setPosts(items);
           break;
 
-        case 'media':
-          const { assets } = await mediaAssetService.getMediaAssets(campaignId, {
-            type: filters.mediaType === 'all' ? undefined : filters.mediaType,
-            limit: 50
-          });
+        case "media":
+          const { assets } = await mediaAssetService.getMediaAssets(
+            campaignId,
+            {
+              type: filters.mediaType === "all" ? undefined : filters.mediaType,
+              limit: 50,
+            }
+          );
           setMediaAssets(assets);
           break;
 
-        case 'templates':
-          const templateList = await postHistoryService.getContentTemplates(campaignId);
+        case "templates":
+          const templateList = await postHistoryService.getContentTemplates(
+            campaignId
+          );
           setTemplates(templateList);
           break;
       }
     } catch (error) {
-      console.error('Error loading content:', error);
+      console.error("Error loading content:", error);
     } finally {
       setLoading(false);
     }
@@ -135,20 +148,28 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
 
     setLoading(true);
     try {
-      if (viewMode === 'media') {
-        const results = await mediaAssetService.searchMediaAssets(campaignId, searchQuery, {
-          type: filters.mediaType === 'all' ? undefined : filters.mediaType
-        });
+      if (viewMode === "media") {
+        const results = await mediaAssetService.searchMediaAssets(
+          campaignId,
+          searchQuery,
+          {
+            type: filters.mediaType === "all" ? undefined : filters.mediaType,
+          }
+        );
         setMediaAssets(results);
       } else {
-        const results = await postHistoryService.searchPosts(campaignId, searchQuery, {
-          platforms: filters.platforms,
-          categories: filters.categories
-        });
+        const results = await postHistoryService.searchPosts(
+          campaignId,
+          searchQuery,
+          {
+            platforms: filters.platforms,
+            categories: filters.categories,
+          }
+        );
         setPosts(results);
       }
     } catch (error) {
-      console.error('Error searching:', error);
+      console.error("Error searching:", error);
     } finally {
       setLoading(false);
     }
@@ -166,13 +187,13 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
 
   const toggleFavorite = async (postId: string) => {
     try {
-      const post = posts.find(p => p.id === postId);
+      const post = posts.find((p) => p.id === postId);
       if (post) {
         await postHistoryService.toggleFavorite(postId, !post.isFavorite);
         loadContent();
       }
     } catch (error) {
-      console.error('Error toggling favorite:', error);
+      console.error("Error toggling favorite:", error);
     }
   };
 
@@ -183,16 +204,16 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
         model: selectedAiModel,
         prompt,
         sourceImage,
-        aspectRatio: '16:9',
-        duration: 10
+        aspectRatio: "16:9",
+        duration: 10,
       });
 
       // Refresh media assets
-      if (viewMode === 'media') {
+      if (viewMode === "media") {
         loadContent();
       }
     } catch (error) {
-      console.error('Error generating video:', error);
+      console.error("Error generating video:", error);
     } finally {
       setVideoGenerating(false);
       setShowVideoGenerator(false);
@@ -201,20 +222,20 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
 
   const handleFileUpload = async (files: FileList) => {
     try {
-      const uploadPromises = Array.from(files).map(file => 
+      const uploadPromises = Array.from(files).map((file) =>
         mediaAssetService.uploadMedia(file, campaignId, {
-          source: 'uploaded',
-          altText: file.name
+          source: "uploaded",
+          altText: file.name,
         })
       );
 
       await Promise.all(uploadPromises);
 
-      if (viewMode === 'media') {
+      if (viewMode === "media") {
         loadContent();
       }
     } catch (error) {
-      console.error('Error uploading files:', error);
+      console.error("Error uploading files:", error);
     }
   };
 
@@ -224,13 +245,13 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
   };
 
   const handleAssetUpdate = (updatedAsset: MediaAsset) => {
-    setMediaAssets(prev => 
-      prev.map(asset => asset.id === updatedAsset.id ? updatedAsset : asset)
+    setMediaAssets((prev) =>
+      prev.map((asset) => (asset.id === updatedAsset.id ? updatedAsset : asset))
     );
   };
 
   const handleAssetDelete = (assetId: string) => {
-    setMediaAssets(prev => prev.filter(asset => asset.id !== assetId));
+    setMediaAssets((prev) => prev.filter((asset) => asset.id !== assetId));
   };
 
   // Handler for editing a post
@@ -245,20 +266,20 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
         platforms: updatedData.selectedPlatforms,
         images: updatedData.images || editingPost.images || [],
         imageAnalysis: updatedData.imageAnalysis || editingPost.imageAnalysis,
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       };
 
       // Update the posts array
-      setPosts(posts.map(post => 
-        post.id === editingPost.id ? updatedPost : post
-      ));
+      setPosts(
+        posts.map((post) => (post.id === editingPost.id ? updatedPost : post))
+      );
 
       // Also update in persistent storage if you have that implemented
       // await postHistoryService.updatePost(editingPost.id, updatedPost);
 
       setEditingPost(null);
     } catch (error) {
-      console.error('Error updating post:', error);
+      console.error("Error updating post:", error);
     }
   };
 
@@ -268,28 +289,47 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
   };
 
   const TabNavigation = () => (
-    <div className="flex space-x-1 bg-gray-100 rounded-lg p-1 mb-6">
+    <div className="flex space-x-1 bg-gray-100 rounded-md p-1 mb-6">
       {[
-        { id: 'gallery', label: 'Post Gallery', icon: Grid3X3, count: posts.length },
-        { id: 'media', label: 'Media Assets', icon: Image, count: mediaAssets.length },
-        { id: 'templates', label: 'Templates', icon: Palette, count: templates.length },
-        { id: 'analytics', label: 'Analytics', icon: TrendingUp }
-      ].map(tab => (
+        {
+          id: "gallery",
+          label: "Post Gallery",
+          icon: Grid3X3,
+          count: posts.length,
+        },
+        {
+          id: "media",
+          label: "Media Assets",
+          icon: Image,
+          count: mediaAssets.length,
+        },
+        {
+          id: "templates",
+          label: "Templates",
+          icon: Palette,
+          count: templates.length,
+        },
+        { id: "analytics", label: "Analytics", icon: TrendingUp },
+      ].map((tab) => (
         <button
           key={tab.id}
           onClick={() => setViewMode(tab.id as ViewMode)}
           className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
             viewMode === tab.id
-              ? 'bg-white text-blue-600 shadow-sm'
-              : 'text-gray-600 hover:text-gray-900'
+              ? "bg-white text-blue-600 shadow-sm"
+              : "text-gray-600 hover:text-gray-900"
           }`}
         >
           <tab.icon className="w-4 h-4" />
           {tab.label}
           {tab.count !== undefined && (
-            <span className={`text-xs px-2 py-0.5 rounded-full ${
-              viewMode === tab.id ? 'bg-blue-100 text-blue-600' : 'bg-gray-200 text-gray-600'
-            }`}>
+            <span
+              className={`text-xs px-2 py-0.5 rounded-full ${
+                viewMode === tab.id
+                  ? "bg-blue-100 text-blue-600"
+                  : "bg-gray-200 text-gray-600"
+              }`}
+            >
               {tab.count}
             </span>
           )}
@@ -299,18 +339,20 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
   );
 
   const FilterPanel = () => (
-    <div className="bg-white rounded-lg shadow-sm border p-4 mb-6">
+    <div className="bg-white rounded-md shadow-sm border p-4 mb-6">
       <div className="flex flex-wrap items-center gap-4">
         <div className="flex-1 min-w-64">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <input
               type="text"
-              placeholder={`Search ${viewMode === 'media' ? 'media' : 'posts'}...`}
+              placeholder={`Search ${
+                viewMode === "media" ? "media" : "posts"
+              }...`}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              onKeyPress={(e) => e.key === "Enter" && handleSearch()}
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
         </div>
@@ -318,33 +360,48 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm"
+            className="flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50 text-sm"
           >
             <Filter className="w-4 h-4 text-gray-400" />
             Filters
-            <ChevronDown className={`w-4 h-4 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
+            <ChevronDown
+              className={`w-4 h-4 transition-transform ${
+                showFilters ? "rotate-180" : ""
+              }`}
+            />
           </button>
 
           <select
             value={filters.sortBy}
-            onChange={(e) => setFilters(prev => ({ ...prev, sortBy: e.target.value as SortBy }))}
-            className="border border-gray-300 rounded-lg px-3 py-2 text-sm"
+            onChange={(e) =>
+              setFilters((prev) => ({
+                ...prev,
+                sortBy: e.target.value as SortBy,
+              }))
+            }
+            className="border border-gray-300 rounded-md px-3 py-2 text-sm"
           >
             <option value="date">Latest First</option>
             <option value="performance">Best Performance</option>
             <option value="popularity">Most Popular</option>
           </select>
 
-          <div className="flex items-center bg-gray-100 rounded-lg p-1">
+          <div className="flex items-center bg-gray-100 rounded-md p-1">
             <button
-              onClick={() => setViewMode(viewMode === 'list' ? 'gallery' : 'gallery')}
-              className={`p-2 rounded ${viewMode === 'gallery' ? 'bg-white shadow-sm' : 'text-gray-500'}`}
+              onClick={() =>
+                setViewMode(viewMode === "list" ? "gallery" : "gallery")
+              }
+              className={`p-2 rounded ${
+                viewMode === "gallery" ? "bg-white shadow-sm" : "text-slate-500"
+              }`}
             >
               <Grid3X3 className="w-4 h-4" />
             </button>
             <button
-              onClick={() => setViewMode('list')}
-              className={`p-2 rounded ${viewMode === 'list' ? 'bg-white shadow-sm' : 'text-gray-500'}`}
+              onClick={() => setViewMode("list")}
+              className={`p-2 rounded ${
+                viewMode === "list" ? "bg-white shadow-sm" : "text-slate-500"
+              }`}
             >
               <List className="w-4 h-4" />
             </button>
@@ -356,37 +413,50 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
         <div className="mt-4 pt-4 border-t border-gray-200">
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Platforms</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Platforms
+              </label>
               <div className="space-y-1">
-                {['LinkedIn', 'Twitter', 'Instagram', 'Facebook'].map(platform => (
-                  <label key={platform} className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={filters.platforms.includes(platform.toLowerCase())}
-                      onChange={(e) => {
-                        const platformId = platform.toLowerCase();
-                        setFilters(prev => ({
-                          ...prev,
-                          platforms: e.target.checked 
-                            ? [...prev.platforms, platformId]
-                            : prev.platforms.filter(p => p !== platformId)
-                        }));
-                      }}
-                      className="mr-2 text-blue-600 rounded"
-                    />
-                    <span className="text-sm text-gray-700">{platform}</span>
-                  </label>
-                ))}
+                {["LinkedIn", "Twitter", "Instagram", "Facebook"].map(
+                  (platform) => (
+                    <label key={platform} className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={filters.platforms.includes(
+                          platform.toLowerCase()
+                        )}
+                        onChange={(e) => {
+                          const platformId = platform.toLowerCase();
+                          setFilters((prev) => ({
+                            ...prev,
+                            platforms: e.target.checked
+                              ? [...prev.platforms, platformId]
+                              : prev.platforms.filter((p) => p !== platformId),
+                          }));
+                        }}
+                        className="mr-2 text-blue-600 rounded"
+                      />
+                      <span className="text-sm text-gray-700">{platform}</span>
+                    </label>
+                  )
+                )}
               </div>
             </div>
 
-            {viewMode === 'media' && (
+            {viewMode === "media" && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Media Type</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Media Type
+                </label>
                 <select
                   value={filters.mediaType}
-                  onChange={(e) => setFilters(prev => ({ ...prev, mediaType: e.target.value as MediaType }))}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                  onChange={(e) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      mediaType: e.target.value as MediaType,
+                    }))
+                  }
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
                 >
                   <option value="all">All Media</option>
                   <option value="image">Images</option>
@@ -397,20 +467,22 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
             )}
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Status
+              </label>
               <div className="space-y-1">
-                {['Published', 'Scheduled', 'Draft'].map(status => (
+                {["Published", "Scheduled", "Draft"].map((status) => (
                   <label key={status} className="flex items-center">
                     <input
                       type="checkbox"
                       checked={filters.status.includes(status.toLowerCase())}
                       onChange={(e) => {
                         const statusId = status.toLowerCase();
-                        setFilters(prev => ({
+                        setFilters((prev) => ({
                           ...prev,
-                          status: e.target.checked 
+                          status: e.target.checked
                             ? [...prev.status, statusId]
-                            : prev.status.filter(s => s !== statusId)
+                            : prev.status.filter((s) => s !== statusId),
                         }));
                       }}
                       className="mr-2 text-blue-600 rounded"
@@ -422,13 +494,20 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Special</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Special
+              </label>
               <div className="space-y-1">
                 <label className="flex items-center">
                   <input
                     type="checkbox"
                     checked={filters.favorites}
-                    onChange={(e) => setFilters(prev => ({ ...prev, favorites: e.target.checked }))}
+                    onChange={(e) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        favorites: e.target.checked,
+                      }))
+                    }
                     className="mr-2 text-blue-600 rounded"
                   />
                   <span className="text-sm text-gray-700">Favorites Only</span>
@@ -437,7 +516,12 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
                   <input
                     type="checkbox"
                     checked={filters.canReuse}
-                    onChange={(e) => setFilters(prev => ({ ...prev, canReuse: e.target.checked }))}
+                    onChange={(e) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        canReuse: e.target.checked,
+                      }))
+                    }
                     className="mr-2 text-blue-600 rounded"
                   />
                   <span className="text-sm text-gray-700">Reusable</span>
@@ -446,24 +530,30 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Date Range</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Date Range
+              </label>
               <div className="space-y-2">
                 <input
                   type="date"
                   value={filters.dateRange.start}
-                  onChange={(e) => setFilters(prev => ({
-                    ...prev,
-                    dateRange: { ...prev.dateRange, start: e.target.value }
-                  }))}
+                  onChange={(e) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      dateRange: { ...prev.dateRange, start: e.target.value },
+                    }))
+                  }
                   className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
                 />
                 <input
                   type="date"
                   value={filters.dateRange.end}
-                  onChange={(e) => setFilters(prev => ({
-                    ...prev,
-                    dateRange: { ...prev.dateRange, end: e.target.value }
-                  }))}
+                  onChange={(e) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      dateRange: { ...prev.dateRange, end: e.target.value },
+                    }))
+                  }
                   className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
                 />
               </div>
@@ -479,7 +569,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
       {posts.map((post) => (
         <div
           key={post.id}
-          className="bg-white rounded-lg shadow-sm border overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
+          className="bg-white rounded-md shadow-sm border overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
           onClick={() => openEditModal(post)} // Changed to open edit modal
         >
           <div className="relative aspect-video bg-gray-100">
@@ -496,12 +586,16 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
                     toggleFavorite(post.id);
                   }}
                   className={`p-1.5 rounded-full shadow-sm transition-colors ${
-                    post.isFavorite 
-                      ? 'bg-red-500 text-white hover:bg-red-600' 
-                      : 'bg-white text-gray-600 hover:bg-gray-50'
+                    post.isFavorite
+                      ? "bg-red-500 text-white hover:bg-red-600"
+                      : "bg-white text-gray-600 hover:bg-gray-50"
                   }`}
                 >
-                  <Heart className={`w-4 h-4 ${post.isFavorite ? 'fill-current' : ''}`} />
+                  <Heart
+                    className={`w-4 h-4 ${
+                      post.isFavorite ? "fill-current" : ""
+                    }`}
+                  />
                 </button>
                 <button
                   onClick={(e) => {
@@ -533,18 +627,25 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
           </div>
 
           <div className="p-4">
-            <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">{post.title}</h3>
-            <p className="text-sm text-gray-600 mb-3 line-clamp-2">{post.preview}</p>
+            <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">
+              {post.title}
+            </h3>
+            <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+              {post.preview}
+            </p>
 
             <div className="flex flex-wrap gap-1 mb-3">
-              {post.platforms.map(platform => (
-                <span key={platform} className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
+              {post.platforms.map((platform) => (
+                <span
+                  key={platform}
+                  className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full"
+                >
                   {platform}
                 </span>
               ))}
             </div>
 
-            <div className="flex items-center justify-between text-sm text-gray-500">
+            <div className="flex items-center justify-between text-sm text-slate-500">
               <div className="flex items-center gap-4">
                 <span className="flex items-center gap-1">
                   <Eye className="w-4 h-4" />
@@ -568,11 +669,11 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
       {mediaAssets.map((asset) => (
         <div
           key={asset.id}
-          className="bg-white rounded-lg shadow-sm border overflow-hidden hover:shadow-md transition-shadow group cursor-pointer"
+          className="bg-white rounded-md shadow-sm border overflow-hidden hover:shadow-md transition-shadow group cursor-pointer"
           onClick={() => handleAssetClick(asset)}
         >
           <div className="relative aspect-square bg-gray-100">
-            {asset.type === 'video' ? (
+            {asset.type === "video" ? (
               <div className="relative w-full h-full">
                 <img
                   src={asset.thumbnailUrl || asset.url}
@@ -587,7 +688,8 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
                 {asset.duration && (
                   <div className="absolute bottom-2 left-2">
                     <span className="bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
-                      {Math.floor(asset.duration / 60)}:{(asset.duration % 60).toString().padStart(2, '0')}
+                      {Math.floor(asset.duration / 60)}:
+                      {(asset.duration % 60).toString().padStart(2, "0")}
                     </span>
                   </div>
                 )}
@@ -602,10 +704,10 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
 
             <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all">
               <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button 
+                <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    const link = document.createElement('a');
+                    const link = document.createElement("a");
                     link.href = asset.url;
                     link.download = asset.filename;
                     document.body.appendChild(link);
@@ -617,7 +719,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
                 >
                   <Download className="w-4 h-4" />
                 </button>
-                <button 
+                <button
                   onClick={(e) => {
                     e.stopPropagation();
                     navigator.clipboard.writeText(asset.url);
@@ -627,7 +729,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
                 >
                   <Share2 className="w-4 h-4" />
                 </button>
-                <button 
+                <button
                   onClick={(e) => {
                     e.stopPropagation();
                     handleAssetClick(asset);
@@ -642,8 +744,12 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
 
             <div className="absolute bottom-2 left-2">
               <div className="flex items-center gap-1">
-                {asset.type === 'video' && <Video className="w-4 h-4 text-white" />}
-                {asset.type === 'image' && <Image className="w-4 h-4 text-white" />}
+                {asset.type === "video" && (
+                  <Video className="w-4 h-4 text-white" />
+                )}
+                {asset.type === "image" && (
+                  <Image className="w-4 h-4 text-white" />
+                )}
                 <span className="text-white text-xs bg-black bg-opacity-75 px-2 py-1 rounded-full">
                   {asset.format.toUpperCase()}
                 </span>
@@ -652,22 +758,30 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
           </div>
 
           <div className="p-3">
-            <h3 className="font-medium text-gray-900 text-sm mb-1 truncate" title={asset.filename}>
+            <h3
+              className="font-medium text-gray-900 text-sm mb-1 truncate"
+              title={asset.filename}
+            >
               {asset.filename}
             </h3>
-            <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
+            <div className="flex items-center justify-between text-xs text-slate-500 mb-2">
               <span>{(asset.size / 1024 / 1024).toFixed(1)} MB</span>
               <span>Used {asset.usage.totalUsed} times</span>
             </div>
             {asset.tags.length > 0 && (
               <div className="flex flex-wrap gap-1">
-                {asset.tags.slice(0, 2).map(tag => (
-                  <span key={tag} className="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded">
+                {asset.tags.slice(0, 2).map((tag) => (
+                  <span
+                    key={tag}
+                    className="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded"
+                  >
                     {tag}
                   </span>
                 ))}
                 {asset.tags.length > 2 && (
-                  <span className="text-gray-400 text-xs">+{asset.tags.length - 2}</span>
+                  <span className="text-gray-400 text-xs">
+                    +{asset.tags.length - 2}
+                  </span>
                 )}
               </div>
             )}
@@ -676,18 +790,18 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
       ))}
 
       {/* Add New Media Button */}
-      <div className="bg-white rounded-lg shadow-sm border-2 border-dashed border-gray-300 hover:border-blue-400 transition-colors group cursor-pointer flex flex-col items-center justify-center aspect-square">
+      <div className="bg-white rounded-md shadow-sm border-2 border-dashed border-gray-300 hover:border-blue-400 transition-colors group cursor-pointer flex flex-col items-center justify-center aspect-square">
         <div className="text-center p-6">
           <div className="flex gap-2 mb-4 justify-center">
             <button
-              onClick={() => document.getElementById('file-upload')?.click()}
-              className="p-3 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition-colors"
+              onClick={() => document.getElementById("file-upload")?.click()}
+              className="p-3 bg-blue-100 text-blue-600 rounded-md hover:bg-blue-200 transition-colors"
             >
               <Upload className="w-6 h-6" />
             </button>
             <button
               onClick={() => setShowVideoGenerator(true)}
-              className="p-3 bg-purple-100 text-purple-600 rounded-lg hover:bg-purple-200 transition-colors"
+              className="p-3 bg-purple-100 text-purple-600 rounded-md hover:bg-purple-200 transition-colors"
             >
               <Wand2 className="w-6 h-6" />
             </button>
@@ -711,11 +825,13 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
     </div>
   );
 
-  const VideoGeneratorModal = () => (
+  const VideoGeneratorModal = () =>
     showVideoGenerator && (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg max-w-md w-full mx-4 p-6">
-          <h3 className="text-xl font-bold text-gray-900 mb-4">Generate AI Video</h3>
+        <div className="bg-white rounded-md max-w-md w-full mx-4 p-6">
+          <h3 className="text-xl font-bold text-gray-900 mb-4">
+            Generate AI Video
+          </h3>
 
           <div className="space-y-4">
             <AIModelSelector
@@ -732,7 +848,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
               <textarea
                 id="video-prompt"
                 rows={3}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Describe the video you want to generate..."
               />
             </div>
@@ -744,14 +860,16 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
               <input
                 type="file"
                 accept="image/*"
-                className="w-full p-2 border border-gray-300 rounded-lg"
+                className="w-full p-2 border border-gray-300 rounded-md"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Aspect Ratio</label>
-                <select className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Aspect Ratio
+                </label>
+                <select className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
                   <option value="16:9">16:9 (Landscape)</option>
                   <option value="9:16">9:16 (Portrait)</option>
                   <option value="1:1">1:1 (Square)</option>
@@ -759,8 +877,10 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Duration</label>
-                <select className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Duration
+                </label>
+                <select className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
                   <option value="5">5 seconds</option>
                   <option value="10">10 seconds</option>
                   <option value="15">15 seconds</option>
@@ -773,11 +893,13 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
           <div className="flex gap-3 mt-6">
             <button
               onClick={() => {
-                const prompt = (document.getElementById('video-prompt') as HTMLTextAreaElement)?.value;
+                const prompt = (
+                  document.getElementById("video-prompt") as HTMLTextAreaElement
+                )?.value;
                 if (prompt) generateVideo(prompt);
               }}
               disabled={videoGenerating}
-              className="flex-1 bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 disabled:opacity-50 flex items-center justify-center gap-2 transition-colors"
+              className="flex-1 bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 disabled:opacity-50 flex items-center justify-center gap-2 transition-colors"
             >
               {videoGenerating ? (
                 <>
@@ -793,28 +915,31 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
             </button>
             <button
               onClick={() => setShowVideoGenerator(false)}
-              className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
             >
               Cancel
             </button>
           </div>
         </div>
       </div>
-    )
-  );
+    );
 
   return (
     <div className="max-w-7xl mx-auto p-6">
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Content Gallery</h1>
-          <p className="text-gray-600">Manage, reuse, and organize your content assets</p>
+          <p className="text-gray-600">
+            Manage, reuse, and organize your content assets
+          </p>
         </div>
 
         <div className="flex items-center gap-3">
           {selectedItems.size > 0 && (
-            <div className="flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2">
-              <span className="text-sm text-blue-700">{selectedItems.size} selected</span>
+            <div className="flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-md px-3 py-2">
+              <span className="text-sm text-blue-700">
+                {selectedItems.size} selected
+              </span>
               <button className="text-blue-600 hover:text-blue-700 transition-colors">
                 <Archive className="w-4 h-4" />
               </button>
@@ -827,14 +952,14 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
             </div>
           )}
 
-          <button 
+          <button
             onClick={loadContent}
             className="p-2 text-gray-600 hover:text-gray-900 transition-colors"
           >
             <RefreshCw className="w-5 h-5" />
           </button>
 
-          <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2 transition-colors">
+          <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center gap-2 transition-colors">
             <Plus className="w-4 h-4" />
             Create New
           </button>
@@ -850,25 +975,35 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
         </div>
       ) : (
         <>
-          {(viewMode === 'gallery' || viewMode === 'list') && <PostGalleryView />}
-          {viewMode === 'media' && <MediaGalleryView />}
-          {viewMode === 'templates' && (
+          {(viewMode === "gallery" || viewMode === "list") && (
+            <PostGalleryView />
+          )}
+          {viewMode === "media" && <MediaGalleryView />}
+          {viewMode === "templates" && (
             <div className="text-center py-12">
               <Palette className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Content Templates</h3>
-              <p className="text-gray-600 mb-4">Create reusable templates from your best performing posts</p>
-              <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2 mx-auto">
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                Content Templates
+              </h3>
+              <p className="text-gray-600 mb-4">
+                Create reusable templates from your best performing posts
+              </p>
+              <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center gap-2 mx-auto">
                 <Plus className="w-4 h-4" />
                 Create Template
               </button>
             </div>
           )}
-          {viewMode === 'analytics' && (
+          {viewMode === "analytics" && (
             <div className="text-center py-12">
               <TrendingUp className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Content Analytics</h3>
-              <p className="text-gray-600 mb-4">Track performance and discover insights about your content</p>
-              <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2 mx-auto">
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                Content Analytics
+              </h3>
+              <p className="text-gray-600 mb-4">
+                Track performance and discover insights about your content
+              </p>
+              <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center gap-2 mx-auto">
                 <TrendingUp className="w-4 h-4" />
                 View Analytics
               </button>
@@ -882,12 +1017,12 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
       {/* Edit Post Modal */}
       {editingPost && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-md p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold">Edit Post</h2>
               <button
                 onClick={() => setEditingPost(null)}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-slate-500 hover:text-gray-700"
               >
                 ✕
               </button>
@@ -899,7 +1034,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
                 content: editingPost.content,
                 selectedPlatforms: editingPost.platforms || [],
                 images: editingPost.images || [],
-                imageAnalysis: editingPost.imageAnalysis // Pass imageAnalysis
+                imageAnalysis: editingPost.imageAnalysis, // Pass imageAnalysis
               }}
             />
           </div>
@@ -918,33 +1053,43 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
         onDelete={handleAssetDelete}
       />
 
-      {posts.length === 0 && !loading && (viewMode === 'gallery' || viewMode === 'list') && (
-        <div className="text-center py-12">
-          <Grid3X3 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No posts found</h3>
-          <p className="text-gray-600 mb-4">Start creating content to see your gallery</p>
-          <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
-            Create Your First Post
-          </button>
-        </div>
-      )}
+      {posts.length === 0 &&
+        !loading &&
+        (viewMode === "gallery" || viewMode === "list") && (
+          <div className="text-center py-12">
+            <Grid3X3 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              No posts found
+            </h3>
+            <p className="text-gray-600 mb-4">
+              Start creating content to see your gallery
+            </p>
+            <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+              Create Your First Post
+            </button>
+          </div>
+        )}
 
-      {mediaAssets.length === 0 && !loading && viewMode === 'media' && (
+      {mediaAssets.length === 0 && !loading && viewMode === "media" && (
         <div className="text-center py-12">
           <Image className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No media assets found</h3>
-          <p className="text-gray-600 mb-4">Upload images, videos, or generate AI content</p>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            No media assets found
+          </h3>
+          <p className="text-gray-600 mb-4">
+            Upload images, videos, or generate AI content
+          </p>
           <div className="flex gap-3 justify-center">
-            <button 
-              onClick={() => document.getElementById('file-upload')?.click()}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2"
+            <button
+              onClick={() => document.getElementById("file-upload")?.click()}
+              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center gap-2"
             >
               <Upload className="w-4 h-4" />
               Upload Media
             </button>
-            <button 
+            <button
               onClick={() => setShowVideoGenerator(true)}
-              className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 flex items-center gap-2"
+              className="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 flex items-center gap-2"
             >
               <Wand2 className="w-4 h-4" />
               Generate Video

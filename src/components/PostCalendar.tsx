@@ -131,7 +131,7 @@ export const PostCalendar: React.FC<PostCalendarProps> = ({
 
   const PostPreviewModal = ({ post }: { post: ScheduledPost }) => (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="theme-primary-bg rounded-lg max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+      <div className="theme-primary-bg rounded-md max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
         <div className="p-6">
           <div className="flex justify-between items-start mb-4">
             <h3 className="text-xl font-bold text-gray-900">
@@ -139,7 +139,7 @@ export const PostCalendar: React.FC<PostCalendarProps> = ({
             </h3>
             <button
               onClick={() => setSelectedPost(null)}
-              className="text-gray-500 hover:text-gray-700 p-1 rounded-lg hover:bg-gray-100"
+              className="text-slate-500 hover:text-gray-700 p-1 rounded-md hover:bg-gray-100"
             >
               <X className="w-5 h-5" />
               <span className="sr-only">Close</span>
@@ -152,7 +152,9 @@ export const PostCalendar: React.FC<PostCalendarProps> = ({
                 Status
               </label>
               <span
-                className={`inline-flex px-2 py-1 text-xs font-medium rounded-full border ${getStatusColor(post.status)}`}
+                className={`inline-flex px-2 py-1 text-xs font-medium rounded-full border ${getStatusColor(
+                  post.status
+                )}`}
               >
                 {post.status.charAt(0).toUpperCase() + post.status.slice(1)}
                 {post.isLive && <span className="ml-1">🔴 Live</span>}
@@ -186,13 +188,13 @@ export const PostCalendar: React.FC<PostCalendarProps> = ({
               <label className="block text-sm font-medium text-gray-700">
                 Content
               </label>
-              <div className="border rounded-lg p-3 bg-gray-50">
+              <div className="border rounded-md p-3 bg-gray-50">
                 <p className="whitespace-pre-wrap">{post.content}</p>
                 {post.imageUrl && (
                   <img
                     src={post.imageUrl}
                     alt="Post image"
-                    className="mt-2 max-w-full h-48 object-cover rounded-lg"
+                    className="mt-2 max-w-full h-48 object-cover rounded-md"
                   />
                 )}
               </div>
@@ -204,7 +206,7 @@ export const PostCalendar: React.FC<PostCalendarProps> = ({
                   onEditPost(post);
                   setSelectedPost(null);
                 }}
-                className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
               >
                 <Edit className="w-4 h-4" />
                 Edit Post
@@ -214,7 +216,7 @@ export const PostCalendar: React.FC<PostCalendarProps> = ({
                   onDeletePost(post.id);
                   setSelectedPost(null);
                 }}
-                className="flex-1 bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center gap-2"
+                className="flex-1 bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 transition-colors flex items-center justify-center gap-2"
               >
                 <Trash2 className="w-4 h-4" />
                 Delete Post
@@ -227,7 +229,7 @@ export const PostCalendar: React.FC<PostCalendarProps> = ({
   );
 
   return (
-    <div className="theme-bg-primary rounded-lg shadow-lg p-6">
+    <div className="theme-bg-primary rounded-md shadow-lg p-6">
       {/* Calendar Header */}
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-4">
@@ -238,7 +240,7 @@ export const PostCalendar: React.FC<PostCalendarProps> = ({
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigateMonth("prev")}
-            className="p-2 theme-text-primary hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 theme-text-primary hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
@@ -249,7 +251,7 @@ export const PostCalendar: React.FC<PostCalendarProps> = ({
 
           <button
             onClick={() => navigateMonth("next")}
-            className="p-2 theme-text-primary hover:text-white hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 theme-text-primary hover:text-white hover:bg-gray-100 rounded-md transition-colors"
           >
             <ChevronRight className="w-5 h-5" />
           </button>
@@ -273,12 +275,20 @@ export const PostCalendar: React.FC<PostCalendarProps> = ({
           <div
             key={index}
             className={`min-h-[120px] p-2 border border-gray-200 ${
-              !day.isCurrentMonth ? "theme-bg-card theme-text-primary opacity-30" : "theme-bg-card"
-            } ${day.isToday ? "theme-bg-secondary border-blue-300 theme-text-secondry" : "theme-text-primary"}`}
+              !day.isCurrentMonth
+                ? "theme-bg-card theme-text-primary opacity-30"
+                : "theme-bg-card"
+            } ${
+              day.isToday
+                ? "theme-bg-secondary border-blue-300 theme-text-secondry"
+                : "theme-text-primary"
+            }`}
           >
             <div className="flex justify-between items-start mb-2">
               <span
-                className={`text-sm font-medium ${day.isToday ? "theme-text-secondary" : "theme-text-primary"}`}
+                className={`text-sm font-medium ${
+                  day.isToday ? "theme-text-secondary" : "theme-text-primary"
+                }`}
               >
                 {day.date.getDate()}
               </span>
@@ -300,7 +310,9 @@ export const PostCalendar: React.FC<PostCalendarProps> = ({
                 <div
                   key={post.id}
                   onClick={() => setSelectedPost(post)}
-                  className={`text-xs p-1 rounded cursor-pointer hover:opacity-80 transition-opacity border ${getStatusColor(post.status)}`}
+                  className={`text-xs p-1 rounded cursor-pointer hover:opacity-80 transition-opacity border ${getStatusColor(
+                    post.status
+                  )}`}
                 >
                   <div className="flex items-center justify-between">
                     <span className="truncate flex-1">
@@ -313,7 +325,7 @@ export const PostCalendar: React.FC<PostCalendarProps> = ({
               ))}
 
               {day.posts.length > 3 && (
-                <div className="text-xs text-gray-500 text-center py-1">
+                <div className="text-xs text-slate-500 text-center py-1">
                   +{day.posts.length - 3} more
                 </div>
               )}

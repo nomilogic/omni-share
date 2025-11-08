@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { createRoot } from 'react-dom/client';
-import { Copy, Share2, X } from 'lucide-react';
+import React, { useEffect, useState } from "react";
+import { createRoot } from "react-dom/client";
+import { Copy, Share2, X } from "lucide-react";
 
 type InviteOpts = {
   title?: string;
@@ -16,10 +16,10 @@ const InviteModal: React.FC<{
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') onClose();
+      if (e.key === "Escape") onClose();
     }
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
 
   const copy = async () => {
@@ -28,7 +28,7 @@ const InviteModal: React.FC<{
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error('copy failed', err);
+      console.error("copy failed", err);
     }
   };
 
@@ -36,39 +36,59 @@ const InviteModal: React.FC<{
     if ((navigator as any).share) {
       try {
         await (navigator as any).share({
-          title: opts?.title || 'Invite',
-          text: opts?.description || 'Join me on OmniShare',
+          title: opts?.title || "Invite",
+          text: opts?.description || "Join me on OmniShare",
           url: link,
         });
       } catch (err) {
-        console.error('share failed', err);
+        console.error("share failed", err);
       }
     } else {
       // fallback to copy
       copy();
-      alert('Share API not supported in this browser — link copied to clipboard');
+      alert(
+        "Share API not supported in this browser — link copied to clipboard"
+      );
     }
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative w-full max-w-md mx-4 bg-white rounded-lg shadow-lg p-6">
+      <div className="relative w-full max-w-md mx-4 bg-white rounded-md shadow-lg p-6">
         <div className="flex items-start justify-between mb-4">
           <div>
-            <h3 className="text-lg font-semibold">{opts?.title || 'Invite a friend'}</h3>
-            <p className="text-sm text-gray-600">{opts?.description || 'Share this link to invite others'}</p>
+            <h3 className="text-lg font-semibold">
+              {opts?.title || "Invite a friend"}
+            </h3>
+            <p className="text-sm text-gray-600">
+              {opts?.description || "Share this link to invite others"}
+            </p>
           </div>
-          <button onClick={onClose} aria-label="Close" className="p-1 text-gray-600 hover:text-gray-800">
+          <button
+            onClick={onClose}
+            aria-label="Close"
+            className="p-1 text-gray-600 hover:text-gray-800"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <div className="mb-4">
-          <label className="block text-xs text-gray-500 mb-2">Invite link</label>
+          <label className="block text-xs text-slate-500 mb-2">
+            Invite link
+          </label>
           <div className="flex items-center gap-2">
-            <input readOnly value={link} className="flex-1 px-3 py-2 border rounded bg-gray-50" />
-            <button onClick={copy} title="Copy link" className="px-2 py-2 bg-gray-100 rounded">
+            <input
+              readOnly
+              value={link}
+              className="flex-1 px-3 py-2 border rounded bg-gray-50"
+            />
+            <button
+              onClick={copy}
+              title="Copy link"
+              className="px-2 py-2 bg-gray-100 rounded"
+            >
               <Copy className="w-4 h-4" />
             </button>
           </div>
@@ -76,11 +96,16 @@ const InviteModal: React.FC<{
         </div>
 
         <div className="flex items-center justify-end gap-2">
-          <button onClick={share} className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded">
+          <button
+            onClick={share}
+            className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded"
+          >
             <Share2 className="w-4 h-4" />
             Share
           </button>
-          <button onClick={onClose} className="px-4 py-2 border rounded">Close</button>
+          <button onClick={onClose} className="px-4 py-2 border rounded">
+            Close
+          </button>
         </div>
       </div>
     </div>
@@ -89,7 +114,7 @@ const InviteModal: React.FC<{
 
 // programmatic opener
 export function openInviteModal(link: string, opts?: InviteOpts) {
-  const container = document.createElement('div');
+  const container = document.createElement("div");
   document.body.appendChild(container);
   const root = createRoot(container);
 

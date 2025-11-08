@@ -1,6 +1,6 @@
-import React from 'react';
-import { Template } from '../types/templates';
-import { templates } from '../utils/templates';
+import React from "react";
+import { Template } from "../types/templates";
+import { templates } from "../utils/templates";
 
 interface TemplateSelectorProps {
   onSelectTemplate: (template: Template) => void;
@@ -9,16 +9,17 @@ interface TemplateSelectorProps {
 
 export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
   onSelectTemplate,
-  onCancel
+  onCancel,
 }) => {
-
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-2">
-      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col">
+      <div className="bg-white rounded-md shadow-xl max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="p-3 border-b border-gray-200">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-gray-900">Choose Template</h2>
+            <h2 className="text-sm font-semibold text-gray-900">
+              Choose Template
+            </h2>
             <button
               onClick={onCancel}
               className="text-gray-400 hover:text-gray-600 text-lg font-medium"
@@ -31,7 +32,7 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
         {/* Templates Grid */}
         <div className="flex-1 overflow-y-auto p-3">
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
-            {templates.map(template => (
+            {templates.map((template) => (
               <div
                 key={template.id}
                 onClick={() => onSelectTemplate(template)}
@@ -39,15 +40,19 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
               >
                 {/* Template Preview */}
                 <div className="w-full aspect-square bg-gray-50 rounded flex items-center justify-center border border-gray-200 mb-1">
-                  <div className="text-xs text-gray-500 text-center leading-tight">
+                  <div className="text-xs text-slate-500 text-center leading-tight">
                     {template.dimensions.width}×{template.dimensions.height}
                   </div>
                 </div>
-                
+
                 {/* Template Info */}
                 <div className="text-center">
-                  <h3 className="text-xs font-medium text-gray-900 truncate group-hover:text-blue-600">{template.name}</h3>
-                  <p className="text-xs text-gray-500">{template.elements.length} items</p>
+                  <h3 className="text-xs font-medium text-gray-900 truncate group-hover:text-blue-600">
+                    {template.name}
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    {template.elements.length} items
+                  </p>
                 </div>
               </div>
             ))}

@@ -76,7 +76,7 @@ export function PricingCard({
           <button
             onClick={onButtonClick}
             disabled={isLocked || isLoading}
-            className={`w-full py-3 px-6 rounded-lg font-semibold transition-all text-base ${
+            className={`w-full py-3 px-6 rounded-md font-semibold transition-all text-base ${
               isFree
                 ? "bg-[#542ed2] text-white hover:bg-[#542ed2] disabled:opacity-50"
                 : "bg-[#542ed2] text-white hover:bg-[#542ed2] disabled:opacity-50"

@@ -42,6 +42,7 @@ import { useLoadingAPI } from "../hooks/useLoadingAPI";
 
 import API from "@/services/api";
 import { useNavigate } from "react-router-dom";
+import { ImageUploader } from ".";
 
 // Helper function to convert file to base64
 const fileToBase64 = (file: File): Promise<string> => {
@@ -1886,19 +1887,19 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   };
 
   return (
-    <div className="w-full mx-auto  rounded-xl border border-white/10   ">
+    <div className="w-full mx-auto  rounded-md border border-white/10   ">
       {/* Hide the main form when template editor is open */}
       {!showTemplateEditor && (
         <>
           {/* Header */}
           <div className="text-left mb-4">
-            {/* <div className="w-12 h-12 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-xl flex items-center justify-center mx-auto ">
+            {/* <div className="w-12 h-12 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-md flex items-center justify-center mx-auto ">
               <Wand2 className="w-6 h-6 text-blue-400" />
             </div> */}
-            <h2 className="text-3xl font-semibold theme-text-primary mb-1">
+            <h2 className="text-3xl font-bold theme-text-primary mb-1 capitalize">
               Create auto‑optimize social posts with AI
             </h2>
-            <p className="text-sm theme-text-primary">
+            <p className="text-sm text-slate-500 font-semibold capitalize">
               Generate on‑brand content, auto‑design visuals, and publish
               everywhere in one click. Meet your new 24/7 content teammate.
             </p>
@@ -1911,19 +1912,19 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           </div>
         )}
         {campaignInfo && (
-          <div className="flex items-center justify-center gap-2 mt-3 px-3 py-1 bg-green-500/10 border border-green-400/20 rounded-full text-xs text-green-300">
+          <div className="flex items-center justify-center gap-2 mt-3 px-3 py-1 bg-green-500/10 border border-green-400/20 rounded-md text-xs text-green-300">
             <Target className="w-3 h-3" />
             <span>Using campaign: {campaignInfo.name}</span>
           </div>
         )}
         {!campaignInfo && !loadingCampaign && state.selectedCampaign && (
-          <div className="flex items-center justify-center gap-2 mt-3 px-3 py-1 bg-yellow-500/10 border border-yellow-400/20 rounded-full text-xs text-yellow-300">
+          <div className="flex items-center justify-center gap-2 mt-3 px-3 py-1 bg-yellow-500/10 border border-yellow-400/20 rounded-md text-xs text-yellow-300">
             <AlertCircle className="w-3 h-3" />
             <span>Campaign not found - using default settings</span>
           </div>
         )}
         {!campaignInfo && !state.selectedCampaign && (
-          <div className="flex items-center justify-center gap-2 mt-3 px-3 py-1 bg-gray-500/10 border border-gray-400/20 rounded-full text-xs text-gray-400">
+          <div className="flex items-center justify-center gap-2 mt-3 px-3 py-1 bg-gray-500/10 border border-gray-400/20 rounded-md text-xs text-gray-400">
             <span>No campaign selected - using general content generation</span>
           </div>
         )} */}
@@ -1932,17 +1933,14 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           {/* TEMPORARY: Loading Test Section - Remove this after testing */}
           {/* <LoadingTest /> */}
 
-          <form onSubmit={handleSubmit} className="space-y-3">
-            <div className="grid grid-cols-1 gap-0 ">
-              {/* Left Column - Post Type Selection */}
-              <div className="space-y-2 mb-1">
-                {/* Post Type Selection */}
-                <div className="z-50 ">
-                  <label className="block text-sm font-semibold theme-text-primary mb-2">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-1 gap-4 ">
+              <>
+                <div className="z-50">
+                  <label className="block text-sm font-semibold theme-text-primary mb-2 uppercase">
                     Select Post Type
                   </label>
-                  <div className="grid grid-cols-3 gap-3 text-sm md:text-base">
-                    {/* Text Post */}
+                  <div className="grid grid-cols-3 gap-4 text-sm md:text-base">
                     <button
                       type="button"
                       onClick={() =>
@@ -1954,7 +1952,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         (formData.media || formData.mediaUrl) &&
                         selectedPostType !== "text"
                       }
-                      className={`  border transition-all duration-200 text-center px-2 py-3 rounded-md ${
+                      className={`  border shadow-md backdrop-blur-md border-slate-200/70 transition-all duration-200 text-center px-2 py-3 rounded-md ${
                         (formData.media || formData.mediaUrl) &&
                         selectedPostType !== "text"
                           ? "theme-bg-primary opacity-50 cursor-not-allowed"
@@ -1977,7 +1975,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         </div>
                         <div>
                           <h3
-                            className={`font-semibold leading-[1.05rem] mt-1  ${
+                            className={`font-semibold leading-[1.2rem] mt-1  ${
                               selectedPostType === "text"
                                 ? "text-white"
                                 : "theme-text-primary"
@@ -2010,7 +2008,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         selectedPostType !== "image" &&
                         !formData.media?.type?.startsWith("image/")
                       }
-                      className={` relative  border transition-all duration-200 text-center px-2 py-3 rounded-md ${
+                      className={` relative  border shadow-md backdrop-blur-md border-slate-200/70 transition-all duration-200 text-center px-2 py-3 rounded-md ${
                         (formData.media || formData.mediaUrl) &&
                         selectedPostType !== "image" &&
                         !formData.media?.type?.startsWith("image/")
@@ -2034,7 +2032,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         </div>
                         <div>
                           <h3
-                            className={`font-semibold text-md leading-[1.05rem] mt-1 text p-0 ${
+                            className={`font-semibold text-md leading-[1.2rem] mt-1 text p-0 ${
                               selectedPostType === "image"
                                 ? "text-white"
                                 : "theme-text-primary"
@@ -2062,7 +2060,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               setSelectedImageMode("upload");
                               setShowImageMenu(false);
                             }}
-                            className={`p-3  border transition-all duration-200 text-center
+                            className={`p-3  border transition shadow-md backdrop-blur-md border-slate-200/70-all duration-200 text-center
                         ${selectedPostType === "image" ? "" : "hidden"}
                         ${
                           selectedImageMode === "upload"
@@ -2084,7 +2082,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               </div>
                               <div>
                                 <h3
-                                  className={`font-semibold text-sm leading-[1.05rem] mt-1 text
+                                  className={`font-semibold text-sm leading-[1.2rem] mt-1 text
                         
                         ${
                           selectedImageMode === "upload"
@@ -2106,7 +2104,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               setSelectedImageMode("textToImage");
                               setShowImageMenu(false);
                             }}
-                            className={`p-3  border transition-all duration-200 text-center 
+                            className={`p-3 shadow-md backdrop-blur-md border-slate-200/70  border transition-all duration-200 text-center 
                         ${selectedPostType === "image" ? "" : "hidden"}
                         ${
                           selectedImageMode === "textToImage"
@@ -2128,7 +2126,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               </div>
                               <div>
                                 <h3
-                                  className={`font-semibold text-sm leading-[1.05rem] mt-1 text ${
+                                  className={`font-semibold text-sm leading-[1.2rem] mt-1 text ${
                                     selectedImageMode === "textToImage"
                                       ? "text-white"
                                       : "theme-text-secondary"
@@ -2163,7 +2161,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         selectedPostType !== "video" &&
                         !isVideoFile(formData.media)
                       }
-                      className={`relative border transition-all duration-200 text-center px-2 py-3 rounded-md ${
+                      className={`relative border shadow-md backdrop-blur-md border-slate-200/70 transition-all duration-200 text-center px-2 py-3 rounded-md ${
                         (formData.media || formData.mediaUrl) &&
                         selectedPostType !== "video" &&
                         !isVideoFile(formData.media)
@@ -2187,7 +2185,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         </div>
                         <div>
                           <h3
-                            className={`font-semibold text-md leading-[1.05rem] mt-1 text p-0 ${
+                            className={`font-semibold text-md leading-[1.2rem] mt-1 text p-0 ${
                               selectedPostType === "video"
                                 ? "text-white"
                                 : "theme-text-primary"
@@ -2215,7 +2213,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               setSelectedVideoMode("upload");
                               setShowVideoMenu(false);
                             }}
-                            className={`p-3 border transition-all duration-200 text-center
+                            className={`p-3 border transition shadow-md backdrop-blur-md border-slate-200/70-all duration-200 text-center
                             ${selectedPostType === "video" ? "" : "hidden"}
                             ${
                               selectedVideoMode === "upload"
@@ -2236,7 +2234,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               </div>
                               <div>
                                 <h3
-                                  className={`font-semibold text-sm leading-[1.05rem] mt-1 text ${
+                                  className={`font-semibold text-sm leading-[1.2rem] mt-1 text ${
                                     selectedVideoMode === "upload"
                                       ? "text-white"
                                       : "theme-text-secondary"
@@ -2258,7 +2256,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               setSelectedVideoMode("uploadShorts");
                               setShowVideoMenu(false);
                             }}
-                            className={`p-3 border transition-all duration-200 text-center
+                            className={`p-3 border transition shadow-md backdrop-blur-md border-slate-200/70-all duration-200 text-center
                             ${selectedPostType === "video" ? "" : "hidden"}
                             ${
                               selectedVideoMode === "uploadShorts"
@@ -2282,7 +2280,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               </div>
                               <div>
                                 <h3
-                                  className={`font-semibold text-sm leading-[1.05rem] mt-1 text ${
+                                  className={`font-semibold text-sm leading-[1.2rem] mt-1 text ${
                                     selectedVideoMode === "uploadShorts"
                                       ? "text-white"
                                       : "theme-text-secondary"
@@ -2304,26 +2302,18 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                   </div>
                 </div>
 
-                {/* Image Post - Mode Selection */}
                 {selectedPostType === "image" && (
                   <>
-                    {/* <label className="block text-sm font-medium theme-text-primary mb-2">
-                  Image Post Mode
-                </label> */}
-
-                    {/* Image Mode Toggle */}
-
-                    {/* Upload to Image Interface */}
                     {selectedImageMode === "upload" && (
                       <div>
-                        <h4 className="text-sm font-medium theme-text-primary mb-1 flex items-center">
+                        <h4 className="text-sm font-medium theme-text-primary uppercase mb-1 flex items-center">
                           Upload Image
                         </h4>
 
                         {/* Upload Area */}
-                        <div className="mb-4 theme-bg-primary ">
+                        <div className=" theme-bg-primary ">
                           <div
-                            className={` border-2 border-dashed  p-4 text-center transition-all duration-200 cursor-pointer ${
+                            className={`  border border-slate-200/70 backdrop-blur-sm rounded-md shadow-md p-4 text-center transition-all duration-200 cursor-pointer ${
                               dragActive
                                 ? "border-blue-400/50 bg-blue-500/10"
                                 : "border-white/20 hover:border-white/30"
@@ -2343,7 +2333,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             />
 
                             {formData.media || formData.mediaUrl ? (
-                              <div className="space-y-3">
+                              <div className="space-y-4">
                                 <div className="relative">
                                   {/* Debug info for upload preview */}
                                   {(() => {
@@ -2403,7 +2393,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                     setSelectedTemplate(undefined);
                                     setImageAnalysis("");
                                   }}
-                                  className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 shadow-lg transition-colors duration-200"
+                                  className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-md p-1.5 shadow-lg transition-colors duration-200"
                                   title="Remove image"
                                 >
                                   <X className="w-3 h-3" />
@@ -2466,7 +2456,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                           }`}
                         >
                           {/* Combined Generation Checkbox */}
-                          <div className="p-3 bg-gradient-to-r from-blue-500/5 to-purple-500/5 border border-blue-400/20 rounded-lg">
+                          <div className="p-3 bg-gradient-to-r from-blue-500/5 to-purple-500/5 border border-blue-400/20 rounded-md">
                             <div className="flex items-center space-x-3">
                               <input
                                 type="checkbox"
@@ -2483,7 +2473,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                   className="flex items-center cursor-pointer"
                                 >
                                   <Sparkles className="w-4 h-4 mr-2 text-blue-400" />
-                                  <span className="text-sm font-medium theme-text-primary">
+                                  <span className="text-sm font-medium theme-text-primary uppercase">
                                     Use main content description as image prompt
                                   </span>
                                 </label>
@@ -2499,7 +2489,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                           {/* Image Description Field - Only show when combined generation is NOT checked */}
                           {!generateImageWithPost && (
                             <div>
-                              <label className="block text-sm font-medium theme-text-primary mb-2">
+                              <label className="block text-sm font-medium theme-text-primary uppercase mb-3 uppercase">
                                 Image Description *
                               </label>
                               <textarea
@@ -2540,8 +2530,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
                           {/* Generate Image from Main Content - Only show when combined generation is checked */}
                           {generateImageWithPost && (
-                            <div className="space-y-3">
-                              <div className="p-3 bg-green-500/10 border border-green-400/20 rounded-lg">
+                            <div className="space-y-4">
+                              <div className="p-3 bg-green-500/10 border border-green-400/20 rounded-md">
                                 <div className="flex items-center space-x-2">
                                   <CheckCircle className="w-4 h-4 text-green-400" />
                                   <span className="text-sm font-medium text-green-300">
@@ -2640,7 +2630,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                     setSelectedTemplate(undefined);
                                     setImageAnalysis("");
                                   }}
-                                  className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 shadow-lg transition-colors duration-200"
+                                  className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-md p-1.5 shadow-lg transition-colors duration-200"
                                   title="Remove image"
                                 >
                                   <X className="w-3 h-3" />
@@ -2677,10 +2667,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                   </>
                 )}
 
-                {/* Video Post - Upload Interface */}
                 {selectedPostType === "video" && (
                   <>
-                    <label className="block text-sm font-medium theme-text-primary flex items-center">
+                    <label className="block text-sm font-medium theme-text-primary uppercase">
                       {selectedPostType === "video" &&
                       selectedVideoMode === "uploadShorts" ? (
                         <span>Upload Shorts Video (9:16)</span>
@@ -2688,7 +2677,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         <span>Upload Video</span>
                       )}
                     </label>
-                    <div className="mb-4 theme-bg-primary py-4">
+                    <div className=" theme-bg-primary py-4">
                       <div
                         className={` border-2 border-dashed p-0 text-center transition-all duration-200 ${
                           dragActive
@@ -2726,7 +2715,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
               </div> */}
 
                       {formData.media || formData.mediaUrl ? (
-                        <div className="space-y-3">
+                        <div className="space-y-4">
                           <div className="relative">
                             {/* Check if it's an image */}
                             {formData.media?.type.startsWith("image/") ||
@@ -2899,38 +2888,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                   !formData.mediaUrl.match(
                                     /\.(mp4|mov|avi|wmv|flv|webm|mkv|m4v)$/i
                                   ))) &&
-                              !analyzingImage && (
-                                <></>
-                                // <div className="flex gap-2">
-                                //   <button
-                                //     type="button"
-                                //     onClick={performAIAnalysis}
-                                //     disabled={analyzingImage}
-                                //     className="flex-1 bg-gradient-to-r from-blue-500/80 to-indigo-500/80 text-white px-3 py-2 rounded text-xs hover:from-blue-600/80 hover:to-indigo-600/80 transition-all duration-200 flex items-center justify-center space-x-1 disabled:opacity-50"
-                                //   >
-                                //     <Eye className="w-3 h-3" />
-                                //     <span>AI Analysis</span>
-                                //   </button>
-                                //   <button
-                                //     type="button"
-                                //     onClick={() => {
-                                //       const blankTemplate = getTemplateById('blank-template');
-                                //       if (blankTemplate) {
-                                //         setSelectedTemplate(blankTemplate);
-                                //         setShowTemplateEditor(true);
-                                //       } else {
-                                //         console.error('❌ Blank template not found for Apply Template button');
-                                //       }
-                                //     }}
-                                //     className="flex-1 bg-gradient-to-r from-purple-500/80 to-pink-500/80 text-white px-3 py-2 rounded text-xs hover:from-purple-600/80 hover:to-pink-600/80 transition-all duration-200 flex items-center justify-center space-x-1"
-                                //   >
-                                //     <Palette className="w-3 h-3" />
-                                //     <span>Apply Template</span>
-                                //   </button>
-                                // </div>
-                              )}
+                              !analyzingImage && <></>}
 
-                            {/* Template Applied UI */}
                             {templatedImageUrl && selectedTemplate && (
                               <div className="bg-purple-500/10 border border-purple-400/20  p-2">
                                 <div className="flex justify-between mb-2">
@@ -2979,7 +2938,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                           </button>
                         </div>
                       ) : (
-                        <div className="space-y-3">
+                        <div className="space-y-4">
                           <div
                             className={`${
                               selectedVideoMode
@@ -3013,7 +2972,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
                     {/* Video Aspect Ratio Warning - Always visible when there's a warning */}
                     {videoAspectRatioWarning && (
-                      <div className="flex items-center justify-start p-3 theme-bg-danger border rounded-lg text-xs mb-1 theme-text-light">
+                      <div className="flex items-center justify-start p-3 theme-bg-danger border rounded-md text-xs mb-1 theme-text-light">
                         <AlertCircle className="w-4 h-4 mr-2 flex-shrink-0" />{" "}
                         {videoAspectRatioWarning}
                       </div>
@@ -3044,14 +3003,13 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                     )}
                   </>
                 )}
-              </div>
+              </>
 
-              {/* Right Column - Content Details */}
               {selectedPostType !== "" ? (
                 <>
-                  <div className="space-y-4">
+                  <>
                     <div className="flex-1">
-                      <label className="block text-sm font-medium theme-text-primary mb-2">
+                      <label className=" text-sm font-medium theme-text-primary uppercase mb-4  flex items-center">
                         <FileText className="w-4 h-4 inline mr-2" />
                         Content Description *
                       </label>
@@ -3063,21 +3021,17 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             prompt: e.target.value,
                           }))
                         }
-                        className="w-full px-3 py-2 theme-bg-primary/20 border border-grey/10  focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400/50 transition-all duration-200 min-h-[60px] lg:min-h-[150px] text-sm  placeholder-gray-400"
+                        className="w-full px-3 py-2  shadow-md focus:ring-0 focus-visible:ring-0  ring-0 border border-slate-200/70 backdrop-blur-sm transition-all duration-200 min-h-[100px] lg:min-h-[150px] text-sm  placeholder-gray-500 bg-white"
                         placeholder="Describe what you want to share... (e.g., 'Launch of our new eco-friendly water bottles')"
                         required
                       />
-                      {/* <p className="text-xs theme-text-secondary mt-1">
-                        Be specific about your message and call-to-action
-                      </p> */}
                     </div>
 
-                    {/* Aspect Ratio Selection - Show for both text-to-image and upload modes */}
                     {selectedPostType === "image" &&
                       (selectedImageMode === "textToImage" ||
                         selectedImageMode === "upload") && (
-                        <div className="mb-4">
-                          <label className="block text-md font-medium theme-text-primary mb-2">
+                        <div className="">
+                          <label className="block text-md font-medium theme-text-primary uppercase mb-3 uppercase">
                             Image Dimensions
                           </label>
                           <div className="grid grid-cols-3 gap-2">
@@ -3121,9 +3075,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                           </div>
                         </div>
                       )}
-                  </div>
+                  </>
                   <div className="hidden">
-                    <label className="block text-sm font-medium theme-text-primary mb-2">
+                    <label className="block text-sm font-medium theme-text-primary uppercase mb-3">
                       Target Platforms
                     </label>
                     <div className="grid lg:grid-cols-1 gap-2 grid-cols-2">
@@ -3164,7 +3118,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                       })}
                     </div>
                   </div>
-                  <div className="flex gap-3 pt-4 border-t border-white/10">
+                  <div className="flex gap-4  border-t border-white/10">
                     <button
                       type="button"
                       onClick={onBack}
@@ -3179,7 +3133,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         !formData.selectedPlatforms?.length ||
                         isGeneratingBoth
                       }
-                      className="rounded-full flex-1 flex items-center justify-between theme-bg-trinary theme-text-light py-2 px-4 font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-sm"
+                      className="rounded-md flex-1 flex items-center justify-between theme-bg-trinary theme-text-light py-2 px-4 font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-sm"
                     >
                       {isGeneratingBoth ? (
                         <div className="flex items-center">
@@ -3198,7 +3152,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         </div>
                       )}
 
-                      <div className="sm:inline-block rounded-full theme-bg-quaternary theme-text-secondary px-2 py-1">
+                      <div className="sm:inline-block rounded-md theme-bg-quaternary theme-text-secondary px-2 py-1">
                         <Icon
                           name="wallet"
                           size={14}
@@ -3210,8 +3164,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                   </div>
                 </>
               ) : (
-                <div className="flex-1 w-full aspect-video mt-2">
-                  <div className="relative rounded-lg overflow-hidden shadow-2xl bg-gray-900 aspect-video">
+                <div className="flex-1 w-full aspect-video ">
+                  <div className="relative rounded-md overflow-hidden shadow-2xl bg-gray-900 aspect-video">
                     <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#7650e3] to-[#6366F1]">
                       <button className="bg-white rounded-full p-6 hover:scale-110 transition-transform shadow-2xl">
                         <svg
@@ -3274,7 +3228,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           />
         )}
 
-      {/* Post Preview */}
       {showPreview && generatedResults && generatedResults.length > 0 && (
         <div className="mt-6">
           <PostPreview
@@ -3282,16 +3235,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
             onBack={() => setShowPreview(false)}
             onEdit={() => {}}
             onPostsUpdate={(updatedPosts) => setGeneratedResults(updatedPosts)}
-            onRegeneratePlatform={(platform) => {
-              // Regenerate only the specified platform
-              //handleRegeneratePlatform(platform);
-              console.log("Regenerate platform clicked for:", platform);
-              // For now, just log - implement actual regeneration logic as needed
-              alert(
-                `Regenerate for ${platform} clicked! (Functionality not yet implemented)`
-              );
-              //setShowPreview(true); // Ensure preview stays visible
-            }}
+            onRegeneratePlatform={(platform) => {}}
           />
         </div>
       )}

@@ -7,7 +7,7 @@ export const OAuthCallback: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [status, setStatus] = useState<"processing" | "success" | "error">(
-    "processing",
+    "processing"
   );
   const [message, setMessage] = useState("Processing OAuth callback...");
 
@@ -36,7 +36,7 @@ export const OAuthCallback: React.FC = () => {
           userId = stateData.userId || stateData.user_id;
         } catch {
           // If state is not JSON, try to get userId from localStorage or other means
-          userId = localStorage.getItem('currentUserId') || 'default-user';
+          userId = localStorage.getItem("currentUserId") || "default-user";
         }
 
         // Set the user ID in the oauth manager client
@@ -48,7 +48,7 @@ export const OAuthCallback: React.FC = () => {
         const credentials = await oauthManagerClient.handleCallback(
           platform,
           code,
-          state,
+          state
         );
 
         setStatus("success");
@@ -62,16 +62,18 @@ export const OAuthCallback: React.FC = () => {
               platform: platform,
               credentials: credentials,
             },
-            "*",
+            "*"
           );
           // Add small delay to ensure message is sent before closing
           setTimeout(() => {
             try {
               window.close();
             } catch (error) {
-              console.warn('Could not close popup window:', error);
+              console.warn("Could not close popup window:", error);
               // Fallback: show user message to close manually
-              setMessage('Authentication successful! You can close this window.');
+              setMessage(
+                "Authentication successful! You can close this window."
+              );
             }
           }, 100);
         } else {
@@ -84,7 +86,7 @@ export const OAuthCallback: React.FC = () => {
         console.error("OAuth callback error:", error);
         setStatus("error");
         setMessage(
-          error instanceof Error ? error.message : "Authentication failed",
+          error instanceof Error ? error.message : "Authentication failed"
         );
 
         // Notify parent window if opened in popup
@@ -97,16 +99,16 @@ export const OAuthCallback: React.FC = () => {
                   ? error.message
                   : "Authentication failed",
             },
-            "*",
+            "*"
           );
           // Add small delay to ensure message is sent before closing
           setTimeout(() => {
             try {
               window.close();
             } catch (error) {
-              console.warn('Could not close popup window:', error);
+              console.warn("Could not close popup window:", error);
               // Fallback: show user message to close manually
-              setMessage('Authentication failed. You can close this window.');
+              setMessage("Authentication failed. You can close this window.");
             }
           }, 100);
         } else {
@@ -176,7 +178,7 @@ export const OAuthCallback: React.FC = () => {
           <div className="mt-6">
             <button
               onClick={() => navigate("/settings")}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg"
+              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-md hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg"
             >
               Continue to Settings
             </button>
@@ -262,7 +264,7 @@ export const OAuthCallback: React.FC = () => {
 
 //   return (
 //     <div className="h-full-dec-hf  x-2 bg-gray-50 flex items-center justify-center p-4">
-//       <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center">
+//       <div className="bg-white rounded-md shadow-lg p-8 max-w-md w-full text-center">
 //         {status === 'loading' && (
 //           <>
 //             <Loader className="w-12 h-12 text-blue-600 mx-auto mb-4 animate-spin" />
@@ -282,7 +284,7 @@ export const OAuthCallback: React.FC = () => {
 //               Authentication Successful!
 //             </h2>
 //             <p className="text-gray-600">{message}</p>
-//             <p className="text-sm text-gray-500 mt-3">
+//             <p className="text-sm text-slate-500 mt-3">
 //               This window will close automatically.
 //             </p>
 //           </>
@@ -295,7 +297,7 @@ export const OAuthCallback: React.FC = () => {
 //               Authentication Failed
 //             </h2>
 //             <p className="text-gray-600">{message}</p>
-//             <p className="text-sm text-gray-500 mt-3">
+//             <p className="text-sm text-slate-500 mt-3">
 //               This window will close automatically.
 //             </p>
 //           </>

@@ -108,7 +108,7 @@ export default function PackageSuccessPage() {
         <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
           <Link
             to="/dashboard"
-            className="flex-1 rounded-lg bg-[#7650e3] px-4 py-2 text-center text-sm font-medium text-white hover:bg-[#7650e3]/80 transition"
+            className="flex-1 rounded-md bg-[#7650e3] px-4 py-2 text-center text-sm font-medium text-white hover:bg-[#7650e3]/80 transition"
           >
             Go to Dashboard
           </Link>
@@ -138,7 +138,7 @@ function SessionId({ value }: { value: string }) {
       </label>
       <div className="flex items-stretch gap-2">
         <div
-          className="flex min-w-0 flex-1 items-center overflow-hidden rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-800"
+          className="flex min-w-0 flex-1 items-center overflow-hidden rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-800"
           title={value}
           aria-label={`Session ID: ${value}`}
         >
@@ -147,7 +147,7 @@ function SessionId({ value }: { value: string }) {
         <button
           type="button"
           onClick={copy}
-          className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
+          className={`rounded-md px-3 py-2 text-sm font-medium transition ${
             copied
               ? "bg-[#7650e3] text-white hover:bg-[#7650e3]/80"
               : "bg-[#7650e3]/40 text-[#7650e3] hover:bg-[#7650e3]/50"

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useSearchParams, useNavigate, useParams } from "react-router-dom";
 import { handleOAuthCallback } from "../utils/authOAuth";
 import { CheckCircle, Loader, XCircle } from "lucide-react";
+import Icon from "./Icon";
 
 interface AuthOAuthCallbackProps {
   onAuthSuccess: (user: any) => void;
@@ -145,22 +146,13 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
   };
 
   return (
-    <div className="h-full-dec-hf  x-2 flex items-center justify-center theme-bg-primary">
-      {/* Animated Background */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-20 left-10 w-20 h-20 bg-white/10 rounded-full animate-pulse"></div>
-        <div className="absolute top-40 right-20 w-16 h-16 bg-white/20 rounded-full animate-bounce"></div>
-        <div className="absolute bottom-40 left-20 w-12 h-12 bg-white/15 rounded-full animate-ping"></div>
-        <div className="absolute bottom-20 right-10 w-24 h-24 bg-white/10 rounded-full animate-pulse"></div>
-      </div>
-
-      <div
-        className="max-w-md w-full theme-bg-card rounded-2xl shadow-xl border p-8 text-center relative z-10"
-        style={{ borderColor: "var(--theme-border)" }}
-      >
+    <div className="h-full-dec-hf  x-2 flex items-center justify-center ">
+      <div>
         <div className="mb-6">
           {status === "processing" && (
-            <Loader className="w-12 h-12 theme-text-accent animate-spin mx-auto" />
+            <div className=" flex justify-center items-center">
+              <Icon name="spiral-logo" size={45} className="animate-spin" />
+            </div>
           )}
           {status === "success" && (
             <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto">
@@ -193,21 +185,13 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
           <div className="mt-6">
             <button
               onClick={() => navigate("/auth")}
-              className="theme-button-primary px-6 py-3 rounded-xl hover:theme-button-hover transition-all duration-200"
+              className="theme-button-primary px-6 py-3 rounded-md hover:theme-button-hover transition-all duration-200"
             >
               Back to Login
             </button>
           </div>
         )}
       </div>
-    </div>
-  );
-};
-
-const LinkedInIconWrapper: React.FC = () => {
-  return (
-    <div className="flex items-center justify-center">
-      {/* <LinkedInIcon className="w-8 h-8" /> */}
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef } from "react";
 import {
   Upload,
   Eye,
@@ -11,11 +11,11 @@ import {
   Palette,
   Edit3,
   Trash2,
-} from 'lucide-react';
+} from "lucide-react";
 
 interface ImageUploaderProps {
   /** The type of media to accept: 'image', 'video', or 'both' */
-  acceptType?: 'image' | 'video' | 'both';
+  acceptType?: "image" | "video" | "both";
   /** Current file object */
   file?: File;
   /** Current media URL */
@@ -54,7 +54,7 @@ interface ImageUploaderProps {
 }
 
 export const ImageUploader: React.FC<ImageUploaderProps> = ({
-  acceptType = 'both',
+  acceptType = "both",
   file,
   mediaUrl,
   uploading = false,
@@ -77,7 +77,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
   onUseForAIReferenceChange,
   onUseInPostChange,
   onAIImageGenerate,
-  className = '',
+  className = "",
 }) => {
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -85,35 +85,35 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
   // Get accept attribute based on acceptType
   const getAcceptAttribute = () => {
     switch (acceptType) {
-      case 'image':
-        return 'image/*';
-      case 'video':
-        return 'video/*';
-      case 'both':
+      case "image":
+        return "image/*";
+      case "video":
+        return "video/*";
+      case "both":
       default:
-        return 'image/*,video/*';
+        return "image/*,video/*";
     }
   };
 
   // Get file type text for display
   const getFileTypeText = () => {
     switch (acceptType) {
-      case 'image':
-        return 'Images up to 50MB';
-      case 'video':
-        return 'Videos up to 50MB';
-      case 'both':
+      case "image":
+        return "Images up to 50MB";
+      case "video":
+        return "Videos up to 50MB";
+      case "both":
       default:
-        return 'Images, videos up to 50MB';
+        return "Images, videos up to 50MB";
     }
   };
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') {
+    if (e.type === "dragenter" || e.type === "dragover") {
       setDragActive(true);
-    } else if (e.type === 'dragleave') {
+    } else if (e.type === "dragleave") {
       setDragActive(false);
     }
   };
@@ -136,17 +136,20 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
     }
   };
 
-  const isImage = (file?.type.startsWith('image/')) || 
-    (mediaUrl && !file && !mediaUrl.match(/\.(mp4|mov|avi|wmv|flv|webm|mkv|m4v)$/i));
+  const isImage =
+    file?.type.startsWith("image/") ||
+    (mediaUrl &&
+      !file &&
+      !mediaUrl.match(/\.(mp4|mov|avi|wmv|flv|webm|mkv|m4v)$/i));
 
   return (
     <div className={`space-y-4 ${className}`}>
       {/* Upload Area */}
       <div
-        className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-all duration-200 ${
+        className={`relative border-2 border-dashed rounded-md p-6 text-center transition-all duration-200 ${
           dragActive
-            ? 'border-blue-400/50 bg-blue-500/10'
-            : 'border-white/20 hover:border-white/30'
+            ? "border-blue-400/50 bg-blue-500/10"
+            : "border-white/20 hover:border-white/30"
         }`}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
@@ -171,12 +174,15 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                     src={
                       templatedImageUrl ||
                       mediaUrl ||
-                      (file ? URL.createObjectURL(file) : '')
+                      (file ? URL.createObjectURL(file) : "")
                     }
                     alt="Preview"
-                    className="max-h-40 mx-auto rounded-lg shadow-sm"
+                    className="max-h-40 mx-auto rounded-md shadow-sm"
                     onError={(e) => {
-                      console.error('Image failed to load:', templatedImageUrl || mediaUrl || file?.name);
+                      console.error(
+                        "Image failed to load:",
+                        templatedImageUrl || mediaUrl || file?.name
+                      );
                     }}
                   />
                   <div className="absolute top-2 left-2 bg-black/60 text-white px-2 py-1 rounded text-xs flex items-center">
@@ -187,11 +193,20 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
               ) : (
                 <div className="relative">
                   <video
-                    src={mediaUrl ? mediaUrl : file ? URL.createObjectURL(file) : ''}
-                    className="max-h-40 mx-auto rounded-lg shadow-sm"
+                    src={
+                      mediaUrl
+                        ? mediaUrl
+                        : file
+                        ? URL.createObjectURL(file)
+                        : ""
+                    }
+                    className="max-h-40 mx-auto rounded-md shadow-sm"
                     controls
                     onError={(e) => {
-                      console.error('Video failed to load:', mediaUrl || file?.name);
+                      console.error(
+                        "Video failed to load:",
+                        mediaUrl || file?.name
+                      );
                     }}
                   >
                     Your browser does not support the video tag.
@@ -208,7 +223,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
             <div className="text-sm theme-text-secondary space-y-2">
               <div>
                 <p className="font-medium theme-text-primary text-sm">
-                  {file?.name || 'Uploaded Media'}
+                  {file?.name || "Uploaded Media"}
                 </p>
                 {file && (
                   <p className="text-xs">
@@ -225,7 +240,9 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                       type="checkbox"
                       id="useForAI"
                       checked={useForAIReference}
-                      onChange={(e) => onUseForAIReferenceChange?.(e.target.checked)}
+                      onChange={(e) =>
+                        onUseForAIReferenceChange?.(e.target.checked)
+                      }
                       className="w-3 h-3 text-blue-600"
                     />
                     <Brain className="w-3 h-3 text-blue-400" />
@@ -271,33 +288,36 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
               )}
 
               {/* Action Buttons */}
-              {(file || mediaUrl) && isImage && !analyzingImage && showAIAnalysis && (
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={onAIAnalysis}
-                    disabled={analyzingImage}
-                    className="flex-1 bg-gradient-to-r from-blue-500/80 to-indigo-500/80 text-white px-3 py-2 rounded text-xs hover:from-blue-600/80 hover:to-indigo-600/80 transition-all duration-200 flex items-center justify-center space-x-1 disabled:opacity-50"
-                  >
-                    <Eye className="w-3 h-3" />
-                    <span>AI Analysis</span>
-                  </button>
-                  {showTemplateSelector && (
+              {(file || mediaUrl) &&
+                isImage &&
+                !analyzingImage &&
+                showAIAnalysis && (
+                  <div className="flex gap-2">
                     <button
                       type="button"
-                      onClick={onTemplateSelector}
-                      className="flex-1 bg-gradient-to-r from-purple-500/80 to-pink-500/80 text-white px-3 py-2 rounded text-xs hover:from-purple-600/80 hover:to-pink-600/80 transition-all duration-200 flex items-center justify-center space-x-1"
+                      onClick={onAIAnalysis}
+                      disabled={analyzingImage}
+                      className="flex-1 bg-gradient-to-r from-blue-500/80 to-indigo-500/80 text-white px-3 py-2 rounded text-xs hover:from-blue-600/80 hover:to-indigo-600/80 transition-all duration-200 flex items-center justify-center space-x-1 disabled:opacity-50"
                     >
-                      <Palette className="w-3 h-3" />
-                      <span>Apply Template</span>
+                      <Eye className="w-3 h-3" />
+                      <span>AI Analysis</span>
                     </button>
-                  )}
-                </div>
-              )}
+                    {showTemplateSelector && (
+                      <button
+                        type="button"
+                        onClick={onTemplateSelector}
+                        className="flex-1 bg-gradient-to-r from-purple-500/80 to-pink-500/80 text-white px-3 py-2 rounded text-xs hover:from-purple-600/80 hover:to-pink-600/80 transition-all duration-200 flex items-center justify-center space-x-1"
+                      >
+                        <Palette className="w-3 h-3" />
+                        <span>Apply Template</span>
+                      </button>
+                    )}
+                  </div>
+                )}
 
               {/* Template Applied UI */}
               {templatedImageUrl && selectedTemplate && (
-                <div className="bg-purple-500/10 border border-purple-400/20 rounded-lg p-2">
+                <div className="bg-purple-500/10 border border-purple-400/20 rounded-md p-2">
                   <div className="flex justify-between mb-2">
                     <h4 className="font-medium text-purple-300 flex text-xs">
                       <Palette className="w-3 h-3 mr-1" />
@@ -355,7 +375,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                 <Upload className="w-3 h-3" />
                 <span>Choose Files</span>
               </button>
-              {acceptType !== 'video' && onAIImageGenerate && (
+              {acceptType !== "video" && onAIImageGenerate && (
                 <button
                   type="button"
                   onClick={onAIImageGenerate}
@@ -366,16 +386,14 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                 </button>
               )}
             </div>
-            <p className="text-xs theme-text-secondary">
-              {getFileTypeText()}
-            </p>
+            <p className="text-xs theme-text-secondary">{getFileTypeText()}</p>
           </div>
         )}
       </div>
 
       {/* AI Analysis Results */}
       {imageAnalysis && (
-        <div className="bg-blue-500/10 border border-blue-400/20 rounded-lg p-3">
+        <div className="bg-blue-500/10 border border-blue-400/20 rounded-md p-3">
           <div className="space-y-2">
             <h4 className="font-medium text-blue-300 flex items-center text-xs">
               <Eye className="w-3 h-3 mr-1" />

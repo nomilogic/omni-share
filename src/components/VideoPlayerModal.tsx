@@ -1,19 +1,19 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { 
-  Play, 
-  Pause, 
-  Volume2, 
-  VolumeX, 
-  Maximize, 
-  X, 
-  SkipBack, 
+import React, { useState, useRef, useEffect } from "react";
+import {
+  Play,
+  Pause,
+  Volume2,
+  VolumeX,
+  Maximize,
+  X,
+  SkipBack,
   SkipForward,
   Download,
   Share2,
   Heart,
   Repeat,
-  Settings
-} from 'lucide-react';
+  Settings,
+} from "lucide-react";
 
 interface VideoPlayerModalProps {
   isOpen: boolean;
@@ -42,11 +42,11 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
   onReuse,
   onDownload,
   onShare,
-  isFavorite = false
+  isFavorite = false,
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
-  
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [volume, setVolume] = useState(1);
@@ -68,15 +68,15 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
 
     const updateTime = () => setCurrentTime(video.currentTime);
     const updateDuration = () => setVideoDuration(video.duration);
-    
-    video.addEventListener('timeupdate', updateTime);
-    video.addEventListener('loadedmetadata', updateDuration);
-    video.addEventListener('ended', () => setIsPlaying(false));
+
+    video.addEventListener("timeupdate", updateTime);
+    video.addEventListener("loadedmetadata", updateDuration);
+    video.addEventListener("ended", () => setIsPlaying(false));
 
     return () => {
-      video.removeEventListener('timeupdate', updateTime);
-      video.removeEventListener('loadedmetadata', updateDuration);
-      video.removeEventListener('ended', () => setIsPlaying(false));
+      video.removeEventListener("timeupdate", updateTime);
+      video.removeEventListener("loadedmetadata", updateDuration);
+      video.removeEventListener("ended", () => setIsPlaying(false));
     };
   }, [isOpen]);
 
@@ -118,7 +118,7 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
     const rect = progressBar.getBoundingClientRect();
     const percent = (e.clientX - rect.left) / rect.width;
     const newTime = percent * videoDuration;
-    
+
     video.currentTime = newTime;
     setCurrentTime(newTime);
   };
@@ -147,10 +147,11 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
   const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
-  const progressPercent = videoDuration > 0 ? (currentTime / videoDuration) * 100 : 0;
+  const progressPercent =
+    videoDuration > 0 ? (currentTime / videoDuration) * 100 : 0;
 
   if (!isOpen) return null;
 
@@ -166,8 +167,8 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
         </button>
 
         {/* Video Container */}
-        <div 
-          className="relative w-full h-full bg-black rounded-lg overflow-hidden"
+        <div
+          className="relative w-full h-full bg-black rounded-md overflow-hidden"
           onMouseEnter={() => setShowControls(true)}
           onMouseLeave={() => setShowControls(false)}
         >
@@ -192,18 +193,18 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
           )}
 
           {/* Controls */}
-          <div 
+          <div
             className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4 transition-opacity duration-300 ${
-              showControls ? 'opacity-100' : 'opacity-0'
+              showControls ? "opacity-100" : "opacity-0"
             }`}
           >
             {/* Progress Bar */}
-            <div 
+            <div
               ref={progressRef}
               onClick={handleProgressClick}
               className="w-full h-2 bg-gray-600 rounded-full cursor-pointer mb-4 relative"
             >
-              <div 
+              <div
                 className="h-full bg-red-500 rounded-full relative"
                 style={{ width: `${progressPercent}%` }}
               >
@@ -225,7 +226,11 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
                   onClick={togglePlay}
                   className="text-white hover:text-red-400 transition-colors"
                 >
-                  {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
+                  {isPlaying ? (
+                    <Pause className="w-6 h-6" />
+                  ) : (
+                    <Play className="w-6 h-6" />
+                  )}
                 </button>
 
                 <button
@@ -240,9 +245,13 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
                     onClick={toggleMute}
                     className="text-white hover:text-red-400 transition-colors"
                   >
-                    {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+                    {isMuted ? (
+                      <VolumeX className="w-5 h-5" />
+                    ) : (
+                      <Volume2 className="w-5 h-5" />
+                    )}
                   </button>
-                  
+
                   <input
                     type="range"
                     min="0"
@@ -264,12 +273,14 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
                   <button
                     onClick={onFavorite}
                     className={`p-2 rounded-full transition-colors ${
-                      isFavorite 
-                        ? 'text-red-500 hover:text-red-400' 
-                        : 'text-white hover:text-red-400'
+                      isFavorite
+                        ? "text-red-500 hover:text-red-400"
+                        : "text-white hover:text-red-400"
                     }`}
                   >
-                    <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
+                    <Heart
+                      className={`w-5 h-5 ${isFavorite ? "fill-current" : ""}`}
+                    />
                   </button>
                 )}
 
@@ -312,7 +323,7 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
         </div>
 
         {/* Video Info Panel */}
-        <div className="absolute top-4 left-4 bg-black bg-opacity-50 text-white p-4 rounded-lg max-w-md">
+        <div className="absolute top-4 left-4 bg-black bg-opacity-50 text-white p-4 rounded-md max-w-md">
           <h3 className="text-lg font-semibold mb-2">{title}</h3>
           {description && (
             <p className="text-sm text-gray-300">{description}</p>
@@ -329,7 +340,7 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
           background: #ef4444;
           cursor: pointer;
         }
-        
+
         .slider::-moz-range-thumb {
           width: 12px;
           height: 12px;

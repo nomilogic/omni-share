@@ -128,7 +128,7 @@ export const ProfilePage: React.FC = () => {
                 <div className="flex space-x-2">
                   <button
                     onClick={() => setProfileEditing(true)}
-                    className="flex items-center px-2 py-2 text-purple-700 text-underline rounded-lg hover:bg-purple-50 transition-colors"
+                    className="flex items-center px-2 py-2 text-purple-700 text-underline rounded-md hover:bg-purple-50 transition-colors"
                   >
                     <Edit3 className="w-4 h-4 mr-2" />
                     Edit Profile
@@ -140,10 +140,10 @@ export const ProfilePage: React.FC = () => {
             {/* Profile Info */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 col-span-2">
-                <div className="group relative overflow-hidden rounded-xl border border-border/50 bg-card/50 backdrop-blur-xl p-6 hover:border-purple/50 transition-all">
+                <div className="group relative overflow-hidden rounded-md border border-border/50 bg-card/50 backdrop-blur-xl p-6 hover:border-purple/50 transition-all">
                   <div className="absolute inset-0 bg-gradient-to-br from-purple/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   <div className="relative flex items-center gap-4">
-                    <div className="p-3 rounded-xl bg-purple/20 text-purple">
+                    <div className="p-3 rounded-md bg-purple/20 text-purple">
                       <Zap className="w-6 h-6 theme-text-secondary" />
                     </div>
                     <div>
@@ -157,10 +157,10 @@ export const ProfilePage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="group relative overflow-hidden rounded-xl border border-border/50 bg-card/50 backdrop-blur-xl p-6 hover:border-secondary/50 transition-all">
+                <div className="group relative overflow-hidden rounded-md border border-border/50 bg-card/50 backdrop-blur-xl p-6 hover:border-secondary/50 transition-all">
                   <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   <div className="relative flex items-center gap-4">
-                    <div className="p-3 rounded-xl bg-secondary/20 theme-text-secondary">
+                    <div className="p-3 rounded-md bg-secondary/20 theme-text-secondary">
                       <Target className="w-6 h-6 theme-text-secondary" />
                     </div>
                     <div>
@@ -175,10 +175,10 @@ export const ProfilePage: React.FC = () => {
                 </div>
 
                 {
-                  <div className="group relative overflow-hidden rounded-xl border border-border/50 bg-card/50 backdrop-blur-xl p-6 hover:border-accent/50 transition-all">
+                  <div className="group relative overflow-hidden rounded-md border border-border/50 bg-card/50 backdrop-blur-xl p-6 hover:border-accent/50 transition-all">
                     <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     <div className="relative flex items-center gap-4">
-                      <div className="p-3 rounded-xl bg-accent/20 text-accent">
+                      <div className="p-3 rounded-md bg-accent/20 text-accent">
                         <Clock className="w-6 h-6 theme-text-secondary" />
                       </div>
                       <div>
@@ -202,7 +202,7 @@ export const ProfilePage: React.FC = () => {
                   </div>
                 }
               </div>
-              <div className=" rounded-lg  mt-2 col-span-2 flex flex-col">
+              <div className=" rounded-md  mt-2 col-span-2 flex flex-col">
                 <div className="flex items-center space-x-3 mb-4">
                   {profile.brandLogo ? (
                     <img
@@ -219,7 +219,7 @@ export const ProfilePage: React.FC = () => {
                     <div className="font-medium">
                       {profile.brandName || "Not set"}
                     </div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-slate-500">
                       {profile.brandTone || "Tone not set"}
                     </div>
                     <div className="text-sm mt-2">
@@ -244,7 +244,7 @@ export const ProfilePage: React.FC = () => {
                         type="text"
                         readOnly
                         value={`${window.location.origin}/auth?referralId=${state.user.id}`}
-                        className="w-full px-4 py-2 border border-white/20 rounded-lg theme-bg-primary theme-text-primary font-mono"
+                        className="w-full px-4 py-2 border border-white/20 rounded-md theme-bg-primary theme-text-primary font-mono"
                       />
                       <button
                         onClick={() => {
@@ -252,7 +252,7 @@ export const ProfilePage: React.FC = () => {
                             `${window.location.origin}/auth?referralId=${state.user.id}`
                           );
                         }}
-                        className="px-3 py-2 bg-purple-600 text-white rounded-lg"
+                        className="px-3 py-2 bg-purple-600 text-white rounded-md"
                       >
                         Copy
                       </button>
@@ -270,7 +270,7 @@ export const ProfilePage: React.FC = () => {
                             );
                           });
                         }}
-                        className="ml-2 px-3 py-2 bg-purple-600 text-white rounded-lg"
+                        className="ml-2 px-3 py-2 bg-purple-600 text-white rounded-md"
                       >
                         Share
                       </button>
@@ -283,7 +283,7 @@ export const ProfilePage: React.FC = () => {
               </div>
 
               <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div className=" rounded-lg px-4">
+                <div className=" rounded-md px-4">
                   <h3 className="text-2xl font-semibold text-purple-600 mb-3">
                     Audience
                   </h3>
@@ -356,7 +356,7 @@ export const ProfilePage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className=" rounded-lg p-4 mt-4">
+                <div className=" rounded-md p-4 mt-4">
                   <h3 className="text-2xl font-semibold text-purple-600 mb-3">
                     Content & Goals
                   </h3>

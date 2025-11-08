@@ -65,10 +65,10 @@ export const FeatureRestriction: React.FC<FeatureRestrictionProps> = ({
     <>
       <div className="relative h-full-dec-hf ">
         <div className="opacity-50 pointer-events-none">{children}</div>
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-lg flex items-center justify-center backdrop-blur-sm ">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-md flex items-center justify-center backdrop-blur-sm ">
           <button
             onClick={() => setShowUpgradeModal(true)}
-            className="bg-white shadow-lg rounded-lg px-6 py-3 flex items-center space-x-3 hover:shadow-xl transition-all duration-200"
+            className="bg-white shadow-lg rounded-md px-6 py-3 flex items-center space-x-3 hover:shadow-xl transition-all duration-200"
           >
             <Lock className="w-5 h-5 text-gray-600" />
             <div className="text-left">
@@ -139,7 +139,7 @@ export const FeatureRestriction: React.FC<FeatureRestrictionProps> = ({
             <div className="flex space-x-3">
               <button
                 onClick={() => setShowUpgradeModal(false)}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors duration-200"
               >
                 Maybe Later
               </button>
@@ -153,7 +153,7 @@ export const FeatureRestriction: React.FC<FeatureRestrictionProps> = ({
                     window.location.href = "/pricing";
                   }
                 }}
-                className={`flex-1 px-4 py-2 rounded-lg text-white transition-colors duration-200 ${
+                className={`flex-1 px-4 py-2 rounded-md text-white transition-colors duration-200 ${
                   requiredPlan === "ipro"
                     ? "bg-blue-600 hover:bg-blue-700"
                     : "bg-purple-600 hover:bg-purple-700"

@@ -9,7 +9,7 @@ import coinIcon from "../assets/01-04.png";
 import ArrowRightIcon from "./icons/ArrowRightIcon";
 import { X } from "lucide-react";
 import { useAppContext } from "@/context/AppContext";
-import { Wallet } from './../lib/wallet';
+import { Wallet } from "./../lib/wallet";
 
 /**
  * A modal component that displays a message to the user when they
@@ -29,7 +29,7 @@ const SubscriptionPauseModal = ({ isVisible, onClose, onPause, onCancel }) => {
   const { user, logout, balance } = useAppContext();
   useEffect(() => {
     console.log(user, "user");
-  })
+  });
 
   return (
     <div className="fixed inset-0 bg-gray-900 bg-opacity-70 flex md:items-center justify-center p-0 z-50 transition-opacity duration-300 font-inter top-0 overflow-hidden">
@@ -94,7 +94,7 @@ const SubscriptionPauseModal = ({ isVisible, onClose, onPause, onCancel }) => {
               <FeatureLossItem label="Text Post Generation" icon={textIcon} />
             </div>
 
-            <div className="border border-[#9F8CF0] rounded-xl p-4 bg-[#F9FAFB] flex justify-between items-start mb-2 md:mb-2">
+            <div className="border border-[#9F8CF0] rounded-md p-4 bg-[#F9FAFB] flex justify-between items-start mb-2 md:mb-2">
               <div className="flex items-center">
                 <div className="w-8 h-8 mr-3 flex-shrink-0">
                   <img
@@ -133,7 +133,7 @@ const SubscriptionPauseModal = ({ isVisible, onClose, onPause, onCancel }) => {
           {/* Buttons */}
           <div className="space-y-2">
             <button
-              className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold p-2.5 text-sm sm:text-base rounded-lg transition disabled:opacity-50 flex justify-between items-center border-2 border-[#7F56D9]"
+              className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold p-2.5 text-sm sm:text-base rounded-md transition disabled:opacity-50 flex justify-between items-center border-2 border-[#7F56D9]"
               onClick={onPause}
             >
               <span>Continue with Subscription</span>
@@ -141,7 +141,7 @@ const SubscriptionPauseModal = ({ isVisible, onClose, onPause, onCancel }) => {
             </button>
 
             <button
-              className=" w-full hover:bg-[#d7d7fc] hover:text-[#7650e3]  text-[#7650e3] font-semibold p-2.5  text-sm sm:text-base rounded-lg transition disabled:opacity-50 flex justify-between items-center  border-2 border-[#7F56D9]"
+              className=" w-full hover:bg-[#d7d7fc] hover:text-[#7650e3]  text-[#7650e3] font-semibold p-2.5  text-sm sm:text-base rounded-md transition disabled:opacity-50 flex justify-between items-center  border-2 border-[#7F56D9]"
               onClick={onCancel}
             >
               <span>Proceed with Cancelation</span>

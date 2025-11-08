@@ -40,7 +40,7 @@ const TransactionHistory = () => {
   return (
     <div className="w-full">
       {history?.length === 0 ? (
-        <div className="text-center text-gray-500 py-4">
+        <div className="text-center text-slate-500 py-4">
           No transaction history found
         </div>
       ) : (

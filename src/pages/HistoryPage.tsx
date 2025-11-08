@@ -409,7 +409,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
             )}
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className={`flex items-center gap-2 text-sm px-3 py-2 rounded-lg border transition-colors ${
+              className={`flex items-center gap-2 text-sm px-3 py-2 rounded-md border transition-colors ${
                 showFilters || hasActiveFilters
                   ? "bg-blue-50 border-blue-200 text-blue-700"
                   : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
@@ -431,7 +431,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
 
         {/* Filters Section */}
         {showFilters && (
-          <div className="max-w-4xl mx-auto mb-6 p-4 bg-white border border-gray-200 rounded-lg">
+          <div className="max-w-4xl mx-auto mb-6 p-4 bg-white border border-gray-200 rounded-md">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               {/* Read Status Filter */}
               <div>
@@ -441,7 +441,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
                 <select
                   value={readFilter}
                   onChange={(e) => setReadFilter(e.target.value as ReadFilter)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="all">All Posts</option>
                   <option value="unread">Unread ({unreadCount})</option>
@@ -461,7 +461,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
                   onChange={(e) =>
                     setPlatformFilter(e.target.value as PlatformFilter)
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="all">All Platforms</option>
                   {availablePlatforms.map((platform) => (
@@ -479,7 +479,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
                 <select
                   value={timePeriod}
                   onChange={(e) => setTimePeriod(e.target.value as TimePeriod)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="all">All Time</option>
                   <option value="today">Today</option>
@@ -495,7 +495,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as SortBy)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="date_desc">Newest First</option>
                   <option value="date_asc">Oldest First</option>
@@ -509,7 +509,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
               <div className="mt-4 flex justify-end">
                 <button
                   onClick={resetFilters}
-                  className="flex items-center gap-2 text-sm px-3 py-1 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="flex items-center gap-2 text-sm px-3 py-1 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-md transition-colors"
                 >
                   <RotateCcw className="w-4 h-4" />
                   Reset Filters
@@ -543,7 +543,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
                     : "Last 30 days"}
                 </span>
               )}
-              <span className="text-gray-500">
+              <span className="text-slate-500">
                 • {filteredPosts.length} posts
               </span>
             </div>
@@ -553,7 +553,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
 
       <div className="w-full lg:max-w-4xl mx-auto ">
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
             <p className="text-red-800 text-sm">{error}</p>
           </div>
         )}
@@ -587,7 +587,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
             {filteredPosts.map((post) => (
               <div
                 key={post.id}
-                className={`bg-white border rounded-xl overflow-hidden hover:shadow-md transition-all duration-200 ${
+                className={`bg-white border rounded-md overflow-hidden hover:shadow-md transition-all duration-200 ${
                   !post.isRead
                     ? "border-blue-200 bg-blue-50/30"
                     : "border-gray-200"
@@ -653,7 +653,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
                           <p className="text-gray-600 text-sm line-clamp-2 mb-2">
                             {post.metadata?.description || post.content}
                           </p>
-                          <p className="text-xs text-gray-500 mb-2 capitalize">
+                          <p className="text-xs text-slate-500 mb-2 capitalize">
                             {post.platform} •{" "}
                             {post.postUrl && new URL(post.postUrl).hostname}
                           </p>

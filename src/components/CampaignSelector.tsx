@@ -1,9 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { Target, Plus, Edit2, Trash2, Calendar, Sparkles, BarChart3 } from 'lucide-react';
-import { getCampaigns, deleteCampaign } from '../lib/database';
-import { CampaignInfo } from '../types';
-import { usePlanFeatures } from '../hooks/usePlanFeatures';
-import { useAppContext } from '../context/AppContext';
+import React, { useState, useEffect } from "react";
+import {
+  Target,
+  Plus,
+  Edit2,
+  Trash2,
+  Calendar,
+  Sparkles,
+  BarChart3,
+} from "lucide-react";
+import { getCampaigns, deleteCampaign } from "../lib/database";
+import { CampaignInfo } from "../types";
+import { usePlanFeatures } from "../hooks/usePlanFeatures";
+import { useAppContext } from "../context/AppContext";
 
 interface CampaignSelectorProps {
   userId: string;
@@ -22,15 +30,16 @@ export const CampaignSelector: React.FC<CampaignSelectorProps> = ({
   onDashboardCampaign,
   onEditCampaign,
   onCreateNew,
-  refreshTrigger
+  refreshTrigger,
 }) => {
   const [campaigns, setCampaigns] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { state } = useAppContext();
   const { canSchedule, currentPlan } = usePlanFeatures();
-  const isBusinessAccount = state.selectedProfile?.profile_type === 'business' ||
-                           state.user?.profile_type === 'business' ||
-                           currentPlan === 'business';
+  const isBusinessAccount =
+    state.selectedProfile?.profile_type === "business" ||
+    state.user?.profile_type === "business" ||
+    currentPlan === "business";
 
   useEffect(() => {
     loadCampaigns();
@@ -41,7 +50,7 @@ export const CampaignSelector: React.FC<CampaignSelectorProps> = ({
       const data = await getCampaigns(userId);
       setCampaigns(data || []);
     } catch (error) {
-      console.error('Error loading campaigns:', error);
+      console.error("Error loading campaigns:", error);
     } finally {
       setLoading(false);
     }
@@ -49,12 +58,12 @@ export const CampaignSelector: React.FC<CampaignSelectorProps> = ({
 
   const handleDelete = async (campaignId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (confirm('Are you sure you want to delete this campaign?')) {
+    if (confirm("Are you sure you want to delete this campaign?")) {
       try {
         await deleteCampaign(campaignId, userId);
-        setCampaigns(prev => prev.filter(c => c.id !== campaignId));
+        setCampaigns((prev) => prev.filter((c) => c.id !== campaignId));
       } catch (error) {
-        console.error('Error deleting campaign:', error);
+        console.error("Error deleting campaign:", error);
       }
     }
   };
@@ -76,7 +85,9 @@ export const CampaignSelector: React.FC<CampaignSelectorProps> = ({
         <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
           <Target className="w-8 h-8 text-blue-600" />
         </div>
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Select Campaign</h2>
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">
+          Select Campaign
+        </h2>
         <p className="text-gray-600">Choose a campaign or create a new one</p>
       </div>
 
@@ -84,11 +95,15 @@ export const CampaignSelector: React.FC<CampaignSelectorProps> = ({
         {/* Create New Campaign Card */}
         <div
           onClick={onCreateNew}
-          className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all duration-200"
+          className="border-2 border-dashed border-gray-300 rounded-md p-6 text-center cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all duration-200"
         >
           <Plus className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="font-medium text-gray-900 mb-2">Create New Campaign</h3>
-          <p className="text-sm text-gray-600">Set up a new marketing campaign</p>
+          <h3 className="font-medium text-gray-900 mb-2">
+            Create New Campaign
+          </h3>
+          <p className="text-sm text-gray-600">
+            Set up a new marketing campaign
+          </p>
         </div>
 
         {/* Existing Campaigns */}
@@ -110,13 +125,13 @@ export const CampaignSelector: React.FC<CampaignSelectorProps> = ({
             endDate: campaign.end_date,
             totalPosts: campaign.total_posts,
             publishedPosts: campaign.published_posts,
-            scheduledPosts: campaign.scheduled_posts
+            scheduledPosts: campaign.scheduled_posts,
           };
 
           return (
             <div
               key={campaign.id}
-              className="border border-gray-200 rounded-xl p-6 hover:border-blue-500 hover:shadow-md transition-all duration-200 relative group"
+              className="border border-gray-200 rounded-md p-6 hover:border-blue-500 hover:shadow-md transition-all duration-200 relative group"
             >
               <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex gap-2">
                 {onEditCampaign && (
@@ -139,9 +154,13 @@ export const CampaignSelector: React.FC<CampaignSelectorProps> = ({
               </div>
 
               <div className="mb-4">
-                <h3 className="font-semibold text-gray-900 text-lg">{campaign.name}</h3>
+                <h3 className="font-semibold text-gray-900 text-lg">
+                  {campaign.name}
+                </h3>
                 {campaign.objective && (
-                  <p className="text-sm text-blue-600 capitalize">{campaign.objective}</p>
+                  <p className="text-sm text-blue-600 capitalize">
+                    {campaign.objective}
+                  </p>
                 )}
                 {campaign.industry && (
                   <p className="text-sm text-gray-600">{campaign.industry}</p>
@@ -150,16 +169,22 @@ export const CampaignSelector: React.FC<CampaignSelectorProps> = ({
 
               <div className="space-y-2 text-sm">
                 <div>
-                  <span className="text-gray-500">Status:</span>
-                  <span className="ml-2 capitalize font-medium">{campaign.status || 'draft'}</span>
+                  <span className="text-slate-500">Status:</span>
+                  <span className="ml-2 capitalize font-medium">
+                    {campaign.status || "draft"}
+                  </span>
                 </div>
                 <div>
-                  <span className="text-gray-500">Platforms:</span>
-                  <span className="ml-2">{campaign.platforms?.length || 0}</span>
+                  <span className="text-slate-500">Platforms:</span>
+                  <span className="ml-2">
+                    {campaign.platforms?.length || 0}
+                  </span>
                 </div>
                 <div>
-                  <span className="text-gray-500">Posts:</span>
-                  <span className="ml-2">{campaign.total_posts || 0} total</span>
+                  <span className="text-slate-500">Posts:</span>
+                  <span className="ml-2">
+                    {campaign.total_posts || 0} total
+                  </span>
                 </div>
               </div>
 
@@ -178,11 +203,11 @@ export const CampaignSelector: React.FC<CampaignSelectorProps> = ({
                   </span>
                 )}
               </div>
-              
+
               <div className="mt-6 grid grid-cols-1 gap-3">
                 <button
                   onClick={() => onSelectCampaign(campaignData)}
-                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 flex items-center justify-center gap-2"
+                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-md font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 flex items-center justify-center gap-2"
                 >
                   <Sparkles className="w-4 h-4" />
                   Create New Post
@@ -191,7 +216,7 @@ export const CampaignSelector: React.FC<CampaignSelectorProps> = ({
                 {(canSchedule || isBusinessAccount) && (
                   <button
                     onClick={() => onScheduleCampaign(campaignData)}
-                    className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 px-4 rounded-lg font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200 flex items-center justify-center gap-2"
+                    className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 px-4 rounded-md font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200 flex items-center justify-center gap-2"
                   >
                     <Calendar className="w-4 h-4" />
                     Schedule Posts
@@ -201,7 +226,7 @@ export const CampaignSelector: React.FC<CampaignSelectorProps> = ({
                 {onDashboardCampaign && (
                   <button
                     onClick={() => onDashboardCampaign(campaignData)}
-                    className="w-full bg-gradient-to-r from-orange-600 to-yellow-600 text-white py-3 px-4 rounded-lg font-medium hover:from-orange-700 hover:to-yellow-700 transition-all duration-200 flex items-center justify-center gap-2"
+                    className="w-full bg-gradient-to-r from-orange-600 to-yellow-600 text-white py-3 px-4 rounded-md font-medium hover:from-orange-700 hover:to-yellow-700 transition-all duration-200 flex items-center justify-center gap-2"
                   >
                     <BarChart3 className="w-4 h-4" />
                     View Dashboard

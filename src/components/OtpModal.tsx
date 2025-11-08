@@ -132,7 +132,7 @@ export function OtpModal({
       aria-labelledby="otp-title"
       className="fixed inset-0 z-50 flex md:items-center justify-center px-4 pt-8 "
     >
-      <div className="w-full max-w-sm md:rounded-lg md:bg-white sm:p-6 md:shadow-lg">
+      <div className="w-full max-w-sm md:rounded-md md:bg-white sm:p-6 md:shadow-lg">
         <div className={`flex  relative  justify-center gap-2 mb-5`}>
           <button
             onClick={() => {}}

@@ -532,7 +532,7 @@ const ProfileSetupSinglePage: React.FC = () => {
                   <section key={section.id} className="space-y-4">
                     <div className="flex items-center space-x-3 mb-2">
                       {section.icon && (
-                        <div className="theme-bg-quaternary p-2 rounded-lg">
+                        <div className="theme-bg-quaternary p-2 rounded-md">
                           {React.createElement(section.icon, {
                             className: "w-6 h-6 theme-text-secondary",
                           })}
@@ -543,7 +543,7 @@ const ProfileSetupSinglePage: React.FC = () => {
                           {section.title}
                         </h2>
                         {section.subtext && (
-                          <p className="mt-1 text-sm text-gray-500">
+                          <p className="mt-1 text-sm text-slate-500">
                             {section.subtext}
                           </p>
                         )}
@@ -576,7 +576,7 @@ const ProfileSetupSinglePage: React.FC = () => {
                                   placeholder={field.placeholder || ""}
                                 />
                                 {field.helperText && (
-                                  <p className="mt-1 text-sm text-gray-500">
+                                  <p className="mt-1 text-sm text-slate-500">
                                     {field.helperText}
                                   </p>
                                 )}
@@ -647,7 +647,7 @@ const ProfileSetupSinglePage: React.FC = () => {
                                   ))}
                                 </select>
                                 {field.helperText && (
-                                  <p className="mt-1 text-sm text-gray-500">
+                                  <p className="mt-1 text-sm text-slate-500">
                                     {field.helperText}
                                   </p>
                                 )}
@@ -669,7 +669,7 @@ const ProfileSetupSinglePage: React.FC = () => {
                                   {field.label} {field.required && "*"}
                                 </label>
                                 {field.helperText && (
-                                  <p className="mt-1 text-sm text-gray-500">
+                                  <p className="mt-1 text-sm text-slate-500">
                                     {field.helperText}
                                   </p>
                                 )}
@@ -684,7 +684,7 @@ const ProfileSetupSinglePage: React.FC = () => {
                                       <div
                                         key={opt}
                                         data-field-name={field.name}
-                                        className={`flex items-center p-2 border-2 rounded-lg cursor-pointer ${
+                                        className={`flex items-center p-2 border-2 rounded-md cursor-pointer ${
                                           isChecked
                                             ? "theme-border-trinary theme-text-secondary"
                                             : "border-gray-200"
@@ -724,7 +724,7 @@ const ProfileSetupSinglePage: React.FC = () => {
                                   {field.label} {field.required && "*"}
                                 </label>
 
-                                <div className="mt-1 flex flex-col items-center justify-center p-4 border-2 border-gray-300 border-dashed rounded-lg relative overflow-hidden">
+                                <div className="mt-1 flex flex-col items-center justify-center p-4 border-2 border-gray-300 border-dashed rounded-md relative overflow-hidden">
                                   {/* Preview if exists */}
                                   {formData[fieldName] ? (
                                     <div className="flex flex-col items-center space-y-2">
@@ -767,7 +767,7 @@ const ProfileSetupSinglePage: React.FC = () => {
                                       <span className="mt-2 text-sm theme-text-secondary">
                                         Click to upload
                                       </span>
-                                      <p className="text-xs text-gray-500">
+                                      <p className="text-xs text-slate-500">
                                         PNG, JPG, GIF up to 10MB
                                       </p>
                                     </label>
@@ -938,7 +938,7 @@ const ProfileSetupSinglePage: React.FC = () => {
                                 </div>
 
                                 {field.helperText && (
-                                  <p className="mt-1 text-sm text-gray-500">
+                                  <p className="mt-1 text-sm text-slate-500">
                                     {field.helperText}
                                   </p>
                                 )}
@@ -962,7 +962,7 @@ const ProfileSetupSinglePage: React.FC = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full theme-bg-gradient disabled:bg-purple-600/50 disabled:cursor-not-allowed text-white py-3 px-6 rounded-lg text-lg font-semibold shadow-sm disabled:opacity-50"
+                className="w-full theme-bg-gradient disabled:bg-purple-600/50 disabled:cursor-not-allowed text-white py-3 px-6 rounded-md text-lg font-semibold shadow-sm disabled:opacity-50"
               >
                 {loading ? "Saving..." : "Complete Profile Setup"}
               </button>

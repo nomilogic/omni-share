@@ -378,7 +378,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
 
         {/* Connection Status Alert */}
         {posts.some((post) => !connectedPlatforms.includes(post.platform)) && (
-          <div className="mb-8 p-4 theme-bg-quaternary rounded-xl border border-purple-200">
+          <div className="mb-8 p-4 theme-bg-quaternary rounded-md border border-purple-200">
             <div className="flex items-start gap-3">
               <div className="w-5 h-5">
                 <Icon
@@ -439,7 +439,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
 
           {/* Selection Summary */}
           {connectedPlatforms.length > 0 && (
-            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
               <p className="text-sm text-blue-800">
                 <span className="font-medium">
                   {
@@ -480,7 +480,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
               return (
                 <div
                   key={post.platform}
-                  className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors"
+                  className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-md hover:bg-gray-50 transition-colors"
                 >
                   <div className="flex items-center gap-3">
                     {/* Platform Icon */}
@@ -555,7 +555,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
                         <button
                           onClick={() => handleConnect(post.platform)}
                           disabled={isConnecting}
-                          className="p-2 text-gray-500 hover:text-blue-600 disabled:opacity-50 rounded-lg hover:bg-gray-100"
+                          className="p-2 text-slate-500 hover:text-blue-600 disabled:opacity-50 rounded-md hover:bg-gray-100"
                           title="Refresh connection"
                         >
                           <RefreshCw className={`w-4 h-4`} />
@@ -563,7 +563,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
                         <button
                           onClick={() => handleDisconnect(post.platform)}
                           disabled={isConnecting}
-                          className="p-2 text-gray-500 hover:text-red-600 disabled:opacity-50 rounded-lg hover:bg-gray-100"
+                          className="p-2 text-slate-500 hover:text-red-600 disabled:opacity-50 rounded-md hover:bg-gray-100"
                           title="Disconnect"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -686,7 +686,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
         {connectedPlatforms.includes("facebook") &&
           selectedPlatforms.includes("facebook") &&
           facebookPages.length > 0 && (
-            <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+            <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-md">
               <h4 className="font-medium text-blue-900 mb-2">
                 Facebook Page Selection
               </h4>
@@ -696,7 +696,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
               <select
                 value={selectedFacebookPage}
                 onChange={(e) => setSelectedFacebookPage(e.target.value)}
-                className="w-full p-3 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full p-3 border border-blue-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 {facebookPages.map((page) => (
                   <option key={page.id} value={page.id}>
@@ -710,7 +710,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
         {connectedPlatforms.includes("youtube") &&
           selectedPlatforms.includes("youtube") &&
           youtubeChannels.length > 0 && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
               <h4 className="font-medium text-red-900 mb-2">
                 YouTube Channel Selection
               </h4>
@@ -720,7 +720,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
               <select
                 value={selectedYoutubeChannel}
                 onChange={(e) => setSelectedYoutubeChannel(e.target.value)}
-                className="w-full p-3 border border-red-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                className="w-full p-3 border border-red-300 rounded-md focus:ring-2 focus:ring-red-500 focus:border-transparent"
               >
                 {youtubeChannels.map((channel) => (
                   <option key={channel.id} value={channel.id}>
@@ -733,7 +733,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
 
         {/* Error Messages */}
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
             <p className="text-red-800 text-sm">{error}</p>
           </div>
         )}
@@ -796,7 +796,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
             connectedPlatforms.includes(p) && !publishedPlatforms.includes(p)
         ).length === 0 &&
           publishedPlatforms.length === 0 && (
-            <p className="mt-3 text-sm text-gray-500 text-center">
+            <p className="mt-3 text-sm text-slate-500 text-center">
               Please select at least one connected platform to publish.
             </p>
           )}
@@ -828,7 +828,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
 
             {/* Summary */}
             {results._summary && (
-              <div className="mb-4 p-4 bg-gray-50 border border-gray-200 rounded-xl">
+              <div className="mb-4 p-4 bg-gray-50 border border-gray-200 rounded-md">
                 <div className="grid grid-cols-3 gap-4 text-center">
                   <div>
                     <div className="text-2xl font-bold text-blue-600">
@@ -859,7 +859,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
                 .map(([platform, result]: [string, any]) => (
                   <div
                     key={platform}
-                    className={`border rounded-xl p-4 ${
+                    className={`border rounded-md p-4 ${
                       result.success
                         ? "bg-green-50 border-green-200"
                         : "bg-red-50 border-red-200"
@@ -874,7 +874,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
                         {result.success ? "✅" : "❌"} {platform}
                       </h4>
                       {result.success && result.postId && (
-                        <span className="text-xs text-gray-500 bg-gray-200 px-2 py-1 rounded-lg">
+                        <span className="text-xs text-slate-500 bg-gray-200 px-2 py-1 rounded-md">
                           ID: {result.postId}
                         </span>
                       )}

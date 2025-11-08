@@ -1,8 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { Sparkles, Brain, Zap } from 'lucide-react';
-import { CampaignInfo, PostContent, GeneratedPost, Platform } from '../types';
-import { generateAllPosts } from '../lib/gemini';
-import { getPlatformIcon, getPlatformDisplayName, getPlatformColors } from '../utils/platformIcons';
+import React, { useState, useEffect } from "react";
+import { Sparkles, Brain, Zap } from "lucide-react";
+import { CampaignInfo, PostContent, GeneratedPost, Platform } from "../types";
+import { generateAllPosts } from "../lib/gemini";
+import {
+  getPlatformIcon,
+  getPlatformDisplayName,
+  getPlatformColors,
+} from "../utils/platformIcons";
 
 interface AIGeneratorProps {
   contentData: any;
@@ -19,7 +23,7 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
   const [currentPlatform, setCurrentPlatform] = useState<Platform | null>(null);
   const [progress, setProgress] = useState(0);
 
-  const useRefFlag= React.useRef(false);
+  const useRefFlag = React.useRef(false);
   useEffect(() => {
     if (useRefFlag.current) return;
     useRefFlag.current = true;
@@ -30,34 +34,59 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
 
   const generatePosts = async () => {
     if (isGenerating) return; // Prevent duplicate calls
-    
+
     setIsGenerating(true);
     setProgress(0);
     setCurrentPlatform(null);
 
     try {
       // Use selected platforms from content data or default to LinkedIn
-      const targetPlatforms = contentData?.selectedPlatforms || contentData?.platforms || ['linkedin'];
+      const targetPlatforms = contentData?.selectedPlatforms ||
+        contentData?.platforms || ["linkedin"];
 
       // Create campaign info for generation - use real data when available
-      console.log('Preparing campaign info for AI generation', contentData);
+      console.log("Preparing campaign info for AI generation", contentData);
       const campaignInfo: CampaignInfo = {
-        name: contentData?.campaignName || contentData?.campaignInfo?.name || 'Default Campaign',
-        website: contentData?.website || contentData?.campaignInfo?.website || 'https://example.com',
-        industry: contentData?.industry || contentData?.campaignInfo?.industry || 'General',
-        description: contentData?.description || contentData?.campaignInfo?.description || 'General content generation',
-        targetAudience: contentData?.targetAudience || contentData?.campaignInfo?.target_audience || contentData?.campaignInfo?.targetAudience || 'General Audience',
-        brandTone: (contentData?.tone || contentData?.campaignInfo?.brand_tone || contentData?.campaignInfo?.brandTone as any) || 'professional',
-        goals: contentData?.goals || contentData?.campaignInfo?.goals || ['brand_building'],
+        name:
+          contentData?.campaignName ||
+          contentData?.campaignInfo?.name ||
+          "Default Campaign",
+        website:
+          contentData?.website ||
+          contentData?.campaignInfo?.website ||
+          "https://example.com",
+        industry:
+          contentData?.industry ||
+          contentData?.campaignInfo?.industry ||
+          "General",
+        description:
+          contentData?.description ||
+          contentData?.campaignInfo?.description ||
+          "General content generation",
+        targetAudience:
+          contentData?.targetAudience ||
+          contentData?.campaignInfo?.target_audience ||
+          contentData?.campaignInfo?.targetAudience ||
+          "General Audience",
+        brandTone:
+          contentData?.tone ||
+          contentData?.campaignInfo?.brand_tone ||
+          (contentData?.campaignInfo?.brandTone as any) ||
+          "professional",
+        goals: contentData?.goals ||
+          contentData?.campaignInfo?.goals || ["brand_building"],
         platforms: targetPlatforms,
         // Additional campaign fields if available
-        objective: contentData?.objective || contentData?.campaignInfo?.objective,
-        keywords: contentData?.keywords || contentData?.campaignInfo?.keywords || [],
-        hashtags: contentData?.hashtags || contentData?.campaignInfo?.hashtags || []
+        objective:
+          contentData?.objective || contentData?.campaignInfo?.objective,
+        keywords:
+          contentData?.keywords || contentData?.campaignInfo?.keywords || [],
+        hashtags:
+          contentData?.hashtags || contentData?.campaignInfo?.hashtags || [],
       };
 
-      console.log('Starting AI generation with campaign info:', campaignInfo);
-      console.log('Content data:', contentData);
+      console.log("Starting AI generation with campaign info:", campaignInfo);
+      console.log("Content data:", contentData);
 
       const posts = await generateAllPosts(
         campaignInfo,
@@ -109,30 +138,31 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
       if (posts && posts.length > 0) {
         onComplete(posts);
       } else {
-        console.error('No posts generated');
+        console.error("No posts generated");
         // Create fallback posts if generation fails
         const fallbackPosts = targetPlatforms.map((platform: Platform) => ({
           platform,
-          caption: contentData?.prompt || 'Check out our latest updates!',
-          hashtags: ['#business', '#updates'],
-          imageUrl: null
+          caption: contentData?.prompt || "Check out our latest updates!",
+          hashtags: ["#business", "#updates"],
+          imageUrl: null,
         }));
         onComplete(fallbackPosts);
       }
     } catch (error: any) {
-      console.error('Error generating posts:', error);
+      console.error("Error generating posts:", error);
       setIsGenerating(false);
       setCurrentPlatform(null);
 
       // Check if it's a quota error
-      if (error.message && error.message.includes('quota')) {
-        console.warn('API quota exceeded, creating fallback posts');
-        const targetPlatforms = contentData?.selectedPlatforms || contentData?.platforms || ['linkedin'];
+      if (error.message && error.message.includes("quota")) {
+        console.warn("API quota exceeded, creating fallback posts");
+        const targetPlatforms = contentData?.selectedPlatforms ||
+          contentData?.platforms || ["linkedin"];
         const fallbackPosts = targetPlatforms.map((platform: Platform) => ({
           platform,
-          caption: contentData?.prompt || 'Check out our latest updates!',
-          hashtags: ['#business', '#updates'],
-          imageUrl: null
+          caption: contentData?.prompt || "Check out our latest updates!",
+          hashtags: ["#business", "#updates"],
+          imageUrl: null,
         }));
         onComplete(fallbackPosts);
       } else {
@@ -140,8 +170,6 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
       }
     }
   };
-
-
 
   return (
     <div className="max-w-full mx-auto bg-white rounded-2xl shadow-lg m-6 h-fit px-6 py-8">
@@ -168,7 +196,7 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
 
         {/* Current Platform */}
         {currentPlatform && (
-          <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-xl border border-blue-200">
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-md border border-blue-200">
             <div className="flex items-center justify-center space-x-4">
               <div
                 className={`w-12 h-12 aspect-square rounded-full shadow-lg flex items-center justify-center animate-bounce text-white ${getPlatformColors(
@@ -209,21 +237,21 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
 
         {/* AI Features */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white border border-gray-200 p-4 rounded-lg">
+          <div className="bg-white border border-gray-200 p-4 rounded-md">
             <Sparkles className="w-6 h-6 text-yellow-500 mb-2" />
             <h3 className="font-medium text-gray-900">Smart Optimization</h3>
             <p className="text-sm text-gray-600">
               Tailoring content for each platform's unique audience
             </p>
           </div>
-          <div className="bg-white border border-gray-200 p-4 rounded-lg">
+          <div className="bg-white border border-gray-200 p-4 rounded-md">
             <Zap className="w-6 h-6 text-blue-500 mb-2" />
             <h3 className="font-medium text-gray-900">Hashtag Research</h3>
             <p className="text-sm text-gray-600">
               Finding trending and relevant hashtags
             </p>
           </div>
-          <div className="bg-white border border-gray-200 p-4 rounded-lg">
+          <div className="bg-white border border-gray-200 p-4 rounded-md">
             <Brain className="w-6 h-6 text-purple-500 mb-2" />
             <h3 className="font-medium text-gray-900">Tone Analysis</h3>
             <p className="text-sm text-gray-600">
@@ -232,7 +260,7 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
           </div>
         </div>
 
-        <div className="text-center text-sm text-gray-500">
+        <div className="text-center text-sm text-slate-500">
           <p>
             Processing{" "}
             {contentData?.selectedPlatforms?.length ||

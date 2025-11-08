@@ -1,58 +1,85 @@
-import { useState, useEffect } from 'react';
-import { Menu, X, ChevronDown, Play, Check, Share2, Zap, BarChart3, Calendar, Video, Sparkles, Star, ChevronLeft, ChevronRight, Users, TrendingUp } from 'lucide-react';
-import Icon from '../components/Icon';
-import { useNavigate } from 'react-router-dom';
-import LogoWhiteText from '../assets/logo-white-text.svg'
+import { useState, useEffect } from "react";
+import {
+  Menu,
+  X,
+  ChevronDown,
+  Play,
+  Check,
+  Share2,
+  Zap,
+  BarChart3,
+  Calendar,
+  Video,
+  Sparkles,
+  Star,
+  ChevronLeft,
+  ChevronRight,
+  Users,
+  TrendingUp,
+} from "lucide-react";
+import Icon from "../components/Icon";
+import { useNavigate } from "react-router-dom";
+import LogoWhiteText from "../assets/logo-white-text.svg";
 
 function HomePage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showAllFeatures, setShowAllFeatures] = useState(false);
   const [scrollY, setScrollY] = useState(0);
   const [currentReviewIndex, setCurrentReviewIndex] = useState(0);
-  const [slideDirection, setSlideDirection] = useState<'left' | 'right' | null>(null);
+  const [slideDirection, setSlideDirection] = useState<"left" | "right" | null>(
+    null
+  );
   const [showContactForm, setShowContactForm] = useState(false);
-  const navigate= useNavigate();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const allFeatures = [
     {
       icon: <Sparkles className="w-8 h-8" />,
       title: "AI-Powered Content",
-      description: "Generate engaging posts automatically using advanced AI technology tailored for each platform."
+      description:
+        "Generate engaging posts automatically using advanced AI technology tailored for each platform.",
     },
     {
       icon: <Calendar className="w-8 h-8" />,
       title: "Smart Scheduling",
-      description: "Schedule your posts across all platforms at optimal times for maximum engagement."
+      description:
+        "Schedule your posts across all platforms at optimal times for maximum engagement.",
     },
     {
       icon: <BarChart3 className="w-8 h-8" />,
       title: "Analytics Dashboard",
-      description: "Track performance metrics and insights across all your social media platforms in real-time."
+      description:
+        "Track performance metrics and insights across all your social media platforms in real-time.",
     },
     {
       icon: <Share2 className="w-8 h-8" />,
       title: "Multi-Platform Sync",
-      description: "Post simultaneously to Facebook, Instagram, YouTube, LinkedIn, and TikTok with one click."
+      description:
+        "Post simultaneously to Facebook, Instagram, YouTube, LinkedIn, and TikTok with one click.",
     },
     {
       icon: <Video className="w-8 h-8" />,
       title: "Media Optimization",
-      description: "Automatically resize and optimize images and videos for each platform's requirements."
+      description:
+        "Automatically resize and optimize images and videos for each platform's requirements.",
     },
     {
       icon: <Zap className="w-8 h-8" />,
       title: "Instant Publishing",
-      description: "Publish your content instantly or schedule it for later with our lightning-fast system."
-    }
+      description:
+        "Publish your content instantly or schedule it for later with our lightning-fast system.",
+    },
   ];
 
-  const displayedFeatures = showAllFeatures ? allFeatures : allFeatures.slice(0, 3);
+  const displayedFeatures = showAllFeatures
+    ? allFeatures
+    : allFeatures.slice(0, 3);
 
   const reviews = [
     {
@@ -61,7 +88,7 @@ function HomePage() {
       company: "TechFlow Inc",
       rating: 5,
       text: "Omnishare has completely transformed how we manage our social media presence. The AI-powered content generation saves us hours every week, and the multi-platform scheduling is seamless.",
-      avatar: "SJ"
+      avatar: "SJ",
     },
     {
       name: "Michael Chen",
@@ -69,7 +96,7 @@ function HomePage() {
       company: "GrowthLabs",
       rating: 5,
       text: "The analytics dashboard is incredibly powerful. We've seen a 300% increase in engagement since switching to Omnishare. The platform pays for itself within the first month.",
-      avatar: "MC"
+      avatar: "MC",
     },
     {
       name: "Emily Rodriguez",
@@ -77,7 +104,7 @@ function HomePage() {
       company: "Creative Studio",
       rating: 5,
       text: "As a solo creator managing multiple client accounts, Omnishare is a lifesaver. The AI understands each platform's nuances and creates perfectly optimized content every time.",
-      avatar: "ER"
+      avatar: "ER",
     },
     {
       name: "David Thompson",
@@ -85,7 +112,7 @@ function HomePage() {
       company: "StartupHub",
       rating: 5,
       text: "Best investment we've made for our marketing stack. The time saved on content creation allows us to focus on strategy and growth. Highly recommend for any business.",
-      avatar: "DT"
+      avatar: "DT",
     },
     {
       name: "Lisa Martinez",
@@ -93,41 +120,48 @@ function HomePage() {
       company: "Fashion Forward",
       rating: 5,
       text: "The media optimization feature is fantastic. Our posts look professional across all platforms, and the scheduling ensures we post at optimal times for maximum reach.",
-      avatar: "LM"
-    }
+      avatar: "LM",
+    },
   ];
 
   const faqs = [
     {
       question: "How does the AI content generation work?",
-      answer: "Our advanced AI analyzes your brand voice, target audience, and platform-specific best practices to generate engaging, relevant content. You can customize the tone and style to match your preferences."
+      answer:
+        "Our advanced AI analyzes your brand voice, target audience, and platform-specific best practices to generate engaging, relevant content. You can customize the tone and style to match your preferences.",
     },
     {
       question: "Can I schedule posts for all platforms at once?",
-      answer: "Yes! You can create one post and publish it across Facebook, Instagram, YouTube, LinkedIn, and TikTok simultaneously, or schedule them at different optimal times for each platform."
+      answer:
+        "Yes! You can create one post and publish it across Facebook, Instagram, YouTube, LinkedIn, and TikTok simultaneously, or schedule them at different optimal times for each platform.",
     },
     {
-      question: "What happens if I exceed my monthly post limit on the Basic plan?",
-      answer: "You'll receive a notification when approaching your limit. You can either upgrade to Pro for unlimited posts or wait until your next billing cycle. No posts are automatically deleted."
+      question:
+        "What happens if I exceed my monthly post limit on the Basic plan?",
+      answer:
+        "You'll receive a notification when approaching your limit. You can either upgrade to Pro for unlimited posts or wait until your next billing cycle. No posts are automatically deleted.",
     },
     {
       question: "Can I cancel my subscription at any time?",
-      answer: "Absolutely. You can cancel anytime from your account settings. You'll retain access until the end of your current billing period, and no future charges will be made."
+      answer:
+        "Absolutely. You can cancel anytime from your account settings. You'll retain access until the end of your current billing period, and no future charges will be made.",
     },
     {
       question: "Do you offer a free trial?",
-      answer: "Yes! We offer a 14-day free trial with full access to all Pro features. No credit card required to start your trial."
+      answer:
+        "Yes! We offer a 14-day free trial with full access to all Pro features. No credit card required to start your trial.",
     },
     {
       question: "How secure is my social media data?",
-      answer: "We use bank-level encryption and never store your social media passwords. All connections use OAuth 2.0, and we're fully GDPR and SOC 2 compliant."
-    }
+      answer:
+        "We use bank-level encryption and never store your social media passwords. All connections use OAuth 2.0, and we're fully GDPR and SOC 2 compliant.",
+    },
   ];
 
   const [expandedFaqIndex, setExpandedFaqIndex] = useState<number | null>(null);
 
   const nextReview = () => {
-    setSlideDirection('left');
+    setSlideDirection("left");
     setTimeout(() => {
       setCurrentReviewIndex((prev) => (prev + 1) % reviews.length);
       setSlideDirection(null);
@@ -135,9 +169,11 @@ function HomePage() {
   };
 
   const prevReview = () => {
-    setSlideDirection('right');
+    setSlideDirection("right");
     setTimeout(() => {
-      setCurrentReviewIndex((prev) => (prev - 1 + reviews.length) % reviews.length);
+      setCurrentReviewIndex(
+        (prev) => (prev - 1 + reviews.length) % reviews.length
+      );
       setSlideDirection(null);
     }, 300);
   };
@@ -145,7 +181,7 @@ function HomePage() {
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      element.scrollIntoView({ behavior: "smooth" });
       setIsMenuOpen(false);
     }
   };
@@ -707,7 +743,7 @@ function HomePage() {
                   <p className="text-gray-600">
                     {reviews[currentReviewIndex].role}
                   </p>
-                  <p className="text-gray-500 text-sm">
+                  <p className="text-slate-500 text-sm">
                     {reviews[currentReviewIndex].company}
                   </p>
                 </div>
@@ -796,7 +832,7 @@ function HomePage() {
                   </label>
                   <input
                     type="text"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7650e3] focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#7650e3] focus:border-transparent transition-all"
                     placeholder="John"
                   />
                 </div>
@@ -806,7 +842,7 @@ function HomePage() {
                   </label>
                   <input
                     type="text"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7650e3] focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#7650e3] focus:border-transparent transition-all"
                     placeholder="Doe"
                   />
                 </div>
@@ -818,7 +854,7 @@ function HomePage() {
                 </label>
                 <input
                   type="email"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7650e3] focus:border-transparent transition-all"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#7650e3] focus:border-transparent transition-all"
                   placeholder="john@example.com"
                 />
               </div>
@@ -829,14 +865,14 @@ function HomePage() {
                 </label>
                 <textarea
                   rows={6}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7650e3] focus:border-transparent transition-all"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#7650e3] focus:border-transparent transition-all"
                   placeholder="Tell us about your needs..."
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full bg-[#7650e3] text-white py-4 rounded-lg hover:bg-[#633cd3] transition-all font-semibold text-lg shadow-lg"
+                className="w-full bg-[#7650e3] text-white py-4 rounded-md hover:bg-[#633cd3] transition-all font-semibold text-lg shadow-lg"
               >
                 Send Message
               </button>
@@ -861,7 +897,7 @@ function HomePage() {
             {faqs.map((faq, index) => (
               <div
                 key={index}
-                className="bg-white rounded-xl shadow-md overflow-hidden transition-all hover:shadow-lg"
+                className="bg-white rounded-md shadow-md overflow-hidden transition-all hover:shadow-lg"
               >
                 <button
                   onClick={() =>

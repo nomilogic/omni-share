@@ -272,7 +272,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                       }}
                       className="group flex items-center px-4 py-3 text-md theme-text-light hover:theme-bg-secondary hover:theme-text-primary transition-all duration-150 ease-in-out"
                     >
-                      <div className="flex items-center justify-center w-8 h-8 rounded-lg theme-bg-trinary group-hover:theme-bg-primary mr-3 transition-colors duration-150">
+                      <div className="flex items-center justify-center w-8 h-8 rounded-md theme-bg-trinary group-hover:theme-bg-primary mr-3 transition-colors duration-150">
                         <Settings className="h-5 w-5 theme-text-light group-hover:theme-text-secondary" />
                       </div>
                       <div className="flex-1">
@@ -292,7 +292,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                       }}
                       className="group flex items-center w-full px-4 py-3 text-md theme-text-light transition-all duration-150 ease-in-out text-left"
                     >
-                      <div className="flex items-center justify-center w-8 h-8 rounded-lg theme-bg-trinary mr-3 transition-colors duration-150">
+                      <div className="flex items-center justify-center w-8 h-8 rounded-md theme-bg-trinary mr-3 transition-colors duration-150">
                         <LogOut className="h-5 w-5 theme-text-light" />
                       </div>
                       <div className="flex-1">
@@ -314,7 +314,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 px-2 py-4 space-y-1">
+            <nav className="flex-1 px-2 py-2 flex flex-col gap-y-1">
               {navigation.map((item) => {
                 const isActive = location.pathname === item.path;
                 const Icon = item.icon;
@@ -676,7 +676,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                           {/* Buttons */}
                           <button
                             onClick={() => openManageSubscription()}
-                            className="w-full py-2 text-md font-semibold rounded-lg border flex items-center justify-center gap-2 transition  hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
+                            className="w-full py-2 text-md font-semibold rounded-md border flex items-center justify-center gap-2 transition  hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
                             style={{ borderColor: "#7650e3", color: "#7650e3" }}
                           >
                             <Icon
@@ -690,7 +690,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                           <Link
                             to="/pricing"
                             onClick={() => setShowPackage(false)}
-                            className="w-full mt-3 p-2 text-md font-semibold rounded-lg flex items-center justify-center gap-2  text-white bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] border upgrade"
+                            className="w-full mt-3 p-2 text-md font-semibold rounded-md flex items-center justify-center gap-2  text-white bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] border upgrade"
                           >
                             <div className="hover:filter-omni h-full w-full text-center">
                               <Icon
@@ -703,7 +703,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                           </Link>
                         </>
                       ) : (
-                        <p className="text-gray-500 text-md text-center">
+                        <p className="text-slate-500 text-md text-center">
                           No active package found
                         </p>
                       )}

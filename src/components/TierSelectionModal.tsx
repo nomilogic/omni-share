@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { X, Star, Zap, Crown, Check } from 'lucide-react';
-import { useAppContext } from '../context/AppContext';
+import React, { useState } from "react";
+import { X, Star, Zap, Crown, Check } from "lucide-react";
+import { useAppContext } from "../context/AppContext";
 
 interface PricingTier {
-  id: 'free' | 'ipro' | 'business';
+  id: "free" | "ipro" | "business";
   name: string;
   price: string;
   description: string;
@@ -16,65 +16,65 @@ interface PricingTier {
 
 const pricingTiers: PricingTier[] = [
   {
-    id: 'free',
-    name: 'aiFree',
-    price: '$0',
-    description: 'Perfect for getting started',
+    id: "free",
+    name: "aiFree",
+    price: "$0",
+    description: "Perfect for getting started",
     features: [
-      'Basic content creation',
-      'Limited AI generations (5/month)',
-      'Manual posting only',
-      '1 social platform',
-      'Basic templates'
+      "Basic content creation",
+      "Limited AI generations (5/month)",
+      "Manual posting only",
+      "1 social platform",
+      "Basic templates",
     ],
     icon: Star,
-    buttonText: 'Get Started Free',
-    buttonClass: 'bg-gray-600 hover:bg-gray-700 text-white'
+    buttonText: "Get Started Free",
+    buttonClass: "bg-gray-600 hover:bg-gray-700 text-white",
   },
   {
-    id: 'ipro',
-    name: 'aiPRO',
-    price: '$39.99',
-    description: 'Most popular for creators',
+    id: "ipro",
+    name: "aiPRO",
+    price: "$39.99",
+    description: "Most popular for creators",
     features: [
-      '1000 textual posts per month',
-      '20 AI image generations',
-      'ChatGPT-4 & Gemini Pro access',
-      'Auto post scheduling',
-      'Multi-platform support',
-      'Advanced analytics',
-      'Priority support'
+      "1000 textual posts per month",
+      "20 AI image generations",
+      "ChatGPT-4 & Gemini Pro access",
+      "Auto post scheduling",
+      "Multi-platform support",
+      "Advanced analytics",
+      "Priority support",
     ],
     icon: Zap,
     popular: true,
-    buttonText: 'Start Pro Trial',
-    buttonClass: 'bg-blue-600 hover:bg-blue-700 text-white'
+    buttonText: "Start Pro Trial",
+    buttonClass: "bg-blue-600 hover:bg-blue-700 text-white",
   },
   {
-    id: 'business',
-    name: 'aiBusiness',
-    price: '$99.99',
-    description: 'For teams and businesses',
+    id: "business",
+    name: "aiBusiness",
+    price: "$99.99",
+    description: "For teams and businesses",
     features: [
-      'Unlimited content creation',
-      'Unlimited AI generations',
-      'All AI models access',
-      'Advanced scheduling',
-      'Team collaboration',
-      'White-label options',
-      'Custom integrations',
-      'Dedicated support'
+      "Unlimited content creation",
+      "Unlimited AI generations",
+      "All AI models access",
+      "Advanced scheduling",
+      "Team collaboration",
+      "White-label options",
+      "Custom integrations",
+      "Dedicated support",
     ],
     icon: Crown,
-    buttonText: 'Start Business Trial',
-    buttonClass: 'bg-purple-600 hover:bg-purple-700 text-white'
-  }
+    buttonText: "Start Business Trial",
+    buttonClass: "bg-purple-600 hover:bg-purple-700 text-white",
+  },
 ];
 
 interface TierSelectionModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelectPlan: (planId: 'free' | 'ipro' | 'business') => void;
+  onSelectPlan: (planId: "free" | "ipro" | "business") => void;
   loading?: boolean;
 }
 
@@ -82,13 +82,15 @@ export const TierSelectionModal: React.FC<TierSelectionModalProps> = ({
   isOpen,
   onClose,
   onSelectPlan,
-  loading = false
+  loading = false,
 }) => {
-  const [selectedPlan, setSelectedPlan] = useState<'free' | 'ipro' | 'business' | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<
+    "free" | "ipro" | "business" | null
+  >(null);
 
   if (!isOpen) return null;
 
-  const handleSelectPlan = (planId: 'free' | 'ipro' | 'business') => {
+  const handleSelectPlan = (planId: "free" | "ipro" | "business") => {
     setSelectedPlan(planId);
     onSelectPlan(planId);
   };
@@ -99,8 +101,12 @@ export const TierSelectionModal: React.FC<TierSelectionModalProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Choose Your Plan</h2>
-            <p className="text-gray-600 mt-1">Select the plan that best fits your needs</p>
+            <h2 className="text-2xl font-bold text-gray-900">
+              Choose Your Plan
+            </h2>
+            <p className="text-gray-600 mt-1">
+              Select the plan that best fits your needs
+            </p>
           </div>
           <button
             onClick={onClose}
@@ -119,8 +125,10 @@ export const TierSelectionModal: React.FC<TierSelectionModalProps> = ({
               return (
                 <div
                   key={tier.id}
-                  className={`relative bg-gray-50 rounded-xl p-6 transition-all duration-300 hover:shadow-lg ${
-                    tier.popular ? 'ring-2 ring-blue-500 bg-blue-50' : 'hover:bg-gray-100'
+                  className={`relative bg-gray-50 rounded-md p-6 transition-all duration-300 hover:shadow-lg ${
+                    tier.popular
+                      ? "ring-2 ring-blue-500 bg-blue-50"
+                      : "hover:bg-gray-100"
                   }`}
                 >
                   {tier.popular && (
@@ -132,14 +140,26 @@ export const TierSelectionModal: React.FC<TierSelectionModalProps> = ({
                   )}
 
                   <div className="text-center mb-6">
-                    <Icon className={`w-10 h-10 mx-auto mb-3 ${
-                      tier.popular ? 'text-blue-600' : 'text-gray-600'
-                    }`} />
-                    <h3 className="text-xl font-bold text-gray-900 mb-1">{tier.name}</h3>
-                    <p className="text-gray-600 text-sm mb-3">{tier.description}</p>
+                    <Icon
+                      className={`w-10 h-10 mx-auto mb-3 ${
+                        tier.popular ? "text-blue-600" : "text-gray-600"
+                      }`}
+                    />
+                    <h3 className="text-xl font-bold text-gray-900 mb-1">
+                      {tier.name}
+                    </h3>
+                    <p className="text-gray-600 text-sm mb-3">
+                      {tier.description}
+                    </p>
                     <div className="flex items-baseline justify-center">
-                      <span className="text-3xl font-bold text-gray-900">{tier.price}</span>
-                      {tier.price !== '$0' && <span className="text-gray-600 ml-1 text-sm">/month</span>}
+                      <span className="text-3xl font-bold text-gray-900">
+                        {tier.price}
+                      </span>
+                      {tier.price !== "$0" && (
+                        <span className="text-gray-600 ml-1 text-sm">
+                          /month
+                        </span>
+                      )}
                     </div>
                   </div>
 
@@ -155,11 +175,17 @@ export const TierSelectionModal: React.FC<TierSelectionModalProps> = ({
                   <button
                     onClick={() => handleSelectPlan(tier.id)}
                     disabled={loading && selectedPlan === tier.id}
-                    className={`w-full py-2.5 px-4 rounded-lg font-medium transition-colors duration-200 text-sm ${tier.buttonClass} ${
-                      loading && selectedPlan === tier.id ? 'opacity-50 cursor-not-allowed' : ''
+                    className={`w-full py-2.5 px-4 rounded-md font-medium transition-colors duration-200 text-sm ${
+                      tier.buttonClass
+                    } ${
+                      loading && selectedPlan === tier.id
+                        ? "opacity-50 cursor-not-allowed"
+                        : ""
                     }`}
                   >
-                    {loading && selectedPlan === tier.id ? 'Setting up...' : tier.buttonText}
+                    {loading && selectedPlan === tier.id
+                      ? "Setting up..."
+                      : tier.buttonText}
                   </button>
                 </div>
               );
@@ -168,7 +194,8 @@ export const TierSelectionModal: React.FC<TierSelectionModalProps> = ({
 
           <div className="text-center mt-6">
             <p className="text-gray-600 text-sm">
-              All plans include a 14-day free trial. No credit card required for Free plan.
+              All plans include a 14-day free trial. No credit card required for
+              Free plan.
             </p>
           </div>
         </div>

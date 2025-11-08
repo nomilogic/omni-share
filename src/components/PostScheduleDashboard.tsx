@@ -55,7 +55,7 @@ export const PostScheduleDashboard: React.FC<PostScheduleDashboardProps> = ({
       setIsLoading(true); // Set loading for post list
       const posts = await scheduleService.getScheduledPosts(campaignId);
       setScheduledPosts(
-        posts.map((post) => ({ ...post, scheduledDate: new Date(post.date) })),
+        posts.map((post) => ({ ...post, scheduledDate: new Date(post.date) }))
       ); // Ensure scheduledDate is a Date object
     } catch (error) {
       console.error("Failed to load scheduled posts:", error);
@@ -75,7 +75,7 @@ export const PostScheduleDashboard: React.FC<PostScheduleDashboardProps> = ({
   };
 
   const handleGenerateSchedule = async (
-    request: ScheduleRequest,
+    request: ScheduleRequest
   ): Promise<GeneratedSchedule[]> => {
     try {
       setIsGeneratingSchedule(true);
@@ -161,10 +161,10 @@ export const PostScheduleDashboard: React.FC<PostScheduleDashboardProps> = ({
   });
 
   const NavigationTabs = () => (
-    <div className="flex space-x-1 theme-bg-secondary p-1 rounded-lg">
+    <div className="flex space-x-1 theme-bg-secondary p-1 rounded-md">
       <button
         onClick={() => setActiveView("calendar")}
-        className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+        className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors ${
           activeView === "calendar"
             ? "theme-bg-primary theme-text-secondary shadow-sm"
             : "theme-text-light hover:theme-text-primary"
@@ -176,7 +176,7 @@ export const PostScheduleDashboard: React.FC<PostScheduleDashboardProps> = ({
 
       <button
         onClick={() => setActiveView("generator")}
-        className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+        className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors ${
           activeView === "generator"
             ? "theme-bg-accent theme-text-secondary shadow-sm"
             : "theme-text-light hover:theme-text-primary"
@@ -188,7 +188,7 @@ export const PostScheduleDashboard: React.FC<PostScheduleDashboardProps> = ({
 
       <button
         onClick={() => setActiveView("analytics")}
-        className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+        className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors ${
           activeView === "analytics"
             ? "theme-bg-accent theme-text-secondary shadow-sm"
             : "theme-text-light hover:theme-text-primary"
@@ -200,7 +200,7 @@ export const PostScheduleDashboard: React.FC<PostScheduleDashboardProps> = ({
 
       <button
         onClick={() => setActiveView("create")}
-        className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+        className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors ${
           activeView === "create"
             ? "theme-bg-accent theme-text-secondary shadow-sm"
             : "theme-text-light hover:theme-text-primary"
@@ -227,7 +227,7 @@ export const PostScheduleDashboard: React.FC<PostScheduleDashboardProps> = ({
       <div className="space-y-6">
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="theme-bg-card p-6 rounded-lg backdrop-blur-lg">
+          <div className="theme-bg-card p-6 rounded-md backdrop-blur-lg">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium theme-text-light">
@@ -244,7 +244,7 @@ export const PostScheduleDashboard: React.FC<PostScheduleDashboardProps> = ({
             </div>
           </div>
 
-          <div className="theme-bg-card p-6 rounded-lg backdrop-blur-lg">
+          <div className="theme-bg-card p-6 rounded-md backdrop-blur-lg">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium theme-text-light">
@@ -261,7 +261,7 @@ export const PostScheduleDashboard: React.FC<PostScheduleDashboardProps> = ({
             </div>
           </div>
 
-          <div className="theme-bg-card p-6 rounded-lg backdrop-blur-lg">
+          <div className="theme-bg-card p-6 rounded-md backdrop-blur-lg">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium theme-text-light">
@@ -280,7 +280,7 @@ export const PostScheduleDashboard: React.FC<PostScheduleDashboardProps> = ({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="theme-bg-card rounded-lg p-6">
+          <div className="theme-bg-card rounded-md p-6">
             <h3 className="text-lg font-semibold theme-text-primary mb-4">
               Posts by Platform
             </h3>
@@ -298,12 +298,12 @@ export const PostScheduleDashboard: React.FC<PostScheduleDashboardProps> = ({
                       {count as number}
                     </span>
                   </div>
-                ),
+                )
               )}
             </div>
           </div>
 
-          <div className="theme-bg-card rounded-lg p-6">
+          <div className="theme-bg-card rounded-md p-6">
             <h3 className="text-lg font-semibold theme-text-primary mb-4">
               Posts by Category
             </h3>
@@ -321,13 +321,13 @@ export const PostScheduleDashboard: React.FC<PostScheduleDashboardProps> = ({
                       {count as number}
                     </span>
                   </div>
-                ),
+                )
               )}
             </div>
           </div>
         </div>
 
-        <div className="theme-bg-card rounded-lg p-6">
+        <div className="theme-bg-card rounded-md p-6">
           <h3 className="text-lg font-semibold theme-text-primary mb-4">
             Upcoming Posts
           </h3>
@@ -335,7 +335,7 @@ export const PostScheduleDashboard: React.FC<PostScheduleDashboardProps> = ({
             {analytics.upcomingPosts?.slice(0, 5).map((post: ScheduledPost) => (
               <div
                 key={post.id}
-                className="flex justify-between items-start p-3 theme-bg-secondary rounded-lg"
+                className="flex justify-between items-start p-3 theme-bg-secondary rounded-md"
               >
                 <div className="flex-1">
                   <p className="font-medium theme-text-primary truncate">
@@ -429,7 +429,7 @@ export const PostScheduleDashboard: React.FC<PostScheduleDashboardProps> = ({
         {activeView === "analytics" && <AnalyticsView />}
 
         {activeView === "create" && (
-          <div className="theme-bg-card rounded-lg p-6">
+          <div className="theme-bg-card rounded-md p-6">
             <div className="mb-6">
               <h2 className="text-2xl font-bold theme-text-primary mb-2">
                 Create Scheduled Post
@@ -455,7 +455,7 @@ export const PostScheduleDashboard: React.FC<PostScheduleDashboardProps> = ({
                   setActiveView("calendar");
                   setSelectedDate(null);
                 }}
-                className="px-4 py-2 theme-border text-theme-text-light rounded-lg hover:theme-bg-secondary transition-colors"
+                className="px-4 py-2 theme-border text-theme-text-light rounded-md hover:theme-bg-secondary transition-colors"
               >
                 Cancel
               </button>
@@ -464,7 +464,7 @@ export const PostScheduleDashboard: React.FC<PostScheduleDashboardProps> = ({
         )}
 
         {/* Scheduled Posts List */}
-        <div className="theme-bg-card rounded-lg backdrop-blur-lg">
+        <div className="theme-bg-card rounded-md backdrop-blur-lg">
           <div
             className="p-6"
             style={{ borderBottom: "1px solid var(--theme-border)" }}

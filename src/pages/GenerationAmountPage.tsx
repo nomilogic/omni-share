@@ -95,7 +95,7 @@ const GenerationAmountPage = () => {
           {/* Type Selector */}
           <select
             {...register("type", { required: true })}
-            className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-1 focus:ring-black outline-none text-gray-800 bg-white"
+            className="border border-gray-300 rounded-md px-3 py-2 focus:ring-1 focus:ring-black outline-none text-gray-800 bg-white"
           >
             <option value="">Select Type</option>
             <option value="image">Image</option>
@@ -107,14 +107,14 @@ const GenerationAmountPage = () => {
             type="number"
             placeholder="Enter Amount"
             {...register("amount", { required: true })}
-            className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-1 focus:ring-black outline-none text-gray-800 bg-white"
+            className="border border-gray-300 rounded-md px-3 py-2 focus:ring-1 focus:ring-black outline-none text-gray-800 bg-white"
           />
 
           {/* Submit Button */}
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex items-center justify-center gap-2 bg-black text-white font-medium px-4 py-2 rounded-lg hover:bg-gray-900 transition-all disabled:opacity-60"
+            className="flex items-center justify-center gap-2 bg-black text-white font-medium px-4 py-2 rounded-md hover:bg-gray-900 transition-all disabled:opacity-60"
           >
             {isSubmitting ? (
               <>
@@ -136,11 +136,11 @@ const GenerationAmountPage = () => {
               <Loader2 className="w-6 h-6 animate-spin text-black" />
             </div>
           ) : generationAmounts.length === 0 ? (
-            <p className="text-gray-500 text-center py-6">
+            <p className="text-slate-500 text-center py-6">
               No generation amounts found.
             </p>
           ) : (
-            <table className="min-w-full border border-gray-200 rounded-lg overflow-hidden">
+            <table className="min-w-full border border-gray-200 rounded-md overflow-hidden">
               <thead className="bg-gray-100 text-gray-800 text-sm uppercase">
                 <tr>
                   <th className="px-4 py-2 text-left font-medium">Type</th>

@@ -162,7 +162,7 @@ export const DashboardPage: React.FC = () => {
       <div className="min-h-[50vh] flex items-center justify-center theme-card-bg">
         <div className="w-full mx-auto text-center space-y-6">
           <div className="relative">
-            <div className="w-16 h-16 theme-bg-card rounded-xl flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 theme-bg-card rounded-md flex items-center justify-center mx-auto mb-4">
               <Icon className="w-8 h-8 theme-text-primary" />
             </div>
             <div className="absolute -top-1 -right-1 theme-bg-secondary theme-text-primary text-xs font-semibold px-2 py-1 rounded-full">
@@ -188,7 +188,7 @@ export const DashboardPage: React.FC = () => {
             </button>
             <button
               onClick={nextOnboardingStep}
-              className="flex items-center space-x-2 theme-button-primary text-white px-6 py-2 text-sm rounded-lg hover:theme-button-hover transition-colors duration-200"
+              className="flex items-center space-x-2 theme-button-primary text-white px-6 py-2 text-sm rounded-md hover:theme-button-hover transition-colors duration-200"
             >
               <span>
                 {onboardingStep === onboardingSteps.length - 1
@@ -255,7 +255,7 @@ export const DashboardPage: React.FC = () => {
         <div className="flex justify-center">
           <button
             onClick={() => navigate("/content")}
-            className="flex items-center gap-2 theme-button-secondary text-white px-6 py-3 rounded-lg hover:theme-button-hover transition-all duration-200 pulse-glow border border-white/20 w-full"
+            className="flex items-center gap-2 theme-button-secondary text-white px-6 py-3 rounded-md hover:theme-button-hover transition-all duration-200 pulse-glow border border-white/20 w-full"
           >
             <Plus className="w-5 h-5" />
             <span className="text-base font-medium">Create Content</span>
@@ -264,7 +264,7 @@ export const DashboardPage: React.FC = () => {
 
         {/* Stats Overview - 2 Columns Row */}
         <div className="grid grid-cols-2 gap-4">
-          <div className="bg-white rounded-xl border border-white/20 p-4 floating-element">
+          <div className="bg-white rounded-md border border-white/20 p-4 floating-element">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-sm  font-medium theme-text-light text-white">
@@ -277,14 +277,14 @@ export const DashboardPage: React.FC = () => {
                   Get started by creating content
                 </p>
               </div>
-              <div className="theme-bg-light p-2 rounded-lg">
+              <div className="theme-bg-light p-2 rounded-md">
                 <TrendingUp className="w-5 h-5 theme-text-primary" />
               </div>
             </div>
           </div>
 
           <div
-            className="bg-white rounded-xl border border-white/20 p-4 floating-element"
+            className="bg-white rounded-md border border-white/20 p-4 floating-element"
             style={{ animationDelay: "0.2s" }}
           >
             <div className="flex items-center justify-between">
@@ -299,7 +299,7 @@ export const DashboardPage: React.FC = () => {
                   Schedule your first post
                 </p>
               </div>
-              <div className="theme-bg-light p-2 rounded-lg">
+              <div className="theme-bg-light p-2 rounded-md">
                 <Calendar className="w-5 h-5 theme-text-primary" />
               </div>
             </div>
@@ -314,10 +314,10 @@ export const DashboardPage: React.FC = () => {
               <div
                 key={index}
                 onClick={action.action}
-                className="theme-bg-trinary rounded-xl shadow-sm border border-white/20 p-4 cursor-pointer transition-all duration-200 hover:shadow-md hover:scale-105 floating-element"
+                className="theme-bg-trinary rounded-md shadow-sm border border-white/20 p-4 cursor-pointer transition-all duration-200 hover:shadow-md hover:scale-105 floating-element"
               >
                 <div
-                  className={`w-8 h-8 ${action.color} rounded-lg flex items-center justify-center mb-3`}
+                  className={`w-8 h-8 ${action.color} rounded-md flex items-center justify-center mb-3`}
                 >
                   <Icon className="w-4 h-4 " />
                 </div>
@@ -334,7 +334,7 @@ export const DashboardPage: React.FC = () => {
 
         {/* Recent Activity */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="theme-bg-card p-6 rounded-lg backdrop-blur-lg">
+          <div className="theme-bg-card p-6 rounded-md backdrop-blur-lg">
             <h2 className="text-xl font-semibold theme-text-primary mb-4">
               Recent Posts
             </h2>
@@ -343,10 +343,10 @@ export const DashboardPage: React.FC = () => {
                 recentPosts.map((post) => (
                   <div
                     key={post.id}
-                    className="flex items-start space-x-3 p-3 theme-bg-primary rounded-lg"
+                    className="flex items-start space-x-3 p-3 theme-bg-primary rounded-md"
                   >
                     <div className="flex-shrink-0">
-                      <div className="w-10 h-10 theme-bg-secondary rounded-lg flex items-center justify-center">
+                      <div className="w-10 h-10 theme-bg-secondary rounded-md flex items-center justify-center">
                         <FileText
                           className="w-5 h-5"
                           style={{ color: "var(--theme-primary)" }}
@@ -385,7 +385,7 @@ export const DashboardPage: React.FC = () => {
                   </p>
                   <button
                     onClick={() => navigate("/content")}
-                    className="text-xs theme-button-primary text-white px-4 py-2 rounded-lg hover:theme-button-hover transition-colors"
+                    className="text-xs theme-button-primary text-white px-4 py-2 rounded-md hover:theme-button-hover transition-colors"
                   >
                     Create Content
                   </button>
@@ -394,30 +394,30 @@ export const DashboardPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="theme-bg-card p-6 rounded-lg backdrop-blur-lg">
+          <div className="theme-bg-card p-6 rounded-md backdrop-blur-lg">
             <h2 className="text-xl font-semibold theme-text-primary mb-4">
               Analytics Overview
             </h2>
             <div className="space-y-4">
-              <div className="flex justify-between items-center p-3 theme-bg-primary rounded-lg">
+              <div className="flex justify-between items-center p-3 theme-bg-primary rounded-md">
                 <span className="text-sm font-medium theme-text-secondary">
                   Impressions
                 </span>
                 <span className="text-sm font-bold theme-text-primary">0</span>
               </div>
-              <div className="flex justify-between items-center p-3 theme-bg-primary rounded-lg">
+              <div className="flex justify-between items-center p-3 theme-bg-primary rounded-md">
                 <span className="text-sm font-medium theme-text-secondary">
                   Clicks
                 </span>
                 <span className="text-sm font-bold theme-text-primary">0</span>
               </div>
-              <div className="flex justify-between items-center p-3 theme-bg-primary rounded-lg">
+              <div className="flex justify-between items-center p-3 theme-bg-primary rounded-md">
                 <span className="text-sm font-medium theme-text-secondary">
                   Engagement Rate
                 </span>
                 <span className="text-sm font-bold theme-text-primary">0%</span>
               </div>
-              <div className="flex justify-between items-center p-3 theme-bg-primary rounded-lg">
+              <div className="flex justify-between items-center p-3 theme-bg-primary rounded-md">
                 <span className="text-sm font-medium theme-text-secondary">
                   Followers Growth
                 </span>
@@ -434,7 +434,7 @@ export const DashboardPage: React.FC = () => {
 
         {/* Show onboarding again button if user needs tier selection or profile setup - HIDDEN FOR NOW */}
         {/* {!state.selectedProfile && !state.hasTierSelected && !state.hasProfileSetup && (
-          <div className="theme-bg-card rounded-xl shadow-sm border border-white/20 p-4 text-center floating-element">
+          <div className="theme-bg-card rounded-md shadow-sm border border-white/20 p-4 text-center floating-element">
             <h2 className="text-lg font-bold theme-text-primary mb-2">
               Get Started with Your First Content
             </h2>
@@ -444,7 +444,7 @@ export const DashboardPage: React.FC = () => {
             </p>
             <button
               onClick={() => setShowTierModal(true)}
-              className="theme-button-secondary text-white px-6 py-2 text-sm rounded-lg hover:theme-button-hover transition-colors duration-200 border border-white/20"
+              className="theme-button-secondary text-white px-6 py-2 text-sm rounded-md hover:theme-button-hover transition-colors duration-200 border border-white/20"
             >
               Choose Your Plan
             </button>

@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 // Form data types matching Profile schema
 interface FormData {
   // Section 1: Personal Information
   fullName: string;
   email: string;
-  phoneNumber?: string;  // optional
+  phoneNumber?: string; // optional
 
   // Section 2: Brand Setup
   publicUrl: string;
@@ -28,7 +28,7 @@ interface FormData {
   // Section 4: Goals & Objectives
   primaryPurpose: string[];
   keyOutcomes: string[];
-  postingStyle?: string;  // optional
+  postingStyle?: string; // optional
 }
 
 // Smart prefill data structure from AI analysis
@@ -68,24 +68,24 @@ const EXAMPLE_AI_RESPONSE = {
   brandInfo: {
     brandName: "Tech Innovators",
     brandLogo: "https://example.com/logo.png",
-    brandTone: "Professional"
+    brandTone: "Professional",
   },
   audienceInsights: {
     audienceAgeRange: ["25-34", "35-44"],
     audienceGender: "All",
     audienceRegions: ["UAE", "Saudi Arabia"],
     audienceInterests: ["Technology", "Innovation"],
-    audienceSegments: ["Professionals", "Entrepreneurs"]
+    audienceSegments: ["Professionals", "Entrepreneurs"],
   },
   contentStrategy: {
     primaryPlatforms: ["LinkedIn", "Instagram", "Twitter"],
     contentCategories: ["Technology", "Business"],
-    postingStyle: "Informative"
+    postingStyle: "Informative",
   },
   goalInsights: {
     primaryPurpose: ["Build personal brand", "Share expertise"],
-    keyOutcomes: ["Generate leads/sales", "Build community"]
-  }
+    keyOutcomes: ["Generate leads/sales", "Build community"],
+  },
 };
 
 // Form section configuration type
@@ -99,25 +99,31 @@ interface Section {
 const SECTIONS: Section[] = [
   {
     title: "Personal Information",
-    subtext: "Let's start with the basics — tell us a bit about yourself so we can personalize your experience."
+    subtext:
+      "Let's start with the basics — tell us a bit about yourself so we can personalize your experience.",
   },
   {
     title: "Brand Setup",
-    subtext: "Share a link to your public profile or website — OmniShare will use it to understand your brand and audience.",
-    helperText: "You can add a website, Instagram, LinkedIn, TikTok, Behance, YouTube, or any other public link."
+    subtext:
+      "Share a link to your public profile or website — OmniShare will use it to understand your brand and audience.",
+    helperText:
+      "You can add a website, Instagram, LinkedIn, TikTok, Behance, YouTube, or any other public link.",
   },
   {
     title: "Target Audience",
-    subtext: "Based on your public profile, we'll suggest an audience — you can review or update it."
+    subtext:
+      "Based on your public profile, we'll suggest an audience — you can review or update it.",
   },
   {
     title: "Content Preferences",
-    subtext: "Tell us what kind of content you create and where you publish — OmniShare will optimize for those platforms."
+    subtext:
+      "Tell us what kind of content you create and where you publish — OmniShare will optimize for those platforms.",
   },
   {
     title: "Goals & Objectives",
-    subtext: "Why do you post on social platforms? This helps OmniShare personalize your content and recommendations."
-  }
+    subtext:
+      "Why do you post on social platforms? This helps OmniShare personalize your content and recommendations.",
+  },
 ];
 
 // Form options constants
@@ -127,29 +133,59 @@ const BRAND_TONES = ["Professional", "Playful", "Inspirational", "Casual"];
 // Audience Options
 const AGE_RANGES = ["18-24", "25-34", "35-44", "45-54", "55+"];
 const GENDER_OPTIONS = ["Male", "Female", "All", "Prefer not to say"];
-const AUDIENCE_SEGMENTS = ["Professionals", "Students", "Entrepreneurs", "Families", "Influencers"];
+const AUDIENCE_SEGMENTS = [
+  "Professionals",
+  "Students",
+  "Entrepreneurs",
+  "Families",
+  "Influencers",
+];
 
 // Content & Platform Options
-const PRIMARY_PLATFORMS = ["Instagram", "LinkedIn", "TikTok", "YouTube", "Facebook", "Pinterest"];
-const CONTENT_CATEGORIES = ["Technology", "Lifestyle", "Fashion", "Travel", "Food & Beverage", "Business", "Education", "Entertainment", "Health & Wellness", "Sports"];
-const POSTING_STYLES = ["Informative", "Entertaining", "Inspirational", "Conversational", "Mixed"];
+const PRIMARY_PLATFORMS = [
+  "Instagram",
+  "LinkedIn",
+  "TikTok",
+  "YouTube",
+  "Facebook",
+  "Pinterest",
+];
+const CONTENT_CATEGORIES = [
+  "Technology",
+  "Lifestyle",
+  "Fashion",
+  "Travel",
+  "Food & Beverage",
+  "Business",
+  "Education",
+  "Entertainment",
+  "Health & Wellness",
+  "Sports",
+];
+const POSTING_STYLES = [
+  "Informative",
+  "Entertaining",
+  "Inspirational",
+  "Conversational",
+  "Mixed",
+];
 
 // Goals and Outcomes
 const PRIMARY_PURPOSES = [
   "Build personal brand",
-  "Promote business", 
+  "Promote business",
   "Share expertise",
   "Showcase work",
   "Sell products/services",
-  "Stay connected"
+  "Stay connected",
 ];
 const KEY_OUTCOMES = [
   "Increase followers",
-  "Drive website traffic", 
+  "Drive website traffic",
   "Generate leads/sales",
   "Boost engagement",
   "Build community",
-  "Gain credibility"
+  "Gain credibility",
 ];
 
 // Form options constants
@@ -158,36 +194,40 @@ const SOCIAL_GOALS = [
   "Build personal brand",
   "Promote business",
   "Share expertise",
-  "Showcase work", 
+  "Showcase work",
   "Sell products/services",
-  "Stay connected"
+  "Stay connected",
 ];
-
-
 
 // Constants for form sections and options
 const FORM_SECTIONS: Section[] = [
   {
     title: "Personal Information",
-    subtext: "Let's start with the basics — tell us a bit about yourself so we can personalize your experience."
+    subtext:
+      "Let's start with the basics — tell us a bit about yourself so we can personalize your experience.",
   },
   {
     title: "Brand Setup",
-    subtext: "Share a link to your public profile or website — OmniShare will use it to understand your brand and audience.",
-    helperText: "You can add a website, Instagram, LinkedIn, TikTok, Behance, YouTube, or any other public link."
+    subtext:
+      "Share a link to your public profile or website — OmniShare will use it to understand your brand and audience.",
+    helperText:
+      "You can add a website, Instagram, LinkedIn, TikTok, Behance, YouTube, or any other public link.",
   },
   {
     title: "Target Audience",
-    subtext: "Based on your public profile, we'll suggest an audience — you can review or update it."
+    subtext:
+      "Based on your public profile, we'll suggest an audience — you can review or update it.",
   },
   {
     title: "Content Preferences",
-    subtext: "Tell us what kind of content you create and where you publish — OmniShare will optimize for those platforms."
+    subtext:
+      "Tell us what kind of content you create and where you publish — OmniShare will optimize for those platforms.",
   },
   {
     title: "Goals & Objectives",
-    subtext: "Why do you post on social platforms? This helps OmniShare personalize your content and recommendations."
-  }
+    subtext:
+      "Why do you post on social platforms? This helps OmniShare personalize your content and recommendations.",
+  },
 ];
 
 const OnboardingForm: React.FC = () => {
@@ -196,19 +236,19 @@ const OnboardingForm: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<FormData>({
     // Section 1: Personal Information
-    fullName: '',
-    email: '',
-    phoneNumber: '',
+    fullName: "",
+    email: "",
+    phoneNumber: "",
 
     // Section 2: Brand Setup
-    publicUrl: '',
-    brandName: '',
+    publicUrl: "",
+    brandName: "",
     brandLogo: null,
-    brandTone: '',
+    brandTone: "",
 
     // Target Audience
     audienceAgeRange: [],
-    audienceGender: '',
+    audienceGender: "",
     audienceRegions: [],
     audienceInterests: [],
     audienceSegments: [],
@@ -220,7 +260,7 @@ const OnboardingForm: React.FC = () => {
     // Section 4: Goals & Objectives
     primaryPurpose: [],
     keyOutcomes: [],
-    postingStyle: ''
+    postingStyle: "",
   });
 
   // Smart prefill logic
@@ -230,13 +270,13 @@ const OnboardingForm: React.FC = () => {
     setIsLoading(true);
     try {
       // Simulate AI analysis
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       // This would be an API call to the AI service in production
       const smartData: SmartPrefillData = EXAMPLE_AI_RESPONSE;
 
       // Update form data with AI insights
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         // Brand Setup
         brandName: smartData.brandInfo.brandName,
@@ -257,45 +297,53 @@ const OnboardingForm: React.FC = () => {
 
         // Goals & Objectives
         primaryPurpose: smartData.goalInsights.primaryPurpose,
-        keyOutcomes: smartData.goalInsights.keyOutcomes
+        keyOutcomes: smartData.goalInsights.keyOutcomes,
       }));
 
       // Show success message with details
-      alert('Successfully analyzed your profile!\n\nWe detected:\n' +
-        `• Brand: ${smartData.brandInfo.brandName}\n` +
-        `• Brand Tone: ${smartData.brandInfo.brandTone}\n` +
-        `• Main Platform: ${smartData.contentStrategy.primaryPlatforms[0]}\n` +
-        `• Audience: ${smartData.audienceInsights.audienceSegments.join(', ')}\n\n` +
-        'Please review the pre-filled information and adjust if needed.');
+      alert(
+        "Successfully analyzed your profile!\n\nWe detected:\n" +
+          `• Brand: ${smartData.brandInfo.brandName}\n` +
+          `• Brand Tone: ${smartData.brandInfo.brandTone}\n` +
+          `• Main Platform: ${smartData.contentStrategy.primaryPlatforms[0]}\n` +
+          `• Audience: ${smartData.audienceInsights.audienceSegments.join(
+            ", "
+          )}\n\n` +
+          "Please review the pre-filled information and adjust if needed."
+      );
     } catch (error) {
-      console.error('Error analyzing URL:', error);
-      alert('Could not analyze the URL. Please fill in the information manually.');
+      console.error("Error analyzing URL:", error);
+      alert(
+        "Could not analyze the URL. Please fill in the information manually."
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value, type } = e.target;
-    
-    if (type === 'checkbox') {
+
+    if (type === "checkbox") {
       const checkbox = e.target as HTMLInputElement;
       const arrayField = formData[name as keyof FormData] as string[];
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         [name]: checkbox.checked
           ? [...arrayField, value]
-          : arrayField.filter(item => item !== value)
+          : arrayField.filter((item) => item !== value),
       }));
     } else {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        [name]: value
+        [name]: value,
       }));
     }
 
     // Trigger URL analysis when public URL is entered
-    if (name === 'publicUrl' && value) {
+    if (name === "publicUrl" && value) {
       handleUrlAnalysis(value);
     }
   };
@@ -303,19 +351,24 @@ const OnboardingForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     // Handle form submission
-    console.log('Form submitted:', formData);
+    console.log("Form submitted:", formData);
     // Navigate to next step or dashboard
-    navigate('/dashboard');
+    navigate("/dashboard");
   };
 
   const renderStep1 = () => (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">Personal Information</h2>
-      <p className="text-gray-600">Let's start with the basics — tell us a bit about yourself so we can personalize your experience.</p>
-      
+      <p className="text-gray-600">
+        Let's start with the basics — tell us a bit about yourself so we can
+        personalize your experience.
+      </p>
+
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Full Name</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Full Name
+          </label>
           <input
             type="text"
             name="fullName"
@@ -327,7 +380,9 @@ const OnboardingForm: React.FC = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Email Address</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Email Address
+          </label>
           <input
             type="email"
             name="email"
@@ -339,7 +394,9 @@ const OnboardingForm: React.FC = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Phone Number (optional)</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Phone Number (optional)
+          </label>
           <input
             type="tel"
             name="phoneNumber"
@@ -357,11 +414,16 @@ const OnboardingForm: React.FC = () => {
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">{FORM_SECTIONS[1].title}</h2>
       <p className="text-gray-600">{FORM_SECTIONS[1].subtext}</p>
-      <p className="text-sm text-gray-500">You can add a website, Instagram, LinkedIn, TikTok, Behance, YouTube, or any other public link.</p>
-      
+      <p className="text-sm text-slate-500">
+        You can add a website, Instagram, LinkedIn, TikTok, Behance, YouTube, or
+        any other public link.
+      </p>
+
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Public URL</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Public URL
+          </label>
           <input
             type="url"
             name="publicUrl"
@@ -374,13 +436,20 @@ const OnboardingForm: React.FC = () => {
 
         {isLoading && (
           <div className="bg-blue-50 p-4 rounded-md">
-            <h3 className="text-blue-700 font-semibold">🧠 OmniShare AI is learning from your link...</h3>
-            <p className="text-blue-600">We're gathering your brand insights, tone, and audience details — your form will be pre-filled for you to review. ✨</p>
+            <h3 className="text-blue-700 font-semibold">
+              🧠 OmniShare AI is learning from your link...
+            </h3>
+            <p className="text-blue-600">
+              We're gathering your brand insights, tone, and audience details —
+              your form will be pre-filled for you to review. ✨
+            </p>
           </div>
         )}
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Brand Name</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Brand Name
+          </label>
           <input
             type="text"
             name="brandName"
@@ -392,7 +461,9 @@ const OnboardingForm: React.FC = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Brand Logo / Profile Image</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Brand Logo / Profile Image
+          </label>
           <div className="mt-1 flex items-center">
             <input
               type="file"
@@ -404,18 +475,20 @@ const OnboardingForm: React.FC = () => {
                   const reader = new FileReader();
                   reader.onload = (e) => {
                     const imageUrl = e.target?.result as string;
-                    setFormData(prev => ({ ...prev, brandLogo: imageUrl }));
+                    setFormData((prev) => ({ ...prev, brandLogo: imageUrl }));
                   };
                   reader.readAsDataURL(file);
                 }
               }}
-              className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+              className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Brand Tone</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Brand Tone
+          </label>
           <select
             name="brandTone"
             value={formData.brandTone}
@@ -423,8 +496,10 @@ const OnboardingForm: React.FC = () => {
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           >
             <option value="">Select tone</option>
-            {BRAND_TONES.map(tone => (
-              <option key={tone} value={tone}>{tone}</option>
+            {BRAND_TONES.map((tone) => (
+              <option key={tone} value={tone}>
+                {tone}
+              </option>
             ))}
           </select>
         </div>
@@ -436,12 +511,14 @@ const OnboardingForm: React.FC = () => {
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">{FORM_SECTIONS[2].title}</h2>
       <p className="text-gray-600">{FORM_SECTIONS[2].subtext}</p>
-      
+
       <div className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Audience Age Range</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Audience Age Range
+          </label>
           <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
-            {AGE_RANGES.map(age => (
+            {AGE_RANGES.map((age) => (
               <label key={age} className="inline-flex items-center">
                 <input
                   type="checkbox"
@@ -458,9 +535,11 @@ const OnboardingForm: React.FC = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Audience Gender</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Audience Gender
+          </label>
           <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
-            {GENDER_OPTIONS.map(gender => (
+            {GENDER_OPTIONS.map((gender) => (
               <label key={gender} className="inline-flex items-center">
                 <input
                   type="radio"
@@ -477,14 +556,18 @@ const OnboardingForm: React.FC = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Audience Location / Region</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Audience Location / Region
+          </label>
           <select
             multiple
             name="audienceLocation"
             value={formData.audienceRegions}
             onChange={(e) => {
-              const selected = Array.from(e.target.selectedOptions).map(opt => opt.value);
-              setFormData(prev => ({ ...prev, audienceRegions: selected }));
+              const selected = Array.from(e.target.selectedOptions).map(
+                (opt) => opt.value
+              );
+              setFormData((prev) => ({ ...prev, audienceRegions: selected }));
             }}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           >
@@ -497,7 +580,9 @@ const OnboardingForm: React.FC = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Audience Type / Segment</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Audience Type / Segment
+          </label>
           <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
             {AUDIENCE_SEGMENTS.map((segment: string) => (
               <label key={segment} className="inline-flex items-center">
@@ -524,10 +609,12 @@ const OnboardingForm: React.FC = () => {
       <div className="space-y-6 mb-12">
         <h2 className="text-2xl font-bold">{FORM_SECTIONS[3].title}</h2>
         <p className="text-gray-600">{FORM_SECTIONS[3].subtext}</p>
-        
+
         <div className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Primary Platforms</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Primary Platforms
+            </label>
             <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
               {PRIMARY_PLATFORMS.map((platform: string) => (
                 <label key={platform} className="inline-flex items-center">
@@ -546,9 +633,11 @@ const OnboardingForm: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Content Categories</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Content Categories
+            </label>
             <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
-              {CONTENT_CATEGORIES.map(category => (
+              {CONTENT_CATEGORIES.map((category) => (
                 <label key={category} className="inline-flex items-center">
                   <input
                     type="checkbox"
@@ -570,10 +659,12 @@ const OnboardingForm: React.FC = () => {
       <div className="space-y-6">
         <h2 className="text-2xl font-bold">{FORM_SECTIONS[4].title}</h2>
         <p className="text-gray-600">{FORM_SECTIONS[4].subtext}</p>
-        
+
         <div className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Primary Purpose of Posting</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Primary Purpose of Posting
+            </label>
             <div className="mt-2 grid grid-cols-2 gap-2">
               {PRIMARY_PURPOSES.map((goal: string) => (
                 <label key={goal} className="inline-flex items-center">
@@ -592,9 +683,11 @@ const OnboardingForm: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Key Outcomes Expected</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Key Outcomes Expected
+            </label>
             <div className="mt-2 grid grid-cols-2 gap-2">
-              {KEY_OUTCOMES.map(outcome => (
+              {KEY_OUTCOMES.map((outcome) => (
                 <label key={outcome} className="inline-flex items-center">
                   <input
                     type="checkbox"
@@ -611,7 +704,9 @@ const OnboardingForm: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Posting Style Preference</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Posting Style Preference
+            </label>
             <select
               name="postingStyle"
               value={formData.postingStyle}
@@ -619,8 +714,10 @@ const OnboardingForm: React.FC = () => {
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             >
               <option value="">Select style</option>
-              {POSTING_STYLES.map(style => (
-                <option key={style} value={style}>{style}</option>
+              {POSTING_STYLES.map((style) => (
+                <option key={style} value={style}>
+                  {style}
+                </option>
               ))}
             </select>
           </div>
@@ -641,17 +738,17 @@ const OnboardingForm: React.FC = () => {
           {currentStep > 1 && (
             <button
               type="button"
-              onClick={() => setCurrentStep(prev => prev - 1)}
+              onClick={() => setCurrentStep((prev) => prev - 1)}
               className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50"
             >
               Previous
             </button>
           )}
-          
+
           {currentStep < 4 ? (
             <button
               type="button"
-              onClick={() => setCurrentStep(prev => prev + 1)}
+              onClick={() => setCurrentStep((prev) => prev + 1)}
               className="ml-auto px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
             >
               Next

@@ -4,7 +4,7 @@ const TransactionsHistoryBox = ({ data }: any) => {
   return (
     <div className="flex flex-col gap-4 w-full pr-2  bg-transparent">
       {data?.length === 0 || !data ? (
-        <p className="text-gray-500 text-center mt-10">
+        <p className="text-slate-500 text-center mt-10">
           No transactions found.
         </p>
       ) : (
@@ -27,7 +27,7 @@ const TransactionsHistoryBox = ({ data }: any) => {
               ) : (
                 <button
                   disabled
-                  className="bg-gray-300 text-black font-semibold px-5 py-2 rounded-lg cursor-not-allowed"
+                  className="bg-gray-300 text-black font-semibold px-5 py-2 rounded-md cursor-not-allowed"
                 >
                   {item?.autoRenewal ? "Auto-Renewed" : "No Receipt"}
                 </button>

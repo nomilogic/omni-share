@@ -85,7 +85,7 @@ export const SettingsPage: React.FC = () => {
                   <Link
                     key={item.path}
                     to={item.path}
-                    className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-200 ${
+                    className={`flex items-center space-x-3 px-4 py-3 rounded-md transition-colors duration-200 ${
                       isActivePath(item.path)
                         ? "theme-bg-card theme-text-primary border border-white/20"
                         : "theme-text-secondary hover:theme-text-primary hover:theme-bg-primary"
@@ -104,7 +104,7 @@ export const SettingsPage: React.FC = () => {
             <div className="theme-bg-card rounded-2xl shadow-sm border border-white/20 p-8 backdrop-blur-lg">
               {message.text && (
                 <div
-                  className={`mb-6 p-4 rounded-lg ${
+                  className={`mb-6 p-4 rounded-md ${
                     message.type === "success"
                       ? "bg-green-50 border border-green-200 text-green-700"
                       : "bg-red-50 border border-red-200 text-red-700"
@@ -144,7 +144,7 @@ export const SettingsPage: React.FC = () => {
                             type="email"
                             value={profileData.email}
                             disabled
-                            className="w-full px-4 py-2 border border-white/20 rounded-lg theme-bg-primary theme-text-primary font-normal"
+                            className="w-full px-4 py-2 border border-white/20 rounded-md theme-bg-primary theme-text-primary font-normal"
                           />
                           <p className="text-xs theme-text-light mt-1">
                             Email cannot be changed
@@ -163,7 +163,7 @@ export const SettingsPage: React.FC = () => {
                                 displayName: e.target.value,
                               }))
                             }
-                            className="w-full px-4 py-2 border border-white/20 rounded-lg theme-bg-primary theme-text-primary font-bold focus:ring-2 focus:ring-white/30 focus:border-transparent"
+                            className="w-full px-4 py-2 border border-white/20 rounded-md theme-bg-primary theme-text-primary font-bold focus:ring-2 focus:ring-white/30 focus:border-transparent"
                             placeholder="Enter your display name"
                           />
                         </div>
@@ -171,7 +171,7 @@ export const SettingsPage: React.FC = () => {
                           <label className="block text-sm font-medium theme-text-secondary mb-2">
                             Current Plan
                           </label>
-                          <div className="px-4 py-2 theme-bg-primary rounded-lg border border-white/20">
+                          <div className="px-4 py-2 theme-bg-primary rounded-md border border-white/20">
                             <span className="theme-text-primary font-normal capitalize">
                               {profileData.planName || "No plan selected"}
                             </span>
@@ -187,7 +187,7 @@ export const SettingsPage: React.FC = () => {
                                 type="text"
                                 readOnly
                                 value={`${window.location.origin}/auth?referralId=${user.id}`}
-                                className="w-full px-4 py-2 border border-white/20 rounded-lg theme-bg-primary theme-text-primary font-mono"
+                                className="w-full px-4 py-2 border border-white/20 rounded-md theme-bg-primary theme-text-primary font-mono"
                               />
                               <button
                                 onClick={() => {
@@ -195,21 +195,27 @@ export const SettingsPage: React.FC = () => {
                                     `${window.location.origin}/auth?referralId=${user.id}`
                                   );
                                 }}
-                                className="theme-button-primary px-3 py-2 rounded-lg text-white hover:theme-button-hover transition"
+                                className="theme-button-primary px-3 py-2 rounded-md text-white hover:theme-button-hover transition"
                               >
                                 Copy
                               </button>
                               <button
                                 onClick={() => {
                                   // lazy import to avoid bundling modal everywhere
-                                  import('../components/InviteShare').then((m) => {
-                                    m.openInviteModal(`${window.location.origin}/auth?referralId=${user.id}`, {
-                                      title: 'Invite a friend',
-                                      description: 'Join me on OmniShare using this invite link',
-                                    });
-                                  });
+                                  import("../components/InviteShare").then(
+                                    (m) => {
+                                      m.openInviteModal(
+                                        `${window.location.origin}/auth?referralId=${user.id}`,
+                                        {
+                                          title: "Invite a friend",
+                                          description:
+                                            "Join me on OmniShare using this invite link",
+                                        }
+                                      );
+                                    }
+                                  );
                                 }}
-                                className="ml-2 px-3 py-2 bg-indigo-600 text-white rounded-lg"
+                                className="ml-2 px-3 py-2 bg-indigo-600 text-white rounded-md"
                               >
                                 Share
                               </button>
@@ -222,7 +228,7 @@ export const SettingsPage: React.FC = () => {
                         <button
                           onClick={handleProfileSave}
                           disabled={loading}
-                          className="flex items-center gap-2 theme-button-primary text-white px-6 py-2 rounded-lg hover:theme-button-hover transition-colors duration-200 disabled:opacity-50"
+                          className="flex items-center gap-2 theme-button-primary text-white px-6 py-2 rounded-md hover:theme-button-hover transition-colors duration-200 disabled:opacity-50"
                         >
                           <Save className="w-4 h-4" />
                           {loading ? "Saving..." : "Save Changes"}
@@ -239,7 +245,7 @@ export const SettingsPage: React.FC = () => {
                         Security Settings
                       </h3>
                       <div className="space-y-6">
-                        <div className="theme-bg-primary p-6 rounded-lg border border-white/20">
+                        <div className="theme-bg-primary p-6 rounded-md border border-white/20">
                           <h4 className="text-lg font-medium theme-text-primary mb-4 flex items-center gap-2">
                             <Shield className="w-5 h-5" />
                             Password
@@ -247,11 +253,11 @@ export const SettingsPage: React.FC = () => {
                           <p className="theme-text-secondary text-sm mb-4">
                             Update your password to keep your account secure.
                           </p>
-                          <button className="theme-button-secondary text-white px-6 py-2 rounded-lg hover:theme-button-hover transition-colors duration-200">
+                          <button className="theme-button-secondary text-white px-6 py-2 rounded-md hover:theme-button-hover transition-colors duration-200">
                             Change Password
                           </button>
                         </div>
-                        <div className="theme-bg-primary p-6 rounded-lg border border-white/20">
+                        <div className="theme-bg-primary p-6 rounded-md border border-white/20">
                           <h4 className="text-lg font-medium theme-text-primary mb-4">
                             Two-Factor Authentication
                           </h4>
@@ -268,19 +274,19 @@ export const SettingsPage: React.FC = () => {
                                 Disabled
                               </span>
                             </div>
-                            <button className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors duration-200">
+                            <button className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition-colors duration-200">
                               Enable 2FA
                             </button>
                           </div>
                         </div>
-                        <div className="theme-bg-primary p-6 rounded-lg border border-white/20">
+                        <div className="theme-bg-primary p-6 rounded-md border border-white/20">
                           <h4 className="text-lg font-medium theme-text-primary mb-4">
                             Account Deletion
                           </h4>
                           <p className="theme-text-secondary text-sm mb-4">
                             Permanently delete your account and all data.
                           </p>
-                          <button className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors duration-200">
+                          <button className="bg-red-600 text-white px-6 py-2 rounded-md hover:bg-red-700 transition-colors duration-200">
                             Delete Account
                           </button>
                         </div>
@@ -320,7 +326,7 @@ export const SettingsPage: React.FC = () => {
                         ].map((item) => (
                           <div
                             key={item.key}
-                            className="theme-bg-primary p-4 rounded-lg border border-white/20"
+                            className="theme-bg-primary p-4 rounded-md border border-white/20"
                           >
                             <div className="flex items-center justify-between">
                               <div>
@@ -378,14 +384,14 @@ export const SettingsPage: React.FC = () => {
                               <div
                                 key={theme.key}
                                 onClick={() => changeTheme(theme.key)}
-                                className={`relative p-4 border rounded-lg cursor-pointer transition-all duration-200 hover:scale-105 ${
+                                className={`relative p-4 border rounded-md cursor-pointer transition-all duration-200 hover:scale-105 ${
                                   currentThemeKey === theme.key
                                     ? "border-white/40 ring-2 ring-white/30"
                                     : "border-white/20 hover:border-white/40"
                                 }`}
                               >
                                 <div
-                                  className={`w-full h-20 bg-gradient-to-r ${theme.bgGradient} rounded-lg mb-3 relative overflow-hidden`}
+                                  className={`w-full h-20 bg-gradient-to-r ${theme.bgGradient} rounded-md mb-3 relative overflow-hidden`}
                                 >
                                   <div className="absolute inset-2 bg-white/10 rounded border border-white/20"></div>
                                   <div className="absolute bottom-2 left-2 right-2 h-2 bg-white/20 rounded"></div>
@@ -423,7 +429,7 @@ export const SettingsPage: React.FC = () => {
                               </div>
                             ))}
                           </div>
-                          <div className="theme-bg-primary p-4 rounded-lg border border-white/20 mt-6">
+                          <div className="theme-bg-primary p-4 rounded-md border border-white/20 mt-6">
                             <p className="text-xs theme-text-secondary">
                               💡 <strong>Tip:</strong> Themes are based on the
                               app's feature categories from the onboarding
