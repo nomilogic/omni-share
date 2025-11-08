@@ -291,9 +291,7 @@ export const PostScheduleDashboard: React.FC<PostScheduleDashboardProps> = ({
                     key={platform}
                     className="flex justify-between items-center"
                   >
-                    <span className="capitalize theme-text-light">
-                      {platform}
-                    </span>
+                    <span className=" theme-text-light">{platform}</span>
                     <span className="font-semibold theme-text-primary">
                       {count as number}
                     </span>
@@ -314,7 +312,7 @@ export const PostScheduleDashboard: React.FC<PostScheduleDashboardProps> = ({
                     key={category}
                     className="flex justify-between items-center"
                   >
-                    <span className="capitalize theme-text-light">
+                    <span className=" theme-text-light">
                       {category || "General"}
                     </span>
                     <span className="font-semibold theme-text-primary">

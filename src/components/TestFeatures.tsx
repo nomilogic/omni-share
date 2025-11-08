@@ -79,7 +79,7 @@ export const TestFeatures: React.FC = () => {
               className={`px-4 py-2 rounded-md font-medium transition-colors ${
                 view === "social-manager"
                   ? "bg-blue-600 text-white"
-                  : "text-gray-600 hover:bg-gray-100"
+                  : "text-slate-500 hover:bg-gray-100"
               }`}
             >
               Social Media Manager
@@ -89,7 +89,7 @@ export const TestFeatures: React.FC = () => {
               className={`px-4 py-2 rounded-md font-medium transition-colors ${
                 view === "post-preview"
                   ? "bg-blue-600 text-white"
-                  : "text-gray-600 hover:bg-gray-100"
+                  : "text-slate-500 hover:bg-gray-100"
               }`}
             >
               Post Preview

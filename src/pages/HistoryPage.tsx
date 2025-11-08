@@ -377,7 +377,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
           </div>
           <div className="flex items-center justify-center py-12">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            <span className="ml-2 text-gray-600">Loading post history...</span>
+            <span className="ml-2 text-slate-500">Loading post history...</span>
           </div>
         </div>
       </div>
@@ -412,7 +412,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
               className={`flex items-center gap-2 text-sm px-3 py-2 rounded-md border transition-colors ${
                 showFilters || hasActiveFilters
                   ? "bg-blue-50 border-blue-200 text-blue-700"
-                  : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
+                  : "bg-white border-gray-200 text-slate-700 hover:bg-gray-50"
               }`}
             >
               <Filter className="w-4 h-4" />
@@ -435,7 +435,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               {/* Read Status Filter */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-slate-700 mb-2">
                   Read Status
                 </label>
                 <select
@@ -453,7 +453,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
 
               {/* Platform Filter */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-slate-700 mb-2">
                   Platform
                 </label>
                 <select
@@ -473,7 +473,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-slate-700 mb-2">
                   Time Period
                 </label>
                 <select
@@ -489,7 +489,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-slate-700 mb-2">
                   Sort By
                 </label>
                 <select
@@ -509,7 +509,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
               <div className="mt-4 flex justify-end">
                 <button
                   onClick={resetFilters}
-                  className="flex items-center gap-2 text-sm px-3 py-1 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-md transition-colors"
+                  className="flex items-center gap-2 text-sm px-3 py-1 text-slate-500 hover:text-slate-800 hover:bg-gray-100 rounded-md transition-colors"
                 >
                   <RotateCcw className="w-4 h-4" />
                   Reset Filters
@@ -521,7 +521,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
 
         {hasActiveFilters && (
           <div className="max-w-4xl mx-auto mb-4">
-            <div className="flex items-center gap-2 text-sm text-gray-600">
+            <div className="flex items-center gap-2 text-sm text-slate-500">
               <span>Showing:</span>
               {readFilter !== "all" && (
                 <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded">
@@ -563,12 +563,12 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
             <div className="text-gray-400 mb-4">
               <Clock className="w-16 h-16 mx-auto" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-lg font-semibold text-slate-900 mb-2">
               {hasActiveFilters
                 ? "No posts match your filters"
                 : "No posts yet"}
             </h3>
-            <p className="text-gray-600">
+            <p className="text-slate-500">
               {hasActiveFilters
                 ? "Try adjusting your filters to see more posts"
                 : "Your published posts will appear here"}
@@ -599,14 +599,14 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
                     {renderPlatformIcon(post.platform)}
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="font-semibold text-gray-900 capitalize">
+                        <span className="font-semibold text-slate-900 ">
                           {post.platform}
                         </span>
                         {!post.isRead && (
                           <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
                         )}
                       </div>
-                      <p className="text-sm text-gray-600 flex items-center gap-1">
+                      <p className="text-sm text-slate-500 flex items-center gap-1">
                         <Clock className="w-3 h-3" />
                         {formatTimeAgo(post.publishedAt)}
                       </p>
@@ -626,7 +626,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
                       href={post.postUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-1 rounded-full text-gray-600 hover:text-blue-600 hover:bg-blue-100 transition-colors"
+                      className="p-1 rounded-full text-slate-500 hover:text-blue-600 hover:bg-blue-100 transition-colors"
                       title="Open original post"
                     >
                       <ExternalLink className="w-4 h-4" />
@@ -647,13 +647,13 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
                     <div className="flex-1 p-4 min-w-0">
                       <div className="flex items-start justify-between">
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-gray-900 text-sm line-clamp-2 mb-1">
+                          <h3 className="font-semibold text-slate-900 text-sm line-clamp-2 mb-1">
                             {post.metadata?.title || post.content}
                           </h3>
-                          <p className="text-gray-600 text-sm line-clamp-2 mb-2">
+                          <p className="text-slate-500 text-sm line-clamp-2 mb-2">
                             {post.metadata?.description || post.content}
                           </p>
-                          <p className="text-xs text-slate-500 mb-2 capitalize">
+                          <p className="text-xs text-slate-500 mb-2 ">
                             {post.platform} •{" "}
                             {post.postUrl && new URL(post.postUrl).hostname}
                           </p>

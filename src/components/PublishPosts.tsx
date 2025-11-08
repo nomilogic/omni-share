@@ -343,11 +343,11 @@ export const PublishPosts: React.FC<PublishProps> = ({
   return (
     <div className="theme-bg-light">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="bg-white border-b border-gray-200 px-4 py-3">
         <div className="flex items-center justify-between max-w-4xl mx-auto">
           <button
             onClick={onBack}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-gray-400 hover:text-slate-500 transition-colors"
           >
             <svg
               className="w-6 h-6"
@@ -367,20 +367,20 @@ export const PublishPosts: React.FC<PublishProps> = ({
       </div>
 
       {/* Main Content */}
-      <div className="max-w-md mx-auto px-6 py-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
+      <div className="lg:px-4 px-3 lg:py-8 py-4">
+        <h1 className="text-3xl font-semibold theme-text-primary mb-1">
           Publish Your Posts
         </h1>
-        <p className="text-gray-600 mb-8 leading-relaxed">
+        <p className="text-slate-500 md:mb-8 mb-4 leading-relaxed">
           Connect your social media accounts and publish your AI-generated posts
           directly.
         </p>
 
         {/* Connection Status Alert */}
         {posts.some((post) => !connectedPlatforms.includes(post.platform)) && (
-          <div className="mb-8 p-4 theme-bg-quaternary rounded-md border border-purple-200">
+          <div className="md:mb-8 mb-4 p-4 theme-bg-quaternary rounded-md border border-purple-200">
             <div className="flex items-start gap-3">
-              <div className="w-5 h-5">
+              <div className="w-5 h-5 md:block hidden">
                 <Icon
                   name="connect-accounts"
                   size={60}
@@ -401,13 +401,13 @@ export const PublishPosts: React.FC<PublishProps> = ({
         )}
 
         {/* Platforms Section */}
-        <div className="mb-8">
+        <div className="md:mb-8 mb-4">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="font-semibold text-gray-900 mb-1">
+              <h2 className="font-semibold text-slate-900 mb-1">
                 Select Platforms to Publish:
               </h2>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-slate-500">
                 Connect your social media accounts to enable direct publishing
                 across all platforms.
               </p>
@@ -423,13 +423,13 @@ export const PublishPosts: React.FC<PublishProps> = ({
                       )
                     )
                   }
-                  className="text-xs px-3 py-1 rounded-full theme-bg-quaternary theme-text-secondary transition-colors"
+                  className="text-xs px-3 py-1 rounded-md bg-purple-600 theme-bg-quaternary theme-text-secondary transition-colors"
                 >
                   Select All
                 </button>
                 <button
                   onClick={() => setSelectedPlatforms([])}
-                  className="text-xs px-3 py-1 rounded-full theme-bg-quaternary theme-text-secondary marker:transition-colors"
+                  className="text-xs px-3 py-1 rounded-md bg-purple-600 theme-bg-quaternary theme-text-secondary marker:transition-colors"
                 >
                   Deselect All
                 </button>
@@ -493,7 +493,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
                         const IconComponent = getPlatformIcon(post.platform);
                         if (!IconComponent) {
                           return (
-                            <span className="text-lg font-bold uppercase">
+                            <span className="text-lg font-bold ">
                               {post.platform.substring(0, 2)}
                             </span>
                           );
@@ -504,7 +504,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
 
                     {/* Platform Info */}
                     <div>
-                      <h4 className="font-medium text-gray-900">
+                      <h4 className="font-medium text-slate-900">
                         {getPlatformDisplayName(post.platform)}
                       </h4>
                       <p
@@ -627,7 +627,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
                       {/* Published indicator - Show when platform is published */}
                       {isConnected &&
                         publishedPlatforms.includes(post.platform) && (
-                          <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-green-100 text-green-800 text-sm font-medium">
+                          <div className="flex items-center gap-2 px-3 py-1 rounded-md bg-purple-600 bg-green-100 text-green-800 text-sm font-medium">
                             <svg
                               className="w-4 h-4"
                               fill="currentColor"
@@ -648,22 +648,15 @@ export const PublishPosts: React.FC<PublishProps> = ({
                         <button
                           onClick={() => handleConnect(post.platform)}
                           disabled={isConnecting}
-                          className="flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed theme-bg-quaternary theme-text-secondary hover:theme-bg-tertiary"
+                          className="flex items-center gap-2 px-3 py-1 capitalize rounded-md bg-purple-600 text-sm font-medium text-white"
                         >
-                          {!isConnecting && (
-                            <Icon
-                              name="connect-accounts"
-                              size={14}
-                              className=""
-                            />
-                          )}
                           {isConnecting ? (
                             <>
                               <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
-                              <span>CONNECTING...</span>
+                              <span>Connecting...</span>
                             </>
                           ) : (
-                            "CONNECT"
+                            "Connect"
                           )}
                         </button>
                       )}
@@ -749,7 +742,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
                 !publishedPlatforms.includes(p)
             ).length === 0
           }
-          className={`w-full rounded-full py-2 px-4 font-medium theme-text-light transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 ${
+          className={`w-full rounded-md py-2.5 px-4 font-medium theme-text-light transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 ${
             selectedPlatforms.filter(
               (p) =>
                 connectedPlatforms.includes(p) &&
@@ -764,7 +757,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
           {publishing ? (
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
-              <span>PUBLISHING...</span>
+              <span>Publish...</span>
             </div>
           ) : (
             <div className="flex items-center gap-2">
@@ -782,9 +775,9 @@ export const PublishPosts: React.FC<PublishProps> = ({
                     !publishedPlatforms.includes(p)
                 ).length === 0
                   ? publishedPlatforms.length > 0
-                    ? "ALL SELECTED PLATFORMS PUBLISHED"
-                    : "SELECT PLATFORMS TO PUBLISH"
-                  : "PUBLISH TO PLATFORMS"}
+                    ? "All Selected Platforms Published"
+                    : "Select Platform to Publish"
+                  : "Publish to Platforms"}
               </span>
             </div>
           )}
@@ -822,7 +815,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
         {/* Publishing Results */}
         {results && (
           <div className="mt-8">
-            <h3 className="font-semibold mb-4 text-gray-900">
+            <h3 className="font-semibold mb-4 text-slate-900">
               Publishing Results:
             </h3>
 
@@ -834,19 +827,19 @@ export const PublishPosts: React.FC<PublishProps> = ({
                     <div className="text-2xl font-bold text-blue-600">
                       {results._summary.total}
                     </div>
-                    <div className="text-sm text-gray-600">Total</div>
+                    <div className="text-sm text-slate-500">Total</div>
                   </div>
                   <div>
                     <div className="text-2xl font-bold text-green-600">
                       {results._summary.successful}
                     </div>
-                    <div className="text-sm text-gray-600">Successful</div>
+                    <div className="text-sm text-slate-500">Successful</div>
                   </div>
                   <div>
                     <div className="text-2xl font-bold text-red-600">
                       {results._summary.failed}
                     </div>
-                    <div className="text-sm text-gray-600">Failed</div>
+                    <div className="text-sm text-slate-500">Failed</div>
                   </div>
                 </div>
               </div>
@@ -867,7 +860,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
                   >
                     <div className="flex items-center justify-between">
                       <h4
-                        className={`font-medium capitalize ${
+                        className={`font-medium  ${
                           result.success ? "text-green-800" : "text-red-800"
                         }`}
                       >

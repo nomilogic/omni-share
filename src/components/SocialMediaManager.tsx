@@ -310,12 +310,12 @@ export const SocialMediaManager: React.FC<SocialMediaManagerProps> = ({
   if (loading) {
     return (
       <div className="bg-white rounded-md border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <h3 className="text-lg font-semibold text-slate-900 mb-4">
           Social Media Connections
         </h3>
         <div className="flex items-center justify-center py-8">
           <div className="animate-spin w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full"></div>
-          <span className="ml-3 text-gray-600">Checking connections...</span>
+          <span className="ml-3 text-slate-500">Checking connections...</span>
         </div>
       </div>
     );
@@ -323,10 +323,10 @@ export const SocialMediaManager: React.FC<SocialMediaManagerProps> = ({
 
   return (
     <div className="bg-white rounded-md border border-gray-200 p-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">
+      <h3 className="text-lg font-semibold text-slate-900 mb-4">
         Social Media Connections
       </h3>
-      <p className="text-sm text-gray-600 mb-6">
+      <p className="text-sm text-slate-500 mb-6">
         Connect your social media accounts to enable direct publishing across
         all platforms.
       </p>
@@ -352,7 +352,7 @@ export const SocialMediaManager: React.FC<SocialMediaManagerProps> = ({
 
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-medium text-gray-900">
+                    <h4 className="font-medium text-slate-900">
                       {getPlatformDisplayName(status.platform)}
                     </h4>
                     <div className="flex items-center space-x-2">
@@ -369,7 +369,7 @@ export const SocialMediaManager: React.FC<SocialMediaManagerProps> = ({
                     </div>
                   </div>
 
-                  {/* <p className="text-sm text-gray-600 mb-2">
+                  {/* <p className="text-sm text-slate-500 mb-2">
                     {info.description}
                   </p> */}
 
@@ -393,13 +393,13 @@ export const SocialMediaManager: React.FC<SocialMediaManagerProps> = ({
                     {info.features.slice(0, 3).map((feature) => (
                       <span
                         key={feature}
-                        className="inline-block px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded"
+                        className="inline-block px-2 py-1 text-xs bg-gray-100 text-slate-500 rounded"
                       >
                         {feature}
                       </span>
                     ))}
                     {info.features.length > 3 && (
-                      <span className="inline-block px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded">
+                      <span className="inline-block px-2 py-1 text-xs bg-gray-100 text-slate-500 rounded">
                         +{info.features.length - 3} more
                       </span>
                     )}

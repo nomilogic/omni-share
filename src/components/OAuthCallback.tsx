@@ -166,13 +166,13 @@ export const OAuthCallback: React.FC = () => {
           )}
         </div>
 
-        <h2 className="text-xl font-semibold text-gray-900 mb-2">
+        <h2 className="text-xl font-semibold text-slate-900 mb-2">
           {status === "processing" && "Connecting Account"}
           {status === "success" && "Connection Successful"}
           {status === "error" && "Connection Failed"}
         </h2>
 
-        <p className="text-gray-600">{message}</p>
+        <p className="text-slate-500">{message}</p>
 
         {status !== "processing" && (
           <div className="mt-6">
@@ -268,10 +268,10 @@ export const OAuthCallback: React.FC = () => {
 //         {status === 'loading' && (
 //           <>
 //             <Loader className="w-12 h-12 text-blue-600 mx-auto mb-4 animate-spin" />
-//             <h2 className="text-xl font-semibold text-gray-900 mb-2">
+//             <h2 className="text-xl font-semibold text-slate-900 mb-2">
 //               Completing Authentication...
 //             </h2>
-//             <p className="text-gray-600">
+//             <p className="text-slate-500">
 //               Please wait while we verify your credentials.
 //             </p>
 //           </>
@@ -280,10 +280,10 @@ export const OAuthCallback: React.FC = () => {
 //         {status === 'success' && (
 //           <>
 //             <CheckCircle className="w-12 h-12 text-green-600 mx-auto mb-4" />
-//             <h2 className="text-xl font-semibold text-gray-900 mb-2">
+//             <h2 className="text-xl font-semibold text-slate-900 mb-2">
 //               Authentication Successful!
 //             </h2>
-//             <p className="text-gray-600">{message}</p>
+//             <p className="text-slate-500">{message}</p>
 //             <p className="text-sm text-slate-500 mt-3">
 //               This window will close automatically.
 //             </p>
@@ -293,10 +293,10 @@ export const OAuthCallback: React.FC = () => {
 //         {status === 'error' && (
 //           <>
 //             <XCircle className="w-12 h-12 text-red-600 mx-auto mb-4" />
-//             <h2 className="text-xl font-semibold text-gray-900 mb-2">
+//             <h2 className="text-xl font-semibold text-slate-900 mb-2">
 //               Authentication Failed
 //             </h2>
-//             <p className="text-gray-600">{message}</p>
+//             <p className="text-slate-500">{message}</p>
 //             <p className="text-sm text-slate-500 mt-3">
 //               This window will close automatically.
 //             </p>

@@ -359,14 +359,14 @@ const OnboardingForm: React.FC = () => {
   const renderStep1 = () => (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">Personal Information</h2>
-      <p className="text-gray-600">
+      <p className="text-slate-500">
         Let's start with the basics — tell us a bit about yourself so we can
         personalize your experience.
       </p>
 
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-slate-700">
             Full Name
           </label>
           <input
@@ -380,7 +380,7 @@ const OnboardingForm: React.FC = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-slate-700">
             Email Address
           </label>
           <input
@@ -394,7 +394,7 @@ const OnboardingForm: React.FC = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-slate-700">
             Phone Number (optional)
           </label>
           <input
@@ -413,7 +413,7 @@ const OnboardingForm: React.FC = () => {
   const renderStep2 = () => (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">{FORM_SECTIONS[1].title}</h2>
-      <p className="text-gray-600">{FORM_SECTIONS[1].subtext}</p>
+      <p className="text-slate-500">{FORM_SECTIONS[1].subtext}</p>
       <p className="text-sm text-slate-500">
         You can add a website, Instagram, LinkedIn, TikTok, Behance, YouTube, or
         any other public link.
@@ -421,7 +421,7 @@ const OnboardingForm: React.FC = () => {
 
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-slate-700">
             Public URL
           </label>
           <input
@@ -447,7 +447,7 @@ const OnboardingForm: React.FC = () => {
         )}
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-slate-700">
             Brand Name
           </label>
           <input
@@ -461,7 +461,7 @@ const OnboardingForm: React.FC = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-slate-700">
             Brand Logo / Profile Image
           </label>
           <div className="mt-1 flex items-center">
@@ -486,7 +486,7 @@ const OnboardingForm: React.FC = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-slate-700">
             Brand Tone
           </label>
           <select
@@ -510,11 +510,11 @@ const OnboardingForm: React.FC = () => {
   const renderStep3 = () => (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">{FORM_SECTIONS[2].title}</h2>
-      <p className="text-gray-600">{FORM_SECTIONS[2].subtext}</p>
+      <p className="text-slate-500">{FORM_SECTIONS[2].subtext}</p>
 
       <div className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-slate-700">
             Audience Age Range
           </label>
           <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
@@ -535,7 +535,7 @@ const OnboardingForm: React.FC = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-slate-700">
             Audience Gender
           </label>
           <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -556,7 +556,7 @@ const OnboardingForm: React.FC = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-slate-700">
             Audience Location / Region
           </label>
           <select
@@ -580,7 +580,7 @@ const OnboardingForm: React.FC = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-slate-700">
             Audience Type / Segment
           </label>
           <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
@@ -608,11 +608,11 @@ const OnboardingForm: React.FC = () => {
       {/* Content Preferences */}
       <div className="space-y-6 mb-12">
         <h2 className="text-2xl font-bold">{FORM_SECTIONS[3].title}</h2>
-        <p className="text-gray-600">{FORM_SECTIONS[3].subtext}</p>
+        <p className="text-slate-500">{FORM_SECTIONS[3].subtext}</p>
 
         <div className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-slate-700">
               Primary Platforms
             </label>
             <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
@@ -633,7 +633,7 @@ const OnboardingForm: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-slate-700">
               Content Categories
             </label>
             <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
@@ -658,11 +658,11 @@ const OnboardingForm: React.FC = () => {
       {/* Goals & Objectives */}
       <div className="space-y-6">
         <h2 className="text-2xl font-bold">{FORM_SECTIONS[4].title}</h2>
-        <p className="text-gray-600">{FORM_SECTIONS[4].subtext}</p>
+        <p className="text-slate-500">{FORM_SECTIONS[4].subtext}</p>
 
         <div className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-slate-700">
               Primary Purpose of Posting
             </label>
             <div className="mt-2 grid grid-cols-2 gap-2">
@@ -683,7 +683,7 @@ const OnboardingForm: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-slate-700">
               Key Outcomes Expected
             </label>
             <div className="mt-2 grid grid-cols-2 gap-2">
@@ -704,7 +704,7 @@ const OnboardingForm: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-slate-700">
               Posting Style Preference
             </label>
             <select
@@ -739,7 +739,7 @@ const OnboardingForm: React.FC = () => {
             <button
               type="button"
               onClick={() => setCurrentStep((prev) => prev - 1)}
-              className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50"
+              className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-slate-700 hover:bg-gray-50"
             >
               Previous
             </button>

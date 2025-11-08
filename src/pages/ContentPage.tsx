@@ -305,7 +305,7 @@ export const ContentPage: React.FC = () => {
                         </li>
                       </ul>
                     </div>
-                    <p className="text-gray-600 mb-4">
+                    <p className="text-slate-500 mb-4">
                       Please start the content creation process from the
                       beginning.
                     </p>

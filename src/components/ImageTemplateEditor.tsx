@@ -1305,7 +1305,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
       <div className="fixed inset-0 bg-white z-50 flex items-center justify-center">
         <div className="text-center">
           <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
-          <p className="text-sm text-gray-600">Loading editor...</p>
+          <p className="text-sm text-slate-500">Loading editor...</p>
         </div>
       </div>
     );
@@ -1324,10 +1324,10 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
         {/* Tools Header - Fixed */}
         {/* <div className="flex-shrink-0 p-3 md:p-4 border-b border-gray-200 bg-white">
           <div className="flex items-center justify-between">
-            <h3 className="text-base md:text-lg font-semibold text-gray-900">Template Editor</h3>
+            <h3 className="text-base md:text-lg font-semibold text-slate-900">Template Editor</h3>
             <button
               onClick={onCancel}
-              className="text-gray-400 hover:text-gray-600 text-xl md:text-2xl font-bold leading-none p-1 hover:bg-gray-100 rounded transition-colors"
+              className="text-gray-400 hover:text-slate-500 text-xl md:text-2xl font-bold leading-none p-1 hover:bg-gray-100 rounded transition-colors"
             >
               ×
             </button>
@@ -1339,7 +1339,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
           <div className="space-y-3 md:space-y-4">
             {/* Element Creation Toolbar */}
             <div className="border border-gray-200 rounded-md p-2 md:p-3 bg-gray-50">
-              <h4 className="text-xs md:text-sm font-semibold text-gray-700 mb-2 md:mb-3">
+              <h4 className="text-xs md:text-sm font-semibold text-slate-700 mb-2 md:mb-3">
                 Add Elements
               </h4>
               <div className="grid grid-cols-4 md:grid-cols-2 gap-1.5 md:gap-2">
@@ -1382,7 +1382,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
             {selectedElementData && (
               <div className="border border-gray-200 rounded-md p-3 md:p-4 bg-white">
                 <div className="flex items-center justify-between mb-3 md:mb-4">
-                  <h4 className="text-xs md:text-sm font-semibold text-gray-900">
+                  <h4 className="text-xs md:text-sm font-semibold text-slate-900">
                     {selectedElementData.type.charAt(0).toUpperCase() +
                       selectedElementData.type.slice(1)}{" "}
                     Element
@@ -1395,7 +1395,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                       className={`p-2 rounded-md ${
                         isElementLocked(selectedElement)
                           ? "bg-red-100 text-red-600"
-                          : "bg-gray-100 text-gray-600"
+                          : "bg-gray-100 text-slate-500"
                       } hover:bg-opacity-80 transition-colors`}
                       title={
                         isElementLocked(selectedElement)
@@ -1421,34 +1421,34 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
 
                 {/* Layer Controls */}
                 <div className="mb-2 md:mb-3">
-                  <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1.5 md:mb-2">
+                  <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5 md:mb-2">
                     Layer Order
                   </label>
                   <div className="grid grid-cols-4 gap-1 md:gap-1.5">
                     <button
                       onClick={bringToFront}
-                      className="p-2 bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors text-xs"
+                      className="p-2 bg-gray-100 text-slate-500 rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors text-xs"
                       title="Bring to Front"
                     >
                       <ChevronUp className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={moveUp}
-                      className="p-2 bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors text-xs"
+                      className="p-2 bg-gray-100 text-slate-500 rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors text-xs"
                       title="Move Up"
                     >
                       <ArrowUp className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={moveDown}
-                      className="p-2 bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors text-xs"
+                      className="p-2 bg-gray-100 text-slate-500 rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors text-xs"
                       title="Move Down"
                     >
                       <ArrowDown className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={sendToBack}
-                      className="p-2 bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors text-xs"
+                      className="p-2 bg-gray-100 text-slate-500 rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors text-xs"
                       title="Send to Back"
                     >
                       <ChevronDown className="w-3.5 h-3.5" />
@@ -1458,7 +1458,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                 {/* W H X Y Controls in one row */}
                 <div className="grid grid-cols-4 gap-1.5 md:gap-2 mb-2 md:mb-3 text-center">
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1 text-center">
+                    <label className="block text-xs font-medium text-slate-700 mb-1 text-center">
                       W
                     </label>
                     <input
@@ -1475,7 +1475,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1 text-center">
+                    <label className="block text-xs font-medium text-slate-700 mb-1 text-center">
                       H
                     </label>
                     <input
@@ -1495,7 +1495,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1 text-center">
+                    <label className="block text-xs font-medium text-slate-700 mb-1 text-center">
                       X
                     </label>
                     <input
@@ -1514,7 +1514,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1 text-center">
+                    <label className="block text-xs font-medium text-slate-700 mb-1 text-center">
                       Y
                     </label>
                     <input
@@ -1537,7 +1537,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                 {/* Rotation Control - Shown here for non-text elements */}
                 {selectedElementData.type !== "text" && (
                   <div className="mb-2 md:mb-3">
-                    <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1">
                       Rotation
                     </label>
                     <input
@@ -1569,7 +1569,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                 {selectedElementData.type === "logo" && (
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
                         Image Upload
                       </label>
                       <input
@@ -1599,7 +1599,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                     </div>
                     <div className="grid grid-cols-2 gap-2.5">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                        <label className="block text-sm font-medium text-slate-700 mb-1.5">
                           Opacity
                         </label>
                         <input
@@ -1617,7 +1617,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                           }
                           className="w-full template-range"
                         />
-                        <span className="text-sm text-gray-600 text-center block mt-1">
+                        <span className="text-sm text-slate-500 text-center block mt-1">
                           {Math.round(
                             ((selectedElementData as LogoElement).opacity ||
                               1) * 100
@@ -1626,7 +1626,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                         </span>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-slate-700 mb-2">
                           Border Radius
                         </label>
                         <input
@@ -1658,7 +1658,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                     {/* Colors first */}
                     <div className="grid grid-cols-2 gap-2">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                        <label className="block text-sm font-medium text-slate-700 mb-1.5">
                           Text
                         </label>
                         <input
@@ -1674,7 +1674,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                        <label className="block text-sm font-medium text-slate-700 mb-1.5">
                           Background
                         </label>
                         <input
@@ -1696,7 +1696,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                     {/* Opacity second */}
                     <div className="grid grid-cols-2 gap-2">
                       <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                        <label className="block text-xs font-medium text-slate-700 mb-1">
                           Text Opacity
                         </label>
                         <input
@@ -1715,7 +1715,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                           }
                           className="w-full template-range"
                         />
-                        <span className="text-xs text-gray-600 text-center block mt-1">
+                        <span className="text-xs text-slate-500 text-center block mt-1">
                           {Math.round(
                             ((selectedElementData as TextElement).textOpacity ||
                               1) * 100
@@ -1724,7 +1724,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                         </span>
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                        <label className="block text-xs font-medium text-slate-700 mb-1">
                           Background Opacity
                         </label>
                         <input
@@ -1743,7 +1743,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                           }
                           className="w-full template-range"
                         />
-                        <span className="text-xs text-gray-600 text-center block mt-1">
+                        <span className="text-xs text-slate-500 text-center block mt-1">
                           {Math.round(
                             ((selectedElementData as TextElement)
                               .backgroundOpacity || 1) * 100
@@ -1777,7 +1777,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                     </div>
                     {/* Font Family */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                      <label className="block text-sm font-medium text-slate-700 mb-1.5">
                         Font Family
                       </label>
                       <select
@@ -1816,7 +1816,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                     {/* Size, Weight, Align, Padding */}
                     <div className="grid grid-cols-4 gap-2 mb-3">
                       <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                        <label className="block text-xs font-medium text-slate-700 mb-1">
                           Size
                         </label>
                         <input
@@ -1835,7 +1835,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                        <label className="block text-xs font-medium text-slate-700 mb-1">
                           Weigt
                         </label>
                         <select
@@ -1857,7 +1857,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                         </select>
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                        <label className="block text-xs font-medium text-slate-700 mb-1">
                           Align
                         </label>
                         <select
@@ -1876,7 +1876,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                         </select>
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                        <label className="block text-xs font-medium text-slate-700 mb-1">
                           Pad
                         </label>
                         <input
@@ -1898,7 +1898,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
 
                     {/* Rotation below fonts for text */}
                     <div className="mb-2">
-                      <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1">
                         Rotation
                       </label>
                       <input
@@ -1929,7 +1929,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                   <div className="space-y-3">
                     <div className="grid grid-cols-2 gap-2">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                        <label className="block text-sm font-medium text-slate-700 mb-1.5">
                           Shape Type
                         </label>
                         <select
@@ -1949,7 +1949,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                         </select>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                        <label className="block text-sm font-medium text-slate-700 mb-1.5">
                           Color
                         </label>
                         <input
@@ -1967,7 +1967,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
                         Opacity
                       </label>
                       <input
@@ -2001,7 +2001,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                     {(selectedElementData as ShapeElement).shape ===
                       "rectangle" && (
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                        <label className="block text-sm font-medium text-slate-700 mb-1.5">
                           Corner Radius
                         </label>
                         <input
@@ -2086,7 +2086,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
         <div className="flex-shrink-0 px-3 py-1 md:py-2 bg-white border-b border-gray-200">
           <div className="flex items-center justify-between">
             {/* Canvas Info */}
-            <div className="text-xs text-gray-600 font-mono">
+            <div className="text-xs text-slate-500 font-mono">
               {canvasDimensions && (
                 <>
                   <span className="hidden sm:inline">
@@ -2104,17 +2104,17 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
             <div className="flex items-center space-x-1.5 md:space-x-2">
               <button
                 onClick={() => setZoomLevel(Math.max(0.1, zoomLevel - 0.1))}
-                className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs hover:bg-gray-200 transition-colors"
+                className="px-2 py-1 bg-gray-100 text-slate-700 rounded text-xs hover:bg-gray-200 transition-colors"
                 disabled={zoomLevel <= 0.1}
               >
                 −
               </button>
-              <span className="text-xs text-gray-600 min-w-8 md:min-w-12 text-center">
+              <span className="text-xs text-slate-500 min-w-8 md:min-w-12 text-center">
                 {Math.round(zoomLevel * 100)}%
               </span>
               <button
                 onClick={() => setZoomLevel(Math.min(maxZoom, zoomLevel + 0.1))}
-                className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs hover:bg-gray-200 transition-colors"
+                className="px-2 py-1 bg-gray-100 text-slate-700 rounded text-xs hover:bg-gray-200 transition-colors"
                 disabled={zoomLevel >= maxZoom}
               >
                 +
@@ -2135,7 +2135,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
               </button>
               <button
                 onClick={() => setZoomLevel(1)}
-                className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs hover:bg-gray-200 transition-colors"
+                className="px-2 py-1 bg-gray-100 text-slate-700 rounded text-xs hover:bg-gray-200 transition-colors"
               >
                 100%
               </button>

@@ -19,13 +19,13 @@ const IconShowcase: React.FC = () => {
   return (
     <div className="p-8 bg-gray-50 h-full-dec-hf  x-2">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-800 mb-8">
+        <h1 className="text-3xl font-bold text-slate-800 mb-8">
           Icon Component Showcase
         </h1>
 
         {/* Basic Icons */}
         <section className="mb-12">
-          <h2 className="text-2xl font-semibold text-gray-700 mb-6">
+          <h2 className="text-2xl font-semibold text-slate-700 mb-6">
             Available Icons
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-6">
@@ -35,7 +35,7 @@ const IconShowcase: React.FC = () => {
                 className="flex flex-col items-center p-4 bg-white rounded-md shadow-md hover:shadow-lg transition-shadow"
               >
                 <Icon name={icon.name} size={48} className="mb-3" />
-                <span className="text-sm font-medium text-gray-600 text-center">
+                <span className="text-sm font-medium text-slate-500 text-center">
                   {icon.description}
                 </span>
                 <span className="text-xs text-gray-400 mt-1">{icon.name}</span>
@@ -46,7 +46,7 @@ const IconShowcase: React.FC = () => {
 
         {/* Different Sizes */}
         <section className="mb-12">
-          <h2 className="text-2xl font-semibold text-gray-700 mb-6">
+          <h2 className="text-2xl font-semibold text-slate-700 mb-6">
             Size Variations
           </h2>
           <div className="bg-white rounded-md p-6 shadow-md">
@@ -54,7 +54,7 @@ const IconShowcase: React.FC = () => {
               {sizes.map((size) => (
                 <div key={size} className="flex flex-col items-center">
                   <Icon name="logo" size={size} className="mb-2" />
-                  <span className="text-sm text-gray-600">{size}px</span>
+                  <span className="text-sm text-slate-500">{size}px</span>
                 </div>
               ))}
             </div>
@@ -63,7 +63,7 @@ const IconShowcase: React.FC = () => {
 
         {/* Color Variations */}
         <section className="mb-12">
-          <h2 className="text-2xl font-semibold text-gray-700 mb-6">
+          <h2 className="text-2xl font-semibold text-slate-700 mb-6">
             Color Variations
           </h2>
           <div className="bg-white rounded-md p-6 shadow-md">
@@ -76,9 +76,7 @@ const IconShowcase: React.FC = () => {
                     color={color}
                     className="mb-2"
                   />
-                  <span className="text-sm text-gray-600 capitalize">
-                    {color}
-                  </span>
+                  <span className="text-sm text-slate-500 ">{color}</span>
                 </div>
               ))}
             </div>
@@ -87,7 +85,7 @@ const IconShowcase: React.FC = () => {
 
         {/* Interactive Example */}
         <section className="mb-12">
-          <h2 className="text-2xl font-semibold text-gray-700 mb-6">
+          <h2 className="text-2xl font-semibold text-slate-700 mb-6">
             Interactive Icons
           </h2>
           <div className="bg-white rounded-md p-6 shadow-md">
@@ -111,7 +109,7 @@ const IconShowcase: React.FC = () => {
                 onClick={() => alert("Connect clicked!")}
               />
             </div>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-slate-500">
               Click on the icons above to see interactive functionality!
             </p>
           </div>
@@ -119,7 +117,7 @@ const IconShowcase: React.FC = () => {
 
         {/* Usage Examples */}
         <section>
-          <h2 className="text-2xl font-semibold text-gray-700 mb-6">
+          <h2 className="text-2xl font-semibold text-slate-700 mb-6">
             Usage Examples
           </h2>
           <div className="bg-white rounded-md p-6 shadow-md">

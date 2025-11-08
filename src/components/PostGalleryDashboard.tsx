@@ -317,7 +317,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
           className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
             viewMode === tab.id
               ? "bg-white text-blue-600 shadow-sm"
-              : "text-gray-600 hover:text-gray-900"
+              : "text-slate-500 hover:text-slate-900"
           }`}
         >
           <tab.icon className="w-4 h-4" />
@@ -327,7 +327,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
               className={`text-xs px-2 py-0.5 rounded-full ${
                 viewMode === tab.id
                   ? "bg-blue-100 text-blue-600"
-                  : "bg-gray-200 text-gray-600"
+                  : "bg-gray-200 text-slate-500"
               }`}
             >
               {tab.count}
@@ -413,7 +413,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
         <div className="mt-4 pt-4 border-t border-gray-200">
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-slate-700 mb-2">
                 Platforms
               </label>
               <div className="space-y-1">
@@ -436,7 +436,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
                         }}
                         className="mr-2 text-blue-600 rounded"
                       />
-                      <span className="text-sm text-gray-700">{platform}</span>
+                      <span className="text-sm text-slate-700">{platform}</span>
                     </label>
                   )
                 )}
@@ -445,7 +445,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
 
             {viewMode === "media" && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-slate-700 mb-2">
                   Media Type
                 </label>
                 <select
@@ -467,7 +467,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
             )}
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-slate-700 mb-2">
                 Status
               </label>
               <div className="space-y-1">
@@ -487,14 +487,14 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
                       }}
                       className="mr-2 text-blue-600 rounded"
                     />
-                    <span className="text-sm text-gray-700">{status}</span>
+                    <span className="text-sm text-slate-700">{status}</span>
                   </label>
                 ))}
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-slate-700 mb-2">
                 Special
               </label>
               <div className="space-y-1">
@@ -510,7 +510,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
                     }
                     className="mr-2 text-blue-600 rounded"
                   />
-                  <span className="text-sm text-gray-700">Favorites Only</span>
+                  <span className="text-sm text-slate-700">Favorites Only</span>
                 </label>
                 <label className="flex items-center">
                   <input
@@ -524,13 +524,13 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
                     }
                     className="mr-2 text-blue-600 rounded"
                   />
-                  <span className="text-sm text-gray-700">Reusable</span>
+                  <span className="text-sm text-slate-700">Reusable</span>
                 </label>
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-slate-700 mb-2">
                 Date Range
               </label>
               <div className="space-y-2">
@@ -588,7 +588,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
                   className={`p-1.5 rounded-full shadow-sm transition-colors ${
                     post.isFavorite
                       ? "bg-red-500 text-white hover:bg-red-600"
-                      : "bg-white text-gray-600 hover:bg-gray-50"
+                      : "bg-white text-slate-500 hover:bg-gray-50"
                   }`}
                 >
                   <Heart
@@ -602,7 +602,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
                     e.stopPropagation();
                     onReusePost?.(post.id);
                   }}
-                  className="p-1.5 bg-white text-gray-600 rounded-full shadow-sm hover:bg-gray-50 transition-colors"
+                  className="p-1.5 bg-white text-slate-500 rounded-full shadow-sm hover:bg-gray-50 transition-colors"
                 >
                   <Repeat className="w-4 h-4" />
                 </button>
@@ -611,7 +611,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
                     e.stopPropagation();
                     onCreateTemplate?.(post.id);
                   }}
-                  className="p-1.5 bg-white text-gray-600 rounded-full shadow-sm hover:bg-gray-50 transition-colors"
+                  className="p-1.5 bg-white text-slate-500 rounded-full shadow-sm hover:bg-gray-50 transition-colors"
                 >
                   <Copy className="w-4 h-4" />
                 </button>
@@ -627,10 +627,10 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
           </div>
 
           <div className="p-4">
-            <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">
+            <h3 className="font-semibold text-slate-900 mb-2 line-clamp-2">
               {post.title}
             </h3>
-            <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+            <p className="text-sm text-slate-500 mb-3 line-clamp-2">
               {post.preview}
             </p>
 
@@ -714,7 +714,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
                     link.click();
                     document.body.removeChild(link);
                   }}
-                  className="p-1.5 bg-white text-gray-600 rounded-full shadow-sm hover:bg-gray-50 transition-colors"
+                  className="p-1.5 bg-white text-slate-500 rounded-full shadow-sm hover:bg-gray-50 transition-colors"
                   title="Download"
                 >
                   <Download className="w-4 h-4" />
@@ -724,7 +724,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
                     e.stopPropagation();
                     navigator.clipboard.writeText(asset.url);
                   }}
-                  className="p-1.5 bg-white text-gray-600 rounded-full shadow-sm hover:bg-gray-50 transition-colors"
+                  className="p-1.5 bg-white text-slate-500 rounded-full shadow-sm hover:bg-gray-50 transition-colors"
                   title="Copy URL"
                 >
                   <Share2 className="w-4 h-4" />
@@ -734,7 +734,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
                     e.stopPropagation();
                     handleAssetClick(asset);
                   }}
-                  className="p-1.5 bg-white text-gray-600 rounded-full shadow-sm hover:bg-gray-50 transition-colors"
+                  className="p-1.5 bg-white text-slate-500 rounded-full shadow-sm hover:bg-gray-50 transition-colors"
                   title="View Details"
                 >
                   <MoreHorizontal className="w-4 h-4" />
@@ -759,7 +759,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
 
           <div className="p-3">
             <h3
-              className="font-medium text-gray-900 text-sm mb-1 truncate"
+              className="font-medium text-slate-900 text-sm mb-1 truncate"
               title={asset.filename}
             >
               {asset.filename}
@@ -773,7 +773,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
                 {asset.tags.slice(0, 2).map((tag) => (
                   <span
                     key={tag}
-                    className="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded"
+                    className="bg-gray-100 text-slate-500 text-xs px-2 py-1 rounded"
                   >
                     {tag}
                   </span>
@@ -806,7 +806,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
               <Wand2 className="w-6 h-6" />
             </button>
           </div>
-          <p className="text-sm text-gray-600 mb-1">Upload or Generate</p>
+          <p className="text-sm text-slate-500 mb-1">Upload or Generate</p>
           <p className="text-xs text-gray-400">Media Assets</p>
         </div>
         <input
@@ -829,7 +829,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
     showVideoGenerator && (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div className="bg-white rounded-md max-w-md w-full mx-4 p-6">
-          <h3 className="text-xl font-bold text-gray-900 mb-4">
+          <h3 className="text-xl font-bold text-slate-900 mb-4">
             Generate AI Video
           </h3>
 
@@ -842,7 +842,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
             />
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-slate-700 mb-2">
                 Video Description
               </label>
               <textarea
@@ -854,7 +854,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-slate-700 mb-2">
                 Source Image (optional)
               </label>
               <input
@@ -866,7 +866,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-slate-700 mb-2">
                   Aspect Ratio
                 </label>
                 <select className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
@@ -877,7 +877,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-slate-700 mb-2">
                   Duration
                 </label>
                 <select className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
@@ -915,7 +915,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
             </button>
             <button
               onClick={() => setShowVideoGenerator(false)}
-              className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
+              className="px-4 py-2 border border-gray-300 text-slate-700 rounded-md hover:bg-gray-50 transition-colors"
             >
               Cancel
             </button>
@@ -928,8 +928,8 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
     <div className="max-w-7xl mx-auto p-6">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Content Gallery</h1>
-          <p className="text-gray-600">
+          <h1 className="text-2xl font-bold text-slate-900">Content Gallery</h1>
+          <p className="text-slate-500">
             Manage, reuse, and organize your content assets
           </p>
         </div>
@@ -954,7 +954,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
 
           <button
             onClick={loadContent}
-            className="p-2 text-gray-600 hover:text-gray-900 transition-colors"
+            className="p-2 text-slate-500 hover:text-slate-900 transition-colors"
           >
             <RefreshCw className="w-5 h-5" />
           </button>
@@ -982,10 +982,10 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
           {viewMode === "templates" && (
             <div className="text-center py-12">
               <Palette className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
+              <h3 className="text-lg font-medium text-slate-900 mb-2">
                 Content Templates
               </h3>
-              <p className="text-gray-600 mb-4">
+              <p className="text-slate-500 mb-4">
                 Create reusable templates from your best performing posts
               </p>
               <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center gap-2 mx-auto">
@@ -997,10 +997,10 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
           {viewMode === "analytics" && (
             <div className="text-center py-12">
               <TrendingUp className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
+              <h3 className="text-lg font-medium text-slate-900 mb-2">
                 Content Analytics
               </h3>
-              <p className="text-gray-600 mb-4">
+              <p className="text-slate-500 mb-4">
                 Track performance and discover insights about your content
               </p>
               <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center gap-2 mx-auto">
@@ -1022,7 +1022,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
               <h2 className="text-xl font-semibold">Edit Post</h2>
               <button
                 onClick={() => setEditingPost(null)}
-                className="text-slate-500 hover:text-gray-700"
+                className="text-slate-500 hover:text-slate-700"
               >
                 ✕
               </button>
@@ -1058,10 +1058,10 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
         (viewMode === "gallery" || viewMode === "list") && (
           <div className="text-center py-12">
             <Grid3X3 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
+            <h3 className="text-lg font-medium text-slate-900 mb-2">
               No posts found
             </h3>
-            <p className="text-gray-600 mb-4">
+            <p className="text-slate-500 mb-4">
               Start creating content to see your gallery
             </p>
             <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
@@ -1073,10 +1073,10 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
       {mediaAssets.length === 0 && !loading && viewMode === "media" && (
         <div className="text-center py-12">
           <Image className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
+          <h3 className="text-lg font-medium text-slate-900 mb-2">
             No media assets found
           </h3>
-          <p className="text-gray-600 mb-4">
+          <p className="text-slate-500 mb-4">
             Upload images, videos, or generate AI content
           </p>
           <div className="flex gap-3 justify-center">

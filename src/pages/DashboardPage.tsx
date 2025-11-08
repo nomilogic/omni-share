@@ -273,7 +273,7 @@ export const DashboardPage: React.FC = () => {
                 <p className="text-2xl font-bold theme-text-primary mt-1 drop-shadow">
                   {stats.totalPosts}
                 </p>
-                <p className=" text-xs text-slate-600">
+                <p className=" text-xs text-slate-500">
                   Get started by creating content
                 </p>
               </div>
@@ -295,7 +295,7 @@ export const DashboardPage: React.FC = () => {
                 <p className="text-2xl font-bold theme-text-primary mt-1 drop-shadow">
                   {stats.scheduledPosts}
                 </p>
-                <p className="text-xs text-slate-600">
+                <p className="text-xs text-slate-500">
                   Schedule your first post
                 </p>
               </div>

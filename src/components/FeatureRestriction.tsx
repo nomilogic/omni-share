@@ -70,10 +70,10 @@ export const FeatureRestriction: React.FC<FeatureRestrictionProps> = ({
             onClick={() => setShowUpgradeModal(true)}
             className="bg-white shadow-lg rounded-md px-6 py-3 flex items-center space-x-3 hover:shadow-xl transition-all duration-200"
           >
-            <Lock className="w-5 h-5 text-gray-600" />
+            <Lock className="w-5 h-5 text-slate-500" />
             <div className="text-left">
-              <p className="font-medium text-gray-900">Upgrade Required</p>
-              <p className="text-sm text-gray-600">
+              <p className="font-medium text-slate-900">Upgrade Required</p>
+              <p className="text-sm text-slate-500">
                 {feature} requires {getPlanName(requiredPlan)}
               </p>
             </div>
@@ -91,12 +91,12 @@ export const FeatureRestriction: React.FC<FeatureRestrictionProps> = ({
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl max-w-md w-full p-6">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-bold text-gray-900">
+              <h3 className="text-xl font-bold text-slate-900">
                 Upgrade Required
               </h3>
               <button
                 onClick={() => setShowUpgradeModal(false)}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-gray-400 hover:text-slate-500"
               >
                 <X className="w-6 h-6" />
               </button>
@@ -110,10 +110,10 @@ export const FeatureRestriction: React.FC<FeatureRestrictionProps> = ({
                   <Crown className="w-8 h-8 text-white" />
                 )}
               </div>
-              <h4 className="text-lg font-semibold text-gray-900 mb-2">
+              <h4 className="text-lg font-semibold text-slate-900 mb-2">
                 {feature} is available with {getPlanName(requiredPlan)}
               </h4>
-              <p className="text-gray-600">
+              <p className="text-slate-500">
                 You're currently on {getPlanName(currentPlan)}. Upgrade to
                 unlock this feature.
               </p>
@@ -121,15 +121,15 @@ export const FeatureRestriction: React.FC<FeatureRestrictionProps> = ({
 
             <div className="space-y-3 mb-6">
               <div className="flex justify-between items-center">
-                <span className="text-gray-700">Current Plan:</span>
+                <span className="text-slate-700">Current Plan:</span>
                 <span className="font-medium">{getPlanName(currentPlan)}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-700">Required Plan:</span>
+                <span className="text-slate-700">Required Plan:</span>
                 <span className="font-medium">{getPlanName(requiredPlan)}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-700">Price:</span>
+                <span className="text-slate-700">Price:</span>
                 <span className="font-medium">
                   {getPlanPrice(requiredPlan)}
                 </span>
@@ -139,7 +139,7 @@ export const FeatureRestriction: React.FC<FeatureRestrictionProps> = ({
             <div className="flex space-x-3">
               <button
                 onClick={() => setShowUpgradeModal(false)}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-slate-700 hover:bg-gray-50 transition-colors duration-200"
               >
                 Maybe Later
               </button>

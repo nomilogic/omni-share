@@ -21,6 +21,9 @@ import {
   Trash2,
 } from "lucide-react";
 import Icon from "./Icon";
+import TextPostIcon from "../assets/create-text-post-icon-01.svg";
+import ImagePostIcon from "../assets/create-image-post-icon-01.svg";
+import VideoPostIcon from "../assets/create-video-post-icon-01.svg";
 import { PostContent, Platform } from "../types";
 import { uploadMedia, getCurrentUser } from "../lib/database";
 import { analyzeImage as analyzeImageWithGemini } from "../lib/gemini"; // Renamed to avoid conflict
@@ -1888,332 +1891,298 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
   return (
     <div className="w-full mx-auto  rounded-md border border-white/10   ">
-      {/* Hide the main form when template editor is open */}
       {!showTemplateEditor && (
         <>
-          {/* Header */}
           <div className="text-left mb-4">
-            {/* <div className="w-12 h-12 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-md flex items-center justify-center mx-auto ">
-              <Wand2 className="w-6 h-6 text-blue-400" />
-            </div> */}
-            <h2 className="text-3xl font-bold theme-text-primary mb-1 capitalize">
+            <h2 className="text-3xl md:font-bold font-semibold theme-text-primary mb-1  leading-8">
               Create auto‑optimize social posts with AI
             </h2>
-            <p className="text-sm text-slate-500 font-semibold capitalize">
+            <p className="text-sm text-slate-500 md:font-semibold font-medium ">
               Generate on‑brand content, auto‑design visuals, and publish
               everywhere in one click. Meet your new 24/7 content teammate.
             </p>
-
-            {/* Campaign Context Indicator */}
-            {/* {loadingCampaign && (
-          <div className="flex items-center justify-center gap-2 mt-3 text-xs text-blue-400">
-            <Loader className="w-3 h-3 animate-spin" />
-            <span>Loading campaign info...</span>
           </div>
-        )}
-        {campaignInfo && (
-          <div className="flex items-center justify-center gap-2 mt-3 px-3 py-1 bg-green-500/10 border border-green-400/20 rounded-md text-xs text-green-300">
-            <Target className="w-3 h-3" />
-            <span>Using campaign: {campaignInfo.name}</span>
-          </div>
-        )}
-        {!campaignInfo && !loadingCampaign && state.selectedCampaign && (
-          <div className="flex items-center justify-center gap-2 mt-3 px-3 py-1 bg-yellow-500/10 border border-yellow-400/20 rounded-md text-xs text-yellow-300">
-            <AlertCircle className="w-3 h-3" />
-            <span>Campaign not found - using default settings</span>
-          </div>
-        )}
-        {!campaignInfo && !state.selectedCampaign && (
-          <div className="flex items-center justify-center gap-2 mt-3 px-3 py-1 bg-gray-500/10 border border-gray-400/20 rounded-md text-xs text-gray-400">
-            <span>No campaign selected - using general content generation</span>
-          </div>
-        )} */}
-          </div>
-
-          {/* TEMPORARY: Loading Test Section - Remove this after testing */}
-          {/* <LoadingTest /> */}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 gap-4 ">
-              <>
-                <div className="z-50">
-                  <label className="block text-sm font-semibold theme-text-primary mb-2 uppercase">
-                    Select Post Type
-                  </label>
-                  <div className="grid grid-cols-3 gap-4 text-sm md:text-base">
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setSelectedPostType(
-                          selectedPostType === "text" ? "" : "text"
-                        )
-                      }
-                      disabled={
-                        (formData.media || formData.mediaUrl) &&
-                        selectedPostType !== "text"
-                      }
-                      className={`  border shadow-md backdrop-blur-md border-slate-200/70 transition-all duration-200 text-center px-2 py-3 rounded-md ${
-                        (formData.media || formData.mediaUrl) &&
-                        selectedPostType !== "text"
-                          ? "theme-bg-primary opacity-50 cursor-not-allowed"
-                          : selectedPostType === "text"
-                          ? "theme-bg-trinary theme-text-light shadow-md"
-                          : "theme-bg-primary "
-                      }`}
-                    >
-                      <div className="flex flex-col items-center">
-                        <div className={`  `}>
-                          <Icon
-                            name="text-post"
-                            size={44}
-                            className={`${
-                              selectedPostType === "text"
-                                ? "brightness-0 invert "
-                                : "theme-text-secondary"
-                            }`}
-                          />
-                        </div>
-                        <div>
-                          <h3
-                            className={`font-semibold leading-[1.2rem] mt-1  ${
-                              selectedPostType === "text"
-                                ? "text-white"
-                                : "theme-text-primary"
-                            }`}
-                          >
-                            Create
-                            <br />
-                            Text Post
-                          </h3>
-                        </div>
+              <div className="z-50">
+                <label className="block text-sm font-semibold theme-text-primary mb-2 ">
+                  Select Post Type
+                </label>
+                <div className="grid grid-cols-3 gap-4 text-sm md:text-base">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setSelectedPostType(
+                        selectedPostType === "text" ? "" : "text"
+                      )
+                    }
+                    disabled={
+                      (formData.media || formData.mediaUrl) &&
+                      selectedPostType !== "text"
+                    }
+                    className={`  border  duration-200 text-center px-2 py-3 rounded-md ${
+                      (formData.media || formData.mediaUrl) &&
+                      selectedPostType !== "text"
+                        ? "theme-bg-primary opacity-50 cursor-not-allowed"
+                        : selectedPostType === "text"
+                        ? "theme-bg-trinary theme-text-light shadow-md"
+                        : "theme-bg-primary "
+                    }`}
+                  >
+                    <div className="flex flex-col items-center">
+                      <div className={`  `}>
+                        <img
+                          src={TextPostIcon}
+                          alt=""
+                          className={`${
+                            selectedPostType === "text"
+                              ? "brightness-0 invert "
+                              : "theme-text-secondary"
+                          }  md:w-[44px] md:h-[44px] w-[38px] h-[38px] `}
+                        />
                       </div>
-                    </button>
+                      <div>
+                        <h3
+                          className={`font-semibold leading-[1.2rem] mt-1  ${
+                            selectedPostType === "text"
+                              ? "text-white"
+                              : "theme-text-primary"
+                          }`}
+                        >
+                          Create
+                          <br />
+                          Text Post
+                        </h3>
+                      </div>
+                    </div>
+                  </button>
 
-                    {/* Image Post */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (
-                          !(
-                            (formData.media || formData.mediaUrl) &&
-                            selectedPostType !== "image"
-                          )
-                        ) {
-                          setSelectedPostType("image");
-                          setShowImageMenu(!showImageMenu);
-                        }
-                      }}
-                      disabled={
-                        (formData.media || formData.mediaUrl) &&
-                        selectedPostType !== "image" &&
-                        !formData.media?.type?.startsWith("image/")
+                  {/* Image Post */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (
+                        !(
+                          (formData.media || formData.mediaUrl) &&
+                          selectedPostType !== "image"
+                        )
+                      ) {
+                        setSelectedPostType("image");
+                        setShowImageMenu(!showImageMenu);
                       }
-                      className={` relative  border shadow-md backdrop-blur-md border-slate-200/70 transition-all duration-200 text-center px-2 py-3 rounded-md ${
-                        (formData.media || formData.mediaUrl) &&
-                        selectedPostType !== "image" &&
-                        !formData.media?.type?.startsWith("image/")
-                          ? "theme-bg-primary opacity-50 cursor-not-allowed"
-                          : selectedPostType === "image"
-                          ? "theme-bg-trinary theme-text-light shadow-md"
-                          : "theme-bg-primary theme-text-primary"
+                    }}
+                    disabled={
+                      (formData.media || formData.mediaUrl) &&
+                      selectedPostType !== "image" &&
+                      !formData.media?.type?.startsWith("image/")
+                    }
+                    className={` relative  border shadow-md backdrop-blur-md border-slate-200/70 transition-all duration-200 text-center px-2 py-3 rounded-md ${
+                      (formData.media || formData.mediaUrl) &&
+                      selectedPostType !== "image" &&
+                      !formData.media?.type?.startsWith("image/")
+                        ? "theme-bg-primary opacity-50 cursor-not-allowed"
+                        : selectedPostType === "image"
+                        ? "theme-bg-trinary theme-text-light shadow-md"
+                        : "theme-bg-primary theme-text-primary"
+                    }`}
+                  >
+                    <div className="flex flex-col items-center">
+                      <div className={`   `}>
+                        <img
+                          src={ImagePostIcon}
+                          alt=""
+                          className={`${
+                            selectedPostType === "image"
+                              ? "brightness-0 invert "
+                              : "theme-text-secondary"
+                          }  md:w-[48px] md:h-[48px] w-[38px] h-[38px] `}
+                        />
+                      </div>
+                      <div>
+                        <h3
+                          className={`font-semibold text-md leading-[1.2rem] mt-1 text p-0 ${
+                            selectedPostType === "image"
+                              ? "text-white"
+                              : "theme-text-primary"
+                          }`}
+                        >
+                          Create
+                          <br />
+                          Image Post
+                        </h3>
+                      </div>
+                    </div>
+                    <div
+                      className={`absolute w-full left-0 mt-3 z-10 ${
+                        showImageMenu ? "" : "hidden"
                       }`}
                     >
-                      <div className="flex flex-col items-center">
-                        <div className={`  `}>
-                          <Icon
-                            name="image-post"
-                            size={48}
-                            className={`${
-                              selectedPostType === "image"
-                                ? "brightness-0 invert "
-                                : "theme-text-secondary"
-                            }`}
-                          />
-                        </div>
-                        <div>
-                          <h3
-                            className={`font-semibold text-md leading-[1.2rem] mt-1 text p-0 ${
-                              selectedPostType === "image"
-                                ? "text-white"
-                                : "theme-text-primary"
-                            }`}
-                          >
-                            Create
-                            <br />
-                            Image Post
-                          </h3>
-                        </div>
-                      </div>
                       <div
-                        className={`absolute w-full left-0 mt-3 z-10 ${
+                        className={`grid grid-cols-1 gap-0 ${
                           showImageMenu ? "" : "hidden"
                         }`}
                       >
-                        <div
-                          className={`grid grid-cols-1 gap-0 ${
-                            showImageMenu ? "" : "hidden"
-                          }`}
-                        >
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setSelectedImageMode("upload");
-                              setShowImageMenu(false);
-                            }}
-                            className={`p-3  border transition shadow-md backdrop-blur-md border-slate-200/70-all duration-200 text-center
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectedImageMode("upload");
+                            setShowImageMenu(false);
+                          }}
+                          className={`p-3 rounded-md border transition shadow-md backdrop-blur-md border-slate-200/70-all duration-200 text-center
                         ${selectedPostType === "image" ? "" : "hidden"}
                         ${
                           selectedImageMode === "upload"
                             ? "theme-bg-trinary text-white shadow-lg"
                             : "theme-bg-quaternary"
                         }`}
-                          >
-                            <div className="flex flex-col items-center space-y-0">
-                              <div>
-                                <Icon
-                                  name="upload"
-                                  size={40}
-                                  className={`${
-                                    selectedImageMode === "upload"
-                                      ? "brightness-0 invert"
-                                      : ""
-                                  }`}
-                                />
-                              </div>
-                              <div>
-                                <h3
-                                  className={`font-semibold text-sm leading-[1.2rem] mt-1 text
+                        >
+                          <div className="flex flex-col items-center space-y-0">
+                            <div className="cret">
+                              <Icon
+                                name="upload"
+                                size={40}
+                                className={`${
+                                  selectedImageMode === "upload"
+                                    ? "brightness-0 invert"
+                                    : ""
+                                }`}
+                              />
+                            </div>
+                            <div>
+                              <h3
+                                className={`font-semibold text-sm leading-[1.2rem] mt-1 text
                         
                         ${
                           selectedImageMode === "upload"
                             ? "text-white"
                             : "theme-text-secondary"
                         }`}
-                                >
-                                  Upload
-                                  <br />
-                                  Image
-                                </h3>
-                              </div>
+                              >
+                                Upload
+                                <br />
+                                Image
+                              </h3>
                             </div>
-                          </button>
+                          </div>
+                        </button>
 
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setSelectedImageMode("textToImage");
-                              setShowImageMenu(false);
-                            }}
-                            className={`p-3 shadow-md backdrop-blur-md border-slate-200/70  border transition-all duration-200 text-center 
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectedImageMode("textToImage");
+                            setShowImageMenu(false);
+                          }}
+                          className={`p-3   border rounded-md transition-all duration-200 text-center 
                         ${selectedPostType === "image" ? "" : "hidden"}
                         ${
                           selectedImageMode === "textToImage"
                             ? "theme-bg-trinary text-white shadow-lg"
                             : "theme-bg-quaternary"
                         }`}
-                          >
-                            <div className="flex flex-col items-center space-y-0">
-                              <div>
-                                <Icon
-                                  name="text-to-image"
-                                  size={44}
-                                  className={`${
-                                    selectedImageMode === "textToImage"
-                                      ? "brightness-0 invert"
-                                      : ""
-                                  }`}
-                                />
-                              </div>
-                              <div>
-                                <h3
-                                  className={`font-semibold text-sm leading-[1.2rem] mt-1 text ${
-                                    selectedImageMode === "textToImage"
-                                      ? "text-white"
-                                      : "theme-text-secondary"
-                                  }`}
-                                >
-                                  Text
-                                  <br /> to Image
-                                </h3>
-                              </div>
+                        >
+                          <div className="flex flex-col items-center space-y-0">
+                            <div>
+                              <Icon
+                                name="text-to-image"
+                                size={44}
+                                className={`${
+                                  selectedImageMode === "textToImage"
+                                    ? "brightness-0 invert"
+                                    : ""
+                                }`}
+                              />
                             </div>
-                          </button>
-                        </div>
+                            <div>
+                              <h3
+                                className={`font-semibold text-sm leading-[1.2rem] mt-1 text ${
+                                  selectedImageMode === "textToImage"
+                                    ? "text-white"
+                                    : "theme-text-secondary"
+                                }`}
+                              >
+                                Text
+                                <br /> to Image
+                              </h3>
+                            </div>
+                          </div>
+                        </button>
                       </div>
-                    </button>
+                    </div>
+                  </button>
 
-                    {/* Video Post */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (
-                          !(
-                            (formData.media || formData.mediaUrl) &&
-                            selectedPostType !== "video"
-                          )
-                        ) {
-                          setSelectedPostType("video");
-                          setShowVideoMenu(!showVideoMenu);
-                        }
-                      }}
-                      disabled={
-                        (formData.media || formData.mediaUrl) &&
-                        selectedPostType !== "video" &&
-                        !isVideoFile(formData.media)
+                  {/* Video Post */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (
+                        !(
+                          (formData.media || formData.mediaUrl) &&
+                          selectedPostType !== "video"
+                        )
+                      ) {
+                        setSelectedPostType("video");
+                        setShowVideoMenu(!showVideoMenu);
                       }
-                      className={`relative border shadow-md backdrop-blur-md border-slate-200/70 transition-all duration-200 text-center px-2 py-3 rounded-md ${
-                        (formData.media || formData.mediaUrl) &&
-                        selectedPostType !== "video" &&
-                        !isVideoFile(formData.media)
-                          ? "theme-bg-primary opacity-50 cursor-not-allowed"
-                          : selectedPostType === "video"
-                          ? "theme-bg-trinary theme-text-light shadow-md"
-                          : "theme-bg-primary theme-text-primary"
+                    }}
+                    disabled={
+                      (formData.media || formData.mediaUrl) &&
+                      selectedPostType !== "video" &&
+                      !isVideoFile(formData.media)
+                    }
+                    className={`relative border shadow-md backdrop-blur-md border-slate-200/70 transition-all duration-200 text-center px-2 py-3 rounded-md ${
+                      (formData.media || formData.mediaUrl) &&
+                      selectedPostType !== "video" &&
+                      !isVideoFile(formData.media)
+                        ? "theme-bg-primary opacity-50 cursor-not-allowed"
+                        : selectedPostType === "video"
+                        ? "theme-bg-trinary theme-text-light shadow-md"
+                        : "theme-bg-primary theme-text-primary"
+                    }`}
+                  >
+                    <div className="flex flex-col items-center">
+                      <div>
+                        <img
+                          src={VideoPostIcon}
+                          alt=""
+                          className={`${
+                            selectedPostType === "video"
+                              ? "brightness-0 invert "
+                              : "theme-text-secondary"
+                          }  md:w-[48px] md:h-[48px] w-[38px] h-[38px] `}
+                        />
+                      </div>
+                      <div>
+                        <h3
+                          className={`font-semibold text-md leading-[1.2rem] mt-1 text p-0 ${
+                            selectedPostType === "video"
+                              ? "text-white"
+                              : "theme-text-primary"
+                          }`}
+                        >
+                          Create
+                          <br />
+                          Video Post
+                        </h3>
+                      </div>
+                    </div>
+                    <div
+                      className={`absolute w-full left-0 mt-3 z-10 ${
+                        showVideoMenu ? "" : "hidden"
                       }`}
                     >
-                      <div className="flex flex-col items-center">
-                        <div>
-                          <Icon
-                            name="video-post"
-                            size={48}
-                            className={`${
-                              selectedPostType === "video"
-                                ? "brightness-0 invert "
-                                : "theme-text-secondary"
-                            }`}
-                          />
-                        </div>
-                        <div>
-                          <h3
-                            className={`font-semibold text-md leading-[1.2rem] mt-1 text p-0 ${
-                              selectedPostType === "video"
-                                ? "text-white"
-                                : "theme-text-primary"
-                            }`}
-                          >
-                            Create
-                            <br />
-                            Video Post
-                          </h3>
-                        </div>
-                      </div>
                       <div
-                        className={`absolute w-full left-0 mt-3 z-10 ${
+                        className={`grid grid-cols-1 gap-0 ${
                           showVideoMenu ? "" : "hidden"
                         }`}
                       >
-                        <div
-                          className={`grid grid-cols-1 gap-0 ${
-                            showVideoMenu ? "" : "hidden"
-                          }`}
-                        >
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setSelectedVideoMode("upload");
-                              setShowVideoMenu(false);
-                            }}
-                            className={`p-3 border transition shadow-md backdrop-blur-md border-slate-200/70-all duration-200 text-center
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectedVideoMode("upload");
+                            setShowVideoMenu(false);
+                          }}
+                          className={`p-3 border transition rounded-md duration-200 text-center
                             ${selectedPostType === "video" ? "" : "hidden"}
                             ${
                               selectedVideoMode === "upload"
@@ -2221,42 +2190,42 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                 : "theme-bg-quaternary"
                             }
                           `}
-                          >
-                            <div className="flex flex-col items-center space-y-0">
-                              <div>
-                                <div
-                                  className={`w-10 h-6 border mx-auto mb-2  ${
-                                    selectedVideoMode === "upload"
-                                      ? "shadow-lg brightness-0 invert border-2"
-                                      : "theme-border-trinary border-2"
-                                  }`}
-                                ></div>
-                              </div>
-                              <div>
-                                <h3
-                                  className={`font-semibold text-sm leading-[1.2rem] mt-1 text ${
-                                    selectedVideoMode === "upload"
-                                      ? "text-white"
-                                      : "theme-text-secondary"
-                                  }`}
-                                >
-                                  Upload
-                                  <br />
-                                  Video (16:9)
-                                </h3>
-                                {/* <p className={`text-xs mt-1 ${selectedVideoMode === 'upload' ? 'text-white/80' : 'theme-text-tertiary'}`}>
+                        >
+                          <div className="flex flex-col items-center space-y-0">
+                            <div>
+                              <div
+                                className={`w-10 h-6 border mx-auto mb-2  ${
+                                  selectedVideoMode === "upload"
+                                    ? "shadow-lg brightness-0 invert border-2"
+                                    : "theme-border-trinary border-2"
+                                }`}
+                              ></div>
+                            </div>
+                            <div>
+                              <h3
+                                className={`font-semibold text-sm leading-[1.2rem] mt-1 text ${
+                                  selectedVideoMode === "upload"
+                                    ? "text-white"
+                                    : "theme-text-secondary"
+                                }`}
+                              >
+                                Upload
+                                <br />
+                                Video (16:9)
+                              </h3>
+                              {/* <p className={`text-xs mt-1 ${selectedVideoMode === 'upload' ? 'text-white/80' : 'theme-text-tertiary'}`}>
                               Horizontal format
                             </p> */}
-                              </div>
                             </div>
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setSelectedVideoMode("uploadShorts");
-                              setShowVideoMenu(false);
-                            }}
-                            className={`p-3 border transition shadow-md backdrop-blur-md border-slate-200/70-all duration-200 text-center
+                          </div>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectedVideoMode("uploadShorts");
+                            setShowVideoMenu(false);
+                          }}
+                          className={`p-3 border transition rounded-md duration-200 text-center
                             ${selectedPostType === "video" ? "" : "hidden"}
                             ${
                               selectedVideoMode === "uploadShorts"
@@ -2264,123 +2233,123 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                 : "theme-bg-quaternary"
                             }
                           `}
-                          >
-                            <div className="flex flex-col items-center space-y-0">
-                              <div>
-                                {/* Fallback to video-post icon if text-to-video is not available */}
-                                {/* <Icon name="video-post" size={44} className={`${selectedVideoMode === 'uploadShorts' ? 'brightness-0 invert' : ''}`} /> */}
+                        >
+                          <div className="flex flex-col items-center space-y-0">
+                            <div>
+                              {/* Fallback to video-post icon if text-to-video is not available */}
+                              {/* <Icon name="video-post" size={44} className={`${selectedVideoMode === 'uploadShorts' ? 'brightness-0 invert' : ''}`} /> */}
 
-                                <div
-                                  className={`w-6 h-10 border mx-auto mb-2  ${
-                                    selectedVideoMode === "uploadShorts"
-                                      ? "shadow-lg brightness-0 invert border-2"
-                                      : "theme-border-trinary border-2"
-                                  }`}
-                                ></div>
-                              </div>
-                              <div>
-                                <h3
-                                  className={`font-semibold text-sm leading-[1.2rem] mt-1 text ${
-                                    selectedVideoMode === "uploadShorts"
-                                      ? "text-white"
-                                      : "theme-text-secondary"
-                                  }`}
-                                >
-                                  Upload
-                                  <br />
-                                  Short (9:16)
-                                </h3>
-                                {/* <p className={`text-xs mt-1 ${selectedVideoMode === 'uploadShorts' ? 'text-white/80' : 'theme-text-tertiary'}`}>
+                              <div
+                                className={`w-6 h-10 border mx-auto mb-2  ${
+                                  selectedVideoMode === "uploadShorts"
+                                    ? "shadow-lg brightness-0 invert border-2"
+                                    : "theme-border-trinary border-2"
+                                }`}
+                              ></div>
+                            </div>
+                            <div>
+                              <h3
+                                className={`font-semibold text-sm leading-[1.2rem] mt-1 text ${
+                                  selectedVideoMode === "uploadShorts"
+                                    ? "text-white"
+                                    : "theme-text-secondary"
+                                }`}
+                              >
+                                Upload
+                                <br />
+                                Short (9:16)
+                              </h3>
+                              {/* <p className={`text-xs mt-1 ${selectedVideoMode === 'uploadShorts' ? 'text-white/80' : 'theme-text-tertiary'}`}>
                               Vertical format
                             </p> */}
-                              </div>
                             </div>
-                          </button>
-                        </div>
+                          </div>
+                        </button>
                       </div>
-                    </button>
-                  </div>
+                    </div>
+                  </button>
                 </div>
+              </div>
 
-                {selectedPostType === "image" && (
-                  <>
-                    {selectedImageMode === "upload" && (
-                      <div>
-                        <h4 className="text-sm font-medium theme-text-primary uppercase mb-1 flex items-center">
-                          Upload Image
-                        </h4>
+              {selectedPostType === "image" && (
+                <>
+                  {selectedImageMode === "upload" && (
+                    <div>
+                      <h4 className="text-sm font-medium theme-text-primary  mb-2 flex items-center">
+                        Upload Image *
+                      </h4>
 
-                        {/* Upload Area */}
-                        <div className=" theme-bg-primary ">
-                          <div
-                            className={`  border border-slate-200/70 backdrop-blur-sm rounded-md shadow-md p-4 text-center transition-all duration-200 cursor-pointer ${
-                              dragActive
-                                ? "border-blue-400/50 bg-blue-500/10"
-                                : "border-white/20 hover:border-white/30"
-                            }`}
-                            onDragEnter={handleDrag}
-                            onDragLeave={handleDrag}
-                            onDragOver={handleDrag}
-                            onDrop={handleDrop}
-                            onClick={() => fileInputRef.current?.click()}
-                          >
-                            <input
-                              ref={fileInputRef}
-                              type="file"
-                              accept="image/*"
-                              onChange={handleFileChange}
-                              className="hidden"
-                            />
+                      {/* Upload Area */}
+                      <div className=" theme-bg-primary  border border-slate-200/70 backdrop-blur-sm rounded-md shadow-md p-6">
+                        <div
+                          className={`  text-center transition-all duration-200 cursor-pointer ${
+                            dragActive
+                              ? "border-blue-400/50 bg-blue-500/10"
+                              : "border-white/20 hover:border-white/30"
+                          }`}
+                          onDragEnter={handleDrag}
+                          onDragLeave={handleDrag}
+                          onDragOver={handleDrag}
+                          onDrop={handleDrop}
+                          onClick={() => fileInputRef.current?.click()}
+                        >
+                          <input
+                            ref={fileInputRef}
+                            type="file"
+                            accept="image/*"
+                            onChange={handleFileChange}
+                            className="hidden"
+                          />
 
-                            {formData.media || formData.mediaUrl ? (
-                              <div className="space-y-4">
-                                <div className="relative">
-                                  {/* Debug info for upload preview */}
-                                  {(() => {
-                                    const imageSrc =
-                                      templatedImageUrl ||
-                                      formData.mediaUrl ||
-                                      (formData.media
-                                        ? URL.createObjectURL(formData.media)
-                                        : "");
-                                    console.log(
-                                      "🖼️ Upload preview rendering with:",
-                                      {
-                                        templatedImageUrl:
-                                          templatedImageUrl?.substring(0, 50) +
-                                          "...",
-                                        mediaUrl:
-                                          formData.mediaUrl?.substring(0, 50) +
-                                          "...",
-                                        hasMedia: !!formData.media,
-                                        mediaType: formData.media?.type,
-                                        finalSrc:
-                                          imageSrc.substring(0, 50) + "...",
-                                      }
-                                    );
-                                    return (
-                                      <img
-                                        src={imageSrc}
-                                        alt="Preview"
-                                        className="max-h-32 mx-auto  shadow-sm"
-                                        onLoad={() => {
-                                          console.log(
-                                            "✅ Upload preview image loaded successfully:",
-                                            imageSrc.substring(0, 30) + "..."
-                                          );
-                                        }}
-                                        onError={(e) => {
-                                          console.error(
-                                            "❌ Upload preview image failed to load:",
-                                            imageSrc
-                                          );
-                                          console.error("❌ Error details:", e);
-                                        }}
-                                      />
-                                    );
-                                  })()}
-                                  {/* Remove button overlay */}
-                                  {/* <button
+                          {formData.media || formData.mediaUrl ? (
+                            <div className="space-y-4">
+                              <div className="relative">
+                                {/* Debug info for upload preview */}
+                                {(() => {
+                                  const imageSrc =
+                                    templatedImageUrl ||
+                                    formData.mediaUrl ||
+                                    (formData.media
+                                      ? URL.createObjectURL(formData.media)
+                                      : "");
+                                  console.log(
+                                    "🖼️ Upload preview rendering with:",
+                                    {
+                                      templatedImageUrl:
+                                        templatedImageUrl?.substring(0, 50) +
+                                        "...",
+                                      mediaUrl:
+                                        formData.mediaUrl?.substring(0, 50) +
+                                        "...",
+                                      hasMedia: !!formData.media,
+                                      mediaType: formData.media?.type,
+                                      finalSrc:
+                                        imageSrc.substring(0, 50) + "...",
+                                    }
+                                  );
+                                  return (
+                                    <img
+                                      src={imageSrc}
+                                      alt="Preview"
+                                      className="max-h-32 mx-auto  shadow-sm"
+                                      onLoad={() => {
+                                        console.log(
+                                          "✅ Upload preview image loaded successfully:",
+                                          imageSrc.substring(0, 30) + "..."
+                                        );
+                                      }}
+                                      onError={(e) => {
+                                        console.error(
+                                          "❌ Upload preview image failed to load:",
+                                          imageSrc
+                                        );
+                                        console.error("❌ Error details:", e);
+                                      }}
+                                    />
+                                  );
+                                })()}
+                                {/* Remove button overlay */}
+                                {/* <button
                                   type="button"
                                   onClick={() => {
                                     setFormData((prev) => ({
@@ -2398,247 +2367,10 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                 >
                                   <X className="w-3 h-3" />
                                 </button> */}
-                                </div>
-                                <div className="flex items-center justify-center flex-col space-y-1">
-                                  <p className="text-xs theme-text-secondary">
-                                    {formData.media?.name || "Uploaded Image"}
-                                  </p>
-                                  <button
-                                    type="button"
-                                    onClick={() => {
-                                      setFormData((prev) => ({
-                                        ...prev,
-                                        media: undefined,
-                                        mediaUrl: undefined,
-                                      }));
-                                      // Also clear template-related state
-                                      setTemplatedImageUrl("");
-                                      setSelectedTemplate(undefined);
-                                      setImageAnalysis("");
-                                    }}
-                                    className="text-red-400 hover:text-red-300 text-xs font-medium flex items-center space-x-1"
-                                  >
-                                    <Trash2 className="w-3 h-3" />
-                                    <span>Remove</span>
-                                  </button>
-                                </div>
                               </div>
-                            ) : (
-                              <div className="">
-                                <Icon name="upload" size={44} />
-                                <div>
-                                  <p className="font-medium theme-text-primary text-sm mb-1">
-                                    Click to browse image
-                                  </p>
-                                  <p className="theme-text-secondary text-xs"></p>
-                                </div>
-                              </div>
-                            )}
-
-                            {/* Upload preloader is now handled by enhanced preloader overlay */}
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Text to Image Interface */}
-                    {selectedImageMode === "textToImage" && (
-                      <div>
-                        <h4 className="text-sm font-medium theme-text-secondary flex items-center p-0">
-                          <Wand2 className="w-4 h-4 mr-2 " />
-                          Generate Image and Post with AI
-                        </h4>
-
-                        {/* Image Generation Form */}
-                        <div
-                          className={`space-y-4 ${
-                            generateImageWithPost ? "hidden" : "hidden"
-                          }`}
-                        >
-                          {/* Combined Generation Checkbox */}
-                          <div className="p-3 bg-gradient-to-r from-blue-500/5 to-purple-500/5 border border-blue-400/20 rounded-md">
-                            <div className="flex items-center space-x-3">
-                              <input
-                                type="checkbox"
-                                id="generateImageWithPostTextToImage"
-                                checked={generateImageWithPost}
-                                onChange={(e) =>
-                                  setGenerateImageWithPost(e.target.checked)
-                                }
-                                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-                              />
-                              <div className="flex-1">
-                                <label
-                                  htmlFor="generateImageWithPostTextToImage"
-                                  className="flex items-center cursor-pointer"
-                                >
-                                  <Sparkles className="w-4 h-4 mr-2 text-blue-400" />
-                                  <span className="text-sm font-medium theme-text-primary uppercase">
-                                    Use main content description as image prompt
-                                  </span>
-                                </label>
-                                <p className="text-xs theme-text-secondary mt-1">
-                                  Instead of using the image description below,
-                                  use your main post content to generate the
-                                  image
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Image Description Field - Only show when combined generation is NOT checked */}
-                          {!generateImageWithPost && (
-                            <div>
-                              <label className="block text-sm font-medium theme-text-primary uppercase mb-3 uppercase">
-                                Image Description *
-                              </label>
-                              <textarea
-                                value={imageDescription}
-                                onChange={(e) =>
-                                  setImageDescription(e.target.value)
-                                }
-                                className="w-full px-3 py-2 theme-bg-primary/20 border border-grey/10 focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400/50 transition-all duration-200 min-h-[40px] text-sm placeholder-gray-400"
-                                placeholder="Describe the image you want to generate... (e.g., 'A professional product photo of eco-friendly water bottles')"
-                                required
-                              />
-                            </div>
-                          )}
-
-                          {/* Generate Button - Only show when combined generation is NOT checked */}
-                          {!generateImageWithPost && (
-                            <button
-                              type="button"
-                              onClick={handleGenerateImage}
-                              disabled={
-                                isGeneratingImage || !imageDescription.trim()
-                              }
-                              className="w-full bg-gradient-to-r from-blue-500/80 to-indigo-500/80 text-white py-3 px-4 rounded font-medium hover:from-blue-600/80 hover:to-indigo-600/80 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
-                            >
-                              {isGeneratingImage ? (
-                                <>
-                                  <Loader className="w-4 h-4 animate-spin" />
-                                  <span>Generating Image...</span>
-                                </>
-                              ) : (
-                                <>
-                                  <Sparkles className="w-4 h-4" />
-                                  <span>Generate Image</span>
-                                </>
-                              )}
-                            </button>
-                          )}
-
-                          {/* Generate Image from Main Content - Only show when combined generation is checked */}
-                          {generateImageWithPost && (
-                            <div className="space-y-4">
-                              <div className="p-3 bg-green-500/10 border border-green-400/20 rounded-md">
-                                <div className="flex items-center space-x-2">
-                                  <CheckCircle className="w-4 h-4 text-green-400" />
-                                  <span className="text-sm font-medium text-green-300">
-                                    Using your main content description to
-                                    generate the image
-                                  </span>
-                                </div>
-                              </div>
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  handleCombinedGenerationWithPost(
-                                    formData.prompt
-                                  )
-                                }
-                                disabled={
-                                  isGeneratingBoth || !formData.prompt.trim()
-                                }
-                                className="w-full bg-gradient-to-r from-green-500/80 to-teal-500/80 text-white py-3 px-4 rounded font-medium hover:from-green-600/80 hover:to-teal-600/80 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
-                              >
-                                {isGeneratingBoth ? (
-                                  <>
-                                    <Loader className="w-4 h-4 animate-spin" />
-                                    <span>Generating Image & Post...</span>
-                                  </>
-                                ) : (
-                                  <>
-                                    <Sparkles className="w-4 h-4" />
-                                    <span>Generate Image & Post</span>
-                                  </>
-                                )}
-                              </button>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Generated Image Preview */}
-                        {(formData.media || formData.mediaUrl) && (
-                          <div className="mt-4">
-                            <div className="border border-white/20 rounded p-4">
-                              <div className="relative">
-                                {(() => {
-                                  const imageSrc =
-                                    templatedImageUrl ||
-                                    formData.mediaUrl ||
-                                    (formData.media
-                                      ? URL.createObjectURL(formData.media)
-                                      : "");
-                                  console.log(
-                                    "🎨 Text-to-image preview rendering with:",
-                                    {
-                                      templatedImageUrl:
-                                        templatedImageUrl?.substring(0, 50) +
-                                        "...",
-                                      mediaUrl:
-                                        formData.mediaUrl?.substring(0, 50) +
-                                        "...",
-                                      hasMedia: !!formData.media,
-                                      mediaType: formData.media?.type,
-                                      finalSrc:
-                                        imageSrc.substring(0, 50) + "...",
-                                    }
-                                  );
-                                  return (
-                                    <img
-                                      src={imageSrc}
-                                      alt="Generated Image"
-                                      className="max-h-32 mx-auto shadow-sm rounded"
-                                      onLoad={() => {
-                                        console.log(
-                                          "✅ Text-to-image preview loaded successfully:",
-                                          imageSrc.substring(0, 30) + "..."
-                                        );
-                                      }}
-                                      onError={(e) => {
-                                        console.error(
-                                          "❌ Text-to-image preview failed to load:",
-                                          imageSrc
-                                        );
-                                        console.error("❌ Error details:", e);
-                                      }}
-                                    />
-                                  );
-                                })()}
-                                {/* Remove button overlay */}
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    setFormData((prev) => ({
-                                      ...prev,
-                                      media: undefined,
-                                      mediaUrl: undefined,
-                                    }));
-                                    // Also clear template-related state
-                                    setTemplatedImageUrl("");
-                                    setSelectedTemplate(undefined);
-                                    setImageAnalysis("");
-                                  }}
-                                  className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-md p-1.5 shadow-lg transition-colors duration-200"
-                                  title="Remove image"
-                                >
-                                  <X className="w-3 h-3" />
-                                </button>
-                              </div>
-                              <div className="flex items-center justify-between mt-1">
+                              <div className="flex items-center justify-center flex-col space-y-1">
                                 <p className="text-xs theme-text-secondary">
-                                  {formData.media?.name || "AI Generated Image"}
+                                  {formData.media?.name || "Uploaded Image"}
                                 </p>
                                 <button
                                   type="button"
@@ -2660,52 +2392,283 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                 </button>
                               </div>
                             </div>
+                          ) : (
+                            <div className="">
+                              <Icon name="upload" size={44} />
+                              <div>
+                                <p className="font-medium theme-text-primary text-sm mb-1">
+                                  Click to browse image
+                                </p>
+                                <p className="theme-text-secondary text-xs"></p>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Upload preloader is now handled by enhanced preloader overlay */}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {selectedImageMode === "textToImage" && (
+                    <>
+                      {" "}
+                      <h4 className="text-sm font-medium theme-text-secondary flex items-center px-0 ">
+                        <Wand2 className="w-4 h-4 mr-2 " />
+                        Generate Image and Post with AI
+                      </h4>
+                      <div
+                        className={`space-y-4 ${
+                          generateImageWithPost ? "hidden" : "hidden"
+                        }`}
+                      >
+                        <div className="p-3 bg-gradient-to-r from-blue-500/5 to-purple-500/5 border border-blue-400/20 rounded-md">
+                          <div className="flex items-center space-x-3">
+                            <input
+                              type="checkbox"
+                              id="generateImageWithPostTextToImage"
+                              checked={generateImageWithPost}
+                              onChange={(e) =>
+                                setGenerateImageWithPost(e.target.checked)
+                              }
+                              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                            />
+                            <div className="flex-1">
+                              <label
+                                htmlFor="generateImageWithPostTextToImage"
+                                className="flex items-center cursor-pointer"
+                              >
+                                <Sparkles className="w-4 h-4 mr-2 text-blue-400" />
+                                <span className="text-sm font-medium theme-text-primary ">
+                                  Use main content description as image prompt
+                                </span>
+                              </label>
+                              <p className="text-xs theme-text-secondary mt-1">
+                                Instead of using the image description below,
+                                use your main post content to generate the image
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Image Description Field - Only show when combined generation is NOT checked */}
+                        {!generateImageWithPost && (
+                          <div>
+                            <label className="text-sm font-medium theme-text-primary  mb-2 flex items-center">
+                              Image Description *
+                            </label>
+                            <textarea
+                              value={imageDescription}
+                              onChange={(e) =>
+                                setImageDescription(e.target.value)
+                              }
+                              className="w-full px-3 py-2 theme-bg-primary/20 border border-grey/10 focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400/50 transition-all duration-200 min-h-[40px] text-sm placeholder-gray-400"
+                              placeholder="Describe the image you want to generate... (e.g., 'A professional product photo of eco-friendly water bottles')"
+                              required
+                            />
+                          </div>
+                        )}
+
+                        {/* Generate Button - Only show when combined generation is NOT checked */}
+                        {!generateImageWithPost && (
+                          <button
+                            type="button"
+                            onClick={handleGenerateImage}
+                            disabled={
+                              isGeneratingImage || !imageDescription.trim()
+                            }
+                            className="w-full bg-gradient-to-r from-blue-500/80 to-indigo-500/80 text-white py-3 px-4 rounded font-medium hover:from-blue-600/80 hover:to-indigo-600/80 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                          >
+                            {isGeneratingImage ? (
+                              <>
+                                <Loader className="w-4 h-4 animate-spin" />
+                                <span>Generating Image...</span>
+                              </>
+                            ) : (
+                              <>
+                                <Sparkles className="w-4 h-4" />
+                                <span>Generate Image</span>
+                              </>
+                            )}
+                          </button>
+                        )}
+
+                        {/* Generate Image from Main Content - Only show when combined generation is checked */}
+                        {generateImageWithPost && (
+                          <div className="space-y-4">
+                            <div className="p-3 bg-green-500/10 border border-green-400/20 rounded-md">
+                              <div className="flex items-center space-x-2">
+                                <CheckCircle className="w-4 h-4 text-green-400" />
+                                <span className="text-sm font-medium text-green-300">
+                                  Using your main content description to
+                                  generate the image
+                                </span>
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleCombinedGenerationWithPost(
+                                  formData.prompt
+                                )
+                              }
+                              disabled={
+                                isGeneratingBoth || !formData.prompt.trim()
+                              }
+                              className="w-full bg-gradient-to-r from-green-500/80 to-teal-500/80 text-white py-3 px-4 rounded font-medium hover:from-green-600/80 hover:to-teal-600/80 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                            >
+                              {isGeneratingBoth ? (
+                                <>
+                                  <Loader className="w-4 h-4 animate-spin" />
+                                  <span>Generating Image & Post...</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Sparkles className="w-4 h-4" />
+                                  <span>Generate Image & Post</span>
+                                </>
+                              )}
+                            </button>
                           </div>
                         )}
                       </div>
-                    )}
-                  </>
-                )}
-
-                {selectedPostType === "video" && (
-                  <>
-                    <label className="block text-sm font-medium theme-text-primary uppercase">
-                      {selectedPostType === "video" &&
-                      selectedVideoMode === "uploadShorts" ? (
-                        <span>Upload Shorts Video (9:16)</span>
-                      ) : (
-                        <span>Upload Video</span>
+                      {/* Generated Image Preview */}
+                      {(formData.media || formData.mediaUrl) && (
+                        <div className="mt-4">
+                          <div className="border border-white/20 rounded p-4">
+                            <div className="relative">
+                              {(() => {
+                                const imageSrc =
+                                  templatedImageUrl ||
+                                  formData.mediaUrl ||
+                                  (formData.media
+                                    ? URL.createObjectURL(formData.media)
+                                    : "");
+                                console.log(
+                                  "🎨 Text-to-image preview rendering with:",
+                                  {
+                                    templatedImageUrl:
+                                      templatedImageUrl?.substring(0, 50) +
+                                      "...",
+                                    mediaUrl:
+                                      formData.mediaUrl?.substring(0, 50) +
+                                      "...",
+                                    hasMedia: !!formData.media,
+                                    mediaType: formData.media?.type,
+                                    finalSrc: imageSrc.substring(0, 50) + "...",
+                                  }
+                                );
+                                return (
+                                  <img
+                                    src={imageSrc}
+                                    alt="Generated Image"
+                                    className="max-h-32 mx-auto shadow-sm rounded"
+                                    onLoad={() => {
+                                      console.log(
+                                        "✅ Text-to-image preview loaded successfully:",
+                                        imageSrc.substring(0, 30) + "..."
+                                      );
+                                    }}
+                                    onError={(e) => {
+                                      console.error(
+                                        "❌ Text-to-image preview failed to load:",
+                                        imageSrc
+                                      );
+                                      console.error("❌ Error details:", e);
+                                    }}
+                                  />
+                                );
+                              })()}
+                              {/* Remove button overlay */}
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setFormData((prev) => ({
+                                    ...prev,
+                                    media: undefined,
+                                    mediaUrl: undefined,
+                                  }));
+                                  // Also clear template-related state
+                                  setTemplatedImageUrl("");
+                                  setSelectedTemplate(undefined);
+                                  setImageAnalysis("");
+                                }}
+                                className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-md p-1.5 shadow-lg transition-colors duration-200"
+                                title="Remove image"
+                              >
+                                <X className="w-3 h-3" />
+                              </button>
+                            </div>
+                            <div className="flex items-center justify-between mt-1">
+                              <p className="text-xs theme-text-secondary">
+                                {formData.media?.name || "AI Generated Image"}
+                              </p>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setFormData((prev) => ({
+                                    ...prev,
+                                    media: undefined,
+                                    mediaUrl: undefined,
+                                  }));
+                                  // Also clear template-related state
+                                  setTemplatedImageUrl("");
+                                  setSelectedTemplate(undefined);
+                                  setImageAnalysis("");
+                                }}
+                                className="text-red-400 hover:text-red-300 text-xs font-medium flex items-center space-x-1"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                                <span>Remove</span>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
                       )}
-                    </label>
-                    <div className=" theme-bg-primary py-4">
-                      <div
-                        className={` border-2 border-dashed p-0 text-center transition-all duration-200 ${
-                          dragActive
-                            ? "border-blue-400/50 bg-blue-500/10"
-                            : "border-white/20 hover:border-white/30"
-                        }`}
-                        onDragEnter={handleDrag}
-                        onDragLeave={handleDrag}
-                        onDragOver={handleDrag}
-                        onDrop={handleDrop}
-                      >
-                        <input
-                          ref={fileInputRef}
-                          type="file"
-                          accept={
-                            selectedPostType === "image"
-                              ? "image/*"
-                              : selectedPostType === "video"
-                              ? "video/*"
-                              : "image/*,video/*"
-                          }
-                          onChange={handleFileChange}
-                          className="hidden"
-                        />
-                      </div>
+                    </>
+                  )}
+                </>
+              )}
 
-                      {/* Debug Info - Enhanced debugging */}
-                      {/* <div className="mb-2 p-2 bg-yellow-500/10 border border-yellow-400/20 rounded text-xs text-yellow-200 space-y-1">
+              {selectedPostType === "video" && (
+                <div>
+                  <label className="block text-sm font-medium theme-text-primary  mb-2">
+                    {selectedPostType === "video" &&
+                    selectedVideoMode === "uploadShorts" ? (
+                      <span>Upload Shorts Video (9:16) *</span>
+                    ) : (
+                      <span>Upload Video (16:9) *</span>
+                    )}
+                  </label>
+                  <div className=" theme-bg-primary rounded-md py-4">
+                    <div
+                      className={` border-2 border-dashed  p-0 text-center transition-all duration-200 ${
+                        dragActive
+                          ? "border-blue-400/50 bg-blue-500/10"
+                          : "border-white/20 hover:border-white/30"
+                      }`}
+                      onDragEnter={handleDrag}
+                      onDragLeave={handleDrag}
+                      onDragOver={handleDrag}
+                      onDrop={handleDrop}
+                    >
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept={
+                          selectedPostType === "image"
+                            ? "image/*"
+                            : selectedPostType === "video"
+                            ? "video/*"
+                            : "image/*,video/*"
+                        }
+                        onChange={handleFileChange}
+                        className="hidden"
+                      />
+                    </div>
+
+                    {/* Debug Info - Enhanced debugging */}
+                    {/* <div className="mb-2 p-2 bg-yellow-500/10 border border-yellow-400/20 rounded text-xs text-yellow-200 space-y-1">
                 <div><strong>Debug State:</strong></div>
                 <div>• media: {formData.media ? `✅ ${formData.media.type} (${formData.media.name})` : '❌ null'}</div>
                 <div>• mediaUrl: {formData.mediaUrl ? `✅ ${formData.mediaUrl.substring(0, 50)}...` : '❌ null'}</div>
@@ -2714,100 +2677,98 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                 <div>• Should show preview: {(formData.media || formData.mediaUrl) ? '✅ YES' : '❌ NO'}</div>
               </div> */}
 
-                      {formData.media || formData.mediaUrl ? (
-                        <div className="space-y-4">
-                          <div className="relative">
-                            {/* Check if it's an image */}
-                            {formData.media?.type.startsWith("image/") ||
-                            (formData.mediaUrl &&
-                              !formData.media &&
-                              !formData.mediaUrl.match(
-                                /\.(mp4|mov|avi|wmv|flv|webm|mkv|m4v)$/i
-                              )) ? (
-                              <div className="relative">
-                                <img
-                                  src={
-                                    // Prioritize templated image if available, then uploaded file URL, then local file object
+                    {formData.media || formData.mediaUrl ? (
+                      <div className="space-y-4">
+                        <div className="relative">
+                          {/* Check if it's an image */}
+                          {formData.media?.type.startsWith("image/") ||
+                          (formData.mediaUrl &&
+                            !formData.media &&
+                            !formData.mediaUrl.match(
+                              /\.(mp4|mov|avi|wmv|flv|webm|mkv|m4v)$/i
+                            )) ? (
+                            <div className="relative">
+                              <img
+                                src={
+                                  // Prioritize templated image if available, then uploaded file URL, then local file object
+                                  templatedImageUrl ||
+                                  formData.mediaUrl ||
+                                  (formData.media
+                                    ? URL.createObjectURL(formData.media)
+                                    : "")
+                                }
+                                alt="Preview"
+                                className="max-h-40 mx-auto  shadow-sm"
+                                onError={(e) => {
+                                  console.error(
+                                    "Image failed to load:",
                                     templatedImageUrl ||
-                                    formData.mediaUrl ||
-                                    (formData.media
-                                      ? URL.createObjectURL(formData.media)
-                                      : "")
-                                  }
-                                  alt="Preview"
-                                  className="max-h-40 mx-auto  shadow-sm"
-                                  onError={(e) => {
-                                    console.error(
-                                      "Image failed to load:",
-                                      templatedImageUrl ||
-                                        formData.mediaUrl ||
-                                        formData.media?.name
-                                    );
-                                  }}
+                                      formData.mediaUrl ||
+                                      formData.media?.name
+                                  );
+                                }}
+                              />
+                              <div className="absolute top-2 left-2 bg-black/60 text-white px-2 py-1 rounded text-xs flex items-center">
+                                <Icon
+                                  name="image-post"
+                                  size={12}
+                                  className="mr-1"
                                 />
-                                <div className="absolute top-2 left-2 bg-black/60 text-white px-2 py-1 rounded text-xs flex items-center">
-                                  <Icon
-                                    name="image-post"
-                                    size={12}
-                                    className="mr-1"
-                                  />
-                                  Image
-                                </div>
+                                Image
                               </div>
-                            ) : (
-                              /* Video preview - Show video player with controls */
-                              <div className="relative">
-                                <video
-                                  src={
-                                    formData.mediaUrl
-                                      ? formData.mediaUrl
-                                      : formData.media
-                                      ? URL.createObjectURL(formData.media)
-                                      : undefined
-                                  }
-                                  className="max-h-40 mx-auto shadow-sm rounded"
-                                  controls
-                                  preload="metadata"
-                                  onError={(e) => {
-                                    console.error(
-                                      "Video failed to load:",
-                                      formData.mediaUrl || formData.media?.name
-                                    );
-                                  }}
-                                  onLoadStart={() => {
-                                    console.log(
-                                      "Video loading started:",
-                                      formData.mediaUrl || formData.media?.name
-                                    );
-                                  }}
-                                >
-                                  Your browser does not support the video tag.
-                                </video>
-                                {/* <div className="absolute top-2 left-2 bg-black/60 text-white px-2 py-1 rounded text-xs flex items-center">
+                            </div>
+                          ) : (
+                            /* Video preview - Show video player with controls */
+                            <div className="relative">
+                              <video
+                                src={
+                                  formData.mediaUrl
+                                    ? formData.mediaUrl
+                                    : formData.media
+                                    ? URL.createObjectURL(formData.media)
+                                    : undefined
+                                }
+                                className="max-h-40 mx-auto shadow-sm rounded"
+                                controls
+                                preload="metadata"
+                                onError={(e) => {
+                                  console.error(
+                                    "Video failed to load:",
+                                    formData.mediaUrl || formData.media?.name
+                                  );
+                                }}
+                                onLoadStart={() => {
+                                  console.log(
+                                    "Video loading started:",
+                                    formData.mediaUrl || formData.media?.name
+                                  );
+                                }}
+                              >
+                                Your browser does not support the video tag.
+                              </video>
+                              {/* <div className="absolute top-2 left-2 bg-black/60 text-white px-2 py-1 rounded text-xs flex items-center">
                               <Icon name="video-post" size={12} className="mr-1" />
                               {videoAspectRatio && is9x16Video(videoAspectRatio) ? 'Vertical Video' : 
                                videoAspectRatio && is16x9Video(videoAspectRatio) ? 'Horizontal Video' : 'Video'}
                             </div> */}
-                              </div>
+                            </div>
+                          )}
+                        </div>
+                        <div className="text-sm theme-text-secondary space-y-2 text-center">
+                          <div>
+                            <p className="font-medium theme-text-primary text-sm">
+                              {formData.media?.name || "Uploaded Media"}
+                            </p>
+                            {formData.media && (
+                              <p className="text-xs">
+                                {(formData.media.size / 1024 / 1024).toFixed(2)}{" "}
+                                MB
+                              </p>
                             )}
                           </div>
-                          <div className="text-sm theme-text-secondary space-y-2 text-center">
-                            <div>
-                              <p className="font-medium theme-text-primary text-sm">
-                                {formData.media?.name || "Uploaded Media"}
-                              </p>
-                              {formData.media && (
-                                <p className="text-xs">
-                                  {(formData.media.size / 1024 / 1024).toFixed(
-                                    2
-                                  )}{" "}
-                                  MB
-                                </p>
-                              )}
-                            </div>
 
-                            {/* Compact checkboxes */}
-                            {/* <div className="flex gap-2">
+                          {/* Compact checkboxes */}
+                          {/* <div className="flex gap-2">
                             <div className="flex items-center space-x-1 p-2 theme-bg-primary/20 rounded text-xs">
                               <input
                                 type="checkbox"
@@ -2845,173 +2806,171 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             </div>
                           </div> */}
 
-                            {/* Status indicators */}
-                            {analyzingImage && (
-                              <div className="flex items-center justify-center p-2 bg-blue-500/10 border border-blue-400/20 rounded text-xs">
-                                <Loader className="w-3 h-3 animate-spin mr-2 text-blue-400" />
-                                <span className="text-blue-300">
-                                  AI analyzing...
-                                </span>
-                              </div>
-                            )}
-                            {/* Upload preloader is now handled by enhanced preloader overlay */}
-                            {videoAspectRatioWarning ? (
-                              <div className="flex items-center justify-start p-3 bg-red-500/10 border border-red-400/20 rounded text-xs">
-                                <AlertCircle className="w-4 h-4 mr-2 text-red-400 flex-shrink-0" />
-                                <div className="text-left">
-                                  <div className="font-medium text-red-300 mb-1">
-                                    Aspect Ratio Warning
-                                  </div>
-                                  <div className="text-red-200">
-                                    {videoAspectRatioWarning}
-                                  </div>
+                          {/* Status indicators */}
+                          {analyzingImage && (
+                            <div className="flex items-center justify-center p-2 bg-blue-500/10 border border-blue-400/20 rounded text-xs">
+                              <Loader className="w-3 h-3 animate-spin mr-2 text-blue-400" />
+                              <span className="text-blue-300">
+                                AI analyzing...
+                              </span>
+                            </div>
+                          )}
+                          {/* Upload preloader is now handled by enhanced preloader overlay */}
+                          {videoAspectRatioWarning ? (
+                            <div className="flex items-center justify-start p-3 bg-red-500/10 border border-red-400/20 rounded text-xs">
+                              <AlertCircle className="w-4 h-4 mr-2 text-red-400 flex-shrink-0" />
+                              <div className="text-left">
+                                <div className="font-medium text-red-300 mb-1">
+                                  Aspect Ratio Warning
+                                </div>
+                                <div className="text-red-200">
+                                  {videoAspectRatioWarning}
                                 </div>
                               </div>
-                            ) : videoAspectRatio ? (
-                              <div className="flex items-center justify-center p-2 bg-green-500/10 border border-green-400/20 rounded text-xs">
-                                <CheckCircle className="w-3 h-3 mr-2 text-green-400" />
-                                <span className="text-green-300">
-                                  {is9x16Video(videoAspectRatio)
-                                    ? "9:16 vertical video ready - stories format (no thumbnail needed)"
-                                    : is16x9Video(videoAspectRatio)
-                                    ? "16:9 horizontal video ready - thumbnail will be generated when you click Generate Post"
-                                    : "Video processed and ready - thumbnail will be generated when you click Generate Post"}
-                                </span>
-                              </div>
-                            ) : null}
+                            </div>
+                          ) : videoAspectRatio ? (
+                            <div className="flex items-center justify-center p-2 bg-green-500/10 border border-green-400/20 rounded text-xs">
+                              <CheckCircle className="w-3 h-3 mr-2 text-green-400" />
+                              <span className="text-green-300">
+                                {is9x16Video(videoAspectRatio)
+                                  ? "9:16 vertical video ready - stories format (no thumbnail needed)"
+                                  : is16x9Video(videoAspectRatio)
+                                  ? "16:9 horizontal video ready - thumbnail will be generated when you click Generate Post"
+                                  : "Video processed and ready - thumbnail will be generated when you click Generate Post"}
+                              </span>
+                            </div>
+                          ) : null}
 
-                            {/* AI Analysis Button */}
-                            {(formData.media || formData.mediaUrl) &&
-                              (formData.media?.type.startsWith("image/") ||
-                                (formData.mediaUrl &&
-                                  !formData.media &&
-                                  !formData.mediaUrl.match(
-                                    /\.(mp4|mov|avi|wmv|flv|webm|mkv|m4v)$/i
-                                  ))) &&
-                              !analyzingImage && <></>}
+                          {/* AI Analysis Button */}
+                          {(formData.media || formData.mediaUrl) &&
+                            (formData.media?.type.startsWith("image/") ||
+                              (formData.mediaUrl &&
+                                !formData.media &&
+                                !formData.mediaUrl.match(
+                                  /\.(mp4|mov|avi|wmv|flv|webm|mkv|m4v)$/i
+                                ))) &&
+                            !analyzingImage && <></>}
 
-                            {templatedImageUrl && selectedTemplate && (
-                              <div className="bg-purple-500/10 border border-purple-400/20  p-2">
-                                <div className="flex justify-between mb-2">
-                                  <h4 className="font-medium text-purple-300 flex  text-xs">
-                                    <Palette className="w-3 h-3 mr-1" />
-                                    Image Updated: {selectedTemplate.name}
-                                  </h4>
-                                </div>
-                                <div className="flex gap-2">
-                                  <button
-                                    type="button"
-                                    onClick={handleEditTemplate}
-                                    className="flex-1 bg-purple-500/80 text-white px-3 py-1.5 rounded text-xs hover:bg-purple-600/80 transition-colors flex items-center justify-center space-x-1"
-                                  >
-                                    <Edit3 className="w-3 h-3" />
-                                    <span>Edit</span>
-                                  </button>
-                                  <button
-                                    type="button"
-                                    onClick={handleDeleteTemplate}
-                                    className="flex-1 bg-red-500/80 text-white px-3 py-1.5 rounded text-xs hover:bg-red-600/80 transition-colors flex items-center justify-center space-x-1"
-                                  >
-                                    <Trash2 className="w-3 h-3" />
-                                    <span>Remove</span>
-                                  </button>
-                                </div>
+                          {templatedImageUrl && selectedTemplate && (
+                            <div className="bg-purple-500/10 border border-purple-400/20  p-2">
+                              <div className="flex justify-between mb-2">
+                                <h4 className="font-medium text-purple-300 flex  text-xs">
+                                  <Palette className="w-3 h-3 mr-1" />
+                                  Image Updated: {selectedTemplate.name}
+                                </h4>
                               </div>
-                            )}
-                          </div>
+                              <div className="flex gap-2">
+                                <button
+                                  type="button"
+                                  onClick={handleEditTemplate}
+                                  className="flex-1 bg-purple-500/80 text-white px-3 py-1.5 rounded text-xs hover:bg-purple-600/80 transition-colors flex items-center justify-center space-x-1"
+                                >
+                                  <Edit3 className="w-3 h-3" />
+                                  <span>Edit</span>
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={handleDeleteTemplate}
+                                  className="flex-1 bg-red-500/80 text-white px-3 py-1.5 rounded text-xs hover:bg-red-600/80 transition-colors flex items-center justify-center space-x-1"
+                                >
+                                  <Trash2 className="w-3 h-3" />
+                                  <span>Remove</span>
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setFormData((prev) => ({
+                              ...prev,
+                              media: undefined,
+                              mediaUrl: undefined,
+                            }));
+                            // Also clear template-related state
+                            setTemplatedImageUrl("");
+                            setSelectedTemplate(undefined);
+                            setImageAnalysis("");
+                          }}
+                          className="text-red-400 hover:text-red-300 text-xs font-medium text-center w-full flex items-center justify-center space-x-1  "
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        <div
+                          className={`${
+                            selectedVideoMode
+                              ? ""
+                              : "filter grayscale opacity-50"
+                          } flex gap-2 justify-center`}
+                        >
                           <button
                             type="button"
-                            onClick={() => {
-                              setFormData((prev) => ({
-                                ...prev,
-                                media: undefined,
-                                mediaUrl: undefined,
-                              }));
-                              // Also clear template-related state
-                              setTemplatedImageUrl("");
-                              setSelectedTemplate(undefined);
-                              setImageAnalysis("");
-                            }}
-                            className="text-red-400 hover:text-red-300 text-xs font-medium text-center w-full flex items-center justify-center space-x-1  "
+                            onClick={() => fileInputRef.current?.click()}
+                            className="bg-transparent"
+                            disabled={!selectedVideoMode}
                           >
-                            Remove
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="space-y-4">
-                          <div
-                            className={`${
-                              selectedVideoMode
-                                ? ""
-                                : "filter grayscale opacity-50"
-                            } flex gap-2 justify-center`}
-                          >
-                            <button
-                              type="button"
-                              onClick={() => fileInputRef.current?.click()}
-                              className="bg-transparent"
-                              disabled={!selectedVideoMode}
-                            >
-                              <div className="">
-                                <Icon name="upload" size={44} />
-                                <div>
-                                  <p className="font-medium theme-text-primary text-sm mb-1">
-                                    Click to browse video
-                                  </p>
-                                  <p className="theme-text-secondary text-xs">
-                                    {!selectedVideoMode &&
-                                      "Select a video mode above first"}
-                                  </p>
-                                </div>
+                            <div className="">
+                              <Icon name="upload" size={44} />
+                              <div>
+                                <p className="font-medium theme-text-primary text-sm mb-1">
+                                  Click to browse video
+                                </p>
+                                <p className="theme-text-secondary text-xs">
+                                  {!selectedVideoMode &&
+                                    "Select a video mode above first"}
+                                </p>
                               </div>
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Video Aspect Ratio Warning - Always visible when there's a warning */}
-                    {videoAspectRatioWarning && (
-                      <div className="flex items-center justify-start p-3 theme-bg-danger border rounded-md text-xs mb-1 theme-text-light">
-                        <AlertCircle className="w-4 h-4 mr-2 flex-shrink-0" />{" "}
-                        {videoAspectRatioWarning}
-                      </div>
-                    )}
-
-                    {/* Image Analysis Results */}
-                    {imageAnalysis && (
-                      <div className="bg-blue-500/10 border border-blue-400/20  p-3">
-                        <div className="space-y-2">
-                          <h4 className="font-medium text-blue-300 flex items-center text-xs">
-                            <Eye className="w-3 h-3 mr-1" />
-                            AI Analysis Complete
-                          </h4>
-                          <div className="max-h-24 overflow-y-auto">
-                            <p className="text-blue-200 text-xs leading-[1.05rem]elaxed">
-                              {imageAnalysis}
-                            </p>
-                          </div>
-                          <button
-                            onClick={useImageAnalysis}
-                            className="bg-gradient-to-r from-blue-500/80 to-indigo-500/80 text-white px-3 py-1.5 rounded text-xs hover:from-blue-600/80 hover:to-indigo-600/80 transition-all duration-200 flex items-center space-x-1"
-                          >
-                            <span>Add to Description</span>
-                            <Sparkles className="w-3 h-3" />
+                            </div>
                           </button>
                         </div>
                       </div>
                     )}
-                  </>
-                )}
-              </>
+                  </div>
+
+                  {/* Video Aspect Ratio Warning - Always visible when there's a warning */}
+                  {videoAspectRatioWarning && (
+                    <div className="flex items-center justify-start p-3 theme-bg-danger border rounded-md text-xs mb-1 theme-text-light">
+                      <AlertCircle className="w-4 h-4 mr-2 flex-shrink-0" />{" "}
+                      {videoAspectRatioWarning}
+                    </div>
+                  )}
+
+                  {/* Image Analysis Results */}
+                  {imageAnalysis && (
+                    <div className="bg-blue-500/10 border border-blue-400/20  p-3">
+                      <div className="space-y-2">
+                        <h4 className="font-medium text-blue-300 flex items-center text-xs">
+                          <Eye className="w-3 h-3 mr-1" />
+                          AI Analysis Complete
+                        </h4>
+                        <div className="max-h-24 overflow-y-auto">
+                          <p className="text-blue-200 text-xs leading-[1.05rem]elaxed">
+                            {imageAnalysis}
+                          </p>
+                        </div>
+                        <button
+                          onClick={useImageAnalysis}
+                          className="bg-gradient-to-r from-blue-500/80 to-indigo-500/80 text-white px-3 py-1.5 rounded text-xs hover:from-blue-600/80 hover:to-indigo-600/80 transition-all duration-200 flex items-center space-x-1"
+                        >
+                          <span>Add to Description</span>
+                          <Sparkles className="w-3 h-3" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {selectedPostType !== "" ? (
                 <>
                   <>
                     <div className="flex-1">
-                      <label className=" text-sm font-medium theme-text-primary uppercase mb-4  flex items-center">
-                        <FileText className="w-4 h-4 inline mr-2" />
-                        Content Description *
+                      <label className=" text-sm font-medium theme-text-primary  mb-2  flex items-center">
+                        {"Content Description *"}
                       </label>
                       <textarea
                         value={formData.prompt}
@@ -3021,7 +2980,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             prompt: e.target.value,
                           }))
                         }
-                        className="w-full px-3 py-2  shadow-md focus:ring-0 focus-visible:ring-0  ring-0 border border-slate-200/70 backdrop-blur-sm transition-all duration-200 min-h-[100px] lg:min-h-[150px] text-sm  placeholder-gray-500 bg-white"
+                        className="w-full px-3 py-2  theme-bg-primary transition-all duration-200 min-h-[160px] lg:min-h-[180px] text-sm  rounded-md placeholder-gray-500 bg-white"
                         placeholder="Describe what you want to share... (e.g., 'Launch of our new eco-friendly water bottles')"
                         required
                       />
@@ -3031,10 +2990,10 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                       (selectedImageMode === "textToImage" ||
                         selectedImageMode === "upload") && (
                         <div className="">
-                          <label className="block text-md font-medium theme-text-primary uppercase mb-3 uppercase">
-                            Image Dimensions
+                          <label className="text-sm font-medium theme-text-primary  mb-2 flex items-center">
+                            Image Dimensions *
                           </label>
-                          <div className="grid grid-cols-3 gap-2">
+                          <div className="grid grid-cols-3 gap-4">
                             {[
                               { label: "1:1", value: "1:1", icon: "⬜" },
                               { label: "16:9", value: "16:9", icon: "▬" },
@@ -3046,28 +3005,28 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                 onClick={() =>
                                   handleAspectRatioChange(ratio.value)
                                 }
-                                className={`p-3 border transition-all duration-200 flex flex-col items-center justify-center ${
+                                className={`w-full h-24 p-2 border transition-all rounded-md duration-200 flex flex-col items-center justify-center ${
                                   aspectRatio === ratio.value
                                     ? "theme-bg-quaternary shadow-lg theme-text-secondary"
                                     : "theme-bg-primary hover:theme-bg-primary/50"
                                 }`}
                               >
                                 <div
-                                  className={`border mx-auto  mb-2 ${
+                                  className={`border mx-auto mb-1  ${
                                     ratio.value === "1:1"
-                                      ? "w-8 h-8 border-1 theme-border-secondary"
+                                      ? "w-8 h-8 border-1 border-purple-600 "
                                       : ratio.value === "16:9"
                                       ? "w-10 h-6 border-1"
                                       : ratio.value === "9:16"
-                                      ? "w-6 h-10 border-1"
+                                      ? "w-6 h-10 border-1 border-purple-600"
                                       : "w-8 h-8 border-1"
                                   } ${
                                     aspectRatio === ratio.value
-                                      ? "theme-border-secondary border-2"
+                                      ? "border-purple-600 border-2"
                                       : "theme-border-dark border-1"
                                   }`}
                                 ></div>
-                                <div className="text-md font-medium whitespace-pre-line">
+                                <div className="text-md font-medium whitespace-pre-line ">
                                   {ratio.label}
                                 </div>
                               </button>
@@ -3077,7 +3036,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                       )}
                   </>
                   <div className="hidden">
-                    <label className="block text-sm font-medium theme-text-primary uppercase mb-3">
+                    <label className="block text-sm font-medium theme-text-primary  mb-3">
                       Target Platforms
                     </label>
                     <div className="grid lg:grid-cols-1 gap-2 grid-cols-2">
@@ -3118,7 +3077,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                       })}
                     </div>
                   </div>
-                  <div className="flex gap-4  border-t border-white/10">
+                  <div className="flex gap-4  -mt-[2px] border-t border-white/10">
                     <button
                       type="button"
                       onClick={onBack}
@@ -3133,7 +3092,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         !formData.selectedPlatforms?.length ||
                         isGeneratingBoth
                       }
-                      className="rounded-md flex-1 flex items-center justify-between theme-bg-trinary theme-text-light py-2 px-4 font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-sm"
+                      className="rounded-md flex-1 flex items-center justify-between theme-bg-trinary theme-text-light py-2.5 px-3 font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-sm"
                     >
                       {isGeneratingBoth ? (
                         <div className="flex items-center">
@@ -3147,15 +3106,15 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         </div>
                       ) : (
                         <div className="flex items-center">
-                          <Wand2 className="w-6 h-6 mr-1" />
+                          <Wand2 className="w-[23px] h-[23px] mr-1" />
                           GENERATE POST
                         </div>
                       )}
 
                       <div className="sm:inline-block rounded-md theme-bg-quaternary theme-text-secondary px-2 py-1">
                         <Icon
-                          name="wallet"
-                          size={14}
+                          name="spiral-logo"
+                          size={20}
                           className="inline mr-1 mt-[-1px]"
                         />
                         {getCost()}

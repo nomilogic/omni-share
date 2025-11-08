@@ -119,13 +119,13 @@ export const PostCalendar: React.FC<PostCalendarProps> = ({
       case "scheduled":
         return "bg-blue-100 text-blue-800 border-blue-200";
       case "draft":
-        return "bg-gray-100 text-gray-800 border-gray-200";
+        return "bg-gray-100 text-slate-800 border-gray-200";
       case "published":
         return "bg-green-100 text-green-800 border-green-200";
       case "failed":
         return "bg-red-100 text-red-800 border-red-200";
       default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
+        return "bg-gray-100 text-slate-800 border-gray-200";
     }
   };
 
@@ -134,12 +134,12 @@ export const PostCalendar: React.FC<PostCalendarProps> = ({
       <div className="theme-primary-bg rounded-md max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
         <div className="p-6">
           <div className="flex justify-between items-start mb-4">
-            <h3 className="text-xl font-bold text-gray-900">
+            <h3 className="text-xl font-bold text-slate-900">
               Scheduled Post - {new Date(post.date).toLocaleDateString()}
             </h3>
             <button
               onClick={() => setSelectedPost(null)}
-              className="text-slate-500 hover:text-gray-700 p-1 rounded-md hover:bg-gray-100"
+              className="text-slate-500 hover:text-slate-700 p-1 rounded-md hover:bg-gray-100"
             >
               <X className="w-5 h-5" />
               <span className="sr-only">Close</span>
@@ -148,7 +148,7 @@ export const PostCalendar: React.FC<PostCalendarProps> = ({
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-slate-700">
                 Status
               </label>
               <span
@@ -162,14 +162,14 @@ export const PostCalendar: React.FC<PostCalendarProps> = ({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-slate-700">
                 Scheduled Time
               </label>
-              <p className="text-gray-900">{post.time}</p>
+              <p className="text-slate-900">{post.time}</p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-slate-700">
                 Platforms
               </label>
               <div className="flex gap-2">
@@ -185,7 +185,7 @@ export const PostCalendar: React.FC<PostCalendarProps> = ({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-slate-700">
                 Content
               </label>
               <div className="border rounded-md p-3 bg-gray-50">
@@ -240,7 +240,7 @@ export const PostCalendar: React.FC<PostCalendarProps> = ({
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigateMonth("prev")}
-            className="p-2 theme-text-primary hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+            className="p-2 theme-text-primary hover:text-slate-900 hover:bg-gray-100 rounded-md transition-colors"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>

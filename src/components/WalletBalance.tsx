@@ -9,7 +9,7 @@ export const WalletBalance = ({ balance, setShowPackage }: any) => {
         <Icon
           name="spiral-logo"
           size={26}
-          className="inline  theme-text-secondary shadow-sm"
+          className="inline  theme-text-secondary"
         />
       </button>
       <div>

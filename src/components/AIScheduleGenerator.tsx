@@ -142,16 +142,16 @@ export const AIScheduleGenerator: React.FC<AIScheduleGeneratorProps> = ({
         <div className="p-6">
           <div className="flex justify-between items-start mb-6">
             <div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">
+              <h3 className="text-2xl font-bold text-slate-900 mb-2">
                 Generated Schedule Preview
               </h3>
-              <p className="text-gray-600">
+              <p className="text-slate-500">
                 Review and approve your AI-generated posting schedule
               </p>
             </div>
             <button
               onClick={() => setShowPreview(false)}
-              className="text-slate-500 hover:text-gray-700"
+              className="text-slate-500 hover:text-slate-700"
             >
               ×
             </button>
@@ -168,7 +168,7 @@ export const AIScheduleGenerator: React.FC<AIScheduleGeneratorProps> = ({
                     <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
                       {new Date(item.date).toLocaleDateString()}
                     </div>
-                    <div className="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm">
+                    <div className="bg-gray-100 text-slate-800 px-3 py-1 rounded-full text-sm">
                       {item.time}
                     </div>
                     {item.isLive && (
@@ -181,18 +181,20 @@ export const AIScheduleGenerator: React.FC<AIScheduleGeneratorProps> = ({
                 </div>
 
                 <div className="mb-3">
-                  <h4 className="font-semibold text-gray-900 mb-1">Content:</h4>
-                  <p className="text-gray-700 bg-gray-50 p-3 rounded-md">
+                  <h4 className="font-semibold text-slate-900 mb-1">
+                    Content:
+                  </h4>
+                  <p className="text-slate-700 bg-gray-50 p-3 rounded-md">
                     {item.content}
                   </p>
                 </div>
 
                 {item.imagePrompt && (
                   <div className="mb-3">
-                    <h4 className="font-semibold text-gray-900 mb-1">
+                    <h4 className="font-semibold text-slate-900 mb-1">
                       AI Image Prompt:
                     </h4>
-                    <p className="text-gray-600 italic bg-yellow-50 p-2 rounded text-sm">
+                    <p className="text-slate-500 italic bg-yellow-50 p-2 rounded text-sm">
                       {item.imagePrompt}
                     </p>
                   </div>
@@ -229,7 +231,7 @@ export const AIScheduleGenerator: React.FC<AIScheduleGeneratorProps> = ({
             </button>
             <button
               onClick={() => setShowPreview(false)}
-              className="px-6 py-3 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
+              className="px-6 py-3 border border-gray-300 text-slate-700 rounded-md hover:bg-gray-50 transition-colors"
             >
               Cancel
             </button>
@@ -246,10 +248,10 @@ export const AIScheduleGenerator: React.FC<AIScheduleGeneratorProps> = ({
           <Sparkles className="w-6 h-6 text-white" />
         </div>
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">
+          <h2 className="text-2xl font-bold text-slate-900">
             AI Schedule Generator
           </h2>
-          <p className="text-gray-600">
+          <p className="text-slate-500">
             Describe your posting schedule and let AI create the perfect content
             calendar
           </p>
@@ -258,7 +260,7 @@ export const AIScheduleGenerator: React.FC<AIScheduleGeneratorProps> = ({
 
       {/* Example Prompts */}
       <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-slate-700 mb-2">
           Try these examples:
         </label>
         <div className="flex flex-wrap gap-2">
@@ -266,7 +268,7 @@ export const AIScheduleGenerator: React.FC<AIScheduleGeneratorProps> = ({
             <button
               key={index}
               onClick={() => handleExampleClick(example)}
-              className="text-sm bg-gray-100 hover:bg-blue-100 text-gray-700 hover:text-blue-700 px-3 py-1 rounded-full transition-colors"
+              className="text-sm bg-gray-100 hover:bg-blue-100 text-slate-700 hover:text-blue-700 px-3 py-1 rounded-full transition-colors"
             >
               {example}
             </button>
@@ -277,7 +279,7 @@ export const AIScheduleGenerator: React.FC<AIScheduleGeneratorProps> = ({
       {/* Main Input */}
       <div className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-slate-700 mb-2">
             Describe your posting schedule:
           </label>
           <textarea
@@ -291,7 +293,7 @@ export const AIScheduleGenerator: React.FC<AIScheduleGeneratorProps> = ({
 
         {/* Platform Selection */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-3">
+          <label className="block text-sm font-medium text-slate-700 mb-3">
             Select Platforms:
           </label>
           <div className="flex flex-wrap gap-3">
@@ -305,7 +307,7 @@ export const AIScheduleGenerator: React.FC<AIScheduleGeneratorProps> = ({
                   className={`flex items-center gap-3 px-4 py-3 rounded-md border-2 transition-all ${
                     isSelected
                       ? `${platform.bgColor} ${platform.borderColor} ${platform.color}`
-                      : "bg-white text-gray-700 border-gray-300 hover:border-gray-400"
+                      : "bg-white text-slate-700 border-gray-300 hover:border-gray-400"
                   }`}
                 >
                   <IconComponent
@@ -333,7 +335,7 @@ export const AIScheduleGenerator: React.FC<AIScheduleGeneratorProps> = ({
         {/* Time Preference */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
+            <label className="block text-sm font-medium text-slate-700 mb-3">
               Preferred Posting Time:
             </label>
             <div className="space-y-2">
@@ -351,7 +353,7 @@ export const AIScheduleGenerator: React.FC<AIScheduleGeneratorProps> = ({
                     onChange={(e) => setTimePreference(e.target.value as any)}
                     className="mr-3 text-blue-600"
                   />
-                  <span className="text-gray-700">{option.label}</span>
+                  <span className="text-slate-700">{option.label}</span>
                 </label>
               ))}
             </div>
@@ -368,7 +370,7 @@ export const AIScheduleGenerator: React.FC<AIScheduleGeneratorProps> = ({
 
           <div>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-slate-700 mb-2">
                 Category (optional):
               </label>
               <input
@@ -381,7 +383,7 @@ export const AIScheduleGenerator: React.FC<AIScheduleGeneratorProps> = ({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-slate-700 mb-2">
                 Keywords (optional):
               </label>
               <input
@@ -420,8 +422,8 @@ export const AIScheduleGenerator: React.FC<AIScheduleGeneratorProps> = ({
 
         {/* Current Settings Summary */}
         <div className="bg-gray-50 p-4 rounded-md">
-          <h4 className="font-medium text-gray-900 mb-2">Current Settings:</h4>
-          <div className="grid grid-cols-2 gap-4 text-sm text-gray-600">
+          <h4 className="font-medium text-slate-900 mb-2">Current Settings:</h4>
+          <div className="grid grid-cols-2 gap-4 text-sm text-slate-500">
             <div>
               <strong>Platforms:</strong>{" "}
               {selectedPlatforms.join(", ") || "None selected"}

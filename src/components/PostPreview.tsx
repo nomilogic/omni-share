@@ -412,7 +412,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                   })()}
                 </div>
                 <div>
-                  <h3 className="font-medium text-gray-900">
+                  <h3 className="font-medium text-slate-900">
                     {getPlatformDisplayName("facebook")}
                   </h3>
                   {/* <p className="text-xs text-slate-500">Just now · 🌍</p> */}
@@ -421,7 +421,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
             </div>
             <div className="p-4">
               <p
-                className={`text-gray-800 whitespace-pre-wrap ${
+                className={`text-slate-800 whitespace-pre-wrap ${
                   editingMode
                     ? "border border-blue-300 rounded p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     : ""
@@ -459,15 +459,15 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
             <div className="px-4 pb-4">
               <div className="flex items-center justify-between pt-2 border-t border-gray-100">
                 <div className="flex items-center space-x-6">
-                  <button className="flex items-center space-x-2 text-gray-600 hover:text-blue-600">
+                  <button className="flex items-center space-x-2 text-slate-500 hover:text-blue-600">
                     <ThumbsUp className="w-4 h-4" />
                     <span className="text-sm">Like</span>
                   </button>
-                  <button className="flex items-center space-x-2 text-gray-600 hover:text-blue-600">
+                  <button className="flex items-center space-x-2 text-slate-500 hover:text-blue-600">
                     <MessageCircle className="w-4 h-4" />
                     <span className="text-sm">Comment</span>
                   </button>
-                  <button className="flex items-center space-x-2 text-gray-600 hover:text-blue-600">
+                  <button className="flex items-center space-x-2 text-slate-500 hover:text-blue-600">
                     <Share2 className="w-4 h-4" />
                     <span className="text-sm">Share</span>
                   </button>
@@ -497,7 +497,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                   })()}
                 </div>
                 <div>
-                  <h3 className="font-medium text-gray-900 text-sm">
+                  <h3 className="font-medium text-slate-900 text-sm">
                     {getPlatformDisplayName("instagram")}
                   </h3>
                 </div>
@@ -576,9 +576,9 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
             <div className="p-3">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center space-x-4">
-                  <Heart className="w-6 h-6 text-gray-700" />
-                  <MessageCircle className="w-6 h-6 text-gray-700" />
-                  <Send className="w-6 h-6 text-gray-700" />
+                  <Heart className="w-6 h-6 text-slate-700" />
+                  <MessageCircle className="w-6 h-6 text-slate-700" />
+                  <Send className="w-6 h-6 text-slate-700" />
                 </div>
               </div>
               <div className="text-sm">
@@ -643,7 +643,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center space-x-2 mb-1">
-                    <h3 className="font-bold text-gray-900">
+                    <h3 className="font-bold text-slate-900">
                       {getPlatformDisplayName("twitter")}
                     </h3>
                     <span className="text-slate-500">@yourcampaign</span>
@@ -651,7 +651,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                     <span className="text-slate-500">now</span>
                   </div>
                   <p
-                    className={`text-gray-800 whitespace-pre-wrap ${
+                    className={`text-slate-800 whitespace-pre-wrap ${
                       editingMode
                         ? "border border-blue-300 rounded p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         : ""
@@ -729,7 +729,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                   })()}
                 </div>
                 <div>
-                  <h3 className="font-medium text-gray-900">
+                  <h3 className="font-medium text-slate-900">
                     {getPlatformDisplayName("linkedin")}
                   </h3>
                   {/* <p className="text-sm text-slate-500">Campaign • 1st</p>
@@ -737,7 +737,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                 </div>
               </div>
               <p
-                className={`text-gray-800 whitespace-pre-wrap mb-3 ${
+                className={`text-slate-800 whitespace-pre-wrap mb-3 ${
                   editingMode
                     ? "border border-blue-300 rounded p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     : ""
@@ -772,15 +772,15 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
               </div>
               {renderMedia({ ...post, mediaUrl })}
               <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                <button className="flex items-center space-x-2 text-gray-600 hover:text-blue-600">
+                <button className="flex items-center space-x-2 text-slate-500 hover:text-blue-600">
                   <ThumbsUp className="w-4 h-4" />
                   <span className="text-sm">Like</span>
                 </button>
-                <button className="flex items-center space-x-2 text-gray-600 hover:text-blue-600">
+                <button className="flex items-center space-x-2 text-slate-500 hover:text-blue-600">
                   <MessageCircle className="w-4 h-4" />
                   <span className="text-sm">Comment</span>
                 </button>
-                <button className="flex items-center space-x-2 text-gray-600 hover:text-blue-600">
+                <button className="flex items-center space-x-2 text-slate-500 hover:text-blue-600">
                   <Share2 className="w-4 h-4" />
                   <span className="text-sm">Share</span>
                 </button>
@@ -929,14 +929,14 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                   })()}
                 </div>
                 <div>
-                  <h4 className="font-medium text-gray-900">
+                  <h4 className="font-medium text-slate-900">
                     {getPlatformDisplayName("youtube")}
                   </h4>
                   <p className="text-xs text-slate-500">Just uploaded</p>
                 </div>
               </div>
               <h3
-                className={`font-medium text-gray-900 mb-2 line-clamp-2 block ${
+                className={`font-medium text-slate-900 mb-2 line-clamp-2 block ${
                   editingMode
                     ? "border border-blue-300 rounded p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     : ""
@@ -976,10 +976,10 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
       default:
         return (
           <div className="bg-white border border-gray-200 rounded-md p-6 shadow-sm">
-            <h3 className="font-medium text-gray-900 mb-3 capitalize">
+            <h3 className="font-medium text-slate-900 mb-3 ">
               {post.platform}
             </h3>
-            <p className="text-gray-800 whitespace-pre-wrap mb-3">
+            <p className="text-slate-800 whitespace-pre-wrap mb-3">
               {post.caption}
             </p>
             <div className="flex flex-wrap gap-1">
@@ -1002,7 +1002,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
   const selectedPost = posts.find((post) => post.platform === selectedPlatform);
 
   return (
-    <div className="preview w-full mx-auto  rounded-2xl shadow-lg px-8 py-10">
+    <div className="preview w-full mx-auto bg-transparent  md:rounded-2xl md:shadow-lg md:px-8  md:py-10  ">
       <h2 className="text-3xl font-semibold theme-text-primary mb-1">
         Your AI-Generated Posts
       </h2>
@@ -1012,7 +1012,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-1 gap-1">
         {/* Platform Selector */}
         <div className="lg:col-span-1 space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900 mb-0 text-left lg:text-center">
+          <h3 className="text-lg font-semibold text-slate-900 mb-0 text-left lg:text-center mt-2">
             Select Platform
           </h3>
           <div className="flex flex-wrap gap-3 justify-center">
@@ -1085,7 +1085,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                   element.click();
                   document.body.removeChild(element);
                 }}
-                className="w-full flex items-center justify-center space-x-2 py-3 px-4 bg-gray-100 text-gray-700 rounded-md font-medium hover:bg-gray-200 transition-colors duration-200"
+                className="w-full flex items-center justify-center space-x-2 py-3 px-4 bg-gray-100 text-slate-700 rounded-md font-medium hover:bg-gray-200 transition-colors duration-200"
               >
                 <Download className="w-4 h-4" />
                 <span>Download</span>
@@ -1096,7 +1096,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
 
         {/* Preview */}
         <div className="lg:col-span-2">
-          <h3 className="text-lg font-semibold text-gray-900 mb-1 px-1 text-left lg:text-center">
+          <h3 className="text-lg font-semibold text-slate-900 mb-1 px-1 text-left lg:text-center">
             Preview
           </h3>
 
@@ -1107,7 +1107,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
 
           {/* Inline Editing Controls */}
           {selectedPost && (
-            <div className="flex justify-center mb-6">
+            <div className="flex justify-center mb-2">
               <div className="max-w-lg w-full text-center space-y-3">
                 {editingMode ? (
                   // Editing Mode - Show save/cancel buttons
@@ -1136,7 +1136,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                   // View Mode - Show edit button
                   <button
                     onClick={() => setEditingMode(true)}
-                    className="inline-flex items-center gap-2 px-4 py-2 theme-bg-quaternary theme-text-secondary rounded-md hover:theme-bg-tertiary transition-colors w-full justify-center"
+                    className="w-full py-2.5 text-md font-semibold rounded-md border flex items-center justify-center gap-2 transition  hover:bg-[#d7d7fc] text-[#7650e3] border-[#7650e3]"
                   >
                     <Edit className="w-4 h-4" />
                     Edit Post Text
@@ -1164,7 +1164,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
             <div className="flex justify-center hidden lg:block">
               <div className="max-w-lg w-full space-y-4">
                 <div className="bg-gray-50 rounded-md p-4">
-                  <h4 className="font-medium text-gray-900 mb-3 flex items-center gap-2">
+                  <h4 className="font-medium text-slate-900 mb-3 flex items-center gap-2">
                     {(() => {
                       const IconComponent = getPlatformIcon(
                         selectedPost.platform
@@ -1178,12 +1178,12 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                           >
                             <IconComponent className="w-3 h-3" />
                           </div>
-                          <span className="capitalize">
+                          <span className="">
                             {selectedPost.platform} Details
                           </span>
                         </>
                       ) : (
-                        <span className="capitalize">
+                        <span className="">
                           {selectedPost.platform} Details
                         </span>
                       );
@@ -1191,21 +1191,21 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
                     <div className="flex justify-between md:flex-col md:items-start">
-                      <span className="text-gray-600">Character Count:</span>
+                      <span className="text-slate-500">Character Count:</span>
                       <span className="font-medium">
                         {selectedPost.characterCount}
                       </span>
                     </div>
                     <div className="flex justify-between md:flex-col md:items-start">
-                      <span className="text-gray-600">Hashtags:</span>
+                      <span className="text-slate-500">Hashtags:</span>
                       <span className="font-medium">
                         {selectedPost.hashtags.length}
                       </span>
                     </div>
                     {/* <div className="flex justify-between md:flex-col md:items-start">
-                      <span className="text-gray-600">Engagement:</span>
+                      <span className="text-slate-500">Engagement:</span>
                       <span
-                        className={`font-medium capitalize ${
+                        className={`font-medium  ${
                           selectedPost.engagement === "high"
                             ? "text-green-600"
                             : selectedPost.engagement === "medium"
@@ -1225,19 +1225,19 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
       </div>
 
       {/* Action Buttons / Regeneration Mode */}
-      <div className="pt-1 mt-1 flex flex-row-reverse">
+      <div className="pt-1 mt-1 flex flex-row-reverse gap-2">
         {!isRegeneratingMode ? (
-          // Normal mode - show publish and regenerate buttons
           <>
-            {/* Publish Button */}
-            <button onClick={onPublish} className="btn-success w-full p-4 mx-1">
+            <button
+              onClick={onPublish}
+              className="w-full bg-[#10b981] flex items-center gap-2 justify-center hover:bg-[#10b981] text-white font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
+            >
               Continue
             </button>
 
-            {/* Regenerate Post Text Button */}
             <button
               onClick={handleRegenerateClick}
-              className="btn-primary w-full p-4 mx-1"
+              className="w-full bg-purple-600 flex items-center gap-2 justify-center hover:bg-purple-700 text-white font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
             >
               <Edit className="w-5 h-5" />
               Regenerate
@@ -1245,8 +1245,8 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
           </>
         ) : (
           // Regeneration mode - show textarea and generate button
-          <div className="theme-bg-quaternary rounded-md p-6 border border-purple-200 w-full">
-            <h4 className="text-lg font-semibold theme-text-secondary mb-4 text-center">
+          <div className="theme-bg-quaternary rounded-md lg:p-5 p-3 border border-purple-200 w-full">
+            <h4 className="text-lg font-semibold theme-text-secondary mb-3 text-left ">
               Generate Post Text
             </h4>
 
@@ -1272,7 +1272,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                   });
                 }}
                 placeholder="Enter your prompt to regenerate the post text for the selected platform..."
-                className="w-full h-32 p-4 border border-gray-300 rounded-md resize-none focus:ring-2 focus:ring-purple-500 focus:border-transparent theme-text-secondary"
+                className="w-full h-32 p-4 border border-gray-300 rounded-md resize-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-black"
               />
             </div>
 
@@ -1280,7 +1280,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
             <button
               onClick={handleRegenerateSubmit}
               disabled={isRegenerating}
-              className={`rounded-full w-full flex items-center justify-between theme-bg-trinary theme-text-light py-2 px-4 font-medium transition-all duration-200 text-sm ${
+              className={`rounded-md w-full flex items-center justify-between theme-bg-trinary theme-text-light py-2.5 px-3 font-medium transition-all duration-200 text-sm ${
                 isRegenerating
                   ? "opacity-70 cursor-not-allowed"
                   : "hover:opacity-90"
@@ -1290,14 +1290,14 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                 {isRegenerating ? (
                   <Loader className="w-6 h-6 mr-1 animate-spin" />
                 ) : (
-                  <Wand2 className="w-6 h-6 mr-1" />
+                  <Wand2 className="w-[23px] h-[23px] mr-1" />
                 )}
                 {isRegenerating ? "REGENERATING..." : "GENERATE POST TEXT"}
               </div>
-              <div className="rounded-full theme-bg-quaternary theme-text-secondary px-2 py-1">
+              <div className="sm:inline-block rounded-md theme-bg-quaternary theme-text-secondary px-2 py-1">
                 <Icon
-                  name="wallet"
-                  size={14}
+                  name="spiral-logo"
+                  size={20}
                   className="inline mr-1 mt-[-1px]"
                 />
                 {generationAmounts?.text}
@@ -1308,7 +1308,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
             <div className="flex justify-center mt-4">
               <button
                 onClick={handleRegenerateCancel}
-                className="bg-theme-quaternary theme-text-secondary px-4 py-2 rounded-md hover:bg-theme-tertiary transition-colors font-medium"
+                className="w-full py-2.5 text-md font-semibold rounded-md border flex items-center justify-center gap-2 transition  hover:bg-[#d7d7fc] text-[#7650e3] border-[#7650e3]"
               >
                 Cancel
               </button>

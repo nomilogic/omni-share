@@ -199,10 +199,10 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
                 <Wand2 className="w-6 h-6 text-purple-600" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-gray-900">
+                <h2 className="text-2xl font-bold text-slate-900">
                   AI Image Generator
                 </h2>
-                <p className="text-gray-600">
+                <p className="text-slate-500">
                   Create stunning visuals for your social media posts
                 </p>
               </div>
@@ -210,7 +210,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
 
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 text-xl"
+              className="text-gray-400 hover:text-slate-500 text-xl"
             >
               ✕
             </button>
@@ -221,7 +221,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Generated Image Panel */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-lg font-semibold text-slate-900">
                 Generated Image
               </h3>
 
@@ -241,7 +241,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
                     <RefreshCw className="w-6 h-6 text-red-600" />
                   </div>
                   <p>Failed to generate image</p>
-                  <p className="text-sm text-gray-600 mb-4">
+                  <p className="text-sm text-slate-500 mb-4">
                     Please try again with a different prompt or model
                   </p>
                   <button
@@ -260,7 +260,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
                     <Loader className="w-6 h-6 text-purple-600 animate-spin" />
                   </div>
                   <p>Generating image...</p>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-slate-500">
                     This may take a few moments
                   </p>
                 </div>
@@ -277,7 +277,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
                       setCurrentImage(null);
                     }}
                   />
-                  <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                  <p className="text-sm text-slate-500 mb-3 line-clamp-2">
                     {currentImage.prompt}
                   </p>
 
@@ -293,7 +293,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
                     <button
                       onClick={handleRetryGeneration}
                       disabled={isGenerating}
-                      className="bg-gray-100 text-gray-700 px-3 py-2 rounded-md text-sm hover:bg-gray-200 transition-colors flex items-center justify-center space-x-1"
+                      className="bg-gray-100 text-slate-700 px-3 py-2 rounded-md text-sm hover:bg-gray-200 transition-colors flex items-center justify-center space-x-1"
                     >
                       <RefreshCw className="w-4 h-4" />
                       <span>Generate New</span>
@@ -303,7 +303,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
                       <a
                         href={currentImage.url}
                         download="ai-generated-image.png"
-                        className="bg-gray-100 text-gray-700 px-3 py-2 rounded-md text-sm hover:bg-gray-200 transition-colors flex items-center justify-center"
+                        className="bg-gray-100 text-slate-700 px-3 py-2 rounded-md text-sm hover:bg-gray-200 transition-colors flex items-center justify-center"
                       >
                         <Download className="w-4 h-4" />
                       </a>
@@ -315,7 +315,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
             {/* Generation Panel */}
             <div className="lg:col-span-2 space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
+                <label className="block text-sm font-medium text-slate-700 mb-3">
                   Image Description
                 </label>
                 <textarea
@@ -335,7 +335,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
               {contentText && (
                 <div>
                   <div className="flex items-center justify-between mb-3">
-                    <label className="text-sm font-medium text-gray-700">
+                    <label className="text-sm font-medium text-slate-700">
                       AI Suggestions Based on Your Content
                     </label>
                     <button
@@ -366,7 +366,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
                         >
                           <div className="flex items-start space-x-2">
                             <Sparkles className="w-4 h-4 text-purple-500 mt-0.5 flex-shrink-0" />
-                            <span className="text-gray-800">{prompt}</span>
+                            <span className="text-slate-800">{prompt}</span>
                           </div>
                         </button>
                       ))}
@@ -377,7 +377,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
 
               {/* AI Model Selection */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-slate-700 mb-2">
                   AI Model{" "}
                   {loadingModels && (
                     <span className="text-xs text-slate-500">(Loading...)</span>
@@ -503,7 +503,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
               {/* Style Options */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
                     Style
                   </label>
                   <select
@@ -525,7 +525,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
                     Aspect Ratio
                   </label>
                   <select
@@ -554,7 +554,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
 
               {/* Quality */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-slate-700 mb-2">
                   Quality
                 </label>
                 <div className="flex space-x-4">
@@ -573,9 +573,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
                         }
                         className="mr-2"
                       />
-                      <span className="text-sm text-gray-700 capitalize">
-                        {quality}
-                      </span>
+                      <span className="text-sm text-slate-700 ">{quality}</span>
                     </label>
                   ))}
                 </div>

@@ -12,7 +12,7 @@ export const OnboardingPage: React.FC = () => {
   //     <div className="min-h-screen flex items-center justify-center">
   //       <div className="bg-white rounded-md shadow p-8 text-center max-w-lg">
   //         <h2 className="text-2xl font-semibold mb-4">Choose a plan to continue</h2>
-  //         <p className="mb-6 text-gray-600">Please select a pricing plan to proceed with onboarding.</p>
+  //         <p className="mb-6 text-slate-500">Please select a pricing plan to proceed with onboarding.</p>
   //         <div className="flex justify-center gap-4">
   //           <a href="/pricing" className="px-6 py-3 bg-blue-600 text-white rounded-md">View Pricing</a>
   //         </div>

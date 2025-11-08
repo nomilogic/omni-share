@@ -17,10 +17,10 @@ const PrivacyPolicy: React.FC = () => {
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back
           </button>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-slate-900 mb-2">
             Privacy Policy
           </h1>
-          <p className="text-gray-600">
+          <p className="text-slate-500">
             Last updated: {new Date().toLocaleDateString()}
           </p>
         </div>
@@ -29,31 +29,31 @@ const PrivacyPolicy: React.FC = () => {
         <div className="bg-white rounded-md shadow-sm border border-gray-200 p-8">
           <div className="prose prose-gray max-w-none">
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              <h2 className="text-2xl font-semibold text-slate-900 mb-4">
                 1. Introduction
               </h2>
-              <p className="text-gray-700 mb-4">
+              <p className="text-slate-700 mb-4">
                 Welcome to Omni Share ("we," "our," or "us"). We are committed
                 to protecting your privacy and ensuring the security of your
                 personal information. This Privacy Policy explains how we
                 collect, use, disclose, and safeguard your information when you
                 use our AI-powered social media content generation platform.
               </p>
-              <p className="text-gray-700">
+              <p className="text-slate-700">
                 By accessing or using our service, you agree to the collection
                 and use of information in accordance with this policy.
               </p>
             </section>
 
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              <h2 className="text-2xl font-semibold text-slate-900 mb-4">
                 2. Information We Collect
               </h2>
 
-              <h3 className="text-xl font-medium text-gray-800 mb-3">
+              <h3 className="text-xl font-medium text-slate-800 mb-3">
                 2.1 Personal Information
               </h3>
-              <ul className="list-disc pl-6 mb-4 text-gray-700">
+              <ul className="list-disc pl-6 mb-4 text-slate-700">
                 <li>Account information (name, email address, password)</li>
                 <li>Profile information and preferences</li>
                 <li>
@@ -65,20 +65,20 @@ const PrivacyPolicy: React.FC = () => {
                 </li>
               </ul>
 
-              <h3 className="text-xl font-medium text-gray-800 mb-3">
+              <h3 className="text-xl font-medium text-slate-800 mb-3">
                 2.2 Content Data
               </h3>
-              <ul className="list-disc pl-6 mb-4 text-gray-700">
+              <ul className="list-disc pl-6 mb-4 text-slate-700">
                 <li>Content you create, generate, or upload</li>
                 <li>AI prompts and inputs</li>
                 <li>Generated social media posts, images, and schedules</li>
                 <li>Campaign data and analytics</li>
               </ul>
 
-              <h3 className="text-xl font-medium text-gray-800 mb-3">
+              <h3 className="text-xl font-medium text-slate-800 mb-3">
                 2.3 Technical Data
               </h3>
-              <ul className="list-disc pl-6 mb-4 text-gray-700">
+              <ul className="list-disc pl-6 mb-4 text-slate-700">
                 <li>Device information and browser type</li>
                 <li>IP address and location data</li>
                 <li>Usage patterns and feature interactions</li>
@@ -87,10 +87,10 @@ const PrivacyPolicy: React.FC = () => {
             </section>
 
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              <h2 className="text-2xl font-semibold text-slate-900 mb-4">
                 3. How We Use Your Information
               </h2>
-              <ul className="list-disc pl-6 text-gray-700">
+              <ul className="list-disc pl-6 text-slate-700">
                 <li>Provide and maintain our AI content generation services</li>
                 <li>Process and fulfill your content creation requests</li>
                 <li>Improve and optimize our AI models and algorithms</li>
@@ -108,15 +108,15 @@ const PrivacyPolicy: React.FC = () => {
             </section>
 
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              <h2 className="text-2xl font-semibold text-slate-900 mb-4">
                 4. AI and Machine Learning
               </h2>
-              <p className="text-gray-700 mb-4">
+              <p className="text-slate-700 mb-4">
                 Our platform uses advanced AI technologies, including large
                 language models and image generation systems. Here's how we
                 handle your data in relation to AI processing:
               </p>
-              <ul className="list-disc pl-6 mb-4 text-gray-700">
+              <ul className="list-disc pl-6 mb-4 text-slate-700">
                 <li>
                   Your content inputs may be processed by third-party AI
                   services (OpenAI, Anthropic, Google AI)
@@ -134,13 +134,13 @@ const PrivacyPolicy: React.FC = () => {
             </section>
 
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              <h2 className="text-2xl font-semibold text-slate-900 mb-4">
                 5. Social Media Integration
               </h2>
-              <p className="text-gray-700 mb-4">
+              <p className="text-slate-700 mb-4">
                 When you connect your social media accounts, we:
               </p>
-              <ul className="list-disc pl-6 mb-4 text-gray-700">
+              <ul className="list-disc pl-6 mb-4 text-slate-700">
                 <li>Store only necessary authorization tokens securely</li>
                 <li>Access only the permissions you explicitly grant</li>
                 <li>Post content only with your explicit approval</li>
@@ -150,48 +150,48 @@ const PrivacyPolicy: React.FC = () => {
             </section>
 
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              <h2 className="text-2xl font-semibold text-slate-900 mb-4">
                 6. Data Sharing and Third Parties
               </h2>
-              <p className="text-gray-700 mb-4">
+              <p className="text-slate-700 mb-4">
                 We may share your information with:
               </p>
 
-              <h3 className="text-xl font-medium text-gray-800 mb-3">
+              <h3 className="text-xl font-medium text-slate-800 mb-3">
                 6.1 Service Providers
               </h3>
-              <ul className="list-disc pl-6 mb-4 text-gray-700">
+              <ul className="list-disc pl-6 mb-4 text-slate-700">
                 <li>AI service providers (OpenAI, Anthropic, Google AI)</li>
                 <li>Cloud hosting and database services (Supabase)</li>
                 <li>Payment processors</li>
                 <li>Analytics and monitoring services</li>
               </ul>
 
-              <h3 className="text-xl font-medium text-gray-800 mb-3">
+              <h3 className="text-xl font-medium text-slate-800 mb-3">
                 6.2 Legal Requirements
               </h3>
-              <p className="text-gray-700 mb-4">
+              <p className="text-slate-700 mb-4">
                 We may disclose information if required by law, regulation, or
                 legal process.
               </p>
 
-              <h3 className="text-xl font-medium text-gray-800 mb-3">
+              <h3 className="text-xl font-medium text-slate-800 mb-3">
                 6.3 Business Transfers
               </h3>
-              <p className="text-gray-700">
+              <p className="text-slate-700">
                 In case of merger, acquisition, or sale of assets, user
                 information may be transferred.
               </p>
             </section>
 
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              <h2 className="text-2xl font-semibold text-slate-900 mb-4">
                 7. Data Security
               </h2>
-              <p className="text-gray-700 mb-4">
+              <p className="text-slate-700 mb-4">
                 We implement robust security measures:
               </p>
-              <ul className="list-disc pl-6 text-gray-700">
+              <ul className="list-disc pl-6 text-slate-700">
                 <li>Encryption of data in transit and at rest</li>
                 <li>Regular security audits and monitoring</li>
                 <li>Access controls and authentication protocols</li>
@@ -201,11 +201,11 @@ const PrivacyPolicy: React.FC = () => {
             </section>
 
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              <h2 className="text-2xl font-semibold text-slate-900 mb-4">
                 8. Your Rights and Choices
               </h2>
-              <p className="text-gray-700 mb-4">You have the right to:</p>
-              <ul className="list-disc pl-6 text-gray-700">
+              <p className="text-slate-700 mb-4">You have the right to:</p>
+              <ul className="list-disc pl-6 text-slate-700">
                 <li>Access, update, or delete your personal information</li>
                 <li>Download your data in a portable format</li>
                 <li>Opt-out of marketing communications</li>
@@ -217,29 +217,29 @@ const PrivacyPolicy: React.FC = () => {
             </section>
 
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              <h2 className="text-2xl font-semibold text-slate-900 mb-4">
                 9. Data Retention
               </h2>
-              <p className="text-gray-700 mb-4">
+              <p className="text-slate-700 mb-4">
                 We retain your information only as long as necessary to:
               </p>
-              <ul className="list-disc pl-6 text-gray-700">
+              <ul className="list-disc pl-6 text-slate-700">
                 <li>Provide our services to you</li>
                 <li>Comply with legal obligations</li>
                 <li>Resolve disputes and enforce agreements</li>
                 <li>Improve our services (using anonymized data)</li>
               </ul>
-              <p className="text-gray-700 mt-4">
+              <p className="text-slate-700 mt-4">
                 You can request deletion of your account and associated data at
                 any time.
               </p>
             </section>
 
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              <h2 className="text-2xl font-semibold text-slate-900 mb-4">
                 10. International Data Transfers
               </h2>
-              <p className="text-gray-700">
+              <p className="text-slate-700">
                 Your information may be transferred to and processed in
                 countries other than your own. We ensure appropriate safeguards
                 are in place to protect your data in accordance with this
@@ -248,10 +248,10 @@ const PrivacyPolicy: React.FC = () => {
             </section>
 
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              <h2 className="text-2xl font-semibold text-slate-900 mb-4">
                 11. Children's Privacy
               </h2>
-              <p className="text-gray-700">
+              <p className="text-slate-700">
                 Our service is not intended for individuals under 18 years of
                 age. We do not knowingly collect personal information from
                 children under 18. If you are a parent or guardian and believe
@@ -261,10 +261,10 @@ const PrivacyPolicy: React.FC = () => {
             </section>
 
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              <h2 className="text-2xl font-semibold text-slate-900 mb-4">
                 12. Updates to This Policy
               </h2>
-              <p className="text-gray-700">
+              <p className="text-slate-700">
                 We may update this Privacy Policy from time to time. We will
                 notify you of any changes by posting the new Privacy Policy on
                 this page and updating the "Last updated" date. We encourage you
@@ -273,31 +273,31 @@ const PrivacyPolicy: React.FC = () => {
             </section>
 
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              <h2 className="text-2xl font-semibold text-slate-900 mb-4">
                 13. Contact Us
               </h2>
-              <p className="text-gray-700 mb-4">
+              <p className="text-slate-700 mb-4">
                 If you have any questions about this Privacy Policy or our data
                 practices, please contact us:
               </p>
               <div className="bg-gray-50 p-4 rounded-md">
-                <p className="text-gray-700 mb-2">
+                <p className="text-slate-700 mb-2">
                   <strong>Email:</strong> privacy@socialaiagent.com
                 </p>
-                <p className="text-gray-700 mb-2">
+                <p className="text-slate-700 mb-2">
                   <strong>Address:</strong> [Your Company Address]
                 </p>
-                <p className="text-gray-700">
+                <p className="text-slate-700">
                   <strong>Phone:</strong> [Your Contact Number]
                 </p>
               </div>
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              <h2 className="text-2xl font-semibold text-slate-900 mb-4">
                 14. Consent
               </h2>
-              <p className="text-gray-700">
+              <p className="text-slate-700">
                 By using our service, you consent to our Privacy Policy and
                 agree to its terms. If you do not agree with this policy, please
                 do not use our service.

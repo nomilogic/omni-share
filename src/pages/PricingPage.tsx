@@ -448,7 +448,7 @@ export const PricingPage: React.FC = () => {
                       <p className="text-xl font-bold text-[#7650e3] mb-2 ">
                         Ideal for:
                       </p>
-                      <p className="text-lg text-gray-800 font-medium">
+                      <p className="text-lg text-slate-800 font-medium">
                         {tier.title ??
                           "Small agency, growing business, content team"}
                       </p>
@@ -458,7 +458,7 @@ export const PricingPage: React.FC = () => {
                       {tier.features?.map((feature: string, idx: number) => (
                         <li key={idx} className="flex items-start gap-3">
                           <Check className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                          <span className="text-sm text-gray-800">
+                          <span className="text-sm text-slate-800">
                             {feature}
                           </span>
                         </li>
@@ -491,7 +491,7 @@ export const PricingPage: React.FC = () => {
                 >
                   <div className="text-left font-medium text-3xl px-5 py-2  pb-[4rem]">
                     <div className="flex items-center gap-2 mb-1">
-                      <div className="text-[25px] font-semibold text-gray-900">
+                      <div className="text-[25px] font-semibold text-slate-900">
                         {addon.coins.toLocaleString()}
                       </div>
                       {addon.isSale && (
@@ -500,7 +500,7 @@ export const PricingPage: React.FC = () => {
                         </span>
                       )}
                     </div>
-                    <div className="text-[1.05rem] text-gray-800 -mt-[10px]  w-full">
+                    <div className="text-[1.05rem] text-slate-800 -mt-[10px]  w-full">
                       {hasSale ? (
                         <>
                           Total: {addon.coins.toLocaleString()} +{" "}

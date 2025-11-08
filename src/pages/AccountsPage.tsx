@@ -229,9 +229,7 @@ export const AccountsPage: React.FC = () => {
 
     if (!IconComponent) {
       return (
-        <span className="text-lg font-bold uppercase">
-          {platform.substring(0, 2)}
-        </span>
+        <span className="text-lg font-bold ">{platform.substring(0, 2)}</span>
       );
     }
 
@@ -239,7 +237,7 @@ export const AccountsPage: React.FC = () => {
   };
 
   return (
-    <div className="theme-bg-light h-full-dec-hf  x-2">
+    <div className=" ">
       {/* Header */}
 
       {/* Main Content */}
@@ -310,7 +308,7 @@ export const AccountsPage: React.FC = () => {
 
                   {/* Platform Info */}
                   <div>
-                    <h4 className="font-medium text-gray-900">
+                    <h4 className="font-medium text-slate-900">
                       {getPlatformDisplayName(platform)}
                     </h4>
                     <p

@@ -104,10 +104,10 @@ const SubscriptionPauseModal = ({ isVisible, onClose, onPause, onCancel }) => {
                   />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-gray-800">
+                  <p className="text-sm font-semibold text-slate-800">
                     Rollover Omni Coins
                   </p>
-                  <p className="text-lg font-bold text-gray-800 leading-none">
+                  <p className="text-lg font-bold text-slate-800 leading-none">
                     Potential Coins Lost
                   </p>
                 </div>
@@ -116,7 +116,7 @@ const SubscriptionPauseModal = ({ isVisible, onClose, onPause, onCancel }) => {
                 <p className="text-xs font-medium text-[#000000] mt-1">
                   Current Excess
                 </p>
-                <p className="text-lg font-bold text-gray-900 leading-none">
+                <p className="text-lg font-bold text-slate-900 leading-none">
                   {user.wallet.coins}
                 </p>
               </div>

@@ -82,7 +82,7 @@ export default function PackageSuccessPage() {
               ? "Purchase Successful!"
               : "Package Status"}
           </h1>
-          <p className="text-gray-600">
+          <p className="text-slate-500">
             {loading
               ? "Please wait while we confirm your package..."
               : confirmed
@@ -133,12 +133,12 @@ function SessionId({ value }: { value: string }) {
 
   return (
     <div>
-      <label className="mb-2 block text-sm font-medium text-gray-600">
+      <label className="mb-2 block text-sm font-medium text-slate-500">
         Session ID
       </label>
       <div className="flex items-stretch gap-2">
         <div
-          className="flex min-w-0 flex-1 items-center overflow-hidden rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-800"
+          className="flex min-w-0 flex-1 items-center overflow-hidden rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-slate-800"
           title={value}
           aria-label={`Session ID: ${value}`}
         >

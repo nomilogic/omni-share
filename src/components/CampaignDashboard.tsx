@@ -198,7 +198,7 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
         className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors ${
           activeView === "overview"
             ? "bg-white text-blue-600 shadow-sm"
-            : "text-gray-600 hover:text-gray-900"
+            : "text-slate-500 hover:text-slate-900"
         }`}
       >
         <Building2 className="w-4 h-4" />
@@ -210,7 +210,7 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
         className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors ${
           activeView === "analytics"
             ? "bg-white text-purple-600 shadow-sm"
-            : "text-gray-600 hover:text-gray-900"
+            : "text-slate-500 hover:text-slate-900"
         }`}
       >
         <BarChart3 className="w-4 h-4" />
@@ -222,7 +222,7 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
         className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors ${
           activeView === "posts"
             ? "bg-white text-green-600 shadow-sm"
-            : "text-gray-600 hover:text-gray-900"
+            : "text-slate-500 hover:text-slate-900"
         }`}
       >
         <Share2 className="w-4 h-4" />
@@ -234,7 +234,7 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
         className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors ${
           activeView === "campaigns"
             ? "bg-white text-red-600 shadow-sm"
-            : "text-gray-600 hover:text-gray-900"
+            : "text-slate-500 hover:text-slate-900"
         }`}
       >
         <Target className="w-4 h-4" />
@@ -246,7 +246,7 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
         className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors ${
           activeView === "settings"
             ? "bg-white text-orange-600 shadow-sm"
-            : "text-gray-600 hover:text-gray-900"
+            : "text-slate-500 hover:text-slate-900"
         }`}
       >
         <Settings className="w-4 h-4" />
@@ -278,43 +278,43 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
         {/* Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div className="bg-white p-6 rounded-md shadow-lg border-l-4 border-blue-500">
-            <h3 className="text-sm font-medium text-slate-500 uppercase tracking-wide">
+            <h3 className="text-sm font-medium text-slate-500  tracking-wide">
               Total Posts
             </h3>
-            <p className="text-3xl font-bold text-gray-900 mt-2">
+            <p className="text-3xl font-bold text-slate-900 mt-2">
               {stats.totalPosts}
             </p>
             <p className="text-sm text-green-600 mt-1">+12 this month</p>
           </div>
 
           <div className="bg-white p-6 rounded-md shadow-lg border-l-4 border-green-500">
-            <h3 className="text-sm font-medium text-slate-500 uppercase tracking-wide">
+            <h3 className="text-sm font-medium text-slate-500  tracking-wide">
               Published
             </h3>
-            <p className="text-3xl font-bold text-gray-900 mt-2">
+            <p className="text-3xl font-bold text-slate-900 mt-2">
               {stats.publishedPosts}
             </p>
             <p className="text-sm text-green-600 mt-1">+8 this month</p>
           </div>
 
           <div className="bg-white p-6 rounded-md shadow-lg border-l-4 border-purple-500">
-            <h3 className="text-sm font-medium text-slate-500 uppercase tracking-wide">
+            <h3 className="text-sm font-medium text-slate-500  tracking-wide">
               Scheduled
             </h3>
-            <p className="text-3xl font-bold text-gray-900 mt-2">
+            <p className="text-3xl font-bold text-slate-900 mt-2">
               {stats.scheduledPosts}
             </p>
             <p className="text-sm text-blue-600 mt-1">Next in 4 hours</p>
           </div>
 
           <div className="bg-white p-6 rounded-md shadow-lg border-l-4 border-red-500">
-            <h3 className="text-sm font-medium text-slate-500 uppercase tracking-wide">
+            <h3 className="text-sm font-medium text-slate-500  tracking-wide">
               Campaigns
             </h3>
-            <p className="text-3xl font-bold text-gray-900 mt-2">
+            <p className="text-3xl font-bold text-slate-900 mt-2">
               {stats.activeCampaigns}
             </p>
-            <p className="text-sm text-gray-600 mt-1">
+            <p className="text-sm text-slate-500 mt-1">
               of {stats.totalCampaigns} total
             </p>
           </div>
@@ -322,7 +322,7 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
 
         {/* Quick Actions */}
         <div className="bg-white rounded-md shadow-lg p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          <h3 className="text-lg font-semibold text-slate-900 mb-4">
             Quick Actions
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -332,8 +332,8 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
             >
               <Plus className="w-6 h-6 text-blue-600" />
               <div className="text-left">
-                <div className="font-medium text-gray-900">Create Post</div>
-                <div className="text-sm text-gray-600">
+                <div className="font-medium text-slate-900">Create Post</div>
+                <div className="text-sm text-slate-500">
                   Generate new content
                 </div>
               </div>
@@ -345,8 +345,8 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
             >
               <Calendar className="w-6 h-6 text-purple-600" />
               <div className="text-left">
-                <div className="font-medium text-gray-900">Schedule Posts</div>
-                <div className="text-sm text-gray-600">Plan your content</div>
+                <div className="font-medium text-slate-900">Schedule Posts</div>
+                <div className="text-sm text-slate-500">Plan your content</div>
               </div>
             </button>
 
@@ -356,8 +356,8 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
             >
               <Target className="w-6 h-6 text-green-600" />
               <div className="text-left">
-                <div className="font-medium text-gray-900">All Campaigns</div>
-                <div className="text-sm text-gray-600">View all campaigns</div>
+                <div className="font-medium text-slate-900">All Campaigns</div>
+                <div className="text-sm text-slate-500">View all campaigns</div>
               </div>
             </button>
 
@@ -367,8 +367,8 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
             >
               <Edit2 className="w-6 h-6 text-orange-600" />
               <div className="text-left">
-                <div className="font-medium text-gray-900">Edit Campaign</div>
-                <div className="text-sm text-gray-600">Update details</div>
+                <div className="font-medium text-slate-900">Edit Campaign</div>
+                <div className="text-sm text-slate-500">Update details</div>
               </div>
             </button>
           </div>
@@ -377,7 +377,7 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Recent Activity */}
           <div className="bg-white rounded-md shadow-lg p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            <h3 className="text-lg font-semibold text-slate-900 mb-4">
               Recent Activity
             </h3>
             <div className="space-y-3">
@@ -388,15 +388,15 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
                 >
                   {getActivityIcon(activity.type)}
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="text-sm font-medium text-slate-900">
                       {activity.message}
                     </p>
-                    <p className="text-xs text-gray-600">
+                    <p className="text-xs text-slate-500">
                       {activity.timestamp}
                     </p>
                   </div>
                   {activity.platform && (
-                    <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full capitalize">
+                    <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full ">
                       {activity.platform}
                     </span>
                   )}
@@ -407,7 +407,7 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
 
           {/* Platform Summary */}
           <div className="bg-white rounded-md shadow-lg p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            <h3 className="text-lg font-semibold text-slate-900 mb-4">
               Platform Overview
             </h3>
             <div className="space-y-4">
@@ -418,15 +418,15 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
                 >
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-blue-100 rounded-md flex items-center justify-center">
-                      <span className="text-sm font-semibold text-blue-600 capitalize">
+                      <span className="text-sm font-semibold text-blue-600 ">
                         {platform[0].toUpperCase()}
                       </span>
                     </div>
                     <div>
-                      <div className="font-medium text-gray-900 capitalize">
+                      <div className="font-medium text-slate-900 ">
                         {platform}
                       </div>
-                      <div className="text-sm text-gray-600">
+                      <div className="text-sm text-slate-500">
                         {followers.toLocaleString()} followers
                       </div>
                     </div>
@@ -435,7 +435,7 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
                     <div className="text-lg font-semibold text-green-600">
                       {stats.engagement[platform]}%
                     </div>
-                    <div className="text-xs text-gray-600">engagement</div>
+                    <div className="text-xs text-slate-500">engagement</div>
                   </div>
                 </div>
               ))}
@@ -449,15 +449,15 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
   const AnalyticsView = () => (
     <div className="space-y-6">
       <div className="bg-white rounded-md shadow-lg p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <h3 className="text-lg font-semibold text-slate-900 mb-4">
           Performance Analytics
         </h3>
         <div className="text-center py-12">
           <BarChart3 className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h4 className="text-lg font-medium text-gray-900 mb-2">
+          <h4 className="text-lg font-medium text-slate-900 mb-2">
             Advanced Analytics Coming Soon
           </h4>
-          <p className="text-gray-600">
+          <p className="text-slate-500">
             Detailed performance metrics and insights will be available here.
           </p>
         </div>
@@ -469,7 +469,7 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
     <div className="space-y-6">
       <div className="bg-white rounded-md shadow-lg p-6">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-semibold text-gray-900">
+          <h3 className="text-lg font-semibold text-slate-900">
             Posts Management
           </h3>
           <button
@@ -482,10 +482,10 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
         </div>
         <div className="text-center py-12">
           <Share2 className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h4 className="text-lg font-medium text-gray-900 mb-2">
+          <h4 className="text-lg font-medium text-slate-900 mb-2">
             Posts Management
           </h4>
-          <p className="text-gray-600 mb-4">
+          <p className="text-slate-500 mb-4">
             View and manage all your posts from here.
           </p>
           <button
@@ -503,7 +503,7 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
     <div className="space-y-6">
       <div className="bg-white rounded-md shadow-lg p-6">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-semibold text-gray-900">
+          <h3 className="text-lg font-semibold text-slate-900">
             Campaign Management
           </h3>
           <button
@@ -516,10 +516,10 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
         </div>
         <div className="text-center py-12">
           <Target className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h4 className="text-lg font-medium text-gray-900 mb-2">
+          <h4 className="text-lg font-medium text-slate-900 mb-2">
             Campaign Management
           </h4>
-          <p className="text-gray-600 mb-4">
+          <p className="text-slate-500 mb-4">
             Create and manage marketing campaigns for organized content
             strategy.
           </p>
@@ -537,21 +537,21 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
   const SettingsView = () => (
     <div className="space-y-6">
       <div className="bg-white rounded-md shadow-lg p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-6">
+        <h3 className="text-lg font-semibold text-slate-900 mb-6">
           Campaign Settings
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-slate-700 mb-1">
                 Campaign Name
               </label>
               <div className="p-3 bg-gray-50 rounded-md">{campaign.name}</div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-slate-700 mb-1">
                 Industry
               </label>
               <div className="p-3 bg-gray-50 rounded-md">
@@ -560,7 +560,7 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-slate-700 mb-1">
                 Website
               </label>
               <div className="p-3 bg-gray-50 rounded-md">
@@ -571,16 +571,16 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-slate-700 mb-1">
                 Brand Tone
               </label>
-              <div className="p-3 bg-gray-50 rounded-md capitalize">
+              <div className="p-3 bg-gray-50 rounded-md ">
                 {campaign.brand_tone || campaign.brandTone || "Not set"}
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-slate-700 mb-1">
                 Target Audience
               </label>
               <div className="p-3 bg-gray-50 rounded-md">
@@ -591,14 +591,14 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-slate-700 mb-1">
                 Platforms
               </label>
               <div className="flex flex-wrap gap-2 p-3 bg-gray-50 rounded-md">
                 {campaign.platforms?.map((platform) => (
                   <span
                     key={platform}
-                    className="px-2 py-1 bg-blue-100 text-blue-700 text-sm rounded-full capitalize"
+                    className="px-2 py-1 bg-blue-100 text-blue-700 text-sm rounded-full "
                   >
                     {platform}
                   </span>
@@ -627,7 +627,7 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center">
             <Building2 className="w-8 h-8 animate-pulse text-blue-600 mx-auto mb-4" />
-            <p className="text-gray-600">Loading campaign dashboard...</p>
+            <p className="text-slate-500">Loading campaign dashboard...</p>
           </div>
         </div>
       </div>
@@ -644,10 +644,10 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
               <Building2 className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold text-slate-900">
                 {campaign.name}
               </h1>
-              <p className="text-gray-600">{campaign.industry}</p>
+              <p className="text-slate-500">{campaign.industry}</p>
             </div>
           </div>
         </div>
@@ -655,7 +655,7 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
         <div className="flex items-center gap-4">
           <button
             onClick={onBack}
-            className="text-gray-600 hover:text-gray-800 transition-colors"
+            className="text-slate-500 hover:text-slate-800 transition-colors"
           >
             ← Back to Campaigns
           </button>

@@ -161,7 +161,7 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
       className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
         activeTab === id
           ? "bg-blue-100 text-blue-700"
-          : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+          : "text-slate-500 hover:text-slate-900 hover:bg-gray-50"
       }`}
     >
       {icon}
@@ -178,10 +178,10 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
             <div className="flex items-center gap-3">
               {getFileIcon(asset.type)}
               <div>
-                <h2 className="text-xl font-semibold text-gray-900">
+                <h2 className="text-xl font-semibold text-slate-900">
                   {asset.filename}
                 </h2>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-slate-500">
                   {asset.format.toUpperCase()} • {formatFileSize(asset.size)}
                 </p>
               </div>
@@ -192,14 +192,14 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
                 <>
                   <button
                     onClick={() => setIsEditing(true)}
-                    className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+                    className="p-2 text-slate-500 hover:text-slate-900 hover:bg-gray-100 rounded-md transition-colors"
                     title="Edit"
                   >
                     <Edit className="w-5 h-5" />
                   </button>
                   <button
                     onClick={handleDownload}
-                    className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+                    className="p-2 text-slate-500 hover:text-slate-900 hover:bg-gray-100 rounded-md transition-colors"
                     title="Download"
                   >
                     <Download className="w-5 h-5" />
@@ -231,7 +231,7 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
                         description: asset.description,
                       });
                     }}
-                    className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"
+                    className="px-4 py-2 border border-gray-300 text-slate-700 rounded-md hover:bg-gray-50"
                   >
                     Cancel
                   </button>
@@ -240,7 +240,7 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
 
               <button
                 onClick={onClose}
-                className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors ml-2"
+                className="p-2 text-slate-500 hover:text-slate-900 hover:bg-gray-100 rounded-md transition-colors ml-2"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -267,7 +267,7 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
                     />
                     <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all flex items-center justify-center">
                       <div className="bg-white bg-opacity-90 rounded-full p-4">
-                        <Video className="w-8 h-8 text-gray-900" />
+                        <Video className="w-8 h-8 text-slate-900" />
                       </div>
                     </div>
                   </div>
@@ -305,7 +305,7 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
                   <div className="space-y-4">
                     {/* Alt Text */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
                         Alt Text
                       </label>
                       {isEditing ? (
@@ -322,7 +322,7 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
                           placeholder="Describe this media for accessibility..."
                         />
                       ) : (
-                        <p className="text-gray-900 bg-gray-50 p-3 rounded-md">
+                        <p className="text-slate-900 bg-gray-50 p-3 rounded-md">
                           {asset.altText || "No alt text provided"}
                         </p>
                       )}
@@ -330,7 +330,7 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
 
                     {/* Description */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
                         Description
                       </label>
                       {isEditing ? (
@@ -347,7 +347,7 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
                           placeholder="Optional description..."
                         />
                       ) : (
-                        <p className="text-gray-900 bg-gray-50 p-3 rounded-md">
+                        <p className="text-slate-900 bg-gray-50 p-3 rounded-md">
                           {asset.description || "No description provided"}
                         </p>
                       )}
@@ -355,7 +355,7 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
 
                     {/* Tags */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
                         Tags
                       </label>
                       <div className="space-y-2">
@@ -405,27 +405,27 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
                     {/* File Info */}
                     <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-md">
                       <div>
-                        <div className="text-sm font-medium text-gray-700">
+                        <div className="text-sm font-medium text-slate-700">
                           Created
                         </div>
-                        <div className="text-sm text-gray-900">
+                        <div className="text-sm text-slate-900">
                           {new Date(asset.createdAt).toLocaleDateString()}
                         </div>
                       </div>
                       <div>
-                        <div className="text-sm font-medium text-gray-700">
+                        <div className="text-sm font-medium text-slate-700">
                           Source
                         </div>
-                        <div className="text-sm text-gray-900 capitalize">
+                        <div className="text-sm text-slate-900 ">
                           {asset.metadata.source}
                         </div>
                       </div>
                       {asset.dimensions && (
                         <div>
-                          <div className="text-sm font-medium text-gray-700">
+                          <div className="text-sm font-medium text-slate-700">
                             Dimensions
                           </div>
-                          <div className="text-sm text-gray-900">
+                          <div className="text-sm text-slate-900">
                             {asset.dimensions.width} × {asset.dimensions.height}
                             px
                           </div>
@@ -433,10 +433,10 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
                       )}
                       {asset.duration && (
                         <div>
-                          <div className="text-sm font-medium text-gray-700">
+                          <div className="text-sm font-medium text-slate-700">
                             Duration
                           </div>
-                          <div className="text-sm text-gray-900">
+                          <div className="text-sm text-slate-900">
                             {Math.floor(asset.duration / 60)}:
                             {(asset.duration % 60).toString().padStart(2, "0")}
                           </div>
@@ -470,7 +470,7 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
                     </div>
 
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                      <h3 className="text-lg font-semibold text-slate-900 mb-3">
                         Recent Posts
                       </h3>
                       <div className="space-y-2">
@@ -482,10 +482,10 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
                               className="flex items-center justify-between p-3 bg-gray-50 rounded-md"
                             >
                               <div>
-                                <div className="font-medium text-gray-900">
+                                <div className="font-medium text-slate-900">
                                   Post #{index + 1}
                                 </div>
-                                <div className="text-sm text-gray-600">
+                                <div className="text-sm text-slate-500">
                                   Used in post {postId}
                                 </div>
                               </div>
@@ -503,10 +503,10 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
                   <div className="space-y-6">
                     <div className="text-center py-12">
                       <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                      <h3 className="text-lg font-medium text-gray-900 mb-2">
+                      <h3 className="text-lg font-medium text-slate-900 mb-2">
                         Media Analytics
                       </h3>
-                      <p className="text-gray-600">
+                      <p className="text-slate-500">
                         Detailed analytics for this media asset will be
                         available soon.
                       </p>
@@ -528,16 +528,16 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
                 <AlertTriangle className="w-6 h-6 text-red-600" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">
+                <h3 className="text-lg font-semibold text-slate-900">
                   Delete Media Asset
                 </h3>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-slate-500">
                   This action cannot be undone.
                 </p>
               </div>
             </div>
 
-            <p className="text-gray-700 mb-6">
+            <p className="text-slate-700 mb-6">
               Are you sure you want to delete "{asset.filename}"? This will
               remove it from all posts and campaigns where it's currently used.
             </p>
@@ -552,7 +552,7 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
               </button>
               <button
                 onClick={() => setShowDeleteConfirm(false)}
-                className="flex-1 border border-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-50"
+                className="flex-1 border border-gray-300 text-slate-700 py-2 px-4 rounded-md hover:bg-gray-50"
               >
                 Cancel
               </button>

@@ -102,7 +102,7 @@ export const AIModelSelector: React.FC<AIModelSelectorProps> = ({
       case "anthropic":
         return "bg-purple-100 text-purple-800";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-gray-100 text-slate-800";
     }
   };
 
@@ -160,7 +160,7 @@ export const AIModelSelector: React.FC<AIModelSelectorProps> = ({
             })()}
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900">{model.name}</h3>
+            <h3 className="font-semibold text-slate-900">{model.name}</h3>
             <span
               className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-full ${getProviderColor(
                 model.provider
@@ -173,26 +173,26 @@ export const AIModelSelector: React.FC<AIModelSelectorProps> = ({
         {isSelected && <Check className="w-5 h-5 text-blue-600" />}
       </div>
 
-      <p className="text-sm text-gray-600 mb-3">{model.description}</p>
+      <p className="text-sm text-slate-500 mb-3">{model.description}</p>
 
       <div className="flex flex-wrap gap-1 mb-3">
         {model.capabilities.slice(0, 3).map((capability) => (
           <span
             key={capability}
-            className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded-full"
+            className="px-2 py-1 text-xs bg-gray-100 text-slate-700 rounded-full"
           >
             {capability}
           </span>
         ))}
         {model.capabilities.length > 3 && (
-          <span className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded-full">
+          <span className="px-2 py-1 text-xs bg-gray-100 text-slate-700 rounded-full">
             +{model.capabilities.length - 3} more
           </span>
         )}
       </div>
 
       {showAdvanced && (
-        <div className="grid grid-cols-2 gap-2 text-xs text-gray-600">
+        <div className="grid grid-cols-2 gap-2 text-xs text-slate-500">
           <div className="flex items-center">
             <Clock className="w-3 h-3 mr-1" />
             {model.contextWindow >= 100000
@@ -217,7 +217,7 @@ export const AIModelSelector: React.FC<AIModelSelectorProps> = ({
     <div className="relative">
       {/* Current Selection Display */}
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-slate-700 mb-2">
           <div className="flex items-center space-x-2">
             <Brain className="w-4 h-4" />
             <span>AI Model for {TASK_DESCRIPTIONS[task]}</span>
@@ -235,14 +235,14 @@ export const AIModelSelector: React.FC<AIModelSelectorProps> = ({
                   const IconComponent = getProviderIcon(
                     selectedModelInfo.provider
                   );
-                  return <IconComponent className="w-4 h-4 text-gray-600" />;
+                  return <IconComponent className="w-4 h-4 text-slate-500" />;
                 })()
               ) : (
-                <Sparkles className="w-4 h-4 text-gray-600" />
+                <Sparkles className="w-4 h-4 text-slate-500" />
               )}
             </div>
             <div className="text-left">
-              <div className="font-medium text-gray-900">
+              <div className="font-medium text-slate-900">
                 {selectedModelInfo?.name || "Select AI Model"}
               </div>
               <div className="text-sm text-slate-500">
@@ -264,7 +264,7 @@ export const AIModelSelector: React.FC<AIModelSelectorProps> = ({
         <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-96 overflow-y-auto">
           <div className="p-4">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-lg font-semibold text-slate-900">
                 Select AI Model
               </h3>
               <button
@@ -278,7 +278,7 @@ export const AIModelSelector: React.FC<AIModelSelectorProps> = ({
 
             {/* Recommended Models */}
             <div className="mb-6">
-              <h4 className="text-sm font-medium text-gray-900 mb-3 flex items-center">
+              <h4 className="text-sm font-medium text-slate-900 mb-3 flex items-center">
                 <Zap className="w-4 h-4 mr-1 text-blue-600" />
                 Recommended for {task.replace("-", " ")}
               </h4>
@@ -298,7 +298,7 @@ export const AIModelSelector: React.FC<AIModelSelectorProps> = ({
 
             {/* All Available Models */}
             <div>
-              <h4 className="text-sm font-medium text-gray-900 mb-3">
+              <h4 className="text-sm font-medium text-slate-900 mb-3">
                 All Available Models
               </h4>
               <div className="grid gap-3">

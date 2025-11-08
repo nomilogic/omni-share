@@ -220,7 +220,7 @@ function HomePage() {
               <button
                 onClick={() => scrollToSection("home")}
                 className={`transition-colors hover:text-[#7650e3] ${
-                  scrollY > 50 ? "text-gray-700" : "text-white"
+                  scrollY > 50 ? "text-slate-700" : "text-white"
                 }`}
               >
                 Home
@@ -228,7 +228,7 @@ function HomePage() {
               <button
                 onClick={() => scrollToSection("features")}
                 className={`transition-colors hover:text-[#7650e3] ${
-                  scrollY > 50 ? "text-gray-700" : "text-white"
+                  scrollY > 50 ? "text-slate-700" : "text-white"
                 }`}
               >
                 Features
@@ -236,7 +236,7 @@ function HomePage() {
               <button
                 onClick={() => scrollToSection("pricing")}
                 className={`transition-colors hover:text-[#7650e3] ${
-                  scrollY > 50 ? "text-gray-700" : "text-white"
+                  scrollY > 50 ? "text-slate-700" : "text-white"
                 }`}
               >
                 Pricing
@@ -244,7 +244,7 @@ function HomePage() {
               <button
                 onClick={() => scrollToSection("video")}
                 className={`transition-colors hover:text-[#7650e3] ${
-                  scrollY > 50 ? "text-gray-700" : "text-white"
+                  scrollY > 50 ? "text-slate-700" : "text-white"
                 }`}
               >
                 Learn
@@ -252,7 +252,7 @@ function HomePage() {
               <button
                 onClick={() => scrollToSection("contact")}
                 className={`transition-colors hover:text-[#7650e3] ${
-                  scrollY > 50 ? "text-gray-700" : "text-white"
+                  scrollY > 50 ? "text-slate-700" : "text-white"
                 }`}
               >
                 Contact
@@ -286,31 +286,31 @@ function HomePage() {
               <div className="px-2 pt-2 pb-3 space-y-1">
                 <button
                   onClick={() => scrollToSection("home")}
-                  className="block w-full text-left px-3 py-2 text-gray-700 hover:bg-gray-100"
+                  className="block w-full text-left px-3 py-2 text-slate-700 hover:bg-gray-100"
                 >
                   Home
                 </button>
                 <button
                   onClick={() => scrollToSection("features")}
-                  className="block w-full text-left px-3 py-2 text-gray-700 hover:bg-gray-100"
+                  className="block w-full text-left px-3 py-2 text-slate-700 hover:bg-gray-100"
                 >
                   Features
                 </button>
                 <button
                   onClick={() => scrollToSection("pricing")}
-                  className="block w-full text-left px-3 py-2 text-gray-700 hover:bg-gray-100"
+                  className="block w-full text-left px-3 py-2 text-slate-700 hover:bg-gray-100"
                 >
                   Pricing
                 </button>
                 <button
                   onClick={() => scrollToSection("video")}
-                  className="block w-full text-left px-3 py-2 text-gray-700 hover:bg-gray-100"
+                  className="block w-full text-left px-3 py-2 text-slate-700 hover:bg-gray-100"
                 >
                   Learn
                 </button>
                 <button
                   onClick={() => scrollToSection("contact")}
-                  className="block w-full text-left px-3 py-2 text-gray-700 hover:bg-gray-100"
+                  className="block w-full text-left px-3 py-2 text-slate-700 hover:bg-gray-100"
                 >
                   Contact
                 </button>
@@ -428,7 +428,7 @@ function HomePage() {
               <div className="text-4xl md:text-5xl font-bold text-[#000] mb-2">
                 50K+
               </div>
-              <div className="text-gray-600 font-medium">Active Users</div>
+              <div className="text-slate-500 font-medium">Active Users</div>
             </div>
             <div className="group">
               <div className="flex items-center justify-center mb-3">
@@ -437,7 +437,7 @@ function HomePage() {
               <div className="text-4xl md:text-5xl font-bold text-[#000] mb-2">
                 10M+
               </div>
-              <div className="text-gray-600 font-medium">Posts Created</div>
+              <div className="text-slate-500 font-medium">Posts Created</div>
             </div>
             <div className="group">
               <div className="flex items-center justify-center mb-3">
@@ -446,7 +446,7 @@ function HomePage() {
               <div className="text-4xl md:text-5xl font-bold text-[#000] mb-2">
                 5
               </div>
-              <div className="text-gray-600 font-medium">
+              <div className="text-slate-500 font-medium">
                 Platforms Supported
               </div>
             </div>
@@ -457,7 +457,7 @@ function HomePage() {
               <div className="text-4xl md:text-5xl font-bold text-[#000] mb-2">
                 99.9%
               </div>
-              <div className="text-gray-600 font-medium">Uptime</div>
+              <div className="text-slate-500 font-medium">Uptime</div>
             </div>
           </div>
         </div>
@@ -478,7 +478,7 @@ function HomePage() {
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               Powerful Features
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-xl text-slate-500 max-w-2xl mx-auto">
               Everything you need to dominate social media marketing in one
               place
             </p>
@@ -497,7 +497,7 @@ function HomePage() {
                 <h3 className="text-xl font-bold text-gray-900 mb-3">
                   {feature.title}
                 </h3>
-                <p className="text-gray-600 leading-relaxed">
+                <p className="text-slate-500 leading-relaxed">
                   {feature.description}
                 </p>
               </div>
@@ -534,7 +534,7 @@ function HomePage() {
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               See Omnishare in Action
             </h2>
-            <p className="text-xl text-gray-600">
+            <p className="text-xl text-slate-500">
               Watch how easy it is to create and schedule content across all
               platforms
             </p>
@@ -565,7 +565,7 @@ function HomePage() {
             <h2 className="text-4xl md:text-5xl font-bold text-[#7650e3] mb-4">
               Simple, Transparent Pricing
             </h2>
-            <p className="text-xl text-gray-600">
+            <p className="text-xl text-slate-500">
               Choose the plan that's right for your business
             </p>
           </div>
@@ -704,7 +704,7 @@ function HomePage() {
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               Loved by Creators Worldwide
             </h2>
-            <p className="text-xl text-gray-600">
+            <p className="text-xl text-slate-500">
               See what our customers have to say about Omnishare
             </p>
           </div>
@@ -728,7 +728,7 @@ function HomePage() {
                 ))}
               </div>
 
-              <p className="text-xl md:text-2xl text-gray-700 text-center mb-8 leading-relaxed italic">
+              <p className="text-xl md:text-2xl text-slate-700 text-center mb-8 leading-relaxed italic">
                 "{reviews[currentReviewIndex].text}"
               </p>
 
@@ -740,7 +740,7 @@ function HomePage() {
                   <p className="font-bold text-gray-900 text-lg">
                     {reviews[currentReviewIndex].name}
                   </p>
-                  <p className="text-gray-600">
+                  <p className="text-slate-500">
                     {reviews[currentReviewIndex].role}
                   </p>
                   <p className="text-slate-500 text-sm">
@@ -755,7 +755,7 @@ function HomePage() {
               className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-12 bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all hover:scale-110"
               aria-label="Previous review"
             >
-              <ChevronLeft className="w-6 h-6 text-gray-700" />
+              <ChevronLeft className="w-6 h-6 text-slate-700" />
             </button>
 
             <button
@@ -763,7 +763,7 @@ function HomePage() {
               className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-12 bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all hover:scale-110"
               aria-label="Next review"
             >
-              <ChevronRight className="w-6 h-6 text-gray-700" />
+              <ChevronRight className="w-6 h-6 text-slate-700" />
             </button>
           </div>
 
@@ -801,7 +801,7 @@ function HomePage() {
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               Contact Us
             </h2>
-            <p className="text-xl text-gray-600 mb-8">
+            <p className="text-xl text-slate-500 mb-8">
               Have questions? We'd love to hear from you.
             </p>
             <button
@@ -827,7 +827,7 @@ function HomePage() {
             <form className="space-y-6 pt-8">
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">
                     First Name
                   </label>
                   <input
@@ -837,7 +837,7 @@ function HomePage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">
                     Last Name
                   </label>
                   <input
@@ -849,7 +849,7 @@ function HomePage() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-slate-700 mb-2">
                   Email
                 </label>
                 <input
@@ -860,7 +860,7 @@ function HomePage() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-slate-700 mb-2">
                   Message
                 </label>
                 <textarea
@@ -888,7 +888,7 @@ function HomePage() {
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               Frequently Asked Questions
             </h2>
-            <p className="text-xl text-gray-600">
+            <p className="text-xl text-slate-500">
               Everything you need to know about Omnishare
             </p>
           </div>
@@ -917,7 +917,7 @@ function HomePage() {
                   />
                 </button>
                 {expandedFaqIndex === index && (
-                  <div className="px-6 pb-5 text-gray-600 leading-relaxed">
+                  <div className="px-6 pb-5 text-slate-500 leading-relaxed">
                     {faq.answer}
                   </div>
                 )}
@@ -926,7 +926,7 @@ function HomePage() {
           </div>
 
           <div className="mt-12 text-center">
-            <p className="text-gray-600">
+            <p className="text-slate-500">
               Still have questions? Scroll up to contact us.
             </p>
           </div>

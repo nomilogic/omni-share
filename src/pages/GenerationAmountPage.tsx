@@ -95,7 +95,7 @@ const GenerationAmountPage = () => {
           {/* Type Selector */}
           <select
             {...register("type", { required: true })}
-            className="border border-gray-300 rounded-md px-3 py-2 focus:ring-1 focus:ring-black outline-none text-gray-800 bg-white"
+            className="border border-gray-300 rounded-md px-3 py-2 focus:ring-1 focus:ring-black outline-none text-slate-800 bg-white"
           >
             <option value="">Select Type</option>
             <option value="image">Image</option>
@@ -107,7 +107,7 @@ const GenerationAmountPage = () => {
             type="number"
             placeholder="Enter Amount"
             {...register("amount", { required: true })}
-            className="border border-gray-300 rounded-md px-3 py-2 focus:ring-1 focus:ring-black outline-none text-gray-800 bg-white"
+            className="border border-gray-300 rounded-md px-3 py-2 focus:ring-1 focus:ring-black outline-none text-slate-800 bg-white"
           />
 
           {/* Submit Button */}
@@ -141,7 +141,7 @@ const GenerationAmountPage = () => {
             </p>
           ) : (
             <table className="min-w-full border border-gray-200 rounded-md overflow-hidden">
-              <thead className="bg-gray-100 text-gray-800 text-sm uppercase">
+              <thead className="bg-gray-100 text-slate-800 text-sm ">
                 <tr>
                   <th className="px-4 py-2 text-left font-medium">Type</th>
                   <th className="px-4 py-2 text-left font-medium">Amount</th>
@@ -154,18 +154,18 @@ const GenerationAmountPage = () => {
                     key={item.id}
                     className="border-t hover:bg-gray-50 transition-all"
                   >
-                    <td className="px-4 py-2 capitalize">{item.type}</td>
-                    <td className="px-4 py-2 text-gray-700">{item.amount}</td>
+                    <td className="px-4 py-2 ">{item.type}</td>
+                    <td className="px-4 py-2 text-slate-700">{item.amount}</td>
                     <td className="px-4 py-2 text-right flex justify-end gap-2">
                       <button
                         onClick={() => handleEdit(item)}
-                        className="text-black hover:text-gray-700 p-1"
+                        className="text-black hover:text-slate-700 p-1"
                       >
                         <Edit2 className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleDelete(item.id)}
-                        className="text-gray-700 hover:text-black p-1"
+                        className="text-slate-700 hover:text-black p-1"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>

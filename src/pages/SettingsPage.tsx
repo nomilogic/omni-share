@@ -172,7 +172,7 @@ export const SettingsPage: React.FC = () => {
                             Current Plan
                           </label>
                           <div className="px-4 py-2 theme-bg-primary rounded-md border border-white/20">
-                            <span className="theme-text-primary font-normal capitalize">
+                            <span className="theme-text-primary font-normal ">
                               {profileData.planName || "No plan selected"}
                             </span>
                           </div>

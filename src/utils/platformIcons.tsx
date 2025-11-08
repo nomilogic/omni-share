@@ -69,7 +69,7 @@ export const getPlatformColors = (platform: Platform) => {
     tiktok: "bg-black border-gray-300 text-black",
     youtube: "bg-red-600 border-red-200 text-red-600",
   };
-  return colors[platform] || "bg-gray-600 border-gray-200 text-gray-600";
+  return colors[platform] || "bg-gray-600 border-gray-200 text-slate-500";
 };
 
 // Get platform background colors for icon containers

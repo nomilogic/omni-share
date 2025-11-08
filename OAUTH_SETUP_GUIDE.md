@@ -5,6 +5,7 @@ This guide explains how to set up Google and Facebook OAuth authentication for u
 ## ✅ What's Been Implemented
 
 ### Frontend Changes:
+
 - ✅ **AuthForm Component**: Added Google and Facebook login buttons with proper styling
 - ✅ **OAuth Utilities**: Created helper functions for OAuth flows and state management
 - ✅ **OAuth Callback Component**: Handles authentication callbacks from Google/Facebook
@@ -12,12 +13,14 @@ This guide explains how to set up Google and Facebook OAuth authentication for u
 - ✅ **Security**: Implemented state parameter validation for OAuth flows
 
 ### Backend Changes:
+
 - ✅ **OAuth Routes**: Added `/api/auth/oauth/google` and `/api/auth/oauth/facebook` endpoints
 - ✅ **User Management**: Handles OAuth user creation and existing user linking
 - ✅ **Database Schema**: Updated users table to support OAuth providers
 - ✅ **JWT Integration**: OAuth users get the same JWT tokens as regular users
 
 ### Database Changes:
+
 - ✅ **Users Table**: Added `oauth_provider`, `oauth_id`, `avatar_url`, `email_verified` fields
 - ✅ **Migration Script**: Created SQL migration to update existing database
 
@@ -26,18 +29,21 @@ This guide explains how to set up Google and Facebook OAuth authentication for u
 ### 1. Google OAuth Setup
 
 1. **Create Google Cloud Project**:
+
    - Go to [Google Cloud Console](https://console.cloud.google.com/)
    - Create a new project or select existing one
 
 2. **Enable Google+ API**:
+
    - Go to "APIs & Services" > "Library"
    - Search for "Google+ API" and enable it
 
 3. **Create OAuth 2.0 Credentials**:
+
    - Go to "APIs & Services" > "Credentials"
    - Click "Create Credentials" > "OAuth 2.0 Client ID"
    - Choose "Web application"
-   - Add authorized redirect URI: `http://localhost:3000/auth/google/callback`
+   - Add authorized redirect URI: `https://4q2ddj89-3000.uks1.devtunnels.ms/auth/google/callback`
    - For production, add your domain: `https://yourdomain.com/auth/google/callback`
 
 4. **Get Client ID and Secret**:
@@ -46,17 +52,20 @@ This guide explains how to set up Google and Facebook OAuth authentication for u
 ### 2. Facebook OAuth Setup
 
 1. **Create Facebook App**:
+
    - Go to [Facebook Developers](https://developers.facebook.com/)
    - Click "Create App" > "Consumer" > "Next"
    - Enter app name and contact email
 
 2. **Add Facebook Login**:
+
    - In app dashboard, click "Add Product"
    - Find "Facebook Login" and click "Set Up"
 
 3. **Configure OAuth Settings**:
+
    - Go to Facebook Login > Settings
-   - Add Valid OAuth Redirect URI: `http://localhost:3000/auth/facebook/callback`
+   - Add Valid OAuth Redirect URI: `https://4q2ddj89-3000.uks1.devtunnels.ms/auth/facebook/callback`
    - For production, add: `https://yourdomain.com/auth/facebook/callback`
    - Enable "Login with the JavaScript SDK"
 
@@ -69,6 +78,7 @@ This guide explains how to set up Google and Facebook OAuth authentication for u
 Create/update your `.env` files:
 
 **Client `.env` file:**
+
 ```env
 VITE_GOOGLE_CLIENT_ID=your-google-client-id-here.apps.googleusercontent.com
 VITE_FACEBOOK_APP_ID=your-facebook-app-id-here
@@ -76,6 +86,7 @@ VITE_APP_URL=http://localhost:5000
 ```
 
 **Server `.env` file:**
+
 ```env
 # OAuth Configuration
 GOOGLE_CLIENT_ID=your-google-client-id-here.apps.googleusercontent.com
@@ -117,6 +128,7 @@ npm install
 ## 🚀 How It Works
 
 ### User Flow:
+
 1. User visits `/auth` page
 2. User can choose between:
    - Traditional email/password registration/login
@@ -132,6 +144,7 @@ npm install
    - User is redirected to dashboard
 
 ### Technical Details:
+
 - **State Parameter**: Used for CSRF protection during OAuth flows
 - **User Linking**: If user with same email exists, OAuth info is added to existing account
 - **JWT Compatibility**: OAuth users get same JWT tokens as regular users
@@ -141,6 +154,7 @@ npm install
 ## 🧪 Testing
 
 1. **Start your application**:
+
    ```bash
    # Terminal 1 - Server
    cd server
@@ -152,7 +166,7 @@ npm install
    ```
 
 2. **Test OAuth flows**:
-   - Go to `http://localhost:3000/auth`
+   - Go to `https://4q2ddj89-3000.uks1.devtunnels.ms/auth`
    - Click Google or Facebook login buttons
    - Complete authorization flow
    - Verify user is created and logged in
@@ -160,12 +174,16 @@ npm install
 ## 🔧 Configuration Options
 
 ### OAuth Button Visibility:
+
 The OAuth buttons only show if the respective client IDs are configured:
+
 - Google button shows if `VITE_GOOGLE_CLIENT_ID` is set
 - Facebook button shows if `VITE_FACEBOOK_APP_ID` is set
 
 ### Redirect URIs:
+
 For production deployment, update redirect URIs in:
+
 1. Google Cloud Console (for Google OAuth)
 2. Facebook Developer Console (for Facebook OAuth)
 3. Update `redirectUri` in `src/utils/authOAuth.ts` if needed
@@ -180,6 +198,7 @@ For production deployment, update redirect URIs in:
 ## 📝 Database Schema
 
 The users table now supports:
+
 ```sql
 users (
   id UUID PRIMARY KEY,
@@ -198,8 +217,9 @@ users (
 ## 🎯 Next Steps
 
 Your OAuth authentication is now fully implemented! Users can:
+
 - ✅ Register/login with Google
-- ✅ Register/login with Facebook  
+- ✅ Register/login with Facebook
 - ✅ Continue using traditional email/password auth
 - ✅ Access all existing features with OAuth accounts
 

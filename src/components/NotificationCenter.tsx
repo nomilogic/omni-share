@@ -228,7 +228,7 @@ const NotificationsTab: React.FC<{
     return (
       <div className="p-4 text-center">
         <div className="animate-spin w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full mx-auto"></div>
-        <p className="text-gray-600 mt-2 text-sm">Loading notifications...</p>
+        <p className="text-slate-500 mt-2 text-sm">Loading notifications...</p>
       </div>
     );
   }
@@ -284,14 +284,14 @@ const NotificationsTab: React.FC<{
                   <div className="flex-1">
                     <p
                       className={`text-sm font-medium ${
-                        !notification.read ? "text-gray-900" : "text-gray-700"
+                        !notification.read ? "text-slate-900" : "text-slate-700"
                       }`}
                     >
                       {notification.title}
                     </p>
                     <p
                       className={`text-sm mt-1 ${
-                        !notification.read ? "text-gray-700" : "text-slate-500"
+                        !notification.read ? "text-slate-700" : "text-slate-500"
                       }`}
                     >
                       {notification.message}
@@ -315,7 +315,7 @@ const NotificationsTab: React.FC<{
                     )}
                     <button
                       onClick={() => onToggleSelection(notification.id)}
-                      className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                      className="p-1 text-gray-400 hover:text-slate-500 transition-colors"
                       title="More options"
                     >
                       <MoreVertical className="w-4 h-4" />
@@ -378,12 +378,12 @@ const SettingsTab: React.FC<{
     <div className="p-4 max-h-96 overflow-y-auto space-y-4">
       {/* General Settings */}
       <div>
-        <h3 className="text-sm font-medium text-gray-900 mb-3">
+        <h3 className="text-sm font-medium text-slate-900 mb-3">
           General Settings
         </h3>
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <label className="text-sm text-gray-700">Push Notifications</label>
+            <label className="text-sm text-slate-700">Push Notifications</label>
             <button
               onClick={() => handleToggle("enablePushNotifications")}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
@@ -401,7 +401,9 @@ const SettingsTab: React.FC<{
           </div>
 
           <div className="flex items-center justify-between">
-            <label className="text-sm text-gray-700">Email Notifications</label>
+            <label className="text-sm text-slate-700">
+              Email Notifications
+            </label>
             <button
               onClick={() => handleToggle("enableEmailNotifications")}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
@@ -421,7 +423,7 @@ const SettingsTab: React.FC<{
           </div>
 
           <div>
-            <label className="text-sm text-gray-700">
+            <label className="text-sm text-slate-700">
               Post Reminder (minutes before)
             </label>
             <select
@@ -443,7 +445,7 @@ const SettingsTab: React.FC<{
           </div>
 
           <div>
-            <label className="text-sm text-gray-700">Daily Summary Time</label>
+            <label className="text-sm text-slate-700">Daily Summary Time</label>
             <input
               type="time"
               value={settings.dailySummaryTime}
@@ -456,13 +458,13 @@ const SettingsTab: React.FC<{
 
       {/* Notification Types */}
       <div>
-        <h3 className="text-sm font-medium text-gray-900 mb-3">
+        <h3 className="text-sm font-medium text-slate-900 mb-3">
           Notification Types
         </h3>
         <div className="space-y-3">
           {Object.entries(settings.notificationTypes).map(([key, enabled]) => (
             <div key={key} className="flex items-center justify-between">
-              <label className="text-sm text-gray-700 capitalize">
+              <label className="text-sm text-slate-700 ">
                 {key.replace(/([A-Z])/g, " $1").trim()}
               </label>
               <button

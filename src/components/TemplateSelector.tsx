@@ -17,12 +17,12 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
         {/* Header */}
         <div className="p-3 border-b border-gray-200">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-gray-900">
+            <h2 className="text-sm font-semibold text-slate-900">
               Choose Template
             </h2>
             <button
               onClick={onCancel}
-              className="text-gray-400 hover:text-gray-600 text-lg font-medium"
+              className="text-gray-400 hover:text-slate-500 text-lg font-medium"
             >
               ×
             </button>
@@ -47,7 +47,7 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
 
                 {/* Template Info */}
                 <div className="text-center">
-                  <h3 className="text-xs font-medium text-gray-900 truncate group-hover:text-blue-600">
+                  <h3 className="text-xs font-medium text-slate-900 truncate group-hover:text-blue-600">
                     {template.name}
                   </h3>
                   <p className="text-xs text-slate-500">
@@ -62,12 +62,12 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
         {/* Footer */}
         <div className="p-3 border-t border-gray-200">
           <div className="flex justify-between items-center">
-            <p className="text-xs text-gray-600">
+            <p className="text-xs text-slate-500">
               {templates.length} templates
             </p>
             <button
               onClick={onCancel}
-              className="px-3 py-1 text-gray-700 bg-gray-100 border border-gray-300 rounded hover:bg-gray-200 transition-colors text-xs"
+              className="px-3 py-1 text-slate-700 bg-gray-100 border border-gray-300 rounded hover:bg-gray-200 transition-colors text-xs"
             >
               Cancel
             </button>

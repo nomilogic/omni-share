@@ -42,7 +42,7 @@ export function PricingCard({
               className={`px-4 py-1.5 rounded-full text-xs font-semibold ${
                 isCurrentPlan
                   ? "bg-[#542ed2] text-white"
-                  : "bg-orange-400 text-gray-900"
+                  : "bg-orange-400 text-slate-900"
               }`}
             >
               {isCurrentPlan ? "Current Plan" : "Pending Downgrade"}
@@ -120,7 +120,7 @@ export function PricingCard({
       <div className="bg-gray-50 px-8 py-8">
         <div className="mb-6 pb-6 border-b-2 border-purple-600 text-center">
           <p className="text-xl font-bold text-[#542ed2] mb-2">Ideal for:</p>
-          <p className="text-lg text-gray-800 font-medium">
+          <p className="text-lg text-slate-800 font-medium">
             {idealFor ?? "Small agency, growing business, content team"}
           </p>
         </div>
@@ -139,7 +139,7 @@ export function PricingCard({
                   clipRule="evenodd"
                 />
               </svg>
-              <span className="text-sm text-gray-800">{feature}</span>
+              <span className="text-sm text-slate-800">{feature}</span>
             </li>
           ))}
         </ul>

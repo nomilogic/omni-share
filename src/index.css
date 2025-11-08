@@ -4,39 +4,46 @@
 
 @layer utilities {
   .filter-omni {
-    filter: brightness(0) saturate(100%) invert(32%) sepia(98%) saturate(1952%) hue-rotate(239deg) brightness(90%) contrast(96%);
+    filter: brightness(0) saturate(100%) invert(32%) sepia(98%) saturate(1952%)
+      hue-rotate(239deg) brightness(90%) contrast(96%);
   }
 }
 /* Theme CSS Variables */
 :root {
-  --theme-primary: #3B82F6;
-  --theme-secondary: #8B5CF6;
-  --theme-accent: #6366F1;
-  --theme-text-primary: #FFFFFF;
+  --theme-primary: #3b82f6;
+  --theme-secondary: #8b5cf6;
+  --theme-accent: #6366f1;
+  --theme-text-primary: #ffffff;
   --theme-text-secondary: rgba(255, 255, 255, 0.9);
   --theme-text-light: rgba(255, 255, 255, 0.7);
   --theme-bg-primary: rgb(11, 85, 247);
   --theme-bg-secondary: rgba(175, 5, 253, 0.199);
   --theme-bg-trinary: rgba(175, 5, 253, 0.199);
   --theme-bg-trinary-dark: rgba(118, 80, 227, 0.4);
-  --theme-bg-card: rgb(26, 25, 25, 15); 
+  --theme-bg-card: rgb(26, 25, 25, 15);
   --theme-border: rgba(255, 255, 255, 0.2);
-  --theme-button-primary: #FFFFFF;
+  --theme-button-primary: #ffffff;
   --theme-button-secondary: rgba(168, 150, 150, 0.2);
   --theme-button-hover: rgba(255, 255, 255, 0.9);
-  --theme-border-light:white;
+  --theme-border-light: white;
 }
 
-.theme-text-primary {}
+.theme-text-primary {
+}
 
 .h-full-dec-hf {
   height: calc(100vh - 60px);
-  padding: 0.5rem;
+  padding: 0.75rem;
 }
 
 /* Theme Utility Classes */
 .theme-gradient {
-  background: linear-gradient(135deg, var(--theme-primary), var(--theme-secondary), var(--theme-accent));
+  background: linear-gradient(
+    135deg,
+    var(--theme-primary),
+    var(--theme-secondary),
+    var(--theme-accent)
+  );
 }
 
 .theme-bg-primary {
@@ -44,7 +51,6 @@
   backdrop-filter: blur(10px);
   border: 1px solid var(--theme-border);
   box-shadow: 0 0px 6px rgba(0, 0, 0, 0.1);
-  
 }
 
 .theme-bg-card {
@@ -56,9 +62,11 @@
   border: 1px solid var(--theme-border);
 }
 .bg-card {
-  background: linear-gradient(to bottom,
-      rgba(75, 10, 255, 0.35) 100%,
-      rgba(0, 0, 0, 0.7) 0%);
+  background: linear-gradient(
+    to bottom,
+    rgba(75, 10, 255, 0.35) 100%,
+    rgba(0, 0, 0, 0.7) 0%
+  );
   /* background-color: var(--theme-bg-card); */
   backdrop-filter: blur(10px);
   border: 1px solid var(--theme-border);
@@ -76,32 +84,27 @@
 }
 .theme-bg-secondary {
   background-color: var(--theme-bg-secondary);
-
 }
 .theme-bg-quaternary {
   background-color: var(--theme-bg-quaternary);
   box-shadow: 0 0px 6px rgba(0, 0, 0, 0.1);
-
 }
 .theme-bg-pantary {
   background-color: var(--theme-bg-pantary);
   box-shadow: 0 0px 6px rgba(0, 0, 0, 0.1);
-
 }
 .theme-bg-light {
   background-color: var(--theme-bg-light);
 }
 .theme-bg-dark {
- background-color: var(--theme-bg-dark);
+  background-color: var(--theme-bg-dark);
 }
 
 .theme-border-primary {
   border-color: var(--theme-border-primary);
-
 }
 .theme-border-secondary {
   border-color: var(--theme-border-secondary);
-
 }
 .theme-border-trinary {
   border-color: var(--theme-border-trinary);
@@ -128,7 +131,6 @@
 .theme-text-secondary {
   color: var(--theme-text-secondary);
 }
-
 
 .theme-text-light {
   color: var(--theme-text-light);
@@ -180,11 +182,20 @@
 }
 
 .theme-bg-gradient {
-  background: linear-gradient(135deg, var(--theme-bg-trinary), var(--theme-accent));
+  background: linear-gradient(
+    135deg,
+    var(--theme-bg-trinary),
+    var(--theme-accent)
+  );
 }
 
 .theme-gradient {
-  background: linear-gradient(135deg, var(--theme-primary), var(--theme-secondary), var(--theme-accent));
+  background: linear-gradient(
+    135deg,
+    var(--theme-primary),
+    var(--theme-secondary),
+    var(--theme-accent)
+  );
 }
 
 /* Green button theme classes */
@@ -250,7 +261,7 @@
 }
 
 .btn-outline-secondary {
-  @apply btn-outline border-gray-300 text-gray-600;
+  @apply btn-outline border-gray-300 text-slate-500;
 }
 
 .btn-outline-secondary:hover:not(:disabled) {
@@ -330,7 +341,6 @@
 }
 
 @keyframes float {
-
   0%,
   100% {
     transform: translateY(0);
@@ -342,7 +352,6 @@
 }
 
 @keyframes pulse-glow {
-
   0%,
   100% {
     box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
@@ -354,18 +363,25 @@
 }
 
 .animated-bg {
-  background: linear-gradient(-45deg, #bebebf22, #4d4d4e22, #78787811, #dedddd11, #33343411, #e2e4e411);
+  background: linear-gradient(
+    -45deg,
+    #bebebf22,
+    #4d4d4e22,
+    #78787811,
+    #dedddd11,
+    #33343411,
+    #e2e4e411
+  );
   background-size: 400% 400%;
   animation: gradient-shift 5s ease infinite;
-
 }
 
 .floating-element {
   animation: float 8s ease-in-out infinite;
 }
-.filter-omni
-{
-  filter: brightness(0) saturate(100%) invert(32%) sepia(98%) saturate(1952%) hue-rotate(239deg) brightness(90%) contrast(96%);
+.filter-omni {
+  filter: brightness(0) saturate(100%) invert(32%) sepia(98%) saturate(1952%)
+    hue-rotate(239deg) brightness(90%) contrast(96%);
 }
 
 .pulse-glow {
@@ -396,11 +412,11 @@ body.modal-open .modal-content * {
   overflow: visible !important;
 }
 .bg-overlay {
-  background-image: url('./assets/bg-overlay.png');
+  background-image: url("./assets/bg-overlay.png");
   /* filter: brightness(0.7); */
   mix-blend-mode: luminosity;
   opacity: 0.05;
-  background-size: contain
+  background-size: contain;
 }
 
 /* Custom Checkbox Styles */
@@ -424,7 +440,7 @@ input[type="checkbox"]:checked {
 }
 
 input[type="checkbox"]:checked::after {
-  content: '✓';
+  content: "✓";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -443,17 +459,15 @@ input[type="checkbox"]:focus {
   box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.3);
 }
 
-.upgrade
-{
-    &:hover {
-        /* The '&' refers to the .button element itself */
-      cursor: pointer;
-      div
-      {
-          filter: brightness(0) saturate(100%) invert(32%) sepia(98%) saturate(1952%) hue-rotate(239deg) brightness(90%) contrast(96%);
-      }
-      }
-
+.upgrade {
+  &:hover {
+    /* The '&' refers to the .button element itself */
+    cursor: pointer;
+    div {
+      filter: brightness(0) saturate(100%) invert(32%) sepia(98%)
+        saturate(1952%) hue-rotate(239deg) brightness(90%) contrast(96%);
+    }
+  }
 }
 /* Custom Select (Dropdown) Styles */
 select {
@@ -496,22 +510,16 @@ select::selection {
   color: var(--theme-text-primary);
 }
 
-
 select option {
   background-color: var(--theme-bg-primary);
   color: var(--theme-text-primary);
- 
+
   &:checked {
     background-color: var(--theme-bg-trinary);
     color: var(--theme-text-light);
   }
-  
- 
 }
-
 
 /* Custom Combo Box Styles (assuming combo boxes are custom components with input + dropdown) */
 
 /* Theme-aware CSS variables for data attributes - used by components that need data-theme approach */
-
-

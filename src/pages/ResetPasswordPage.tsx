@@ -111,7 +111,7 @@ const ResetPasswordPage: React.FC = () => {
           <div className="text-center flex justify-center mb-8 gap-2 items-center">
             <Icon name="logo" size={50} />
           </div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-3">
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-3">
             Oops! Link Expired
           </h2>
 
@@ -140,7 +140,7 @@ const ResetPasswordPage: React.FC = () => {
             </span>
           </div>
 
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-800 text-center mb-2">
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-800 text-center mb-2">
             Reset Your Password
           </h2>
           <p className="text-slate-500 text-sm sm:text-base text-center mb-6">
@@ -154,7 +154,7 @@ const ResetPasswordPage: React.FC = () => {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-1 text-gray-900">
+              <label className="block text-sm font-medium mb-1 text-slate-900">
                 New Password
               </label>
               <input
@@ -163,12 +163,12 @@ const ResetPasswordPage: React.FC = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder="Enter new password"
-                className="w-full px-3 py-2 rounded-md border-2 border-purple-300 bg-white text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all duration-200"
+                className="w-full px-3 py-2 rounded-md border-2 border-purple-300 bg-white text-slate-800 placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all duration-200"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1 text-gray-900">
+              <label className="block text-sm font-medium mb-1 text-slate-900">
                 Confirm Password
               </label>
               <input
@@ -177,7 +177,7 @@ const ResetPasswordPage: React.FC = () => {
                 onChange={(e) => setConfirm(e.target.value)}
                 required
                 placeholder="Re-enter password"
-                className="w-full px-3 py-2 rounded-md border-2 border-purple-300 bg-white text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all duration-200"
+                className="w-full px-3 py-2 rounded-md border-2 border-purple-300 bg-white text-slate-800 placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all duration-200"
               />
             </div>
 

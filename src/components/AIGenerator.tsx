@@ -172,15 +172,15 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
   };
 
   return (
-    <div className="max-w-full mx-auto bg-white rounded-2xl shadow-lg m-6 h-fit px-6 py-8">
+    <div className="max-w-full mx-auto bg-white rounded-2xl shadow-lg md:m-6 h-fit md:px-6 px-4 md:py-8 py-4">
       <div className="text-center mb-8">
         <div className="w-12 h-12 aspect-square bg-gradient-to-r from-blue-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
           <Brain className="w-8 h-8 text-blue-600" />
         </div>
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">
+        <h2 className="text-3xl font-bold text-slate-900 mb-2">
           AI is Crafting Your Posts
         </h2>
-        <p className="text-gray-600">
+        <p className="text-slate-500">
           Creating optimized content for each platform
         </p>
       </div>
@@ -213,10 +213,10 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
                 })()}
               </div>
               <div>
-                <p className="text-lg font-medium text-gray-800">
+                <p className="text-lg font-medium text-slate-800">
                   Optimizing for {getPlatformDisplayName(currentPlatform)}
                 </p>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-slate-500">
                   Analyzing audience, tone, and platform best practices...
                 </p>
               </div>
@@ -238,23 +238,23 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
         {/* AI Features */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-white border border-gray-200 p-4 rounded-md">
-            <Sparkles className="w-6 h-6 text-yellow-500 mb-2" />
-            <h3 className="font-medium text-gray-900">Smart Optimization</h3>
-            <p className="text-sm text-gray-600">
+            <Sparkles className="w-6 h-6 text-blue-600 mb-2" />
+            <h3 className="font-medium text-slate-900">Smart Optimization</h3>
+            <p className="text-sm text-slate-500">
               Tailoring content for each platform's unique audience
             </p>
           </div>
           <div className="bg-white border border-gray-200 p-4 rounded-md">
-            <Zap className="w-6 h-6 text-blue-500 mb-2" />
-            <h3 className="font-medium text-gray-900">Hashtag Research</h3>
-            <p className="text-sm text-gray-600">
+            <Zap className="w-6 h-6 text-blue-600 mb-2" />
+            <h3 className="font-medium text-slate-900">Hashtag Research</h3>
+            <p className="text-sm text-slate-500">
               Finding trending and relevant hashtags
             </p>
           </div>
           <div className="bg-white border border-gray-200 p-4 rounded-md">
-            <Brain className="w-6 h-6 text-purple-500 mb-2" />
-            <h3 className="font-medium text-gray-900">Tone Analysis</h3>
-            <p className="text-sm text-gray-600">
+            <Brain className="w-6 h-6 text-blue-600 mb-2" />
+            <h3 className="font-medium text-slate-900">Tone Analysis</h3>
+            <p className="text-sm text-slate-500">
               Matching your brand voice perfectly
             </p>
           </div>

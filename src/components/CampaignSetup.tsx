@@ -180,10 +180,10 @@ export const CampaignSetup: React.FC<CampaignSetupProps> = ({
         <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
           <Target className="w-8 h-8 text-blue-600" />
         </div>
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">
+        <h2 className="text-3xl font-bold text-slate-900 mb-2">
           Campaign Setup
         </h2>
-        <p className="text-gray-600">
+        <p className="text-slate-500">
           Create your marketing campaign with targeted content strategy
         </p>
       </div>
@@ -191,12 +191,12 @@ export const CampaignSetup: React.FC<CampaignSetupProps> = ({
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* Campaign Information */}
         <div className="bg-gray-50 rounded-md p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          <h3 className="text-lg font-semibold text-slate-900 mb-4">
             Campaign Information
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-slate-700 mb-2">
                 <Target className="w-4 h-4 inline mr-2" />
                 Campaign Name *
               </label>
@@ -213,7 +213,7 @@ export const CampaignSetup: React.FC<CampaignSetupProps> = ({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-slate-700 mb-2">
                 <Globe className="w-4 h-4 inline mr-2" />
                 Website
               </label>
@@ -229,7 +229,7 @@ export const CampaignSetup: React.FC<CampaignSetupProps> = ({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-slate-700 mb-2">
                 Industry
               </label>
               <select
@@ -249,7 +249,7 @@ export const CampaignSetup: React.FC<CampaignSetupProps> = ({
             </div>
 
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-slate-700 mb-2">
                 <FileText className="w-4 h-4 inline mr-2" />
                 Campaign Description
               </label>
@@ -271,11 +271,11 @@ export const CampaignSetup: React.FC<CampaignSetupProps> = ({
 
         {/* Target Audience */}
         <div className="bg-gray-50 rounded-md p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          <h3 className="text-lg font-semibold text-slate-900 mb-4">
             Target Audience
           </h3>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-slate-700 mb-2">
               <Target className="w-4 h-4 inline mr-2" />
               Audience Description
             </label>
@@ -296,7 +296,7 @@ export const CampaignSetup: React.FC<CampaignSetupProps> = ({
 
         {/* Brand Voice */}
         <div className="bg-gray-50 rounded-md p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          <h3 className="text-lg font-semibold text-slate-900 mb-4">
             <Palette className="w-5 h-5 inline mr-2" />
             Brand Voice & Tone
           </h3>
@@ -316,8 +316,10 @@ export const CampaignSetup: React.FC<CampaignSetupProps> = ({
                   }))
                 }
               >
-                <h3 className="font-medium text-gray-900">{tone.label}</h3>
-                <p className="text-sm text-gray-600 mt-1">{tone.description}</p>
+                <h3 className="font-medium text-slate-900">{tone.label}</h3>
+                <p className="text-sm text-slate-500 mt-1">
+                  {tone.description}
+                </p>
               </div>
             ))}
           </div>
@@ -325,7 +327,7 @@ export const CampaignSetup: React.FC<CampaignSetupProps> = ({
 
         {/* Marketing Goals */}
         <div className="bg-gray-50 rounded-md p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          <h3 className="text-lg font-semibold text-slate-900 mb-4">
             <Goal className="w-5 h-5 inline mr-2" />
             Marketing Goals
           </h3>
@@ -338,7 +340,7 @@ export const CampaignSetup: React.FC<CampaignSetupProps> = ({
                 className={`px-4 py-3 rounded-md text-sm font-medium transition-all duration-200 ${
                   formData.goals?.includes(goal)
                     ? "bg-blue-500 text-white border-2 border-blue-500 shadow-md"
-                    : "bg-white text-gray-700 border-2 border-gray-200 hover:bg-gray-50 hover:border-gray-300"
+                    : "bg-white text-slate-700 border-2 border-gray-200 hover:bg-gray-50 hover:border-gray-300"
                 }`}
               >
                 {goal}
@@ -349,7 +351,7 @@ export const CampaignSetup: React.FC<CampaignSetupProps> = ({
 
         {/* Social Media Platforms */}
         <div className="bg-gray-50 rounded-md p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          <h3 className="text-lg font-semibold text-slate-900 mb-4">
             Target Platforms *
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -382,7 +384,7 @@ export const CampaignSetup: React.FC<CampaignSetupProps> = ({
                       />
                     </div>
                     <div>
-                      <h3 className="font-medium text-gray-900">
+                      <h3 className="font-medium text-slate-900">
                         {platform.name}
                       </h3>
                       <div
@@ -405,13 +407,13 @@ export const CampaignSetup: React.FC<CampaignSetupProps> = ({
 
         {/* Campaign Settings */}
         <div className="bg-gray-50 rounded-md p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          <h3 className="text-lg font-semibold text-slate-900 mb-4">
             <Calendar className="w-5 h-5 inline mr-2" />
             Campaign Settings
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-slate-700 mb-2">
                 Campaign Objective
               </label>
               <select
@@ -434,7 +436,7 @@ export const CampaignSetup: React.FC<CampaignSetupProps> = ({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-slate-700 mb-2">
                 <DollarSign className="w-4 h-4 inline mr-2" />
                 Budget (optional)
               </label>
@@ -454,7 +456,7 @@ export const CampaignSetup: React.FC<CampaignSetupProps> = ({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-slate-700 mb-2">
                 Start Date (optional)
               </label>
               <input
@@ -471,7 +473,7 @@ export const CampaignSetup: React.FC<CampaignSetupProps> = ({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-slate-700 mb-2">
                 End Date (optional)
               </label>
               <input
@@ -492,7 +494,7 @@ export const CampaignSetup: React.FC<CampaignSetupProps> = ({
             <button
               type="button"
               onClick={onBack}
-              className="flex-1 bg-gray-100 text-gray-700 py-4 px-8 rounded-md font-medium hover:bg-gray-200 transition-colors duration-200"
+              className="flex-1 bg-gray-100 text-slate-700 py-4 px-8 rounded-md font-medium hover:bg-gray-200 transition-colors duration-200"
             >
               Back
             </button>
