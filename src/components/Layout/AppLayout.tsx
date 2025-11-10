@@ -91,9 +91,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   }, []);
 
   const handleLogout = () => {
-    logout();
     navigate("/auth");
     setShowUserMenu(false);
+    logout();
   };
   const handleResizeMainToFullScreen = (isFullScreen: boolean) => {
     //use MainContentRef
@@ -247,10 +247,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 `}
                   style={{ pointerEvents: showUserMenu ? "auto" : "none" }}
                 >
-                  <div className="px-4 py-3 border-b border-white/20">
+                  <div className="px-4 py-2 border-b border-white/20">
                     <div className="flex items-center space-x-3">
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm theme-text-light  opacity-70 truncate">
+                        <p className="text-sm theme-text-light ml-2 opacity-70 truncate capitalize">
                           {user.wallet.package.tier} Plan
                         </p>
                       </div>
@@ -264,14 +264,14 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                         setShowUserMenu(false);
                         setIsMobileMenuOpen(false);
                       }}
-                      className="group flex items-center px-4  text-md theme-text-light hover:theme-bg-secondary hover:theme-text-primary transition-all duration-150 ease-in-out"
+                      className="group flex items-center px-4 ml-1 text-md theme-text-light hover:theme-bg-secondary hover:theme-text-primary transition-all duration-150 ease-in-out"
                     >
                       <div className="flex items-center justify-center w-9 h-9 rounded-md theme-bg-trinary group-hover:theme-bg-primary mr-3 transition-colors duration-150">
                         <Settings className="h-5 w-5 theme-text-light group-hover:theme-text-secondary" />
                       </div>
                       <div className="flex-1">
                         <p className="font-medium">Settings</p>
-                        <p className="text-sm theme-text-light opacity-70">
+                        <p className="text-sm theme-text-light opacity-70 capitalize">
                           Manage your account
                         </p>
                       </div>
@@ -284,15 +284,15 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                         setShowUserMenu(false);
                         setIsMobileMenuOpen(false);
                       }}
-                      className="group flex items-center w-full px-4 py-0 text-md theme-text-light transition-all duration-150 ease-in-out text-left"
+                      className="group flex items-center ml-1 w-full px-4 py-0 text-md theme-text-light transition-all duration-150 ease-in-out text-left"
                     >
                       <div className="flex items-center justify-center w-9 h-9 rounded-md theme-bg-trinary mr-3 transition-colors duration-150">
                         <LogOut className="h-5 w-5 theme-text-light" />
                       </div>
                       <div className="flex-1">
                         <p className="font-medium">Logout</p>
-                        <p className="text-sm theme-text-light opacity-70">
-                          Logout of your account
+                        <p className="text-sm theme-text-light opacity-70 capitalize">
+                          Logout from your account
                         </p>
                       </div>
                     </button>
@@ -302,7 +302,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 px-2 py-2 flex flex-col gap-y-1">
+            <nav className="flex-1 px-2 py-2 flex flex-col mx-2 gap-y-2">
               {navigation.map((item) => {
                 const isActive = location.pathname === item.path;
                 const Icon = item.icon;
@@ -311,7 +311,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                   <Link
                     key={item.name}
                     to={item.path}
-                    className={`flex items-center justify-between px-3 py-2 text-md font-medium rounded-md transition-colors ${
+                    className={`flex items-center justify-between px-2 py-2 text-md font-medium rounded-md transition-colors ${
                       isActive
                         ? "theme-bg-primary theme-text-secondary"
                         : "theme-text-light hover:theme-bg-secondary hover:theme-text-primary"
@@ -552,18 +552,36 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                     >
                       {user?.wallet?.package ? (
                         <>
-                          <div className="flex justify-between items-start ">
-                            <div className="flex items-center gap-2">
-                              <Icon name="crown" size={24} />
-                              <h2 className="text-base font-semibold text-slate-800">
-                                My Plan
-                              </h2>
-                              <span
-                                className="text-gray-400 cursor-pointer text-xs"
-                                title="Current subscription details"
-                              >
-                                <Icon name="question-mark" size={18} />
-                              </span>
+                          <div className="flex justify-between items-start mb-4">
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <Icon name="crown" size={24} />
+                                <h2 className="text-base font-semibold text-slate-800">
+                                  My Plan
+                                </h2>
+                                <span
+                                  className="text-gray-400 cursor-pointer text-xs"
+                                  title="Current subscription details"
+                                >
+                                  <Icon name="question-mark" size={18} />
+                                </span>
+                              </div>
+                              {user?.wallet?.package.tier == "free" && (
+                                <p className="text-sm text-slate-700  ml-8 font-medium  ">
+                                  Renewing on:{" "}
+                                  <span className="text-slate-700 font-medium">
+                                    {user.wallet.expiresAt
+                                      ? new Date(
+                                          user.wallet.expiresAt
+                                        ).toLocaleDateString("en-GB", {
+                                          day: "2-digit",
+                                          month: "short",
+                                          year: "numeric",
+                                        })
+                                      : "N/A"}
+                                  </span>
+                                </p>
+                              )}
                             </div>
 
                             <span
@@ -573,22 +591,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                               {user.wallet?.package?.name || "FREE"}
                             </span>
                           </div>
-
-                          {/* Renewal info */}
-                          <p className="text-sm text-slate-700 mb-4 ml-8 font-medium mt-[-1px] ">
-                            Renewing on:{" "}
-                            <span className="text-slate-700 font-medium">
-                              {user.wallet.expiresAt
-                                ? new Date(
-                                    user.wallet.expiresAt
-                                  ).toLocaleDateString("en-GB", {
-                                    day: "2-digit",
-                                    month: "short",
-                                    year: "numeric",
-                                  })
-                                : "N/A"}
-                            </span>
-                          </p>
 
                           <div className="md:space-y-6 space-y-4 mb-5">
                             <div className="flex items-center justify-between">
@@ -629,7 +631,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                 className="text-base font-semibold"
                                 style={{ color: "#7650e3" }}
                               >
-                                0
+                                {user?.wallet?.referralCoin?.toLocaleString()}
                               </p>
                             </div>
                           </div>
@@ -680,7 +682,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             ref={mainContentRef}
             className="py-0 h-full-dec-hf overflow-auto theme-bg-card  "
           >
-            <div className="w-full mx-auto overflow-fit max-w-4xl">
+            <div className="w-full mx-auto overflow-fit max-w-5xl">
               {children}
             </div>
           </main>

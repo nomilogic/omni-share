@@ -118,10 +118,8 @@ export const PricingPage: React.FC = () => {
       const res = await API.buyPackage(plan.id);
       const redirectUrl = res?.data?.data?.url;
       if (redirectUrl) {
-        window.location.href = redirectUrl;
-        localStorage.clear();
+        window.open(redirectUrl, "_blank");
       }
-      setTimeout(() => refreshUser(), 50);
     } catch (error) {
       console.error("Failed to buy package:", error);
       alert("Something went wrong while processing your purchase.");
@@ -350,7 +348,7 @@ export const PricingPage: React.FC = () => {
               return (
                 <div
                   key={tier.id}
-                  className={`rounded-2xl overflow-hidden shadow-lg transition-transform duration-300 ${
+                  className={`rounded-2xl bg-gray-50 overflow-hidden shadow-lg transition-transform duration-300 ${
                     !isLockedByCancel && !isLockedByDowngrade
                       ? "hover:shadow-2xl hover:-translate-y-2"
                       : ""
@@ -443,7 +441,7 @@ export const PricingPage: React.FC = () => {
                     )}
                   </div>
 
-                  <div className="bg-gray-50 px-8 py-8">
+                  <div className=" px-8 py-8">
                     <div className="mb-6 pb-6 border-b-2 border-purple-600  h-28 text-center">
                       <p className="text-xl font-bold text-[#7650e3] mb-2 ">
                         Ideal for:
@@ -515,7 +513,7 @@ export const PricingPage: React.FC = () => {
 
                     <Icon
                       name="spiral-grey"
-                      className="absolute top-5 right-5"
+                      className="absolute -z-10 top-5 right-5"
                       size={120}
                     />
                   </div>
@@ -529,7 +527,7 @@ export const PricingPage: React.FC = () => {
                         setSelectedAddon(addon);
                         setAddonConfirmOpen(true);
                       }}
-                      className="rounded-md theme-bg-light  w-fit p-1 px-3 h-fit font-bold text-lg border-2 border-[#7650e3] text-[#7650e3] hover:bg-[#7650e3] hover:text-white"
+                      className="rounded-md theme-bg-light  w-fit  px-3  font-bold text-base py-1  border-2 border-[#7650e3] text-[#7650e3] hover:bg-[#7650e3] hover:text-white"
                     >
                       Purchase
                     </button>
@@ -780,57 +778,61 @@ export const PricingPage: React.FC = () => {
       )}
 
       {confirmOpen && selectedPlan && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-md animate-fadeIn h-[100%]">
-          <div className="theme-bg-quaternary border theme-border rounded-3xl shadow-2xl w-full max-w-md p-8 relative overflow-hidden">
-            {/* Accent gradient at top */}
-            <div className="absolute inset-x-0 top-0 h-1  animate-gradient" />
-
-            {/* Header */}
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-[#7650e3] flex items-center gap-2">
+        <div className="fixed inset-0 backdrop-blur-sm bg-opacity-75 flex items-center justify-center p-4 z-50 w-full h-full">
+          <div className="bg-gray-50 p-6 rounded-xl shadow-2xl w-full max-w-md max-h-[80vh] overflow-auto">
+            <div className="flex justify-between items-center mb-2">
+              <h2 className="text-2xl text-purple-600 font-semibold">
                 Confirm Plan
               </h2>
               <button
                 onClick={handleClosePopup}
-                className="p-2 hover:bg-gray-100 rounded-full transition-all duration-200"
+                className="text-gray-400 hover:text-gray-600 transition-colors p-0.5 mb-0 mt-1 rounded-full border border-purple-600 "
+                aria-label="Close"
               >
-                <X className="w-5 h-5 text-[#7650e3]" />
+                <X className="text-purple-600 w-4 h-4" />
               </button>
             </div>
 
-            {/* Plan Details */}
-            <div className="mb-5 bg-[#7650e3] border border-gray-200 rounded-md p-4">
-              <p className="text-sm text-white mb-1 font-semibold">
-                You're selecting:
+            <div className="bg-white border border-purple-600 p-4 rounded-lg text-center mb-6">
+              <p className="text-base text-purple-600 font-semibold mb-1">
+                {selectedPlan.name || "Standard"}
               </p>
-              <h3 className="text-xl font-semibold text-white">
-                {selectedPlan.name}
-              </h3>
-              <p className="text-md font-medium text-white">
-                ${selectedPlan.amount}/month
-              </p>
+              <div className="flex justify-center items-end space-x-4">
+                <span className="text-5xl text-purple-600">
+                  ${selectedPlan.amount || "25.00"}
+                </span>
+                <div className="flex flex-col items-start justify-between h-10">
+                  <span className="text-sm text-purple-600 font-normal">
+                    USD
+                  </span>
+                  <span className="text-sm text-purple-600 font-normal">
+                    Month
+                  </span>
+                </div>
+              </div>
+              <p className="text-xs mt-2">Includes GST of $0.00.</p>
             </div>
 
-            {/* Features */}
-            <ul className="mb-5 text-sm space-y-2">
-              {selectedPlan.features?.map((f: string, i: number) => (
-                <li key={i} className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-green-500 shrink-0 mt-[2px]" />
-                  <span className="text-[#7650e3]">{f}</span>
-                </li>
-              ))}
-            </ul>
+            {selectedPlan.features?.length > 0 && (
+              <ul className="mb-5 text-sm space-y-2">
+                {selectedPlan.features.map((feature: any, index: any) => (
+                  <li key={index} className="flex items-start gap-2">
+                    <Check className="w-4 h-4 text-green-500 shrink-0 mt-[2px]" />
+                    <span className="text-purple-600">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
 
-            {/* Conditional message */}
             {activePackage?.package?.tier !== "free" ? (
-              <div className="mb-6 text-sm rounded-md text-[#7650e3]  p-3">
+              <div className="mb-6 text-sm rounded-md text-purple-600 p-3">
                 <p>
                   You’re <strong>upgrading</strong> your current plan — you’ll
                   also receive your previous package coins with this upgrade.
                 </p>
               </div>
             ) : (
-              <div className="mb-6 bg-blue-50 border border-blue-200 text-[#7650e3] text-sm rounded-md p-3">
+              <div className="mb-6 bg-blue-50 border border-blue-200 text-purple-600 text-sm rounded-md p-3">
                 <p>
                   You’re starting a <strong>new subscription</strong>. This plan
                   begins fresh with the listed features and coins.
@@ -838,36 +840,26 @@ export const PricingPage: React.FC = () => {
               </div>
             )}
 
-            {/* Buttons */}
-            <div className="flex gap-3 justify-end">
-              <button
-                onClick={handleClosePopup}
-                className="px-5 py-2.5 border border-gray-300 rounded-md  font-semibold text-[#7650e3] hover:bg-gray-100 bg-gray-50 transition-all duration-200"
-              >
-                Back
-              </button>
-
-              <button
-                onClick={() => {
-                  if (activePackage?.package?.tier === "free") {
-                    handleSubscribe(selectedPlan);
-                  } else {
-                    handleUpdatePackage(selectedPlan);
-                  }
-                }}
-                disabled={loadingPackage}
-                className="px-6 py-2.5 bg-[#7650e3] text-white rounded-md  font-semibold shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loadingPackage ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Processing...
-                  </>
-                ) : (
-                  "Proceed to Checkout"
-                )}
-              </button>
-            </div>
+            <button
+              className="w-full py-2 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-600/90 transition-colors shadow-md shadow-purple-600/50 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              onClick={() => {
+                if (activePackage?.package?.tier === "free") {
+                  handleSubscribe(selectedPlan);
+                } else {
+                  handleUpdatePackage(selectedPlan);
+                }
+              }}
+              disabled={loadingPackage}
+            >
+              {loadingPackage ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                "Proceed to Checkout"
+              )}
+            </button>
           </div>
         </div>
       )}
