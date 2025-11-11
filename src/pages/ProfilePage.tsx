@@ -356,7 +356,7 @@ export const ProfilePage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className=" rounded-md p-4 mt-4">
+                <div className=" rounded-md px-4">
                   <h3 className="text-2xl font-semibold text-purple-600 mb-3">
                     Content & Goals
                   </h3>

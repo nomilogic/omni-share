@@ -155,7 +155,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   const [videoAspectRatio, setVideoAspectRatio] = useState<number | null>(null);
   const [videoAspectRatioWarning, setVideoAspectRatioWarning] =
     useState<string>("");
-  const [warningTimeoutId, setWarningTimeoutId] = useState<NodeJS.Timeout | null>(null);
+  const [warningTimeoutId, setWarningTimeoutId] =
+    useState<NodeJS.Timeout | null>(null);
 
   const [aspectRatio, setAspectRatio] = useState<string>("16:9");
   const [imageDescription, setImageDescription] = useState<string>("");
@@ -165,9 +166,11 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
 
   // Thumbnail generation preference and custom thumbnail upload
-  const [generateVideoThumbnailAI, setGenerateVideoThumbnailAI] = useState(true);
+  const [generateVideoThumbnailAI, setGenerateVideoThumbnailAI] =
+    useState(true);
   const thumbnailInputRef = useRef<HTMLInputElement>(null);
-  const [customThumbnailUploading, setCustomThumbnailUploading] = useState(false);
+  const [customThumbnailUploading, setCustomThumbnailUploading] =
+    useState(false);
 
   // State to hold pending post generation data
   const [pendingPostGeneration, setPendingPostGeneration] = useState<any>(null);
@@ -2960,7 +2963,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                     type="checkbox"
                                     checked={generateVideoThumbnailAI}
                                     onChange={(e) =>
-                                      setGenerateVideoThumbnailAI(e.target.checked)
+                                      setGenerateVideoThumbnailAI(
+                                        e.target.checked
+                                      )
                                     }
                                     className="w-4 h-4"
                                   />
@@ -3126,11 +3131,12 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                   <>
                     <div className="flex-1">
                       <label className=" text-sm font-medium theme-text-primary  mb-2  flex items-center">
-                        {selectedPostType === "image"
+                        {selectedPostType === "image" &&
+                        selectedImageMode !== "upload"
                           ? "Generate Image and Post with AI *"
                           : "Content Description *"}
                       </label>
-                      
+
                       <textarea
                         value={formData.prompt}
                         onChange={(e) =>

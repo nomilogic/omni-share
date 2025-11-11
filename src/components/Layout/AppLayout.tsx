@@ -44,7 +44,7 @@ interface AppLayoutProps {
 }
 
 export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
-  const { user, logout, balance } = useAppContext();
+  const { user, logout, balance, refreshUser } = useAppContext();
 
   console.log(user);
   const { loadingState } = useLoading();
@@ -136,40 +136,29 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     //   path: "/transaction-history",
     //   icon: HistoryIcon,
     // },
-    // { name: "Generate Amount", path: "/generate-amount", icon: Coins },
   ];
   const [showPackage, setShowPackage] = useState(false);
   const [isCanceled, setIsCanceled] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const cancelSubscription = async () => {
-    // alert("cancel")
-
-    // alert box to accept cancelation
-    if (window.confirm("Are you sure you want to cancel your subscription?")) {
-      cancelSubscription();
-    }
-
     try {
       setIsCanceled(true);
       await API.cancelPackage();
-      window.location.reload();
+      setTimeout(() => {
+        refreshUser();
+
+        setIsModalOpen(false);
+      }, 50);
     } catch (error) {
+      setIsModalOpen(false);
     } finally {
       setIsCanceled(false);
     }
   };
-  const reactivateSubscription = async () => {
-    try {
-      setIsCanceled(true);
-      await API.reactivatePackage();
-      window.location.reload();
-    } catch (error) {
-    } finally {
-      setIsCanceled(false);
-    }
-  };
+
   return (
     <ResizeContext.Provider value={{ handleResizeMainToFullScreen }}>
-      {/* h-full-dec-hf  relative  */}
       <div className=" ">
         <div className="relative z-10">
           <div
@@ -701,8 +690,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             closeManageSubscription();
             navigate("/invoices");
           }}
+          isCanceled={isCanceled}
+          isModalOpen={isModalOpen}
+          setIsModalOpen={setIsModalOpen}
           onCancelSubscription={() => {
-            closeManageSubscription();
             try {
               (cancelSubscription as any) && cancelSubscription();
             } catch (e) {

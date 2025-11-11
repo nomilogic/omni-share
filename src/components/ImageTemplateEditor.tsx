@@ -2049,7 +2049,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
             <button
               onClick={exportImage}
               disabled={isSaving}
-              className="btn-success w-full px-3 py-2.5 mx-1 rounded-md"
+              className="bg-[#059669] flex justify-center items-center gap-2 text-white font-medium w-full px-3 py-2.5 mx-1 rounded-md"
             >
               {isSaving ? (
                 <>
@@ -2072,7 +2072,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
             </div> */}
             <button
               onClick={onCancel}
-              className="btn-primary w-full  px-3 py-2.5 mx-1 rounded-md"
+              className="bg-purple-600  text-white font-medium w-full  px-3 py-2.5 mx-1 rounded-md"
             >
               Back
             </button>

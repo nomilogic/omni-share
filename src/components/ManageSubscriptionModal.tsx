@@ -15,26 +15,17 @@ import { AccountsPage } from "./../pages/AccountsPage";
 import TransactionHistory from "@/pages/TransectionHistory";
 import { useNavigate } from "react-router-dom";
 
-interface ManageSubscriptionModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onUpdatePayment?: () => void;
-  onViewInvoices?: () => void;
-  onCancelSubscription?: () => void;
-  onAddCoins?: () => void;
-}
-
-export const ManageSubscriptionModal: React.FC<
-  ManageSubscriptionModalProps
-> = ({
+export const ManageSubscriptionModal: React.FC<any> = ({
   isOpen,
   onClose,
   onUpdatePayment,
   onCancelSubscription,
   onAddCoins,
+  isCanceled,
+  isModalOpen,
+  setIsModalOpen,
 }) => {
   const [selected, setSelected] = useState<string | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [showTransactions, setShowTransactions] = useState(false);
   const [showManageSubscription, setShowManageSubscription] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -97,9 +88,9 @@ export const ManageSubscriptionModal: React.FC<
           setIsModalOpen(false);
           _onClose();
         }}
+        isCanceled={isCanceled}
         onCancel={() => {
           onCancelSubscription && onCancelSubscription();
-          setIsModalOpen(false);
         }}
         onPause={() => {}}
       />

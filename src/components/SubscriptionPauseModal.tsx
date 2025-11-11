@@ -24,24 +24,25 @@ import { Wallet } from "./../lib/wallet";
  * @param {function} onCancel - Callback to proceed with cancellation
  */
 
-const SubscriptionPauseModal = ({ isVisible, onClose, onPause, onCancel }) => {
+const SubscriptionPauseModal = ({
+  isVisible,
+  onClose,
+  onPause,
+  onCancel,
+  isCanceled,
+}: any) => {
   if (!isVisible) return null;
-  const { user, logout, balance } = useAppContext();
-  useEffect(() => {
-    console.log(user, "user");
-  });
+  const { user } = useAppContext();
 
   return (
     <div className="fixed inset-0 bg-gray-900 bg-opacity-70 flex md:items-center justify-center p-0 z-50 transition-opacity duration-300 font-inter top-0 overflow-hidden">
-      <div className="bg-white md:rounded-[24px] shadow-2xl md:max-w-3xl lg:max-w-5xl w-full flex flex-col md:flex-row transform transition-all duration-300 scale-100 h-[100vh] overflow-hidden no-scroll md:h-[60vh] ">
-        {/* Left Illustration Section */}
+      <div className="bg-white md:rounded-[24px]  md:max-w-3xl lg:max-w-5xl w-full flex flex-col md:flex-row transform transition-all duration-300 scale-100 h-[100vh] overflow-hidden no-scroll md:h-[60vh] ">
         <div className=" w-full md:w-2/5 h-[30vh] md:h-full">
           <ModalIllustration />
         </div>
 
-        {/* Right Content Section */}
         <div className="w-full md:w-3/5 p-4 flex flex-col gap-0 overflow-y-auto">
-          <div className="flex items-center gap-1 mb-2 md:mb-2">
+          <div className="flex items-center gap-1 mb-2 ">
             <h2 className="text-xl sm:text-2xl font-bold text-[#7650e3] leading-snug">
               Consider Canceling Your Subscription?
             </h2>
@@ -55,7 +56,7 @@ const SubscriptionPauseModal = ({ isVisible, onClose, onPause, onCancel }) => {
           </div>
 
           <div className="mb-2 flex-grow">
-            <p className="text-sm sm:text-base text-[#000000] mb-2 md:mb-2 font-semibold">
+            <p className="text-sm sm:text-base text-[#000000] mb-2 md:mb-4 font-semibold">
               By canceling now, you'll lose{" "}
               <span className="font-bold text-[#7650e3]">
                 {user.walle}
@@ -85,7 +86,7 @@ const SubscriptionPauseModal = ({ isVisible, onClose, onPause, onCancel }) => {
               features :
             </p>
 
-            <div className="mb-2 md:mb-2 space-y-1">
+            <div className="mb-2 md:mb-4 space-y-1">
               <FeatureLossItem label="Video Post Generation" icon={videoIcon} />
               <FeatureLossItem
                 label="Images Post Generation"
@@ -94,7 +95,7 @@ const SubscriptionPauseModal = ({ isVisible, onClose, onPause, onCancel }) => {
               <FeatureLossItem label="Text Post Generation" icon={textIcon} />
             </div>
 
-            <div className="border border-[#9F8CF0] rounded-md p-4 bg-[#F9FAFB] flex justify-between items-start mb-2 md:mb-2">
+            <div className="border border-[#9F8CF0] rounded-md p-4 bg-[#F9FAFB] flex justify-between items-start mb-2 md:mb-4">
               <div className="flex items-center">
                 <div className="w-8 h-8 mr-3 flex-shrink-0">
                   <img
@@ -122,7 +123,7 @@ const SubscriptionPauseModal = ({ isVisible, onClose, onPause, onCancel }) => {
               </div>
             </div>
 
-            <p className="text-sm sm:text-base text-[#000000] mb-2 md:mb-2 font-semibold">
+            <p className="text-sm sm:text-base text-[#000000] mb-2 md:mb-4 font-semibold">
               If you still want to cancel, select{" "}
               <span className="font-bold text-[#7650e3]">
                 "Proceed with Cancelation"
@@ -141,10 +142,11 @@ const SubscriptionPauseModal = ({ isVisible, onClose, onPause, onCancel }) => {
             </button>
 
             <button
-              className=" w-full hover:bg-[#d7d7fc] hover:text-[#7650e3]  text-[#7650e3] font-semibold p-2.5  text-sm sm:text-base rounded-md transition disabled:opacity-50 flex justify-between items-center  border-2 border-[#7F56D9]"
+              disabled={isCanceled}
+              className=" w-full hover:bg-[#d7d7fc] disabled:cursor-not-allowed hover:text-[#7650e3]  text-[#7650e3] font-semibold p-2.5  text-sm sm:text-base rounded-md transition disabled:opacity-50 flex justify-between items-center  border-2 border-[#7F56D9]"
               onClick={onCancel}
             >
-              <span>Proceed with Cancelation</span>
+              <span>Proceed with Cancellation</span>
               <ArrowRightIcon className="w-5 h-5" />
             </button>
           </div>

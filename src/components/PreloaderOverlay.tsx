@@ -113,7 +113,7 @@ export const PreloaderOverlay: React.FC<PreloaderOverlayProps> = ({
         </div>
 
         {/* Loading message with typing effect */}
-        <div className="text-center mb-6 min-h-[2.5rem]">
+        <div className="text-center mb-6 min-h-[3.5rem]">
           <p className="text-white text-lg font-medium leading-tight">
             {displayMessage}
             <span className="animate-pulse">|</span>
@@ -137,7 +137,7 @@ export const PreloaderOverlay: React.FC<PreloaderOverlayProps> = ({
         )}
 
         {/* Animated background elements */}
-        <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
+        <div className="absolute inset-0 overflow-hidden rounded-md pointer-events-none">
           <div
             className="absolute -top-10 -right-10 w-20 h-20 bg-blue-500/10 rounded-full animate-ping"
             style={{ animationDuration: "3s" }}
