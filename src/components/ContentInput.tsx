@@ -155,8 +155,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   const [videoAspectRatio, setVideoAspectRatio] = useState<number | null>(null);
   const [videoAspectRatioWarning, setVideoAspectRatioWarning] =
     useState<string>("");
-  const [warningTimeoutId, setWarningTimeoutId] =
-    useState<NodeJS.Timeout | null>(null);
+  const [warningTimeoutId, setWarningTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
   const [aspectRatio, setAspectRatio] = useState<string>("16:9");
   const [imageDescription, setImageDescription] = useState<string>("");
@@ -164,6 +163,11 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   const [isGeneratingBoth, setIsGeneratingBoth] = useState(false);
   const [isGeneratingThumbnail, setIsGeneratingThumbnail] = useState(false);
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+
+  // Thumbnail generation preference and custom thumbnail upload
+  const [generateVideoThumbnailAI, setGenerateVideoThumbnailAI] = useState(true);
+  const thumbnailInputRef = useRef<HTMLInputElement>(null);
+  const [customThumbnailUploading, setCustomThumbnailUploading] = useState(false);
 
   // State to hold pending post generation data
   const [pendingPostGeneration, setPendingPostGeneration] = useState<any>(null);
@@ -201,7 +205,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   // Auto-select platforms based on content type and modes
   useEffect(() => {
     const appropriatePlatforms = getAppropiatePlatforms(
-      selectedPostType,
+      selectedPostType?.toLowerCase() as "text" | "image" | "video",
       selectedImageMode,
       selectedVideoMode
     );
@@ -844,8 +848,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         }
       }
 
-      // NEW: For uploaded videos, generate thumbnail first then open template editor
-      // Only for 16:9 and other aspect ratios that support thumbnails (not 9:16 stories)
+      // NEW: For uploaded videos, either generate thumbnail with AI or
+      // allow using an uploaded custom thumbnail. This only runs for
+      // aspect ratios that support thumbnails (not 9:16 stories).
       if (
         selectedPostType === "video" &&
         (selectedVideoMode === "upload" ||
@@ -853,69 +858,108 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         originalVideoFile &&
         !is9x16Video(videoAspectRatio || 0)
       ) {
-        console.log(
-          "🎥 Generating video thumbnail from content description, then opening template editor..."
-        );
-
-        // Generate thumbnail using content description and aspect ratio
-        const generatedThumbnailUrl = await generateThumbnailForPost(
-          formData.prompt,
-          videoAspectRatio
-        );
-
-        if (generatedThumbnailUrl) {
+        // If user opted to generate thumbnail via AI, use existing flow
+        if (generateVideoThumbnailAI) {
           console.log(
-            "✅ Video thumbnail generated successfully, opening template editor"
+            "🎥 Generating video thumbnail from content description, then opening template editor..."
           );
 
-          // Get blank template
-          const blankTemplate = getTemplateById("blank-template");
-          if (blankTemplate) {
+          // Generate thumbnail using content description and aspect ratio
+          const generatedThumbnailUrl = await generateThumbnailForPost(
+            formData.prompt,
+            videoAspectRatio
+          );
+
+          if (generatedThumbnailUrl) {
             console.log(
-              "📋 Setting blank template and opening editor for generated video thumbnail"
+              "✅ Video thumbnail generated successfully, opening template editor"
             );
-            setSelectedTemplate(blankTemplate);
-            setShowTemplateEditor(true);
 
-            // Store post generation data for later use, including original video file
-            const currentCampaignInfo = campaignInfo || {
-              name: "Default Campaign",
-              industry: "General",
-              brand_tone: "professional",
-              target_audience: "General",
-              description:
-                "General content generation without specific campaign context",
-            };
+            // Get blank template
+            const blankTemplate = getTemplateById("blank-template");
+            if (blankTemplate) {
+              console.log(
+                "📋 Setting blank template and opening editor for generated video thumbnail"
+              );
+              setSelectedTemplate(blankTemplate);
+              setShowTemplateEditor(true);
 
-            const postGenerationData = {
-              prompt: formData.prompt,
-              originalImageUrl: generatedThumbnailUrl, // Use generated thumbnail for template editor
-              originalVideoUrl: formData.mediaUrl, // Store original video URL
-              originalVideoFile: originalVideoFile, // Store original video file
-              videoAspectRatio: videoAspectRatio,
-              isVideoContent: true, // Flag to indicate this is video content
-              campaignInfo: currentCampaignInfo,
-              selectedPlatforms: formData.selectedPlatforms,
-              imageAnalysis: `Video thumbnail generated from content description for ${
-                is16x9Video(videoAspectRatio || 0)
-                  ? "16:9 horizontal"
-                  : "custom aspect ratio"
-              } video`,
-              formData,
-            };
+              // Store post generation data for later use, including original video file
+              const currentCampaignInfo = campaignInfo || {
+                name: "Default Campaign",
+                industry: "General",
+                brand_tone: "professional",
+                target_audience: "General",
+                description:
+                  "General content generation without specific campaign context",
+              };
 
-            setPendingPostGeneration(postGenerationData);
-            return; // Exit here to wait for template editor completion
+              const postGenerationData = {
+                prompt: formData.prompt,
+                originalImageUrl: generatedThumbnailUrl, // Use generated thumbnail for template editor
+                originalVideoUrl: formData.mediaUrl, // Store original video URL
+                originalVideoFile: originalVideoFile, // Store original video file
+                videoAspectRatio: videoAspectRatio,
+                isVideoContent: true, // Flag to indicate this is video content
+                campaignInfo: currentCampaignInfo,
+                selectedPlatforms: formData.selectedPlatforms,
+                imageAnalysis: `Video thumbnail generated from content description for ${
+                  is16x9Video(videoAspectRatio || 0)
+                    ? "16:9 horizontal"
+                    : "custom aspect ratio"
+                } video`,
+                formData,
+              };
+
+              setPendingPostGeneration(postGenerationData);
+              return; // Exit here to wait for template editor completion
+            } else {
+              console.error(
+                "❌ Blank template not found for video, proceeding with normal flow"
+              );
+            }
           } else {
             console.error(
-              "❌ Blank template not found for video, proceeding with normal flow"
+              "❌ Failed to generate video thumbnail, proceeding with normal flow without thumbnail"
             );
+            // Continue with normal flow - video posts can work without thumbnails
           }
         } else {
-          console.error(
-            "❌ Failed to generate video thumbnail, proceeding with normal flow without thumbnail"
-          );
-          // Continue with normal flow - video posts can work without thumbnails
+          // User chose to upload a custom thumbnail instead of AI generation.
+          // If a custom thumbnail URL already exists, open the template editor
+          // immediately using that image.
+          if (videoThumbnailUrl) {
+            const blankTemplate = getTemplateById("blank-template");
+            if (blankTemplate) {
+              setSelectedTemplate(blankTemplate);
+              setShowTemplateEditor(true);
+
+              const currentCampaignInfo = campaignInfo || {
+                name: "Default Campaign",
+                industry: "General",
+                brand_tone: "professional",
+                target_audience: "General",
+                description:
+                  "General content generation without specific campaign context",
+              };
+
+              const postGenerationData = {
+                prompt: formData.prompt,
+                originalImageUrl: videoThumbnailUrl,
+                originalVideoUrl: formData.mediaUrl,
+                originalVideoFile: originalVideoFile,
+                videoAspectRatio: videoAspectRatio,
+                isVideoContent: true,
+                campaignInfo: currentCampaignInfo,
+                selectedPlatforms: formData.selectedPlatforms,
+                imageAnalysis: `Custom thumbnail uploaded for video`,
+                formData,
+              };
+
+              setPendingPostGeneration(postGenerationData);
+              return;
+            }
+          }
         }
       }
 
@@ -1749,6 +1793,76 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     }
   };
 
+  // Handle user-uploaded custom thumbnail for video posts
+  const handleCustomThumbnailChange = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setCustomThumbnailUploading(true);
+    try {
+      const userResult = await getCurrentUser();
+      if (!userResult?.user) {
+        alert("You must be signed in to upload a thumbnail");
+        return;
+      }
+
+      const mediaUrl = await executeFileUpload(
+        async () => await uploadMedia(file, userResult.user.id),
+        file.name,
+        file.size,
+        {
+          canCancel: true,
+          onCancel: () => {
+            console.log("Custom thumbnail upload cancelled");
+          },
+        }
+      );
+
+      if (mediaUrl) {
+        console.log("✅ Custom thumbnail uploaded:", mediaUrl);
+        setVideoThumbnailUrl(mediaUrl);
+
+        // Immediately open template editor for uploaded thumbnail
+        const blankTemplate = getTemplateById("blank-template");
+        if (blankTemplate) {
+          setSelectedTemplate(blankTemplate);
+          setShowTemplateEditor(true);
+
+          const currentCampaignInfo = campaignInfo || {
+            name: "Default Campaign",
+            industry: "General",
+            brand_tone: "professional",
+            target_audience: "General",
+            description:
+              "General content generation without specific campaign context",
+          };
+
+          const postGenerationData = {
+            prompt: formData.prompt,
+            originalImageUrl: mediaUrl,
+            originalVideoUrl: formData.mediaUrl,
+            originalVideoFile: originalVideoFile,
+            videoAspectRatio: videoAspectRatio,
+            isVideoContent: true,
+            campaignInfo: currentCampaignInfo,
+            selectedPlatforms: formData.selectedPlatforms,
+            imageAnalysis: `Custom thumbnail uploaded for video`,
+            formData,
+          };
+
+          setPendingPostGeneration(postGenerationData);
+        }
+      }
+    } catch (err) {
+      console.error("Failed to upload custom thumbnail:", err);
+      alert("Failed to upload thumbnail");
+    } finally {
+      setCustomThumbnailUploading(false);
+      if (thumbnailInputRef.current) thumbnailInputRef.current.value = "";
+    }
+  };
+
   // Inline image generation function
   const handleGenerateImage = async () => {
     if (!imageDescription.trim()) return;
@@ -2413,10 +2527,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                   {selectedImageMode === "textToImage" && (
                     <>
                       {" "}
-                      <h4 className="text-sm font-medium theme-text-secondary flex items-center px-0 ">
-                        <Wand2 className="w-4 h-4 mr-2 " />
-                        Generate Image and Post with AI
-                      </h4>
                       <div
                         className={`space-y-4 ${
                           generateImageWithPost ? "hidden" : "hidden"
@@ -2841,6 +2951,52 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             </div>
                           ) : null}
 
+                          {/* Thumbnail preference: AI or custom upload (only for non-9:16 videos) */}
+                          {selectedPostType === "video" &&
+                            !is9x16Video(videoAspectRatio || 0) && (
+                              <div className="mt-2 flex items-center justify-center gap-3">
+                                <label className="flex items-center space-x-2 cursor-pointer">
+                                  <input
+                                    type="checkbox"
+                                    checked={generateVideoThumbnailAI}
+                                    onChange={(e) =>
+                                      setGenerateVideoThumbnailAI(e.target.checked)
+                                    }
+                                    className="w-4 h-4"
+                                  />
+                                  <span className="text-sm theme-text-secondary">
+                                    Generate thumbnail with AI
+                                  </span>
+                                </label>
+
+                                {!generateVideoThumbnailAI && (
+                                  <>
+                                    <input
+                                      ref={thumbnailInputRef}
+                                      type="file"
+                                      accept="image/*"
+                                      onChange={handleCustomThumbnailChange}
+                                      className="hidden"
+                                    />
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        thumbnailInputRef.current?.click()
+                                      }
+                                      className="px-3 py-1 border rounded text-sm"
+                                    >
+                                      Upload custom thumbnail
+                                    </button>
+                                    {customThumbnailUploading && (
+                                      <span className="text-xs text-blue-300 ml-2">
+                                        Uploading...
+                                      </span>
+                                    )}
+                                  </>
+                                )}
+                              </div>
+                            )}
+
                           {/* AI Analysis Button */}
                           {(formData.media || formData.mediaUrl) &&
                             (formData.media?.type.startsWith("image/") ||
@@ -2970,8 +3126,11 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                   <>
                     <div className="flex-1">
                       <label className=" text-sm font-medium theme-text-primary  mb-2  flex items-center">
-                        {"Content Description *"}
+                        {selectedPostType === "image"
+                          ? "Generate Image and Post with AI *"
+                          : "Content Description *"}
                       </label>
+                      
                       <textarea
                         value={formData.prompt}
                         onChange={(e) =>
