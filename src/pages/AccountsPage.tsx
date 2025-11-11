@@ -259,7 +259,7 @@ export const AccountsPage: React.FC = () => {
 
         {connectedPlatforms.length === 0 && (
           <div className=" p-4 theme-bg-quaternary rounded-md border border-purple-200">
-            <div className="flex items-start gap-3">
+            <div className="flex items-start gap-4">
               <div className="w-5 h-5 md:block hidden">
                 <Icon
                   name="connect-accounts"

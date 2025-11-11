@@ -1230,7 +1230,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
           <>
             <button
               onClick={onPublish}
-              className="w-full bg-[#10b981] flex items-center gap-2 justify-center hover:bg-[#10b981] text-white font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
+              className="w-full bg-transparent border-purple-600 border text-purple-600 flex items-center gap-2 justify-center hover:border-purple-600  font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
             >
               Continue
             </button>

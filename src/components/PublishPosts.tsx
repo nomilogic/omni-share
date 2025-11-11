@@ -341,34 +341,12 @@ export const PublishPosts: React.FC<PublishProps> = ({
   };
 
   return (
-    <div className="theme-bg-light">
+    <div className="theme-bg-light max-w-4xl mx-auto  ">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center justify-between max-w-4xl mx-auto">
-          <button
-            onClick={onBack}
-            className="text-gray-400 hover:text-slate-500 transition-colors"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
-        </div>
-      </div>
 
       {/* Main Content */}
       <div className="lg:px-4 px-3 lg:py-8 py-4">
-        <h1 className="text-3xl font-semibold theme-text-primary mb-1">
+        <h1 className="text-3xl font-bold theme-text-primary mb-1">
           Publish Your Posts
         </h1>
         <p className="text-slate-500 md:mb-8 mb-4 leading-relaxed">
@@ -379,7 +357,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
         {/* Connection Status Alert */}
         {posts.some((post) => !connectedPlatforms.includes(post.platform)) && (
           <div className="md:mb-8 mb-4 p-4 theme-bg-quaternary rounded-md border border-purple-200">
-            <div className="flex items-start gap-3">
+            <div className="flex items-start gap-4">
               <div className="w-5 h-5 md:block hidden">
                 <Icon
                   name="connect-accounts"
@@ -388,7 +366,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
                 />
               </div>
               <div>
-                <h3 className="text-2xl font-bold theme-text-primary mb-1">
+                <h3 className="text-2xl font-semibold theme-text-primary mb-1">
                   Connect Your Accounts
                 </h3>
                 <p className="text-sm text-slate-500 mb-1">
@@ -724,14 +702,19 @@ export const PublishPosts: React.FC<PublishProps> = ({
             </div>
           )}
 
-        {/* Error Messages */}
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
             <p className="text-red-800 text-sm">{error}</p>
           </div>
         )}
 
-        {/* Main Publish Button */}
+        <button
+          onClick={onBack}
+          className="text-center w-full text-white font-semibold transition-colors bg-purple-600 hover:bg-purple-700 border border-gray-200 px-4 py-2.5 rounded-md mb-5"
+        >
+          Close
+        </button>
+
         <button
           onClick={handlePublish}
           disabled={
