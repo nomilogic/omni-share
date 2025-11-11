@@ -76,8 +76,7 @@ export const SettingsPage: React.FC = () => {
     <div className="theme-card-bg">
       <div className="mx-auto px-4 py-4 space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Settings Navigation */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 border border-slate-100 bg-white shadow-sm rounded-md p-2">
             <nav className="space-y-2">
               {settingsNavItems.map((item) => {
                 const Icon = item.icon;
@@ -99,9 +98,8 @@ export const SettingsPage: React.FC = () => {
             </nav>
           </div>
 
-          {/* Settings Content */}
           <div className="lg:col-span-3">
-            <div className="theme-bg-card rounded-2xl shadow-sm border border-white/20 p-8 backdrop-blur-lg">
+            <div className="theme-bg-card rounded-md shadow-sm border border-slate-100 bg-white lg:p-6 p-4 backdrop-blur-lg">
               {message.text && (
                 <div
                   className={`mb-6 p-4 rounded-md ${
@@ -337,7 +335,8 @@ export const SettingsPage: React.FC = () => {
                                   {item.desc}
                                 </p>
                               </div>
-                              <label className="relative inline-flex items-center cursor-pointer">
+                              <label className="relative inline-flex items-center cursor-pointer select-none">
+                                {/* Hidden checkbox */}
                                 <input
                                   type="checkbox"
                                   checked={
@@ -351,9 +350,22 @@ export const SettingsPage: React.FC = () => {
                                       e.target.checked
                                     )
                                   }
-                                  className="sr-only peer"
+                                  className="sr-only peer hidden"
                                 />
-                                <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+
+                                {/* Toggle track */}
+                                <div className="w-12 h-7 bg-gray-300 rounded-full peer-checked:bg-green-500 transition-colors duration-300 relative">
+                                  {/* Toggle circle */}
+                                  <span
+                                    className={`absolute left-[2px] top-[2px] w-6 h-6 bg-white rounded-full shadow-md transition-transform duration-300 ${
+                                      notifications[
+                                        item.key as keyof typeof notifications
+                                      ]
+                                        ? "translate-x-5"
+                                        : "translate-x-0"
+                                    }`}
+                                  ></span>
+                                </div>
                               </label>
                             </div>
                           </div>

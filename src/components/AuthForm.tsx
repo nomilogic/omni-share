@@ -3,6 +3,9 @@
 import type React from "react";
 import { useState, useLayoutEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import {
   initiateGoogleOAuth,
   initiateFacebookOAuth,
@@ -26,6 +29,39 @@ interface AuthFormProps {
 
 type AuthMode = "login" | "signup" | "forgotPassword" | "resetPassword";
 
+// Validation Schemas
+const loginSchema = z.object({
+  email: z.string().email("Please enter a valid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+});
+
+const signupSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Please enter a valid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+});
+
+const forgotPasswordSchema = z.object({
+  email: z.string().email("Please enter a valid email address"),
+});
+
+const resetPasswordSchema = z
+  .object({
+    password: z.string().min(6, "Password must be at least 6 characters"),
+    confirmPassword: z
+      .string()
+      .min(6, "Password must be at least 6 characters"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
+type LoginFormData = z.infer<typeof loginSchema>;
+type SignupFormData = z.infer<typeof signupSchema>;
+type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
+type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
+
 export const AuthForm: React.FC<AuthFormProps> = ({
   onAuthSuccess,
   loading: externalLoading,
@@ -34,12 +70,6 @@ export const AuthForm: React.FC<AuthFormProps> = ({
   const navigate = useNavigate();
   const [mode, setMode] = useState<AuthMode>("login");
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    name: "",
-    confirmPassword: "",
-  });
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
   const [showOtpPopup, setShowOtpPopup] = useState<boolean>(false);
@@ -48,6 +78,30 @@ export const AuthForm: React.FC<AuthFormProps> = ({
   const params = new URLSearchParams(window.location.search);
   const referralId: any = params.get("referralId");
   const isVerification = params.get("isVerification");
+
+  // Login Form
+  const loginForm = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: "", password: "" },
+  });
+
+  // Signup Form
+  const signupForm = useForm<SignupFormData>({
+    resolver: zodResolver(signupSchema),
+    defaultValues: { name: "", email: "", password: "" },
+  });
+
+  // Forgot Password Form
+  const forgotPasswordForm = useForm<ForgotPasswordFormData>({
+    resolver: zodResolver(forgotPasswordSchema),
+    defaultValues: { email: "" },
+  });
+
+  // Reset Password Form
+  const resetPasswordForm = useForm<ResetPasswordFormData>({
+    resolver: zodResolver(resetPasswordSchema),
+    defaultValues: { password: "", confirmPassword: "" },
+  });
 
   useLayoutEffect(() => {
     if (isVerification === "true" || isVerification === "1") {
@@ -79,84 +133,85 @@ export const AuthForm: React.FC<AuthFormProps> = ({
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    setError("");
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleLoginSubmit = async (data: LoginFormData) => {
     setLoading(true);
     setError("");
     setSuccessMessage("");
 
     try {
-      if (mode === "login") {
-        const response = await API.login({
-          email: formData.email,
-          password: formData.password,
-        });
+      const response = await API.login({
+        email: data.email,
+        password: data.password,
+      });
 
-        const result = response.data.data;
+      const result = response.data.data;
 
-        if (!result.token || !result.user) {
-          throw new Error("Invalid response from server");
-        }
+      if (!result.token || !result.user) {
+        throw new Error("Invalid response from server");
+      }
 
-        if (rememberMe) {
-          const expirationDate = new Date();
-          expirationDate.setDate(expirationDate.getDate() + 30);
-          localStorage.setItem("auth_token", result.token);
-          localStorage.setItem(
-            "auth_token_expiry",
-            expirationDate.toISOString()
-          );
-          localStorage.setItem("auth_remember", "true");
-        } else {
-          localStorage.setItem("auth_token", result.token);
-          localStorage.removeItem("auth_token_expiry");
-          localStorage.removeItem("auth_remember");
-        }
-        onAuthSuccess(result.user);
-        try {
-          const profile = result.user?.profile;
-          if (profile && (profile as any).isOnboarding === false) {
-            import("../lib/navigation")
-              .then(({ navigateOnce }) => {
-                navigateOnce(navigate, "/onboarding/profile", {
-                  replace: true,
-                });
-              })
-              .catch((err) => {
-                console.error("failed to load navigation helper", err);
-                navigate("/onboarding/profile", { replace: true });
-              });
-            return;
-          }
-        } catch (e) {
-          console.error("AuthForm fallback redirect check failed", e);
-        }
+      if (rememberMe) {
+        const expirationDate = new Date();
+        expirationDate.setDate(expirationDate.getDate() + 30);
+        localStorage.setItem("auth_token", result.token);
+        localStorage.setItem("auth_token_expiry", expirationDate.toISOString());
+        localStorage.setItem("auth_remember", "true");
       } else {
-        const response = await API.registerUser({
-          email: formData.email,
-          password: formData.password,
-          name: formData.name,
-          ...(referralId !== "" && {
-            referralId: referralId ? referralId : "",
-          }),
-        });
-
-        const result = await response.data.data;
-        localStorage.setItem("email_token", result?.token);
-        setShowOtpPopup(true);
-        const url = new URL(window.location.href);
-        url.searchParams.set("isVerification", "true");
-        window.history.pushState({}, "", url.toString());
+        localStorage.setItem("auth_token", result.token);
+        localStorage.removeItem("auth_token_expiry");
+        localStorage.removeItem("auth_remember");
+      }
+      onAuthSuccess(result.user);
+      try {
+        const profile = result.user?.profile;
+        if (profile && (profile as any).isOnboarding === false) {
+          import("../lib/navigation")
+            .then(({ navigateOnce }) => {
+              navigateOnce(navigate, "/onboarding/profile", {
+                replace: true,
+              });
+            })
+            .catch((err) => {
+              console.error("failed to load navigation helper", err);
+              navigate("/onboarding/profile", { replace: true });
+            });
+          return;
+        }
+      } catch (e) {
+        console.error("AuthForm fallback redirect check failed", e);
       }
     } catch (error: any) {
-      console.error("Authentication error:", error.response.data.message);
-      setError(error.response.data.message || "Authentication failed");
+      console.error("Authentication error:", error.response?.data?.message);
+      setError(error.response?.data?.message || "Authentication failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSignupSubmit = async (data: SignupFormData) => {
+    setLoading(true);
+    setError("");
+    setSuccessMessage("");
+
+    try {
+      const response = await API.registerUser({
+        email: data.email,
+        password: data.password,
+        name: data.name,
+        ...(referralId !== "" && {
+          referralId: referralId ? referralId : "",
+        }),
+      });
+
+      const result = await response.data.data;
+      localStorage.setItem("email_token", result?.token);
+      setShowOtpPopup(true);
+      const url = new URL(window.location.href);
+      url.searchParams.set("isVerification", "true");
+      window.history.pushState({}, "", url.toString());
+    } catch (error: any) {
+      console.error("Authentication error:", error.response?.data?.message);
+      setError(error.response?.data?.message || "Authentication failed");
     } finally {
       setLoading(false);
     }
@@ -247,20 +302,24 @@ export const AuthForm: React.FC<AuthFormProps> = ({
     }
   };
 
-  const handleForgotPasswordSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await onForgetPassword(formData.email);
+  const handleForgotPasswordSubmit = async (data: ForgotPasswordFormData) => {
+    await onForgetPassword(data.email);
   };
 
-  const handleResetPasswordSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (formData.password === formData.confirmPassword) {
-      setSuccessMessage("Password successfully reset.");
-      setFormData({ email: "", password: "", name: "", confirmPassword: "" });
-      setMode("login");
-    } else {
-      setError("Passwords do not match");
-    }
+  const handleResetPasswordSubmit = async (data: ResetPasswordFormData) => {
+    setSuccessMessage("Password successfully reset.");
+    resetPasswordForm.reset();
+    setMode("login");
+  };
+
+  const resetMode = () => {
+    setMode("login");
+    setError("");
+    setSuccessMessage("");
+    loginForm.reset();
+    signupForm.reset();
+    forgotPasswordForm.reset();
+    resetPasswordForm.reset();
   };
 
   return (
@@ -270,17 +329,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
           <div className="flex relative items-center justify-center mb-6 sm:mb-8 md:mb-10">
             {mode !== "login" && (
               <button
-                onClick={() => {
-                  setMode("login");
-                  setError("");
-                  setSuccessMessage("");
-                  setFormData({
-                    email: "",
-                    password: "",
-                    name: "",
-                    confirmPassword: "",
-                  });
-                }}
+                onClick={resetMode}
                 className="absolute left-0 sm:-left-1"
               >
                 <ArrowLeftIcon className="w-8 sm:w-9 md:w-10 text-purple-600" />
@@ -387,20 +436,25 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                   </span>
                 </div>
               </div>
-              <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+              <form
+                onSubmit={loginForm.handleSubmit(handleLoginSubmit)}
+                className="space-y-3 sm:space-y-4"
+              >
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">
                     Email
                   </label>
                   <input
                     type="email"
-                    name="email"
                     placeholder="Enter your email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    required
+                    {...loginForm.register("email")}
                     className="w-full px-4 py-2.5 text-sm border-2 border-purple-300 rounded-md focus:outline-none focus:border-purple-600 transition"
                   />
+                  {loginForm.formState.errors.email && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {loginForm.formState.errors.email.message}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">
@@ -408,13 +462,15 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                   </label>
                   <input
                     type="password"
-                    name="password"
                     placeholder="Enter your Password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    required
+                    {...loginForm.register("password")}
                     className="w-full px-4 py-2.5 text-sm border-2 border-purple-300 rounded-md focus:outline-none focus:border-purple-600 transition"
                   />
+                  {loginForm.formState.errors.password && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {loginForm.formState.errors.password.message}
+                    </p>
+                  )}
                 </div>
                 <button
                   type="submit"
@@ -456,20 +512,25 @@ export const AuthForm: React.FC<AuthFormProps> = ({
           )}
 
           {mode === "signup" && (
-            <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+            <form
+              onSubmit={signupForm.handleSubmit(handleSignupSubmit)}
+              className="space-y-3 sm:space-y-4"
+            >
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
                   Name
                 </label>
                 <input
                   type="text"
-                  name="name"
                   placeholder="Enter your Full Name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  required
+                  {...signupForm.register("name")}
                   className="w-full px-4 py-2.5 text-sm border-2 border-purple-300 rounded-md focus:outline-none focus:border-purple-600 transition"
                 />
+                {signupForm.formState.errors.name && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {signupForm.formState.errors.name.message}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -478,13 +539,15 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                 </label>
                 <input
                   type="email"
-                  name="email"
                   placeholder="Enter your email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  required
+                  {...signupForm.register("email")}
                   className="w-full px-4 py-2.5 text-sm border-2 border-purple-300 rounded-md focus:outline-none focus:border-purple-600 transition"
                 />
+                {signupForm.formState.errors.email && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {signupForm.formState.errors.email.message}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -493,13 +556,15 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                 </label>
                 <input
                   type="password"
-                  name="password"
                   placeholder="Enter your Password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  required
+                  {...signupForm.register("password")}
                   className="w-full px-4 py-2.5 text-sm border-2 border-purple-300 rounded-md focus:outline-none focus:border-purple-600 transition"
                 />
+                {signupForm.formState.errors.password && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {signupForm.formState.errors.password.message}
+                  </p>
+                )}
               </div>
 
               {referralId && (
@@ -534,7 +599,9 @@ export const AuthForm: React.FC<AuthFormProps> = ({
 
           {mode === "forgotPassword" && (
             <form
-              onSubmit={handleForgotPasswordSubmit}
+              onSubmit={forgotPasswordForm.handleSubmit(
+                handleForgotPasswordSubmit
+              )}
               className="space-y-4 sm:space-y-5"
             >
               <div>
@@ -552,13 +619,15 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                 </label>
                 <input
                   type="email"
-                  name="email"
                   placeholder="Enter your email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  required
+                  {...forgotPasswordForm.register("email")}
                   className="w-full px-4 py-2.5 text-sm border-2 border-purple-300 rounded-md focus:outline-none focus:border-purple-600 transition"
                 />
+                {forgotPasswordForm.formState.errors.email && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {forgotPasswordForm.formState.errors.email.message}
+                  </p>
+                )}
               </div>
 
               <button
@@ -583,7 +652,9 @@ export const AuthForm: React.FC<AuthFormProps> = ({
 
           {mode === "resetPassword" && (
             <form
-              onSubmit={handleResetPasswordSubmit}
+              onSubmit={resetPasswordForm.handleSubmit(
+                handleResetPasswordSubmit
+              )}
               className="space-y-4 sm:space-y-5"
             >
               <h2 className="text-base sm:text-lg font-semibold text-slate-800 mb-4 sm:mb-6">
@@ -596,13 +667,15 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                 </label>
                 <input
                   type="password"
-                  name="password"
                   placeholder="Enter new Password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  required
+                  {...resetPasswordForm.register("password")}
                   className="w-full px-4 py-2.5 text-sm border-2 border-purple-300 rounded-md focus:outline-none focus:border-purple-600 transition"
                 />
+                {resetPasswordForm.formState.errors.password && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {resetPasswordForm.formState.errors.password.message}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -611,13 +684,15 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                 </label>
                 <input
                   type="password"
-                  name="confirmPassword"
                   placeholder="Re-enter your Password"
-                  value={formData.confirmPassword}
-                  onChange={handleInputChange}
-                  required
+                  {...resetPasswordForm.register("confirmPassword")}
                   className="w-full px-4 py-2.5 text-sm border-2 border-purple-300 rounded-md focus:outline-none focus:border-purple-600 transition"
                 />
+                {resetPasswordForm.formState.errors.confirmPassword && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {resetPasswordForm.formState.errors.confirmPassword.message}
+                  </p>
+                )}
               </div>
 
               <button

@@ -1,11 +1,19 @@
-import React, { useState } from 'react';
-import { X, CreditCard, FileText, ChevronRight, PlusCircle, Subscript, Loader } from 'lucide-react';
+import React, { useState } from "react";
+import {
+  X,
+  CreditCard,
+  FileText,
+  ChevronRight,
+  PlusCircle,
+  Subscript,
+  Loader,
+} from "lucide-react";
 import Illustration from "../assets/manarge-subscription-img.png";
 import Transactions from "../assets/transactions.png";
-import SubscriptionPauseModal from './SubscriptionPauseModal';
-import { AccountsPage } from './../pages/AccountsPage';
-import TransactionHistory from '@/pages/TransectionHistory';
-import { useNavigate } from 'react-router-dom';
+import SubscriptionPauseModal from "./SubscriptionPauseModal";
+import { AccountsPage } from "./../pages/AccountsPage";
+import TransactionHistory from "@/pages/TransectionHistory";
+import { useNavigate } from "react-router-dom";
 
 interface ManageSubscriptionModalProps {
   isOpen: boolean;
@@ -16,7 +24,9 @@ interface ManageSubscriptionModalProps {
   onAddCoins?: () => void;
 }
 
-export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = ({
+export const ManageSubscriptionModal: React.FC<
+  ManageSubscriptionModalProps
+> = ({
   isOpen,
   onClose,
   onUpdatePayment,
@@ -28,38 +38,40 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
   const [showTransactions, setShowTransactions] = useState(false);
   const [showManageSubscription, setShowManageSubscription] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [loadingAction, setLoadingAction] = useState<string>('');
+  const [loadingAction, setLoadingAction] = useState<string>("");
   const navigate = useNavigate();
-
 
   if (!isOpen) return null;
 
-  const handleAction = async (action: () => void | Promise<void>, actionName: string) => {
+  const handleAction = async (
+    action: () => void | Promise<void>,
+    actionName: string
+  ) => {
     try {
       setLoadingAction(actionName);
       setIsLoading(true);
       await action();
     } finally {
       setIsLoading(false);
-      setLoadingAction('');
+      setLoadingAction("");
     }
   };
 
   const onViewInvoices = () => {
     setShowManageSubscription(false);
     setShowTransactions(true);
-  }
+  };
 
   const _onClose = () => {
     setShowManageSubscription(false);
     setShowTransactions(false);
     onClose();
     setIsModalOpen(false);
-  }
+  };
 
   const LoadingOverlay = () => {
     if (!isLoading) return null;
-    
+
     return (
       <div className="absolute inset-0 bg-white/80 backdrop-blur-[1px] z-50 flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
@@ -79,16 +91,15 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
         onClick={onClose}
         aria-hidden
       />
-      <SubscriptionPauseModal 
+      <SubscriptionPauseModal
         isVisible={isModalOpen}
         onClose={() => {
           setIsModalOpen(false);
-               _onClose();
+          _onClose();
         }}
         onCancel={() => {
           onCancelSubscription && onCancelSubscription();
           setIsModalOpen(false);
-     
         }}
         onPause={() => {}}
       />
@@ -108,7 +119,7 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
           {/* Right: Actions */}
           <div className="md:w-1/2 p-4 z-10 flex flex-grow flex-col ">
             {/* Loading Overlay */}
-            
+
             {/* Close button as a purple circle in top-right */}
             <button
               onClick={_onClose}
@@ -152,7 +163,6 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
                   icon: <PlusCircle className="w-4 h-4" />,
                 },
               ].map((action) => {
-                const isSelected = selected === action.key;
                 const commonClasses =
                   "w-full flex items-center justify-between py-2 px-3 rounded-md text-md font-medium transition-all hover:bg-[#d7d7fc] text-[#7650e3]";
 
@@ -164,14 +174,13 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
                     key={action.key}
                     onClick={async () => {
                       setSelected(action.key);
-                      // Define action and message based on key
                       let actionFn: () => void | Promise<void>;
                       let actionMessage: string;
-                      
+
                       switch (action.key) {
                         case "update":
                           actionFn = () => {
-                            onUpdatePayment?.()
+                            onUpdatePayment?.();
                             setIsModalOpen(false);
                             navigate("/pricing");
                           };
@@ -192,7 +201,7 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
                         default:
                           return;
                       }
-                      
+
                       await handleAction(actionFn, actionMessage);
                     }}
                     className={`${commonClasses} ${buttonClass}`}
@@ -208,41 +217,43 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
           </div>
         </div>
       </div>
-    {showTransactions &&  <div className="absolute w-full md:max-w-3xl lg:max-w-5xl md:rounded-2xl overflow-hidden shadow-2xl bg-white h-full md:h-[60vh] z-50">
-        <div className="flex flex-col md:flex-row  md:h-fit">
-          {/* Left: Illustration */}
-          <div className=" bg-[#7650e3] p-0 flex items-center justify-center h-[30vh] md:h-auto md:w-1/2">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={Transactions}
-              alt="Manage subscription illustration"
-              className="w-full h-full object-contain md:p-20 rounded-2xl object-bottom"
-            />
-          </div>
-
-          {/* Right: Actions */}
-          <div className="md:w-1/2 p-4 z-10 flex flex-grow flex-col">
-            {/* Close button as a purple circle in top-right */}
-            <button
-              onClick={_onClose}
-              className="absolute right-4 top-4 w-7 h-7 z-1000 rounded-full border border-[#7650e3] flex items-center justify-center text-[#7650e3] bg-[#F7F5FB] transition-shadow border-[3px]"
-              aria-label="Close manage subscription dialog"
-            >
-              <X className="w-5 h-5  color-[#7650e3] stroke-[#7650e3] stroke-[3] " />
-            </button>
-
-            <div className="">
-              <h3 className="text-xl font-semibold text-[#7650e3]">
-                View Invoices
-              </h3>
+      {showTransactions && (
+        <div className="absolute w-full md:max-w-3xl lg:max-w-5xl md:rounded-2xl overflow-hidden shadow-2xl bg-white h-full md:h-[60vh] z-50">
+          <div className="flex flex-col md:flex-row  md:h-fit">
+            {/* Left: Illustration */}
+            <div className=" bg-[#7650e3] p-0 flex items-center justify-center h-[30vh] md:h-auto md:w-1/2">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={Transactions}
+                alt="Manage subscription illustration"
+                className="w-full h-full object-contain md:p-20 rounded-2xl object-bottom"
+              />
             </div>
 
-            <div className="space-y-3 mt-6 h-[58vh] overflow-y-auto">
-              <TransactionHistory />
+            {/* Right: Actions */}
+            <div className="md:w-1/2 p-4 z-10 flex flex-grow flex-col">
+              {/* Close button as a purple circle in top-right */}
+              <button
+                onClick={_onClose}
+                className="absolute right-4 top-4 w-7 h-7 z-1000 rounded-full border border-[#7650e3] flex items-center justify-center text-[#7650e3] bg-[#F7F5FB] transition-shadow border-[3px]"
+                aria-label="Close manage subscription dialog"
+              >
+                <X className="w-5 h-5  color-[#7650e3] stroke-[#7650e3] stroke-[3] " />
+              </button>
+
+              <div className="">
+                <h3 className="text-xl font-semibold text-[#7650e3]">
+                  View Invoices
+                </h3>
+              </div>
+
+              <div className="space-y-3 mt-6 h-[58vh] overflow-y-auto">
+                <TransactionHistory />
+              </div>
             </div>
           </div>
         </div>
-      </div>}
+      )}
     </div>
   );
 };

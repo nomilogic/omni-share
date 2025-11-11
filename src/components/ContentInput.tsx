@@ -2008,7 +2008,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       {!showTemplateEditor && (
         <>
           <div className="text-left mb-4">
-            <h2 className="text-3xl md:font-bold font-semibold theme-text-primary mb-1  leading-8">
+            <h2 className="text-3xl md:font-bold font-semibold theme-text-primary mb-2  leading-8">
               Create auto‑optimize social posts with AI
             </h2>
             <p className="text-sm text-slate-500 md:font-semibold font-medium ">

@@ -264,12 +264,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
+  const pusher = new Pusher("5a8f542f7e4c1f452d53", {
+    cluster: "ap2",
+    forceTLS: true,
+  });
 
-  // Initialize auth on app start
+  const fetchBalance = async () => {
+    try {
+      const response = await API.userBalance();
+      const { data } = response;
+      dispatch({ type: "SET_BALANCE", payload: data?.data ?? 0 });
+    } catch (error) {
+      console.error("Error fetching wallet balance:", error);
+    }
+  };
+
   useEffect(() => {
     const initializeAuth = async () => {
+      console.log("initializeAuth");
       try {
-        // Check if token is expired (persistent storage)
         const persistentToken = localStorage.getItem("auth_token");
         const expiry = localStorage.getItem("auth_token_expiry");
         const remember = localStorage.getItem("auth_remember");
@@ -292,118 +305,30 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
         }
 
         const authResult = await getCurrentUser();
-
-        if (!authResult || !authResult.user) {
+        if (!authResult?.user) {
           dispatch({ type: "SET_LOADING", payload: false });
           return;
         }
 
-        if (authResult && authResult.user) {
-          dispatch({ type: "SET_USER", payload: authResult.user });
+        dispatch({ type: "SET_USER", payload: authResult.user });
 
-          // If the auth response already includes a profile, apply it and avoid
-          // the 'auto-skip onboarding' fallback below which would overwrite
-          // an explicit isOnboarding flag.
-          let profileFromAuth = false;
-          try {
-            const profile = authResult.user?.profile;
-            console.log(
-              "AppContext.initializeAuth found profile in authResult.user:",
-              profile
-            );
-            if (profile) {
-              profileFromAuth = true;
-              dispatch({ type: "SET_SELECTED_PROFILE", payload: profile });
-              if (profile.plan) {
-                dispatch({ type: "SET_USER_PLAN", payload: profile.plan });
-              }
-              if (profile.type === "business") {
-                dispatch({ type: "SET_BUSINESS_ACCOUNT", payload: true });
-              }
-              if (typeof (profile as any).isOnboarding !== "undefined") {
-                // Backend sends `isOnboarding: false` when onboarding is required
-                dispatch({
-                  type: "SET_ONBOARDING_COMPLETE",
-                  payload: (profile as any).isOnboarding,
-                });
-              }
-            }
-          } catch (e) {
-            console.error("Error applying profile from auth result", e);
+        const profile = authResult.user.profile;
+        if (profile) {
+          dispatch({ type: "SET_SELECTED_PROFILE", payload: profile });
+          dispatch({ type: "SET_USER_PLAN", payload: profile.plan || "free" });
+          if (profile.type === "business") {
+            dispatch({ type: "SET_BUSINESS_ACCOUNT", payload: true });
           }
 
-          try {
-            const profileResponse = await API.getProfile();
-
-            if (profileResponse.data) {
-              const existingProfile = profileResponse.data.data;
-              if (
-                existingProfile &&
-                existingProfile.name &&
-                existingProfile.plan
-              ) {
-                const isProfileComplete =
-                  checkProfileCompletion(existingProfile);
-
-                dispatch({
-                  type: "SET_SELECTED_PROFILE",
-                  payload: existingProfile,
-                });
-                dispatch({
-                  type: "SET_USER_PLAN",
-                  payload: existingProfile.plan,
-                });
-                dispatch({ type: "SET_TIER_SELECTED", payload: true });
-                dispatch({
-                  type: "SET_PROFILE_SETUP",
-                  payload: isProfileComplete,
-                });
-                dispatch({
-                  type: "SET_ONBOARDING_COMPLETE",
-                  payload: isProfileComplete,
-                });
-
-                if (existingProfile.type === "business") {
-                  dispatch({ type: "SET_BUSINESS_ACCOUNT", payload: true });
-                }
-
-                console.log("User has complete setup, going to dashboard");
-                return;
-              } else if (existingProfile && existingProfile.plan) {
-                // User has tier selected but no profile setup
-                dispatch({
-                  type: "SET_USER_PLAN",
-                  payload: existingProfile.plan,
-                });
-                dispatch({ type: "SET_TIER_SELECTED", payload: true });
-                dispatch({ type: "SET_PROFILE_SETUP", payload: false });
-                console.log("User has tier selected but needs profile setup");
-                return;
-              }
-            } else if (profileResponse.status === 404) {
-              // Profile not found - user is completely new
-              console.log(
-                "Profile not found - new user needs tier selection and profile setup"
-              );
-            }
-          } catch (error) {
-            console.log("Profile check failed:", error);
-          }
-
-          // New user - only apply the auto-skip onboarding fallback if we did
-          // not already get a profile from the auth response or the profile API.
-          if (!profileFromAuth) {
-            dispatch({ type: "SET_USER_PLAN", payload: "free" });
-            dispatch({ type: "SET_TIER_SELECTED", payload: true });
-            dispatch({ type: "SET_PROFILE_SETUP", payload: true });
-            dispatch({ type: "SET_ONBOARDING_COMPLETE", payload: true });
-            console.log(
-              "New user - automatically set to free plan, skipping onboarding"
-            );
-          }
+          const isProfileComplete = checkProfileCompletion(profile);
+          dispatch({ type: "SET_TIER_SELECTED", payload: true });
+          dispatch({ type: "SET_PROFILE_SETUP", payload: isProfileComplete });
+          dispatch({
+            type: "SET_ONBOARDING_COMPLETE",
+            payload: isProfileComplete,
+          });
         }
       } catch (error) {
-        console.error("Error initializing auth:", error);
         dispatch({
           type: "SET_ERROR",
           payload: "Failed to initialize authentication",
@@ -417,24 +342,45 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   useEffect(() => {
-    if (!state.user?.id) return; // Wait for user to be available
+    if (!state.user?.id) return;
 
-    const fetchBalance = async () => {
-      try {
-        const response = await API.userBalance();
-        const { data } = response;
-        dispatch({ type: "SET_BALANCE", payload: data?.data ?? 0 });
-      } catch (error) {
-        console.error("Error fetching wallet balance:", error);
+    const channel = pusher.subscribe(`user-${state.user.id}`);
+
+    const handleSubscriptionSuccess = async (data: any) => {
+      if (data.success) {
+        try {
+          const updatedAuthResult: any = await getCurrentUser();
+          dispatch({ type: "SET_USER", payload: updatedAuthResult.user });
+          if (updatedAuthResult?.user?.profile) {
+            const updatedProfile = updatedAuthResult.user.profile;
+
+            dispatch({ type: "SET_SELECTED_PROFILE", payload: updatedProfile });
+            if (updatedProfile.plan) {
+              dispatch({ type: "SET_USER_PLAN", payload: updatedProfile.plan });
+            }
+            if (updatedProfile.type === "business") {
+              dispatch({ type: "SET_BUSINESS_ACCOUNT", payload: true });
+            }
+          }
+          fetchBalance();
+        } catch (error) {
+          console.error("Error refreshing profile after subscription:", error);
+        }
       }
     };
 
-    fetchBalance();
+    channel.bind("subscription-success", handleSubscriptionSuccess);
 
-    const pusher = new Pusher("5a8f542f7e4c1f452d53", {
-      cluster: "ap2",
-      forceTLS: true,
-    });
+    return () => {
+      channel.unbind("subscription-success", handleSubscriptionSuccess);
+      pusher.unsubscribe(`user-${state.user.id}`);
+    };
+  }, [state.user?.id]);
+
+  useEffect(() => {
+    if (!state.user?.id) return;
+
+    fetchBalance();
 
     const userId = state.user.id;
     const channel = pusher.subscribe(`wallet-${userId}`);

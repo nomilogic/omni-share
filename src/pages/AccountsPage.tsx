@@ -237,204 +237,193 @@ export const AccountsPage: React.FC = () => {
   };
 
   return (
-    <div className=" ">
-      {/* Header */}
-
-      {/* Main Content */}
-      <div className="max-w-full mx-auto px-0 py-2">
-        <div className="mb-0">
-          <h2 className="text-2xl font-semibold theme-text-primary mb-1">
+    <div className="max-w-full mx-auto px-0 py-2 flex flex-col gap-y-3">
+      <div className="flex flex-col gap-y-3">
+        <div className="">
+          <h2 className="text-2xl font-bold theme-text-primary mb-1">
             Connect Your Accounts
           </h2>
-          <p className="text-sm theme-text-primary mb-1">
+          <p className="text-sm text-slate-500 ">
             Connect your social media accounts to enable publishing across all
             platforms.
           </p>
-
-          {/* Connection Status Summary */}
-          <div className="mb-2 p-2 bg-blue-50 border border-blue-200 rounded-md">
-            <p className="text-sm text-blue-800">
-              <span className="font-medium">{connectedPlatforms.length}</span>{" "}
-              of <span className="font-medium">{ALL_PLATFORMS.length}</span>{" "}
-              platforms connected
-            </p>
-          </div>
-
-          {/* Connection Alert */}
-          {connectedPlatforms.length === 0 && (
-            <div className="mb-8 p-4 theme-bg-quaternary rounded-md border border-purple-200">
-              <div className="flex items-start gap-3">
-                <div className="w-5 h-5">
-                  <Icon
-                    name="connect-accounts"
-                    size={60}
-                    className="inline mr-1"
-                  />
-                </div>
-                <div>
-                  <h3 className="font-semibold theme-text-secondary mb-1">
-                    No Accounts Connected
-                  </h3>
-                  <p className="text-sm theme-text-secondary leading-relaxed">
-                    Connect your social media accounts to start publishing
-                    content across multiple platforms.
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
 
-        {/* Platforms List */}
-        <div className="space-y-3 mb-2">
-          {ALL_PLATFORMS.map((platform) => {
-            const isConnected = connectedPlatforms.includes(platform);
-            const isConnecting = connectingPlatforms.includes(platform);
-
-            return (
-              <div
-                key={platform}
-                className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-md hover:bg-gray-50 transition-colors"
-              >
-                <div className="flex items-center gap-2">
-                  {/* Platform Icon */}
-                  <div
-                    className={`w-12 h-12 rounded-full flex items-center justify-center text-white ${getPlatformIconBackgroundColors(
-                      platform
-                    )}`}
-                  >
-                    {renderPlatformIcon(platform)}
-                  </div>
-
-                  {/* Platform Info */}
-                  <div>
-                    <h4 className="font-medium text-slate-900">
-                      {getPlatformDisplayName(platform)}
-                    </h4>
-                    <p
-                      className={`text-sm ${
-                        isConnected ? "text-green-600" : "text-red-600"
-                      }`}
-                    >
-                      {isConnected ? "Connected" : "Not Connected"}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Platform Controls */}
-                <div className="flex items-center gap-3">
-                  {isConnected ? (
-                    <>
-                      <button
-                        onClick={() => handleConnect(platform)}
-                        disabled={isConnecting}
-                        className="p-2 text-slate-500 hover:text-blue-600 disabled:opacity-50 rounded-md hover:bg-gray-100"
-                        title="Refresh connection"
-                      >
-                        <RefreshCw className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => handleDisconnect(platform)}
-                        disabled={isConnecting}
-                        className="p-2 text-slate-500 hover:text-red-600 disabled:opacity-50 rounded-md hover:bg-gray-100"
-                        title="Disconnect"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                      <div className="flex items-center gap-2 px-3 py-1 rounded-full text-green-800 text-sm font-medium">
-                        <svg
-                          className="w-6 h-6"
-                          fill="#4caf50"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                        {/* <span>CONNECTED</span> */}
-                      </div>
-                    </>
-                  ) : (
-                    <button
-                      onClick={() => handleConnect(platform)}
-                      disabled={isConnecting}
-                      className="flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed theme-bg-quaternary theme-text-secondary hover:theme-bg-tertiary"
-                    >
-                      {!isConnecting && (
-                        <Icon name="connect-accounts" size={14} className="" />
-                      )}
-                      {isConnecting ? (
-                        <>
-                          <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
-                          <span>CONNECTING...</span>
-                        </>
-                      ) : (
-                        "CONNECT"
-                      )}
-                    </button>
-                  )}
-                </div>
-              </div>
-            );
-          })}
+        <div className=" p-2 bg-blue-50 border border-blue-200 rounded-md">
+          <p className="text-sm text-blue-800">
+            <span className="font-medium">{connectedPlatforms.length}</span> of{" "}
+            <span className="font-medium">{ALL_PLATFORMS.length}</span>{" "}
+            platforms connected
+          </p>
         </div>
 
-        {/* Platform-specific options */}
-        {connectedPlatforms.includes("facebook") &&
-          facebookPages.length > 0 && (
-            <div className="mb-6 p-2 bg-blue-50 border border-blue-200 rounded-md">
-              <h4 className="font-medium text-blue-900 mb-2">
-                Facebook Page Selection
-              </h4>
-              <p className="text-blue-700 text-sm mb-3">
-                Choose your default Facebook page for publishing:
-              </p>
-              <select
-                value={selectedFacebookPage}
-                onChange={(e) => setSelectedFacebookPage(e.target.value)}
-                className="w-full p-3 border border-blue-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                {facebookPages.map((page) => (
-                  <option key={page.id} value={page.id}>
-                    {page.name} ({page.category})
-                  </option>
-                ))}
-              </select>
+        {connectedPlatforms.length === 0 && (
+          <div className=" p-4 theme-bg-quaternary rounded-md border border-purple-200">
+            <div className="flex items-start gap-3">
+              <div className="w-5 h-5 md:block hidden">
+                <Icon
+                  name="connect-accounts"
+                  size={60}
+                  className="inline mr-1"
+                />
+              </div>
+              <div>
+                <h3 className="font-semibold theme-text-secondary mb-1">
+                  No Accounts Connected
+                </h3>
+                <p className="text-sm theme-text-secondary leading-relaxed">
+                  Connect your social media accounts to start publishing content
+                  across multiple platforms.
+                </p>
+              </div>
             </div>
-          )}
-
-        {connectedPlatforms.includes("youtube") &&
-          youtubeChannels.length > 0 && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
-              <h4 className="font-medium text-red-900 mb-2">
-                YouTube Channel Selection
-              </h4>
-              <p className="text-red-700 text-sm mb-3">
-                Choose your default YouTube channel for publishing:
-              </p>
-              <select
-                value={selectedYoutubeChannel}
-                onChange={(e) => setSelectedYoutubeChannel(e.target.value)}
-                className="w-full p-3 border border-red-300 rounded-md focus:ring-2 focus:ring-red-500 focus:border-transparent"
-              >
-                {youtubeChannels.map((channel) => (
-                  <option key={channel.id} value={channel.id}>
-                    {channel.snippet.title}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
-        {/* Error Messages */}
-        {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
-            <p className="text-red-800 text-sm">{error}</p>
           </div>
         )}
       </div>
+
+      <div className="flex flex-col gap-y-3 mb-2">
+        {ALL_PLATFORMS.map((platform) => {
+          const isConnected = connectedPlatforms.includes(platform);
+          const isConnecting = connectingPlatforms.includes(platform);
+
+          return (
+            <div
+              key={platform}
+              className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-md hover:bg-gray-50 transition-colors"
+            >
+              <div className="flex items-center gap-2">
+                {/* Platform Icon */}
+                <div
+                  className={`w-12 h-12 rounded-full flex items-center justify-center text-white ${getPlatformIconBackgroundColors(
+                    platform
+                  )}`}
+                >
+                  {renderPlatformIcon(platform)}
+                </div>
+
+                {/* Platform Info */}
+                <div>
+                  <h4 className="font-medium text-slate-900">
+                    {getPlatformDisplayName(platform)}
+                  </h4>
+                  <p
+                    className={`text-sm ${
+                      isConnected ? "text-green-600" : "text-red-600"
+                    }`}
+                  >
+                    {isConnected ? "Connected" : "Not Connected"}
+                  </p>
+                </div>
+              </div>
+
+              {/* Platform Controls */}
+              <div className="flex items-center gap-3">
+                {isConnected ? (
+                  <>
+                    <button
+                      onClick={() => handleConnect(platform)}
+                      disabled={isConnecting}
+                      className="p-2 text-slate-500 hover:text-blue-600 disabled:opacity-50 rounded-md hover:bg-gray-100"
+                      title="Refresh connection"
+                    >
+                      <RefreshCw className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDisconnect(platform)}
+                      disabled={isConnecting}
+                      className="p-2 text-slate-500 hover:text-red-600 disabled:opacity-50 rounded-md hover:bg-gray-100"
+                      title="Disconnect"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                    <div className="flex items-center gap-2 px-3 py-1 rounded-full text-green-800 text-sm font-medium">
+                      <svg
+                        className="w-6 h-6"
+                        fill="#4caf50"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      {/* <span>CONNECTED</span> */}
+                    </div>
+                  </>
+                ) : (
+                  <button
+                    onClick={() => handleConnect(platform)}
+                    disabled={isConnecting}
+                    className="flex items-center gap-2 px-3 py-1 capitalize rounded-md bg-purple-600 text-sm font-medium text-white"
+                  >
+                    {isConnecting ? (
+                      <>
+                        <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+                        <span>Connecting...</span>
+                      </>
+                    ) : (
+                      "Connect"
+                    )}
+                  </button>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Platform-specific options */}
+      {connectedPlatforms.includes("facebook") && facebookPages.length > 0 && (
+        <div className="mb-6 p-2 bg-blue-50 border border-blue-200 rounded-md">
+          <h4 className="font-medium text-blue-900 mb-2">
+            Facebook Page Selection
+          </h4>
+          <p className="text-blue-700 text-sm mb-3">
+            Choose your default Facebook page for publishing:
+          </p>
+          <select
+            value={selectedFacebookPage}
+            onChange={(e) => setSelectedFacebookPage(e.target.value)}
+            className="w-full p-3 border border-blue-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          >
+            {facebookPages.map((page) => (
+              <option key={page.id} value={page.id}>
+                {page.name} ({page.category})
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
+      {connectedPlatforms.includes("youtube") && youtubeChannels.length > 0 && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
+          <h4 className="font-medium text-red-900 mb-2">
+            YouTube Channel Selection
+          </h4>
+          <p className="text-red-700 text-sm mb-3">
+            Choose your default YouTube channel for publishing:
+          </p>
+          <select
+            value={selectedYoutubeChannel}
+            onChange={(e) => setSelectedYoutubeChannel(e.target.value)}
+            className="w-full p-3 border border-red-300 rounded-md focus:ring-2 focus:ring-red-500 focus:border-transparent"
+          >
+            {youtubeChannels.map((channel) => (
+              <option key={channel.id} value={channel.id}>
+                {channel.snippet.title}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
+      {/* Error Messages */}
+      {error && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
+          <p className="text-red-800 text-sm">{error}</p>
+        </div>
+      )}
     </div>
   );
 };
