@@ -346,32 +346,30 @@ export const PublishPosts: React.FC<PublishProps> = ({
 
       {/* Main Content */}
       <div className="lg:px-4 px-3 lg:py-8 py-4">
-        <h1 className="text-3xl font-bold theme-text-primary mb-1">
+        <h2 className="text-2xl font-bold theme-text-primary mb-1">
           Publish Your Posts
-        </h1>
-        <p className="text-slate-500 md:mb-8 mb-4 leading-relaxed">
+        </h2>
+        <p className="text-sm text-slate-500 ">
           Connect your social media accounts and publish your AI-generated posts
           directly.
         </p>
 
         {/* Connection Status Alert */}
         {posts.some((post) => !connectedPlatforms.includes(post.platform)) && (
-          <div className="md:mb-8 mb-4 p-4 theme-bg-quaternary rounded-md border border-purple-200">
+          <div className=" p-4 theme-bg-quaternary rounded-md border border-purple-200">
             <div className="flex items-start gap-4">
-              <div className="w-5 h-5 md:block hidden">
-                <Icon
-                  name="connect-accounts"
-                  size={60}
-                  className="inline mr-1"
-                />
-              </div>
+              <Icon
+                name="connect-accounts"
+                size={20}
+                className="inline mr-1 mt-1"
+              />
               <div>
-                <h3 className="text-2xl font-semibold theme-text-primary mb-1">
-                  Connect Your Accounts
+                <h3 className="font-semibold theme-text-secondary mb-1">
+                  No Accounts Connected
                 </h3>
-                <p className="text-sm text-slate-500 mb-1">
-                  You need to connect your social media accounts before
-                  publishing. Click the Connect buttons below.
+                <p className="text-sm theme-text-secondary leading-relaxed">
+                  Connect your social media accounts to start publishing content
+                  across multiple platforms.
                 </p>
               </div>
             </div>
