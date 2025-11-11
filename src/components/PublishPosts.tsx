@@ -388,10 +388,10 @@ export const PublishPosts: React.FC<PublishProps> = ({
                 />
               </div>
               <div>
-                <h3 className="text-2xl font-semibold theme-text-primary mb-1">
+                <h3 className="text-2xl font-bold theme-text-primary mb-1">
                   Connect Your Accounts
                 </h3>
-                <p className="text-sm theme-text-primary mb-1">
+                <p className="text-sm text-slate-500 mb-1">
                   You need to connect your social media accounts before
                   publishing. Click the Connect buttons below.
                 </p>

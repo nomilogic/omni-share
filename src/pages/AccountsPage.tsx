@@ -240,10 +240,10 @@ export const AccountsPage: React.FC = () => {
     <div className="max-w-full mx-auto px-0 py-2 flex flex-col gap-y-3">
       <div className="flex flex-col gap-y-3">
         <div className="">
-          <h2 className="text-2xl font-semibold theme-text-primary mb-1">
+          <h2 className="text-2xl font-bold theme-text-primary mb-1">
             Connect Your Accounts
           </h2>
-          <p className="text-sm theme-text-primary ">
+          <p className="text-sm text-slate-500 ">
             Connect your social media accounts to enable publishing across all
             platforms.
           </p>
@@ -260,7 +260,7 @@ export const AccountsPage: React.FC = () => {
         {connectedPlatforms.length === 0 && (
           <div className=" p-4 theme-bg-quaternary rounded-md border border-purple-200">
             <div className="flex items-start gap-3">
-              <div className="w-5 h-5">
+              <div className="w-5 h-5 md:block hidden">
                 <Icon
                   name="connect-accounts"
                   size={60}
@@ -355,18 +355,15 @@ export const AccountsPage: React.FC = () => {
                   <button
                     onClick={() => handleConnect(platform)}
                     disabled={isConnecting}
-                    className="flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed theme-bg-quaternary theme-text-secondary hover:theme-bg-tertiary"
+                    className="flex items-center gap-2 px-3 py-1 capitalize rounded-md bg-purple-600 text-sm font-medium text-white"
                   >
-                    {!isConnecting && (
-                      <Icon name="connect-accounts" size={14} className="" />
-                    )}
                     {isConnecting ? (
                       <>
                         <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
-                        <span>CONNECTING...</span>
+                        <span>Connecting...</span>
                       </>
                     ) : (
-                      "CONNECT"
+                      "Connect"
                     )}
                   </button>
                 )}
