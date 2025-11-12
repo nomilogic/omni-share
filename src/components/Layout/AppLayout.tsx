@@ -3,14 +3,9 @@ import { ResizeContext } from "../../context/ResizeContext";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Home,
-  PenTool,
-  Calendar,
   Settings,
-  Bell,
-  Search,
   Menu,
   X,
-  Target,
   LogOut,
   User,
   Building2,
@@ -19,21 +14,16 @@ import {
   ChevronDown,
   ChevronUp,
   Plus,
-  HistoryIcon,
-  Coins,
 } from "lucide-react";
 import { useAppContext } from "../../context/AppContext";
 import { useLoading } from "../../context/LoadingContext";
 import { useSubscriptionModal } from "../../context/SubscriptionModalContext";
-import { NotificationCenter } from "../NotificationCenter";
-import { ThemeSelector } from "../ThemeSelector";
-import { useTheme } from "../../hooks/useTheme";
+
 import { useUnreadPosts } from "../../hooks/useUnreadPosts";
 import Icon from "../Icon";
 import { WalletBalance } from "../WalletBalance";
 import PreloaderOverlay from "../PreloaderOverlay";
 import { ManageSubscriptionModal } from "../ManageSubscriptionModal";
-import { ContentTemplate } from "./../../lib/postHistoryService";
 import API from "@/services/api";
 import logoText from "../../assets/logo-text.svg";
 import LogoWhiteText from "../../assets/logo-white-text.svg";
@@ -46,7 +36,6 @@ interface AppLayoutProps {
 export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const { user, logout, balance, refreshUser } = useAppContext();
 
-  console.log(user);
   const { loadingState } = useLoading();
   const { unreadCount, markAllAsRead: markAllUnreadAsRead } = useUnreadPosts();
   const location = useLocation();
@@ -162,11 +151,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       <div className=" ">
         <div className="relative z-10">
           <div
-            className={`fixed inset-y-0 left-0 z-50 w-full md:w-[17%] theme-bg-trinary border-r border-white/10 transform ${
+            className={`fixed inset-y-0 left-0 z-50 w-full xl:w-[18%] sm:w-[40%] theme-bg-trinary border-r border-white/10 transform ${
               isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
             } transition-transform duration-300 ease-in-out`}
           >
-            {/* Close button */}
             <div className="flex items-center justify-between border-b border-white/20 p-2 py-3 ">
               <span className="flex items-center">
                 <Icon

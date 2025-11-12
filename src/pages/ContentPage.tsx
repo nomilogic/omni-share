@@ -249,12 +249,6 @@ export const ContentPage: React.FC = () => {
     <div className="  ">
       <div className="">
         <div className="w-full mx-auto">
-          {/* <ProgressBar
-            currentStep={getCurrentStep()}
-            totalSteps={4}
-            stepLabels={stepLabels}
-          />
- */}
           <Routes>
             <Route
               index
