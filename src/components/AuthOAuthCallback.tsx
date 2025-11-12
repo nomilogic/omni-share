@@ -173,7 +173,7 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
           {status === "error" && "Authentication Failed"}
         </h2>
 
-        <p className="theme-text-secondary text-gray-500">{message}</p>
+        <p className=" text-gray-500">{message}</p>
 
         {status === "success" && (
           <div className="mt-4 text-sm theme-text-secondary">

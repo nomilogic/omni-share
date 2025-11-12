@@ -454,7 +454,7 @@ export const PricingPage: React.FC = () => {
               return (
                 <div
                   key={addon.id}
-                  className="rounded-md border-3 border-gray-200 shadow-xl transform transition-all relative w-full pt-3"
+                  className="rounded-md border-3 border-gray-200 shadow-md transform transition-all relative w-full pt-3"
                 >
                   <div className="text-left font-medium text-3xl px-5 py-2  pb-[4rem]">
                     <div className="flex items-center gap-2 mb-1">
@@ -487,7 +487,7 @@ export const PricingPage: React.FC = () => {
                     />
                   </div>
 
-                  <div className="flex justify-between theme-bg-quaternary items-center px-5  py-2 rounded-b-xl">
+                  <div className="flex justify-between theme-bg-quaternary items-center px-5  py-2 rounded-b-md">
                     <p className="text-center text-2xl font-bold text-[#7650e3] ">
                       ${addon.amount.toLocaleString()}
                     </p>
@@ -783,17 +783,6 @@ export const PricingPage: React.FC = () => {
               </div>
               <p className="text-xs mt-2">Includes GST of $0.00.</p>
             </div>
-
-            {selectedPlan.features?.length > 0 && (
-              <ul className="mb-5 text-sm space-y-2">
-                {selectedPlan.features.map((feature: any, index: any) => (
-                  <li key={index} className="flex items-start gap-2">
-                    <Check className="w-4 h-4 text-green-500 shrink-0 mt-[2px]" />
-                    <span className="text-purple-600">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
 
             {activePackage?.package?.tier !== "free" ? (
               <div className="mb-6 text-sm rounded-md text-purple-600 p-3">
