@@ -246,7 +246,7 @@ export const PricingPage: React.FC = () => {
 
   return (
     <div className="bg-white w-full h-full rounded-md shadow-md px-5 py-10 min-h-[70vh] transition-colors ">
-      <div className="flex justify-between items-center mb-10 border-b border-gray-200 ">
+      <div className="flex justify-between items-center mb-5 border-b border-gray-200 ">
         <div className="flex flex-1">
           <button
             onClick={() => handleTabChange("")}

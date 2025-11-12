@@ -76,7 +76,7 @@ export const SettingsPage: React.FC = () => {
     <div className="theme-card-bg">
       <div className="mx-auto px-4 py-4 space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          <div className="lg:col-span-1 border border-slate-100 bg-white shadow-sm rounded-md p-2">
+          <div className="lg:col-span-1 bg-white/20 shadow-sm rounded-md ">
             <nav className="space-y-2">
               {settingsNavItems.map((item) => {
                 const Icon = item.icon;
@@ -99,7 +99,7 @@ export const SettingsPage: React.FC = () => {
           </div>
 
           <div className="lg:col-span-3">
-            <div className="theme-bg-card rounded-md shadow-sm border border-slate-100 bg-white lg:p-6 p-4 backdrop-blur-lg">
+            <div className="">
               {message.text && (
                 <div
                   className={`mb-6 p-4 rounded-md ${
@@ -331,7 +331,7 @@ export const SettingsPage: React.FC = () => {
                                 <h4 className="text-lg font-medium theme-text-primary">
                                   {item.title}
                                 </h4>
-                                <p className="theme-text-secondary text-sm">
+                                <p className="text-gray-500 text-sm">
                                   {item.desc}
                                 </p>
                               </div>

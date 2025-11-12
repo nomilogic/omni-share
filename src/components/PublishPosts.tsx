@@ -349,20 +349,15 @@ export const PublishPosts: React.FC<PublishProps> = ({
         <h2 className="text-2xl font-bold theme-text-primary mb-1">
           Publish Your Posts
         </h2>
-        <p className="text-sm text-slate-500 ">
+        <p className="text-sm text-slate-500">
           Connect your social media accounts and publish your AI-generated posts
           directly.
         </p>
 
         {/* Connection Status Alert */}
         {posts.some((post) => !connectedPlatforms.includes(post.platform)) && (
-          <div className=" p-4 theme-bg-quaternary rounded-md border border-purple-200">
+          <div className=" p-4 theme-bg-quaternary rounded-md border border-purple-200 my-3">
             <div className="flex items-start gap-4">
-              <Icon
-                name="connect-accounts"
-                size={20}
-                className="inline mr-1 mt-1"
-              />
               <div>
                 <h3 className="font-semibold theme-text-secondary mb-1">
                   No Accounts Connected

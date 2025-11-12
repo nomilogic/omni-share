@@ -260,11 +260,6 @@ export const AccountsPage: React.FC = () => {
         {connectedPlatforms.length === 0 && (
           <div className=" p-4 theme-bg-quaternary rounded-md border border-purple-200">
             <div className="flex items-start gap-4">
-              <Icon
-                name="connect-accounts"
-                size={20}
-                className="inline mr-1 mt-1"
-              />
               <div>
                 <h3 className="font-semibold theme-text-secondary mb-1">
                   No Accounts Connected

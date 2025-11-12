@@ -90,9 +90,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   const getCost = () => {
     if (!selectedPostType || !generationAmounts) return 0;
 
-    const textPrice = Number(generationAmounts["text"] || 100);
-    const imagePrice = Number(generationAmounts["image"] || 100);
-    const videoPrice = Number(generationAmounts["image"] || 100);
+    const textPrice = Number(generationAmounts["text"] || 0);
+    const imagePrice = Number(generationAmounts["image"] || 0);
+    const videoPrice = Number(generationAmounts["image"] || 0);
 
     switch (selectedPostType) {
       case "text":
@@ -3253,6 +3253,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                     <button
                       type="submit"
                       disabled={
+                        getCost() === 0 ||
                         !formData.prompt.trim() ||
                         !formData.selectedPlatforms?.length ||
                         isGeneratingBoth
