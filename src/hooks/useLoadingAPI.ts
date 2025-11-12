@@ -35,20 +35,22 @@ export const useLoadingAPI = () => {
       // Execute the API call
       const result = await apiCall();
 
-      // Show success message briefly if provided
+      // Show success message briefly if provided (for non-file-uploads only)
       if (options?.successMessage) {
         updateLoadingMessage(options.successMessage);
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        // Skip success message delay for file uploads to allow immediate cleanup
+        // await new Promise(resolve => setTimeout(resolve, 1500));
       }
 
       return result;
     } catch (error) {
       console.error('API call failed:', error);
       
-      // Show error message briefly if provided
+      // Show error message briefly if provided (for non-file-uploads only)
       if (options?.errorMessage) {
         updateLoadingMessage(options.errorMessage);
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        // Skip error message delay for file uploads to allow immediate cleanup
+        // await new Promise(resolve => setTimeout(resolve, 2000));
       }
       
       throw error; // Re-throw to allow caller to handle
@@ -198,49 +200,95 @@ export const useLoadingAPI = () => {
     options?: {
       canCancel?: boolean;
       onCancel?: () => void;
+      abortSignal?: AbortSignal;
     }
   ): Promise<T | null> => {
+    // Check if already aborted before even starting
+    if (options?.abortSignal?.aborted) {
+      console.log("Upload aborted before start");
+      options?.onCancel?.();
+      return null;
+    }
+
     const fileSizeText = fileSize ? ` (${(fileSize / 1024 / 1024).toFixed(1)}MB)` : '';
     const baseMessage = `Uploading ${fileName}${fileSizeText}`;
     
+    // Helper function for cancellable delays
+    const cancellableDelay = (ms: number): Promise<void> => {
+      return new Promise((resolve, reject) => {
+        // If already aborted, reject immediately
+        if (options?.abortSignal?.aborted) {
+          reject(new DOMException('Upload aborted', 'AbortError'));
+          return;
+        }
+
+        const timeoutId = setTimeout(resolve, ms);
+        
+        const abortHandler = () => {
+          clearTimeout(timeoutId);
+          reject(new DOMException('Upload aborted', 'AbortError'));
+        };
+        
+        options?.abortSignal?.addEventListener('abort', abortHandler);
+      });
+    };
+    
     return executeWithLoading(
       async () => {
-        // Simulate upload progress phases
-        updateLoadingProgress(5);
-        updateLoadingMessage(`${baseMessage} - Preparing file`);
-        
-        await new Promise(resolve => setTimeout(resolve, 300));
-        updateLoadingProgress(15);
-        updateLoadingMessage(`${baseMessage} - Connecting to server`);
-        
-        await new Promise(resolve => setTimeout(resolve, 200));
-        updateLoadingProgress(25);
-        updateLoadingMessage(`${baseMessage} - Uploading data`);
-        
-        // Execute the actual upload
-        const result = await uploadCall();
-        
-        updateLoadingProgress(85);
-        updateLoadingMessage(`${baseMessage} - Processing on server`);
-        
-        await new Promise(resolve => setTimeout(resolve, 400));
-        updateLoadingProgress(95);
-        updateLoadingMessage(`${baseMessage} - Finalizing`);
-        
-        await new Promise(resolve => setTimeout(resolve, 200));
-        updateLoadingProgress(100);
-        
-        return result;
+        try {
+          // Double-check abort status before proceeding
+          if (options?.abortSignal?.aborted) {
+            throw new DOMException('Upload aborted', 'AbortError');
+          }
+
+          // Simulate upload progress phases
+          updateLoadingProgress(5);
+          updateLoadingMessage(`${baseMessage} - Preparing file`);
+          
+          await cancellableDelay(300);
+          updateLoadingProgress(15);
+          updateLoadingMessage(`${baseMessage} - Connecting to server`);
+          
+          await cancellableDelay(200);
+          updateLoadingProgress(25);
+          updateLoadingMessage(`${baseMessage} - Uploading data`);
+          
+          // Execute the actual upload
+          const result = await uploadCall();
+          
+          updateLoadingProgress(85);
+          updateLoadingMessage(`${baseMessage} - Processing on server`);
+          
+          await cancellableDelay(400);
+          updateLoadingProgress(95);
+          updateLoadingMessage(`${baseMessage} - Finalizing`);
+          
+          await cancellableDelay(200);
+          updateLoadingProgress(100);
+          
+          return result;
+        } catch (error: any) {
+          // If abort was called, trigger the onCancel callback
+          if (error?.name === 'AbortError') {
+            console.log("Upload was aborted");
+            options?.onCancel?.();
+            hideLoading();
+            return null;
+          }
+          throw error;
+        }
       },
       baseMessage,
       {
         progress: 0,
         canCancel: options?.canCancel || true, // Allow cancellation by default
-        onCancel: options?.onCancel,
+        onCancel: () => {
+          options?.onCancel?.();
+        },
         successMessage: `${fileName} uploaded successfully!`
       }
     );
-  }, [executeWithLoading, updateLoadingProgress, updateLoadingMessage]);
+  }, [executeWithLoading, updateLoadingProgress, updateLoadingMessage, hideLoading]);
 
   /**
    * Simple loading wrapper for quick operations

@@ -85,6 +85,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     executeVideoThumbnailGeneration,
     executeImageGeneration,
     executeFileUpload,
+    showLoading,
+    hideLoading,
   } = useLoadingAPI();
 
   const getCost = () => {
@@ -171,6 +173,12 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   const thumbnailInputRef = useRef<HTMLInputElement>(null);
   const [customThumbnailUploading, setCustomThumbnailUploading] =
     useState(false);
+
+  // Upload abort controller for cancelling in-progress uploads
+  const uploadAbortControllerRef = useRef<AbortController | null>(null);
+  
+  // Track the current file being uploaded to prevent stale updates
+  const currentFileRef = useRef<File | null>(null);
 
   // State to hold pending post generation data
   const [pendingPostGeneration, setPendingPostGeneration] = useState<any>(null);
@@ -356,6 +364,10 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
   const handleFileUpload = async (file: File) => {
     console.log("📁 File upload started:", file.name, file.type, file.size);
+    
+    // Set this file as the current file being processed
+    currentFileRef.current = file;
+    
     console.log("Current formData state BEFORE:", {
       media: !!formData.media,
       mediaUrl: !!formData.mediaUrl,
@@ -496,6 +508,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     // Force a re-render to ensure file preview shows
     console.log("🔄 File should be visible now with preview");
 
+    // Show loading popup IMMEDIATELY to prevent mode switching during upload
+    showLoading(`Uploading ${file.name}...`, { canCancel: true });
+
     try {
       const userResult = await getCurrentUser();
       console.log("👤 User check result:", {
@@ -505,47 +520,76 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
       if (!userResult || !userResult.user) {
         console.warn("⚠️ User not authenticated, keeping local file only");
+        hideLoading();
         return;
       }
 
       console.log("🌍 Starting upload to server with enhanced preloader...");
 
-      // Use the enhanced file upload preloader
-      const mediaUrl = await executeFileUpload(
-        async () => {
-          return await uploadMedia(file, userResult.user.id);
-        },
-        file.name,
-        file.size,
-        {
-          canCancel: true,
-          onCancel: () => {
-            console.log("🛑 File upload cancelled by user");
-            // Optionally clean up the preview if user cancels
-            setFormData((prev) => {
-              if (prev.mediaUrl && prev.mediaUrl.startsWith("blob:")) {
-                URL.revokeObjectURL(prev.mediaUrl);
-              }
-              return {
-                ...prev,
-                media: undefined,
-                mediaUrl: undefined,
-                serverUrl: undefined,
-              };
-            });
-            // Clear related state
-            setTemplatedImageUrl("");
-            setSelectedTemplate(undefined);
-            setImageAnalysis("");
-            setVideoThumbnailUrl("");
-            setOriginalVideoFile(null);
-            setVideoAspectRatio(null);
-          },
-        }
-      );
+      // Create abort controller for this upload
+      const abortController = new AbortController();
+      uploadAbortControllerRef.current = abortController;
+      currentFileRef.current = file;
 
-      if (mediaUrl) {
+      try {
+        // Use the enhanced file upload preloader
+        const mediaUrl = await executeFileUpload(
+          async () => {
+            return await uploadMedia(file, userResult.user.id);
+          },
+          file.name,
+          file.size,
+          {
+            canCancel: true,
+            abortSignal: abortController.signal,
+            onCancel: () => {
+              console.log("🛑 File upload cancelled by user");
+              uploadAbortControllerRef.current = null;
+              // Optionally clean up the preview if user cancels
+              setFormData((prev) => {
+                if (prev.mediaUrl && prev.mediaUrl.startsWith("blob:")) {
+                  URL.revokeObjectURL(prev.mediaUrl);
+                }
+                return {
+                  ...prev,
+                  media: undefined,
+                  mediaUrl: undefined,
+                  serverUrl: undefined,
+                };
+              });
+              // Clear related state
+              setTemplatedImageUrl("");
+              setSelectedTemplate(undefined);
+              setImageAnalysis("");
+              setVideoThumbnailUrl("");
+              setOriginalVideoFile(null);
+              setVideoAspectRatio(null);
+            },
+          }
+        );
+
+        // If mediaUrl is null, upload was aborted - don't proceed
+        if (!mediaUrl) {
+          console.log("📛 Upload was aborted, skipping further processing");
+          uploadAbortControllerRef.current = null;
+          return;
+        }
+
+        // Double-check: if abort controller was cleared (mode was switched), don't add the image
+        if (!uploadAbortControllerRef.current) {
+          console.log("📛 Upload was aborted before completion, skipping image addition");
+          return;
+        }
+
+        // Triple-check: verify this is still the current file being processed
+        if (currentFileRef.current !== file) {
+          console.log("📛 A different file is now being processed, skipping old file update");
+          return;
+        }
+
         console.log("✅ Upload successful, URL:", mediaUrl);
+        uploadAbortControllerRef.current = null; // Clear abort controller after successful upload
+        currentFileRef.current = null; // Clear current file ref
 
         setFormData((prev) => {
           console.log("Adding URL to existing file. Previous:", {
@@ -576,41 +620,41 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         });
 
         // Final state check
-        setTimeout(() => {
-          console.log("Final state after upload process:", {
-            media: !!formData.media,
-            mediaUrl: !!formData.mediaUrl,
-            templatedImageUrl: !!templatedImageUrl,
-            videoThumbnailUrl: !!videoThumbnailUrl,
-            isVideo: isVideoFile(file),
-            showPreview: !!(formData.media || formData.mediaUrl),
-          });
+        console.log("Final state after upload process:", {
+          media: !!formData.media,
+          mediaUrl: !!formData.mediaUrl,
+          templatedImageUrl: !!templatedImageUrl,
+          videoThumbnailUrl: !!videoThumbnailUrl,
+          isVideo: isVideoFile(file),
+          showPreview: !!(formData.media || formData.mediaUrl),
+        });
 
-          // Note: Template editor will open when user clicks Generate Post
-          if (file.type.startsWith("image/")) {
-            console.log(
-              "🖼️ Image uploaded successfully, template editor will open on Generate Post"
-            );
-          } else if (isVideoFile(file)) {
-            console.log(
-              "🎥 Video uploaded successfully, thumbnail generated, template editor will open on Generate Post"
-            );
-          }
-        }, 100);
+        // Note: Template editor will open when user clicks Generate Post
+        if (file.type.startsWith("image/")) {
+          console.log(
+            "🖼️ Image uploaded successfully, template editor will open on Generate Post"
+          );
+        } else if (isVideoFile(file)) {
+          console.log(
+            "🎥 Video uploaded successfully, thumbnail generated, template editor will open on Generate Post"
+          );
+        }
+      } catch (error) {
+        console.error("❌ Error uploading file:", error);
+        if (error instanceof Error) {
+          console.log(
+            "📱 File should still be set for local preview, error was:",
+            error.message
+          );
+        } else {
+          console.log(
+            "📱 File should still be set for local preview, unknown error:",
+            error
+          );
+        }
       }
     } catch (error) {
-      console.error("❌ Error uploading file:", error);
-      if (error instanceof Error) {
-        console.log(
-          "📱 File should still be set for local preview, error was:",
-          error.message
-        );
-      } else {
-        console.log(
-          "📱 File should still be set for local preview, unknown error:",
-          error
-        );
-      }
+      console.error("❌ Unexpected error in handleFileUpload:", error);
     }
   };
 
@@ -1810,52 +1854,64 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         return;
       }
 
+      // Create abort controller for custom thumbnail upload
+      const thumbnailAbortController = new AbortController();
+      uploadAbortControllerRef.current = thumbnailAbortController;
+
       const mediaUrl = await executeFileUpload(
         async () => await uploadMedia(file, userResult.user.id),
         file.name,
         file.size,
         {
           canCancel: true,
+          abortSignal: thumbnailAbortController.signal,
           onCancel: () => {
             console.log("Custom thumbnail upload cancelled");
+            uploadAbortControllerRef.current = null;
           },
         }
       );
 
-      if (mediaUrl) {
-        console.log("✅ Custom thumbnail uploaded:", mediaUrl);
-        setVideoThumbnailUrl(mediaUrl);
+      // If upload was aborted, don't proceed
+      if (!mediaUrl || !uploadAbortControllerRef.current) {
+        console.log("📛 Custom thumbnail upload was aborted");
+        uploadAbortControllerRef.current = null;
+        return;
+      }
 
-        // Immediately open template editor for uploaded thumbnail
-        const blankTemplate = getTemplateById("blank-template");
-        if (blankTemplate) {
-          setSelectedTemplate(blankTemplate);
-          setShowTemplateEditor(true);
+      console.log("✅ Custom thumbnail uploaded:", mediaUrl);
+      uploadAbortControllerRef.current = null;
+      setVideoThumbnailUrl(mediaUrl);
 
-          const currentCampaignInfo = campaignInfo || {
-            name: "Default Campaign",
-            industry: "General",
-            brand_tone: "professional",
-            target_audience: "General",
-            description:
-              "General content generation without specific campaign context",
-          };
+      // Immediately open template editor for uploaded thumbnail
+      const blankTemplate = getTemplateById("blank-template");
+      if (blankTemplate) {
+        setSelectedTemplate(blankTemplate);
+        setShowTemplateEditor(true);
 
-          const postGenerationData = {
-            prompt: formData.prompt,
-            originalImageUrl: mediaUrl,
-            originalVideoUrl: formData.mediaUrl,
-            originalVideoFile: originalVideoFile,
-            videoAspectRatio: videoAspectRatio,
-            isVideoContent: true,
-            campaignInfo: currentCampaignInfo,
-            selectedPlatforms: formData.selectedPlatforms,
-            imageAnalysis: `Custom thumbnail uploaded for video`,
-            formData,
-          };
+        const currentCampaignInfo = campaignInfo || {
+          name: "Default Campaign",
+          industry: "General",
+          brand_tone: "professional",
+          target_audience: "General",
+          description:
+            "General content generation without specific campaign context",
+        };
 
-          setPendingPostGeneration(postGenerationData);
-        }
+        const postGenerationData = {
+          prompt: formData.prompt,
+          originalImageUrl: mediaUrl,
+          originalVideoUrl: formData.mediaUrl,
+          originalVideoFile: originalVideoFile,
+          videoAspectRatio: videoAspectRatio,
+          isVideoContent: true,
+          campaignInfo: currentCampaignInfo,
+          selectedPlatforms: formData.selectedPlatforms,
+          imageAnalysis: `Custom thumbnail uploaded for video`,
+          formData,
+        };
+
+        setPendingPostGeneration(postGenerationData);
       }
     } catch (err) {
       console.error("Failed to upload custom thumbnail:", err);
@@ -2029,19 +2085,29 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                 <div className="grid grid-cols-3 gap-4 text-sm md:text-base">
                   <button
                     type="button"
-                    onClick={() =>
+                    onClick={() => {
+                      // Allow switching to text post - clear media
+                      if (selectedPostType !== "text") {
+                        setFormData((prev) => ({
+                          ...prev,
+                          media: undefined,
+                          mediaUrl: undefined,
+                        }));
+                        setTemplatedImageUrl("");
+                        setSelectedTemplate(undefined);
+                        setImageAnalysis("");
+                        setVideoThumbnailUrl("");
+                        setOriginalVideoFile(null);
+                        setVideoAspectRatio(null);
+                        currentFileRef.current = null;
+                      }
                       setSelectedPostType(
                         selectedPostType === "text" ? "" : "text"
                       )
-                    }
-                    disabled={
-                      (formData.media || formData.mediaUrl) &&
-                      selectedPostType !== "text"
-                    }
+                    }}
                     className={`  border  duration-200 text-center px-2 py-3 rounded-md ${
-                      (formData.media || formData.mediaUrl) &&
-                      selectedPostType !== "text"
-                        ? "theme-bg-primary opacity-50 cursor-not-allowed"
+                      selectedPostType === "text"
+                        ? "theme-bg-primary text-white shadow-lg"
                         : selectedPostType === "text"
                         ? "theme-bg-trinary theme-text-light shadow-md"
                         : "theme-bg-primary "
@@ -2079,27 +2145,29 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                   <button
                     type="button"
                     onClick={() => {
-                      if (
-                        !(
-                          (formData.media || formData.mediaUrl) &&
-                          selectedPostType !== "image"
-                        )
-                      ) {
-                        setSelectedPostType("image");
-                        setShowImageMenu(!showImageMenu);
+                      // Allow switching to image post - clear media if switching from other types
+                      if (selectedPostType !== "image") {
+                        // If switching from video/text, clear existing media
+                        if (selectedPostType !== "image" && formData.media) {
+                          setFormData((prev) => ({
+                            ...prev,
+                            media: undefined,
+                            mediaUrl: undefined,
+                          }));
+                          setTemplatedImageUrl("");
+                          setSelectedTemplate(undefined);
+                          setImageAnalysis("");
+                          setVideoThumbnailUrl("");
+                          setOriginalVideoFile(null);
+                          setVideoAspectRatio(null);
+                          currentFileRef.current = null;
+                        }
                       }
+                      setSelectedPostType("image");
+                      setShowImageMenu(!showImageMenu);
                     }}
-                    disabled={
-                      (formData.media || formData.mediaUrl) &&
-                      selectedPostType !== "image" &&
-                      !formData.media?.type?.startsWith("image/")
-                    }
                     className={` relative  border shadow-md backdrop-blur-md border-slate-200/70 transition-all duration-200 text-center px-2 py-3 rounded-md ${
-                      (formData.media || formData.mediaUrl) &&
-                      selectedPostType !== "image" &&
-                      !formData.media?.type?.startsWith("image/")
-                        ? "theme-bg-primary opacity-50 cursor-not-allowed"
-                        : selectedPostType === "image"
+                      selectedPostType === "image"
                         ? "theme-bg-trinary theme-text-light shadow-md"
                         : "theme-bg-primary theme-text-primary"
                     }`}
@@ -2143,8 +2211,26 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         <button
                           type="button"
                           onClick={() => {
+                            // Abort any in-progress upload
+                            if (uploadAbortControllerRef.current) {
+                              uploadAbortControllerRef.current.abort();
+                              uploadAbortControllerRef.current = null;
+                            }
+                            // Clear the current file being processed
+                            currentFileRef.current = null;
+                            // Close the upload progress modal
+                            hideLoading();
                             setSelectedImageMode("upload");
                             setShowImageMenu(false);
+                            // Clear any previously selected/generated image when switching modes
+                            setFormData((prev) => ({
+                              ...prev,
+                              media: undefined,
+                              mediaUrl: undefined,
+                            }));
+                            setTemplatedImageUrl("");
+                            setSelectedTemplate(undefined);
+                            setImageAnalysis("");
                           }}
                           className={`p-3 rounded-md border transition shadow-md backdrop-blur-md border-slate-200/70-all duration-200 text-center
                         ${selectedPostType === "image" ? "" : "hidden"}
@@ -2187,8 +2273,24 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         <button
                           type="button"
                           onClick={() => {
+                            // Abort any in-progress upload
+                            if (uploadAbortControllerRef.current) {
+                              uploadAbortControllerRef.current.abort();
+                              uploadAbortControllerRef.current = null;
+                            }
+                            // Close the upload progress modal
+                            hideLoading();
                             setSelectedImageMode("textToImage");
                             setShowImageMenu(false);
+                            // Clear any previously selected/generated image when switching modes
+                            setFormData((prev) => ({
+                              ...prev,
+                              media: undefined,
+                              mediaUrl: undefined,
+                            }));
+                            setTemplatedImageUrl("");
+                            setSelectedTemplate(undefined);
+                            setImageAnalysis("");
                           }}
                           className={`p-3   border rounded-md transition-all duration-200 text-center 
                         ${selectedPostType === "image" ? "" : "hidden"}
@@ -2232,27 +2334,29 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                   <button
                     type="button"
                     onClick={() => {
-                      if (
-                        !(
-                          (formData.media || formData.mediaUrl) &&
-                          selectedPostType !== "video"
-                        )
-                      ) {
-                        setSelectedPostType("video");
-                        setShowVideoMenu(!showVideoMenu);
+                      // Allow switching to video post - clear media if switching from other types
+                      if (selectedPostType !== "video") {
+                        // If switching from image/text, clear existing media
+                        if (selectedPostType !== "video" && formData.media) {
+                          setFormData((prev) => ({
+                            ...prev,
+                            media: undefined,
+                            mediaUrl: undefined,
+                          }));
+                          setTemplatedImageUrl("");
+                          setSelectedTemplate(undefined);
+                          setImageAnalysis("");
+                          setVideoThumbnailUrl("");
+                          setOriginalVideoFile(null);
+                          setVideoAspectRatio(null);
+                          currentFileRef.current = null;
+                        }
                       }
+                      setSelectedPostType("video");
+                      setShowVideoMenu(!showVideoMenu);
                     }}
-                    disabled={
-                      (formData.media || formData.mediaUrl) &&
-                      selectedPostType !== "video" &&
-                      !isVideoFile(formData.media)
-                    }
                     className={`relative border shadow-md backdrop-blur-md border-slate-200/70 transition-all duration-200 text-center px-2 py-3 rounded-md ${
-                      (formData.media || formData.mediaUrl) &&
-                      selectedPostType !== "video" &&
-                      !isVideoFile(formData.media)
-                        ? "theme-bg-primary opacity-50 cursor-not-allowed"
-                        : selectedPostType === "video"
+                      selectedPostType === "video"
                         ? "theme-bg-trinary theme-text-light shadow-md"
                         : "theme-bg-primary theme-text-primary"
                     }`}
@@ -2296,6 +2400,19 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         <button
                           type="button"
                           onClick={() => {
+                            // Clear video when switching between video modes
+                            if (selectedVideoMode !== "upload") {
+                              setFormData((prev) => ({
+                                ...prev,
+                                media: undefined,
+                                mediaUrl: undefined,
+                              }));
+                              setOriginalVideoFile(null);
+                              setVideoAspectRatio(null);
+                              setVideoThumbnailUrl("");
+                              setVideoAspectRatioWarning("");
+                              currentFileRef.current = null;
+                            }
                             setSelectedVideoMode("upload");
                             setShowVideoMenu(false);
                           }}
@@ -2339,6 +2456,19 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         <button
                           type="button"
                           onClick={() => {
+                            // Clear video when switching between video modes
+                            if (selectedVideoMode !== "uploadShorts") {
+                              setFormData((prev) => ({
+                                ...prev,
+                                media: undefined,
+                                mediaUrl: undefined,
+                              }));
+                              setOriginalVideoFile(null);
+                              setVideoAspectRatio(null);
+                              setVideoThumbnailUrl("");
+                              setVideoAspectRatioWarning("");
+                              currentFileRef.current = null;
+                            }
                             setSelectedVideoMode("uploadShorts");
                             setShowVideoMenu(false);
                           }}
