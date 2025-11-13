@@ -117,7 +117,7 @@ export const PricingPage: React.FC = () => {
       const res = await API.buyPackage(plan.id);
       const redirectUrl = res?.data?.data?.url;
       if (redirectUrl) {
-        window.open(redirectUrl, "_blank");
+        window.location.href = redirectUrl; //window.open(redirectUrl, "_blank");
       }
     } catch (error) {
       console.error("Failed to buy package:", error);
@@ -333,13 +333,13 @@ export const PricingPage: React.FC = () => {
                       isPendingDowngradePackage ||
                       isLockedByCancel ||
                       isLockedByDowngrade) && (
-                      <div className="absolute top-3 right-3 flex justify-center">
+                      <div className="absolute top-2.5 right-3 flex justify-center">
                         <span
                           className={`px-5 py-1.5 rounded-full text-xs font-semibold ${
                             isCurrentPlan
                               ? "bg-[#7650e3] text-white"
                               : isPendingDowngradePackage
-                              ? "bg-red-400 text-[#7650e3]"
+                              ? "bg-purple-600 text-white"
                               : "bg-gray-500 text-white"
                           }`}
                         >
@@ -362,7 +362,7 @@ export const PricingPage: React.FC = () => {
                       <span className="text-[#7650e3] font-bold text-xl">
                         $
                       </span>
-                      <span className="text-[40px] font-bold text-[#7650e3]">
+                      <span className="text-[40px] text-purple-600 font-semibold">
                         {tier.amount}
                       </span>
                       <span className="text-3xl font-medium text-[#7650e3]">
@@ -412,7 +412,7 @@ export const PricingPage: React.FC = () => {
 
                   <div className=" px-8 py-8">
                     <div className="mb-6 pb-6 border-b-2 border-purple-600  h-28 text-center">
-                      <p className="text-xl font-bold text-[#7650e3] mb-2 ">
+                      <p className="text-xl text-purple-600 font-semibold mb-2 ">
                         Ideal for:
                       </p>
                       <p className="text-lg text-slate-800 font-medium">
@@ -441,12 +441,12 @@ export const PricingPage: React.FC = () => {
 
       {activePackage?.package?.tier !== "free" && activeTab === "addons" && (
         <div className="grid xl:grid-cols-3  md:grid-cols-2 gap-5">
-          {addons.length === 0 ? (
+          {addons?.length === 0 ? (
             <p className="col-span-3 text-center text-[#7650e3]">
               No credits available
             </p>
           ) : (
-            addons.map((addon) => {
+            addons?.map((addon) => {
               const hasSale = addon.isSale;
               const bonusAmount = addon.bonus || 0;
               const totalCoins = addon.coins + bonusAmount;
@@ -459,7 +459,7 @@ export const PricingPage: React.FC = () => {
                   <div className="text-left font-medium text-3xl px-5 py-2  pb-[4rem]">
                     <div className="flex items-center gap-2 mb-1">
                       <div className="text-[25px] font-semibold text-slate-900">
-                        {addon.coins.toLocaleString()}
+                        {totalCoins?.toLocaleString()}
                       </div>
                       {addon.isSale && (
                         <span className="bg-[#7650e3] text-white px-2 py-0.5 rounded text-sm font-semibold">
@@ -488,7 +488,7 @@ export const PricingPage: React.FC = () => {
                   </div>
 
                   <div className="flex justify-between theme-bg-quaternary items-center px-5  py-2 rounded-b-md">
-                    <p className="text-center text-2xl font-bold text-[#7650e3] ">
+                    <p className="text-center text-2xl text-purple-600 font-semibold ">
                       ${addon.amount.toLocaleString()}
                     </p>
                     <button
@@ -516,14 +516,15 @@ export const PricingPage: React.FC = () => {
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
             {/* Header */}
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-[#7650e3]">
+              <h2 className="text-2xl text-purple-600 font-semibold">
                 Reactivate Your Subscription
               </h2>
               <button
                 onClick={handleClosePopup}
-                className="p-1 hover:bg-gray-100 mt-1  rounded-full border border-purple-600 transition-colors"
+                className="text-gray-400 hover:text-gray-600 transition-colors p-0.5 mt-1 rounded-full border border-purple-600"
+                aria-label="Close"
               >
-                <X className="w-4 h-4 text-[#7650e3]" />
+                <X className="text-purple-600 w-4 h-4" />
               </button>
             </div>
 
@@ -548,28 +549,17 @@ export const PricingPage: React.FC = () => {
               </p>
             </div>
 
-            {/* What happens */}
-            <div className="bg-gray-50 rounded-md p-4 mb-6">
-              <p className="text-xs text-[#7650e3] leading-relaxed">
-                <span className="font-semibold block mb-2">What happens:</span>•
-                Your {currentTier?.name} plan will continue to be active
-                <br />• Billing will resume at ${currentTier?.amount}/month
-                <br />• You will have full access to all plan features
-              </p>
-            </div>
-
-            {/* Buttons */}
-            <div className="flex items-center gap-3 w-full">
+            <div className="flex justify-between items-center gap-2 w-full">
               <button
                 onClick={handleClosePopup}
-                className="px-6 py-3 border border-gray-300 rounded-md font-semibold text-[#7650e3] hover:bg-gray-50 transition-colors"
+                className="px-6 py-2.5 border border-gray-300 rounded-md font-semibold text-[#7650e3] hover:bg-gray-50 transition-colors"
               >
                 Keep Canceled
               </button>
               <button
                 onClick={reactivateSubscription}
                 disabled={isCanceled}
-                className="px-6 py-3 bg-[#7650e3] text-white rounded-md font-semibold hover:bg-[#5a3dc9] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                className="px-6 py-2.5 bg-[#7650e3] text-white rounded-md font-semibold hover:bg-[#5a3dc9] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
                 {isCanceled ? (
                   <>
@@ -589,14 +579,15 @@ export const PricingPage: React.FC = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-[#7650e3]">
+              <h2 className="text-2xl text-purple-600 font-semibold">
                 Cancel Downgrade Request
               </h2>
               <button
                 onClick={handleClosePopup}
-                className="p-1 hover:bg-gray-100 rounded-md transition-colors"
+                className="text-gray-400 hover:text-gray-600 transition-colors p-0.5 mt-1 rounded-full border border-purple-600"
+                aria-label="Close"
               >
-                <X className="w-5 h-5 text-[#7650e3]" />
+                <X className="text-purple-600 w-4 h-4" />
               </button>
             </div>
 
@@ -635,31 +626,17 @@ export const PricingPage: React.FC = () => {
               </p>
             </div>
 
-            <div className="bg-gray-50 rounded-md p-4 mb-6">
-              <p className="text-xs text-[#7650e3] leading-relaxed">
-                <span className="font-semibold block mb-2">What happens:</span>•
-                Your current {currentTier?.name} plan will continue after{" "}
-                {formatDate(
-                  activePackage?.expiredAt
-                    ? new Date(activePackage.expiredAt)
-                    : null
-                )}
-                <br />• Billing will continue at ${currentTier?.amount}/month
-                <br />• You can request downgrade again anytime
-              </p>
-            </div>
-
-            <div className="flex gap-3 justify-end">
+            <div className="flex justify-between items-center gap-2 w-full">
               <button
                 onClick={handleClosePopup}
-                className="px-6 py-3 border border-gray-300 rounded-md font-semibold text-[#7650e3] hover:bg-gray-50 transition-colors"
+                className="px-6 py-2.5 border border-gray-300 rounded-md font-semibold text-[#7650e3] hover:bg-gray-50 transition-colors"
               >
                 Keep Downgrade
               </button>
               <button
                 onClick={handleCancelDowngradeRequest}
                 disabled={downgradeLoading}
-                className="px-6 py-3 bg-purple-600 text-white rounded-md font-semibold hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                className="px-6 py-2.5 bg-purple-600 text-white rounded-md font-semibold hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
                 {downgradeLoading ? (
                   <>
@@ -757,7 +734,7 @@ export const PricingPage: React.FC = () => {
               </h2>
               <button
                 onClick={handleClosePopup}
-                className="text-gray-400 hover:text-gray-600 transition-colors p-0.5 mb-0 mt-1 rounded-full border border-purple-600 "
+                className="text-gray-400 hover:text-gray-600 transition-colors p-0.5 mt-1 rounded-full border border-purple-600"
                 aria-label="Close"
               >
                 <X className="text-purple-600 w-4 h-4" />
@@ -828,7 +805,7 @@ export const PricingPage: React.FC = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-[#7650e3]">
+              <h2 className="text-2xl text-purple-600 font-semibold">
                 Cancel Your Subscription
               </h2>
               <button
@@ -861,27 +838,17 @@ export const PricingPage: React.FC = () => {
               </p>
             </div>
 
-            <div className="bg-gray-50 rounded-md p-4 mb-6">
-              <p className="text-xs text-[#7650e3] leading-relaxed">
-                <span className="font-semibold block mb-2">What happens:</span>•
-                Your {currentTier?.name} plan will be canceled
-                <br />• You will lose access to premium features
-                <br />• Your subscription will end at the next billing cycle
-                <br />• You can reactivate anytime
-              </p>
-            </div>
-
-            <div className="flex gap-3 justify-end">
+            <div className="flex justify-between items-center gap-2 w-full">
               <button
                 onClick={handleClosePopup}
-                className="px-6 py-3 border border-gray-300 rounded-md font-semibold text-[#7650e3] hover:bg-gray-50 transition-colors"
+                className="px-6 py-2.5 border border-gray-300 rounded-md font-semibold text-[#7650e3] hover:bg-gray-50 transition-colors"
               >
                 Keep Plan
               </button>
               <button
                 onClick={cancelSubscription}
                 disabled={isCanceled}
-                className="px-6 py-3 bg-purple-600 text-white rounded-md font-semibold hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                className="px-6 py-2.5 bg-purple-600 text-white rounded-md font-semibold hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
                 {isCanceled ? (
                   <>

@@ -546,7 +546,7 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
               <button
                 onClick={handleDelete}
                 disabled={loading}
-                className="flex-1 bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 disabled:opacity-50"
+                className="flex-1 bg-red-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 disabled:opacity-50"
               >
                 {loading ? "Deleting..." : "Delete"}
               </button>

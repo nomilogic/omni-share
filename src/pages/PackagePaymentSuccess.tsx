@@ -93,19 +93,7 @@ export default function PackageSuccessPage() {
           </p>
         </div>
 
-        {/* Session Info */}
-        {hasSession && (
-          <div className="my-6">
-            <SessionId value={sessionId} />
-          </div>
-        )}
-        {!hasSession && (
-          <div className="my-6 rounded-md border border-dashed bg-green-50 p-4 text-center text-sm text-[#7650e3]">
-            Session ID is missing from the URL query.
-          </div>
-        )}
-
-        <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
+        <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center w-full">
           <Link
             to="/dashboard"
             className="flex-1 rounded-md bg-[#7650e3] px-4 py-2 text-center text-sm font-medium text-white hover:bg-[#7650e3]/80 transition"

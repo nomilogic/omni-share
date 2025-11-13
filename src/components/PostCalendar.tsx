@@ -216,7 +216,7 @@ export const PostCalendar: React.FC<PostCalendarProps> = ({
                   onDeletePost(post.id);
                   setSelectedPost(null);
                 }}
-                className="flex-1 bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 transition-colors flex items-center justify-center gap-2"
+                className="flex-1 bg-red-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 transition-colors flex items-center justify-center gap-2"
               >
                 <Trash2 className="w-4 h-4" />
                 Delete Post
