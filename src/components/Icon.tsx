@@ -9,9 +9,9 @@ import ConnectAccountsIcon from "../assets/connect-your-accounts-icon-01.svg";
 import EditPostIcon from "../assets/edit-post-text-icon-01.svg";
 import PlayIcon from "../assets/play-icon-01.svg";
 import LogoIcon from "../assets/logo-icon-01.svg";
-import WalletIcon from "../assets/wallet-icon-01.svg"; // Example external URL
-import TextToImageIcon from "../assets/text-to-image-icon-01.svg"; // Placeholder, replace with actual icon
-import ShareIcon from "../assets/share.svg"; // Placeholder, replace with actual icon
+import WalletIcon from "../assets/wallet-icon-01.svg";
+import TextToImageIcon from "../assets/text-to-image-icon-01.svg";
+import ShareIcon from "../assets/share.svg";
 import WhiteDiamond from "../assets/white-diamond.svg";
 import ManageSubs from "../assets/manage-subscription-icon-01.svg";
 import SpiralLogo from "../assets/spiral-logo.svg";
@@ -19,6 +19,7 @@ import QuestionMark from "../assets/question-mark.svg";
 import Crown from "../assets/crown.svg";
 import SpiralGrey from "../assets/spiral-grey.svg";
 import LogoWhite from "../assets/logo-white.svg";
+import CoinsIcon from "../assets/coins-icon.svg";
 
 // Define the available icon names
 export type IconName =
@@ -39,7 +40,8 @@ export type IconName =
   | "question-mark"
   | "share"
   | "spiral-grey"
-  | "logo-white";
+  | "logo-white"
+  | "coins-icon";
 // New icon name
 
 // Map icon names to their respective SVG imports
@@ -62,6 +64,7 @@ const iconMap: Record<IconName, string> = {
   "question-mark": QuestionMark,
   "spiral-grey": SpiralGrey,
   "logo-white": LogoWhite,
+  "coins-icon": CoinsIcon,
 };
 
 interface IconProps {
@@ -92,12 +95,13 @@ const Icon: React.FC<IconProps> = ({
     <img
       src={iconSrc}
       alt={`${name} icon`}
-      className={`inline-block ${className} `}
+      className={`inline-block ${className}`}
       style={{
         width: sizeStyle,
         height: sizeStyle,
         filter: color ? `hue-rotate(${getHueRotation(color)}deg)` : undefined,
         cursor: onClick ? "pointer" : undefined,
+        display: "inline-block",
       }}
       onClick={onClick}
     />

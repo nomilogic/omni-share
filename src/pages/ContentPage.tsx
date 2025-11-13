@@ -21,6 +21,7 @@ export const ContentPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [showPublishModal, setShowPublishModal] = useState(false);
+  const [showGenerateModal, setShowGenerateModal] = useState(false);
 
   // Cleanup background scrolling on component unmount
   useEffect(() => {
@@ -33,7 +34,10 @@ export const ContentPage: React.FC = () => {
 
   const handleContentNext = (contentData: any) => {
     dispatch({ type: "SET_CONTENT_DATA", payload: contentData });
-    navigate("/generate");
+    // Show generate modal instead of navigating
+    setShowGenerateModal(true);
+    document.body.classList.add("modal-open");
+    document.documentElement.classList.add("modal-open");
   };
 
   const handleGenerationComplete = async (posts: any[]) => {
@@ -267,58 +271,7 @@ export const ContentPage: React.FC = () => {
                 />
               }
             />
-            <Route
-              path="generate"
-              element={(() => {
-                // Debug logging
-                console.log("🔍 Generate route accessed:", {
-                  hasContentData: !!state.contentData,
-                  contentData: state.contentData,
-                  location: location.pathname,
-                });
-
-                return state.contentData ? (
-                  <AIGenerator
-                    contentData={state.contentData}
-                    onComplete={handleGenerationComplete}
-                    onBack={() => navigate("/content")}
-                  />
-                ) : (
-                  <div className="text-center py-8">
-                    <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4 mb-4 text-left max-w-md mx-auto">
-                      <h3 className="font-semibold text-yellow-800 mb-2">
-                        No Content Data Found
-                      </h3>
-                      <p className="text-yellow-700 text-sm mb-3">
-                        The content generation requires initial content data.
-                        This usually happens when:
-                      </p>
-                      <ul className="text-yellow-700 text-sm list-disc list-inside space-y-1">
-                        <li>
-                          You accessed /generate directly without going through
-                          the content creation flow
-                        </li>
-                        <li>Your session expired and the data was cleared</li>
-                        <li>
-                          You refreshed the page during the content creation
-                          process
-                        </li>
-                      </ul>
-                    </div>
-                    <p className="text-slate-500 mb-4">
-                      Please start the content creation process from the
-                      beginning.
-                    </p>
-                    <button
-                      onClick={() => navigate("/content")}
-                      className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors"
-                    >
-                      Start Content Creation
-                    </button>
-                  </div>
-                );
-              })()}
-            />
+            {/* Generate route removed - now showing as modal overlay instead */}
             <Route
               path="preview"
               element={(() => {
@@ -379,6 +332,30 @@ export const ContentPage: React.FC = () => {
                   }}
                   onReset={handlePublishReset}
                   userId={state.user?.id || ""}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Generate Modal - Show AI Generator as modal instead of route */}
+          {showGenerateModal && state.contentData && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center z-50">
+              <div className="bg-white w-full overflow-y-auto modal-content">
+                <AIGenerator
+                  contentData={state.contentData}
+                  onComplete={(posts) => {
+                    handleGenerationComplete(posts);
+                    setShowGenerateModal(false);
+                    // Restore background scrolling when modal is closed
+                    document.body.classList.remove("modal-open");
+                    document.documentElement.classList.remove("modal-open");
+                  }}
+                  onBack={() => {
+                    setShowGenerateModal(false);
+                    // Restore background scrolling when modal is closed
+                    document.body.classList.remove("modal-open");
+                    document.documentElement.classList.remove("modal-open");
+                  }}
                 />
               </div>
             </div>

@@ -2107,8 +2107,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                     }}
                     className={`  border  duration-200 text-center px-2 py-3 rounded-md ${
                       selectedPostType === "text"
-                        ? "theme-bg-primary text-white shadow-lg"
-                        : selectedPostType === "text"
+                       
                         ? "theme-bg-trinary theme-text-light shadow-md"
                         : "theme-bg-primary "
                     }`}

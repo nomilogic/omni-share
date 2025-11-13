@@ -182,12 +182,12 @@ function App() {
             }
           />
 
-          {/* Direct /generate route - redirects to /content/generate */}
+          {/* Direct /generate route - redirects to /content (Generate now shows as modal overlay) */}
           <Route
             path="/generate"
             element={
               <ProtectedRoute>
-                <Navigate to="/content/generate" replace />
+                <Navigate to="/content" replace />
               </ProtectedRoute>
             }
           />
