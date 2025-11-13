@@ -284,7 +284,7 @@ export const SettingsPage: React.FC = () => {
                           <p className="theme-text-secondary text-sm mb-4">
                             Permanently delete your account and all data.
                           </p>
-                          <button className="bg-red-600 text-white px-6 py-2 rounded-md hover:bg-red-700 transition-colors duration-200">
+                          <button className="bg-red-600 text-white px-6 py-2 rounded-md hover:bg-purple-700 transition-colors duration-200">
                             Delete Account
                           </button>
                         </div>

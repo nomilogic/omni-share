@@ -91,13 +91,7 @@ export default function AddonSuccessPage() {
           </p>
         </div>
 
-        {hasSession && (
-          <div className="my-6">
-            <SessionId value={sessionId} />
-          </div>
-        )}
-
-        <div className="mt-6 flex justify-center gap-3">
+        <div className="mt-6 flex justify-center gap-3 w-full">
           <Link
             to="/dashboard"
             className="rounded-md bg-[#7650e3] px-4 py-2 text-center text-sm font-medium text-white hover:bg-[#7650e3]/80 transition"

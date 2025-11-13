@@ -1117,7 +1117,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                         saveChanges();
                         setEditingMode(false);
                       }}
-                      className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors font-medium"
+                      className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors font-medium"
                     >
                       <Save className="w-4 h-4" />
                       Save Changes
@@ -1126,7 +1126,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                       onClick={() => {
                         discardChanges();
                       }}
-                      className="flex items-center gap-2 px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors font-medium"
+                      className="flex items-center gap-2 px-4 py-2 border border-purple-600 text-purple-600 rounded-md hover:bg-gray-600 transition-colors font-medium"
                     >
                       <X className="w-4 h-4" />
                       Cancel

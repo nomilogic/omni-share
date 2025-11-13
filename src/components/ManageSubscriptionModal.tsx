@@ -60,23 +60,8 @@ export const ManageSubscriptionModal: React.FC<any> = ({
     setIsModalOpen(false);
   };
 
-  const LoadingOverlay = () => {
-    if (!isLoading) return null;
-
-    return (
-      <div className="absolute inset-0 bg-white/80 backdrop-blur-[1px] z-50 flex items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <Loader className="w-8 h-8 text-[#7650e3] animate-spin" />
-          <p className="text-[#7650e3] text-sm font-medium animate-pulse">
-            {loadingAction}...
-          </p>
-        </div>
-      </div>
-    );
-  };
-
   return (
-    <div className="fixed inset-0 z-[260] flex items-center justify-center p-0">
+    <div className="fixed inset-0 z-10 flex items-center justify-center p-0">
       <div
         className="absolute inset-0 bg-black/40 backdrop-blur-sm"
         onClick={onClose}
@@ -95,41 +80,35 @@ export const ManageSubscriptionModal: React.FC<any> = ({
         onPause={() => {}}
       />
 
-      <div className="relative w-full md:max-w-3xl lg:max-w-5xl md:rounded-2xl overflow-hidden shadow-2xl bg-white h-full md:h-[60vh]">
-        <div className="flex flex-col md:flex-row  md:h-full">
-          {/* Left: Illustration */}
-          <div className=" bg-[#7650e3] p-0 flex items-center justify-center h-[30vh] md:h-full md:w-1/2">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
+      <div className="relative w-full md:max-w-3xl lg:max-w-5xl h-[500px] rounded-2xl shadow-md overflow-hidden bg-white  ">
+        <div className="grid grid-cols-1 md:grid-cols-2 ">
+          <div className=" bg-purple-600 p-0 flex items-center  justify-center rounded-l-xl w-full ">
             <img
               src={Illustration}
               alt="Manage subscription illustration"
-              className="w-full h-full object-contain px-20 md:px-10 rounded-2xl object-bottom"
+              className="w-full h-full object-contain p-6  object-center "
             />
           </div>
 
-          {/* Right: Actions */}
-          <div className="md:w-1/2 p-4 z-10 flex flex-grow flex-col ">
-            {/* Loading Overlay */}
-
-            {/* Close button as a purple circle in top-right */}
+          <div className="md:w-full p-6 z-10 flex flex-col ">
             <button
               onClick={_onClose}
-              className="absolute right-4 top-4 w-7 h-7 z-[1000] rounded-full border-[#7650e3] flex items-center justify-center text-[#7650e3] bg-[#F7F5FB] transition-shadow border-[3px]"
+              className="absolute right-4 top-3 w-6 h-6 z-10 rounded-full border-[#7650e3] flex items-center justify-center text-[#7650e3] bg-[#F7F5FB] transition-shadow border-[2px]"
               aria-label="Close manage subscription dialog"
               disabled={isLoading}
             >
-              <X className="w-5 h-5 color-[#7650e3] stroke-[#7650e3] stroke-[3]" />
+              <X className="w-4 h-4 color-[#7650e3] stroke-[#7650e3] stroke-[3]" />
             </button>
 
-            <div className="mb-[10vh]">
-              <h3 className="text-xl font-semibold text-[#7650e3]">
+            <div className="mb-10">
+              <h3 className="text-2xl font-semibold text-[#7650e3]">
                 Manage Subscription
               </h3>
             </div>
-            <div className="text-md font-medium text-[#7650e3] mb-[-1rem] ">
+            <div className="text-xl font-medium text-[#7650e3]  mb-4">
               How can we help you today?
             </div>
-            <div className="space-y-3 mt-6">
+            <div className="space-y-4 ">
               {[
                 {
                   key: "update",
@@ -226,10 +205,10 @@ export const ManageSubscriptionModal: React.FC<any> = ({
               {/* Close button as a purple circle in top-right */}
               <button
                 onClick={_onClose}
-                className="absolute right-4 top-4 w-7 h-7 z-1000 rounded-full border border-[#7650e3] flex items-center justify-center text-[#7650e3] bg-[#F7F5FB] transition-shadow border-[3px]"
+                className="absolute right-4 top-4 w-6 h-6 z-1000 rounded-full  border-[#7650e3] flex items-center justify-center text-[#7650e3] bg-[#F7F5FB] transition-shadow border-[2px]"
                 aria-label="Close manage subscription dialog"
               >
-                <X className="w-5 h-5  color-[#7650e3] stroke-[#7650e3] stroke-[3] " />
+                <X className="w-4 h-4  color-[#7650e3] stroke-[#7650e3] stroke-[3] " />
               </button>
 
               <div className="">

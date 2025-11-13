@@ -246,7 +246,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
                   </p>
                   <button
                     onClick={handleRetryGeneration}
-                    className="bg-red-600 text-white px-4 py-2 rounded-md text-sm hover:bg-red-700 transition-colors flex items-center justify-center space-x-1 mx-auto"
+                    className="bg-red-600 text-white px-4 py-2 rounded-md text-sm hover:bg-purple-700 transition-colors flex items-center justify-center space-x-1 mx-auto"
                   >
                     <RefreshCw className="w-4 h-4" />
                     <span>Retry</span>

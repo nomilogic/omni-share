@@ -342,9 +342,6 @@ export const PublishPosts: React.FC<PublishProps> = ({
 
   return (
     <div className="theme-bg-light max-w-4xl mx-auto  ">
-      {/* Header */}
-
-      {/* Main Content */}
       <div className="lg:px-4 px-3 lg:py-8 py-4">
         <h2 className="text-2xl font-bold theme-text-primary mb-1">
           Publish Your Posts
@@ -354,7 +351,6 @@ export const PublishPosts: React.FC<PublishProps> = ({
           directly.
         </p>
 
-        {/* Connection Status Alert */}
         {posts.some((post) => !connectedPlatforms.includes(post.platform)) && (
           <div className=" p-4 theme-bg-quaternary rounded-md border border-purple-200 my-3">
             <div className="flex items-start gap-4">
@@ -371,7 +367,6 @@ export const PublishPosts: React.FC<PublishProps> = ({
           </div>
         )}
 
-        {/* Platforms Section */}
         <div className="md:mb-8 mb-4">
           <div className="flex items-center justify-between mb-4">
             <div>
