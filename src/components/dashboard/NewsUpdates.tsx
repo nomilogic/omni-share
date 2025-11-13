@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import laptop from '../../assets/laptop.png';
+import { useState } from "react";
+import laptop from "../../assets/laptop.png";
 
 function NewsUpdates() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -8,13 +8,11 @@ function NewsUpdates() {
     <div>
       <h3 className="font-medium text-gray-900 text-md mb-2">News & Updates</h3>
 
-      <div className="bg-white rounded-xl shadow-sm border border-stone-200 p-6 h-96 flex flex-col">
+      <div className="bg-slate-100 rounded-xl  p-5  flex flex-col">
         <div className="flex-1 mb-6 flex flex-col">
-          <div className="bg-stone-100 rounded-lg p-6 mb-4 flex items-center justify-center flex-1">
-            <img src={laptop} alt="laptop" />
-          </div>
+          <img src={laptop} alt="laptop" />
 
-          <p className="text-sm text-gray-700 leading-relaxed">
+          <p className="text-xs text-black ">
             We'll soon be launching our Scheduled Post & Announcement feature –
             stay tuned for the official release!
           </p>

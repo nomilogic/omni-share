@@ -9,55 +9,57 @@ import NewsUpdates from "../components/dashboard/NewsUpdates";
 import ReferralSection from "../components/dashboard/ReferralSection";
 
 export const DashboardPage: React.FC = () => {
-  const { state } = useAppContext();
+  const { user } = useAppContext();
   const navigate = useNavigate();
 
   // Get user plan and tier info
-  const userPlan = state?.user?.wallet?.package?.tier || state?.userPlan || 'free';
-  const planRenewalDate = state?.user?.wallet?.package?.renewalDate || '30 Nov 2025';
-  const coinBalance = Math.floor(state?.user?.wallet?.balance || state?.balance || 0);
-  const coinLimit = state?.user?.wallet?.package?.coinLimit || 25000;
+  const userPlan = user?.wallet?.package?.tier || "free";
+  const planRenewalDate = user?.wallet?.package?.renewalDate || "No Expire";
+  const coinBalance = Math.floor(user?.wallet?.balance || 0);
+  const coinLimit = user?.wallet?.package?.coinLimit || 0;
+  const referralCoin = user?.wallet?.referralCoin || 0;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <main className="max-w-7xl mx-auto px-8 py-8">
-        <ProfileCard />
+    <div className="min-h-screen ">
+      <main className="max-w-8xl mx-auto  flex flex-col gap-y-8 ">
+        <div className="bg-slate-100  px-5 py-4 rounded-2xl flex flex-col gap-4">
+          <ProfileCard />
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
-          <StatsCard
-            iconName="crown"
-            title="My Plan"
-            badge={userPlan.toUpperCase()}
-            subtitle={`Renewing on: ${planRenewalDate}`}
-            buttonText="Switch Plan"
-            onButtonClick={() => navigate("/pricing")}
-            showicon2={true}
-          />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <StatsCard
+              iconName="crown"
+              title="My Plan"
+              badge={userPlan.toUpperCase()}
+              subtitle={`Renewing on: ${planRenewalDate}`}
+              buttonText="Switch Plan"
+              onButtonClick={() => navigate("/pricing")}
+              showicon2={true}
+            />
 
-          <StatsCard
-            iconName="spiral-logo"
-            title="Omni Coins"
-            stats={`${coinBalance.toLocaleString()}/${coinLimit.toLocaleString()}`}
-            subtitle="You can add coins to your package anytime."
-            buttonText="Add Coins"
-            onButtonClick={() => navigate("/pricing")}
-          />
+            <StatsCard
+              iconName="spiral-logo"
+              title="Omni Coins"
+              stats={`${coinBalance.toLocaleString()}/${coinLimit.toLocaleString()}`}
+              subtitle="You can add coins to your package anytime."
+              buttonText="Add Coins"
+              onButtonClick={() => navigate("/pricing")}
+            />
 
-          <StatsCard
-            iconName="share"
-            title="Referral Coins"
-            stats="0/100"
-            subtitle="Earn 100 Omni Coins each per referral!"
-            buttonText="Refer & Earn!"
-          />
+            <StatsCard
+              iconName="share"
+              title="Referral Coins"
+              stats={referralCoin}
+              subtitle="Earn 100 Omni Coins each per referral!"
+              buttonText="Refer & Earn!"
+            />
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <RecentPosts />
           <Analytics />
           <NewsUpdates />
         </div>
-
         <ReferralSection />
       </main>
     </div>
