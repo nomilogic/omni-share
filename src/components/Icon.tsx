@@ -20,6 +20,7 @@ import Crown from "../assets/crown.svg";
 import SpiralGrey from "../assets/spiral-grey.svg";
 import LogoWhite from "../assets/logo-white.svg";
 import CoinsIcon from "../assets/coins-icon.svg";
+import UploadVideoIcon from "../assets/upload-video-icon-01.svg";
 
 // Define the available icon names
 export type IconName =
@@ -41,7 +42,8 @@ export type IconName =
   | "share"
   | "spiral-grey"
   | "logo-white"
-  | "coins-icon";
+  | "coins-icon"
+  | "upload-video";
 // New icon name
 
 // Map icon names to their respective SVG imports
@@ -65,6 +67,7 @@ const iconMap: Record<IconName, string> = {
   "spiral-grey": SpiralGrey,
   "logo-white": LogoWhite,
   "coins-icon": CoinsIcon,
+  "upload-video": UploadVideoIcon,
 };
 
 interface IconProps {
