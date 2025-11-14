@@ -726,59 +726,51 @@ export const PricingPage: React.FC = () => {
       )}
 
       {confirmOpen && selectedPlan && (
-        <div className="fixed inset-0 backdrop-blur-sm bg-opacity-75 flex items-center justify-center p-4 z-50 w-full h-full">
-          <div className="bg-gray-50 p-6 rounded-xl shadow-2xl w-full max-w-md max-h-[80vh] overflow-auto">
-            <div className="flex justify-between items-center mb-2">
-              <h2 className="text-2xl text-purple-600 font-semibold">
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-slate-100 rounded-xl shadow-md w-full max-w-md px-5 py-4 relative">
+            <div className="flex justify-between items-center mb-3">
+              <h2 className="text-[18px] text-purple-700 font-bold">
                 Confirm Plan
               </h2>
+
               <button
                 onClick={handleClosePopup}
-                className="text-gray-400 hover:text-gray-600 transition-colors p-0.5 mt-1 rounded-full border border-purple-600"
-                aria-label="Close"
+                className="w-5 h-5 flex items-center justify-center border border-purple-700 rounded-full "
               >
-                <X className="text-purple-600 w-4 h-4" />
+                <X className="w-3.5 h-3.5 text-purple-700" />
               </button>
             </div>
 
-            <div className="bg-white border border-purple-600 p-4 rounded-lg text-center mb-6">
-              <p className="text-base text-purple-600 font-semibold mb-1">
+            {/* Price Box */}
+            <div className="border border-purple-600 bg-white rounded-lg py-4 px-3 text-center mb-4">
+              <p className="text-base text-purple-700 font-bold mb-1">
                 {selectedPlan.name || "Standard"}
               </p>
-              <div className="flex justify-center items-end space-x-4">
-                <span className="text-5xl text-purple-600">
+
+              <div className="flex justify-center items-end gap-2">
+                <span className="text-[34px] font-bold text-purple-700 leading-none">
                   ${selectedPlan.amount || "25.00"}
                 </span>
-                <div className="flex flex-col items-start justify-between h-10">
-                  <span className="text-sm text-purple-600 font-normal">
-                    USD
-                  </span>
-                  <span className="text-sm text-purple-600 font-normal">
-                    Month
-                  </span>
+
+                <div className="flex flex-col items-start leading-none mb-1 font-bold">
+                  <span className="text-[12px] text-purple-700">USD</span>
+                  <span className="text-[12px] text-purple-700">Month</span>
                 </div>
               </div>
-              <p className="text-xs mt-2">Includes GST of $0.00.</p>
+
+              <p className="text-[12px] font-semibold text-black mt-2">
+                Includes GST of $0.00.
+              </p>
             </div>
 
-            {activePackage?.package?.tier !== "free" ? (
-              <div className="mb-6 text-sm rounded-md text-purple-600 p-3">
-                <p>
-                  You’re <strong>upgrading</strong> your current plan — you’ll
-                  also receive your previous package coins with this upgrade.
-                </p>
-              </div>
-            ) : (
-              <div className="mb-6 bg-blue-50 border border-blue-200 text-purple-600 text-sm rounded-md p-3">
-                <p>
-                  You’re starting a <strong>new subscription</strong>. This plan
-                  begins fresh with the listed features and coins.
-                </p>
-              </div>
-            )}
+            <div className="text-center text-[13px] text-black font-bold mb-5">
+              We are committed to secure payments for businesses and service
+              providers without any limitations.
+            </div>
 
             <button
-              className="w-full py-2 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-600/90 transition-colors shadow-md shadow-purple-600/50 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-2.5 bg-purple-600 text-white text-[15px] font-semibold rounded-md 
+                 hover:bg-purple-700 transition shadow-md flex items-center justify-center gap-2"
               onClick={() => {
                 if (activePackage?.package?.tier === "free") {
                   handleSubscribe(selectedPlan);

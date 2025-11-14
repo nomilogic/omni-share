@@ -191,7 +191,9 @@ function HomePage() {
       {/* Navigation */}
       <nav
         className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-          scrollY > 50 ? "bg-white shadow-lg" : "bg-transparent"
+          scrollY > 50
+            ? " bg-[linear-gradient(135deg,_#7650e3_0%,_#6366F1_100%)]  shadow-lg"
+            : "bg-transparent"
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -206,7 +208,7 @@ function HomePage() {
               />
               <span
                 className={`${
-                  scrollY > 50 ? "text-[#000]" : "text-white"
+                  scrollY > 50 ? "text-white" : "text-white"
                 } text-2xl lg:text-[1.6rem] tracking-tight`}
               >
                 <span className="theme-text-primary text-2xl lg:text-[1.6rem] tracking-tight">
@@ -220,7 +222,7 @@ function HomePage() {
               <button
                 onClick={() => scrollToSection("home")}
                 className={`transition-colors hover:text-[#7650e3] ${
-                  scrollY > 50 ? "text-slate-700" : "text-white"
+                  scrollY > 50 ? "text-white" : "text-white"
                 }`}
               >
                 Home
@@ -228,7 +230,7 @@ function HomePage() {
               <button
                 onClick={() => scrollToSection("features")}
                 className={`transition-colors hover:text-[#7650e3] ${
-                  scrollY > 50 ? "text-slate-700" : "text-white"
+                  scrollY > 50 ? "text-white" : "text-white"
                 }`}
               >
                 Features
@@ -236,7 +238,7 @@ function HomePage() {
               <button
                 onClick={() => scrollToSection("pricing")}
                 className={`transition-colors hover:text-[#7650e3] ${
-                  scrollY > 50 ? "text-slate-700" : "text-white"
+                  scrollY > 50 ? "text-white" : "text-white"
                 }`}
               >
                 Pricing
@@ -244,7 +246,7 @@ function HomePage() {
               <button
                 onClick={() => scrollToSection("video")}
                 className={`transition-colors hover:text-[#7650e3] ${
-                  scrollY > 50 ? "text-slate-700" : "text-white"
+                  scrollY > 50 ? "text-white" : "text-white"
                 }`}
               >
                 Learn
@@ -252,7 +254,7 @@ function HomePage() {
               <button
                 onClick={() => scrollToSection("contact")}
                 className={`transition-colors hover:text-[#7650e3] ${
-                  scrollY > 50 ? "text-slate-700" : "text-white"
+                  scrollY > 50 ? "text-white" : "text-white"
                 }`}
               >
                 Contact
@@ -268,7 +270,7 @@ function HomePage() {
             {/* Mobile Menu Button */}
             <button
               className={`md:hidden transition-colors ${
-                scrollY > 50 ? "text-gray-900" : "text-white"
+                scrollY > 50 ? "text-white" : "text-white"
               }`}
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >

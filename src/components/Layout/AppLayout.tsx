@@ -529,7 +529,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                     >
                       {user?.wallet?.package ? (
                         <>
-                          <div className="flex justify-between items-start mb-4">
+                          <div className="flex justify-between items-start mb-3">
                             <div>
                               <div className="flex items-center gap-2">
                                 <Icon name="crown" size={24} />
@@ -543,7 +543,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                   <Icon name="question-mark" size={18} />
                                 </span>
                               </div>
-                              {user?.wallet?.package.tier == "free" && (
+                              {
                                 <p className="text-sm text-slate-700  ml-8 font-medium  ">
                                   Renewing on:{" "}
                                   <span className="text-slate-700 font-medium">
@@ -558,7 +558,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                       : "N/A"}
                                   </span>
                                 </p>
-                              )}
+                              }
                             </div>
 
                             <span
@@ -569,7 +569,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                             </span>
                           </div>
 
-                          <div className="md:space-y-6 space-y-4 mb-5">
+                          <div className=" space-y-3 mb-5">
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-2 text-slate-800 text-md font-medium">
                                 <Icon name="spiral-logo" className="mr-1" />
@@ -613,10 +613,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                             </div>
                           </div>
 
-                          {/* Buttons */}
                           <button
                             onClick={() => openManageSubscription()}
-                            className="w-full py-2.5 text-md font-semibold rounded-md border flex items-center justify-center gap-2 transition  hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
+                            className="w-full py-2.5 text-md font-semibold rounded-md border bg-white flex items-center justify-center gap-2 transition  hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
                             style={{ borderColor: "#7650e3", color: "#7650e3" }}
                           >
                             <Icon
@@ -630,7 +629,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                           <Link
                             to="/pricing"
                             onClick={() => setShowPackage(false)}
-                            className="w-full mt-3 px-2 py-2.5 text-md font-semibold rounded-md flex items-center justify-center gap-2  text-white bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] border upgrade"
+                            className="w-full mt-3 px-2 py-2.5 border  text-md font-semibold rounded-md flex items-center justify-center gap-2  text-white bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] border-[#7650e3]  "
                           >
                             <div className="hover:filter-omni h-full w-full text-center">
                               <Icon
