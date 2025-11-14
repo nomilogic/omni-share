@@ -35,14 +35,14 @@ const SubscriptionPauseModal = ({
   const { user } = useAppContext();
 
   return (
-    <div className=" flex md:items-center justify-center p-0 z-50 transition-opacity duration-300 font-inter top-0 overflow-hidden">
-      <div className="relative w-full md:max-w-3xl lg:max-w-5xl rounded-2xl shadow-md overflow-hidden bg-gray-100 ">
-        <div className="grid grid-cols-1 md:grid-cols-2 ">
-          <div className=" bg-purple-600 flex pl-6 pt-10 rounded-l-xl w-full ">
+    <div className="relative w-full md:max-w-3xl lg:max-w-5xl  md:rounded-2xl  shadow-md overflow-hidden bg-white md:h-auto h-full ">
+      <div className="relative w-full md:max-w-3xl lg:max-w-5xl  md:rounded-2xl  shadow-md overflow-hidden bg-white md:h-auto h-full ">
+        <div className="flex  flex-col sm:grid sm:grid-cols-1 md:grid-cols-2 md:h-auto h-full ">
+          <div className=" bg-purple-600 flex pl-6 pt-10  md:rounded-l-xl w-full md:h-full h-[40%]">
             <img
               src={ModalIllustrationPng}
               alt="Pause Illustration"
-              className="w-full h-full object-center  "
+              className="w-full h-full object-contain  md:object-center  "
             />
           </div>
 
@@ -149,9 +149,11 @@ const SubscriptionPauseModal = ({
               <button
                 disabled={isCanceled}
                 onClick={onCancel}
-                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2.5  px-3 text-sm sm:text-base rounded-md transition disabled:opacity-50 flex justify-between items-center border   border-[#7F56D9]"
+                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2.5 disabled:cursor-not-allowed  px-3 text-sm sm:text-base rounded-md transition disabled:opacity-50 flex justify-between items-center border   border-[#7F56D9]"
               >
-                <span>Proceed with Cancellation</span>
+                <span>
+                  {isCanceled ? "Processing..." : "Proceed with Cancellation"}
+                </span>
                 <ArrowRightIcon className="w-5 h-5" />
               </button>
             </div>

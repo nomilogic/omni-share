@@ -534,45 +534,25 @@ export const PricingPage: React.FC = () => {
               </button>
             </div>
 
-            <p className="text-[#7650e3] mb-4">
+            <p className="text-[#7650e3] mb-8">
               Are you sure you want to reactivate your subscription? Your{" "}
               <span className="font-semibold">{currentTier?.name}</span> plan
               will continue to be billed.
             </p>
 
-            <div className="bg-blue-50 border border-blue-200 rounded-md p-4 mb-4">
-              <p className="text-sm text-[#7650e3]">
-                <span className="font-semibold">Plan:</span>{" "}
-                <span className="font-semibold">{currentTier?.name}</span>
-              </p>
-              <p className="text-sm text-[#7650e3] mt-2">
-                <span className="font-semibold">Monthly Cost:</span>{" "}
-                <span className="font-semibold">
-                  ${currentTier?.amount}/month
-                </span>
-              </p>
-            </div>
-
             <div className="flex justify-between items-center gap-2 w-full">
               <button
                 onClick={handleClosePopup}
-                className="px-6 py-2.5  border border-gray-300 rounded-md font-semibold text-[#7650e3] hover:bg-gray-50 transition-colors"
+                className="px-3 py-2.5 w-full  border border-purple-600 rounded-md font-semibold text-[#7650e3] hover:bg-gray-50 transition-colors"
               >
                 Keep Canceled
               </button>
               <button
                 onClick={reactivateSubscription}
                 disabled={isCanceled}
-                className="px-6 py-2.5  bg-[#7650e3] text-white rounded-md font-semibold hover:bg-[#5a3dc9] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                className="px-3 py-2.5 w-full   justify-center border border-purple-600 bg-[#7650e3] text-white rounded-md font-semibold hover:bg-[#5a3dc9] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
-                {isCanceled ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Reactivating...
-                  </>
-                ) : (
-                  "Yes, Reactivate"
-                )}
+                {isCanceled ? <>Reactivating...</> : "Yes, Reactivate"}
               </button>
             </div>
           </div>

@@ -564,7 +564,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                             </span>
                           </div>
 
-                          <div className=" space-y-3 mb-5">
+                          <div className=" space-y-3 ">
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-2 text-slate-800 text-md font-medium">
                                 <Icon name="spiral-logo" />
@@ -610,27 +610,31 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                 {user?.wallet?.referralCoin?.toLocaleString()}
                               </p>
                             </div>
-
-                            <p className="text-base">
-                              More information in our{" "}
-                              <span className="text-purple-600 font-medium">
-                                FAQ.
-                              </span>
-                            </p>
                           </div>
+                          <p className="text-base my-4">
+                            More information in our{" "}
+                            <span className="text-purple-600 font-medium">
+                              FAQ.
+                            </span>
+                          </p>
 
-                          <button
-                            onClick={() => openManageSubscription()}
-                            className="w-full py-2.5  text-md font-semibold rounded-md border bg-white flex items-center justify-center gap-2 transition  hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
-                            style={{ borderColor: "#7650e3", color: "#7650e3" }}
-                          >
-                            <Icon
-                              name="manage-subs"
-                              size={20}
-                              className="filter-omni"
-                            />
-                            Manage Subscription
-                          </button>
+                          {user?.wallet?.package?.tier !== "free" && (
+                            <button
+                              onClick={() => openManageSubscription()}
+                              className="w-full py-2.5  text-md font-semibold rounded-md border bg-white flex items-center justify-center gap-2 transition  hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
+                              style={{
+                                borderColor: "#7650e3",
+                                color: "#7650e3",
+                              }}
+                            >
+                              <Icon
+                                name="manage-subs"
+                                size={20}
+                                className="filter-omni"
+                              />
+                              Manage Subscription
+                            </button>
+                          )}
 
                           <Link
                             to="/pricing"
@@ -662,7 +666,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           <main
             id="mainContent"
             ref={mainContentRef}
-            className="py-0 h-full-dec-hf overflow-auto theme-bg-card  "
+            // className="py-0 h-full-dec-hf overflow-auto theme-bg-card  "
           >
             <div className="w-full mx-auto overflow-fit max-w-5xl">
               {children}
