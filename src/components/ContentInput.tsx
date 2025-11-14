@@ -2082,7 +2082,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   };
 
   return (
-    <div className="w-full mx-auto  rounded-md border border-white/10   ">
+    <div className="w-full mx-auto rounded-md border border-white/10  p-4 ">
       {!showTemplateEditor && (
         <>
           <div className="text-left mb-4">
@@ -2097,7 +2097,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 gap-4 ">
-              <div className="z-50">
+              <div className="z-10">
                 <label className="block text-sm font-semibold theme-text-primary mb-2 ">
                   Select Post Type
                 </label>

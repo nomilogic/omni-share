@@ -504,8 +504,8 @@ const ProfileSetupSinglePage: React.FC = () => {
     });
   };
   return (
-    <div className="px-0 py-0 md:px-0 bg-transparent">
-      <div className="max-w-4xl mx-auto">
+    <div className="p-4 md:px-0 bg-transparent">
+      <div className="w-full  mx-auto">
         <div className="bg-white  overflow-hidden relative">
           {/* Header */}
           <div className="theme-bg-trinary px-4 pt-6 pb-2 text-white relative rounded-t-2xl">
@@ -525,7 +525,7 @@ const ProfileSetupSinglePage: React.FC = () => {
             </div>
           </div>
 
-          <div className="p-4">
+          <div className="p-4 bg-white">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
               {profileFormConfig.map((section) => {
                 return (
