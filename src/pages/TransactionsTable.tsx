@@ -1,8 +1,9 @@
+import { Copy } from "lucide-react";
 import React from "react";
 
 const TransactionsHistoryBox = ({ data }: any) => {
   return (
-    <div className="flex flex-col gap-4 w-full pr-2  bg-transparent">
+    <div className="flex flex-col gap-2 w-ful bg-transparent">
       {data?.length === 0 || !data ? (
         <p className="text-slate-500 text-center mt-10">
           No transactions found.
@@ -11,30 +12,30 @@ const TransactionsHistoryBox = ({ data }: any) => {
         data?.map((item: any) => (
           <div
             key={item?.id}
-            className="w-full  border-2 border-purple-600 rounded-2xl p-4  bg-white shadow-sm hover:shadow-lg transition-all duration-300"
+            className="w-full  border-2 border-purple-600 rounded-lg px-6 py-3  bg-white  hover:shadow-md transition-all duration-300"
           >
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-purple-600">
-                Standard Monthly Subscription
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-lg font-semibold text-purple-600">
+                Standard-Monthly Subscription
               </h2>
               {item?.hostedInvoiceUrl ? (
                 <button
                   onClick={() => window.open(item?.hostedInvoiceUrl, "_blank")}
-                  className="bg-purple-700 hover:bg-purple-800 text-white font-semibold px-3 py-1 text-sm rounded-md transition-colors"
+                  className="bg-purple-700 hover:bg-purple-800 text-white font-semibold px-2 py-1 text-xs rounded transition-colors"
                 >
                   Invoice
                 </button>
               ) : (
                 <button
                   disabled
-                  className="bg-gray-300 text-black font-semibold px-5 py-2 rounded-md cursor-not-allowed"
+                  className="bg-gray-300 text-black font-semibold px-2 py-1 text-xs     rounded-md cursor-not-allowed"
                 >
                   {item?.autoRenewal ? "Auto-Renewed" : "No Receipt"}
                 </button>
               )}
             </div>
 
-            <div className="space-y-3 text-sm text-black">
+            <div className="space-y-1 text-xs text-black">
               <div className="flex items-center justify-between">
                 <span className="font-medium">Price</span>
                 <span className="font-semibold">
@@ -63,22 +64,9 @@ const TransactionsHistoryBox = ({ data }: any) => {
                     className="p-0.5 hover:bg-gray-100 rounded transition-colors"
                     title="Copy to clipboard"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-4 w-4 text-purple-600"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M8 16h8m-8-4h8m-8-4h8m2 12H6a2 2 0 01-2-2V6a2 2 0 012-2h6l6 6v10a2 2 0 01-2 2z"
-                      />
-                    </svg>
+                    <Copy className="w-4 h-4 text-purple-600" />
                   </button>
-                  <span className="text-purple-600 font-medium">
+                  <span className="text-black font-medium">
                     {item?.transactionId || item?.id}
                   </span>
                 </div>

@@ -5,7 +5,7 @@ import ModalIllustration from "./ModalIllustration";
 import videoIcon from "../assets/05-02.png";
 import imageIcon from "../assets/05-01.png";
 import textIcon from "../assets/05-03.png";
-import coinIcon from "../assets/01-04.png";
+import coinIcon from "../assets/spiral-logo.svg";
 import ArrowRightIcon from "./icons/ArrowRightIcon";
 import { X } from "lucide-react";
 import { useAppContext } from "@/context/AppContext";
@@ -35,40 +35,40 @@ const SubscriptionPauseModal = ({
   const { user } = useAppContext();
 
   return (
-    <div className="fixed inset-0 bg-gray-900 bg-opacity-70 flex md:items-center justify-center p-0 z-50 transition-opacity duration-300 font-inter top-0 overflow-hidden">
-      <div className="relative w-full md:max-w-3xl lg:max-w-5xl rounded-2xl shadow-md overflow-hidden bg-white  ">
+    <div className=" flex md:items-center justify-center p-0 z-50 transition-opacity duration-300 font-inter top-0 overflow-hidden">
+      <div className="relative w-full md:max-w-3xl lg:max-w-5xl rounded-2xl shadow-md overflow-hidden bg-slate-100  ">
         <div className="grid grid-cols-1 md:grid-cols-2 ">
-          <div className=" bg-purple-600 p-0 flex items-center  justify-center rounded-l-xl w-full ">
+          <div className=" bg-purple-600 flex pl-6 pt-10 rounded-l-xl w-full ">
             <img
               src={ModalIllustrationPng}
               alt="Pause Illustration"
-              className="w-full h-full object-contain md:object-bottom px-6"
+              className="w-full h-full object-center  "
             />
           </div>
 
-          <div className="w-full  p-8 flex flex-col gap-5 overflow-y-auto">
+          <div className="w-full  p-6 flex flex-col gap-5 overflow-y-auto">
             <div className="flex items-center gap-1  ">
               <h2 className="text-2xl font-semibold text-[#7650e3]">
                 Consider Canceling Your Subscription?
               </h2>
               <button
                 onClick={onClose}
-                className="absolute right-4 top-3 w-6 h-6 z-10 rounded-full border-[#7650e3] flex items-center justify-center text-[#7650e3] bg-[#F7F5FB] transition-shadow border-[2px]"
+                className="absolute right-4 top-7 w-6 h-6 z-10 rounded-full border-[#7650e3] flex items-center justify-center text-[#7650e3] bg-[#F7F5FB] transition-shadow border-[2px]"
                 aria-label="Close manage subscription dialog"
               >
                 <X className="w-4 h-4 color-[#7650e3] stroke-[#7650e3] stroke-[3]" />
               </button>
             </div>
 
-            <div className=" flex flex-col justify-center gap-5">
-              <p className="text-sm sm:text-base text-[#000000] font-medium">
+            <div className=" flex flex-col justify-center gap-4">
+              <p className="text-sm sm:text-base text-[#000000] ">
                 By canceling now, you'll lose{" "}
-                <span className="font-bold text-[#7650e3]">
+                <span className="font-medium text-[#7650e3]">
                   {user.walle}
                   {user.wallet.package.name}
                 </span>{" "}
                 access on due date{" "}
-                <span className="font-bold text-[#7650e3]">
+                <span className="font-medium text-[#7650e3]">
                   {user.wallet.expiresAt
                     ? new Date(user.wallet.expiresAt).toLocaleDateString(
                         "en-GB",
@@ -80,10 +80,9 @@ const SubscriptionPauseModal = ({
                       )
                     : "N/A"}{" "}
                 </span>
-                of your next billing cycle, forfeit all rollover tokens in your
-                bank and lose these{" "}
-                <span className="font-bold text-[#7650e3]">
-                  <span className="font-bold text-[#7650e3]">
+                , forfeit all rollover tokens in your bank and lose these{" "}
+                <span className="font-medium text-[#7650e3]">
+                  <span className="font-medium text-[#7650e3]">
                     {user.walle}
                     {user.wallet.package.name}
                   </span>{" "}
@@ -103,9 +102,9 @@ const SubscriptionPauseModal = ({
                 <FeatureLossItem label="Text Post Generation" icon={textIcon} />
               </div>
 
-              <div className="border border-[#9F8CF0] rounded-md px-4 py-2 bg-white flex justify-between items-start">
+              <div className="border border-purple-600 rounded-md px-5 py-4 bg-white flex justify-between items-start">
                 <div className="flex  gap-2 items-center">
-                  <div className="w-8 h-8  flex-shrink-0">
+                  <div className="w-12 h-12  flex-shrink-0">
                     <img
                       src={coinIcon}
                       alt="Omni Coin"
@@ -113,10 +112,10 @@ const SubscriptionPauseModal = ({
                     />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-slate-800 mb-1">
+                    <p className="text-sm font-semibold text-slate-800">
                       Rollover Omni Coins
                     </p>
-                    <p className="text-lg font-bold text-slate-800 leading-none">
+                    <p className="text-base font-semibold text-slate-800 leading-none">
                       Potential Coins Lost
                     </p>
                   </div>
@@ -125,23 +124,22 @@ const SubscriptionPauseModal = ({
                   <p className="text-xs font-medium text-[#000000] mb-1">
                     Current Excess
                   </p>
-                  <p className="text-lg font-bold text-slate-900 leading-none">
+                  <p className="text-lg font-medium text-slate-900 leading-none">
                     {user.wallet.coins}
                   </p>
                 </div>
               </div>
 
-              <p className="text-sm sm:text-base text-black font-semibold">
-                If you still want to cancel, select{" "}
-                <span className="font-bold text-[#7650e3]">
-                  Proceed with Cancellation
-                </span>
+              <p className="text-sm  text-black ">
+                If you still want to cancel, select "Proceed with Cancelation".
+                Alternatively, consider pausing your subscription for 3 months
+                to save your current benefits.
               </p>
             </div>
 
             <div className="space-y-2">
               <button
-                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold p-2.5 text-sm sm:text-base rounded-md transition disabled:opacity-50 flex justify-between items-center border-2 border-[#7F56D9]"
+                className=" w-full hover:bg-[#d7d7fc] disabled:cursor-not-allowed hover:text-[#7650e3]  text-[#7650e3] font-semibold py-2.5 px-3  text-sm sm:text-base rounded-md transition disabled:opacity-50 flex justify-between items-center  border border-[#7F56D9]"
                 onClick={onPause}
               >
                 <span>Continue with Subscription</span>
@@ -150,8 +148,8 @@ const SubscriptionPauseModal = ({
 
               <button
                 disabled={isCanceled}
-                className=" w-full hover:bg-[#d7d7fc] disabled:cursor-not-allowed hover:text-[#7650e3]  text-[#7650e3] font-semibold p-2.5  text-sm sm:text-base rounded-md transition disabled:opacity-50 flex justify-between items-center  border-2 border-[#7F56D9]"
                 onClick={onCancel}
+                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2.5 px-3 text-sm sm:text-base rounded-md transition disabled:opacity-50 flex justify-between items-center border   border-[#7F56D9]"
               >
                 <span>Proceed with Cancellation</span>
                 <ArrowRightIcon className="w-5 h-5" />
