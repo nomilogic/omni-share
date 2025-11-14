@@ -43,6 +43,14 @@ export const PricingPage: React.FC = () => {
   const activePackage = state?.user?.wallet;
 
   useEffect(() => {
+    if (initialTab === "addons") {
+      setActiveTab("addons");
+    } else {
+      setActiveTab("");
+    }
+  }, [initialTab]);
+
+  useEffect(() => {
     const fetchData = async () => {
       try {
         const packagesRes = await API.listPackages();
@@ -514,7 +522,6 @@ export const PricingPage: React.FC = () => {
       {reactivateOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
-            {/* Header */}
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl text-purple-600 font-semibold">
                 Reactivate Your Subscription
@@ -528,14 +535,12 @@ export const PricingPage: React.FC = () => {
               </button>
             </div>
 
-            {/* Description */}
             <p className="text-[#7650e3] mb-4">
               Are you sure you want to reactivate your subscription? Your{" "}
               <span className="font-semibold">{currentTier?.name}</span> plan
               will continue to be billed.
             </p>
 
-            {/* Plan Info */}
             <div className="bg-blue-50 border border-blue-200 rounded-md p-4 mb-4">
               <p className="text-sm text-[#7650e3]">
                 <span className="font-semibold">Plan:</span>{" "}
@@ -727,43 +732,43 @@ export const PricingPage: React.FC = () => {
 
       {confirmOpen && selectedPlan && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-slate-100 rounded-xl shadow-md w-full max-w-md px-5 py-4 relative">
+          <div className="bg-slate-100 rounded-2xl shadow-md w-full max-w-md px-8 py-6  relative">
             <div className="flex justify-between items-center mb-3">
-              <h2 className="text-[18px] text-purple-700 font-bold">
+              <h2 className="text-[18px] text-purple-700 font-semibold">
                 Confirm Plan
               </h2>
 
               <button
                 onClick={handleClosePopup}
-                className="w-5 h-5 flex items-center justify-center border border-purple-700 rounded-full "
+                className="w-6 h-6 flex items-center justify-center border border-purple-700 rounded-full "
               >
-                <X className="w-3.5 h-3.5 text-purple-700" />
+                <X className="w-4 h-4 text-purple-700" />
               </button>
             </div>
 
             {/* Price Box */}
-            <div className="border border-purple-600 bg-white rounded-lg py-4 px-3 text-center mb-4">
-              <p className="text-base text-purple-700 font-bold mb-1">
+            <div className="border border-purple-600 bg-white rounded-lg  px-4 text-center ">
+              <p className="text-lg text-purple-700 font-semibold mb-1 mt-2">
                 {selectedPlan.name || "Standard"}
               </p>
 
-              <div className="flex justify-center items-end gap-2">
-                <span className="text-[34px] font-bold text-purple-700 leading-none">
-                  ${selectedPlan.amount || "25.00"}
+              <div className="flex justify-center items-end gap-4">
+                <span className="text-[32px] font-semibold text-purple-700 leading-none">
+                  ${selectedPlan.amount + ".00" || "25.00"}
                 </span>
 
-                <div className="flex flex-col items-start leading-none mb-1 font-bold">
-                  <span className="text-[12px] text-purple-700">USD</span>
-                  <span className="text-[12px] text-purple-700">Month</span>
+                <div className="flex flex-col items-start leading-none mb-1 font-semibold">
+                  <span className="text-[13px] text-purple-700">USD</span>
+                  <span className="text-[13px] text-purple-700">Month</span>
                 </div>
               </div>
 
-              <p className="text-[12px] font-semibold text-black mt-2">
+              <p className="text-[12px]  text-black mt-2 mb-3">
                 Includes GST of $0.00.
               </p>
             </div>
 
-            <div className="text-center text-[13px] text-black font-bold mb-5">
+            <div className="text-center text-[13px] text-black font-medium my-6">
               We are committed to secure payments for businesses and service
               providers without any limitations.
             </div>

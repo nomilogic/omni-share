@@ -521,7 +521,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
                   {showPackage && (
                     <div
-                      className="absolute  z-20 lg:left-auto top-8 left-3 right-3 mt-6 rounded-2xl shadow-xl md:p-6 p-4 border md:w-[380px] w-auto"
+                      className="absolute  z-20 lg:left-auto top-8 left-3 right-3 mt-6 rounded-2xl shadow-xl md:px-6 px-4 py-6 border md:w-[380px] w-auto"
                       style={{
                         backgroundColor: "#F9F8FB",
                         borderColor: "#F1F0F4",
@@ -572,7 +572,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                           <div className=" space-y-3 mb-5">
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-2 text-slate-800 text-md font-medium">
-                                <Icon name="spiral-logo" className="mr-1" />
+                                <Icon name="spiral-logo" />
                                 Omni Coins
                                 <span
                                   className="text-gray-400 text-xs cursor-pointer"
@@ -592,10 +592,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-2 text-md text-slate-800 font-medium ">
-                                <Icon
-                                  name="share"
-                                  className="scale-[0.8] mr-1"
-                                />
+                                <Icon name="share" className="scale-[0.8] " />
                                 Referral Coins
                                 <span
                                   className="text-gray-400 text-xs cursor-pointer"
@@ -690,7 +687,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           onAddCoins={() => {
             setShowPackage(false);
             closeManageSubscription();
-            navigate("/wallet");
+            navigate("/pricing?tab=addons");
           }}
         />
         <PreloaderOverlay loadingState={loadingState} />
