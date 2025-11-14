@@ -521,7 +521,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                   />
 
                   {showPackage && (
-                    <div className="absolute bg-slate-100  z-20 lg:left-auto top-8 left-3 right-3 mt-6 rounded-2xl shadow-md md:px-6 px-4 py-6 border md:w-[370px] w-auto">
+                    <div className="absolute bg-gray-50  z-20 lg:left-auto top-8 left-3 right-3 mt-6 rounded-2xl shadow-md md:px-6 px-4 py-6 border md:w-[370px] w-auto">
                       {user?.wallet?.package ? (
                         <>
                           <div className="flex justify-between items-start mb-3">
@@ -635,9 +635,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                           <Link
                             to="/pricing"
                             onClick={() => setShowPackage(false)}
-                            className="w-full mt-3 px-2 py-2.5  border  text-md font-semibold rounded-md flex items-center justify-center gap-2  text-white bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] border-[#7650e3]  "
+                            className="w-full mt-3 px-2 py-2.5  border  text-md font-semibold rounded-md group flex items-center justify-center gap-2  text-white bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] border-[#7650e3]  "
                           >
-                            <div className="hover:filter-omni h-full w-full text-center">
+                            <div className="group-hover:filter-omni h-full w-full text-center">
                               <Icon
                                 name="white-diamond"
                                 size={20}

@@ -14,7 +14,7 @@ export const WalletBalance = ({
     >
       <div
         className={`rounded p-0 ${
-          showPackage ? "bg-slate-100  rounded-full" : "bg-transparent"
+          showPackage ? "bg-gray-50  rounded-full" : "bg-transparent"
         }`}
       >
         <Icon

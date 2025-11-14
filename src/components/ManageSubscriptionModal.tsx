@@ -90,7 +90,7 @@ export const ManageSubscriptionModal: React.FC<any> = ({
                 className="w-full h-full object-contain  object-center "
               />
             </div>
-            <div className="px-8 py-5 bg-slate-100">
+            <div className="px-8 py-5 bg-gray-50">
               <div className="flex justify-between items-center">
                 <h3 className="text-2xl  font-semibold text-[#7650e3]">
                   Manage Subscription
@@ -202,7 +202,7 @@ export const ManageSubscriptionModal: React.FC<any> = ({
               />
             </div>
 
-            <div className="w-full p-6 z-10 flex  bg-slate-100 flex-grow flex-col">
+            <div className="w-full p-6 z-10 flex  bg-gray-50 flex-grow flex-col">
               <div className="flex justify-between items-center">
                 <h3 className="text-2xl font-semibold text-[#7650e3]">
                   View Invoices

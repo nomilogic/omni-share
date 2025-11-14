@@ -731,7 +731,7 @@ export const PricingPage: React.FC = () => {
 
       {confirmOpen && selectedPlan && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-slate-100 rounded-2xl shadow-md w-full max-w-md px-8 py-6  relative">
+          <div className="bg-gray-50 rounded-2xl shadow-md w-full max-w-md px-8 py-6  relative">
             <div className="flex justify-between items-center mb-3">
               <h2 className="text-[18px] text-purple-700 font-semibold">
                 Confirm Plan

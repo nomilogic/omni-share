@@ -327,7 +327,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
     <div className="min-h-screen w-full flex md:items-center justify-center bg-white px-3 py-4  sm:py-6 md:py-8">
       {!showOtpPopup && (
         <div
-          className={`z-10  md:max-w-md bg-slate-100 flex items-center flex-col w-full justify-center md:shadow-md rounded-2xl py-6 ${
+          className={`z-10  md:max-w-md md:bg-gray-50 flex items-center flex-col w-full justify-start md:shadow-md rounded-2xl py-6 ${
             mode !== "login" && mode !== "signup" ? "h-[480px]" : "h-[750px]"
           } md:py-12  sm:px-6 md:px-10  md:border md:border-slate-200/70 md:backdrop-blur-sm`}
         >
@@ -505,11 +505,6 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                   Forgot Password
                 </button>
               </div>
-              {(error || externalError) && (
-                <p className="text-red-500 text-sm text-center">
-                  {error || externalError}
-                </p>
-              )}
             </div>
           )}
 

@@ -13,7 +13,7 @@ function ReferralSection() {
   };
 
   return (
-    <div className="bg-slate-100 rounded-2xl   px-5 py-4">
+    <div className="bg-gray-50 rounded-2xl   px-5 py-4">
       <div className="grid md:grid-cols-3 gap-5  items-center">
         <div className="col-span-2 w-full">
           <h2 className="text-3xl font-bold text-[#7650e3] mb-1">

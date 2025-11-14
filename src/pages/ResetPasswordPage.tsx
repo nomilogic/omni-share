@@ -107,7 +107,7 @@ const ResetPasswordPage: React.FC = () => {
   return (
     <main className="min-h-screen w-full flex md:items-center md:justify-center bg-white px-4 py-8 sm:px-6 sm:py-12 md:px-8">
       {!token || expired ? (
-        <div className="w-full md:max-w-md bg-slate-100 md:rounded-2xl md:shadow-md md:p-8 flex flex-col items-center text-center md:border md:border-gray-200">
+        <div className="w-full md:max-w-md md:bg-gray-50 md:rounded-2xl md:shadow-md md:p-8 flex flex-col items-center text-center md:border md:border-gray-200">
           <div className="text-center flex justify-center mb-8 gap-2 items-center">
             <Icon name="logo" size={50} />
           </div>
@@ -128,7 +128,7 @@ const ResetPasswordPage: React.FC = () => {
           </button>
         </div>
       ) : (
-        <div className="w-full md:max-w-md md:bg-white md:rounded-2xl md:shadow-md p-6 sm:p-8 md:p-10 md:border border-gray-200">
+        <div className="w-full md:max-w-md bg-gray-50 md:rounded-2xl md:shadow-md p-6 sm:p-8 md:p-10 md:border border-gray-200">
           <div className="text-center flex justify-center mb-8 gap-2 items-center">
             <Icon name="logo" size={50} />
             <span className="theme-text-primary text-lg sm:text-xl md:text-2xl lg:text-[1.6rem] tracking-tight">
@@ -147,7 +147,6 @@ const ResetPasswordPage: React.FC = () => {
             Enter your new password below.
           </p>
 
-          {/* Timer Display */}
           <div className="text-center mb-4 font-medium text-purple-700">
             Link expires in: {formatTime(remainingTime)}
           </div>
@@ -181,6 +180,13 @@ const ResetPasswordPage: React.FC = () => {
               />
             </div>
 
+            <button
+              type="submit"
+              disabled={loading}
+              className={`w-full py-2.5 bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3]  border border-[#7650e3] rounded-md font-semibold text-white transition-all duration-300 disabled:cursor-not-allowed`}
+            >
+              {loading ? "Updating..." : "Set New Password"}
+            </button>
             {error && (
               <div className="text-red-500 text-sm text-center font-medium bg-red-50 py-2.5 px-3 rounded-md">
                 {error}
@@ -192,14 +198,6 @@ const ResetPasswordPage: React.FC = () => {
                 {success}
               </div>
             )}
-
-            <button
-              type="submit"
-              disabled={loading}
-              className={`w-full py-2.5 bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3]  border border-[#7650e3] rounded-md font-semibold text-white transition-all duration-300 disabled:cursor-not-allowed`}
-            >
-              {loading ? "Updating..." : "Set New Password"}
-            </button>
           </form>
         </div>
       )}
