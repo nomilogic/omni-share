@@ -251,7 +251,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
     }
 
     return (
-      <div className="flex-shrink-0 w-32 h-24 bg-gray-200 border-r border-gray-200 relative">
+      <div className="p-4 flex-shrink-0 w-32 h-24 bg-gray-200 border-r border-gray-200 relative">
         <img
           src={thumbnailUrl}
           alt="Post thumbnail"
@@ -367,7 +367,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
   );
 
   return (
-    <div className="h-fit px-0 lg:px-2 ">
+    <div className="h-fit p-4 ">
       {/* Header */}
       <div className="">
         <div className="flex items-center justify-between max-w-4xl mx-auto mb-6">

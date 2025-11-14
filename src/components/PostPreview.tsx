@@ -1002,7 +1002,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
   const selectedPost = posts.find((post) => post.platform === selectedPlatform);
 
   return (
-    <div className="preview w-full mx-auto bg-transparent  md:rounded-2xl md:shadow-md md:px-8  md:py-10  ">
+    <div className="preview w-full mx-auto bg-transparent  md:rounded-2xl p-4 md:shadow-md md:px-8  md:py-10  ">
       <h2 className="text-3xl font-semibold theme-text-primary mb-1">
         Your AI-Generated Posts
       </h2>

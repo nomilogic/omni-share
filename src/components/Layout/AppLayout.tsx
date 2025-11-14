@@ -148,7 +148,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
   return (
     <ResizeContext.Provider value={{ handleResizeMainToFullScreen }}>
-      <div className=" ">
+      <div className="">
         <div className="relative z-10">
           <div
             className={`fixed inset-y-0 left-0 z-50 w-full xl:w-[18%] sm:w-[40%] theme-bg-trinary border-r border-white/10 transform ${

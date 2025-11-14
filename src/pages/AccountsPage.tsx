@@ -237,7 +237,7 @@ export const AccountsPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-full mx-auto px-0 py-2.5 flex flex-col gap-y-3">
+    <div className="max-w-full mx-auto px-4 py-2.5 flex flex-col gap-y-3">
       <div className="flex flex-col gap-y-3">
         <div className="">
           <h2 className="text-2xl font-bold theme-text-primary mb-1">
