@@ -70,41 +70,43 @@ export const ManageSubscriptionModal: React.FC<any> = ({
       <SubscriptionPauseModal
         isVisible={isModalOpen}
         onClose={() => {
-          setIsModalOpen(false);
           _onClose();
+          setIsModalOpen(false);
         }}
         isCanceled={isCanceled}
         onCancel={() => {
           onCancelSubscription && onCancelSubscription();
         }}
-        onPause={() => {}}
+        onPause={() => {
+          _onClose();
+        }}
       />
 
       {!showTransactions && !isModalOpen && (
-        <div className="relative w-full md:max-w-3xl lg:max-w-5xl  rounded-2xl shadow-md overflow-hidden bg-white  ">
-          <div className="grid grid-cols-1 md:grid-cols-2 ">
-            <div className=" bg-purple-600 py-12   px-5 flex items-center  justify-center rounded-l-xl w-full ">
+        <div className="relative w-full md:max-w-3xl lg:max-w-5xl  md:rounded-2xl  shadow-md overflow-hidden bg-white md:h-auto h-full ">
+          <div className="flex  flex-col sm:grid sm:grid-cols-1 md:grid-cols-2 md:h-auto h-full ">
+            <div className=" bg-purple-600 py-12   px-5 flex items-center  justify-center md:rounded-l-xl w-full md:h-full h-[40%]">
               <img
                 src={Illustration}
                 alt="Manage subscription illustration"
-                className="w-full h-full object-contain  object-center "
+                className="w-full h-full object-contain  md:object-center "
               />
             </div>
-            <div className="px-8 py-5 bg-gray-50">
+            <div className="px-8 py-5 bg-gray-50 h-full">
               <div className="flex justify-between items-center">
                 <h3 className="text-2xl  font-semibold text-[#7650e3]">
                   Manage Subscription
                 </h3>
                 <button
                   onClick={_onClose}
-                  className="  w-6 h-6 z-10 rounded-full border-[#7650e3] flex items-center justify-center text-[#7650e3] bg-[#F7F5FB] transition-shadow border-[2px]"
+                  className="absolute right-3 top-3  w-6 h-6 z-10 rounded-full border-[#7650e3] flex items-center justify-center text-[#7650e3] bg-[#F7F5FB] transition-shadow border-[2px]"
                   aria-label="Close manage subscription dialog"
                   disabled={isLoading}
                 >
                   <X className="w-4 h-4 color-[#7650e3] stroke-[#7650e3] stroke-[3]" />
                 </button>
               </div>
-              <div className="md:w-full  z-10 flex flex-col justify-center h-full -mt-8">
+              <div className="md:w-full  z-10 flex flex-col justify-center h-full md:-mt-8">
                 <div className="">
                   <div className="text-lg font-medium text-[#7650e3]  mb-4">
                     How can we help you today?
@@ -192,9 +194,9 @@ export const ManageSubscriptionModal: React.FC<any> = ({
         </div>
       )}
       {showTransactions && (
-        <div className="absolute w-full md:max-w-3xl lg:max-w-5xl md:rounded-2xl overflow-hidden shadow-md bg-white  ">
-          <div className="grid md:grid-cols-2 ">
-            <div className=" bg-[#7650e3]  flex items-center justify-center   w-full">
+        <div className="absolute  w-full md:max-w-3xl lg:max-w-5xl  md:rounded-2xl  shadow-md overflow-hidden bg-white md:h-auto h-full  ">
+          <div className="flex  flex-col sm:grid sm:grid-cols-1 md:grid-cols-2 md:h-auto h-full">
+            <div className=" bg-[#7650e3]  flex items-center justify-center   w-full  md:h-full h-[40%]">
               <img
                 src={Transactions}
                 alt="Manage subscription illustration"
@@ -209,14 +211,15 @@ export const ManageSubscriptionModal: React.FC<any> = ({
                 </h3>
                 <button
                   onClick={_onClose}
-                  className=" z-1000 rounded-full  border-[#7650e3] flex items-center justify-center text-[#7650e3] bg-[#F7F5FB] transition-shadow border-[2px]"
+                  className="absolute right-3 top-3  w-6 h-6 z-10 rounded-full border-[#7650e3] flex items-center justify-center text-[#7650e3] bg-[#F7F5FB] transition-shadow border-[2px]"
                   aria-label="Close manage subscription dialog"
+                  disabled={isLoading}
                 >
-                  <X className="w-6 h-6  p-0.5 color-[#7650e3] stroke-[#7650e3] stroke-[3] " />
+                  <X className="w-4 h-4 color-[#7650e3] stroke-[#7650e3] stroke-[3]" />
                 </button>
               </div>
 
-              <div className="space-y-3 mt-4 h-[58vh] overflow-y-auto">
+              <div className="space-y-3 mt-4 h-[58vh]  overflow-y-auto pb-20">
                 <TransactionHistory />
               </div>
             </div>
