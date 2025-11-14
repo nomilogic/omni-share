@@ -93,7 +93,7 @@ function Analytics() {
 
       <button
         onClick={() => navigate("/dashboard")}
-        className="w-full py-2.5 px-4 rounded-md font-semibold text-sm transition-all border-2 border-[#7650e3] mt-4 text-white bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
+        className="w-full py-2.5 px-4 rounded-md font-semibold text-sm transition-all border-2 mt-4 text-white border-[#7650e3]  bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
        
       >
         View Analytics

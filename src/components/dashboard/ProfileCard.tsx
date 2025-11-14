@@ -1,8 +1,11 @@
 import { Settings, Edit } from "lucide-react";
 import { useAppContext } from "../../context/AppContext";
+import { useNavigate } from "react-router-dom";
 
 function ProfileCard() {
-  const { state } = useAppContext();
+  const { state, dispatch, setProfileEditing} = useAppContext();
+
+  const navigate = useNavigate();
 
   // Extract user information
   const fullName =
@@ -40,15 +43,19 @@ function ProfileCard() {
           style={{
             color: "#7650e3",
           }}
+          onClick={() => navigate("/settings")}
+          
         >
           <Settings className="w-[18px] h-[18px]" />
           <span>Setting</span>
+        
         </button>
         <button
           className="flex items-center rounded-md gap-2 transition-colors text-[13px] font-semibold"
           style={{
             color: "#7650e3",
           }}
+           onClick={() => setProfileEditing(true)}
         >
           <Edit className="w-[17px] h-[17px]" />
           <span>Edit Profile</span>
