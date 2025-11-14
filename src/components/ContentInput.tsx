@@ -3288,7 +3288,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                 </div>
               )}
 
-              {selectedPostType !== "" ? (
+              {(selectedPostType !== ""  &&  (selectedImageMode!== "" || selectedVideoMode !== "" || selectedPostType === "text") ) ? (
                 <>
                   <>
                     <div className="flex-1">
@@ -3448,8 +3448,10 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                     </button>
                   </div>
                 </>
-              ) : (
-                <div className="flex-1 w-full aspect-video ">
+              ) : (<></>
+              
+              )}
+              {((selectedImageMode === "" && selectedVideoMode === "" && selectedPostType !== "text") &&  <div className="flex-1 w-full aspect-video ">
                   <div className="relative rounded-md overflow-hidden shadow-2xl bg-gray-900 aspect-video">
                     <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#7650e3] to-[#6366F1]">
                       <button className="bg-white rounded-full p-6 hover:scale-110 transition-transform shadow-2xl">
@@ -3478,8 +3480,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                       </p>
                     </div>
                   </div>
-                </div>
-              )}
+                </div>)}
             </div>
           </form>
         </>
