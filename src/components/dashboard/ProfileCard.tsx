@@ -36,33 +36,21 @@ function ProfileCard() {
       </div>
       <div className="flex items-center gap-5">
         <button
-          className="flex items-center rounded-md gap-1.5 transition-colors text-sm font-semibold"
+          className="flex items-center rounded-md gap-1.5 transition-colors text-[13px] font-semibold"
           style={{
             color: "#7650e3",
           }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = "#d7d7fc";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = "transparent";
-          }}
         >
-          <Settings className="w-5 h-5" />
+          <Settings className="w-[18px] h-[18px]" />
           <span>Setting</span>
         </button>
         <button
-          className="flex items-center rounded-md gap-2 transition-colors text-sm font-semibold"
+          className="flex items-center rounded-md gap-2 transition-colors text-[13px] font-semibold"
           style={{
             color: "#7650e3",
           }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = "#d7d7fc";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = "transparent";
-          }}
         >
-          <Edit className="w-5 h-5" />
+          <Edit className="w-[17px] h-[17px]" />
           <span>Edit Profile</span>
         </button>
       </div>

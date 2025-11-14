@@ -5,6 +5,7 @@ import {
   getPlatformIconBackgroundColors,
 } from "../../utils/platformIcons";
 import { Platform } from "../../types";
+import Referal from "../../assets/referal.png";
 
 function RecentPosts() {
   const { state } = useAppContext();
@@ -22,70 +23,67 @@ function RecentPosts() {
   ];
 
   return (
-    <div>
-      <h3 className="font-medium text-gray-900 text-md mb-2">Recent Posts</h3>
+    <div className="bg-slate-100 rounded-xl  p-5 flex flex-col h-full w-full">
+      <div className="flex gap-3 mb-5">
+        {socialPlatforms.map((platform, i) => {
+          const IconComponent = getPlatformIcon(platform);
+          const bgColor = getPlatformIconBackgroundColors(platform);
+          return (
+            <div
+              key={i}
+              className={`w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-white ${bgColor}`}
+            >
+              <IconComponent className="w-5 h-5" />
+            </div>
+          );
+        })}
+      </div>
 
-      <div className="bg-slate-100 rounded-xl  p-5 flex flex-col">
-        <div className="flex gap-3 mb-5">
-          {socialPlatforms.map((platform, i) => {
-            const IconComponent = getPlatformIcon(platform);
-            const bgColor = getPlatformIconBackgroundColors(platform);
-            return (
-              <div
-                key={i}
-                className={`w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-white ${bgColor}`}
-              >
-                <IconComponent className="w-5 h-5" />
-              </div>
-            );
-          })}
-        </div>
-
-        <div className="flex-1 mb-5 h-full">
-          {lastPost?.image ? (
-            <div className="relative rounded-lg overflow-hidden h-full">
+      <div className="flex-1 mb-5 h-full">
+        {lastPost?.image ? (
+          <div className="relative rounded-lg overflow-hidden h-full">
+            <img
+              src={lastPost.image}
+              alt="Recent Post"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute bottom-0 left-0 right-0 bg-black/40 px-2 py-1">
+              <h4 className="text-white font-bold text-xs truncate">
+                {lastPost.content?.substring(0, 50) || "Post Title"}...
+              </h4>
+            </div>
+          </div>
+        ) : (
+          <div className="relative rounded-lg overflow-hidden h-full shadow-md bg-white">
+            {/* Placeholder preview */}
+            <div>
               <img
-                src={lastPost.image}
-                alt="Recent Post"
+                src={Referal} // <--- replace with your placeholder image
+                alt="Placeholder"
                 className="w-full h-full object-cover"
               />
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t  from-black/80 to-black/20">
-                <h4 className="text-white font-bold text-xs truncate">
-                  {lastPost.content?.substring(0, 50) || "Post Title"}...
-                </h4>
-              </div>
-            </div>
-          ) : (
-            <div className="relative rounded-lg overflow-hidden bg-gradient-to-br h-full py-5 from-indigo-100 to-indigo-50  flex items-center justify-center">
-              <div className="text-center">
-                <div className="text-3xl mb-2">📱</div>
-                <p className="text-xs text-gray-500">No posts yet</p>
-              </div>
-            </div>
-          )}
-        </div>
 
-        <button
-          onClick={() => navigate("/content")}
-          className="w-full text-white py-2.5 px-4 rounded-md font-bold text-sm transition-all border-2"
-          style={{
-            backgroundColor: "#7650e3",
-            borderColor: "#7650e3",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = "#d7d7fc";
-            e.currentTarget.style.color = "#7650e3";
-            e.currentTarget.style.borderColor = "#7650e3";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = "#7650e3";
-            e.currentTarget.style.color = "white";
-            e.currentTarget.style.borderColor = "#7650e3";
-          }}
-        >
-          Create Post
-        </button>
+              {/* Bottom overlay exactly like your image */}
+              <div className="absolute bottom-0 left-0 w-full bg-black/40 px-3 py-4">
+                <span className="text-white text-sm font-semibold">
+                  Post Title
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
+
+      <button
+        onClick={() => navigate("/content")}
+        className="w-full text-white py-2.5 px-4 rounded-md font-semibold text-sm transition-all border-2"
+        style={{
+          backgroundColor: "#7650e3",
+          borderColor: "#7650e3",
+        }}
+      >
+        Create Post
+      </button>
     </div>
   );
 }

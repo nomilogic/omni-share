@@ -1,6 +1,6 @@
 import { Share2, Copy, Users } from "lucide-react";
 import { useState } from "react";
-
+import Referal from "../../assets/referal.png";
 function ReferralSection() {
   const [copied, setCopied] = useState(false);
   const referralLink =
@@ -19,28 +19,30 @@ function ReferralSection() {
           <h2 className="text-3xl font-bold text-[#7650e3] mb-1">
             Refer & Earn!
           </h2>
-          <p className="text-gray-700 mb-5 text-sm leading-relaxed">
+          <p className="text-black mb-5 text-sm font-medium leading-relaxed">
             When someone buys a package using your referral link, you both earn
             100 Buses Coins!
           </p>
 
-          <div className="mb-6">
-            <label className="text-xs text-gray-600 mb-2 block font-medium">
+          <div className="mb-4">
+            <label className="text-xs text-slate-500 mb-2 block font-medium">
               Copy Link or Share Below
             </label>
-            <div className="flex gap-2">
+
+            <div className="flex items-center gap-2 w-full border border-purple-600 bg-white rounded-md overflow-hidden">
               <input
                 type="text"
                 value={referralLink}
                 readOnly
-                className="flex-1 px-3 py-2 border border-stone-300 rounded-lg text-xs text-gray-600 bg-stone-50 font-mono"
+                className="px-3 py-2 w-full text-xs text-slate-700 font-mono outline-none"
               />
+
               <button
                 onClick={copyToClipboard}
-                className="p-2 border border-stone-300 rounded-lg hover:bg-stone-100 transition-colors"
+                className="px-3 py-2  transition-colors"
                 title="Copy to clipboard"
               >
-                <Copy className="w-4 h-4 text-gray-600" />
+                <Copy className="w-4 h-4 text-purple-600" />
               </button>
             </div>
             {copied && (
@@ -50,33 +52,17 @@ function ReferralSection() {
             )}
           </div>
 
-          <button
-            className="flex items-center gap-2 text-white px-6 py-2.5 rounded-md font-bold text-sm transition-colors"
-            style={{
-              backgroundColor: "#7650e3",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = "#d7d7fc";
-              e.currentTarget.style.color = "#7650e3";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = "#7650e3";
-              e.currentTarget.style.color = "white";
-            }}
-          >
-            <Share2 className="w-4 h-4" />
+          <button className="flex items-center rounded-md gap-2 transition-colors text-[13px] font-semibold bg-purple-600  text-white py-2 px-3">
+            <Share2 className="w-[18px] h-[18px]" />
             Share
           </button>
         </div>
 
-        <div className="flex justify-center w-full">
-          <div className="relative w-full h-56 flex items-center justify-center">
-            <div className="absolute inset-0 bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl"></div>
-
-            {/* People/Network visualization */}
-            <div className="relative flex items-center justify-center gap-0"></div>
-          </div>
-        </div>
+        <img
+          src={Referal}
+          className="w-full h-full object-cover object-center"
+          alt=""
+        />
       </div>
     </div>
   );
