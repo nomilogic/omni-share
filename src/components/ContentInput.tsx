@@ -214,6 +214,28 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   };
 
   // Auto-select platforms based on content type and modes
+  // useEffect(() => {
+  //   const appropriatePlatforms = getAppropiatePlatforms(
+  //     selectedPostType?.toLowerCase() as "text" | "image" | "video",
+     
+  //   );
+    
+
+  //   // Clear aspect ratio warning when video mode changes or when correct video is uploaded
+  //   if (selectedPostType === "video") {
+  //     if (videoAspectRatio) {
+  //       // If we have a video loaded, check if the mode now matches the aspect ratio
+  //     console
+  //       }
+  //     } else {
+  //       // If no video is loaded but there's a warning (from previous rejected upload), keep the warning
+  //       // This ensures the warning persists until a correct video is uploaded or mode is switched
+  //     }
+    
+  // }, [
+  //   selectedPostType,
+
+  // ]);
   useEffect(() => {
     const appropriatePlatforms = getAppropiatePlatforms(
       selectedPostType?.toLowerCase() as "text" | "image" | "video",
@@ -264,7 +286,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       }
     }
   }, [
-    selectedPostType,
     selectedImageMode,
     selectedVideoMode,
     videoAspectRatio,
@@ -812,7 +833,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     if (formData.prompt.trim()) {
       // For text-to-image mode with combined generation enabled, do the combined generation
       if (
-        selectedPostType === "image" &&
+        
         selectedImageMode === "textToImage" &&
         generateImageWithPost &&
         !formData.mediaUrl
@@ -826,7 +847,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
       // For text-to-image mode without combined generation, check if image exists
       if (
-        selectedPostType === "image" &&
+        
         selectedImageMode === "textToImage" &&
         !generateImageWithPost &&
         !formData.mediaUrl
@@ -840,7 +861,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
       // For upload mode, check if image is uploaded
       if (
-        selectedPostType === "image" &&
+        
         selectedImageMode === "upload" &&
         !formData.mediaUrl &&
         !formData.media
@@ -852,7 +873,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
       // NEW: For uploaded images, open template editor directly with blank template
       if (
-        selectedPostType === "image" &&
+        
         selectedImageMode === "upload" &&
         (formData.media || formData.mediaUrl)
       ) {
@@ -899,7 +920,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       // allow using an uploaded custom thumbnail. This only runs for
       // aspect ratios that support thumbnails (not 9:16 stories).
       if (
-        selectedPostType === "video" &&
+        
         (selectedVideoMode === "upload" ||
           selectedVideoMode === "uploadShorts") &&
         originalVideoFile &&
@@ -2099,15 +2120,16 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         setVideoThumbnailUrl("");
                         setOriginalVideoFile(null);
                         setVideoAspectRatio(null);
+                        setSelectedImageMode("");
+                        setSelectedVideoMode("");
                         currentFileRef.current = null;
                       }
                       setSelectedPostType(
                         selectedPostType === "text" ? "" : "text"
-                      )
+                      );
                     }}
                     className={`  border  duration-200 text-center px-2 py-3 rounded-md ${
                       selectedPostType === "text"
-                       
                         ? "theme-bg-trinary theme-text-light shadow-md"
                         : "theme-bg-primary "
                     }`}
@@ -2147,23 +2169,13 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                       // Allow switching to image post - clear media if switching from other types
                       if (selectedPostType !== "image") {
                         // If switching from video/text, clear existing media
-                        if (selectedPostType !== "image" && formData.media) {
-                          setFormData((prev) => ({
-                            ...prev,
-                            media: undefined,
-                            mediaUrl: undefined,
-                          }));
-                          setTemplatedImageUrl("");
-                          setSelectedTemplate(undefined);
-                          setImageAnalysis("");
-                          setVideoThumbnailUrl("");
-                          setOriginalVideoFile(null);
-                          setVideoAspectRatio(null);
-                          currentFileRef.current = null;
-                        }
+
+                        setShowImageMenu(true);
+                      } else {
+                        setShowImageMenu(!showImageMenu);
                       }
+
                       setSelectedPostType("image");
-                      setShowImageMenu(!showImageMenu);
                     }}
                     className={` relative  border shadow-md backdrop-blur-md border-slate-200/70 transition-all duration-200 text-center px-2 py-3 rounded-md ${
                       selectedPostType === "image"
@@ -2219,7 +2231,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             currentFileRef.current = null;
                             // Close the upload progress modal
                             hideLoading();
-                            setSelectedImageMode("upload");
                             setShowImageMenu(false);
                             // Clear any previously selected/generated image when switching modes
                             setFormData((prev) => ({
@@ -2227,9 +2238,17 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               media: undefined,
                               mediaUrl: undefined,
                             }));
+
+                            setOriginalVideoFile(null);
+                            setVideoAspectRatio(null);
+                            setVideoThumbnailUrl("");
+                            setVideoAspectRatioWarning("");
+                            setSelectedVideoMode("");
+                            currentFileRef.current = null;
                             setTemplatedImageUrl("");
                             setSelectedTemplate(undefined);
                             setImageAnalysis("");
+                            setSelectedImageMode("upload");
                           }}
                           className={`p-3 rounded-md border transition shadow-md backdrop-blur-md border-slate-200/70-all duration-200 text-center
                         ${selectedPostType === "image" ? "" : "hidden"}
@@ -2290,6 +2309,11 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             setTemplatedImageUrl("");
                             setSelectedTemplate(undefined);
                             setImageAnalysis("");
+                            setOriginalVideoFile(null);
+                            setVideoAspectRatio(null);
+                            setVideoThumbnailUrl("");
+                            setVideoAspectRatioWarning("");
+                            setSelectedVideoMode("");
                           }}
                           className={`p-3   border rounded-md transition-all duration-200 text-center 
                         ${selectedPostType === "image" ? "" : "hidden"}
@@ -2336,23 +2360,25 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                       // Allow switching to video post - clear media if switching from other types
                       if (selectedPostType !== "video") {
                         // If switching from image/text, clear existing media
-                        if (selectedPostType !== "video" && formData.media) {
-                          setFormData((prev) => ({
-                            ...prev,
-                            media: undefined,
-                            mediaUrl: undefined,
-                          }));
-                          setTemplatedImageUrl("");
-                          setSelectedTemplate(undefined);
-                          setImageAnalysis("");
-                          setVideoThumbnailUrl("");
-                          setOriginalVideoFile(null);
-                          setVideoAspectRatio(null);
-                          currentFileRef.current = null;
-                        }
+                        // if (selectedPostType !== "video" && formData.media) {
+                        //   setFormData((prev) => ({
+                        //     ...prev,
+                        //     media: undefined,
+                        //     mediaUrl: undefined,
+                        //   }));
+                        //   setTemplatedImageUrl("");
+                        //   setSelectedTemplate(undefined);
+                        //   setImageAnalysis("");
+                        //   setVideoThumbnailUrl("");
+                        //   setOriginalVideoFile(null);
+                        //   setVideoAspectRatio(null);
+                        //   currentFileRef.current = null;
+                        // }
+                        setShowVideoMenu(true);
+                        setSelectedPostType("video");
+                      } else {
+                        setShowVideoMenu(!showVideoMenu);
                       }
-                      setSelectedPostType("video");
-                      setShowVideoMenu(!showVideoMenu);
                     }}
                     className={`relative border shadow-md backdrop-blur-md border-slate-200/70 transition-all duration-200 text-center px-2 py-3 rounded-md ${
                       selectedPostType === "video"
@@ -2410,10 +2436,15 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               setVideoAspectRatio(null);
                               setVideoThumbnailUrl("");
                               setVideoAspectRatioWarning("");
+
                               currentFileRef.current = null;
                             }
                             setSelectedVideoMode("upload");
                             setShowVideoMenu(false);
+                            setTemplatedImageUrl("");
+                            setSelectedTemplate(undefined);
+                            setImageAnalysis("");
+                            setSelectedImageMode("");
                           }}
                           className={`p-3 border transition rounded-md duration-200 text-center
                             ${selectedPostType === "video" ? "" : "hidden"}
@@ -2470,6 +2501,10 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             }
                             setSelectedVideoMode("uploadShorts");
                             setShowVideoMenu(false);
+                            setTemplatedImageUrl("");
+                            setSelectedTemplate(undefined);
+                            setImageAnalysis("");
+                            setSelectedImageMode("");
                           }}
                           className={`p-3 border transition rounded-md duration-200 text-center
                             ${selectedPostType === "video" ? "" : "hidden"}
@@ -2517,7 +2552,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                 </div>
               </div>
 
-              {selectedPostType === "image" && (
+              {selectedImageMode === "upload" && (
                 <>
                   {selectedImageMode === "upload" && (
                     <div>
@@ -2872,17 +2907,16 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                 </>
               )}
 
-              {selectedPostType === "video" && (
+              {selectedVideoMode !== "" &&(
                 <div>
                   <label className="block text-sm font-medium theme-text-primary  mb-2">
-                    {selectedPostType === "video" &&
-                    selectedVideoMode === "uploadShorts" ? (
+                    {selectedVideoMode === "uploadShorts" ? (
                       <span>Upload Shorts Video (9:16) *</span>
                     ) : (
                       <span>Upload Video (16:9) *</span>
                     )}
                   </label>
-                  <div className=" theme-bg-primary rounded-md py-4">
+                  <div className="  theme-bg-primary  border border-slate-200/70 backdrop-blur-sm rounded-md shadow-md p-6">
                     <div
                       className={` border-2 border-dashed  p-0 text-center transition-all duration-200 ${
                         dragActive
@@ -3084,52 +3118,51 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                           ) : null}
 
                           {/* Thumbnail preference: AI or custom upload (only for non-9:16 videos) */}
-                          {selectedPostType === "video" &&
-                            !is9x16Video(videoAspectRatio || 0) && (
-                              <div className="mt-2 flex items-center justify-center gap-3">
-                                <label className="flex items-center space-x-2 cursor-pointer">
-                                  <input
-                                    type="checkbox"
-                                    checked={generateVideoThumbnailAI}
-                                    onChange={(e) =>
-                                      setGenerateVideoThumbnailAI(
-                                        e.target.checked
-                                      )
-                                    }
-                                    className="w-4 h-4"
-                                  />
-                                  <span className="text-sm theme-text-secondary">
-                                    Generate thumbnail with AI
-                                  </span>
-                                </label>
+                          {!is9x16Video(videoAspectRatio || 0) && (
+                            <div className="mt-2 flex items-center justify-center gap-3">
+                              <label className="flex items-center space-x-2 cursor-pointer">
+                                <input
+                                  type="checkbox"
+                                  checked={generateVideoThumbnailAI}
+                                  onChange={(e) =>
+                                    setGenerateVideoThumbnailAI(
+                                      e.target.checked
+                                    )
+                                  }
+                                  className="w-4 h-4"
+                                />
+                                <span className="text-sm theme-text-secondary">
+                                  Generate thumbnail with AI
+                                </span>
+                              </label>
 
-                                {!generateVideoThumbnailAI && (
-                                  <>
-                                    <input
-                                      ref={thumbnailInputRef}
-                                      type="file"
-                                      accept="image/*"
-                                      onChange={handleCustomThumbnailChange}
-                                      className="hidden"
-                                    />
-                                    <button
-                                      type="button"
-                                      onClick={() =>
-                                        thumbnailInputRef.current?.click()
-                                      }
-                                      className="px-3 py-1 border rounded text-sm"
-                                    >
-                                      Upload custom thumbnail
-                                    </button>
-                                    {customThumbnailUploading && (
-                                      <span className="text-xs text-blue-300 ml-2">
-                                        Uploading...
-                                      </span>
-                                    )}
-                                  </>
-                                )}
-                              </div>
-                            )}
+                              {!generateVideoThumbnailAI && (
+                                <>
+                                  <input
+                                    ref={thumbnailInputRef}
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleCustomThumbnailChange}
+                                    className="hidden"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      thumbnailInputRef.current?.click()
+                                    }
+                                    className="px-3 py-1 border rounded text-sm"
+                                  >
+                                    Upload custom thumbnail
+                                  </button>
+                                  {customThumbnailUploading && (
+                                    <span className="text-xs text-blue-300 ml-2">
+                                      Uploading...
+                                    </span>
+                                  )}
+                                </>
+                              )}
+                            </div>
+                          )}
 
                           {/* AI Analysis Button */}
                           {(formData.media || formData.mediaUrl) &&
@@ -3204,7 +3237,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             disabled={!selectedVideoMode}
                           >
                             <div className="">
-                              <Icon name="upload" size={44} />
+                              <Icon name="upload-video" size={44} />
                               <div>
                                 <p className="font-medium theme-text-primary text-sm mb-1">
                                   Click to browse video
@@ -3255,13 +3288,12 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                 </div>
               )}
 
-              {selectedPostType !== "" ? (
+              {(selectedPostType !== ""  &&  (selectedImageMode!== "" || selectedVideoMode !== "" || selectedPostType === "text") ) ? (
                 <>
                   <>
                     <div className="flex-1">
                       <label className=" text-sm font-medium theme-text-primary  mb-2  flex items-center">
-                        {selectedPostType === "image" &&
-                        selectedImageMode !== "upload"
+                        {selectedImageMode === "textToImage"
                           ? "Generate Image and Post with AI *"
                           : "Content Description *"}
                       </label>
@@ -3280,54 +3312,53 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                       />
                     </div>
 
-                    {selectedPostType === "image" &&
-                      (selectedImageMode === "textToImage" ||
-                        selectedImageMode === "upload") && (
-                        <div className="">
-                          <label className="text-sm font-medium theme-text-primary  mb-2 flex items-center">
-                            Image Dimensions *
-                          </label>
-                          <div className="grid grid-cols-3 gap-4">
-                            {[
-                              { label: "1:1", value: "1:1", icon: "⬜" },
-                              { label: "16:9", value: "16:9", icon: "▬" },
-                              { label: "9:16", value: "9:16", icon: "▫" },
-                            ].map((ratio) => (
-                              <button
-                                key={ratio.value}
-                                type="button"
-                                onClick={() =>
-                                  handleAspectRatioChange(ratio.value)
-                                }
-                                className={`w-full h-24 p-2 border transition-all rounded-md duration-200 flex flex-col items-center justify-center ${
+                    {(selectedImageMode === "textToImage" ||
+                      selectedImageMode === "upload") && (
+                      <div className="">
+                        <label className="text-sm font-medium theme-text-primary  mb-2 flex items-center">
+                          Image Dimensions *
+                        </label>
+                        <div className="grid grid-cols-3 gap-4">
+                          {[
+                            { label: "1:1", value: "1:1", icon: "⬜" },
+                            { label: "16:9", value: "16:9", icon: "▬" },
+                            { label: "9:16", value: "9:16", icon: "▫" },
+                          ].map((ratio) => (
+                            <button
+                              key={ratio.value}
+                              type="button"
+                              onClick={() =>
+                                handleAspectRatioChange(ratio.value)
+                              }
+                              className={`w-full h-24 p-2 border transition-all rounded-md duration-200 flex flex-col items-center justify-center ${
+                                aspectRatio === ratio.value
+                                  ? "theme-bg-quaternary shadow-lg theme-text-secondary"
+                                  : "theme-bg-primary hover:theme-bg-primary/50"
+                              }`}
+                            >
+                              <div
+                                className={`border mx-auto mb-1  ${
+                                  ratio.value === "1:1"
+                                    ? "w-8 h-8 border-1 border-purple-600 "
+                                    : ratio.value === "16:9"
+                                    ? "w-10 h-6 border-1"
+                                    : ratio.value === "9:16"
+                                    ? "w-6 h-10 border-1 border-purple-600"
+                                    : "w-8 h-8 border-1"
+                                } ${
                                   aspectRatio === ratio.value
-                                    ? "theme-bg-quaternary shadow-lg theme-text-secondary"
-                                    : "theme-bg-primary hover:theme-bg-primary/50"
+                                    ? "border-purple-600 border-2"
+                                    : "theme-border-dark border-1"
                                 }`}
-                              >
-                                <div
-                                  className={`border mx-auto mb-1  ${
-                                    ratio.value === "1:1"
-                                      ? "w-8 h-8 border-1 border-purple-600 "
-                                      : ratio.value === "16:9"
-                                      ? "w-10 h-6 border-1"
-                                      : ratio.value === "9:16"
-                                      ? "w-6 h-10 border-1 border-purple-600"
-                                      : "w-8 h-8 border-1"
-                                  } ${
-                                    aspectRatio === ratio.value
-                                      ? "border-purple-600 border-2"
-                                      : "theme-border-dark border-1"
-                                  }`}
-                                ></div>
-                                <div className="text-md font-medium whitespace-pre-line ">
-                                  {ratio.label}
-                                </div>
-                              </button>
-                            ))}{" "}
-                          </div>
+                              ></div>
+                              <div className="text-md font-medium whitespace-pre-line ">
+                                {ratio.label}
+                              </div>
+                            </button>
+                          ))}{" "}
                         </div>
-                      )}
+                      </div>
+                    )}
                   </>
                   <div className="hidden">
                     <label className="block text-sm font-medium theme-text-primary  mb-3">
@@ -3417,8 +3448,10 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                     </button>
                   </div>
                 </>
-              ) : (
-                <div className="flex-1 w-full aspect-video ">
+              ) : (<></>
+              
+              )}
+              {((selectedImageMode === "" && selectedVideoMode === "" && selectedPostType !== "text") &&  <div className="flex-1 w-full aspect-video ">
                   <div className="relative rounded-md overflow-hidden shadow-2xl bg-gray-900 aspect-video">
                     <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#7650e3] to-[#6366F1]">
                       <button className="bg-white rounded-full p-6 hover:scale-110 transition-transform shadow-2xl">
@@ -3447,8 +3480,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                       </p>
                     </div>
                   </div>
-                </div>
-              )}
+                </div>)}
             </div>
           </form>
         </>
