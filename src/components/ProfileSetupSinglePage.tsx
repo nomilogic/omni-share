@@ -367,7 +367,7 @@ const ProfileSetupSinglePage: React.FC = () => {
   const handleSkip = () => {
     localStorage.removeItem(STORAGE_KEY);
     setProfileEditing(false);
-    navigate("/profile");
+    navigate("/dashboard");
   };
 
   const handleArrayChange = (fieldName: string, option: string) => {

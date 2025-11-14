@@ -114,7 +114,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   };
 
   const navigation = [
-    { name: "Profile", path: "/profile", icon: User },
+    // { name: "Profile", path: "/profile", icon: User },
     { name: "Dashboard", path: "/dashboard", icon: Home },
     { name: "Create Content", path: "/content", icon: Plus },
     { name: "Accounts", path: "/accounts", icon: Building2 },

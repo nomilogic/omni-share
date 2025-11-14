@@ -2213,7 +2213,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                       }`}
                     >
                       <div
-                        className={`grid grid-cols-1 gap-0 ${
+                        className={`grid grid-cols-1 gap-[1px] pt-[1px] ${
                           showImageMenu ? "" : "hidden"
                         }`}
                       >
@@ -2248,7 +2248,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             setImageAnalysis("");
                             setSelectedImageMode("upload");
                           }}
-                          className={`p-3 rounded-md border transition shadow-md backdrop-blur-md border-slate-200/70-all duration-200 text-center
+                          className={`p-3 rounded-md border transition shadow-md backdrop-blur-md border-slate-200/70 transition-all duration-200 text-center
                         ${selectedPostType === "image" ? "" : "hidden"}
                         ${
                           selectedImageMode === "upload"
@@ -2416,7 +2416,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                       }`}
                     >
                       <div
-                        className={`grid grid-cols-1 gap-0 ${
+                        className={`grid grid-cols-1 gap-[1px] pt-[1px] ${
                           showVideoMenu ? "" : "hidden"
                         }`}
                       >
