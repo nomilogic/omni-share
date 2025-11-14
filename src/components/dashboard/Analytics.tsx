@@ -20,7 +20,7 @@ function Analytics() {
   ];
 
   return (
-    <div className="bg-gray-50 rounded-2xl   p-5 flex flex-col w-full h-full">
+    <div className="bg-gray-100 rounded-2xl   p-5 flex flex-col w-full h-full">
       <div className="flex gap-3 mb-3">
         {socialPlatforms.map((platform, i) => {
           const IconComponent = getPlatformIcon(platform);

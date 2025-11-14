@@ -26,7 +26,7 @@ function StatsCard({
 }: StatsCardProps) {
   return (
     <div className="rounded-xl border border-[#7650e3] bg-white shadow-md px-4 py-4">
-      <div className="flex items-start justify-between mb-2">
+      <div className="flex items-start justify-between ">
         <div className="flex items-center gap-2">
           {(icon || iconName) && (
             <>
@@ -56,7 +56,7 @@ function StatsCard({
         </>
       </div>
 
-      <p className="text-sm text-slate-600  h-10">{subtitle}</p>
+      <div className="text-sm text-slate-600  h-8">{subtitle}</div>
 
       <button
         onClick={onButtonClick}

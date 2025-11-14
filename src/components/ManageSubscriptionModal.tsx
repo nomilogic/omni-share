@@ -202,7 +202,7 @@ export const ManageSubscriptionModal: React.FC<any> = ({
               />
             </div>
 
-            <div className="w-full p-6 z-10 flex  bg-gray-50 flex-grow flex-col">
+            <div className="w-full p-6 z-10 flex  bg-gray-100 flex-grow flex-col">
               <div className="flex justify-between items-center">
                 <h3 className="text-2xl font-semibold text-[#7650e3]">
                   View Invoices

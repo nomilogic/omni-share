@@ -23,7 +23,7 @@ function RecentPosts() {
   ];
 
   return (
-    <div className="bg-gray-50 rounded-xl  p-5 flex flex-col h-full w-full">
+    <div className="bg-gray-100 rounded-xl  p-5 flex flex-col h-full w-full">
       <div className="flex gap-3 mb-5">
         {socialPlatforms.map((platform, i) => {
           const IconComponent = getPlatformIcon(platform);
