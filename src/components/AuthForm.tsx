@@ -324,7 +324,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
   };
 
   return (
-    <div className="min-h-screen w-full flex md:items-center justify-center bg-white px-3 py-4  sm:py-6 md:py-8">
+    <div className="w-full flex md:items-center justify-center bg-white px-3 py-4  sm:py-6 md:py-8 h-screen">
       {!showOtpPopup && (
         <div
           className={`z-10  md:max-w-md md:bg-gray-50 flex items-center flex-col w-full justify-start md:shadow-md rounded-2xl py-6 ${

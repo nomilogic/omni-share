@@ -34,7 +34,7 @@ function ProfileCard() {
         </div>
         <div>
           <h2 className="text-base font-bold text-gray-900">{fullName}</h2>
-          <p className="text-gray-600 text-sm">{email}</p>
+          <p className="text-sm text-[#7650e3]">{email}</p>
         </div>
       </div>
       <div className="flex items-center gap-5">
@@ -47,18 +47,18 @@ function ProfileCard() {
           
         >
           <Settings className="w-[18px] h-[18px]" />
-          <span>Setting</span>
+          <span className="hover:underline text-decoration-line">Setting</span>
         
         </button>
         <button
-          className="flex items-center rounded-md gap-2 transition-colors text-[13px] font-semibold"
+          className="flex items-center rounded-md gap-2 transition-colors text-[13px] font-semibold "
           style={{
             color: "#7650e3",
           }}
            onClick={() => setProfileEditing(true)}
         >
           <Edit className="w-[17px] h-[17px]" />
-          <span>Edit Profile</span>
+          <span className="hover:underline text-decoration-line">Edit Profile</span>
         </button>
       </div>
     </div>

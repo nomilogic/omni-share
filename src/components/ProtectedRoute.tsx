@@ -14,7 +14,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   if (state.loading) {
     return (
-      <div className="h-full-dec-hf  x-2 bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
+      <div className="min-h-screen px-2 bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
         <div className="text-center">
           <Icon name="spiral-logo" size={50} className="animate-spin mb-2" />
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
