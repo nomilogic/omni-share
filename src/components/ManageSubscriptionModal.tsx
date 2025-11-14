@@ -135,10 +135,10 @@ export const ManageSubscriptionModal: React.FC<any> = ({
                       },
                     ].map((action) => {
                       const commonClasses =
-                        "w-full flex items-center justify-between py-2.5 px-3 rounded-md text-md font-medium transition-all hover:bg-[#d7d7fc] text-[#7650e3]";
+                        "w-full flex items-center justify-between py-2.5  px-3 rounded-md text-md font-medium transition-all hover:bg-[#d7d7fc] text-[#7650e3]";
 
                       const buttonClass =
-                        "bg-white border border-[#7650e3] text-[#7650e3] hover:shadow-sm";
+                        "bg-white border border-[#7650e3] text-[#7650e3] hover:shadow-md";
 
                       return (
                         <button
@@ -192,7 +192,7 @@ export const ManageSubscriptionModal: React.FC<any> = ({
         </div>
       )}
       {showTransactions && (
-        <div className="absolute w-full md:max-w-3xl lg:max-w-5xl md:rounded-2xl overflow-hidden shadow-2xl bg-white  ">
+        <div className="absolute w-full md:max-w-3xl lg:max-w-5xl md:rounded-2xl overflow-hidden shadow-md bg-white  ">
           <div className="grid md:grid-cols-2 ">
             <div className=" bg-[#7650e3]  flex items-center justify-center   w-full">
               <img

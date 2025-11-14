@@ -192,7 +192,7 @@ function HomePage() {
       <nav
         className={`fixed top-0 w-full z-50 transition-all duration-300 ${
           scrollY > 50
-            ? " bg-[linear-gradient(135deg,_#7650e3_0%,_#6366F1_100%)]  shadow-lg"
+            ? " bg-[linear-gradient(135deg,_#7650e3_0%,_#6366F1_100%)]  shadow-md"
             : "bg-transparent"
         }`}
       >
@@ -261,7 +261,7 @@ function HomePage() {
               </button>
               <button
                 onClick={() => navigate("/auth")}
-                className="bg-[#7650e3] text-white px-6 py-2 rounded-full hover:bg-[#633cd3] transition-all transform hover:scale-105 shadow-lg"
+                className="bg-[#7650e3] text-white px-6 py-2.5 rounded-full hover:bg-[#633cd3] transition-all transform hover:scale-105 shadow-md"
               >
                 Get Started
               </button>
@@ -288,37 +288,37 @@ function HomePage() {
               <div className="px-2 pt-2 pb-3 space-y-1">
                 <button
                   onClick={() => scrollToSection("home")}
-                  className="block w-full text-left px-3 py-2 text-slate-700 hover:bg-gray-100"
+                  className="block w-full text-left px-3 py-2.5 text-slate-700 hover:bg-gray-100"
                 >
                   Home
                 </button>
                 <button
                   onClick={() => scrollToSection("features")}
-                  className="block w-full text-left px-3 py-2 text-slate-700 hover:bg-gray-100"
+                  className="block w-full text-left px-3 py-2.5 text-slate-700 hover:bg-gray-100"
                 >
                   Features
                 </button>
                 <button
                   onClick={() => scrollToSection("pricing")}
-                  className="block w-full text-left px-3 py-2 text-slate-700 hover:bg-gray-100"
+                  className="block w-full text-left px-3 py-2.5 text-slate-700 hover:bg-gray-100"
                 >
                   Pricing
                 </button>
                 <button
                   onClick={() => scrollToSection("video")}
-                  className="block w-full text-left px-3 py-2 text-slate-700 hover:bg-gray-100"
+                  className="block w-full text-left px-3 py-2.5 text-slate-700 hover:bg-gray-100"
                 >
                   Learn
                 </button>
                 <button
                   onClick={() => scrollToSection("contact")}
-                  className="block w-full text-left px-3 py-2 text-slate-700 hover:bg-gray-100"
+                  className="block w-full text-left px-3 py-2.5 text-slate-700 hover:bg-gray-100"
                 >
                   Contact
                 </button>
                 <button
                   onClick={() => navigate("/auth")}
-                  className="block w-full text-left px-3 py-2 bg-blue-600 text-white hover:bg-blue-700"
+                  className="block w-full text-left px-3 py-2.5 bg-blue-600 text-white hover:bg-blue-700"
                 >
                   Get Started
                 </button>
@@ -406,7 +406,7 @@ function HomePage() {
 
           <button
             onClick={() => navigate("/auth")}
-            className="bg-white text-[#7650e3] px-8 py-4 rounded-full text-lg font-semibold hover:bg-[#d7d7fc] transition-all transform hover:scale-105 shadow-2xl inline-flex items-center space-x-2"
+            className="bg-white text-[#7650e3] px-8 py-4 rounded-full text-lg font-semibold hover:bg-[#d7d7fc] transition-all transform hover:scale-105 shadow-md inline-flex items-center space-x-2"
             style={{ transform: `translateY(${scrollY * 0.2}px)` }}
           >
             <span>Get Started Free</span>
@@ -490,7 +490,7 @@ function HomePage() {
             {displayedFeatures.map((feature, index) => (
               <div
                 key={index}
-                className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 border border-gray-100"
+                className="bg-white p-8 rounded-2xl shadow-md hover:shadow-md transition-all transform hover:-translate-y-2 border border-gray-100"
                 style={{
                   animation: `fadeInUp 0.6s ease-out ${index * 0.1}s both`,
                 }}
@@ -509,7 +509,7 @@ function HomePage() {
           <div className="text-center">
             <button
               onClick={() => setShowAllFeatures(!showAllFeatures)}
-              className="bg-[#7650e3] text-white px-8 py-3 rounded-full hover:bg-[#633cd3] transition-all transform hover:scale-105 shadow-lg inline-flex items-center space-x-2"
+              className="bg-[#7650e3] text-white px-8 py-3 rounded-full hover:bg-[#633cd3] transition-all transform hover:scale-105 shadow-md inline-flex items-center space-x-2"
             >
               <span>{showAllFeatures ? "Show Less" : "View All Features"}</span>
               <ChevronDown
@@ -542,9 +542,9 @@ function HomePage() {
             </p>
           </div>
 
-          <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-gray-900 aspect-video">
+          <div className="relative rounded-2xl overflow-hidden shadow-md bg-gray-900 aspect-video">
             <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#7650e3] to-[#6366F1]">
-              <button className="bg-white rounded-full p-6 hover:scale-110 transition-transform shadow-2xl">
+              <button className="bg-white rounded-full p-6 hover:scale-110 transition-transform shadow-md">
                 <Play className="w-12 h-12 text-[#7650e3] ml-1" />
               </button>
             </div>
@@ -574,7 +574,7 @@ function HomePage() {
 
           <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             {/* Basic Plan */}
-            <div className="bg-white rounded-2xl shadow-xl p-8 border-2 border-gray-200 hover:border-[#7650e3] transition-all transform hover:scale-105">
+            <div className="bg-white rounded-2xl shadow-md p-8 border-2 border-gray-200 hover:border-[#7650e3] transition-all transform hover:scale-105">
               <div className="text-center mb-4">
                 <h3 className="text-2xl font-bold text-[#7650e3] mb-2">
                   Basic
@@ -626,7 +626,7 @@ function HomePage() {
             </div>
 
             {/* Pro Plan */}
-            <div className="bg-gradient-to-br from-[#7650e3] to-[#6366F1] rounded-2xl shadow-2xl p-8 transform hover:scale-105 transition-all relative">
+            <div className="bg-gradient-to-br from-[#7650e3] to-[#6366F1] rounded-2xl shadow-md p-8 transform hover:scale-105 transition-all relative">
               <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                 <span className="bg-yellow-400 text-gray-900 px-4 py-1 rounded-full text-sm font-bold">
                   MOST POPULAR
@@ -713,7 +713,7 @@ function HomePage() {
 
           <div className="relative pb-8">
             <div
-              className={`bg-white rounded-3xl shadow-2xl p-8 md:p-12 max-w-4xl mx-auto transition-all duration-300 ${
+              className={`bg-white rounded-3xl shadow-md p-8 md:p-12 max-w-4xl mx-auto transition-all duration-300 ${
                 slideDirection === "left"
                   ? "opacity-0 -translate-x-12"
                   : slideDirection === "right"
@@ -754,7 +754,7 @@ function HomePage() {
 
             <button
               onClick={prevReview}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-12 bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all hover:scale-110"
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-12 bg-white rounded-full p-3 shadow-md hover:shadow-md transition-all hover:scale-110"
               aria-label="Previous review"
             >
               <ChevronLeft className="w-6 h-6 text-slate-700" />
@@ -762,7 +762,7 @@ function HomePage() {
 
             <button
               onClick={nextReview}
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-12 bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all hover:scale-110"
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-12 bg-white rounded-full p-3 shadow-md hover:shadow-md transition-all hover:scale-110"
               aria-label="Next review"
             >
               <ChevronRight className="w-6 h-6 text-slate-700" />
@@ -808,7 +808,7 @@ function HomePage() {
             </p>
             <button
               onClick={() => setShowContactForm(!showContactForm)}
-              className="bg-[#7650e3] text-white px-8 py-3 rounded-full hover:bg-[#633cd3] transition-all transform hover:scale-105 shadow-lg inline-flex items-center space-x-2"
+              className="bg-[#7650e3] text-white px-8 py-3 rounded-full hover:bg-[#633cd3] transition-all transform hover:scale-105 shadow-md inline-flex items-center space-x-2"
             >
               <span>{showContactForm ? "Hide Form" : "Get in Touch"}</span>
               <ChevronDown
@@ -874,7 +874,7 @@ function HomePage() {
 
               <button
                 type="submit"
-                className="w-full bg-[#7650e3] text-white py-4 rounded-md hover:bg-[#633cd3] transition-all font-semibold text-lg shadow-lg"
+                className="w-full bg-[#7650e3] text-white py-4 rounded-md hover:bg-[#633cd3] transition-all font-semibold text-lg shadow-md"
               >
                 Send Message
               </button>
@@ -899,7 +899,7 @@ function HomePage() {
             {faqs.map((faq, index) => (
               <div
                 key={index}
-                className="bg-white rounded-md shadow-md overflow-hidden transition-all hover:shadow-lg"
+                className="bg-white rounded-md shadow-md overflow-hidden transition-all hover:shadow-md"
               >
                 <button
                   onClick={() =>

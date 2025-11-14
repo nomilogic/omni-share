@@ -206,7 +206,7 @@ export const PostCalendar: React.FC<PostCalendarProps> = ({
                   onEditPost(post);
                   setSelectedPost(null);
                 }}
-                className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                className="flex-1 bg-blue-600 text-white py-2.5 px-4 rounded-md hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
               >
                 <Edit className="w-4 h-4" />
                 Edit Post
@@ -216,7 +216,7 @@ export const PostCalendar: React.FC<PostCalendarProps> = ({
                   onDeletePost(post.id);
                   setSelectedPost(null);
                 }}
-                className="flex-1 bg-red-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 transition-colors flex items-center justify-center gap-2"
+                className="flex-1 bg-red-600 text-white py-2.5 px-4 rounded-md hover:bg-purple-700 transition-colors flex items-center justify-center gap-2"
               >
                 <Trash2 className="w-4 h-4" />
                 Delete Post
@@ -229,7 +229,7 @@ export const PostCalendar: React.FC<PostCalendarProps> = ({
   );
 
   return (
-    <div className="theme-bg-primary rounded-md shadow-lg p-6">
+    <div className="theme-bg-primary rounded-md shadow-md p-6">
       {/* Calendar Header */}
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-4">

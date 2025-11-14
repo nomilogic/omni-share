@@ -423,7 +423,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
                 <select
                   value={readFilter}
                   onChange={(e) => setReadFilter(e.target.value as ReadFilter)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="all">All Posts</option>
                   <option value="unread">Unread ({unreadCount})</option>
@@ -443,7 +443,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
                   onChange={(e) =>
                     setPlatformFilter(e.target.value as PlatformFilter)
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="all">All Platforms</option>
                   {availablePlatforms.map((platform) => (
@@ -461,7 +461,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
                 <select
                   value={timePeriod}
                   onChange={(e) => setTimePeriod(e.target.value as TimePeriod)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="all">All Time</option>
                   <option value="today">Today</option>
@@ -477,7 +477,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as SortBy)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="date_desc">Newest First</option>
                   <option value="date_asc">Oldest First</option>

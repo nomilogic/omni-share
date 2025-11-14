@@ -139,7 +139,7 @@ const SubscriptionPauseModal = ({
 
             <div className="space-y-2">
               <button
-                className=" w-full hover:bg-[#d7d7fc] disabled:cursor-not-allowed hover:text-[#7650e3]  text-[#7650e3] font-semibold py-2.5 px-3  text-sm sm:text-base rounded-md transition disabled:opacity-50 flex justify-between items-center  border border-[#7F56D9]"
+                className=" w-full hover:bg-[#d7d7fc] disabled:cursor-not-allowed hover:text-[#7650e3]  text-[#7650e3] font-semibold py-2.5  px-3  text-sm sm:text-base rounded-md transition disabled:opacity-50 flex justify-between items-center  border border-[#7F56D9]"
                 onClick={onPause}
               >
                 <span>Continue with Subscription</span>
@@ -149,7 +149,7 @@ const SubscriptionPauseModal = ({
               <button
                 disabled={isCanceled}
                 onClick={onCancel}
-                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2.5 px-3 text-sm sm:text-base rounded-md transition disabled:opacity-50 flex justify-between items-center border   border-[#7F56D9]"
+                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2.5  px-3 text-sm sm:text-base rounded-md transition disabled:opacity-50 flex justify-between items-center border   border-[#7F56D9]"
               >
                 <span>Proceed with Cancellation</span>
                 <ArrowRightIcon className="w-5 h-5" />

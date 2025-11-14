@@ -70,7 +70,7 @@ export const CampaignSelector: React.FC<CampaignSelectorProps> = ({
 
   if (loading) {
     return (
-      <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-8">
+      <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-md p-8">
         <div className="text-center">
           <div className="animate-spin w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto"></div>
           <p className="mt-4 text-slate-500">Loading your campaigns...</p>
@@ -80,7 +80,7 @@ export const CampaignSelector: React.FC<CampaignSelectorProps> = ({
   }
 
   return (
-    <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-8">
+    <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-md p-8">
       <div className="text-center mb-8">
         <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
           <Target className="w-8 h-8 text-blue-600" />

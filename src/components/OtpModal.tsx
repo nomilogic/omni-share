@@ -132,7 +132,7 @@ export function OtpModal({
       aria-labelledby="otp-title"
       className="fixed inset-0 z-50 flex md:items-center justify-center px-4 pt-8 "
     >
-      <div className="w-full max-w-sm md:rounded-md md:bg-white sm:p-6 md:shadow-lg">
+      <div className="w-full max-w-sm md:rounded-md md:bg-white sm:p-6 md:shadow-md">
         <div className={`flex  relative  justify-center gap-2 mb-5`}>
           <button
             onClick={() => {}}
@@ -199,7 +199,7 @@ export function OtpModal({
           <button
             onClick={handleVerify}
             disabled={verifying || otp.replace(/\D/g, "").length < 4}
-            className="inline-flex items-center justify-center rounded-md px-4 py-2       bg-theme-text-secondary text-white
+            className="inline-flex items-center justify-center rounded-md px-4 py-2.5       bg-theme-text-secondary text-white
               hover:opacity-95
               disabled:opacity-50 disabled:cursor-not-allowed"
           >
@@ -209,7 +209,7 @@ export function OtpModal({
           <button
             onClick={handleResend}
             disabled={resending || remaining > 0}
-            className="inline-flex items-center justify-center rounded-md px-4 py-2  bg-theme-text-secondary text-white              hover:opacity-95      disabled:opacity-50 disabled:cursor-not-allowed"
+            className="inline-flex items-center justify-center rounded-md px-4 py-2.5  bg-theme-text-secondary text-white              hover:opacity-95      disabled:opacity-50 disabled:cursor-not-allowed"
             aria-live="polite"
           >
             {resending

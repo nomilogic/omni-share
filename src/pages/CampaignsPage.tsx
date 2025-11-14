@@ -129,7 +129,7 @@ export const CampaignsPage: React.FC = () => {
               </div>
               {/* <button
                 onClick={handleCreateCampaign}
-                className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors duration-200"
+                className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2.5 rounded-md hover:bg-blue-700 transition-colors duration-200"
               >
                 <Plus className="w-4 h-4" />
                 <span>New Campaign</span>

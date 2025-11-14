@@ -55,7 +55,7 @@ const InviteModal: React.FC<{
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative w-full max-w-md mx-4 bg-white rounded-md shadow-lg p-6">
+      <div className="relative w-full max-w-md mx-4 bg-white rounded-md shadow-md p-6">
         <div className="flex items-start justify-between mb-4">
           <div>
             <h3 className="text-lg font-semibold">
@@ -82,12 +82,12 @@ const InviteModal: React.FC<{
             <input
               readOnly
               value={link}
-              className="flex-1 px-3 py-2 border rounded bg-gray-50"
+              className="flex-1 px-3 py-2.5 border rounded bg-gray-50"
             />
             <button
               onClick={copy}
               title="Copy link"
-              className="px-2 py-2 bg-gray-100 rounded"
+              className="px-2 py-2.5 bg-gray-100 rounded"
             >
               <Copy className="w-4 h-4" />
             </button>
@@ -98,12 +98,12 @@ const InviteModal: React.FC<{
         <div className="flex items-center justify-end gap-2">
           <button
             onClick={share}
-            className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded"
+            className="flex items-center gap-2 px-4 py-2.5 bg-purple-600 text-white rounded"
           >
             <Share2 className="w-4 h-4" />
             Share
           </button>
-          <button onClick={onClose} className="px-4 py-2 border rounded">
+          <button onClick={onClose} className="px-4 py-2.5 border rounded">
             Close
           </button>
         </div>

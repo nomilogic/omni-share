@@ -177,7 +177,7 @@ export const AITrainingDashboard: React.FC<AITrainingDashboardProps> = ({
   }) => (
     <button
       onClick={() => setActiveTab(id)}
-      className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+      className={`flex items-center gap-2 px-4 py-2.5 rounded-md text-sm font-medium transition-colors ${
         activeTab === id
           ? "bg-blue-100 text-blue-700 border-blue-200"
           : "text-slate-500 hover:text-slate-900 hover:bg-gray-50"
@@ -220,7 +220,7 @@ export const AITrainingDashboard: React.FC<AITrainingDashboardProps> = ({
     };
 
     return (
-      <div className="bg-white p-6 rounded-md border shadow-sm">
+      <div className="bg-white p-6 rounded-md border shadow-md">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm font-medium text-slate-500">{title}</p>
@@ -284,7 +284,7 @@ export const AITrainingDashboard: React.FC<AITrainingDashboardProps> = ({
 
       {/* Recent Insights */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white p-6 rounded-md border shadow-sm">
+        <div className="bg-white p-6 rounded-md border shadow-md">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-slate-900">
               Recent Insights
@@ -320,7 +320,7 @@ export const AITrainingDashboard: React.FC<AITrainingDashboardProps> = ({
           </button>
         </div>
 
-        <div className="bg-white p-6 rounded-md border shadow-sm">
+        <div className="bg-white p-6 rounded-md border shadow-md">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-slate-900">
               Active Training Criteria
@@ -380,14 +380,14 @@ export const AITrainingDashboard: React.FC<AITrainingDashboardProps> = ({
         </div>
         <button
           onClick={() => setShowCreateCriteria(true)}
-          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center gap-2"
+          className="bg-blue-600 text-white px-4 py-2.5 rounded-md hover:bg-blue-700 flex items-center gap-2"
         >
           <Plus className="w-4 h-4" />
           New Criteria
         </button>
       </div>
 
-      <div className="bg-white rounded-md border shadow-sm">
+      <div className="bg-white rounded-md border shadow-md">
         <div className="p-4 border-b">
           <div className="flex items-center gap-4">
             <select
@@ -395,7 +395,7 @@ export const AITrainingDashboard: React.FC<AITrainingDashboardProps> = ({
               onChange={(e) =>
                 setSelectedCategory(e.target.value as TrainingCategory | "all")
               }
-              className="border border-gray-300 rounded-md px-3 py-2 text-sm"
+              className="border border-gray-300 rounded-md px-3 py-2.5 text-sm"
             >
               <option value="all">All Categories</option>
               <option value="content_quality">Content Quality</option>
@@ -489,7 +489,7 @@ export const AITrainingDashboard: React.FC<AITrainingDashboardProps> = ({
         </div>
         <button
           onClick={loadInsights}
-          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center gap-2"
+          className="bg-blue-600 text-white px-4 py-2.5 rounded-md hover:bg-blue-700 flex items-center gap-2"
         >
           <RefreshCw className="w-4 h-4" />
           Refresh
@@ -500,7 +500,7 @@ export const AITrainingDashboard: React.FC<AITrainingDashboardProps> = ({
         {insights.map((insight) => (
           <div
             key={insight.id}
-            className="bg-white p-6 rounded-md border shadow-sm"
+            className="bg-white p-6 rounded-md border shadow-md"
           >
             <div className="flex items-start justify-between mb-4">
               <div className="flex-1">
@@ -580,7 +580,7 @@ export const AITrainingDashboard: React.FC<AITrainingDashboardProps> = ({
         </div>
         <button
           onClick={loadPatterns}
-          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center gap-2"
+          className="bg-blue-600 text-white px-4 py-2.5 rounded-md hover:bg-blue-700 flex items-center gap-2"
         >
           <RefreshCw className="w-4 h-4" />
           Discover New
@@ -591,7 +591,7 @@ export const AITrainingDashboard: React.FC<AITrainingDashboardProps> = ({
         {patterns.map((pattern) => (
           <div
             key={pattern.id}
-            className="bg-white p-6 rounded-md border shadow-sm"
+            className="bg-white p-6 rounded-md border shadow-md"
           >
             <div className="flex items-start justify-between">
               <div className="flex-1">
@@ -656,14 +656,14 @@ export const AITrainingDashboard: React.FC<AITrainingDashboardProps> = ({
         </div>
         <button
           onClick={() => setShowReportModal(true)}
-          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center gap-2"
+          className="bg-blue-600 text-white px-4 py-2.5 rounded-md hover:bg-blue-700 flex items-center gap-2"
         >
           <Plus className="w-4 h-4" />
           Generate Report
         </button>
       </div>
 
-      <div className="bg-white p-8 rounded-md border shadow-sm text-center">
+      <div className="bg-white p-8 rounded-md border shadow-md text-center">
         <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
         <h3 className="text-lg font-medium text-slate-900 mb-2">
           Reports Coming Soon

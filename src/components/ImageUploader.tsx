@@ -177,7 +177,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                       (file ? URL.createObjectURL(file) : "")
                     }
                     alt="Preview"
-                    className="max-h-40 mx-auto rounded-md shadow-sm"
+                    className="max-h-40 mx-auto rounded-md shadow-md"
                     onError={(e) => {
                       console.error(
                         "Image failed to load:",
@@ -200,7 +200,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                         ? URL.createObjectURL(file)
                         : ""
                     }
-                    className="max-h-40 mx-auto rounded-md shadow-sm"
+                    className="max-h-40 mx-auto rounded-md shadow-md"
                     controls
                     onError={(e) => {
                       console.error(
@@ -297,7 +297,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                       type="button"
                       onClick={onAIAnalysis}
                       disabled={analyzingImage}
-                      className="flex-1 bg-gradient-to-r from-blue-500/80 to-indigo-500/80 text-white px-3 py-2 rounded text-xs hover:from-blue-600/80 hover:to-indigo-600/80 transition-all duration-200 flex items-center justify-center space-x-1 disabled:opacity-50"
+                      className="flex-1 bg-gradient-to-r from-blue-500/80 to-indigo-500/80 text-white px-3 py-2.5 rounded text-xs hover:from-blue-600/80 hover:to-indigo-600/80 transition-all duration-200 flex items-center justify-center space-x-1 disabled:opacity-50"
                     >
                       <Eye className="w-3 h-3" />
                       <span>AI Analysis</span>
@@ -306,7 +306,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                       <button
                         type="button"
                         onClick={onTemplateSelector}
-                        className="flex-1 bg-gradient-to-r from-purple-500/80 to-pink-500/80 text-white px-3 py-2 rounded text-xs hover:from-purple-600/80 hover:to-pink-600/80 transition-all duration-200 flex items-center justify-center space-x-1"
+                        className="flex-1 bg-gradient-to-r from-purple-500/80 to-pink-500/80 text-white px-3 py-2.5 rounded text-xs hover:from-purple-600/80 hover:to-pink-600/80 transition-all duration-200 flex items-center justify-center space-x-1"
                       >
                         <Palette className="w-3 h-3" />
                         <span>Apply Template</span>
@@ -370,7 +370,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="bg-blue-500/80 text-white px-4 py-2 rounded text-xs hover:bg-blue-600/80 transition-colors duration-200 flex items-center space-x-1"
+                className="bg-blue-500/80 text-white px-4 py-2.5 rounded text-xs hover:bg-blue-600/80 transition-colors duration-200 flex items-center space-x-1"
               >
                 <Upload className="w-3 h-3" />
                 <span>Choose Files</span>
@@ -379,7 +379,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                 <button
                   type="button"
                   onClick={onAIImageGenerate}
-                  className="bg-gradient-to-r from-purple-500/80 to-pink-500/80 text-white px-4 py-2 rounded text-xs hover:from-purple-600/80 hover:to-pink-600/80 transition-all duration-200 flex items-center space-x-1"
+                  className="bg-gradient-to-r from-purple-500/80 to-pink-500/80 text-white px-4 py-2.5 rounded text-xs hover:from-purple-600/80 hover:to-pink-600/80 transition-all duration-200 flex items-center space-x-1"
                 >
                   <Sparkles className="w-3 h-3" />
                   <span>Generate AI</span>

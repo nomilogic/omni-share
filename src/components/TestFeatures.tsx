@@ -76,7 +76,7 @@ export const TestFeatures: React.FC = () => {
           <div className="bg-white rounded-md p-1 shadow-md">
             <button
               onClick={() => setView("social-manager")}
-              className={`px-4 py-2 rounded-md font-medium transition-colors ${
+              className={`px-4 py-2.5 rounded-md font-medium transition-colors ${
                 view === "social-manager"
                   ? "bg-blue-600 text-white"
                   : "text-slate-500 hover:bg-gray-100"
@@ -86,7 +86,7 @@ export const TestFeatures: React.FC = () => {
             </button>
             <button
               onClick={() => setView("post-preview")}
-              className={`px-4 py-2 rounded-md font-medium transition-colors ${
+              className={`px-4 py-2.5 rounded-md font-medium transition-colors ${
                 view === "post-preview"
                   ? "bg-blue-600 text-white"
                   : "text-slate-500 hover:bg-gray-100"

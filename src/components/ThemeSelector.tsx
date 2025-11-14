@@ -223,7 +223,7 @@ export const ThemeSelector: React.FC = () => {
         </span>
       </button>
 
-      <div className="absolute top-full right-0 mt-2 w-72 theme-bg-card rounded-md shadow-2xl opacity-50 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+      <div className="absolute top-full right-0 mt-2 w-72 theme-bg-card rounded-md shadow-md opacity-50 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
         <div className="p-4">
           <h3 className="theme-text-primary font-semibold mb-3 theme-bg-card p-2 rounded-md">
             Choose App Theme

@@ -105,9 +105,9 @@ const ResetPasswordPage: React.FC = () => {
   };
 
   return (
-    <main className="min-h-screen w-full flex md:items-center md:justify-center bg-gray-100 px-4 py-8 sm:px-6 sm:py-12 md:px-8">
+    <main className="min-h-screen w-full flex md:items-center md:justify-center bg-white px-4 py-8 sm:px-6 sm:py-12 md:px-8">
       {!token || expired ? (
-        <div className="w-full md:max-w-md md:bg-white md:rounded-2xl md:shadow-xl md:p-8 flex flex-col items-center text-center md:border md:border-gray-200">
+        <div className="w-full md:max-w-md bg-slate-100 md:rounded-2xl md:shadow-md md:p-8 flex flex-col items-center text-center md:border md:border-gray-200">
           <div className="text-center flex justify-center mb-8 gap-2 items-center">
             <Icon name="logo" size={50} />
           </div>
@@ -122,13 +122,13 @@ const ResetPasswordPage: React.FC = () => {
 
           <button
             onClick={() => router("/auth")}
-            className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-md shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+            className="px-4 py-2.5 bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3]  border border-[#7650e3] text-white font-semibold rounded-md shadow-md hover:shadow-md transition-all duration-300 transform hover:-translate-y-1"
           >
             Request New Link
           </button>
         </div>
       ) : (
-        <div className="w-full md:max-w-md md:bg-white md:rounded-2xl md:shadow-xl p-6 sm:p-8 md:p-10 md:border border-gray-200">
+        <div className="w-full md:max-w-md md:bg-white md:rounded-2xl md:shadow-md p-6 sm:p-8 md:p-10 md:border border-gray-200">
           <div className="text-center flex justify-center mb-8 gap-2 items-center">
             <Icon name="logo" size={50} />
             <span className="theme-text-primary text-lg sm:text-xl md:text-2xl lg:text-[1.6rem] tracking-tight">
@@ -163,7 +163,7 @@ const ResetPasswordPage: React.FC = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder="Enter new password"
-                className="w-full px-3 py-2 rounded-md border-2 border-purple-300 bg-white text-slate-800 placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all duration-200"
+                className="w-full px-3 py-2.5 rounded-md border-2 border-purple-500 bg-white text-slate-800 placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all duration-200"
               />
             </div>
 
@@ -177,18 +177,18 @@ const ResetPasswordPage: React.FC = () => {
                 onChange={(e) => setConfirm(e.target.value)}
                 required
                 placeholder="Re-enter password"
-                className="w-full px-3 py-2 rounded-md border-2 border-purple-300 bg-white text-slate-800 placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all duration-200"
+                className="w-full px-3 py-2.5 rounded-md border-2 border-purple-500 bg-white text-slate-800 placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all duration-200"
               />
             </div>
 
             {error && (
-              <div className="text-red-500 text-sm text-center font-medium bg-red-50 py-2 px-3 rounded-md">
+              <div className="text-red-500 text-sm text-center font-medium bg-red-50 py-2.5 px-3 rounded-md">
                 {error}
               </div>
             )}
 
             {success && (
-              <div className="text-green-600 text-sm text-center font-medium bg-green-50 py-2 px-3 rounded-md">
+              <div className="text-green-600 text-sm text-center font-medium bg-green-50 py-2.5 px-3 rounded-md">
                 {success}
               </div>
             )}
@@ -196,11 +196,7 @@ const ResetPasswordPage: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-2 rounded-md font-semibold text-white transition-all duration-300 ${
-                loading
-                  ? "bg-purple-400 cursor-not-allowed"
-                  : "bg-purple-600 hover:bg-purple-700 shadow-lg hover:shadow-xl"
-              }`}
+              className={`w-full py-2.5 bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3]  border border-[#7650e3] rounded-md font-semibold text-white transition-all duration-300 disabled:cursor-not-allowed`}
             >
               {loading ? "Updating..." : "Set New Password"}
             </button>

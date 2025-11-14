@@ -172,7 +172,7 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
   };
 
   return (
-    <div className="max-w-full mx-auto bg-white rounded-2xl shadow-lg md:m-6 h-fit md:px-6 px-[20%] md:py-8 py-4">
+    <div className="max-w-full mx-auto bg-white rounded-2xl shadow-md md:m-6 h-fit md:px-6 px-[20%] md:py-8 py-4">
       <div className="text-center mb-8">
         <div className="w-12 h-12 aspect-square bg-gradient-to-r from-blue-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
           <Brain className="w-8 h-8 text-blue-600" />
@@ -199,7 +199,7 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
           <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-md border border-blue-200">
             <div className="flex items-center justify-center space-x-4">
               <div
-                className={`w-12 h-12 aspect-square rounded-full shadow-lg flex items-center justify-center animate-bounce text-white ${getPlatformColors(
+                className={`w-12 h-12 aspect-square rounded-full shadow-md flex items-center justify-center animate-bounce text-white ${getPlatformColors(
                   currentPlatform
                 )}`}
               >

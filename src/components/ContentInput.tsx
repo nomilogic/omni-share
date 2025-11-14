@@ -176,7 +176,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
   // Upload abort controller for cancelling in-progress uploads
   const uploadAbortControllerRef = useRef<AbortController | null>(null);
-  
+
   // Track the current file being uploaded to prevent stale updates
   const currentFileRef = useRef<File | null>(null);
 
@@ -217,9 +217,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   // useEffect(() => {
   //   const appropriatePlatforms = getAppropiatePlatforms(
   //     selectedPostType?.toLowerCase() as "text" | "image" | "video",
-     
+
   //   );
-    
 
   //   // Clear aspect ratio warning when video mode changes or when correct video is uploaded
   //   if (selectedPostType === "video") {
@@ -231,7 +230,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   //       // If no video is loaded but there's a warning (from previous rejected upload), keep the warning
   //       // This ensures the warning persists until a correct video is uploaded or mode is switched
   //     }
-    
+
   // }, [
   //   selectedPostType,
 
@@ -385,10 +384,10 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
   const handleFileUpload = async (file: File) => {
     console.log("📁 File upload started:", file.name, file.type, file.size);
-    
+
     // Set this file as the current file being processed
     currentFileRef.current = file;
-    
+
     console.log("Current formData state BEFORE:", {
       media: !!formData.media,
       mediaUrl: !!formData.mediaUrl,
@@ -598,13 +597,17 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
         // Double-check: if abort controller was cleared (mode was switched), don't add the image
         if (!uploadAbortControllerRef.current) {
-          console.log("📛 Upload was aborted before completion, skipping image addition");
+          console.log(
+            "📛 Upload was aborted before completion, skipping image addition"
+          );
           return;
         }
 
         // Triple-check: verify this is still the current file being processed
         if (currentFileRef.current !== file) {
-          console.log("📛 A different file is now being processed, skipping old file update");
+          console.log(
+            "📛 A different file is now being processed, skipping old file update"
+          );
           return;
         }
 
@@ -833,7 +836,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     if (formData.prompt.trim()) {
       // For text-to-image mode with combined generation enabled, do the combined generation
       if (
-        
         selectedImageMode === "textToImage" &&
         generateImageWithPost &&
         !formData.mediaUrl
@@ -847,7 +849,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
       // For text-to-image mode without combined generation, check if image exists
       if (
-        
         selectedImageMode === "textToImage" &&
         !generateImageWithPost &&
         !formData.mediaUrl
@@ -861,7 +862,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
       // For upload mode, check if image is uploaded
       if (
-        
         selectedImageMode === "upload" &&
         !formData.mediaUrl &&
         !formData.media
@@ -873,7 +873,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
       // NEW: For uploaded images, open template editor directly with blank template
       if (
-        
         selectedImageMode === "upload" &&
         (formData.media || formData.mediaUrl)
       ) {
@@ -920,7 +919,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       // allow using an uploaded custom thumbnail. This only runs for
       // aspect ratios that support thumbnails (not 9:16 stories).
       if (
-        
         (selectedVideoMode === "upload" ||
           selectedVideoMode === "uploadShorts") &&
         originalVideoFile &&
@@ -2254,7 +2252,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         ${selectedPostType === "image" ? "" : "hidden"}
                         ${
                           selectedImageMode === "upload"
-                            ? "theme-bg-trinary text-white shadow-lg"
+                            ? "theme-bg-trinary text-white shadow-md"
                             : "theme-bg-quaternary"
                         }`}
                         >
@@ -2319,7 +2317,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         ${selectedPostType === "image" ? "" : "hidden"}
                         ${
                           selectedImageMode === "textToImage"
-                            ? "theme-bg-trinary text-white shadow-lg"
+                            ? "theme-bg-trinary text-white shadow-md"
                             : "theme-bg-quaternary"
                         }`}
                         >
@@ -2450,7 +2448,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             ${selectedPostType === "video" ? "" : "hidden"}
                             ${
                               selectedVideoMode === "upload"
-                                ? "theme-bg-trinary text-white shadow-lg"
+                                ? "theme-bg-trinary text-white shadow-md"
                                 : "theme-bg-quaternary"
                             }
                           `}
@@ -2460,7 +2458,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               <div
                                 className={`w-10 h-6 border mx-auto mb-2  ${
                                   selectedVideoMode === "upload"
-                                    ? "shadow-lg brightness-0 invert border-2"
+                                    ? "shadow-md brightness-0 invert border-2"
                                     : "theme-border-trinary border-2"
                                 }`}
                               ></div>
@@ -2510,7 +2508,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             ${selectedPostType === "video" ? "" : "hidden"}
                             ${
                               selectedVideoMode === "uploadShorts"
-                                ? "theme-bg-trinary text-white shadow-lg"
+                                ? "theme-bg-trinary text-white shadow-md"
                                 : "theme-bg-quaternary"
                             }
                           `}
@@ -2523,7 +2521,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               <div
                                 className={`w-6 h-10 border mx-auto mb-2  ${
                                   selectedVideoMode === "uploadShorts"
-                                    ? "shadow-lg brightness-0 invert border-2"
+                                    ? "shadow-md brightness-0 invert border-2"
                                     : "theme-border-trinary border-2"
                                 }`}
                               ></div>
@@ -2612,7 +2610,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                     <img
                                       src={imageSrc}
                                       alt="Preview"
-                                      className="max-h-32 mx-auto  shadow-sm"
+                                      className="max-h-32 mx-auto  shadow-md"
                                       onLoad={() => {
                                         console.log(
                                           "✅ Upload preview image loaded successfully:",
@@ -2643,7 +2641,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                     setSelectedTemplate(undefined);
                                     setImageAnalysis("");
                                   }}
-                                  className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-md p-1.5 shadow-lg transition-colors duration-200"
+                                  className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-md p-1.5 shadow-md transition-colors duration-200"
                                   title="Remove image"
                                 >
                                   <X className="w-3 h-3" />
@@ -2739,7 +2737,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               onChange={(e) =>
                                 setImageDescription(e.target.value)
                               }
-                              className="w-full px-3 py-2 theme-bg-primary/20 border border-grey/10 focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400/50 transition-all duration-200 min-h-[40px] text-sm placeholder-gray-400"
+                              className="w-full px-3 py-2.5 theme-bg-primary/20 border border-grey/10 focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400/50 transition-all duration-200 min-h-[40px] text-sm placeholder-gray-400"
                               placeholder="Describe the image you want to generate... (e.g., 'A professional product photo of eco-friendly water bottles')"
                               required
                             />
@@ -2839,7 +2837,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                   <img
                                     src={imageSrc}
                                     alt="Generated Image"
-                                    className="max-h-32 mx-auto shadow-sm rounded"
+                                    className="max-h-32 mx-auto shadow-md rounded"
                                     onLoad={() => {
                                       console.log(
                                         "✅ Text-to-image preview loaded successfully:",
@@ -2870,7 +2868,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                   setSelectedTemplate(undefined);
                                   setImageAnalysis("");
                                 }}
-                                className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-md p-1.5 shadow-lg transition-colors duration-200"
+                                className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-md p-1.5 shadow-md transition-colors duration-200"
                                 title="Remove image"
                               >
                                 <X className="w-3 h-3" />
@@ -2907,7 +2905,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                 </>
               )}
 
-              {selectedVideoMode !== "" &&(
+              {selectedVideoMode !== "" && (
                 <div>
                   <label className="block text-sm font-medium theme-text-primary  mb-2">
                     {selectedVideoMode === "uploadShorts" ? (
@@ -2974,7 +2972,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                     : "")
                                 }
                                 alt="Preview"
-                                className="max-h-40 mx-auto  shadow-sm"
+                                className="max-h-40 mx-auto  shadow-md"
                                 onError={(e) => {
                                   console.error(
                                     "Image failed to load:",
@@ -3004,7 +3002,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                     ? URL.createObjectURL(formData.media)
                                     : undefined
                                 }
-                                className="max-h-40 mx-auto shadow-sm rounded"
+                                className="max-h-40 mx-auto shadow-md rounded"
                                 controls
                                 preload="metadata"
                                 onError={(e) => {
@@ -3288,7 +3286,10 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                 </div>
               )}
 
-              {(selectedPostType !== ""  &&  (selectedImageMode!== "" || selectedVideoMode !== "" || selectedPostType === "text") ) ? (
+              {selectedPostType !== "" &&
+              (selectedImageMode !== "" ||
+                selectedVideoMode !== "" ||
+                selectedPostType === "text") ? (
                 <>
                   <>
                     <div className="flex-1">
@@ -3306,7 +3307,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             prompt: e.target.value,
                           }))
                         }
-                        className="w-full px-3 py-2  theme-bg-primary transition-all duration-200 min-h-[160px] lg:min-h-[180px] text-sm  rounded-md placeholder-gray-500 bg-white"
+                        className="w-full px-3 py-2.5  theme-bg-primary transition-all duration-200 min-h-[160px] lg:min-h-[180px] text-sm  rounded-md placeholder-gray-500 bg-white"
                         placeholder="Describe what you want to share... (e.g., 'Launch of our new eco-friendly water bottles')"
                         required
                       />
@@ -3332,7 +3333,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               }
                               className={`w-full h-24 p-2 border transition-all rounded-md duration-200 flex flex-col items-center justify-center ${
                                 aspectRatio === ratio.value
-                                  ? "theme-bg-quaternary shadow-lg theme-text-secondary"
+                                  ? "theme-bg-quaternary shadow-md theme-text-secondary"
                                   : "theme-bg-primary hover:theme-bg-primary/50"
                               }`}
                             >
@@ -3418,7 +3419,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         !formData.selectedPlatforms?.length ||
                         isGeneratingBoth
                       }
-                      className="rounded-md flex-1 flex items-center justify-between theme-bg-trinary theme-text-light py-2.5 px-3 font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-sm"
+                      className="rounded-md flex-1 flex items-center justify-between theme-bg-trinary theme-text-light py-2.5  px-3 font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-sm"
                     >
                       {isGeneratingBoth ? (
                         <div className="flex items-center">
@@ -3448,39 +3449,43 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                     </button>
                   </div>
                 </>
-              ) : (<></>
-              
+              ) : (
+                <></>
               )}
-              {((selectedImageMode === "" && selectedVideoMode === "" && selectedPostType !== "text") &&  <div className="flex-1 w-full aspect-video ">
-                  <div className="relative rounded-md overflow-hidden shadow-2xl bg-gray-900 aspect-video">
-                    <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#7650e3] to-[#6366F1]">
-                      <button className="bg-white rounded-full p-6 hover:scale-110 transition-transform shadow-2xl">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          className="lucide lucide-play w-12 h-12 text-[#7650e3] ml-1"
-                        >
-                          <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                        </svg>
-                      </button>
-                    </div>
-                    <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/70 to-transparent">
-                      <p className="text-white text-lg font-semibold">
-                        Introduction to Omnishare
-                      </p>
-                      <p className="text-white/80">
-                        Learn how to maximize your social media presence
-                      </p>
+              {selectedImageMode === "" &&
+                selectedVideoMode === "" &&
+                selectedPostType !== "text" && (
+                  <div className="flex-1 w-full aspect-video ">
+                    <div className="relative rounded-md overflow-hidden shadow-md bg-gray-900 aspect-video">
+                      <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#7650e3] to-[#6366F1]">
+                        <button className="bg-white rounded-full p-6 hover:scale-110 transition-transform shadow-md">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            className="lucide lucide-play w-12 h-12 text-[#7650e3] ml-1"
+                          >
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                          </svg>
+                        </button>
+                      </div>
+                      <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/70 to-transparent">
+                        <p className="text-white text-lg font-semibold">
+                          Introduction to Omnishare
+                        </p>
+                        <p className="text-white/80">
+                          Learn how to maximize your social media presence
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>)}
+                )}
             </div>
           </form>
         </>

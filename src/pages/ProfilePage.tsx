@@ -84,7 +84,7 @@ export const ProfilePage: React.FC = () => {
       <div className="w-full mx-auto">
         {!isEditing && (
           <>
-            <div className=" backdrop-blur-sm rounded-2xl shadow-xl border border-slate-200/80 p-0 mb-6 w-full my-10">
+            <div className=" backdrop-blur-sm rounded-2xl shadow-md border border-slate-200/80 p-0 mb-6 w-full my-10">
               <div className="flex items-center justify-between  px-4 py-6">
                 <div className="flex items space-x-4">
                   <div>
@@ -128,7 +128,7 @@ export const ProfilePage: React.FC = () => {
                 <div className="flex space-x-2">
                   <button
                     onClick={() => setProfileEditing(true)}
-                    className="flex items-center px-2 py-2 text-purple-700 text-underline rounded-md hover:bg-purple-50 transition-colors"
+                    className="flex items-center px-2 py-2.5 text-purple-700 text-underline rounded-md hover:bg-purple-50 transition-colors"
                   >
                     <Edit3 className="w-4 h-4 mr-2" />
                     Edit Profile
@@ -244,7 +244,7 @@ export const ProfilePage: React.FC = () => {
                         type="text"
                         readOnly
                         value={`${window.location.origin}/auth?referralId=${state.user.id}`}
-                        className="w-full px-4 py-2 border border-white/20 rounded-md theme-bg-primary theme-text-primary font-mono"
+                        className="w-full px-4 py-2.5 border border-white/20 rounded-md theme-bg-primary theme-text-primary font-mono"
                       />
                       <button
                         onClick={() => {
@@ -252,7 +252,7 @@ export const ProfilePage: React.FC = () => {
                             `${window.location.origin}/auth?referralId=${state.user.id}`
                           );
                         }}
-                        className="px-3 py-2 bg-purple-600 text-white rounded-md"
+                        className="px-3 py-2.5 bg-purple-600 text-white rounded-md"
                       >
                         Copy
                       </button>
@@ -270,7 +270,7 @@ export const ProfilePage: React.FC = () => {
                             );
                           });
                         }}
-                        className="ml-2 px-3 py-2 bg-purple-600 text-white rounded-md"
+                        className="ml-2 px-3 py-2.5 bg-purple-600 text-white rounded-md"
                       >
                         Share
                       </button>

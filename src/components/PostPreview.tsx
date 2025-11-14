@@ -394,7 +394,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
     switch (post.platform) {
       case "facebook":
         return (
-          <div className="bg-white border border-gray-200 rounded-md overflow-hidden shadow-sm max-w-lg">
+          <div className="bg-white border border-gray-200 rounded-md overflow-hidden shadow-md max-w-lg">
             <div className="p-4 border-b border-gray-100">
               <div className="flex items-center space-x-3">
                 <div
@@ -479,7 +479,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
 
       case "instagram":
         return (
-          <div className="bg-white border border-gray-200 rounded-md overflow-hidden max-w-sm shadow-sm">
+          <div className="bg-white border border-gray-200 rounded-md overflow-hidden max-w-sm shadow-md">
             <div className="p-3 border-b border-gray-100">
               <div className="flex items-center space-x-3">
                 <div
@@ -624,7 +624,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
 
       case "twitter":
         return (
-          <div className="bg-white border border-gray-200 rounded-md overflow-hidden max-w-lg shadow-sm">
+          <div className="bg-white border border-gray-200 rounded-md overflow-hidden max-w-lg shadow-md">
             <div className="p-4">
               <div className="flex items-start space-x-3">
                 <div
@@ -711,7 +711,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
 
       case "linkedin":
         return (
-          <div className="bg-white border border-gray-200 rounded-md overflow-hidden shadow-sm max-w-lg">
+          <div className="bg-white border border-gray-200 rounded-md overflow-hidden shadow-md max-w-lg">
             <div className="p-4">
               <div className="flex items-center space-x-3 mb-4">
                 <div
@@ -791,7 +791,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
 
       case "tiktok":
         return (
-          <div className="bg-black rounded-md overflow-hidden max-w-sm shadow-sm">
+          <div className="bg-black rounded-md overflow-hidden max-w-sm shadow-md">
             {/* TikTok Header with Icon and Name */}
             <div className="p-3 border-b border-gray-800">
               <div className="flex items-center space-x-3">
@@ -905,7 +905,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
 
       case "youtube":
         return (
-          <div className="bg-white border border-gray-200 rounded-md overflow-hidden shadow-sm max-w-lg">
+          <div className="bg-white border border-gray-200 rounded-md overflow-hidden shadow-md max-w-lg">
             {renderMedia(
               { ...post, mediaUrl },
               "rounded-md max-h-96 object-contain w-full",
@@ -975,7 +975,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
 
       default:
         return (
-          <div className="bg-white border border-gray-200 rounded-md p-6 shadow-sm">
+          <div className="bg-white border border-gray-200 rounded-md p-6 shadow-md">
             <h3 className="font-medium text-slate-900 mb-3 ">
               {post.platform}
             </h3>
@@ -1002,7 +1002,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
   const selectedPost = posts.find((post) => post.platform === selectedPlatform);
 
   return (
-    <div className="preview w-full mx-auto bg-transparent  md:rounded-2xl md:shadow-lg md:px-8  md:py-10  ">
+    <div className="preview w-full mx-auto bg-transparent  md:rounded-2xl md:shadow-md md:px-8  md:py-10  ">
       <h2 className="text-3xl font-semibold theme-text-primary mb-1">
         Your AI-Generated Posts
       </h2>
@@ -1024,7 +1024,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                   onClick={() => setSelectedPlatform(post.platform)}
                   className={`relative p-1 rounded-full transition-all duration-200 transform hover:scale-105 h-fit  ${
                     selectedPlatform === post.platform
-                      ? "ring-4 ring-blue-200 shadow-lg"
+                      ? "ring-4 ring-blue-200 shadow-md"
                       : "hover:shadow-md"
                   }`}
                 >
@@ -1033,14 +1033,14 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                     <div
                       className={`w-12 h-12 rounded-full flex items-center justify-center text-white ${getPlatformColors(
                         post.platform
-                      )} shadow-lg`}
+                      )} shadow-md`}
                     >
                       <IconComponent className="w-6 h-6" />
                     </div>
                   )}
 
                   {/* Indicator Light */}
-                  {/* <div className={`absolute -top-1 -right-1 w-5 h-5 rounded-full border-2 border-white shadow-lg ${
+                  {/* <div className={`absolute -top-1 -right-1 w-5 h-5 rounded-full border-2 border-white shadow-md ${
                     post.engagement === "high"
                       ? "bg-green-500"
                       : post.engagement === "medium"
@@ -1117,7 +1117,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                         saveChanges();
                         setEditingMode(false);
                       }}
-                      className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors font-medium"
+                      className="flex items-center gap-2 px-4 py-2.5 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors font-medium"
                     >
                       <Save className="w-4 h-4" />
                       Save Changes
@@ -1126,7 +1126,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                       onClick={() => {
                         discardChanges();
                       }}
-                      className="flex items-center gap-2 px-4 py-2 border border-purple-600 text-purple-600 rounded-md hover:bg-gray-600 transition-colors font-medium"
+                      className="flex items-center gap-2 px-4 py-2.5 border border-purple-600 text-purple-600 rounded-md hover:bg-gray-600 transition-colors font-medium"
                     >
                       <X className="w-4 h-4" />
                       Cancel
@@ -1136,7 +1136,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                   // View Mode - Show edit button
                   <button
                     onClick={() => setEditingMode(true)}
-                    className="w-full py-2.5 text-md font-semibold rounded-md border flex items-center justify-center gap-2 transition  hover:bg-[#d7d7fc] text-[#7650e3] border-[#7650e3]"
+                    className="w-full py-2.5  text-md font-semibold rounded-md border flex items-center justify-center gap-2 transition  hover:bg-[#d7d7fc] text-[#7650e3] border-[#7650e3]"
                   >
                     <Edit className="w-4 h-4" />
                     Edit Post Text
@@ -1230,14 +1230,14 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
           <>
             <button
               onClick={onPublish}
-              className="w-full bg-transparent border-purple-600 border text-purple-600 flex items-center gap-2 justify-center hover:border-purple-600  font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
+              className="w-full bg-transparent border-purple-600 border text-purple-600 flex items-center gap-2 justify-center hover:border-purple-600  font-semibold py-2.5  text-base rounded-md transition disabled:opacity-50"
             >
               Continue
             </button>
 
             <button
               onClick={handleRegenerateClick}
-              className="w-full bg-purple-600 flex items-center gap-2 justify-center hover:bg-purple-700 text-white font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
+              className="w-full bg-purple-600 flex items-center gap-2 justify-center hover:bg-purple-700 text-white font-semibold py-2.5  text-base rounded-md transition disabled:opacity-50"
             >
               <Edit className="w-5 h-5" />
               Regenerate
@@ -1280,7 +1280,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
             <button
               onClick={handleRegenerateSubmit}
               disabled={isRegenerating}
-              className={`rounded-md w-full flex items-center justify-between theme-bg-trinary theme-text-light py-2.5 px-3 font-medium transition-all duration-200 text-sm ${
+              className={`rounded-md w-full flex items-center justify-between theme-bg-trinary theme-text-light py-2.5  px-3 font-medium transition-all duration-200 text-sm ${
                 isRegenerating
                   ? "opacity-70 cursor-not-allowed"
                   : "hover:opacity-90"
@@ -1308,7 +1308,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
             <div className="flex justify-center mt-4">
               <button
                 onClick={handleRegenerateCancel}
-                className="w-full py-2.5 text-md font-semibold rounded-md border flex items-center justify-center gap-2 transition  hover:bg-[#d7d7fc] text-[#7650e3] border-[#7650e3]"
+                className="w-full py-2.5  text-md font-semibold rounded-md border flex items-center justify-center gap-2 transition  hover:bg-[#d7d7fc] text-[#7650e3] border-[#7650e3]"
               >
                 Cancel
               </button>

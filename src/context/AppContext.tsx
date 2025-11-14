@@ -426,20 +426,9 @@ export const useAppContext = () => {
   };
 
   const logout = async () => {
-    try {
-      await API.logout();
-    } catch (error) {
-      console.log(
-        "Logout endpoint call failed, but continuing with local logout:",
-        error
-      );
-    } finally {
-      localStorage.removeItem("auth_token");
-      localStorage.removeItem("auth_token_expiry");
-      localStorage.removeItem("auth_remember");
-      sessionStorage.removeItem("auth_token");
-      context.dispatch({ type: "RESET_STATE" });
-    }
+    localStorage.clear();
+
+    context.dispatch({ type: "RESET_STATE" });
   };
 
   const [generationAmounts, setGenerationAmounts] = useState<any>({});

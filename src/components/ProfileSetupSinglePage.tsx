@@ -506,7 +506,7 @@ const ProfileSetupSinglePage: React.FC = () => {
   return (
     <div className="px-0 py-0 md:px-0 bg-transparent">
       <div className="max-w-4xl mx-auto">
-        <div className="bg-white shadow-xl overflow-hidden relative">
+        <div className="bg-white shadow-md overflow-hidden relative">
           {/* Header */}
           <div className="theme-bg-gradient px-4 pt-6 pb-2 text-white relative">
             <h1 className="text-3xl font-bold">Complete Your Profile</h1>
@@ -568,7 +568,7 @@ const ProfileSetupSinglePage: React.FC = () => {
                                 <input
                                   type={field.type}
                                   {...register(fieldName)}
-                                  className={`w-full px-3 py-2 border rounded-md ${
+                                  className={`w-full px-3 py-2.5 border rounded-md ${
                                     fieldError
                                       ? "border-red-500"
                                       : "border-gray-300"
@@ -633,7 +633,7 @@ const ProfileSetupSinglePage: React.FC = () => {
                                 </label>
                                 <select
                                   {...register(fieldName)}
-                                  className={`w-full px-3 py-2 border rounded-md ${
+                                  className={`w-full px-3 py-2.5 border rounded-md ${
                                     fieldError
                                       ? "border-red-500"
                                       : "border-gray-300"
@@ -851,7 +851,7 @@ const ProfileSetupSinglePage: React.FC = () => {
                                   {field.label} {field.required && "*"}
                                 </label>
 
-                                <div className="flex flex-wrap items-center gap-2 border border-gray-300 rounded-md px-3 py-2 min-h-[44px]">
+                                <div className="flex flex-wrap items-center gap-2 border border-gray-300 rounded-md px-3 py-2.5 min-h-[44px]">
                                   {Array.isArray(formData[fieldName]) &&
                                     (formData[fieldName] as string[]).map(
                                       (tag: string, idx: number) => (
@@ -962,7 +962,7 @@ const ProfileSetupSinglePage: React.FC = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full theme-bg-gradient disabled:bg-purple-600/50 disabled:cursor-not-allowed text-white py-3 px-6 rounded-md text-lg font-semibold shadow-sm disabled:opacity-50"
+                className="w-full theme-bg-gradient disabled:bg-purple-600/50 disabled:cursor-not-allowed text-white py-3 px-6 rounded-md text-lg font-semibold shadow-md disabled:opacity-50"
               >
                 {loading ? "Saving..." : "Complete Profile Setup"}
               </button>

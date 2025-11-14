@@ -70,7 +70,7 @@ export const PreloaderOverlay: React.FC<PreloaderOverlayProps> = ({
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-fadeIn" />
 
       {/* Loading container */}
-      <div className="relative z-10 bg-gray-900/95 backdrop-blur-md border border-white/20 rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl animate-slideUp">
+      <div className="relative z-10 bg-gray-900/95 backdrop-blur-md border border-white/20 rounded-2xl p-8 max-w-md w-full mx-4 shadow-md animate-slideUp">
         {/* Cancel button */}
         {loadingState.canCancel && loadingState.onCancel && (
           <button

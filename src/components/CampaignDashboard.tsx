@@ -195,9 +195,9 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
     <div className="flex space-x-1 bg-gray-100 p-1 rounded-md">
       <button
         onClick={() => setActiveView("overview")}
-        className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors ${
+        className={`flex items-center gap-2 px-4 py-2.5 rounded-md transition-colors ${
           activeView === "overview"
-            ? "bg-white text-blue-600 shadow-sm"
+            ? "bg-white text-blue-600 shadow-md"
             : "text-slate-500 hover:text-slate-900"
         }`}
       >
@@ -207,9 +207,9 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
 
       <button
         onClick={() => setActiveView("analytics")}
-        className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors ${
+        className={`flex items-center gap-2 px-4 py-2.5 rounded-md transition-colors ${
           activeView === "analytics"
-            ? "bg-white text-purple-600 shadow-sm"
+            ? "bg-white text-purple-600 shadow-md"
             : "text-slate-500 hover:text-slate-900"
         }`}
       >
@@ -219,9 +219,9 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
 
       <button
         onClick={() => setActiveView("posts")}
-        className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors ${
+        className={`flex items-center gap-2 px-4 py-2.5 rounded-md transition-colors ${
           activeView === "posts"
-            ? "bg-white text-green-600 shadow-sm"
+            ? "bg-white text-green-600 shadow-md"
             : "text-slate-500 hover:text-slate-900"
         }`}
       >
@@ -231,9 +231,9 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
 
       <button
         onClick={() => setActiveView("campaigns")}
-        className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors ${
+        className={`flex items-center gap-2 px-4 py-2.5 rounded-md transition-colors ${
           activeView === "campaigns"
-            ? "bg-white text-red-600 shadow-sm"
+            ? "bg-white text-red-600 shadow-md"
             : "text-slate-500 hover:text-slate-900"
         }`}
       >
@@ -243,9 +243,9 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
 
       <button
         onClick={() => setActiveView("settings")}
-        className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors ${
+        className={`flex items-center gap-2 px-4 py-2.5 rounded-md transition-colors ${
           activeView === "settings"
-            ? "bg-white text-orange-600 shadow-sm"
+            ? "bg-white text-orange-600 shadow-md"
             : "text-slate-500 hover:text-slate-900"
         }`}
       >
@@ -277,7 +277,7 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
       <div className="space-y-6">
         {/* Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div className="bg-white p-6 rounded-md shadow-lg border-l-4 border-blue-500">
+          <div className="bg-white p-6 rounded-md shadow-md border-l-4 border-blue-500">
             <h3 className="text-sm font-medium text-slate-500  tracking-wide">
               Total Posts
             </h3>
@@ -287,7 +287,7 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
             <p className="text-sm text-green-600 mt-1">+12 this month</p>
           </div>
 
-          <div className="bg-white p-6 rounded-md shadow-lg border-l-4 border-green-500">
+          <div className="bg-white p-6 rounded-md shadow-md border-l-4 border-green-500">
             <h3 className="text-sm font-medium text-slate-500  tracking-wide">
               Published
             </h3>
@@ -297,7 +297,7 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
             <p className="text-sm text-green-600 mt-1">+8 this month</p>
           </div>
 
-          <div className="bg-white p-6 rounded-md shadow-lg border-l-4 border-purple-500">
+          <div className="bg-white p-6 rounded-md shadow-md border-l-4 border-purple-500">
             <h3 className="text-sm font-medium text-slate-500  tracking-wide">
               Scheduled
             </h3>
@@ -307,7 +307,7 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
             <p className="text-sm text-blue-600 mt-1">Next in 4 hours</p>
           </div>
 
-          <div className="bg-white p-6 rounded-md shadow-lg border-l-4 border-red-500">
+          <div className="bg-white p-6 rounded-md shadow-md border-l-4 border-red-500">
             <h3 className="text-sm font-medium text-slate-500  tracking-wide">
               Campaigns
             </h3>
@@ -321,7 +321,7 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
         </div>
 
         {/* Quick Actions */}
-        <div className="bg-white rounded-md shadow-lg p-6">
+        <div className="bg-white rounded-md shadow-md p-6">
           <h3 className="text-lg font-semibold text-slate-900 mb-4">
             Quick Actions
           </h3>
@@ -376,7 +376,7 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Recent Activity */}
-          <div className="bg-white rounded-md shadow-lg p-6">
+          <div className="bg-white rounded-md shadow-md p-6">
             <h3 className="text-lg font-semibold text-slate-900 mb-4">
               Recent Activity
             </h3>
@@ -406,7 +406,7 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
           </div>
 
           {/* Platform Summary */}
-          <div className="bg-white rounded-md shadow-lg p-6">
+          <div className="bg-white rounded-md shadow-md p-6">
             <h3 className="text-lg font-semibold text-slate-900 mb-4">
               Platform Overview
             </h3>
@@ -448,7 +448,7 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
 
   const AnalyticsView = () => (
     <div className="space-y-6">
-      <div className="bg-white rounded-md shadow-lg p-6">
+      <div className="bg-white rounded-md shadow-md p-6">
         <h3 className="text-lg font-semibold text-slate-900 mb-4">
           Performance Analytics
         </h3>
@@ -467,14 +467,14 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
 
   const PostsView = () => (
     <div className="space-y-6">
-      <div className="bg-white rounded-md shadow-lg p-6">
+      <div className="bg-white rounded-md shadow-md p-6">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-semibold text-slate-900">
             Posts Management
           </h3>
           <button
             onClick={onCreatePost}
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors flex items-center gap-2"
+            className="bg-blue-600 text-white px-4 py-2.5 rounded-md hover:bg-blue-700 transition-colors flex items-center gap-2"
           >
             <Plus className="w-4 h-4" />
             Create New Post
@@ -490,7 +490,7 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
           </p>
           <button
             onClick={onViewPosts}
-            className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-md hover:from-blue-700 hover:to-purple-700 transition-all duration-200"
+            className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2.5 rounded-md hover:from-blue-700 hover:to-purple-700 transition-all duration-200"
           >
             View All Posts
           </button>
@@ -501,14 +501,14 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
 
   const CampaignsView = () => (
     <div className="space-y-6">
-      <div className="bg-white rounded-md shadow-lg p-6">
+      <div className="bg-white rounded-md shadow-md p-6">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-semibold text-slate-900">
             Campaign Management
           </h3>
           <button
             onClick={onBack}
-            className="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors flex items-center gap-2"
+            className="bg-purple-600 text-white px-4 py-2.5 rounded-md hover:bg-purple-700 transition-colors flex items-center gap-2"
           >
             <Target className="w-4 h-4" />
             View All Campaigns
@@ -525,7 +525,7 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
           </p>
           <button
             onClick={onBack}
-            className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-2 rounded-md hover:from-purple-700 hover:to-pink-700 transition-all duration-200"
+            className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-2.5 rounded-md hover:from-purple-700 hover:to-pink-700 transition-all duration-200"
           >
             View All Campaigns
           </button>
@@ -536,7 +536,7 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
 
   const SettingsView = () => (
     <div className="space-y-6">
-      <div className="bg-white rounded-md shadow-lg p-6">
+      <div className="bg-white rounded-md shadow-md p-6">
         <h3 className="text-lg font-semibold text-slate-900 mb-6">
           Campaign Settings
         </h3>
@@ -611,7 +611,7 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
         <div className="mt-6 flex justify-end">
           <button
             onClick={onEditCampaign}
-            className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors flex items-center gap-2"
+            className="bg-blue-600 text-white px-6 py-2.5 rounded-md hover:bg-blue-700 transition-colors flex items-center gap-2"
           >
             <Edit2 className="w-4 h-4" />
             Edit Campaign Details

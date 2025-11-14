@@ -221,7 +221,7 @@
 /* Standardized Button Classes - Based on Generate Post Button Pattern */
 /* Primary Button - Main CTA buttons */
 .btn-primary {
-  @apply rounded-full py-2 px-4 font-medium theme-bg-trinary theme-text-light transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2;
+  @apply rounded-full py-2.5 px-4 font-medium theme-bg-trinary theme-text-light transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2;
 }
 
 .btn-primary:hover:not(:disabled) {
@@ -230,7 +230,7 @@
 
 /* Secondary Button - Secondary actions */
 .btn-secondary {
-  @apply rounded-full py-2 px-4 font-medium bg-gray-100 text-gray-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2;
+  @apply rounded-full py-2.5 px-4 font-medium bg-gray-100 text-gray-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2;
 }
 
 .btn-secondary:hover:not(:disabled) {
@@ -239,17 +239,17 @@
 
 /* Success Button - Positive actions (connect, publish, etc.) */
 .btn-success {
-  @apply rounded-full py-2 px-4 font-medium theme-bg-success theme-text-light transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2;
+  @apply rounded-full py-2.5 px-4 font-medium theme-bg-success theme-text-light transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2;
 }
 
 /* Danger Button - Destructive actions (disconnect, delete, etc.) */
 .btn-danger {
-  @apply rounded-full py-2 px-4 font-medium theme-bg-danger theme-text-light transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2;
+  @apply rounded-full py-2.5 px-4 font-medium theme-bg-danger theme-text-light transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2;
 }
 
 /* Outline variants */
 .btn-outline {
-  @apply rounded-full py-2 px-4 font-medium bg-transparent border-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2;
+  @apply rounded-full py-2.5 px-4 font-medium bg-transparent border-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2;
 }
 
 .btn-outline-primary {

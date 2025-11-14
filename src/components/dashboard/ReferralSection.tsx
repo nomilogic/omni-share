@@ -34,12 +34,12 @@ function ReferralSection() {
                 type="text"
                 value={referralLink}
                 readOnly
-                className="px-3 py-2 w-full text-xs text-slate-700 font-mono outline-none"
+                className="px-3 py-2.5 w-full text-xs text-slate-700 font-mono outline-none"
               />
 
               <button
                 onClick={copyToClipboard}
-                className="px-3 py-2  transition-colors"
+                className="px-3 py-2.5  transition-colors"
                 title="Copy to clipboard"
               >
                 <Copy className="w-4 h-4 text-purple-600" />
@@ -52,7 +52,7 @@ function ReferralSection() {
             )}
           </div>
 
-          <button className="flex items-center rounded-md gap-2 transition-colors text-[13px] font-semibold bg-purple-600  text-white py-2 px-3">
+          <button className="flex items-center rounded-md gap-2 transition-colors text-[13px] font-semibold bg-purple-600  text-white py-2.5 px-3">
             <Share2 className="w-[18px] h-[18px]" />
             Share
           </button>

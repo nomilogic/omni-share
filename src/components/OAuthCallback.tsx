@@ -125,7 +125,7 @@ export const OAuthCallback: React.FC = () => {
 
   return (
     <div className="h-full-dec-hf  x-2 flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      <div className="max-w-md w-full bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-8 text-center">
+      <div className="max-w-md w-full bg-white/80 backdrop-blur-sm rounded-2xl shadow-md border border-white/20 p-8 text-center">
         <div className="mb-6">
           {status === "processing" && (
             <Loader className="w-12 h-12 text-blue-600 animate-spin mx-auto" />
@@ -178,7 +178,7 @@ export const OAuthCallback: React.FC = () => {
           <div className="mt-6">
             <button
               onClick={() => navigate("/settings")}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-md hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg"
+              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-md hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-md"
             >
               Continue to Settings
             </button>
@@ -264,7 +264,7 @@ export const OAuthCallback: React.FC = () => {
 
 //   return (
 //     <div className="h-full-dec-hf  x-2 bg-gray-50 flex items-center justify-center p-4">
-//       <div className="bg-white rounded-md shadow-lg p-8 max-w-md w-full text-center">
+//       <div className="bg-white rounded-md shadow-md p-8 max-w-md w-full text-center">
 //         {status === 'loading' && (
 //           <>
 //             <Loader className="w-12 h-12 text-blue-600 mx-auto mb-4 animate-spin" />

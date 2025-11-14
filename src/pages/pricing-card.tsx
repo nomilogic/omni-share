@@ -31,8 +31,8 @@ export function PricingCard({
 
   return (
     <div
-      className={`rounded-2xl overflow-hidden shadow-lg transition-transform duration-300  ${
-        !isLocked ? "hover:shadow-2xl hover:-translate-y-2" : ""
+      className={`rounded-2xl overflow-hidden shadow-md transition-transform duration-300  ${
+        !isLocked ? "hover:shadow-md hover:-translate-y-2" : ""
       } ${isLocked ? "opacity-60" : "opacity-100"}`}
     >
       <div className="bg-gradient-to-br from-[#c7bdef] to-[#c7bdef] px-10 py-10 h-64 text-center relative">

@@ -314,9 +314,9 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
         <button
           key={tab.id}
           onClick={() => setViewMode(tab.id as ViewMode)}
-          className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-md text-sm font-medium transition-colors ${
             viewMode === tab.id
-              ? "bg-white text-blue-600 shadow-sm"
+              ? "bg-white text-blue-600 shadow-md"
               : "text-slate-500 hover:text-slate-900"
           }`}
         >
@@ -339,7 +339,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
   );
 
   const FilterPanel = () => (
-    <div className="bg-white rounded-md shadow-sm border p-4 mb-6">
+    <div className="bg-white rounded-md shadow-md border p-4 mb-6">
       <div className="flex flex-wrap items-center gap-4">
         <div className="flex-1 min-w-64">
           <div className="relative">
@@ -352,7 +352,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyPress={(e) => e.key === "Enter" && handleSearch()}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
         </div>
@@ -360,7 +360,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50 text-sm"
+            className="flex items-center gap-2 px-3 py-2.5 border border-gray-300 rounded-md hover:bg-gray-50 text-sm"
           >
             <Filter className="w-4 h-4 text-gray-400" />
             Filters
@@ -379,7 +379,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
                 sortBy: e.target.value as SortBy,
               }))
             }
-            className="border border-gray-300 rounded-md px-3 py-2 text-sm"
+            className="border border-gray-300 rounded-md px-3 py-2.5 text-sm"
           >
             <option value="date">Latest First</option>
             <option value="performance">Best Performance</option>
@@ -392,7 +392,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
                 setViewMode(viewMode === "list" ? "gallery" : "gallery")
               }
               className={`p-2 rounded ${
-                viewMode === "gallery" ? "bg-white shadow-sm" : "text-slate-500"
+                viewMode === "gallery" ? "bg-white shadow-md" : "text-slate-500"
               }`}
             >
               <Grid3X3 className="w-4 h-4" />
@@ -400,7 +400,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
             <button
               onClick={() => setViewMode("list")}
               className={`p-2 rounded ${
-                viewMode === "list" ? "bg-white shadow-sm" : "text-slate-500"
+                viewMode === "list" ? "bg-white shadow-md" : "text-slate-500"
               }`}
             >
               <List className="w-4 h-4" />
@@ -456,7 +456,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
                       mediaType: e.target.value as MediaType,
                     }))
                   }
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
+                  className="w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm"
                 >
                   <option value="all">All Media</option>
                   <option value="image">Images</option>
@@ -569,7 +569,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
       {posts.map((post) => (
         <div
           key={post.id}
-          className="bg-white rounded-md shadow-sm border overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
+          className="bg-white rounded-md shadow-md border overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
           onClick={() => openEditModal(post)} // Changed to open edit modal
         >
           <div className="relative aspect-video bg-gray-100">
@@ -585,7 +585,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
                     e.stopPropagation();
                     toggleFavorite(post.id);
                   }}
-                  className={`p-1.5 rounded-full shadow-sm transition-colors ${
+                  className={`p-1.5 rounded-full shadow-md transition-colors ${
                     post.isFavorite
                       ? "bg-red-500 text-white hover:bg-red-600"
                       : "bg-white text-slate-500 hover:bg-gray-50"
@@ -602,7 +602,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
                     e.stopPropagation();
                     onReusePost?.(post.id);
                   }}
-                  className="p-1.5 bg-white text-slate-500 rounded-full shadow-sm hover:bg-gray-50 transition-colors"
+                  className="p-1.5 bg-white text-slate-500 rounded-full shadow-md hover:bg-gray-50 transition-colors"
                 >
                   <Repeat className="w-4 h-4" />
                 </button>
@@ -611,7 +611,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
                     e.stopPropagation();
                     onCreateTemplate?.(post.id);
                   }}
-                  className="p-1.5 bg-white text-slate-500 rounded-full shadow-sm hover:bg-gray-50 transition-colors"
+                  className="p-1.5 bg-white text-slate-500 rounded-full shadow-md hover:bg-gray-50 transition-colors"
                 >
                   <Copy className="w-4 h-4" />
                 </button>
@@ -669,7 +669,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
       {mediaAssets.map((asset) => (
         <div
           key={asset.id}
-          className="bg-white rounded-md shadow-sm border overflow-hidden hover:shadow-md transition-shadow group cursor-pointer"
+          className="bg-white rounded-md shadow-md border overflow-hidden hover:shadow-md transition-shadow group cursor-pointer"
           onClick={() => handleAssetClick(asset)}
         >
           <div className="relative aspect-square bg-gray-100">
@@ -714,7 +714,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
                     link.click();
                     document.body.removeChild(link);
                   }}
-                  className="p-1.5 bg-white text-slate-500 rounded-full shadow-sm hover:bg-gray-50 transition-colors"
+                  className="p-1.5 bg-white text-slate-500 rounded-full shadow-md hover:bg-gray-50 transition-colors"
                   title="Download"
                 >
                   <Download className="w-4 h-4" />
@@ -724,7 +724,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
                     e.stopPropagation();
                     navigator.clipboard.writeText(asset.url);
                   }}
-                  className="p-1.5 bg-white text-slate-500 rounded-full shadow-sm hover:bg-gray-50 transition-colors"
+                  className="p-1.5 bg-white text-slate-500 rounded-full shadow-md hover:bg-gray-50 transition-colors"
                   title="Copy URL"
                 >
                   <Share2 className="w-4 h-4" />
@@ -734,7 +734,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
                     e.stopPropagation();
                     handleAssetClick(asset);
                   }}
-                  className="p-1.5 bg-white text-slate-500 rounded-full shadow-sm hover:bg-gray-50 transition-colors"
+                  className="p-1.5 bg-white text-slate-500 rounded-full shadow-md hover:bg-gray-50 transition-colors"
                   title="View Details"
                 >
                   <MoreHorizontal className="w-4 h-4" />
@@ -790,7 +790,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
       ))}
 
       {/* Add New Media Button */}
-      <div className="bg-white rounded-md shadow-sm border-2 border-dashed border-gray-300 hover:border-blue-400 transition-colors group cursor-pointer flex flex-col items-center justify-center aspect-square">
+      <div className="bg-white rounded-md shadow-md border-2 border-dashed border-gray-300 hover:border-blue-400 transition-colors group cursor-pointer flex flex-col items-center justify-center aspect-square">
         <div className="text-center p-6">
           <div className="flex gap-2 mb-4 justify-center">
             <button
@@ -869,7 +869,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
                 <label className="block text-sm font-medium text-slate-700 mb-2">
                   Aspect Ratio
                 </label>
-                <select className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
+                <select className="w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm">
                   <option value="16:9">16:9 (Landscape)</option>
                   <option value="9:16">9:16 (Portrait)</option>
                   <option value="1:1">1:1 (Square)</option>
@@ -880,7 +880,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
                 <label className="block text-sm font-medium text-slate-700 mb-2">
                   Duration
                 </label>
-                <select className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
+                <select className="w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm">
                   <option value="5">5 seconds</option>
                   <option value="10">10 seconds</option>
                   <option value="15">15 seconds</option>
@@ -899,7 +899,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
                 if (prompt) generateVideo(prompt);
               }}
               disabled={videoGenerating}
-              className="flex-1 bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 disabled:opacity-50 flex items-center justify-center gap-2 transition-colors"
+              className="flex-1 bg-purple-600 text-white py-2.5 px-4 rounded-md hover:bg-purple-700 disabled:opacity-50 flex items-center justify-center gap-2 transition-colors"
             >
               {videoGenerating ? (
                 <>
@@ -915,7 +915,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
             </button>
             <button
               onClick={() => setShowVideoGenerator(false)}
-              className="px-4 py-2 border border-gray-300 text-slate-700 rounded-md hover:bg-gray-50 transition-colors"
+              className="px-4 py-2.5 border border-gray-300 text-slate-700 rounded-md hover:bg-gray-50 transition-colors"
             >
               Cancel
             </button>
@@ -936,7 +936,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
 
         <div className="flex items-center gap-3">
           {selectedItems.size > 0 && (
-            <div className="flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-md px-3 py-2">
+            <div className="flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-md px-3 py-2.5">
               <span className="text-sm text-blue-700">
                 {selectedItems.size} selected
               </span>
@@ -959,7 +959,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
             <RefreshCw className="w-5 h-5" />
           </button>
 
-          <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center gap-2 transition-colors">
+          <button className="bg-blue-600 text-white px-4 py-2.5 rounded-md hover:bg-blue-700 flex items-center gap-2 transition-colors">
             <Plus className="w-4 h-4" />
             Create New
           </button>
@@ -988,7 +988,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
               <p className="text-slate-500 mb-4">
                 Create reusable templates from your best performing posts
               </p>
-              <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center gap-2 mx-auto">
+              <button className="bg-blue-600 text-white px-4 py-2.5 rounded-md hover:bg-blue-700 flex items-center gap-2 mx-auto">
                 <Plus className="w-4 h-4" />
                 Create Template
               </button>
@@ -1003,7 +1003,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
               <p className="text-slate-500 mb-4">
                 Track performance and discover insights about your content
               </p>
-              <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center gap-2 mx-auto">
+              <button className="bg-blue-600 text-white px-4 py-2.5 rounded-md hover:bg-blue-700 flex items-center gap-2 mx-auto">
                 <TrendingUp className="w-4 h-4" />
                 View Analytics
               </button>
@@ -1064,7 +1064,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
             <p className="text-slate-500 mb-4">
               Start creating content to see your gallery
             </p>
-            <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+            <button className="bg-blue-600 text-white px-4 py-2.5 rounded-md hover:bg-blue-700">
               Create Your First Post
             </button>
           </div>
@@ -1082,14 +1082,14 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
           <div className="flex gap-3 justify-center">
             <button
               onClick={() => document.getElementById("file-upload")?.click()}
-              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center gap-2"
+              className="bg-blue-600 text-white px-4 py-2.5 rounded-md hover:bg-blue-700 flex items-center gap-2"
             >
               <Upload className="w-4 h-4" />
               Upload Media
             </button>
             <button
               onClick={() => setShowVideoGenerator(true)}
-              className="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 flex items-center gap-2"
+              className="bg-purple-600 text-white px-4 py-2.5 rounded-md hover:bg-purple-700 flex items-center gap-2"
             >
               <Wand2 className="w-4 h-4" />
               Generate Video

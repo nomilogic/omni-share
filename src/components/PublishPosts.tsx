@@ -698,7 +698,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
 
         <button
           onClick={onBack}
-          className="text-center w-full text-white font-semibold transition-colors bg-purple-600 hover:bg-purple-700 border border-gray-200 px-4 py-2.5 rounded-md mb-5"
+          className="text-center w-full text-white font-semibold transition-colors bg-purple-600 hover:bg-purple-700 border border-gray-200 px-4 py-2.5  rounded-md mb-5"
         >
           Close
         </button>
@@ -713,7 +713,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
                 !publishedPlatforms.includes(p)
             ).length === 0
           }
-          className={`w-full rounded-md py-2.5 px-4 font-medium theme-text-light transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 ${
+          className={`w-full rounded-md py-2.5  px-4 font-medium theme-text-light transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 ${
             selectedPlatforms.filter(
               (p) =>
                 connectedPlatforms.includes(p) &&

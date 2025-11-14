@@ -134,7 +134,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-start justify-end pt-16 pr-4">
-      <div className="bg-white rounded-md shadow-2xl w-96 max-h-[80vh] overflow-hidden">
+      <div className="bg-white rounded-md shadow-md w-96 max-h-[80vh] overflow-hidden">
         {/* Header */}
         <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
           <div className="flex items-center justify-between">
@@ -434,7 +434,7 @@ const SettingsTab: React.FC<{
                   parseInt(e.target.value)
                 )
               }
-              className="mt-1 block w-full text-sm border border-gray-300 rounded-md px-3 py-2"
+              className="mt-1 block w-full text-sm border border-gray-300 rounded-md px-3 py-2.5"
             >
               <option value={5}>5 minutes</option>
               <option value={15}>15 minutes</option>
@@ -450,7 +450,7 @@ const SettingsTab: React.FC<{
               type="time"
               value={settings.dailySummaryTime}
               onChange={(e) => handleToggle("dailySummaryTime", e.target.value)}
-              className="mt-1 block w-full text-sm border border-gray-300 rounded-md px-3 py-2"
+              className="mt-1 block w-full text-sm border border-gray-300 rounded-md px-3 py-2.5"
             />
           </div>
         </div>

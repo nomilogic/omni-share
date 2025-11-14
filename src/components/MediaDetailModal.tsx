@@ -158,7 +158,7 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
   }) => (
     <button
       onClick={() => setActiveTab(id as any)}
-      className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+      className={`flex items-center gap-2 px-4 py-2.5 rounded-md text-sm font-medium transition-colors ${
         activeTab === id
           ? "bg-blue-100 text-blue-700"
           : "text-slate-500 hover:text-slate-900 hover:bg-gray-50"
@@ -216,7 +216,7 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
                   <button
                     onClick={handleSave}
                     disabled={loading}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 flex items-center gap-2"
+                    className="px-4 py-2.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 flex items-center gap-2"
                   >
                     <Check className="w-4 h-4" />
                     Save
@@ -230,7 +230,7 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
                         description: asset.description,
                       });
                     }}
-                    className="px-4 py-2 border border-gray-300 text-slate-700 rounded-md hover:bg-gray-50"
+                    className="px-4 py-2.5 border border-gray-300 text-slate-700 rounded-md hover:bg-gray-50"
                   >
                     Cancel
                   </button>
@@ -392,7 +392,7 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
                             />
                             <button
                               onClick={addTag}
-                              className="px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm"
+                              className="px-3 py-2.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm"
                             >
                               <Plus className="w-4 h-4" />
                             </button>
@@ -545,13 +545,13 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
               <button
                 onClick={handleDelete}
                 disabled={loading}
-                className="flex-1 bg-red-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 disabled:opacity-50"
+                className="flex-1 bg-red-600 text-white py-2.5 px-4 rounded-md hover:bg-purple-700 disabled:opacity-50"
               >
                 {loading ? "Deleting..." : "Delete"}
               </button>
               <button
                 onClick={() => setShowDeleteConfirm(false)}
-                className="flex-1 border border-gray-300 text-slate-700 py-2 px-4 rounded-md hover:bg-gray-50"
+                className="flex-1 border border-gray-300 text-slate-700 py-2.5 px-4 rounded-md hover:bg-gray-50"
               >
                 Cancel
               </button>

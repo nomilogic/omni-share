@@ -375,7 +375,7 @@ const OnboardingForm: React.FC = () => {
             value={formData.fullName}
             onChange={handleInputChange}
             placeholder="e.g. Sarah Ahmed"
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-md focus:border-blue-500 focus:ring-blue-500"
           />
         </div>
 
@@ -389,7 +389,7 @@ const OnboardingForm: React.FC = () => {
             value={formData.email}
             onChange={handleInputChange}
             placeholder="e.g. sarah@brandstudio.com"
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-md focus:border-blue-500 focus:ring-blue-500"
           />
         </div>
 
@@ -403,7 +403,7 @@ const OnboardingForm: React.FC = () => {
             value={formData.phoneNumber}
             onChange={handleInputChange}
             placeholder="e.g. +971 50 123 4567"
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-md focus:border-blue-500 focus:ring-blue-500"
           />
         </div>
       </div>
@@ -430,7 +430,7 @@ const OnboardingForm: React.FC = () => {
             value={formData.publicUrl}
             onChange={handleInputChange}
             placeholder="e.g. https://instagram.com/brandstudio or https://yourbrand.com"
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-md focus:border-blue-500 focus:ring-blue-500"
           />
         </div>
 
@@ -456,7 +456,7 @@ const OnboardingForm: React.FC = () => {
             value={formData.brandName}
             onChange={handleInputChange}
             placeholder="e.g. Brand Studio"
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-md focus:border-blue-500 focus:ring-blue-500"
           />
         </div>
 
@@ -480,7 +480,7 @@ const OnboardingForm: React.FC = () => {
                   reader.readAsDataURL(file);
                 }
               }}
-              className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+              className="block w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
             />
           </div>
         </div>
@@ -493,7 +493,7 @@ const OnboardingForm: React.FC = () => {
             name="brandTone"
             value={formData.brandTone}
             onChange={handleInputChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-md focus:border-blue-500 focus:ring-blue-500"
           >
             <option value="">Select tone</option>
             {BRAND_TONES.map((tone) => (
@@ -569,7 +569,7 @@ const OnboardingForm: React.FC = () => {
               );
               setFormData((prev) => ({ ...prev, audienceRegions: selected }));
             }}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-md focus:border-blue-500 focus:ring-blue-500"
           >
             <option value="UAE">UAE</option>
             <option value="Saudi Arabia">Saudi Arabia</option>
@@ -711,7 +711,7 @@ const OnboardingForm: React.FC = () => {
               name="postingStyle"
               value={formData.postingStyle}
               onChange={handleInputChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-md focus:border-blue-500 focus:ring-blue-500"
             >
               <option value="">Select style</option>
               {POSTING_STYLES.map((style) => (
@@ -739,7 +739,7 @@ const OnboardingForm: React.FC = () => {
             <button
               type="button"
               onClick={() => setCurrentStep((prev) => prev - 1)}
-              className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-slate-700 hover:bg-gray-50"
+              className="px-4 py-2.5 border border-gray-300 rounded-md shadow-md text-sm font-medium text-slate-700 hover:bg-gray-50"
             >
               Previous
             </button>
@@ -749,14 +749,14 @@ const OnboardingForm: React.FC = () => {
             <button
               type="button"
               onClick={() => setCurrentStep((prev) => prev + 1)}
-              className="ml-auto px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+              className="ml-auto px-4 py-2.5 border border-transparent rounded-md shadow-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
             >
               Next
             </button>
           ) : (
             <button
               type="submit"
-              className="ml-auto px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+              className="ml-auto px-4 py-2.5 border border-transparent rounded-md shadow-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
             >
               Complete Setup
             </button>

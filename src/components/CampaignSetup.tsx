@@ -175,7 +175,7 @@ export const CampaignSetup: React.FC<CampaignSetupProps> = ({
   };
 
   return (
-    <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-8">
+    <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-md p-8">
       <div className="text-center mb-8">
         <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
           <Target className="w-8 h-8 text-blue-600" />
@@ -502,7 +502,7 @@ export const CampaignSetup: React.FC<CampaignSetupProps> = ({
           <button
             type="submit"
             disabled={!formData.name || formData.platforms.length === 0}
-            className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 px-8 rounded-md font-medium hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl"
+            className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 px-8 rounded-md font-medium hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-md"
           >
             {initialData?.name ? "Update Campaign" : "Create Campaign"}
           </button>

@@ -80,9 +80,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   }, []);
 
   const handleLogout = () => {
-    navigate("/auth");
-    setShowUserMenu(false);
     logout();
+    setShowUserMenu(false);
+    navigate("/auth");
   };
   const handleResizeMainToFullScreen = (isFullScreen: boolean) => {
     //use MainContentRef
@@ -215,7 +215,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               {/* User Menu Dropdown - Themed Style */}
               {
                 <div
-                  className={`w-full theme-bg-pantary border border-white/30 shadow-2xl z-50 overflow-hidden transition-all duration-500
+                  className={`w-full theme-bg-pantary border border-white/30 shadow-md z-50 overflow-hidden transition-all duration-500
                   ${
                     showUserMenu
                       ? " max-h-96 opacity-100"
@@ -224,7 +224,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 `}
                   style={{ pointerEvents: showUserMenu ? "auto" : "none" }}
                 >
-                  <div className="px-4 py-2 border-b border-white/20">
+                  <div className="px-4 py-2.5 border-b border-white/20">
                     <div className="flex items-center space-x-3">
                       <div className="flex-1 min-w-0">
                         <p className="text-sm theme-text-light ml-2 opacity-70 truncate capitalize">
@@ -234,7 +234,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                     </div>
                   </div>
 
-                  <div className="py-2">
+                  <div className="py-2.5">
                     <Link
                       to="/settings"
                       onClick={() => {
@@ -279,7 +279,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 px-2 py-2 flex flex-col mx-2 gap-y-2">
+            <nav className="flex-1 px-2 py-2.5 flex flex-col mx-2 gap-y-2">
               {navigation.map((item) => {
                 const isActive = location.pathname === item.path;
                 const Icon = item.icon;
@@ -288,7 +288,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                   <Link
                     key={item.name}
                     to={item.path}
-                    className={`flex items-center justify-between px-2 py-2 text-md font-medium rounded-md transition-colors ${
+                    className={`flex items-center justify-between px-2 py-2.5 text-md font-medium rounded-md transition-colors ${
                       isActive
                         ? "theme-bg-primary theme-text-secondary"
                         : "theme-text-light hover:theme-bg-secondary hover:theme-text-primary"
@@ -517,34 +517,29 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                   <WalletBalance
                     setShowPackage={() => setShowPackage(!showPackage)}
                     balance={balance.toLocaleString()}
+                    showPackage={showPackage}
                   />
 
                   {showPackage && (
-                    <div
-                      className="absolute  z-20 lg:left-auto top-8 left-3 right-3 mt-6 rounded-2xl shadow-xl md:px-6 px-4 py-6 border md:w-[380px] w-auto"
-                      style={{
-                        backgroundColor: "#F9F8FB",
-                        borderColor: "#F1F0F4",
-                      }}
-                    >
+                    <div className="absolute bg-slate-100  z-20 lg:left-auto top-8 left-3 right-3 mt-6 rounded-2xl shadow-md md:px-6 px-4 py-6 border md:w-[370px] w-auto">
                       {user?.wallet?.package ? (
                         <>
                           <div className="flex justify-between items-start mb-3">
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <Icon name="crown" size={24} />
-                                <h2 className="text-base font-semibold text-slate-800">
-                                  My Plan
-                                </h2>
-                                <span
-                                  className="text-gray-400 cursor-pointer text-xs"
-                                  title="Current subscription details"
-                                >
-                                  <Icon name="question-mark" size={18} />
-                                </span>
-                              </div>
-                              {
-                                <p className="text-sm text-slate-700  ml-8 font-medium  ">
+                            <div className="flex items-start gap-2">
+                              <Icon name="crown" size={24} />
+                              <div>
+                                <div className="flex items-center gap-3">
+                                  <h2 className="text-base font-semibold text-slate-800">
+                                    My Plan
+                                  </h2>
+                                  <span
+                                    className="text-slate-300 cursor-pointer text-xs"
+                                    title="Current subscription details"
+                                  >
+                                    <Icon name="question-mark" size={17} />
+                                  </span>
+                                </div>
+                                <p className="text-sm text-slate-700   font-medium  ">
                                   Renewing on:{" "}
                                   <span className="text-slate-700 font-medium">
                                     {user.wallet.expiresAt
@@ -558,7 +553,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                       : "N/A"}
                                   </span>
                                 </p>
-                              }
+                              </div>
                             </div>
 
                             <span
@@ -573,13 +568,16 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-2 text-slate-800 text-md font-medium">
                                 <Icon name="spiral-logo" />
-                                Omni Coins
-                                <span
-                                  className="text-gray-400 text-xs cursor-pointer"
-                                  title="Coins info"
-                                >
-                                  <Icon name="question-mark" size={18} />
-                                </span>
+                                <div className="flex items-center gap-3">
+                                  <p>Omni Coins</p>
+
+                                  <span
+                                    className="text-slate-300 text-xs cursor-pointer"
+                                    title="Coins info"
+                                  >
+                                    <Icon name="question-mark" size={17} />
+                                  </span>
+                                </div>
                               </div>
                               <p
                                 className="text-base font-semibold"
@@ -593,13 +591,17 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-2 text-md text-slate-800 font-medium ">
                                 <Icon name="share" className="scale-[0.8] " />
-                                Referral Coins
-                                <span
-                                  className="text-gray-400 text-xs cursor-pointer"
-                                  title="Referral info"
-                                >
-                                  <Icon name="question-mark" size={18} />
-                                </span>
+
+                                <div className="flex items-center gap-3">
+                                  <p> Referral Coins</p>
+
+                                  <span
+                                    className="text-slate-300 text-xs cursor-pointer"
+                                    title="Coins info"
+                                  >
+                                    <Icon name="question-mark" size={17} />
+                                  </span>
+                                </div>
                               </div>
                               <p
                                 className="text-base font-semibold"
@@ -608,11 +610,18 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                 {user?.wallet?.referralCoin?.toLocaleString()}
                               </p>
                             </div>
+
+                            <p className="text-base">
+                              More information in our{" "}
+                              <span className="text-purple-600 font-medium">
+                                FAQ.
+                              </span>
+                            </p>
                           </div>
 
                           <button
                             onClick={() => openManageSubscription()}
-                            className="w-full py-2.5 text-md font-semibold rounded-md border bg-white flex items-center justify-center gap-2 transition  hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
+                            className="w-full py-2.5  text-md font-semibold rounded-md border bg-white flex items-center justify-center gap-2 transition  hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
                             style={{ borderColor: "#7650e3", color: "#7650e3" }}
                           >
                             <Icon
@@ -626,7 +635,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                           <Link
                             to="/pricing"
                             onClick={() => setShowPackage(false)}
-                            className="w-full mt-3 px-2 py-2.5 border  text-md font-semibold rounded-md flex items-center justify-center gap-2  text-white bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] border-[#7650e3]  "
+                            className="w-full mt-3 px-2 py-2.5  border  text-md font-semibold rounded-md flex items-center justify-center gap-2  text-white bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] border-[#7650e3]  "
                           >
                             <div className="hover:filter-omni h-full w-full text-center">
                               <Icon

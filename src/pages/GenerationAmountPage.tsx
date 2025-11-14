@@ -82,7 +82,7 @@ const GenerationAmountPage = () => {
 
   return (
     <div className="p-6 bg-white min-h-screen text-black">
-      <div className="max-w-4xl mx-auto bg-[#f9f9f9] border border-gray-200 shadow-sm rounded-2xl p-6">
+      <div className="max-w-4xl mx-auto bg-[#f9f9f9] border border-gray-200 shadow-md rounded-2xl p-6">
         <h1 className="text-2xl font-semibold text-black mb-6">
           Generation Amount Management
         </h1>
@@ -95,7 +95,7 @@ const GenerationAmountPage = () => {
           {/* Type Selector */}
           <select
             {...register("type", { required: true })}
-            className="border border-gray-300 rounded-md px-3 py-2 focus:ring-1 focus:ring-black outline-none text-slate-800 bg-white"
+            className="border border-gray-300 rounded-md px-3 py-2.5 focus:ring-1 focus:ring-black outline-none text-slate-800 bg-white"
           >
             <option value="">Select Type</option>
             <option value="image">Image</option>
@@ -107,14 +107,14 @@ const GenerationAmountPage = () => {
             type="number"
             placeholder="Enter Amount"
             {...register("amount", { required: true })}
-            className="border border-gray-300 rounded-md px-3 py-2 focus:ring-1 focus:ring-black outline-none text-slate-800 bg-white"
+            className="border border-gray-300 rounded-md px-3 py-2.5 focus:ring-1 focus:ring-black outline-none text-slate-800 bg-white"
           />
 
           {/* Submit Button */}
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex items-center justify-center gap-2 bg-black text-white font-medium px-4 py-2 rounded-md hover:bg-gray-900 transition-all disabled:opacity-60"
+            className="flex items-center justify-center gap-2 bg-black text-white font-medium px-4 py-2.5 rounded-md hover:bg-gray-900 transition-all disabled:opacity-60"
           >
             {isSubmitting ? (
               <>
@@ -143,9 +143,11 @@ const GenerationAmountPage = () => {
             <table className="min-w-full border border-gray-200 rounded-md overflow-hidden">
               <thead className="bg-gray-100 text-slate-800 text-sm ">
                 <tr>
-                  <th className="px-4 py-2 text-left font-medium">Type</th>
-                  <th className="px-4 py-2 text-left font-medium">Amount</th>
-                  <th className="px-4 py-2 text-right font-medium">Actions</th>
+                  <th className="px-4 py-2.5 text-left font-medium">Type</th>
+                  <th className="px-4 py-2.5 text-left font-medium">Amount</th>
+                  <th className="px-4 py-2.5 text-right font-medium">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -154,9 +156,11 @@ const GenerationAmountPage = () => {
                     key={item.id}
                     className="border-t hover:bg-gray-50 transition-all"
                   >
-                    <td className="px-4 py-2 ">{item.type}</td>
-                    <td className="px-4 py-2 text-slate-700">{item.amount}</td>
-                    <td className="px-4 py-2 text-right flex justify-end gap-2">
+                    <td className="px-4 py-2.5 ">{item.type}</td>
+                    <td className="px-4 py-2.5 text-slate-700">
+                      {item.amount}
+                    </td>
+                    <td className="px-4 py-2.5 text-right flex justify-end gap-2">
                       <button
                         onClick={() => handleEdit(item)}
                         className="text-black hover:text-slate-700 p-1"

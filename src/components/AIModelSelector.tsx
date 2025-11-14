@@ -137,7 +137,7 @@ export const AIModelSelector: React.FC<AIModelSelectorProps> = ({
       onClick={onClick}
       className={`p-4 border rounded-md cursor-pointer transition-all duration-200 hover:shadow-md ${
         isSelected
-          ? "border-blue-500 bg-blue-50 shadow-sm"
+          ? "border-blue-500 bg-blue-50 shadow-md"
           : "border-gray-200 hover:border-gray-300"
       }`}
     >
@@ -261,7 +261,7 @@ export const AIModelSelector: React.FC<AIModelSelectorProps> = ({
 
       {/* Model Selection Dropdown */}
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-96 overflow-y-auto">
+        <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-gray-200 rounded-md shadow-md max-h-96 overflow-y-auto">
           <div className="p-4">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-slate-900">

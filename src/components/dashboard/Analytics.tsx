@@ -93,7 +93,7 @@ function Analytics() {
 
       <button
         onClick={() => navigate("/dashboard")}
-        className="w-full text-white py-2.5 px-4 rounded-md font-semibold text-sm transition-all border-2 mt-4"
+        className="w-full text-white py-2.5  px-4 rounded-md font-semibold text-sm transition-all border-2 mt-4"
         style={{
           backgroundColor: "#7650e3",
           borderColor: "#7650e3",

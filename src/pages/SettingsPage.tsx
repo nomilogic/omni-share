@@ -76,7 +76,7 @@ export const SettingsPage: React.FC = () => {
     <div className="theme-card-bg">
       <div className="mx-auto px-4 py-4 space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          <div className="lg:col-span-1 bg-white/20 shadow-sm rounded-md ">
+          <div className="lg:col-span-1 bg-white/20 shadow-md rounded-md ">
             <nav className="space-y-2">
               {settingsNavItems.map((item) => {
                 const Icon = item.icon;
@@ -142,7 +142,7 @@ export const SettingsPage: React.FC = () => {
                             type="email"
                             value={profileData.email}
                             disabled
-                            className="w-full px-4 py-2 border border-white/20 rounded-md theme-bg-primary theme-text-primary font-normal"
+                            className="w-full px-4 py-2.5 border border-white/20 rounded-md theme-bg-primary theme-text-primary font-normal"
                           />
                           <p className="text-xs theme-text-light mt-1">
                             Email cannot be changed
@@ -161,7 +161,7 @@ export const SettingsPage: React.FC = () => {
                                 displayName: e.target.value,
                               }))
                             }
-                            className="w-full px-4 py-2 border border-white/20 rounded-md theme-bg-primary theme-text-primary font-bold focus:ring-2 focus:ring-white/30 focus:border-transparent"
+                            className="w-full px-4 py-2.5 border border-white/20 rounded-md theme-bg-primary theme-text-primary font-bold focus:ring-2 focus:ring-white/30 focus:border-transparent"
                             placeholder="Enter your display name"
                           />
                         </div>
@@ -169,7 +169,7 @@ export const SettingsPage: React.FC = () => {
                           <label className="block text-sm font-medium theme-text-secondary mb-2">
                             Current Plan
                           </label>
-                          <div className="px-4 py-2 theme-bg-primary rounded-md border border-white/20">
+                          <div className="px-4 py-2.5 theme-bg-primary rounded-md border border-white/20">
                             <span className="theme-text-primary font-normal ">
                               {profileData.planName || "No plan selected"}
                             </span>
@@ -185,7 +185,7 @@ export const SettingsPage: React.FC = () => {
                                 type="text"
                                 readOnly
                                 value={`${window.location.origin}/auth?referralId=${user.id}`}
-                                className="w-full px-4 py-2 border border-white/20 rounded-md theme-bg-primary theme-text-primary font-mono"
+                                className="w-full px-4 py-2.5 border border-white/20 rounded-md theme-bg-primary theme-text-primary font-mono"
                               />
                               <button
                                 onClick={() => {
@@ -193,7 +193,7 @@ export const SettingsPage: React.FC = () => {
                                     `${window.location.origin}/auth?referralId=${user.id}`
                                   );
                                 }}
-                                className="theme-button-primary px-3 py-2 rounded-md text-white hover:theme-button-hover transition"
+                                className="theme-button-primary px-3 py-2.5 rounded-md text-white hover:theme-button-hover transition"
                               >
                                 Copy
                               </button>
@@ -213,7 +213,7 @@ export const SettingsPage: React.FC = () => {
                                     }
                                   );
                                 }}
-                                className="ml-2 px-3 py-2 bg-indigo-600 text-white rounded-md"
+                                className="ml-2 px-3 py-2.5 bg-indigo-600 text-white rounded-md"
                               >
                                 Share
                               </button>
@@ -226,7 +226,7 @@ export const SettingsPage: React.FC = () => {
                         <button
                           onClick={handleProfileSave}
                           disabled={loading}
-                          className="flex items-center gap-2 theme-button-primary text-white px-6 py-2 rounded-md hover:theme-button-hover transition-colors duration-200 disabled:opacity-50"
+                          className="flex items-center gap-2 theme-button-primary text-white px-6 py-2.5 rounded-md hover:theme-button-hover transition-colors duration-200 disabled:opacity-50"
                         >
                           <Save className="w-4 h-4" />
                           {loading ? "Saving..." : "Save Changes"}
@@ -251,7 +251,7 @@ export const SettingsPage: React.FC = () => {
                           <p className="theme-text-secondary text-sm mb-4">
                             Update your password to keep your account secure.
                           </p>
-                          <button className="theme-button-secondary text-white px-6 py-2 rounded-md hover:theme-button-hover transition-colors duration-200">
+                          <button className="theme-button-secondary text-white px-6 py-2.5 rounded-md hover:theme-button-hover transition-colors duration-200">
                             Change Password
                           </button>
                         </div>
@@ -272,7 +272,7 @@ export const SettingsPage: React.FC = () => {
                                 Disabled
                               </span>
                             </div>
-                            <button className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition-colors duration-200">
+                            <button className="bg-green-600 text-white px-6 py-2.5 rounded-md hover:bg-green-700 transition-colors duration-200">
                               Enable 2FA
                             </button>
                           </div>
@@ -284,7 +284,7 @@ export const SettingsPage: React.FC = () => {
                           <p className="theme-text-secondary text-sm mb-4">
                             Permanently delete your account and all data.
                           </p>
-                          <button className="bg-red-600 text-white px-6 py-2 rounded-md hover:bg-purple-700 transition-colors duration-200">
+                          <button className="bg-red-600 text-white px-6 py-2.5 rounded-md hover:bg-purple-700 transition-colors duration-200">
                             Delete Account
                           </button>
                         </div>

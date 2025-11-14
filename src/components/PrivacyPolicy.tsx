@@ -26,7 +26,7 @@ const PrivacyPolicy: React.FC = () => {
         </div>
 
         {/* Content */}
-        <div className="bg-white rounded-md shadow-sm border border-gray-200 p-8">
+        <div className="bg-white rounded-md shadow-md border border-gray-200 p-8">
           <div className="prose prose-gray max-w-none">
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-slate-900 mb-4">

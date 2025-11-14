@@ -242,7 +242,7 @@ export const AIScheduleGenerator: React.FC<AIScheduleGeneratorProps> = ({
   );
 
   return (
-    <div className="bg-white rounded-md shadow-lg p-6">
+    <div className="bg-white rounded-md shadow-md p-6">
       <div className="flex items-center gap-3 mb-6">
         <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-2 rounded-md">
           <Sparkles className="w-6 h-6 text-white" />

@@ -1643,7 +1643,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                                   : parseInt(e.target.value),
                             })
                           }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                          className="w-full px-3 py-2.5 border border-gray-300 rounded-md text-sm"
                           placeholder="0"
                           min="0"
                           max="50"
@@ -1770,7 +1770,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                                 : e.target.value,
                           })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                        className="w-full px-3 py-2.5 border border-gray-300 rounded-md text-sm"
                         rows={3}
                         placeholder="Enter your text..."
                       />
@@ -1792,7 +1792,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                                 : e.target.value,
                           })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                        className="w-full px-3 py-2.5 border border-gray-300 rounded-md text-sm"
                       >
                         <option value="Arial">Arial</option>
                         <option value="Helvetica">Helvetica</option>
@@ -1942,7 +1942,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                               shape: e.target.value as "rectangle" | "circle",
                             })
                           }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                          className="w-full px-3 py-2.5 border border-gray-300 rounded-md text-sm"
                         >
                           <option value="rectangle">Rectangle</option>
                           <option value="circle">Circle</option>
@@ -2015,7 +2015,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                               borderRadius: parseInt(e.target.value),
                             })
                           }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                          className="w-full px-3 py-2.5 border border-gray-300 rounded-md text-sm"
                           min="0"
                           max="50"
                           placeholder="0"
@@ -2049,7 +2049,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
             <button
               onClick={exportImage}
               disabled={isSaving}
-              className="border-purple-600 border text-purple-600 flex justify-center items-center gap-2  font-medium w-full px-3 py-2.5 mx-1 rounded-md"
+              className="border-purple-600 border text-purple-600 flex justify-center items-center gap-2  font-medium w-full px-3 py-2.5  mx-1 rounded-md"
             >
               {isSaving ? (
                 <>
@@ -2072,7 +2072,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
             </div> */}
             <button
               onClick={onCancel}
-              className="bg-purple-600  text-white font-medium w-full  px-3 py-2.5 mx-1 rounded-md"
+              className="bg-purple-600  text-white font-medium w-full  px-3 py-2.5  mx-1 rounded-md"
             >
               Back
             </button>
@@ -2083,7 +2083,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
       {/* Canvas Area - Bottom Row on Mobile, Right Column on Desktop - Flexible Height/Width with Scroll */}
       <div className="flex-1 bg-gray-50 flex flex-col min-h-0">
         {/* Canvas Controls - Fixed Header */}
-        <div className="flex-shrink-0 px-3 py-1 md:py-2 bg-white border-b border-gray-200">
+        <div className="flex-shrink-0 px-3 py-1 md:py-2.5 bg-white border-b border-gray-200">
           <div className="flex items-center justify-between">
             {/* Canvas Info */}
             <div className="text-xs text-slate-500 font-mono">
@@ -2166,7 +2166,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
               onTouchStart={handleCanvasTouchStart}
               onTouchMove={handleCanvasTouchMove}
               onTouchEnd={handleCanvasTouchEnd}
-              className="border-2 border-gray-300 rounded-md shadow-2xl cursor-pointer bg-white transition-all duration-200"
+              className="border-2 border-gray-300 rounded-md shadow-md cursor-pointer bg-white transition-all duration-200"
               style={{
                 width: `${canvasDimensions.width}px`,
                 height: `${canvasDimensions.height}px`,

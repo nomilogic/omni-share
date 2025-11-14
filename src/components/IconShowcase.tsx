@@ -32,7 +32,7 @@ const IconShowcase: React.FC = () => {
             {icons.map((icon) => (
               <div
                 key={icon.name}
-                className="flex flex-col items-center p-4 bg-white rounded-md shadow-md hover:shadow-lg transition-shadow"
+                className="flex flex-col items-center p-4 bg-white rounded-md shadow-md hover:shadow-md transition-shadow"
               >
                 <Icon name={icon.name} size={48} className="mb-3" />
                 <span className="text-sm font-medium text-slate-500 text-center">

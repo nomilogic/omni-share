@@ -76,7 +76,7 @@ function RecentPosts() {
 
       <button
         onClick={() => navigate("/content")}
-        className="w-full text-white py-2.5 px-4 rounded-md font-semibold text-sm transition-all border-2"
+        className="w-full text-white py-2.5  px-4 rounded-md font-semibold text-sm transition-all border-2"
         style={{
           backgroundColor: "#7650e3",
           borderColor: "#7650e3",

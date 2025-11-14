@@ -59,7 +59,7 @@ export default function PackageSuccessPage() {
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-gradient-to-b from-[#7650e3] to-[#7650e3]/80 ">
-      <section className="w-full max-w-lg rounded-2xl border border-[#7650e3]/50 bg-white p-8 shadow-xl">
+      <section className="w-full max-w-lg rounded-2xl border border-[#7650e3]/50 bg-white p-8 shadow-md">
         {/* Header */}
         <div className="flex flex-col items-center gap-4 text-center">
           <span className="flex h-16 w-16 items-center justify-center rounded-full bg-[#7650e3]/40 text-[#7650e3] animate-bounce">
@@ -96,7 +96,7 @@ export default function PackageSuccessPage() {
         <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center w-full">
           <Link
             to="/dashboard"
-            className="flex-1 rounded-md bg-[#7650e3] px-4 py-2 text-center text-sm font-medium text-white hover:bg-[#7650e3]/80 transition"
+            className="flex-1 rounded-md bg-[#7650e3] px-4 py-2.5 text-center text-sm font-medium text-white hover:bg-[#7650e3]/80 transition"
           >
             Go to Dashboard
           </Link>
@@ -126,7 +126,7 @@ function SessionId({ value }: { value: string }) {
       </label>
       <div className="flex items-stretch gap-2">
         <div
-          className="flex min-w-0 flex-1 items-center overflow-hidden rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-slate-800"
+          className="flex min-w-0 flex-1 items-center overflow-hidden rounded-md border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm text-slate-800"
           title={value}
           aria-label={`Session ID: ${value}`}
         >
@@ -135,7 +135,7 @@ function SessionId({ value }: { value: string }) {
         <button
           type="button"
           onClick={copy}
-          className={`rounded-md px-3 py-2 text-sm font-medium transition ${
+          className={`rounded-md px-3 py-2.5 text-sm font-medium transition ${
             copied
               ? "bg-[#7650e3] text-white hover:bg-[#7650e3]/80"
               : "bg-[#7650e3]/40 text-[#7650e3] hover:bg-[#7650e3]/50"

@@ -164,9 +164,9 @@ export const PostScheduleDashboard: React.FC<PostScheduleDashboardProps> = ({
     <div className="flex space-x-1 theme-bg-secondary p-1 rounded-md">
       <button
         onClick={() => setActiveView("calendar")}
-        className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors ${
+        className={`flex items-center gap-2 px-4 py-2.5 rounded-md transition-colors ${
           activeView === "calendar"
-            ? "theme-bg-primary theme-text-secondary shadow-sm"
+            ? "theme-bg-primary theme-text-secondary shadow-md"
             : "theme-text-light hover:theme-text-primary"
         }`}
       >
@@ -176,9 +176,9 @@ export const PostScheduleDashboard: React.FC<PostScheduleDashboardProps> = ({
 
       <button
         onClick={() => setActiveView("generator")}
-        className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors ${
+        className={`flex items-center gap-2 px-4 py-2.5 rounded-md transition-colors ${
           activeView === "generator"
-            ? "theme-bg-accent theme-text-secondary shadow-sm"
+            ? "theme-bg-accent theme-text-secondary shadow-md"
             : "theme-text-light hover:theme-text-primary"
         }`}
       >
@@ -188,9 +188,9 @@ export const PostScheduleDashboard: React.FC<PostScheduleDashboardProps> = ({
 
       <button
         onClick={() => setActiveView("analytics")}
-        className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors ${
+        className={`flex items-center gap-2 px-4 py-2.5 rounded-md transition-colors ${
           activeView === "analytics"
-            ? "theme-bg-accent theme-text-secondary shadow-sm"
+            ? "theme-bg-accent theme-text-secondary shadow-md"
             : "theme-text-light hover:theme-text-primary"
         }`}
       >
@@ -200,9 +200,9 @@ export const PostScheduleDashboard: React.FC<PostScheduleDashboardProps> = ({
 
       <button
         onClick={() => setActiveView("create")}
-        className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors ${
+        className={`flex items-center gap-2 px-4 py-2.5 rounded-md transition-colors ${
           activeView === "create"
-            ? "theme-bg-accent theme-text-secondary shadow-sm"
+            ? "theme-bg-accent theme-text-secondary shadow-md"
             : "theme-text-light hover:theme-text-primary"
         }`}
       >
@@ -453,7 +453,7 @@ export const PostScheduleDashboard: React.FC<PostScheduleDashboardProps> = ({
                   setActiveView("calendar");
                   setSelectedDate(null);
                 }}
-                className="px-4 py-2 theme-border text-theme-text-light rounded-md hover:theme-bg-secondary transition-colors"
+                className="px-4 py-2.5 theme-border text-theme-text-light rounded-md hover:theme-bg-secondary transition-colors"
               >
                 Cancel
               </button>

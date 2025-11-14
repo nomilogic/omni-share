@@ -18,6 +18,7 @@ import API from "../services/api";
 import { OtpModal } from "./OtpModal";
 import { ArrowLeftIcon, Mail } from "lucide-react";
 import logoText from "../assets/logo-text.svg";
+import backArrow from "../assets/back-arrow.png";
 
 interface AuthFormProps {
   onAuthSuccess: (user: any) => void;
@@ -323,16 +324,17 @@ export const AuthForm: React.FC<AuthFormProps> = ({
   };
 
   return (
-    <div className="min-h-screen w-full flex md:items-center justify-center bg-slate-50 px-3 py-4  sm:py-6 md:py-8">
+    <div className="min-h-screen w-full flex md:items-center justify-center bg-white px-3 py-4  sm:py-6 md:py-8">
       {!showOtpPopup && (
-        <div className="z-10 w-full md:max-w-md md:bg-white md:shadow-xl rounded-2xl py-6  md:py-12  sm:px-6 md:px-8 md:border md:border-slate-200/70 md:backdrop-blur-sm">
-          <div className="flex relative items-center justify-center mb-6 sm:mb-8 md:mb-10">
+        <div
+          className={`z-10  md:max-w-md bg-slate-100 flex items-center flex-col w-full justify-center md:shadow-md rounded-2xl py-6 ${
+            mode !== "login" && mode !== "signup" ? "h-[480px]" : "h-[750px]"
+          } md:py-12  sm:px-6 md:px-10  md:border md:border-slate-200/70 md:backdrop-blur-sm`}
+        >
+          <div className="flex relative items-center justify-center mb-6 sm:mb-8 w-full ">
             {mode !== "login" && (
-              <button
-                onClick={resetMode}
-                className="absolute left-0 sm:-left-1"
-              >
-                <ArrowLeftIcon className="w-8 sm:w-9 md:w-10 text-purple-600" />
+              <button onClick={resetMode} className="absolute left-3">
+                <img src={backArrow} className="w-full h-full" alt="" />
               </button>
             )}
             <div
@@ -354,7 +356,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
           </div>
 
           {mode === "login" && (
-            <div className="space-y-4 sm:space-y-5 md:space-y-6">
+            <div className="space-y-4 sm:space-y-5 md:space-y-6 w-full">
               <h2 className="text-center text-base font-medium text-black">
                 Sign up or Login with
               </h2>
@@ -362,7 +364,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                 <button
                   onClick={handleGoogleOAuth}
                   disabled={loading}
-                  className="w-full border-2 border-purple-600 rounded-md py-2.5 flex items-center justify-center gap-2 hover:bg-purple-50 transition font-medium text-base text-slate-700 disabled:opacity-50"
+                  className="w-full border-2 border-purple-600 rounded-md py-2.5  flex items-center justify-start bg-white px-4 gap-2 hover:bg-purple-50 transition font-medium text-base text-slate-700 disabled:opacity-50"
                 >
                   <svg
                     className="w-5 h-5"
@@ -394,7 +396,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                   <button
                     onClick={handleFacebookOAuth}
                     disabled={loading}
-                    className="w-full border-2 border-purple-600 rounded-md py-2.5 flex items-center justify-center gap-2 hover:bg-purple-50 transition font-medium text-base text-slate-700 disabled:opacity-50"
+                    className="w-full border-2 border-purple-600 rounded-md py-2.5  flex items-center justify-start bg-white px-4 gap-2 hover:bg-purple-50 transition font-medium text-base text-slate-700 disabled:opacity-50"
                   >
                     <svg className="w-5 h-5" fill="#1877F2" viewBox="0 0 24 24">
                       <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
@@ -407,7 +409,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                 <button
                   onClick={handleLinkedInOAuth}
                   disabled={loading}
-                  className="w-full border-2 border-purple-600 rounded-md py-2.5 flex items-center justify-center gap-2 hover:bg-purple-50 transition font-medium text-base text-slate-700 disabled:opacity-50"
+                  className="w-full border-2 border-purple-600 rounded-md py-2.5  flex items-center justify-start bg-white px-4 gap-2 hover:bg-purple-50 transition font-medium text-base text-slate-700 disabled:opacity-50"
                 >
                   <svg className="w-5 h-5" fill="#0A66C2" viewBox="0 0 24 24">
                     <path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5zM.2 8.98h4.6V24H.2V8.98zM9.98 8.98h4.4v2.06h.06c.61-1.16 2.1-2.38 4.32-2.38 4.62 0 5.47 3.04 5.47 6.99V24h-4.6v-6.92c0-1.65-.03-3.78-2.3-3.78-2.31 0-2.66 1.8-2.66 3.67V24h-4.6V8.98z" />
@@ -419,7 +421,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                 <button
                   onClick={() => setMode("signup")}
                   disabled={loading}
-                  className="w-full border-2 border-purple-600 rounded-md py-2.5 flex items-center justify-center gap-2 hover:bg-purple-50 transition font-medium text-base text-slate-700 disabled:opacity-50"
+                  className="w-full border-2 border-purple-600 rounded-md py-2.5  flex items-center justify-start bg-white px-4 gap-2 hover:bg-purple-50 transition font-medium text-base text-slate-700 disabled:opacity-50"
                 >
                   <Mail className="w-5 h-5" />
                   <span className="hidden sm:inline">Continue with Email</span>
@@ -448,7 +450,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                     type="email"
                     placeholder="Enter your email"
                     {...loginForm.register("email")}
-                    className="w-full px-4 py-2.5 text-sm border-2 border-purple-300 rounded-md focus:outline-none focus:border-purple-600 transition"
+                    className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
                   />
                   {loginForm.formState.errors.email && (
                     <p className="text-red-500 text-xs mt-1">
@@ -464,7 +466,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                     type="password"
                     placeholder="Enter your Password"
                     {...loginForm.register("password")}
-                    className="w-full px-4 py-2.5 text-sm border-2 border-purple-300 rounded-md focus:outline-none focus:border-purple-600 transition"
+                    className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
                   />
                   {loginForm.formState.errors.password && (
                     <p className="text-red-500 text-xs mt-1">
@@ -475,7 +477,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
+                  className="w-full bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3]  border border-[#7650e3] text-white font-semibold py-2 text-base rounded-md transition disabled:opacity-50"
                 >
                   {loading ? "Signing in..." : "Sign in"}
                 </button>
@@ -514,7 +516,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
           {mode === "signup" && (
             <form
               onSubmit={signupForm.handleSubmit(handleSignupSubmit)}
-              className="space-y-3 sm:space-y-4"
+              className="space-y-3 sm:space-y-4 w-full"
             >
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
@@ -524,7 +526,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                   type="text"
                   placeholder="Enter your Full Name"
                   {...signupForm.register("name")}
-                  className="w-full px-4 py-2.5 text-sm border-2 border-purple-300 rounded-md focus:outline-none focus:border-purple-600 transition"
+                  className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
                 />
                 {signupForm.formState.errors.name && (
                   <p className="text-red-500 text-xs mt-1">
@@ -541,7 +543,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                   type="email"
                   placeholder="Enter your email"
                   {...signupForm.register("email")}
-                  className="w-full px-4 py-2.5 text-sm border-2 border-purple-300 rounded-md focus:outline-none focus:border-purple-600 transition"
+                  className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
                 />
                 {signupForm.formState.errors.email && (
                   <p className="text-red-500 text-xs mt-1">
@@ -558,7 +560,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                   type="password"
                   placeholder="Enter your Password"
                   {...signupForm.register("password")}
-                  className="w-full px-4 py-2.5 text-sm border-2 border-purple-300 rounded-md focus:outline-none focus:border-purple-600 transition"
+                  className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
                 />
                 {signupForm.formState.errors.password && (
                   <p className="text-red-500 text-xs mt-1">
@@ -576,7 +578,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                     type="text"
                     value={referralId}
                     disabled
-                    className="w-full px-4 py-2.5 text-sm border-2 border-purple-300 rounded-md disabled:bg-slate-50 disabled:cursor-not-allowed"
+                    className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md disabled:bg-slate-50 disabled:cursor-not-allowed"
                   />
                 </div>
               )}
@@ -584,7 +586,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
+                className="w-full  text-white bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] border-[#7650e3] border font-semibold py-2  text-base rounded-md transition disabled:opacity-50"
               >
                 {loading ? "Creating account..." : "Sign Up"}
               </button>
@@ -602,18 +604,18 @@ export const AuthForm: React.FC<AuthFormProps> = ({
               onSubmit={forgotPasswordForm.handleSubmit(
                 handleForgotPasswordSubmit
               )}
-              className="space-y-4 sm:space-y-5"
+              className=" w-full"
             >
-              <div>
+              <div className="mb-10">
                 <h2 className="text-center text-base font-medium text-black">
                   Forgot Password
                 </h2>
-                <p className="text-center text-base  text-slate-500">
+                <p className="text-center text-sm  text-slate-500">
                   Enter your registered email address below.
                 </p>
               </div>
 
-              <div>
+              <div className="mb-4">
                 <label className="block text-sm font-medium text-slate-700 mb-2">
                   Email
                 </label>
@@ -621,7 +623,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                   type="email"
                   placeholder="Enter your email"
                   {...forgotPasswordForm.register("email")}
-                  className="w-full px-4 py-2.5 text-sm border-2 border-purple-300 rounded-md focus:outline-none focus:border-purple-600 transition"
+                  className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
                 />
                 {forgotPasswordForm.formState.errors.email && (
                   <p className="text-red-500 text-xs mt-1">
@@ -629,24 +631,25 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                   </p>
                 )}
               </div>
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
-              >
-                {loading ? "Sending..." : "Forgot Password"}
-              </button>
-
-              {(error || externalError || successMessage) && (
-                <p
-                  className={`text-sm text-center ${
-                    successMessage ? "text-green-600" : "text-red-500"
-                  }`}
+              <div>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3]  border border-[#7650e3] text-white font-semibold py-2 mb-4 text-base rounded-md transition disabled:opacity-50"
                 >
-                  {successMessage || error || externalError}
-                </p>
-              )}
+                  {loading ? "Sending..." : "Forgot Password"}
+                </button>
+
+                {(error || externalError || successMessage) && (
+                  <p
+                    className={`text-sm text-center ${
+                      successMessage ? "text-green-600" : "text-red-500"
+                    }`}
+                  >
+                    {successMessage || error || externalError}
+                  </p>
+                )}
+              </div>
             </form>
           )}
 
@@ -655,7 +658,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
               onSubmit={resetPasswordForm.handleSubmit(
                 handleResetPasswordSubmit
               )}
-              className="space-y-4 sm:space-y-5"
+              className="space-y-4 sm:space-y-5 w-full"
             >
               <h2 className="text-base sm:text-lg font-semibold text-slate-800 mb-4 sm:mb-6">
                 Reset Your Password
@@ -669,7 +672,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                   type="password"
                   placeholder="Enter new Password"
                   {...resetPasswordForm.register("password")}
-                  className="w-full px-4 py-2.5 text-sm border-2 border-purple-300 rounded-md focus:outline-none focus:border-purple-600 transition"
+                  className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
                 />
                 {resetPasswordForm.formState.errors.password && (
                   <p className="text-red-500 text-xs mt-1">
@@ -686,7 +689,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                   type="password"
                   placeholder="Re-enter your Password"
                   {...resetPasswordForm.register("confirmPassword")}
-                  className="w-full px-4 py-2.5 text-sm border-2 border-purple-300 rounded-md focus:outline-none focus:border-purple-600 transition"
+                  className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
                 />
                 {resetPasswordForm.formState.errors.confirmPassword && (
                   <p className="text-red-500 text-xs mt-1">
@@ -698,7 +701,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
+                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2  text-base rounded-md transition disabled:opacity-50"
               >
                 {loading ? "Resetting..." : "Set New Password"}
               </button>
