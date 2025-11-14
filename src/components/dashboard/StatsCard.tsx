@@ -60,7 +60,7 @@ function StatsCard({
 
       <button
         onClick={onButtonClick}
-        className="rounded-md theme-bg-light px-3 disabled:cursor-not-allowed font-semibold text-base py-1 border w-[130px] border-[#7650e3] text-[#7650e3] hover:bg-[#7650e3] hover:text-white"
+        className="rounded-md theme-bg-light px-3 disabled:cursor-not-allowed font-semibold text-base py-1 border w-[130px] border-[#7650e3] text-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
       >
         {buttonText}
       </button>

@@ -93,21 +93,8 @@ function Analytics() {
 
       <button
         onClick={() => navigate("/dashboard")}
-        className="w-full text-white py-2.5 px-4 rounded-md font-semibold text-sm transition-all border-2 mt-4"
-        style={{
-          backgroundColor: "#7650e3",
-          borderColor: "#7650e3",
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.backgroundColor = "#d7d7fc";
-          e.currentTarget.style.color = "#7650e3";
-          e.currentTarget.style.borderColor = "#7650e3";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.backgroundColor = "#7650e3";
-          e.currentTarget.style.color = "white";
-          e.currentTarget.style.borderColor = "#7650e3";
-        }}
+        className="w-full py-2.5 px-4 rounded-md font-semibold text-sm transition-all border-2 border-[#7650e3] mt-4 text-white bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
+       
       >
         View Analytics
       </button>

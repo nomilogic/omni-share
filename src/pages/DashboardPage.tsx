@@ -48,7 +48,7 @@ export const DashboardPage: React.FC = () => {
             <StatsCard
               iconName="share"
               title="Referral Coins"
-              stats={referralCoin}
+              stats={referralCoin.toLocaleString()}
               subtitle="Earn 100 Omni Coins each per referral!"
               buttonText="Refer & Earn!"
             />

@@ -76,11 +76,8 @@ function RecentPosts() {
 
       <button
         onClick={() => navigate("/content")}
-        className="w-full text-white py-2.5 px-4 rounded-md font-semibold text-sm transition-all border-2"
-        style={{
-          backgroundColor: "#7650e3",
-          borderColor: "#7650e3",
-        }}
+        className="w-full text-white py-2.5 px-4 rounded-md font-semibold text-sm transition-all border-2 border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
+       
       >
         Create Post
       </button>
