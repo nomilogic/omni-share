@@ -506,9 +506,9 @@ const ProfileSetupSinglePage: React.FC = () => {
   return (
     <div className="px-0 py-0 md:px-0 bg-transparent">
       <div className="max-w-4xl mx-auto">
-        <div className="bg-white shadow-md overflow-hidden relative">
+        <div className="bg-white  overflow-hidden relative">
           {/* Header */}
-          <div className="theme-bg-gradient px-4 pt-6 pb-2 text-white relative">
+          <div className="theme-bg-trinary px-4 pt-6 pb-2 text-white relative rounded-t-2xl">
             <h1 className="text-3xl font-bold">Complete Your Profile</h1>
             <p className="text-blue-100">
               Tell us about yourself to personalize your experience
@@ -962,7 +962,7 @@ const ProfileSetupSinglePage: React.FC = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full theme-bg-gradient disabled:bg-purple-600/50 disabled:cursor-not-allowed text-white py-3 px-6 rounded-md text-lg font-semibold shadow-md disabled:opacity-50"
+                className="w-full theme-bg-trinary disabled:bg-purple-600/50 disabled:cursor-not-allowed text-white py-3 px-6 rounded-md text-lg font-semibold shadow-md disabled:opacity-50"
               >
                 {loading ? "Saving..." : "Complete Profile Setup"}
               </button>
