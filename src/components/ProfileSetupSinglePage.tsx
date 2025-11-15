@@ -12,12 +12,14 @@ import {
   Target,
   Share2,
   Flag,
+  X,
 } from "lucide-react";
 import { FieldName, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import API from "../services/api";
 import { profileFormSchema, ProfileFormData } from "./profileFormSchema";
 import { useAppContext } from "../context/AppContext";
+import { input } from "framer-motion/client";
 
 const STORAGE_KEY = "profile_form_data";
 
@@ -285,6 +287,7 @@ const ProfileSetupSinglePage: React.FC = () => {
       const profile = user.profile;
 
       return {
+        email: profile.email || user.email || "",
         fullName: profile.fullName || user.full_name || "",
         phoneNumber: profile.phoneNumber || "",
         publicUrl: profile.publicUrl || "",
@@ -422,6 +425,7 @@ const ProfileSetupSinglePage: React.FC = () => {
 
         // FIX 4: Ensure arrays are never undefined
         const updatedData: ProfileFormData = {
+          email: formData.email,
           fullName: profile.fullName?.trim() || formData.fullName,
           phoneNumber: formData.phoneNumber,
           publicUrl: url,
@@ -504,8 +508,8 @@ const ProfileSetupSinglePage: React.FC = () => {
     });
   };
   return (
-    <div className="p-4 md:px-0 bg-transparent">
-      <div className="w-full  mx-auto">
+    <div className="p-4 bg-transparent">
+      <div className="w-full max-w-5xl  mx-auto">
         <div className="bg-white  overflow-hidden relative">
           {/* Header */}
           <div className="theme-bg-trinary px-4 pt-6 pb-2 text-white relative rounded-t-2xl">
@@ -517,10 +521,10 @@ const ProfileSetupSinglePage: React.FC = () => {
             <div className="top-4 right-4 flex justify-end">
               <button
                 onClick={handleSkip}
-                type="button"
-                className="text-sm font-medium theme-text-light underline hover:opacity-90"
+                className="absolute right-3 top-3 w-6 h-6 z-10 rounded-full border-[#7650e3] flex items-center justify-center text-[#7650e3] bg-[#F7F5FB] transition-shadow border-[2px]"
+                aria-label="Close manage subscription dialog"
               >
-                Skip
+                <X className="w-4 h-4 color-[#7650e3] stroke-[#7650e3] stroke-[3]" />
               </button>
             </div>
           </div>
@@ -530,20 +534,22 @@ const ProfileSetupSinglePage: React.FC = () => {
               {profileFormConfig.map((section) => {
                 return (
                   <section key={section.id} className="space-y-4">
-                    <div className="flex items-center space-x-3 mb-2">
-                      {section.icon && (
-                        <div className="theme-bg-quaternary p-2 rounded-md">
-                          {React.createElement(section.icon, {
-                            className: "w-6 h-6 theme-text-secondary",
-                          })}
-                        </div>
-                      )}
+                    <div className="flex lg:items-center space-x-3 mb-2">
+                      <div>
+                        {section.icon && (
+                          <div className="theme-bg-quaternary p-2 rounded-md">
+                            {React.createElement(section.icon, {
+                              className: "w-6 h-6 theme-text-secondary",
+                            })}
+                          </div>
+                        )}
+                      </div>
                       <div>
                         <h2 className="text-xl font-semibold theme-text-secondary">
                           {section.title}
                         </h2>
                         {section.subtext && (
-                          <p className="mt-1 text-sm text-slate-500">
+                          <p className="mt-1 text-sm text-gray-500 font-medium">
                             {section.subtext}
                           </p>
                         )}
@@ -552,7 +558,7 @@ const ProfileSetupSinglePage: React.FC = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {section.fields.map((field) => {
-                        const fieldName = field.name as FieldName;
+                        const fieldName: any = field.name;
                         const fieldError = errors[fieldName];
 
                         switch (field.type) {
@@ -567,8 +573,9 @@ const ProfileSetupSinglePage: React.FC = () => {
                                 </label>
                                 <input
                                   type={field.type}
+                                  disabled={field.type == "email"}
                                   {...register(fieldName)}
-                                  className={`w-full px-3 py-2.5 border rounded-md ${
+                                  className={`w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition ${
                                     fieldError
                                       ? "border-red-500"
                                       : "border-gray-300"
@@ -576,17 +583,15 @@ const ProfileSetupSinglePage: React.FC = () => {
                                   placeholder={field.placeholder || ""}
                                 />
                                 {field.helperText && (
-                                  <p className="mt-1 text-sm text-slate-500">
+                                  <p className="mt-1 text-sm text-gray-500 font-medium">
                                     {field.helperText}
                                   </p>
                                 )}
-
                                 {fieldError && (
                                   <p className="mt-1 text-sm text-red-600">
                                     {String(fieldError.message || "")}
                                   </p>
                                 )}
-
                                 {field.name === "publicUrl" && (
                                   <>
                                     <div className="flex items-center mt-2 gap-2">
@@ -633,7 +638,7 @@ const ProfileSetupSinglePage: React.FC = () => {
                                 </label>
                                 <select
                                   {...register(fieldName)}
-                                  className={`w-full px-3 py-2.5 border rounded-md ${
+                                  className={`w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition ${
                                     fieldError
                                       ? "border-red-500"
                                       : "border-gray-300"
@@ -647,7 +652,7 @@ const ProfileSetupSinglePage: React.FC = () => {
                                   ))}
                                 </select>
                                 {field.helperText && (
-                                  <p className="mt-1 text-sm text-slate-500">
+                                  <p className="mt-1 text-sm text-gray-500 font-medium">
                                     {field.helperText}
                                   </p>
                                 )}
@@ -669,7 +674,7 @@ const ProfileSetupSinglePage: React.FC = () => {
                                   {field.label} {field.required && "*"}
                                 </label>
                                 {field.helperText && (
-                                  <p className="mt-1 text-sm text-slate-500">
+                                  <p className="mt-1 text-sm text-gray-500 font-medium">
                                     {field.helperText}
                                   </p>
                                 )}
@@ -767,7 +772,7 @@ const ProfileSetupSinglePage: React.FC = () => {
                                       <span className="mt-2 text-sm theme-text-secondary">
                                         Click to upload
                                       </span>
-                                      <p className="text-xs text-slate-500">
+                                      <p className="text-xs text-gray-500 font-medium">
                                         PNG, JPG, GIF up to 10MB
                                       </p>
                                     </label>
@@ -938,7 +943,7 @@ const ProfileSetupSinglePage: React.FC = () => {
                                 </div>
 
                                 {field.helperText && (
-                                  <p className="mt-1 text-sm text-slate-500">
+                                  <p className="mt-1 text-sm text-gray-500 font-medium">
                                     {field.helperText}
                                   </p>
                                 )}

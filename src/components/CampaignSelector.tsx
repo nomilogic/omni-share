@@ -70,25 +70,29 @@ export const CampaignSelector: React.FC<CampaignSelectorProps> = ({
 
   if (loading) {
     return (
-      <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-md p-8">
+      <div className="max-w-4xl mx-auto bg-white rounded-md shadow-md p-8">
         <div className="text-center">
           <div className="animate-spin w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto"></div>
-          <p className="mt-4 text-slate-500">Loading your campaigns...</p>
+          <p className="mt-4 text-gray-500 font-medium">
+            Loading your campaigns...
+          </p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-md p-8">
+    <div className="max-w-4xl mx-auto bg-white rounded-md shadow-md p-8">
       <div className="text-center mb-8">
-        <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+        <div className="w-16 h-16 bg-blue-100 rounded-md flex items-center justify-center mx-auto mb-4">
           <Target className="w-8 h-8 text-blue-600" />
         </div>
         <h2 className="text-3xl font-bold text-slate-900 mb-2">
           Select Campaign
         </h2>
-        <p className="text-slate-500">Choose a campaign or create a new one</p>
+        <p className="text-gray-500 font-medium">
+          Choose a campaign or create a new one
+        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -101,7 +105,7 @@ export const CampaignSelector: React.FC<CampaignSelectorProps> = ({
           <h3 className="font-medium text-slate-900 mb-2">
             Create New Campaign
           </h3>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-gray-500 font-medium">
             Set up a new marketing campaign
           </p>
         </div>
@@ -161,25 +165,27 @@ export const CampaignSelector: React.FC<CampaignSelectorProps> = ({
                   <p className="text-sm text-blue-600 ">{campaign.objective}</p>
                 )}
                 {campaign.industry && (
-                  <p className="text-sm text-slate-500">{campaign.industry}</p>
+                  <p className="text-sm text-gray-500 font-medium">
+                    {campaign.industry}
+                  </p>
                 )}
               </div>
 
               <div className="space-y-2 text-sm">
                 <div>
-                  <span className="text-slate-500">Status:</span>
+                  <span className="text-gray-500 font-medium">Status:</span>
                   <span className="ml-2  font-medium">
                     {campaign.status || "draft"}
                   </span>
                 </div>
                 <div>
-                  <span className="text-slate-500">Platforms:</span>
+                  <span className="text-gray-500 font-medium">Platforms:</span>
                   <span className="ml-2">
                     {campaign.platforms?.length || 0}
                   </span>
                 </div>
                 <div>
-                  <span className="text-slate-500">Posts:</span>
+                  <span className="text-gray-500 font-medium">Posts:</span>
                   <span className="ml-2">
                     {campaign.total_posts || 0} total
                   </span>
@@ -196,7 +202,7 @@ export const CampaignSelector: React.FC<CampaignSelectorProps> = ({
                   </span>
                 ))}
                 {campaign.platforms?.length > 3 && (
-                  <span className="px-2 py-1 bg-gray-100 text-slate-500 text-xs rounded-full">
+                  <span className="px-2 py-1 bg-gray-100 text-gray-500 font-medium text-xs rounded-full">
                     +{campaign.platforms.length - 3} more
                   </span>
                 )}

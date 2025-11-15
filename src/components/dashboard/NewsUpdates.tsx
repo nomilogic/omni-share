@@ -5,7 +5,7 @@ function NewsUpdates() {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   return (
-    <div className="bg-gray-100 rounded-xl  p-5  flex flex-col w-full h-full ">
+    <div className="bg-gray-100 rounded-md  p-5  flex flex-col w-full h-full ">
       <div className="flex-1  flex flex-col">
         <img src={laptop} alt="laptop" />
 

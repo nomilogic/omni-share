@@ -59,7 +59,7 @@ export default function PackageSuccessPage() {
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-gradient-to-b from-[#7650e3] to-[#7650e3]/80 ">
-      <section className="w-full max-w-lg rounded-2xl border border-[#7650e3]/50 bg-white p-8 shadow-md">
+      <section className="w-full max-w-lg rounded-md border border-[#7650e3]/50 bg-white p-8 shadow-md">
         {/* Header */}
         <div className="flex flex-col items-center gap-4 text-center">
           <span className="flex h-16 w-16 items-center justify-center rounded-full bg-[#7650e3]/40 text-[#7650e3] animate-bounce">
@@ -82,7 +82,7 @@ export default function PackageSuccessPage() {
               ? "Purchase Successful!"
               : "Package Status"}
           </h1>
-          <p className="text-slate-500">
+          <p className="text-gray-500 font-medium">
             {loading
               ? "Please wait while we confirm your package..."
               : confirmed
@@ -121,7 +121,7 @@ function SessionId({ value }: { value: string }) {
 
   return (
     <div>
-      <label className="mb-2 block text-sm font-medium text-slate-500">
+      <label className="mb-2 block text-sm font-medium text-gray-500 font-medium">
         Session ID
       </label>
       <div className="flex items-stretch gap-2">

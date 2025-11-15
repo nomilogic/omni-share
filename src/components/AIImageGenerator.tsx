@@ -191,7 +191,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-2xl shadow-md w-full max-h-[90vh] overflow-auto ">
+      <div className="bg-white rounded-md shadow-md w-full max-h-[90vh] overflow-auto ">
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -202,7 +202,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
                 <h2 className="text-2xl font-bold text-slate-900">
                   AI Image Generator
                 </h2>
-                <p className="text-slate-500">
+                <p className="text-gray-500 font-medium">
                   Create stunning visuals for your social media posts
                 </p>
               </div>
@@ -210,7 +210,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
 
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-slate-500 text-xl"
+              className="text-gray-400 hover:text-gray-500 font-medium text-xl"
             >
               ✕
             </button>
@@ -226,7 +226,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
               </h3>
 
               {!currentImage && !hasError && !isGenerating && (
-                <div className="text-center py-12 text-slate-500">
+                <div className="text-center py-12 text-gray-500 font-medium">
                   <Wand2 className="w-12 h-12 mx-auto mb-4 text-gray-300" />
                   <p>No image generated yet</p>
                   <p className="text-sm">
@@ -241,7 +241,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
                     <RefreshCw className="w-6 h-6 text-red-600" />
                   </div>
                   <p>Failed to generate image</p>
-                  <p className="text-sm text-slate-500 mb-4">
+                  <p className="text-sm text-gray-500 font-medium mb-4">
                     Please try again with a different prompt or model
                   </p>
                   <button
@@ -260,7 +260,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
                     <Loader className="w-6 h-6 text-purple-600 animate-spin" />
                   </div>
                   <p>Generating image...</p>
-                  <p className="text-sm text-slate-500">
+                  <p className="text-sm text-gray-500 font-medium">
                     This may take a few moments
                   </p>
                 </div>
@@ -277,7 +277,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
                       setCurrentImage(null);
                     }}
                   />
-                  <p className="text-sm text-slate-500 mb-3 line-clamp-2">
+                  <p className="text-sm text-gray-500 font-medium mb-3 line-clamp-2">
                     {currentImage.prompt}
                   </p>
 
@@ -380,7 +380,9 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
                 <label className="block text-sm font-medium text-slate-700 mb-2">
                   AI Model{" "}
                   {loadingModels && (
-                    <span className="text-xs text-slate-500">(Loading...)</span>
+                    <span className="text-xs text-gray-500 font-medium">
+                      (Loading...)
+                    </span>
                   )}
                 </label>
                 <select
@@ -449,7 +451,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
                 </select>
 
                 {/* Provider Info */}
-                <div className="mt-2 text-xs text-slate-500">
+                <div className="mt-2 text-xs text-gray-500 font-medium">
                   {(() => {
                     const selectedModelData = availableModels.find(
                       (m) => m.id === selectedModel

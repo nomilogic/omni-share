@@ -61,21 +61,21 @@ const InviteModal: React.FC<{
             <h3 className="text-lg font-semibold">
               {opts?.title || "Invite a friend"}
             </h3>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-gray-500 font-medium">
               {opts?.description || "Share this link to invite others"}
             </p>
           </div>
           <button
             onClick={onClose}
             aria-label="Close"
-            className="p-1 text-slate-500 hover:text-slate-800"
+            className="p-1 text-gray-500 font-medium hover:text-slate-800"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <div className="mb-4">
-          <label className="block text-xs text-slate-500 mb-2">
+          <label className="block text-xs text-gray-500 font-medium mb-2">
             Invite link
           </label>
           <div className="flex items-center gap-2">

@@ -415,7 +415,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                   <h3 className="font-medium text-slate-900">
                     {getPlatformDisplayName("facebook")}
                   </h3>
-                  {/* <p className="text-xs text-slate-500">Just now · 🌍</p> */}
+                  {/* <p className="text-xs text-gray-500 font-medium">Just now · 🌍</p> */}
                 </div>
               </div>
             </div>
@@ -459,15 +459,15 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
             <div className="px-4 pb-4">
               <div className="flex items-center justify-between pt-2 border-t border-gray-100">
                 <div className="flex items-center space-x-6">
-                  <button className="flex items-center space-x-2 text-slate-500 hover:text-blue-600">
+                  <button className="flex items-center space-x-2 text-gray-500 font-medium hover:text-blue-600">
                     <ThumbsUp className="w-4 h-4" />
                     <span className="text-sm">Like</span>
                   </button>
-                  <button className="flex items-center space-x-2 text-slate-500 hover:text-blue-600">
+                  <button className="flex items-center space-x-2 text-gray-500 font-medium hover:text-blue-600">
                     <MessageCircle className="w-4 h-4" />
                     <span className="text-sm">Comment</span>
                   </button>
-                  <button className="flex items-center space-x-2 text-slate-500 hover:text-blue-600">
+                  <button className="flex items-center space-x-2 text-gray-500 font-medium hover:text-blue-600">
                     <Share2 className="w-4 h-4" />
                     <span className="text-sm">Share</span>
                   </button>
@@ -646,9 +646,11 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                     <h3 className="font-bold text-slate-900">
                       {getPlatformDisplayName("twitter")}
                     </h3>
-                    <span className="text-slate-500">@yourcampaign</span>
-                    <span className="text-slate-500">·</span>
-                    <span className="text-slate-500">now</span>
+                    <span className="text-gray-500 font-medium">
+                      @yourcampaign
+                    </span>
+                    <span className="text-gray-500 font-medium">·</span>
+                    <span className="text-gray-500 font-medium">now</span>
                   </div>
                   <p
                     className={`text-slate-800 whitespace-pre-wrap ${
@@ -686,19 +688,19 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                   </div>
                   {renderMedia({ ...post, mediaUrl })}
                   <div className="flex items-center justify-between mt-3 max-w-md">
-                    <button className="flex items-center space-x-2 text-slate-500 hover:text-blue-500">
+                    <button className="flex items-center space-x-2 text-gray-500 font-medium hover:text-blue-500">
                       <MessageCircle className="w-4 h-4" />
                       <span className="text-sm">Reply</span>
                     </button>
-                    <button className="flex items-center space-x-2 text-slate-500 hover:text-green-500">
+                    <button className="flex items-center space-x-2 text-gray-500 font-medium hover:text-green-500">
                       <Repeat2 className="w-4 h-4" />
                       <span className="text-sm">Repost</span>
                     </button>
-                    <button className="flex items-center space-x-2 text-slate-500 hover:text-red-500">
+                    <button className="flex items-center space-x-2 text-gray-500 font-medium hover:text-red-500">
                       <Heart className="w-4 h-4" />
                       <span className="text-sm">Like</span>
                     </button>
-                    <button className="flex items-center space-x-2 text-slate-500 hover:text-blue-500">
+                    <button className="flex items-center space-x-2 text-gray-500 font-medium hover:text-blue-500">
                       <Share2 className="w-4 h-4" />
                       <span className="text-sm">Share</span>
                     </button>
@@ -732,7 +734,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                   <h3 className="font-medium text-slate-900">
                     {getPlatformDisplayName("linkedin")}
                   </h3>
-                  {/* <p className="text-sm text-slate-500">Campaign • 1st</p>
+                  {/* <p className="text-sm text-gray-500 font-medium">Campaign • 1st</p>
                   <p className="text-xs text-gray-400">Just now</p> */}
                 </div>
               </div>
@@ -772,15 +774,15 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
               </div>
               {renderMedia({ ...post, mediaUrl })}
               <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                <button className="flex items-center space-x-2 text-slate-500 hover:text-blue-600">
+                <button className="flex items-center space-x-2 text-gray-500 font-medium hover:text-blue-600">
                   <ThumbsUp className="w-4 h-4" />
                   <span className="text-sm">Like</span>
                 </button>
-                <button className="flex items-center space-x-2 text-slate-500 hover:text-blue-600">
+                <button className="flex items-center space-x-2 text-gray-500 font-medium hover:text-blue-600">
                   <MessageCircle className="w-4 h-4" />
                   <span className="text-sm">Comment</span>
                 </button>
-                <button className="flex items-center space-x-2 text-slate-500 hover:text-blue-600">
+                <button className="flex items-center space-x-2 text-gray-500 font-medium hover:text-blue-600">
                   <Share2 className="w-4 h-4" />
                   <span className="text-sm">Share</span>
                 </button>
@@ -932,7 +934,9 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                   <h4 className="font-medium text-slate-900">
                     {getPlatformDisplayName("youtube")}
                   </h4>
-                  <p className="text-xs text-slate-500">Just uploaded</p>
+                  <p className="text-xs text-gray-500 font-medium">
+                    Just uploaded
+                  </p>
                 </div>
               </div>
               <h3
@@ -1002,7 +1006,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
   const selectedPost = posts.find((post) => post.platform === selectedPlatform);
 
   return (
-    <div className="preview w-full mx-auto bg-transparent  md:rounded-2xl p-4 md:shadow-md md:px-8  md:py-10  ">
+    <div className="preview w-full mx-auto bg-transparent  md:rounded-md p-4 md:shadow-md md:px-8  md:py-10  ">
       <h2 className="text-3xl font-semibold theme-text-primary mb-1">
         Your AI-Generated Posts
       </h2>
@@ -1191,19 +1195,23 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
                     <div className="flex justify-between md:flex-col md:items-start">
-                      <span className="text-slate-500">Character Count:</span>
+                      <span className="text-gray-500 font-medium">
+                        Character Count:
+                      </span>
                       <span className="font-medium">
                         {selectedPost.characterCount}
                       </span>
                     </div>
                     <div className="flex justify-between md:flex-col md:items-start">
-                      <span className="text-slate-500">Hashtags:</span>
+                      <span className="text-gray-500 font-medium">
+                        Hashtags:
+                      </span>
                       <span className="font-medium">
                         {selectedPost.hashtags.length}
                       </span>
                     </div>
                     {/* <div className="flex justify-between md:flex-col md:items-start">
-                      <span className="text-slate-500">Engagement:</span>
+                      <span className="text-gray-500 font-medium">Engagement:</span>
                       <span
                         className={`font-medium  ${
                           selectedPost.engagement === "high"

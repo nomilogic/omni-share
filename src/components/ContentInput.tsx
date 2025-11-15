@@ -2089,7 +2089,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
             <h2 className="text-3xl md:font-bold font-semibold theme-text-primary mb-2  leading-8">
               Create auto‑optimize social posts with AI
             </h2>
-            <p className="text-sm text-slate-500 md:font-semibold font-medium ">
+            <p className="text-sm text-gray-500 font-medium md:font-semibold font-medium ">
               Generate on‑brand content, auto‑design visuals, and publish
               everywhere in one click. Meet your new 24/7 content teammate.
             </p>
@@ -2641,7 +2641,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                     setSelectedTemplate(undefined);
                                     setImageAnalysis("");
                                   }}
-                                  className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-md p-1.5 shadow-md transition-colors duration-200"
+                                  className="absolute top-2 right-2 bg-purple-500 hover:bg-purple-600 text-white rounded-md p-1.5 shadow-md transition-colors duration-200"
                                   title="Remove image"
                                 >
                                   <X className="w-3 h-3" />
@@ -2868,7 +2868,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                   setSelectedTemplate(undefined);
                                   setImageAnalysis("");
                                 }}
-                                className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-md p-1.5 shadow-md transition-colors duration-200"
+                                className="absolute top-2 right-2 bg-purple-500 hover:bg-purple-600 text-white rounded-md p-1.5 shadow-md transition-colors duration-200"
                                 title="Remove image"
                               >
                                 <X className="w-3 h-3" />

@@ -22,7 +22,7 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
             </h2>
             <button
               onClick={onCancel}
-              className="text-gray-400 hover:text-slate-500 text-lg font-medium"
+              className="text-gray-400 hover:text-gray-500 font-medium text-lg font-medium"
             >
               ×
             </button>
@@ -40,7 +40,7 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
               >
                 {/* Template Preview */}
                 <div className="w-full aspect-square bg-gray-50 rounded flex items-center justify-center border border-gray-200 mb-1">
-                  <div className="text-xs text-slate-500 text-center leading-tight">
+                  <div className="text-xs text-gray-500 font-medium text-center leading-tight">
                     {template.dimensions.width}×{template.dimensions.height}
                   </div>
                 </div>
@@ -50,7 +50,7 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
                   <h3 className="text-xs font-medium text-slate-900 truncate group-hover:text-blue-600">
                     {template.name}
                   </h3>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-gray-500 font-medium">
                     {template.elements.length} items
                   </p>
                 </div>
@@ -62,7 +62,7 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
         {/* Footer */}
         <div className="p-3 border-t border-gray-200">
           <div className="flex justify-between items-center">
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-gray-500 font-medium">
               {templates.length} templates
             </p>
             <button

@@ -145,13 +145,13 @@ export const AIScheduleGenerator: React.FC<AIScheduleGeneratorProps> = ({
               <h3 className="text-2xl font-bold text-slate-900 mb-2">
                 Generated Schedule Preview
               </h3>
-              <p className="text-slate-500">
+              <p className="text-gray-500 font-medium">
                 Review and approve your AI-generated posting schedule
               </p>
             </div>
             <button
               onClick={() => setShowPreview(false)}
-              className="text-slate-500 hover:text-slate-700"
+              className="text-gray-500 font-medium hover:text-slate-700"
             >
               ×
             </button>
@@ -177,7 +177,9 @@ export const AIScheduleGenerator: React.FC<AIScheduleGeneratorProps> = ({
                       </div>
                     )}
                   </div>
-                  <div className="text-sm text-slate-500">#{index + 1}</div>
+                  <div className="text-sm text-gray-500 font-medium">
+                    #{index + 1}
+                  </div>
                 </div>
 
                 <div className="mb-3">
@@ -194,7 +196,7 @@ export const AIScheduleGenerator: React.FC<AIScheduleGeneratorProps> = ({
                     <h4 className="font-semibold text-slate-900 mb-1">
                       AI Image Prompt:
                     </h4>
-                    <p className="text-slate-500 italic bg-yellow-50 p-2 rounded text-sm">
+                    <p className="text-gray-500 font-medium italic bg-yellow-50 p-2 rounded text-sm">
                       {item.imagePrompt}
                     </p>
                   </div>
@@ -212,7 +214,7 @@ export const AIScheduleGenerator: React.FC<AIScheduleGeneratorProps> = ({
                     ))}
                   </div>
                   {item.reasoning && (
-                    <div className="text-xs text-slate-500 max-w-xs">
+                    <div className="text-xs text-gray-500 font-medium max-w-xs">
                       AI: {item.reasoning}
                     </div>
                   )}
@@ -251,7 +253,7 @@ export const AIScheduleGenerator: React.FC<AIScheduleGeneratorProps> = ({
           <h2 className="text-2xl font-bold text-slate-900">
             AI Schedule Generator
           </h2>
-          <p className="text-slate-500">
+          <p className="text-gray-500 font-medium">
             Describe your posting schedule and let AI create the perfect content
             calendar
           </p>
@@ -312,7 +314,7 @@ export const AIScheduleGenerator: React.FC<AIScheduleGeneratorProps> = ({
                 >
                   <IconComponent
                     className={`w-4 h-4 ${
-                      isSelected ? platform.color : "text-slate-500"
+                      isSelected ? platform.color : "text-gray-500 font-medium"
                     }`}
                   />
                   <span className="font-medium">{platform.name}</span>
@@ -423,7 +425,7 @@ export const AIScheduleGenerator: React.FC<AIScheduleGeneratorProps> = ({
         {/* Current Settings Summary */}
         <div className="bg-gray-50 p-4 rounded-md">
           <h4 className="font-medium text-slate-900 mb-2">Current Settings:</h4>
-          <div className="grid grid-cols-2 gap-4 text-sm text-slate-500">
+          <div className="grid grid-cols-2 gap-4 text-sm text-gray-500 font-medium">
             <div>
               <strong>Platforms:</strong>{" "}
               {selectedPlatforms.join(", ") || "None selected"}

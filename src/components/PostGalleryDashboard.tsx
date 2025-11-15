@@ -317,7 +317,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
           className={`flex items-center gap-2 px-4 py-2.5 rounded-md text-sm font-medium transition-colors ${
             viewMode === tab.id
               ? "bg-white text-blue-600 shadow-md"
-              : "text-slate-500 hover:text-slate-900"
+              : "text-gray-500 font-medium hover:text-slate-900"
           }`}
         >
           <tab.icon className="w-4 h-4" />
@@ -327,7 +327,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
               className={`text-xs px-2 py-0.5 rounded-full ${
                 viewMode === tab.id
                   ? "bg-blue-100 text-blue-600"
-                  : "bg-gray-200 text-slate-500"
+                  : "bg-gray-200 text-gray-500 font-medium"
               }`}
             >
               {tab.count}
@@ -392,7 +392,9 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
                 setViewMode(viewMode === "list" ? "gallery" : "gallery")
               }
               className={`p-2 rounded ${
-                viewMode === "gallery" ? "bg-white shadow-md" : "text-slate-500"
+                viewMode === "gallery"
+                  ? "bg-white shadow-md"
+                  : "text-gray-500 font-medium"
               }`}
             >
               <Grid3X3 className="w-4 h-4" />
@@ -400,7 +402,9 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
             <button
               onClick={() => setViewMode("list")}
               className={`p-2 rounded ${
-                viewMode === "list" ? "bg-white shadow-md" : "text-slate-500"
+                viewMode === "list"
+                  ? "bg-white shadow-md"
+                  : "text-gray-500 font-medium"
               }`}
             >
               <List className="w-4 h-4" />
@@ -588,7 +592,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
                   className={`p-1.5 rounded-full shadow-md transition-colors ${
                     post.isFavorite
                       ? "bg-red-500 text-white hover:bg-red-600"
-                      : "bg-white text-slate-500 hover:bg-gray-50"
+                      : "bg-white text-gray-500 font-medium hover:bg-gray-50"
                   }`}
                 >
                   <Heart
@@ -602,7 +606,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
                     e.stopPropagation();
                     onReusePost?.(post.id);
                   }}
-                  className="p-1.5 bg-white text-slate-500 rounded-full shadow-md hover:bg-gray-50 transition-colors"
+                  className="p-1.5 bg-white text-gray-500 font-medium rounded-full shadow-md hover:bg-gray-50 transition-colors"
                 >
                   <Repeat className="w-4 h-4" />
                 </button>
@@ -611,7 +615,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
                     e.stopPropagation();
                     onCreateTemplate?.(post.id);
                   }}
-                  className="p-1.5 bg-white text-slate-500 rounded-full shadow-md hover:bg-gray-50 transition-colors"
+                  className="p-1.5 bg-white text-gray-500 font-medium rounded-full shadow-md hover:bg-gray-50 transition-colors"
                 >
                   <Copy className="w-4 h-4" />
                 </button>
@@ -630,7 +634,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
             <h3 className="font-semibold text-slate-900 mb-2 line-clamp-2">
               {post.title}
             </h3>
-            <p className="text-sm text-slate-500 mb-3 line-clamp-2">
+            <p className="text-sm text-gray-500 font-medium mb-3 line-clamp-2">
               {post.preview}
             </p>
 
@@ -645,7 +649,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
               ))}
             </div>
 
-            <div className="flex items-center justify-between text-sm text-slate-500">
+            <div className="flex items-center justify-between text-sm text-gray-500 font-medium">
               <div className="flex items-center gap-4">
                 <span className="flex items-center gap-1">
                   <Eye className="w-4 h-4" />
@@ -714,7 +718,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
                     link.click();
                     document.body.removeChild(link);
                   }}
-                  className="p-1.5 bg-white text-slate-500 rounded-full shadow-md hover:bg-gray-50 transition-colors"
+                  className="p-1.5 bg-white text-gray-500 font-medium rounded-full shadow-md hover:bg-gray-50 transition-colors"
                   title="Download"
                 >
                   <Download className="w-4 h-4" />
@@ -724,7 +728,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
                     e.stopPropagation();
                     navigator.clipboard.writeText(asset.url);
                   }}
-                  className="p-1.5 bg-white text-slate-500 rounded-full shadow-md hover:bg-gray-50 transition-colors"
+                  className="p-1.5 bg-white text-gray-500 font-medium rounded-full shadow-md hover:bg-gray-50 transition-colors"
                   title="Copy URL"
                 >
                   <Share2 className="w-4 h-4" />
@@ -734,7 +738,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
                     e.stopPropagation();
                     handleAssetClick(asset);
                   }}
-                  className="p-1.5 bg-white text-slate-500 rounded-full shadow-md hover:bg-gray-50 transition-colors"
+                  className="p-1.5 bg-white text-gray-500 font-medium rounded-full shadow-md hover:bg-gray-50 transition-colors"
                   title="View Details"
                 >
                   <MoreHorizontal className="w-4 h-4" />
@@ -764,7 +768,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
             >
               {asset.filename}
             </h3>
-            <div className="flex items-center justify-between text-xs text-slate-500 mb-2">
+            <div className="flex items-center justify-between text-xs text-gray-500 font-medium mb-2">
               <span>{(asset.size / 1024 / 1024).toFixed(1)} MB</span>
               <span>Used {asset.usage.totalUsed} times</span>
             </div>
@@ -773,7 +777,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
                 {asset.tags.slice(0, 2).map((tag) => (
                   <span
                     key={tag}
-                    className="bg-gray-100 text-slate-500 text-xs px-2 py-1 rounded"
+                    className="bg-gray-100 text-gray-500 font-medium text-xs px-2 py-1 rounded"
                   >
                     {tag}
                   </span>
@@ -806,7 +810,9 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
               <Wand2 className="w-6 h-6" />
             </button>
           </div>
-          <p className="text-sm text-slate-500 mb-1">Upload or Generate</p>
+          <p className="text-sm text-gray-500 font-medium mb-1">
+            Upload or Generate
+          </p>
           <p className="text-xs text-gray-400">Media Assets</p>
         </div>
         <input
@@ -929,7 +935,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Content Gallery</h1>
-          <p className="text-slate-500">
+          <p className="text-gray-500 font-medium">
             Manage, reuse, and organize your content assets
           </p>
         </div>
@@ -954,7 +960,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
 
           <button
             onClick={loadContent}
-            className="p-2 text-slate-500 hover:text-slate-900 transition-colors"
+            className="p-2 text-gray-500 font-medium hover:text-slate-900 transition-colors"
           >
             <RefreshCw className="w-5 h-5" />
           </button>
@@ -985,7 +991,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
               <h3 className="text-lg font-medium text-slate-900 mb-2">
                 Content Templates
               </h3>
-              <p className="text-slate-500 mb-4">
+              <p className="text-gray-500 font-medium mb-4">
                 Create reusable templates from your best performing posts
               </p>
               <button className="bg-blue-600 text-white px-4 py-2.5 rounded-md hover:bg-blue-700 flex items-center gap-2 mx-auto">
@@ -1000,7 +1006,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
               <h3 className="text-lg font-medium text-slate-900 mb-2">
                 Content Analytics
               </h3>
-              <p className="text-slate-500 mb-4">
+              <p className="text-gray-500 font-medium mb-4">
                 Track performance and discover insights about your content
               </p>
               <button className="bg-blue-600 text-white px-4 py-2.5 rounded-md hover:bg-blue-700 flex items-center gap-2 mx-auto">
@@ -1022,7 +1028,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
               <h2 className="text-xl font-semibold">Edit Post</h2>
               <button
                 onClick={() => setEditingPost(null)}
-                className="text-slate-500 hover:text-slate-700"
+                className="text-gray-500 font-medium hover:text-slate-700"
               >
                 ✕
               </button>
@@ -1061,7 +1067,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
             <h3 className="text-lg font-medium text-slate-900 mb-2">
               No posts found
             </h3>
-            <p className="text-slate-500 mb-4">
+            <p className="text-gray-500 font-medium mb-4">
               Start creating content to see your gallery
             </p>
             <button className="bg-blue-600 text-white px-4 py-2.5 rounded-md hover:bg-blue-700">
@@ -1076,7 +1082,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
           <h3 className="text-lg font-medium text-slate-900 mb-2">
             No media assets found
           </h3>
-          <p className="text-slate-500 mb-4">
+          <p className="text-gray-500 font-medium mb-4">
             Upload images, videos, or generate AI content
           </p>
           <div className="flex gap-3 justify-center">

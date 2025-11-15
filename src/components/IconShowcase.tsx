@@ -35,7 +35,7 @@ const IconShowcase: React.FC = () => {
                 className="flex flex-col items-center p-4 bg-white rounded-md shadow-md hover:shadow-md transition-shadow"
               >
                 <Icon name={icon.name} size={48} className="mb-3" />
-                <span className="text-sm font-medium text-slate-500 text-center">
+                <span className="text-sm font-medium text-gray-500 font-medium text-center">
                   {icon.description}
                 </span>
                 <span className="text-xs text-gray-400 mt-1">{icon.name}</span>
@@ -54,7 +54,9 @@ const IconShowcase: React.FC = () => {
               {sizes.map((size) => (
                 <div key={size} className="flex flex-col items-center">
                   <Icon name="logo" size={size} className="mb-2" />
-                  <span className="text-sm text-slate-500">{size}px</span>
+                  <span className="text-sm text-gray-500 font-medium">
+                    {size}px
+                  </span>
                 </div>
               ))}
             </div>
@@ -76,7 +78,9 @@ const IconShowcase: React.FC = () => {
                     color={color}
                     className="mb-2"
                   />
-                  <span className="text-sm text-slate-500 ">{color}</span>
+                  <span className="text-sm text-gray-500 font-medium ">
+                    {color}
+                  </span>
                 </div>
               ))}
             </div>
@@ -109,7 +113,7 @@ const IconShowcase: React.FC = () => {
                 onClick={() => alert("Connect clicked!")}
               />
             </div>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-gray-500 font-medium">
               Click on the icons above to see interactive functionality!
             </p>
           </div>

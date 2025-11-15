@@ -139,7 +139,7 @@ export const PostCalendar: React.FC<PostCalendarProps> = ({
             </h3>
             <button
               onClick={() => setSelectedPost(null)}
-              className="text-slate-500 hover:text-slate-700 p-1 rounded-md hover:bg-gray-100"
+              className="text-gray-500 font-medium hover:text-slate-700 p-1 rounded-md hover:bg-gray-100"
             >
               <X className="w-5 h-5" />
               <span className="sr-only">Close</span>
@@ -325,7 +325,7 @@ export const PostCalendar: React.FC<PostCalendarProps> = ({
               ))}
 
               {day.posts.length > 3 && (
-                <div className="text-xs text-slate-500 text-center py-1">
+                <div className="text-xs text-gray-500 font-medium text-center py-1">
                   +{day.posts.length - 3} more
                 </div>
               )}

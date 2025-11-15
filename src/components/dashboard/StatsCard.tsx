@@ -25,7 +25,7 @@ function StatsCard({
   onButtonClick,
 }: StatsCardProps) {
   return (
-    <div className="rounded-xl border border-[#7650e3] bg-white shadow-md px-4 py-4">
+    <div className="rounded-md border border-[#7650e3] bg-white  px-4 py-4">
       <div className="flex items-start justify-between ">
         <div className="flex items-center gap-2">
           {(icon || iconName) && (

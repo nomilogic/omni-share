@@ -23,7 +23,7 @@ function RecentPosts() {
   ];
 
   return (
-    <div className="bg-gray-100 rounded-xl  p-5 flex flex-col h-full w-full">
+    <div className="bg-gray-100 rounded-md  p-5 flex flex-col h-full w-full">
       <div className="flex gap-3 mb-5">
         {socialPlatforms.map((platform, i) => {
           const IconComponent = getPlatformIcon(platform);
@@ -41,7 +41,7 @@ function RecentPosts() {
 
       <div className="flex-1 mb-5 h-full">
         {lastPost?.image ? (
-          <div className="relative rounded-lg overflow-hidden h-full">
+          <div className="relative rounded-md overflow-hidden h-full">
             <img
               src={lastPost.image}
               alt="Recent Post"
@@ -54,7 +54,7 @@ function RecentPosts() {
             </div>
           </div>
         ) : (
-          <div className="relative rounded-lg overflow-hidden h-full shadow-md bg-white">
+          <div className="relative rounded-md overflow-hidden h-full shadow-md bg-white">
             {/* Placeholder preview */}
             <div>
               <img

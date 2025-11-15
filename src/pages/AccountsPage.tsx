@@ -237,16 +237,16 @@ export const AccountsPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-full mx-auto px-4 py-2.5 flex flex-col gap-y-3">
+    <div className="max-w-full mx-auto md:px-4 px-3 py-2.5 flex flex-col gap-y-3">
       <div className="flex flex-col gap-y-3">
         <div className="">
           <h2 className="text-2xl font-bold theme-text-primary mb-1">
             Connect Your Accounts
           </h2>
-          <p className="text-sm text-slate-500 ">
+          {/* <p className="text-sm text-gray-500 font-medium ">
             Connect your social media accounts to enable publishing across all
             platforms.
-          </p>
+          </p> */}
         </div>
 
         <div className=" p-2 bg-blue-50 border border-blue-200 rounded-md">
@@ -258,7 +258,7 @@ export const AccountsPage: React.FC = () => {
         </div>
 
         {connectedPlatforms.length === 0 && (
-          <div className=" p-4 theme-bg-quaternary rounded-md border border-purple-200">
+          <div className=" p-4 theme-bg-quaternary rounded-md border border-purple-600">
             <div className="flex items-start gap-4">
               <div>
                 <h3 className="font-semibold theme-text-secondary mb-1">
@@ -316,7 +316,7 @@ export const AccountsPage: React.FC = () => {
                     <button
                       onClick={() => handleConnect(platform)}
                       disabled={isConnecting}
-                      className="p-2 text-slate-500 hover:text-blue-600 disabled:opacity-50 rounded-md hover:bg-gray-100"
+                      className="p-2 text-gray-500 font-medium hover:text-blue-600 disabled:opacity-50 rounded-md hover:bg-gray-100"
                       title="Refresh connection"
                     >
                       <RefreshCw className="w-4 h-4" />
@@ -324,7 +324,7 @@ export const AccountsPage: React.FC = () => {
                     <button
                       onClick={() => handleDisconnect(platform)}
                       disabled={isConnecting}
-                      className="p-2 text-slate-500 hover:text-red-600 disabled:opacity-50 rounded-md hover:bg-gray-100"
+                      className="p-2 text-gray-500 font-medium hover:text-red-600 disabled:opacity-50 rounded-md hover:bg-gray-100"
                       title="Disconnect"
                     >
                       <Trash2 className="w-4 h-4" />

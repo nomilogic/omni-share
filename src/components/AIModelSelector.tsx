@@ -173,7 +173,9 @@ export const AIModelSelector: React.FC<AIModelSelectorProps> = ({
         {isSelected && <Check className="w-5 h-5 text-blue-600" />}
       </div>
 
-      <p className="text-sm text-slate-500 mb-3">{model.description}</p>
+      <p className="text-sm text-gray-500 font-medium mb-3">
+        {model.description}
+      </p>
 
       <div className="flex flex-wrap gap-1 mb-3">
         {model.capabilities.slice(0, 3).map((capability) => (
@@ -192,7 +194,7 @@ export const AIModelSelector: React.FC<AIModelSelectorProps> = ({
       </div>
 
       {showAdvanced && (
-        <div className="grid grid-cols-2 gap-2 text-xs text-slate-500">
+        <div className="grid grid-cols-2 gap-2 text-xs text-gray-500 font-medium">
           <div className="flex items-center">
             <Clock className="w-3 h-3 mr-1" />
             {model.contextWindow >= 100000
@@ -235,17 +237,19 @@ export const AIModelSelector: React.FC<AIModelSelectorProps> = ({
                   const IconComponent = getProviderIcon(
                     selectedModelInfo.provider
                   );
-                  return <IconComponent className="w-4 h-4 text-slate-500" />;
+                  return (
+                    <IconComponent className="w-4 h-4 text-gray-500 font-medium" />
+                  );
                 })()
               ) : (
-                <Sparkles className="w-4 h-4 text-slate-500" />
+                <Sparkles className="w-4 h-4 text-gray-500 font-medium" />
               )}
             </div>
             <div className="text-left">
               <div className="font-medium text-slate-900">
                 {selectedModelInfo?.name || "Select AI Model"}
               </div>
-              <div className="text-sm text-slate-500">
+              <div className="text-sm text-gray-500 font-medium">
                 {selectedModelInfo?.provider || "No provider"} •{" "}
                 {selectedModelInfo?.type || "text"}
               </div>

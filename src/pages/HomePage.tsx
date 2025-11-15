@@ -349,7 +349,7 @@ function HomePage() {
                       <motion.button
                         key={section}
                         onClick={() => scrollToSection(section)}
-                        className="block w-full text-left px-3 py-2.5 text-slate-700 hover:bg-gray-100 rounded-lg capitalize"
+                        className="block w-full text-left px-3 py-2.5 text-slate-700 hover:bg-gray-100 rounded-md capitalize"
                         initial={{ x: -50, opacity: 0 }}
                         animate={{ x: 0, opacity: 1 }}
                         transition={{ delay: index * 0.05 }}
@@ -361,7 +361,7 @@ function HomePage() {
                   )}
                   <motion.button
                     onClick={() => navigate("/auth")}
-                    className="block w-full text-left px-3 py-2.5 bg-blue-600 text-white hover:bg-blue-700 rounded-lg"
+                    className="block w-full text-left px-3 py-2.5 bg-blue-600 text-white hover:bg-blue-700 rounded-md"
                     initial={{ x: -50, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ delay: 0.25 }}
@@ -555,7 +555,9 @@ function HomePage() {
                 <div className="text-4xl md:text-5xl font-bold text-[#000] mb-2">
                   <Counter end={stat.end} suffix={stat.suffix} />
                 </div>
-                <div className="text-slate-500 font-medium">{stat.label}</div>
+                <div className="text-gray-500 font-medium font-medium">
+                  {stat.label}
+                </div>
               </motion.div>
             ))}
           </motion.div>
@@ -586,7 +588,7 @@ function HomePage() {
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               Powerful Features
             </h2>
-            <p className="text-xl text-slate-500 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-500 font-medium max-w-2xl mx-auto">
               Everything you need to dominate social media marketing in one
               place
             </p>
@@ -603,7 +605,7 @@ function HomePage() {
               <motion.div
                 key={index}
                 variants={itemVariants}
-                className="bg-white p-8 rounded-2xl shadow-md border border-gray-100 cursor-pointer group"
+                className="bg-white p-8 rounded-md shadow-md border border-gray-100 cursor-pointer group"
                 whileHover={{ y: -8, scale: 1.02 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
@@ -617,7 +619,7 @@ function HomePage() {
                 <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-[#7650e3] transition-colors">
                   {feature.title}
                 </h3>
-                <p className="text-slate-500 leading-relaxed">
+                <p className="text-gray-500 font-medium leading-relaxed">
                   {feature.description}
                 </p>
                 <motion.div
@@ -678,14 +680,14 @@ function HomePage() {
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               See Omnishare in Action
             </h2>
-            <p className="text-xl text-slate-500">
+            <p className="text-xl text-gray-500 font-medium">
               Watch how easy it is to create and schedule content across all
               platforms
             </p>
           </motion.div>
 
           <motion.div
-            className="relative rounded-2xl overflow-hidden shadow-2xl bg-gray-900 aspect-video"
+            className="relative rounded-md overflow-hidden shadow-2xl bg-gray-900 aspect-video"
             initial={{ opacity: 0, scale: 0.9, y: 50 }}
             whileInView={{ opacity: 1, scale: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
@@ -736,7 +738,7 @@ function HomePage() {
             <h2 className="text-4xl md:text-5xl font-bold text-[#7650e3] mb-4">
               Simple, Transparent Pricing
             </h2>
-            <p className="text-xl text-slate-500">
+            <p className="text-xl text-gray-500 font-medium">
               Choose the plan that's right for your business
             </p>
           </motion.div>
@@ -754,13 +756,13 @@ function HomePage() {
                 <motion.div
                   key={tier.id}
                   variants={itemVariants}
-                  className="rounded-2xl bg-gray-100 overflow-hidden shadow-md relative group"
+                  className="rounded-md bg-gray-100 overflow-hidden shadow-md relative group"
                   whileHover={{ y: -8, scale: 1.02 }}
                   transition={{ type: "spring", stiffness: 300 }}
                 >
                   <motion.div className="absolute inset-0 bg-gradient-to-br from-[#7650e3]/5 to-[#6366F1]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                  <div className="bg-gradient-to-br from-[#c7bdef] to-[#c7bdef] px-10 py-10 h-64 text-center relative">
+                  <div className="bg-gradient-to-br from-[#c7bdef] to-[#c7bdef] px-6 py-10 h-64 text-center relative">
                     <motion.h3
                       className="text-[#7650e3] text-3xl font-semibold mb-3"
                       whileHover={{ y: -5 }}
@@ -862,7 +864,7 @@ function HomePage() {
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               Loved by Creators Worldwide
             </h2>
-            <p className="text-xl text-slate-500">
+            <p className="text-xl text-gray-500 font-medium">
               See what our customers have to say about Omnishare
             </p>
           </motion.div>
@@ -883,7 +885,7 @@ function HomePage() {
                   scale: 0.9,
                 }}
                 transition={{ type: "spring", stiffness: 100, damping: 20 }}
-                className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 max-w-4xl mx-auto"
+                className="bg-white rounded-md shadow-2xl p-8 md:p-12 max-w-4xl mx-auto"
               >
                 <div className="flex items-center justify-center mb-6">
                   {[...Array(reviews[currentReviewIndex].rating)].map(
@@ -920,10 +922,10 @@ function HomePage() {
                     <p className="font-bold text-gray-900 text-lg">
                       {reviews[currentReviewIndex].name}
                     </p>
-                    <p className="text-slate-500">
+                    <p className="text-gray-500 font-medium">
                       {reviews[currentReviewIndex].role}
                     </p>
-                    <p className="text-slate-500 text-sm">
+                    <p className="text-gray-500 font-medium text-sm">
                       {reviews[currentReviewIndex].company}
                     </p>
                   </div>
@@ -1002,7 +1004,7 @@ function HomePage() {
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               Contact Us
             </h2>
-            <p className="text-xl text-slate-500 mb-8">
+            <p className="text-xl text-gray-500 font-medium mb-8">
               Have questions? We'd love to hear from you.
             </p>
             <motion.button
@@ -1044,7 +1046,7 @@ function HomePage() {
                     </label>
                     <input
                       type="text"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7650e3] focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#7650e3] focus:border-transparent transition-all"
                       placeholder="John"
                     />
                   </motion.div>
@@ -1058,7 +1060,7 @@ function HomePage() {
                     </label>
                     <input
                       type="text"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7650e3] focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#7650e3] focus:border-transparent transition-all"
                       placeholder="Doe"
                     />
                   </motion.div>
@@ -1074,7 +1076,7 @@ function HomePage() {
                   </label>
                   <input
                     type="email"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7650e3] focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#7650e3] focus:border-transparent transition-all"
                     placeholder="john@example.com"
                   />
                 </motion.div>
@@ -1089,14 +1091,14 @@ function HomePage() {
                   </label>
                   <textarea
                     rows={6}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7650e3] focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#7650e3] focus:border-transparent transition-all"
                     placeholder="Tell us about your needs..."
                   />
                 </motion.div>
 
                 <motion.button
                   type="submit"
-                  className="w-full bg-[#7650e3] text-white py-4 rounded-lg font-semibold text-lg shadow-lg"
+                  className="w-full bg-[#7650e3] text-white py-4 rounded-md font-semibold text-lg shadow-lg"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4, type: "spring" }}
@@ -1127,7 +1129,7 @@ function HomePage() {
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               Frequently Asked Questions
             </h2>
-            <p className="text-xl text-slate-500">
+            <p className="text-xl text-gray-500 font-medium">
               Everything you need to know about Omnishare
             </p>
           </motion.div>
@@ -1143,7 +1145,7 @@ function HomePage() {
               <motion.div
                 key={index}
                 variants={itemVariants}
-                className="bg-white rounded-xl shadow-md overflow-hidden transition-all hover:shadow-lg"
+                className="bg-white rounded-md shadow-md overflow-hidden transition-all hover:shadow-lg"
                 whileHover={{ x: 5 }}
               >
                 <motion.button
@@ -1177,7 +1179,7 @@ function HomePage() {
                       transition={{ duration: 0.3, ease: "easeInOut" }}
                       className="overflow-hidden"
                     >
-                      <div className="px-6 pb-5 text-slate-500 leading-relaxed">
+                      <div className="px-6 pb-5 text-gray-500 font-medium leading-relaxed">
                         {faq.answer}
                       </div>
                     </motion.div>
@@ -1194,7 +1196,7 @@ function HomePage() {
             viewport={{ once: true }}
             transition={{ delay: 0.3 }}
           >
-            <p className="text-slate-500">
+            <p className="text-gray-500 font-medium">
               Still have questions? Scroll up to contact us.
             </p>
           </motion.div>

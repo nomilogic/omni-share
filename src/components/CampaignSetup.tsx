@@ -175,15 +175,15 @@ export const CampaignSetup: React.FC<CampaignSetupProps> = ({
   };
 
   return (
-    <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-md p-8">
+    <div className="max-w-4xl mx-auto bg-white rounded-md shadow-md p-8">
       <div className="text-center mb-8">
-        <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+        <div className="w-16 h-16 bg-blue-100 rounded-md flex items-center justify-center mx-auto mb-4">
           <Target className="w-8 h-8 text-blue-600" />
         </div>
         <h2 className="text-3xl font-bold text-slate-900 mb-2">
           Campaign Setup
         </h2>
-        <p className="text-slate-500">
+        <p className="text-gray-500 font-medium">
           Create your marketing campaign with targeted content strategy
         </p>
       </div>
@@ -317,7 +317,7 @@ export const CampaignSetup: React.FC<CampaignSetupProps> = ({
                 }
               >
                 <h3 className="font-medium text-slate-900">{tone.label}</h3>
-                <p className="text-sm text-slate-500 mt-1">
+                <p className="text-sm text-gray-500 font-medium mt-1">
                   {tone.description}
                 </p>
               </div>

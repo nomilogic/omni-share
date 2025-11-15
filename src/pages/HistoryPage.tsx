@@ -175,9 +175,8 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
       );
     }
 
-    // Extract background color from the color classes
     const bgColorMatch = colorClasses.match(/bg-[\w-]+/);
-    const bgColor = bgColorMatch ? bgColorMatch[0] : "bg-gray-600";
+    const bgColor = bgColorMatch ? bgColorMatch[0] : "bg-blue-600";
 
     return (
       <div
@@ -367,34 +366,20 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
   );
 
   return (
-    <div className="h-fit p-4 ">
+    <div className="h-fit md:p-4 p-3 ">
       {/* Header */}
       <div className="">
-        <div className="flex items-center justify-between max-w-4xl mx-auto mb-6">
-          <div>
+        <div className=" max-w-5xl mx-auto mb-6">
+          <div className="flex justify-between items-center gap-4">
             <h2 className="text-3xl font-semibold theme-text-primary mb-2">
               Post History
             </h2>
-
-            <p className="text-sm text-slate-500">
-              View all your published posts across platforms
-            </p>
-          </div>
-          <div className="flex flex-col items-center gap-1">
-            {unreadCount == 0 && (
-              <button
-                onClick={markAllAsRead}
-                className="text-xs px-2 py-1 font-medium rounded-md  border border-purple-600 text-purple-600 transition-colors"
-              >
-                Mark all as read
-              </button>
-            )}
             <button
               onClick={() => setShowFilters(!showFilters)}
               className={`flex items-center gap-2 text-sm font-medium px-3 py-1.5 rounded-md border transition-colors ${
                 showFilters || hasActiveFilters
                   ? "bg-blue-50 border-blue-200 text-blue-700"
-                  : "bg-white border-gray-200 text-slate-700 hover:bg-gray-50"
+                  : "bg-white border-purple-600  text-purple-600 "
               }`}
             >
               <Filter className="w-3 h-3" />
@@ -413,7 +398,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
 
         {/* Filters Section */}
         {showFilters && (
-          <div className="max-w-4xl mx-auto mb-6 p-4 bg-white border border-gray-200 rounded-md">
+          <div className="w-full mb-6 p-4 bg-white border border-gray-200 rounded-md">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               {/* Read Status Filter */}
               <div>
@@ -491,7 +476,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
               <div className="mt-4 flex justify-end">
                 <button
                   onClick={resetFilters}
-                  className="flex items-center gap-2 text-sm px-3 py-1 text-slate-500 hover:text-slate-800 hover:bg-gray-100 rounded-md transition-colors"
+                  className="flex items-center gap-2 text-sm px-3 py-1 text-gray-500 font-medium hover:text-slate-800 hover:bg-gray-100 rounded-md transition-colors"
                 >
                   <RotateCcw className="w-4 h-4" />
                   Reset Filters
@@ -502,8 +487,8 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
         )}
 
         {hasActiveFilters && (
-          <div className="max-w-4xl mx-auto mb-4">
-            <div className="flex items-center gap-2 text-sm text-slate-500">
+          <div className=" mb-4">
+            <div className="flex items-center gap-2 text-sm text-gray-500 font-medium">
               <span>Showing:</span>
               {readFilter !== "all" && (
                 <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded">
@@ -525,7 +510,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
                     : "Last 30 days"}
                 </span>
               )}
-              <span className="text-slate-500">
+              <span className="text-gray-500 font-medium">
                 • {filteredPosts.length} posts
               </span>
             </div>
@@ -533,7 +518,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
         )}
       </div>
 
-      <div className="w-full lg:max-w-4xl mx-auto ">
+      <div className="w-full  mx-auto ">
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
             <p className="text-red-800 text-sm">{error}</p>
@@ -550,7 +535,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
                 ? "No posts match your filters"
                 : "No posts yet"}
             </h3>
-            <p className="text-slate-500">
+            <p className="text-gray-500 font-medium">
               {hasActiveFilters
                 ? "Try adjusting your filters to see more posts"
                 : "Your published posts will appear here"}
@@ -570,9 +555,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
               <div
                 key={post.id}
                 className={`bg-white border rounded-md overflow-hidden hover:shadow-md transition-all duration-200 ${
-                  !post.isRead
-                    ? "border-blue-200 bg-blue-50/30"
-                    : "border-gray-200"
+                  !post.isRead ? " bg-blue-50/30" : "border-gray-100"
                 }`}
               >
                 {/* Post Header */}
@@ -588,7 +571,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
                           <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
                         )}
                       </div>
-                      <p className="text-sm text-slate-500 flex items-center gap-1">
+                      <p className="text-sm text-gray-500 font-medium flex items-center gap-1">
                         <Clock className="w-3 h-3" />
                         {formatTimeAgo(post.publishedAt)}
                       </p>
@@ -605,10 +588,11 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
                       title={post.isRead ? "Read" : "Mark as read"}
                     ></button>
                     <a
+                      onClick={markAllAsRead}
                       href={post.postUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-1 rounded-full text-slate-500 hover:text-blue-600 hover:bg-blue-100 transition-colors"
+                      className="p-1 rounded-full text-gray-500 font-medium hover:text-blue-600 hover:bg-blue-100 transition-colors"
                       title="Open original post"
                     >
                       <ExternalLink className="w-4 h-4" />
@@ -632,10 +616,10 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
                           <h3 className="font-semibold text-slate-900 text-sm line-clamp-2 mb-1">
                             {post.metadata?.title || post.content}
                           </h3>
-                          <p className="text-slate-500 text-sm line-clamp-2 mb-2">
+                          <p className="text-gray-500 font-medium text-sm line-clamp-2 mb-2">
                             {post.metadata?.description || post.content}
                           </p>
-                          <p className="text-xs text-slate-500 mb-2 ">
+                          <p className="text-xs text-gray-500 font-medium mb-2 ">
                             {post.platform} •{" "}
                             {post.postUrl && new URL(post.postUrl).hostname}
                           </p>

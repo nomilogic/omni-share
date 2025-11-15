@@ -180,7 +180,7 @@ export const AITrainingDashboard: React.FC<AITrainingDashboardProps> = ({
       className={`flex items-center gap-2 px-4 py-2.5 rounded-md text-sm font-medium transition-colors ${
         activeTab === id
           ? "bg-blue-100 text-blue-700 border-blue-200"
-          : "text-slate-500 hover:text-slate-900 hover:bg-gray-50"
+          : "text-gray-500 font-medium hover:text-slate-900 hover:bg-gray-50"
       } border`}
     >
       {icon}
@@ -190,7 +190,7 @@ export const AITrainingDashboard: React.FC<AITrainingDashboardProps> = ({
           className={`text-xs px-2 py-0.5 rounded-full ${
             activeTab === id
               ? "bg-blue-200 text-blue-800"
-              : "bg-gray-200 text-slate-500"
+              : "bg-gray-200 text-gray-500 font-medium"
           }`}
         >
           {count}
@@ -223,7 +223,9 @@ export const AITrainingDashboard: React.FC<AITrainingDashboardProps> = ({
       <div className="bg-white p-6 rounded-md border shadow-md">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-slate-500">{title}</p>
+            <p className="text-sm font-medium text-gray-500 font-medium">
+              {title}
+            </p>
             <p className="text-2xl font-bold text-slate-900">{value}</p>
             {change !== undefined && (
               <div
@@ -300,10 +302,10 @@ export const AITrainingDashboard: React.FC<AITrainingDashboardProps> = ({
                       {insight.insight}
                     </p>
                     <div className="flex items-center gap-2 mt-1">
-                      <span className="text-xs text-slate-500">
+                      <span className="text-xs text-gray-500 font-medium">
                         Confidence: {(insight.confidence * 100).toFixed(0)}%
                       </span>
-                      <span className="text-xs text-slate-500">
+                      <span className="text-xs text-gray-500 font-medium">
                         Impact: {insight.impact}/10
                       </span>
                     </div>
@@ -325,7 +327,7 @@ export const AITrainingDashboard: React.FC<AITrainingDashboardProps> = ({
             <h3 className="text-lg font-semibold text-slate-900">
               Active Training Criteria
             </h3>
-            <Settings className="w-5 h-5 text-slate-500" />
+            <Settings className="w-5 h-5 text-gray-500 font-medium" />
           </div>
           <div className="space-y-3">
             {criteria.slice(0, 5).map((criterion) => (
@@ -337,7 +339,9 @@ export const AITrainingDashboard: React.FC<AITrainingDashboardProps> = ({
                   <p className="text-sm font-medium text-slate-900">
                     {criterion.name}
                   </p>
-                  <p className="text-xs text-slate-500">{criterion.category}</p>
+                  <p className="text-xs text-gray-500 font-medium">
+                    {criterion.category}
+                  </p>
                 </div>
                 <div className="flex items-center gap-2">
                   <span
@@ -349,7 +353,7 @@ export const AITrainingDashboard: React.FC<AITrainingDashboardProps> = ({
                   >
                     {criterion.isActive ? "Active" : "Inactive"}
                   </span>
-                  <span className="text-xs text-slate-500">
+                  <span className="text-xs text-gray-500 font-medium">
                     Priority: {criterion.priority}
                   </span>
                 </div>
@@ -374,7 +378,7 @@ export const AITrainingDashboard: React.FC<AITrainingDashboardProps> = ({
           <h2 className="text-xl font-semibold text-slate-900">
             Training Criteria
           </h2>
-          <p className="text-slate-500">
+          <p className="text-gray-500 font-medium">
             Define and manage AI learning parameters
           </p>
         </div>
@@ -432,10 +436,10 @@ export const AITrainingDashboard: React.FC<AITrainingDashboardProps> = ({
                       {criterion.category}
                     </span>
                   </div>
-                  <p className="text-sm text-slate-500 mb-3">
+                  <p className="text-sm text-gray-500 font-medium mb-3">
                     {criterion.description}
                   </p>
-                  <div className="flex items-center gap-4 text-sm text-slate-500">
+                  <div className="flex items-center gap-4 text-sm text-gray-500 font-medium">
                     <span>Priority: {criterion.priority}/10</span>
                     <span>Conditions: {criterion.conditions.length}</span>
                     <span>
@@ -447,7 +451,7 @@ export const AITrainingDashboard: React.FC<AITrainingDashboardProps> = ({
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setSelectedCriteria(criterion)}
-                    className="p-2 text-gray-400 hover:text-slate-500"
+                    className="p-2 text-gray-400 hover:text-gray-500 font-medium"
                   >
                     <Eye className="w-4 h-4" />
                   </button>
@@ -455,7 +459,7 @@ export const AITrainingDashboard: React.FC<AITrainingDashboardProps> = ({
                     onClick={() => {
                       /* Edit functionality */
                     }}
-                    className="p-2 text-gray-400 hover:text-slate-500"
+                    className="p-2 text-gray-400 hover:text-gray-500 font-medium"
                   >
                     <Edit className="w-4 h-4" />
                   </button>
@@ -483,7 +487,7 @@ export const AITrainingDashboard: React.FC<AITrainingDashboardProps> = ({
           <h2 className="text-xl font-semibold text-slate-900">
             Learning Insights
           </h2>
-          <p className="text-slate-500">
+          <p className="text-gray-500 font-medium">
             AI-generated recommendations and discoveries
           </p>
         </div>
@@ -510,13 +514,13 @@ export const AITrainingDashboard: React.FC<AITrainingDashboardProps> = ({
                   </h3>
                   <div className="flex items-center gap-1">
                     <Star className="w-4 h-4 text-yellow-500" />
-                    <span className="text-sm text-slate-500">
+                    <span className="text-sm text-gray-500 font-medium">
                       Priority: {insight.implementationPriority}
                     </span>
                   </div>
                 </div>
                 <p className="text-slate-700 mb-3">{insight.insight}</p>
-                <div className="flex items-center gap-4 text-sm text-slate-500">
+                <div className="flex items-center gap-4 text-sm text-gray-500 font-medium">
                   <span>
                     Confidence: {(insight.confidence * 100).toFixed(0)}%
                   </span>
@@ -574,7 +578,7 @@ export const AITrainingDashboard: React.FC<AITrainingDashboardProps> = ({
           <h2 className="text-xl font-semibold text-slate-900">
             Discovered Patterns
           </h2>
-          <p className="text-slate-500">
+          <p className="text-gray-500 font-medium">
             Behavioral and performance patterns in your data
           </p>
         </div>
@@ -613,7 +617,7 @@ export const AITrainingDashboard: React.FC<AITrainingDashboardProps> = ({
                     </span>
                   </div>
                 </div>
-                <div className="flex items-center gap-4 text-sm text-slate-500 mb-3">
+                <div className="flex items-center gap-4 text-sm text-gray-500 font-medium mb-3">
                   <span>Frequency: {pattern.frequency}</span>
                   <span>Impact: {pattern.impact}/10</span>
                   <span>
@@ -650,7 +654,7 @@ export const AITrainingDashboard: React.FC<AITrainingDashboardProps> = ({
           <h2 className="text-xl font-semibold text-slate-900">
             Training Reports
           </h2>
-          <p className="text-slate-500">
+          <p className="text-gray-500 font-medium">
             Comprehensive analysis of AI learning progress
           </p>
         </div>
@@ -668,7 +672,7 @@ export const AITrainingDashboard: React.FC<AITrainingDashboardProps> = ({
         <h3 className="text-lg font-medium text-slate-900 mb-2">
           Reports Coming Soon
         </h3>
-        <p className="text-slate-500 mb-4">
+        <p className="text-gray-500 font-medium mb-4">
           Comprehensive training reports will be available to track AI learning
           progress and performance improvements.
         </p>
@@ -696,20 +700,20 @@ export const AITrainingDashboard: React.FC<AITrainingDashboardProps> = ({
             <h1 className="text-2xl font-bold text-slate-900">
               AI Training Dashboard
             </h1>
-            <p className="text-slate-500">
+            <p className="text-gray-500 font-medium">
               Monitor and optimize AI learning performance
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 text-sm text-slate-500">
+          <div className="flex items-center gap-2 text-sm text-gray-500 font-medium">
             <Database className="w-4 h-4" />
             <span>Last updated: {new Date().toLocaleTimeString()}</span>
           </div>
           <button
             onClick={loadDashboardData}
-            className="p-2 text-slate-500 hover:text-slate-900 hover:bg-gray-100 rounded-md"
+            className="p-2 text-gray-500 font-medium hover:text-slate-900 hover:bg-gray-100 rounded-md"
           >
             <RefreshCw className="w-5 h-5" />
           </button>

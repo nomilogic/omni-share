@@ -82,7 +82,7 @@ export default function AddonSuccessPage() {
               ? "Payment Successful!"
               : "Payment Status"}
           </h1>
-          <p className="text-slate-500">
+          <p className="text-gray-500 font-medium">
             {loading
               ? "Please wait while we confirm your add-on."
               : confirmed
@@ -117,7 +117,7 @@ function SessionId({ value }: { value: string }) {
 
   return (
     <div>
-      <label className="mb-2 block text-sm font-medium text-slate-500">
+      <label className="mb-2 block text-sm font-medium text-gray-500 font-medium">
         Session ID
       </label>
       <div className="flex items-stretch gap-2">

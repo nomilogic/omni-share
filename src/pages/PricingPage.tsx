@@ -129,7 +129,7 @@ export const PricingPage: React.FC = () => {
       }
     } catch (error) {
       console.error("Failed to buy package:", error);
-      alert("Something went wrong while processing your purchase.");
+      alert("Something went wrong while processing your Buy.");
     } finally {
       setLoadingPackage(false);
       setConfirmOpen(false);
@@ -253,58 +253,46 @@ export const PricingPage: React.FC = () => {
   };
 
   return (
-    <div className="bg-white w-full h-full rounded-md shadow-md px-5 py-10 min-h-[70vh] transition-colors ">
+    <div className="w-full h-full rounded-md mb-10 md:px-4 px-3 py-5 min-h-screen transition-colors ">
       <div className="flex justify-between items-center mb-5 border-b border-gray-200 ">
         <div className="flex flex-1">
           <button
             onClick={() => handleTabChange("")}
-            className={`px-5 py-2.5  font-semibold transition-all border-b-2 rounded-t-lg ${
+            className={`px-5 pb-2  font-semibold transition-all border-b-2 rounded-t-lg  ${
               activeTab === ""
-                ? "border-[#7650e3] text-white bg-[#7650e3]"
-                : "border-transparent text-[#7650e3] hover:text-[#7650e3]"
+                ? "border-purple-600 border-b text-purple-600"
+                : ""
             }`}
           >
-            Packages
+            Planes
           </button>
           {activePackage?.package?.tier !== "free" && !hasCancelRequested && (
             <button
               onClick={() => handleTabChange("addons")}
-              className={`px-5 py-2.5  font-semibold transition-all border-b-2 rounded-t-lg ${
+              className={`px-5 pb-2  font-semibold transition-all border-b-2 rounded-t-lg ${
                 activeTab === "addons"
-                  ? "border-[#7650e3] text-white bg-[#7650e3]"
-                  : "border-transparent text-[#7650e3] hover:text-[#7650e3]"
+                  ? "border-purple-600 border-b  text-purple-600"
+                  : ""
               }`}
             >
-              Credits
+              Buy Omni Coins
             </button>
           )}
         </div>
-
-        {/* {hasCancelRequested && (
-          <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-md px-5 py-2.5">
-            <Calendar className="w-4 h-4 text-[#7650e3]" />
-            <span className="text-sm font-medium text-red-900">
-              Your subscription will be canceled on{" "}
-              {formatDate(
-                activePackage?.expiredAt
-                  ? new Date(activePackage.expiredAt)
-                  : null
-              )}
-            </span>
-            <button
-              onClick={() => setReactivateOpen(true)}
-              className="ml-2 text-[#7650e3] hover:text-red-900 font-medium text-sm underline"
-            >
-              Reactivate
-            </button>
-          </div>
-        )} */}
       </div>
-
       {activeTab === "" && (
         <>
-          <div className="grid xl:grid-cols-3 lg:grid-cols-2 gap-5 mx-auto">
-            {packages.map((tier: any) => {
+          <div className="grid xl:grid-cols-3 lg:grid-cols-2 gap-5 mx-auto order-2 md:order-1">
+            {packages.map((tier: any, index: any) => {
+              const mobileOrder =
+                index === 0 ? "order-3" : index === 1 ? "order-2" : "order-1";
+
+              const desktopOrder =
+                index === 0
+                  ? "md:order-1"
+                  : index === 1
+                  ? "md:order-2"
+                  : "md:order-3";
               const isCurrentPlan =
                 activePackage?.packageId === tier.id && activePackage?.isActive;
               const isPendingDowngradePackage =
@@ -325,7 +313,7 @@ export const PricingPage: React.FC = () => {
               return (
                 <div
                   key={tier.id}
-                  className={`rounded-2xl bg-gray-100 overflow-hidden shadow-md transition-transform duration-300 ${
+                  className={`rounded-md bg-white overflow-hidden shadow-md transition-transform duration-300 ${
                     !isLockedByCancel && !isLockedByDowngrade
                       ? "hover:shadow-md hover:-translate-y-2"
                       : ""
@@ -333,48 +321,21 @@ export const PricingPage: React.FC = () => {
                     isLockedByCancel || isLockedByDowngrade
                       ? "opacity-60 cursor-not-allowed"
                       : "opacity-100"
-                  } relative`}
+                  } relative       ${mobileOrder} ${desktopOrder}`}
                 >
-                  <div className="bg-gradient-to-br from-[#c7bdef] to-[#c7bdef] px-10 py-10 h-64 text-center relative">
-                    {/* Badges */}
-                    {(isCurrentPlan ||
-                      isPendingDowngradePackage ||
-                      isLockedByCancel ||
-                      isLockedByDowngrade) && (
-                      <div className="absolute top-2.5 right-3 flex justify-center">
-                        <span
-                          className={`px-5 py-1.5 rounded-full text-xs font-semibold ${
-                            isCurrentPlan
-                              ? "bg-[#7650e3] text-white"
-                              : isPendingDowngradePackage
-                              ? "bg-purple-600 text-white"
-                              : "bg-gray-500 text-white"
-                          }`}
-                        >
-                          {isCurrentPlan
-                            ? "Current Plan"
-                            : isPendingDowngradePackage
-                            ? "Pending Downgrade"
-                            : "Locked"}
-                        </span>
-                      </div>
-                    )}
-
-                    {/* Plan Name */}
-                    <h3 className="text-[#7650e3] text-3xl font-semibold mb-3">
+                  <div className="bg-gradient-to-br from-[#c7bdef] to-[#c7bdef] px-6  flex flex-col justify-start items-center min-h-56 pt-7 text-center relative">
+                    <h3 className="text-[#7650e3] text-2xl font-bold -mb-1">
                       {tier.name}
                     </h3>
-
-                    {/* Price */}
-                    <div className="flex items-baseline justify-center gap-3 mb-6">
-                      <span className="text-[40px] text-purple-600 font-semibold">
-                        <span className="text-[#7650e3] font-semibold text-2xl mr-1">
+                    <div className="flex items-baseline justify-center gap-1 mb-3">
+                      <span className="text-[50px]   text-purple-600 font-bold">
+                        <span className="text-[#7650e3] font-bold text-2xl mr-1">
                           $
                         </span>
                         {tier.amount}
                       </span>
-                      <span className="text-2xl font-medium text-[#7650e3]">
-                        /{isFree ? "Forever" : "Month"}
+                      <span className="text-2xl font-bold text-[#7650e3]">
+                        / {isFree ? "Forever" : "Month"}
                       </span>
                     </div>
 
@@ -410,7 +371,7 @@ export const PricingPage: React.FC = () => {
                           : isCurrentPlan
                           ? "Active"
                           : isPendingDowngradePackage
-                          ? "Cancel Downgrade"
+                          ? "Cancel Request"
                           : isLowerPlan
                           ? "Switch Plan"
                           : "Switch Plan"}
@@ -419,8 +380,8 @@ export const PricingPage: React.FC = () => {
                   </div>
 
                   <div className=" px-6 py-4">
-                    <div className="mb-5 border-b-2 border-purple-600  h-[120px] text-center">
-                      <p className="text-xl text-purple-600 font-semibold mb-2 ">
+                    <div className="mb-4 border-b-2 border-purple-600  h-[115px] text-center">
+                      <p className=" text-purple-600 font-bold text-2xl mb-2 ">
                         Ideal for:
                       </p>
                       <p className="text-lg text-slate-800 font-medium">
@@ -428,7 +389,7 @@ export const PricingPage: React.FC = () => {
                       </p>
                     </div>
 
-                    <ul className="space-y-4">
+                    <ul className="space-y-3 pb-2">
                       {tier.features?.map((feature: string, idx: number) => (
                         <li key={idx} className="flex items-start gap-3">
                           <Check className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
@@ -445,7 +406,6 @@ export const PricingPage: React.FC = () => {
           </div>
         </>
       )}
-
       {activePackage?.package?.tier !== "free" && activeTab === "addons" && (
         <div className="grid xl:grid-cols-3  md:grid-cols-2 gap-5">
           {addons?.length === 0 ? (
@@ -461,10 +421,10 @@ export const PricingPage: React.FC = () => {
               return (
                 <div
                   key={addon.id}
-                  className="rounded-md border-3 border-gray-200 shadow-md transform transition-all relative w-full pt-3"
+                  className="rounded-md border-3 border-gray-200 shadow-md  bg-white transform transition-all relative w-full pt-3"
                 >
                   <div className="text-left font-medium text-3xl px-5 py-2.5  pb-[4rem]">
-                    <div className="flex items-center gap-3 mb-1">
+                    <div className="flex items-center gap-1 mb-1">
                       <div className="text-[22px] font-semibold text-slate-900">
                         {totalCoins?.toLocaleString()}
                       </div>
@@ -477,7 +437,8 @@ export const PricingPage: React.FC = () => {
                     <div className="text-[0.8rem] text-slate-800 -mt-[18px]  w-full">
                       {hasSale ? (
                         <>
-                          Total: {addon.coins.toLocaleString()}+
+                          Total: {addon.coins.toLocaleString()}{" "}
+                          <span className="mx-1">+</span>
                           <span className="text-[#7650e3] inline-block">
                             {bonusAmount.toLocaleString()} Bonus
                           </span>
@@ -489,12 +450,12 @@ export const PricingPage: React.FC = () => {
 
                     <Icon
                       name="spiral-grey"
-                      className="absolute -z-10 top-4 right-3"
+                      className="absolute -z-10 top-3 right-2"
                       size={120}
                     />
                   </div>
 
-                  <div className="flex justify-between theme-bg-quaternary items-center px-5  py-2.5 rounded-b-md">
+                  <div className="flex justify-between bg-purple-100 items-center px-5  py-2.5 rounded-b-md">
                     <p className="text-center text-2xl text-purple-600 font-semibold ">
                       ${addon.amount.toLocaleString()}
                     </p>
@@ -507,8 +468,8 @@ export const PricingPage: React.FC = () => {
                       className="rounded-md theme-bg-light  w-fit  px-3 disabled:cursor-not-allowed  font-bold text-base py-1  border-2 border-[#7650e3] text-[#7650e3] hover:bg-[#7650e3] hover:text-white"
                     >
                       {selectedAddon?.id === addon?.id
-                        ? "Purchasing..."
-                        : "Purchase"}
+                        ? "Buying...."
+                        : "Buy Now"}
                     </button>
                   </div>
                 </div>
@@ -517,42 +478,45 @@ export const PricingPage: React.FC = () => {
           )}
         </div>
       )}
-
       {reactivateOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-2xl shadow-md w-full max-w-md p-8">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl text-purple-600 font-semibold">
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-gray-50 rounded-md shadow-md w-full max-w-md px-8 py-6 relative">
+            <div className="flex justify-between items-center mb-3">
+              <h2 className="text-2xl font-bold text-purple-700">
                 Reactivate Your Subscription
               </h2>
-              <button
-                onClick={handleClosePopup}
-                className="text-gray-400 hover:text-gray-600 transition-colors p-0.5 mt-1 rounded-full border border-purple-600"
-                aria-label="Close"
-              >
-                <X className="text-purple-600 w-4 h-4" />
-              </button>
             </div>
 
-            <p className="text-[#7650e3] mb-8">
+            <p className="text-gray-500 text-sm mb-6">
               Are you sure you want to reactivate your subscription? Your{" "}
-              <span className="font-semibold">{currentTier?.name}</span> plan
-              will continue to be billed.
+              <span className="font-semibold mr-1 text-purple-600">
+                {currentTier?.name} Plan
+              </span>
+              will continue.
             </p>
 
-            <div className="flex justify-between items-center gap-2 w-full">
+            {/* Buttons */}
+            <div className="flex gap-3">
               <button
                 onClick={handleClosePopup}
-                className="px-3 py-2.5 w-full  border border-purple-600 rounded-md font-semibold text-[#7650e3] hover:bg-gray-50 transition-colors"
+                className="flex-1 py-2.5 border border-purple-600 text-purple-600 font-semibold rounded-md hover:bg-purple-50 transition"
               >
-                Keep Canceled
+                Back
               </button>
+
               <button
                 onClick={reactivateSubscription}
                 disabled={isCanceled}
-                className="px-3 py-2.5 w-full   justify-center border border-purple-600 bg-[#7650e3] text-white rounded-md font-semibold hover:bg-[#5a3dc9] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                className="flex-1 py-2.5 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isCanceled ? <>Reactivating...</> : "Yes, Reactivate"}
+                {isCanceled ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Confirming...
+                  </>
+                ) : (
+                  "Confirm "
+                )}
               </button>
             </div>
           </div>
@@ -560,67 +524,53 @@ export const PricingPage: React.FC = () => {
       )}
 
       {cancelDowngradeOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-2xl shadow-md w-full max-w-md p-8">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl text-purple-600 font-semibold">
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-gray-50 rounded-md shadow-md w-full max-w-md px-8 py-6 relative">
+            {/* Header */}
+            <div className="flex justify-between items-center mb-3">
+              <h2 className="text-2xl font-bold text-purple-700">
                 Cancel Downgrade Request
               </h2>
-              <button
-                onClick={handleClosePopup}
-                className="text-gray-400 hover:text-gray-600 transition-colors p-0.5 mt-1 rounded-full border border-purple-600"
-                aria-label="Close"
-              >
-                <X className="text-purple-600 w-4 h-4" />
-              </button>
             </div>
 
-            <p className="text-[#7650e3] mb-4">
+            <p className="text-gray-500 text-sm mb-4">
               Are you sure you want to cancel your downgrade request? You will{" "}
-              <span className="font-semibold">
-                continue with your current plan
-              </span>{" "}
-              after expiration.
+              continue with your current plan after expiration.
             </p>
 
-            <div className="bg-blue-50 border border-blue-200 rounded-md p-4 mb-4">
-              <p className="text-sm text-[#7650e3]">
-                <span className="font-semibold text-[#7650e3]">
-                  Current Plan:
-                </span>{" "}
-                <span className="text-[#7650e3] font-semibold">
-                  {currentTier?.name}
-                </span>
+            {/* Info Box */}
+            <div className="bg-white border text-gray-500 border-purple-600 rounded-md p-4 mb-6">
+              <p className="text-sm font-semibold ">
+                <span className="">Active Plan:</span>{" "}
+                <span className="text-purple-600">{currentTier?.name}</span>
               </p>
-              <p className="text-sm text-[#7650e3] mt-2">
-                <span className="font-semibold text-[#7650e3]">
-                  Planned Downgrade:
+
+              <p className="text-sm font-semibold mt-2 border-b pb-3">
+                <span className=""> Monthly Cost:</span>{" "}
+                <span className=" text-purple-600 ">
+                  ${currentTier?.amount}/month
                 </span>{" "}
-                <span className="text-purple-600 font-semibold">
+              </p>
+
+              <p className="text-sm  font-semibold mt-2">
+                <span className="">Planned Downgrade:</span>{" "}
+                <span className=" text-purple-600 ">
                   {pendingDowngradePackage?.name}
                 </span>
               </p>
-              <p className="text-sm text-[#7650e3] mt-2">
-                <span className="font-semibold text-[#7650e3]">
-                  Current Monthly Cost:
-                </span>{" "}
-                <span className="text-[#7650e3] font-semibold">
-                  ${currentTier?.amount}/month
-                </span>
-              </p>
             </div>
-
-            <div className="flex justify-between items-center gap-2 w-full">
+            <div className="flex gap-3">
               <button
                 onClick={handleClosePopup}
-                className="px-6 py-2.5  border border-gray-300 rounded-md font-semibold text-[#7650e3] hover:bg-gray-50 transition-colors"
+                className="flex-1 py-2.5 border border-purple-600 text-purple-600 font-semibold rounded-md hover:bg-purple-50 transition"
               >
-                Keep Downgrade
+                Back
               </button>
+
               <button
                 onClick={handleCancelDowngradeRequest}
                 disabled={downgradeLoading}
-                className="px-6 py-2.5  bg-purple-600 text-white rounded-md font-semibold hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                className="flex-1 py-2.5 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {downgradeLoading ? (
                   <>
@@ -628,7 +578,7 @@ export const PricingPage: React.FC = () => {
                     Canceling...
                   </>
                 ) : (
-                  "Yes, Cancel Request"
+                  "Confirm"
                 )}
               </button>
             </div>
@@ -636,49 +586,171 @@ export const PricingPage: React.FC = () => {
         </div>
       )}
 
+      {/* done */}
       {downgradeRequestOpen && selectedPlan && (
-        <div className="fixed inset-0 backdrop-blur-sm bg-black/40 flex items-center justify-center p-4 z-50 w-full h-full">
-          <div className="bg-gray-50 p-6 rounded-xl shadow-md w-full max-w-md max-h-[80vh] overflow-auto">
-            {/* Header */}
+        <div className="fixed  inset-0 bg-black/30 backdrop-blur-sm flex lg:items-center justify-center p-4 z-50">
+          <div className="bg-gray-50 rounded-md shadow-md w-full max-w-md px-8 py-6 max-h-[80vh] h-fit overflow-auto relative">
             <div className="flex justify-between items-center mb-3">
-              <h2 className="text-2xl text-purple-600 font-semibold">
-                Request Downgrade
+              <h2 className="text-2xl font-bold text-purple-700">
+                Request Downgrade To
               </h2>
-              <button
-                onClick={handleClosePopup}
-                className="text-gray-400 hover:text-gray-600 transition-colors p-0.5 mt-1 rounded-full border border-purple-600"
-                aria-label="Close"
-              >
-                <X className="text-purple-600 w-4 h-4" />
-              </button>
             </div>
 
-            {/* Plan Info */}
-            <div className="bg-white border border-purple-600 p-4 rounded-lg text-center mb-6">
-              <p className="text-base text-purple-600 font-semibold mb-1">
+            {/* Price Box */}
+            <div className="border border-purple-600 bg-white rounded-md px-4 text-center mb-6">
+              <p className="text-2xl font-bold text-purple-700 mb-1 mt-2">
                 {selectedPlan.name}
               </p>
-              <div className="flex justify-center items-end space-x-4">
-                <span className="text-5xl text-purple-600">
+
+              <div className="flex justify-center items-end gap-4">
+                <span className="text-[45px] text-purple-600 font-bold leading-none">
                   ${selectedPlan.amount || "0.00"}
                 </span>
-                <div className="flex flex-col items-start justify-between h-10">
-                  <span className="text-sm text-purple-600 font-normal">
-                    USD
-                  </span>
-                  <span className="text-sm text-purple-600 font-normal">
+
+                <div className="flex flex-col items-start leading-none font-semibold">
+                  <span className="text-sm font-bold text-purple-700">USD</span>
+                  <span className="text-sm font-bold text-purple-700">
                     Month
                   </span>
                 </div>
               </div>
-              <p className="text-xs mt-2">Includes GST of $0.00.</p>
+              <hr className="h-[1px] bg-gray-100 my-2 " />
+              <p className="text-[12px]  font-semibold text-black  mb-3">
+                Includes GST of $0.00.
+              </p>
             </div>
 
-            <div className="bg-purple-50 border border-purple-200 text-purple-700 text-sm rounded-md p-3 mb-6">
-              <p className="font-semibold mb-1">Note:</p>
-              <p>
-                Downgrade will be scheduled at plan expiry. You can cancel it
-                anytime before it is applied.
+            <div className="flex gap-3">
+              <button
+                onClick={handleClosePopup}
+                className="flex-1 py-2.5 border border-purple-600 text-purple-600 font-semibold rounded-md hover:bg-purple-50 transition"
+              >
+                Back
+              </button>
+
+              <button
+                onClick={handleRequestDowngrade}
+                disabled={downgradeLoading}
+                className="flex-1 py-2.5 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {downgradeLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Confirming...
+                  </>
+                ) : (
+                  "Confirm"
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* done */}
+      {confirmOpen && selectedPlan && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex lg:items-center justify-center p-4 z-50">
+          <div className="bg-gray-50 rounded-md shadow-md w-full max-w-md px-8 py-6 h-fit relative">
+            <div className="flex justify-between items-center mb-3">
+              <h2 className="text-2xl font-bold text-purple-700 ">
+                Confirm Plan
+              </h2>
+            </div>
+
+            {/* Price Box */}
+            <div className="border border-purple-600 bg-white rounded-md  px-4 text-center ">
+              <p className="text-2xl font-bold text-purple-700 mb-1 mt-2">
+                {selectedPlan.name || "Standard"}
+              </p>
+
+              <div className="flex justify-center items-end gap-4">
+                <span className="text-[45px]   text-purple-600 font-bold leading-none">
+                  ${selectedPlan.amount + ".00" || "25.00"}
+                </span>
+
+                <div className="flex flex-col items-start leading-none  font-semibold">
+                  <span className="text-sm font-bold text-purple-700">USD</span>
+                  <span className="text-sm font-bold text-purple-700">
+                    Month
+                  </span>
+                </div>
+              </div>
+
+              <p className="text-[12px] font-semibold  text-black mt-2 mb-3">
+                Includes GST of $0.00.
+              </p>
+            </div>
+
+            <div className="text-center text-[13px] text-gray-500 font-medium my-6">
+              We are committed to secure payments for businesses and service
+              providers without any limitations.
+            </div>
+            <div>
+              <button
+                className="w-full py-2.5 border border-purple-600  bg-purple-600 text-white text-[15px] font-semibold rounded-md 
+                 hover:bg-purple-700 transition shadow-md flex items-center justify-center gap-2"
+                onClick={() => {
+                  if (activePackage?.package?.tier === "free") {
+                    handleSubscribe(selectedPlan);
+                  } else {
+                    handleUpdatePackage(selectedPlan);
+                  }
+                }}
+                disabled={loadingPackage}
+              >
+                {loadingPackage ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  "Proceed to Checkout"
+                )}
+              </button>
+              <button
+                onClick={handleClosePopup}
+                className="flex-1 py-2.5 w-full mt-2 border border-purple-600 text-purple-600 font-semibold rounded-md hover:bg-purple-50 transition"
+              >
+                Back
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* done */}
+      {cancelPackageOpen && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-gray-50 rounded-md shadow-md w-full max-w-md px-8 py-6 relative">
+            {/* Header */}
+            <div className="flex justify-between items-center mb-3">
+              <h2 className="text-2xl font-bold text-purple-700">
+                Cancel Your Subscription
+              </h2>
+
+              <button
+                onClick={handleClosePopup}
+                className="w-6 h-6 flex items-center justify-center border border-purple-700 rounded-full"
+              >
+                <X className="w-4 h-4 text-purple-700 stroke-[3px]" />
+              </button>
+            </div>
+
+            {/* Message */}
+            <p className="text-purple-700 font-medium mb-4">
+              We're sorry to see you go! Are you sure you want to cancel your{" "}
+              <span className="font-semibold">{currentTier?.name}</span> plan?
+            </p>
+
+            {/* Plan Info Box */}
+            <div className="bg-purple-50 border border-purple-200 rounded-md p-4 mb-6">
+              <p className="text-sm text-purple-700">
+                <span className="font-semibold text-purple-700">Plan:</span>{" "}
+                {currentTier?.name}
+              </p>
+              <p className="text-sm text-purple-700 mt-2">
+                <span className="font-semibold text-purple-700">
+                  Monthly Cost:
+                </span>{" "}
+                ${currentTier?.amount}/month
               </p>
             </div>
 
@@ -686,145 +758,15 @@ export const PricingPage: React.FC = () => {
             <div className="flex gap-3">
               <button
                 onClick={handleClosePopup}
-                className="flex-1 py-2.5 border border-purple-300 text-purple-600 font-semibold rounded-md hover:bg-purple-50 transition-colors"
-              >
-                Back
-              </button>
-              <button
-                onClick={handleRequestDowngrade}
-                disabled={downgradeLoading}
-                className="flex-1 py-2.5 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {downgradeLoading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Requesting...
-                  </>
-                ) : (
-                  "Confirm Downgrade"
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {confirmOpen && selectedPlan && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-gray-50 rounded-2xl shadow-md w-full max-w-md px-8 py-6  relative">
-            <div className="flex justify-between items-center mb-3">
-              <h2 className="text-[18px] text-purple-700 font-semibold">
-                Confirm Plan
-              </h2>
-
-              <button
-                onClick={handleClosePopup}
-                className="w-6 h-6 flex items-center justify-center border border-purple-700 rounded-full "
-              >
-                <X className="w-4 h-4 text-purple-700 stroke-[3px]" />
-              </button>
-            </div>
-
-            {/* Price Box */}
-            <div className="border border-purple-600 bg-white rounded-lg  px-4 text-center ">
-              <p className="text-lg text-purple-700 font-semibold mb-1 mt-2">
-                {selectedPlan.name || "Standard"}
-              </p>
-
-              <div className="flex justify-center items-end gap-4">
-                <span className="text-[32px] font-semibold text-purple-700 leading-none">
-                  ${selectedPlan.amount + ".00" || "25.00"}
-                </span>
-
-                <div className="flex flex-col items-start leading-none mb-1 font-semibold">
-                  <span className="text-[13px] text-purple-700">USD</span>
-                  <span className="text-[13px] text-purple-700">Month</span>
-                </div>
-              </div>
-
-              <p className="text-[12px]  text-black mt-2 mb-3">
-                Includes GST of $0.00.
-              </p>
-            </div>
-
-            <div className="text-center text-[13px] text-black font-medium my-6">
-              We are committed to secure payments for businesses and service
-              providers without any limitations.
-            </div>
-
-            <button
-              className="w-full py-2.5  bg-purple-600 text-white text-[15px] font-semibold rounded-md 
-                 hover:bg-purple-700 transition shadow-md flex items-center justify-center gap-2"
-              onClick={() => {
-                if (activePackage?.package?.tier === "free") {
-                  handleSubscribe(selectedPlan);
-                } else {
-                  handleUpdatePackage(selectedPlan);
-                }
-              }}
-              disabled={loadingPackage}
-            >
-              {loadingPackage ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Processing...
-                </>
-              ) : (
-                "Proceed to Checkout"
-              )}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {cancelPackageOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-2xl shadow-md w-full max-w-md p-8">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl text-purple-600 font-semibold">
-                Cancel Your Subscription
-              </h2>
-              <button
-                onClick={handleClosePopup}
-                className="p-1 hover:bg-gray-100 rounded-md transition-colors"
-              >
-                <X className="w-6 h-6 text-[#7650e3]" />
-              </button>
-            </div>
-
-            <p className="text-[#7650e3] mb-4">
-              We're sorry to see you go! Are you sure you want to cancel your{" "}
-              <span className="font-semibold">{currentTier?.name}</span> plan?
-            </p>
-
-            <div className="bg-red-50 border border-red-200 rounded-md p-4 mb-4">
-              <p className="text-sm text-[#7650e3]">
-                <span className="font-semibold text-[#7650e3]">Plan:</span>{" "}
-                <span className="text-[#7650e3] font-semibold">
-                  {currentTier?.name}
-                </span>
-              </p>
-              <p className="text-sm text-[#7650e3] mt-2">
-                <span className="font-semibold text-[#7650e3]">
-                  Monthly Cost:
-                </span>{" "}
-                <span className="text-[#7650e3] font-semibold">
-                  ${currentTier?.amount}/month
-                </span>
-              </p>
-            </div>
-
-            <div className="flex justify-between items-center gap-2 w-full">
-              <button
-                onClick={handleClosePopup}
-                className="px-6 py-2.5  border border-gray-300 rounded-md font-semibold text-[#7650e3] hover:bg-gray-50 transition-colors"
+                className="flex-1 py-2.5 border border-purple-600 text-purple-600 font-semibold rounded-md hover:bg-purple-50 transition"
               >
                 Keep Plan
               </button>
+
               <button
                 onClick={cancelSubscription}
                 disabled={isCanceled}
-                className="px-6 py-2.5  bg-purple-600 text-white rounded-md font-semibold hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                className="flex-1 py-2.5 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isCanceled ? (
                   <>

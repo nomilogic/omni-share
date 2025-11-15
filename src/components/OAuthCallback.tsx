@@ -125,7 +125,7 @@ export const OAuthCallback: React.FC = () => {
 
   return (
     <div className="h-full-dec-hf  x-2 flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      <div className="max-w-md w-full bg-white/80 backdrop-blur-sm rounded-2xl shadow-md border border-white/20 p-8 text-center">
+      <div className="max-w-md w-full bg-white/80 backdrop-blur-sm rounded-md shadow-md border border-white/20 p-8 text-center">
         <div className="mb-6">
           {status === "processing" && (
             <Loader className="w-12 h-12 text-blue-600 animate-spin mx-auto" />
@@ -172,7 +172,7 @@ export const OAuthCallback: React.FC = () => {
           {status === "error" && "Connection Failed"}
         </h2>
 
-        <p className="text-slate-500">{message}</p>
+        <p className="text-gray-500 font-medium">{message}</p>
 
         {status !== "processing" && (
           <div className="mt-6">
@@ -271,7 +271,7 @@ export const OAuthCallback: React.FC = () => {
 //             <h2 className="text-xl font-semibold text-slate-900 mb-2">
 //               Completing Authentication...
 //             </h2>
-//             <p className="text-slate-500">
+//             <p className="text-gray-500 font-medium">
 //               Please wait while we verify your credentials.
 //             </p>
 //           </>
@@ -283,8 +283,8 @@ export const OAuthCallback: React.FC = () => {
 //             <h2 className="text-xl font-semibold text-slate-900 mb-2">
 //               Authentication Successful!
 //             </h2>
-//             <p className="text-slate-500">{message}</p>
-//             <p className="text-sm text-slate-500 mt-3">
+//             <p className="text-gray-500 font-medium">{message}</p>
+//             <p className="text-sm text-gray-500 font-medium mt-3">
 //               This window will close automatically.
 //             </p>
 //           </>
@@ -296,8 +296,8 @@ export const OAuthCallback: React.FC = () => {
 //             <h2 className="text-xl font-semibold text-slate-900 mb-2">
 //               Authentication Failed
 //             </h2>
-//             <p className="text-slate-500">{message}</p>
-//             <p className="text-sm text-slate-500 mt-3">
+//             <p className="text-gray-500 font-medium">{message}</p>
+//             <p className="text-sm text-gray-500 font-medium mt-3">
 //               This window will close automatically.
 //             </p>
 //           </>

@@ -172,7 +172,7 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
   };
 
   return (
-    <div className="max-w-full mx-auto bg-white md:border md:border-gray-100  rounded-2xl shadow-md md:m-6 h-fit md:px-6 px-4 md:py-8 py-4">
+    <div className="max-w-full mx-auto bg-white md:border md:border-gray-100  rounded-md shadow-md md:m-6 h-fit md:px-6 px-4 md:py-8 py-4">
       <div className="text-center mb-8">
         <div className="w-12 h-12 aspect-square bg-gradient-to-r from-blue-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
           <Brain className="w-8 h-8 text-blue-600" />
@@ -180,7 +180,7 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
         <h2 className="text-3xl font-bold text-slate-900 mb-2">
           AI is Crafting Your Posts
         </h2>
-        <p className="text-slate-500">
+        <p className="text-gray-500 font-medium">
           Creating optimized content for each platform
         </p>
       </div>
@@ -216,7 +216,7 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
                 <p className="text-lg font-medium text-slate-800">
                   Optimizing for {getPlatformDisplayName(currentPlatform)}
                 </p>
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-gray-500 font-medium">
                   Analyzing audience, tone, and platform best practices...
                 </p>
               </div>
@@ -240,27 +240,27 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
           <div className="bg-white border border-gray-200 p-4 rounded-md">
             <Sparkles className="w-6 h-6 text-blue-600 mb-2" />
             <h3 className="font-medium text-slate-900">Smart Optimization</h3>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-gray-500 font-medium">
               Tailoring content for each platform's unique audience
             </p>
           </div>
           <div className="bg-white border border-gray-200 p-4 rounded-md">
             <Zap className="w-6 h-6 text-blue-600 mb-2" />
             <h3 className="font-medium text-slate-900">Hashtag Research</h3>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-gray-500 font-medium">
               Finding trending and relevant hashtags
             </p>
           </div>
           <div className="bg-white border border-gray-200 p-4 rounded-md">
             <Brain className="w-6 h-6 text-blue-600 mb-2" />
             <h3 className="font-medium text-slate-900">Tone Analysis</h3>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-gray-500 font-medium">
               Matching your brand voice perfectly
             </p>
           </div>
         </div>
 
-        <div className="text-center text-sm text-slate-500">
+        <div className="text-center text-sm text-gray-500 font-medium">
           <p>
             Processing{" "}
             {contentData?.selectedPlatforms?.length ||

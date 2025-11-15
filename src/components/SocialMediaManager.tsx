@@ -315,7 +315,9 @@ export const SocialMediaManager: React.FC<SocialMediaManagerProps> = ({
         </h3>
         <div className="flex items-center justify-center py-8">
           <div className="animate-spin w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full"></div>
-          <span className="ml-3 text-slate-500">Checking connections...</span>
+          <span className="ml-3 text-gray-500 font-medium">
+            Checking connections...
+          </span>
         </div>
       </div>
     );
@@ -326,7 +328,7 @@ export const SocialMediaManager: React.FC<SocialMediaManagerProps> = ({
       <h3 className="text-lg font-semibold text-slate-900 mb-4">
         Social Media Connections
       </h3>
-      <p className="text-sm text-slate-500 mb-6">
+      <p className="text-sm text-gray-500 font-medium mb-6">
         Connect your social media accounts to enable direct publishing across
         all platforms.
       </p>
@@ -369,7 +371,7 @@ export const SocialMediaManager: React.FC<SocialMediaManagerProps> = ({
                     </div>
                   </div>
 
-                  {/* <p className="text-sm text-slate-500 mb-2">
+                  {/* <p className="text-sm text-gray-500 font-medium mb-2">
                     {info.description}
                   </p> */}
 
@@ -383,7 +385,7 @@ export const SocialMediaManager: React.FC<SocialMediaManagerProps> = ({
 
                   {/* Profile Info */}
                   {status.profile && status.profile.name && (
-                    <div className="text-xs text-slate-500 mb-2">
+                    <div className="text-xs text-gray-500 font-medium mb-2">
                       <span>✓ {status.profile.name}</span>
                     </div>
                   )}
@@ -393,13 +395,13 @@ export const SocialMediaManager: React.FC<SocialMediaManagerProps> = ({
                     {info.features.slice(0, 3).map((feature) => (
                       <span
                         key={feature}
-                        className="inline-block px-2 py-1 text-xs bg-gray-100 text-slate-500 rounded"
+                        className="inline-block px-2 py-1 text-xs bg-gray-100 text-gray-500 font-medium rounded"
                       >
                         {feature}
                       </span>
                     ))}
                     {info.features.length > 3 && (
-                      <span className="inline-block px-2 py-1 text-xs bg-gray-100 text-slate-500 rounded">
+                      <span className="inline-block px-2 py-1 text-xs bg-gray-100 text-gray-500 font-medium rounded">
                         +{info.features.length - 3} more
                       </span>
                     )}
@@ -414,7 +416,7 @@ export const SocialMediaManager: React.FC<SocialMediaManagerProps> = ({
                     <button
                       onClick={() => handleRefresh(status.platform)}
                       disabled={status.loading}
-                      className="p-2 text-slate-500 hover:text-blue-600 disabled:opacity-50 rounded-md hover:bg-gray-100"
+                      className="p-2 text-gray-500 font-medium hover:text-blue-600 disabled:opacity-50 rounded-md hover:bg-gray-100"
                       title="Refresh connection"
                     >
                       <RefreshCw
@@ -426,7 +428,7 @@ export const SocialMediaManager: React.FC<SocialMediaManagerProps> = ({
                     <button
                       onClick={() => handleDisconnect(status.platform)}
                       disabled={status.loading}
-                      className="p-2 text-slate-500 hover:text-red-600 disabled:opacity-50 rounded-md hover:bg-gray-100"
+                      className="p-2 text-gray-500 font-medium hover:text-red-600 disabled:opacity-50 rounded-md hover:bg-gray-100"
                       title="Disconnect"
                     >
                       <Trash2 className="w-4 h-4" />

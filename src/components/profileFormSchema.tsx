@@ -2,7 +2,7 @@ import z from "zod";
 
 const profileFormSchema = z.object({
   fullName: z.string().min(2, "Full name must be at least 2 characters").trim(),
-
+  email: z.string(),
   phoneNumber: z
     .string()
     .regex(/^[+\d\s-()]{10,}$/, "Please enter a valid phone number"),

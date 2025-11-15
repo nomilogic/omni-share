@@ -338,13 +338,13 @@ export const AuthForm: React.FC<AuthFormProps> = ({
     <div className="w-full flex md:items-center justify-center bg-white px-3 py-4  sm:py-6 md:py-8 h-screen">
       {!showOtpPopup && (
         <div
-          className={`z-10  md:max-w-md md:bg-gray-50 flex items-center flex-col w-full justify-start md:shadow-md rounded-2xl py-6 ${
+          className={`z-10  md:max-w-md md:bg-gray-50 flex items-center flex-col w-full justify-start md:shadow-md rounded-md py-6 ${
             mode !== "login" && mode !== "signup" ? "h-[480px]" : "h-[750px]"
           } md:py-12  sm:px-6 md:px-10  md:border md:border-slate-200/70 md:backdrop-blur-sm`}
         >
           <div className="flex relative items-center justify-center mb-6 sm:mb-8 w-full ">
             {mode !== "login" && (
-              <button onClick={resetMode} className="absolute left-3">
+              <button onClick={resetMode} className="absolute left-0">
                 <img src={backArrow} className="w-full h-full" alt="" />
               </button>
             )}
@@ -444,7 +444,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                   <div className="w-full border-t border-slate-300"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="w-8 h-8 p-1 flex border border-slate-300 justify-center items-center rounded-full bg-slate-50 text-slate-500 font-medium">
+                  <span className="w-8 h-8 p-1 flex border border-slate-300 justify-center items-center rounded-full md:bg-gray-50 bg-white text-gray-500 font-medium font-medium">
                     OR
                   </span>
                 </div>
@@ -502,7 +502,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                     onChange={(e) => setRememberMe(e.target.checked)}
                     className="rounded  accent-white"
                   />
-                  <span className="text-slate-500 text-sm">
+                  <span className="text-gray-500 font-medium text-sm">
                     Remember me For 30 Days
                   </span>
                 </label> */}
@@ -616,7 +616,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                 <h2 className="text-center text-base font-medium text-black">
                   Forgot Password
                 </h2>
-                <p className="text-center text-sm  text-slate-500">
+                <p className="text-center text-sm  text-gray-500 font-medium">
                   Enter your registered email address below.
                 </p>
               </div>
@@ -645,16 +645,6 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                 >
                   {loading ? "Sending..." : "Forgot Password"}
                 </button>
-
-                {(error || externalError || successMessage) && (
-                  <p
-                    className={`text-sm text-center ${
-                      successMessage ? "text-green-600" : "text-red-500"
-                    }`}
-                  >
-                    {successMessage || error || externalError}
-                  </p>
-                )}
               </div>
             </form>
           )}

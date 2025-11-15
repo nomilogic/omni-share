@@ -142,14 +142,15 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     } catch (error) {
       setIsModalOpen(false);
     } finally {
+      closeManageSubscription();
       setIsCanceled(false);
     }
   };
 
   return (
     <ResizeContext.Provider value={{ handleResizeMainToFullScreen }}>
-      <div className="">
-        <div className="relative z-10">
+      <>
+        <div className="relative z-10 min-h-screen">
           <div
             className={`fixed inset-y-0 left-0 z-50 w-full xl:w-[18%] sm:w-[40%] theme-bg-trinary border-r border-white/10 transform ${
               isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
@@ -203,17 +204,17 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                     {user?.email}
                   </div>
                 </div>
-                <div className="theme-text-light ">
+                {/* <div className="theme-text-light ">
                   {showUserMenu ? (
                     <ChevronUp size={40} className="w-8 h-8" />
                   ) : (
                     <ChevronDown size={40} className="w-8 h-8" />
                   )}
-                </div>
+                </div> */}
               </button>
 
               {/* User Menu Dropdown - Themed Style */}
-              {
+              {/* {
                 <div
                   className={`w-full theme-bg-pantary border border-white/30 shadow-md z-50 overflow-hidden transition-all duration-500
                   ${
@@ -253,8 +254,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                         </p>
                       </div>
                     </Link>
-                    {/* Divider */}
-                    <div className="my-2 border-t border-white/20"></div>
+
+                    <div className="my-2.5 border-t border-white/20"></div>
                     <button
                       onClick={() => {
                         handleLogout();
@@ -275,11 +276,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                     </button>
                   </div>
                 </div>
-              }
+              } */}
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 px-2 py-2.5 flex flex-col mx-2 gap-y-2">
+            <nav className="flex-1 px-1 py-2.5 flex flex-col mx-2 gap-y-2">
               {navigation.map((item) => {
                 const isActive = location.pathname === item.path;
                 const Icon = item.icon;
@@ -288,21 +289,21 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                   <Link
                     key={item.name}
                     to={item.path}
-                    className={`flex items-center justify-between px-2 py-2.5 text-md font-medium rounded-md transition-colors ${
+                    className={`flex items-center justify-between px-3 py-2.5 text-md font-medium rounded-md transition-colors ${
                       isActive
                         ? "theme-bg-primary theme-text-secondary"
                         : "theme-text-light hover:theme-bg-secondary hover:theme-text-primary"
                     }`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    <div className="flex items-center">
+                    <div className="flex  justify-center items-center">
                       <Icon size={20} className="mr-3" />
                       {item.name}
                     </div>
                     {showBadge && (
                       <button
                         onClick={handleMarkAllAsRead}
-                        className="h-6 w-6 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center text-xs text-white font-bold transition-colors duration-200 cursor-pointer border-0 outline-none"
+                        className="h-6 w-6 bg-purple-500 hover:bg-purple-600 rounded-full flex items-center justify-center text-xs text-white font-bold transition-colors duration-200 cursor-pointer border-0 outline-none"
                         title={`Mark all ${unreadCount} unread posts as read`}
                       >
                         {unreadCount > 99 ? "99+" : unreadCount}
@@ -312,6 +313,23 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 );
               })}
             </nav>
+            <div className="flex-1 px-1 hover:bg-white hover:text-purple-600 flex flex-col rounded-md text-white mx-2 gap-y-2">
+              <button
+                onClick={() => {
+                  handleLogout();
+                  setShowUserMenu(false);
+                  setIsMobileMenuOpen(false);
+                }}
+                className="flex items-center justify-between px-3 py-2.5 text-md font-medium rounded-md transition-colors  "
+              >
+                <div className="flex  justify-center items-center">
+                  <LogOut className="h-5 w-5 mr-3" />
+                  <div className="flex-1">
+                    <p className="font-medium">Logout</p>
+                  </div>
+                </div>
+              </button>
+            </div>
 
             {/* Footer */}
             <div className="absolute bottom-0 left-0 right-0 ">
@@ -521,7 +539,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                   />
 
                   {showPackage && (
-                    <div className="absolute bg-gray-50  z-20 lg:left-auto top-8 left-3 right-3 mt-6 rounded-2xl shadow-md md:px-6 px-4 py-6 border md:w-[370px] w-auto">
+                    <div className="absolute bg-gray-50  z-20 lg:left-auto top-8 left-3 right-3 mt-6 rounded-md shadow-md md:px-6 px-4 py-6 border md:w-[370px] w-auto">
                       {user?.wallet?.package ? (
                         <>
                           <div className="flex justify-between items-start mb-3">
@@ -639,7 +657,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                           <Link
                             to="/pricing"
                             onClick={() => setShowPackage(false)}
-                            className="w-full mt-3 px-2 py-2.5  border  text-md font-semibold rounded-md group flex items-center justify-center gap-2  text-white bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] border-[#7650e3]  "
+                            className="w-full mt-3 px-3 py-2.5  border  text-md font-semibold rounded-md group flex items-center justify-center gap-2  text-white bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] border-[#7650e3]  "
                           >
                             <div className="group-hover:filter-omni h-full w-full text-center">
                               <Icon
@@ -652,7 +670,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                           </Link>
                         </>
                       ) : (
-                        <p className="text-slate-500 text-md text-center">
+                        <p className="text-gray-500 font-medium text-md text-center">
                           No active package found
                         </p>
                       )}
@@ -666,7 +684,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           <main
             id="mainContent"
             ref={mainContentRef}
-            // className="py-0 h-full-dec-hf overflow-auto theme-bg-card  "
+            className="py-0 min-h-screen overflow-auto theme-bg-card  "
           >
             <div className="w-full mx-auto overflow-fit max-w-5xl">
               {children}
@@ -704,7 +722,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           }}
         />
         <PreloaderOverlay loadingState={loadingState} />
-      </div>
+      </>
     </ResizeContext.Provider>
   );
 };

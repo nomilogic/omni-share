@@ -350,16 +350,14 @@ const OnboardingForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
     console.log("Form submitted:", formData);
-    // Navigate to next step or dashboard
-    navigate("/dashboard");
+    // navigate("/dashboard");
   };
 
   const renderStep1 = () => (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">Personal Information</h2>
-      <p className="text-slate-500">
+      <p className="text-gray-500 font-medium">
         Let's start with the basics — tell us a bit about yourself so we can
         personalize your experience.
       </p>
@@ -375,7 +373,7 @@ const OnboardingForm: React.FC = () => {
             value={formData.fullName}
             onChange={handleInputChange}
             placeholder="e.g. Sarah Ahmed"
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-md focus:border-blue-500 focus:ring-blue-500"
+            className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
           />
         </div>
 
@@ -389,7 +387,7 @@ const OnboardingForm: React.FC = () => {
             value={formData.email}
             onChange={handleInputChange}
             placeholder="e.g. sarah@brandstudio.com"
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-md focus:border-blue-500 focus:ring-blue-500"
+            className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
           />
         </div>
 
@@ -403,7 +401,7 @@ const OnboardingForm: React.FC = () => {
             value={formData.phoneNumber}
             onChange={handleInputChange}
             placeholder="e.g. +971 50 123 4567"
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-md focus:border-blue-500 focus:ring-blue-500"
+            className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
           />
         </div>
       </div>
@@ -413,8 +411,8 @@ const OnboardingForm: React.FC = () => {
   const renderStep2 = () => (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">{FORM_SECTIONS[1].title}</h2>
-      <p className="text-slate-500">{FORM_SECTIONS[1].subtext}</p>
-      <p className="text-sm text-slate-500">
+      <p className="text-gray-500 font-medium">{FORM_SECTIONS[1].subtext}</p>
+      <p className="text-sm text-gray-500 font-medium">
         You can add a website, Instagram, LinkedIn, TikTok, Behance, YouTube, or
         any other public link.
       </p>
@@ -430,7 +428,7 @@ const OnboardingForm: React.FC = () => {
             value={formData.publicUrl}
             onChange={handleInputChange}
             placeholder="e.g. https://instagram.com/brandstudio or https://yourbrand.com"
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-md focus:border-blue-500 focus:ring-blue-500"
+            className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
           />
         </div>
 
@@ -456,7 +454,7 @@ const OnboardingForm: React.FC = () => {
             value={formData.brandName}
             onChange={handleInputChange}
             placeholder="e.g. Brand Studio"
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-md focus:border-blue-500 focus:ring-blue-500"
+            className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
           />
         </div>
 
@@ -480,7 +478,7 @@ const OnboardingForm: React.FC = () => {
                   reader.readAsDataURL(file);
                 }
               }}
-              className="block w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+              className="block w-full text-sm text-gray-500 font-medium file:mr-4 file:py-2.5 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
             />
           </div>
         </div>
@@ -493,7 +491,7 @@ const OnboardingForm: React.FC = () => {
             name="brandTone"
             value={formData.brandTone}
             onChange={handleInputChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-md focus:border-blue-500 focus:ring-blue-500"
+            className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
           >
             <option value="">Select tone</option>
             {BRAND_TONES.map((tone) => (
@@ -510,7 +508,7 @@ const OnboardingForm: React.FC = () => {
   const renderStep3 = () => (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">{FORM_SECTIONS[2].title}</h2>
-      <p className="text-slate-500">{FORM_SECTIONS[2].subtext}</p>
+      <p className="text-gray-500 font-medium">{FORM_SECTIONS[2].subtext}</p>
 
       <div className="space-y-6">
         <div>
@@ -569,7 +567,7 @@ const OnboardingForm: React.FC = () => {
               );
               setFormData((prev) => ({ ...prev, audienceRegions: selected }));
             }}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-md focus:border-blue-500 focus:ring-blue-500"
+            className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
           >
             <option value="UAE">UAE</option>
             <option value="Saudi Arabia">Saudi Arabia</option>
@@ -608,7 +606,7 @@ const OnboardingForm: React.FC = () => {
       {/* Content Preferences */}
       <div className="space-y-6 mb-12">
         <h2 className="text-2xl font-bold">{FORM_SECTIONS[3].title}</h2>
-        <p className="text-slate-500">{FORM_SECTIONS[3].subtext}</p>
+        <p className="text-gray-500 font-medium">{FORM_SECTIONS[3].subtext}</p>
 
         <div className="space-y-6">
           <div>
@@ -658,7 +656,7 @@ const OnboardingForm: React.FC = () => {
       {/* Goals & Objectives */}
       <div className="space-y-6">
         <h2 className="text-2xl font-bold">{FORM_SECTIONS[4].title}</h2>
-        <p className="text-slate-500">{FORM_SECTIONS[4].subtext}</p>
+        <p className="text-gray-500 font-medium">{FORM_SECTIONS[4].subtext}</p>
 
         <div className="space-y-6">
           <div>
@@ -711,7 +709,7 @@ const OnboardingForm: React.FC = () => {
               name="postingStyle"
               value={formData.postingStyle}
               onChange={handleInputChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-md focus:border-blue-500 focus:ring-blue-500"
+              className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
             >
               <option value="">Select style</option>
               {POSTING_STYLES.map((style) => (

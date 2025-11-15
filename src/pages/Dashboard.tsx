@@ -17,7 +17,7 @@ function Dashboard() {
           <h1 className="text-xl font-bold tracking-wide">
             OMNI<span className="font-normal">SHARE</span>
           </h1>
-          <div className="flex items-center gap-2 bg-stone-100 px-4 py-2.5 rounded-lg">
+          <div className="flex items-center gap-2 bg-stone-100 px-4 py-2.5 rounded-md">
             <Crown className="w-5 h-5 text-indigo-600" />
             <span className="text-gray-700 font-semibold text-sm">
               {Math.floor(state?.balance || 0)}

@@ -82,7 +82,7 @@ const GenerationAmountPage = () => {
 
   return (
     <div className="p-6 bg-white min-h-screen text-black">
-      <div className="max-w-4xl mx-auto bg-[#f9f9f9] border border-gray-200 shadow-md rounded-2xl p-6">
+      <div className="max-w-4xl mx-auto bg-[#f9f9f9] border border-gray-200 shadow-md rounded-md p-6">
         <h1 className="text-2xl font-semibold text-black mb-6">
           Generation Amount Management
         </h1>
@@ -136,7 +136,7 @@ const GenerationAmountPage = () => {
               <Loader2 className="w-6 h-6 animate-spin text-black" />
             </div>
           ) : generationAmounts.length === 0 ? (
-            <p className="text-slate-500 text-center py-6">
+            <p className="text-gray-500 font-medium text-center py-6">
               No generation amounts found.
             </p>
           ) : (

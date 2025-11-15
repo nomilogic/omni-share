@@ -20,7 +20,7 @@ const PrivacyPolicy: React.FC = () => {
           <h1 className="text-3xl font-bold text-slate-900 mb-2">
             Privacy Policy
           </h1>
-          <p className="text-slate-500">
+          <p className="text-gray-500 font-medium">
             Last updated: {new Date().toLocaleDateString()}
           </p>
         </div>
@@ -308,7 +308,7 @@ const PrivacyPolicy: React.FC = () => {
 
         {/* Footer */}
         <div className="mt-8 text-center">
-          <p className="text-slate-500 text-sm">
+          <p className="text-gray-500 font-medium text-sm">
             This privacy policy is effective as of{" "}
             {new Date().toLocaleDateString()} and applies to all users of Omni
             Share.

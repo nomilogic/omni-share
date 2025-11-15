@@ -49,7 +49,7 @@ export const SettingsPage: React.FC = () => {
 
   const settingsNavItems = [
     { path: "/settings/profile", icon: User, label: "Profile" },
-    { path: "/settings/security", icon: Shield, label: "Security" },
+    // { path: "/settings/security", icon: Shield, label: "Security" },
     { path: "/settings/notifications", icon: Bell, label: "Notifications" },
     { path: "/settings/appearance", icon: Palette, label: "Appearance" },
   ];

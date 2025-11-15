@@ -107,7 +107,7 @@ const ResetPasswordPage: React.FC = () => {
   return (
     <main className="min-h-screen w-full flex md:items-center md:justify-center bg-white px-4 py-8 sm:px-6 sm:py-12 md:px-8">
       {!token || expired ? (
-        <div className="w-full md:max-w-md md:bg-gray-50 md:rounded-2xl md:shadow-md md:p-8 flex flex-col items-center text-center md:border md:border-gray-200">
+        <div className="w-full md:max-w-md md:bg-gray-50 md:rounded-md md:shadow-md md:p-8 flex flex-col items-center text-center md:border md:border-gray-200">
           <div className="text-center flex justify-center mb-8 gap-2 items-center">
             <Icon name="logo" size={50} />
           </div>
@@ -115,7 +115,7 @@ const ResetPasswordPage: React.FC = () => {
             Oops! Link Expired
           </h2>
 
-          <p className="text-slate-500 text-sm sm:text-base mb-6 px-2 sm:px-4">
+          <p className="text-gray-500 font-medium text-sm sm:text-base mb-6 px-2 sm:px-4">
             Your password reset link has expired or is invalid. Don’t worry, you
             can request a new one.
           </p>
@@ -128,7 +128,7 @@ const ResetPasswordPage: React.FC = () => {
           </button>
         </div>
       ) : (
-        <div className="w-full md:max-w-md bg-gray-50 md:rounded-2xl md:shadow-md p-6 sm:p-8 md:p-10 md:border border-gray-200">
+        <div className="w-full md:max-w-md bg-gray-50 md:rounded-md md:shadow-md p-6 sm:p-8 md:p-10 md:border border-gray-200">
           <div className="text-center flex justify-center mb-8 gap-2 items-center">
             <Icon name="logo" size={50} />
             <span className="theme-text-primary text-lg sm:text-xl md:text-2xl lg:text-[1.6rem] tracking-tight">
@@ -143,7 +143,7 @@ const ResetPasswordPage: React.FC = () => {
           <h2 className="text-xl sm:text-2xl font-bold text-slate-800 text-center mb-2">
             Reset Your Password
           </h2>
-          <p className="text-slate-500 text-sm sm:text-base text-center mb-6">
+          <p className="text-gray-500 font-medium text-sm sm:text-base text-center mb-6">
             Enter your new password below.
           </p>
 

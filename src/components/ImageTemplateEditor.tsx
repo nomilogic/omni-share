@@ -1305,7 +1305,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
       <div className="fixed inset-0 bg-white z-50 flex items-center justify-center">
         <div className="text-center">
           <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
-          <p className="text-sm text-slate-500">Loading editor...</p>
+          <p className="text-sm text-gray-500 font-medium">Loading editor...</p>
         </div>
       </div>
     );
@@ -1327,7 +1327,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
             <h3 className="text-base md:text-lg font-semibold text-slate-900">Template Editor</h3>
             <button
               onClick={onCancel}
-              className="text-gray-400 hover:text-slate-500 text-xl md:text-2xl font-bold leading-none p-1 hover:bg-gray-100 rounded transition-colors"
+              className="text-gray-400 hover:text-gray-500 font-medium text-xl md:text-2xl font-bold leading-none p-1 hover:bg-gray-100 rounded transition-colors"
             >
               ×
             </button>
@@ -1395,7 +1395,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                       className={`p-2 rounded-md ${
                         isElementLocked(selectedElement)
                           ? "bg-red-100 text-red-600"
-                          : "bg-gray-100 text-slate-500"
+                          : "bg-gray-100 text-gray-500 font-medium"
                       } hover:bg-opacity-80 transition-colors`}
                       title={
                         isElementLocked(selectedElement)
@@ -1427,28 +1427,28 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                   <div className="grid grid-cols-4 gap-1 md:gap-1.5">
                     <button
                       onClick={bringToFront}
-                      className="p-2 bg-gray-100 text-slate-500 rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors text-xs"
+                      className="p-2 bg-gray-100 text-gray-500 font-medium rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors text-xs"
                       title="Bring to Front"
                     >
                       <ChevronUp className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={moveUp}
-                      className="p-2 bg-gray-100 text-slate-500 rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors text-xs"
+                      className="p-2 bg-gray-100 text-gray-500 font-medium rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors text-xs"
                       title="Move Up"
                     >
                       <ArrowUp className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={moveDown}
-                      className="p-2 bg-gray-100 text-slate-500 rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors text-xs"
+                      className="p-2 bg-gray-100 text-gray-500 font-medium rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors text-xs"
                       title="Move Down"
                     >
                       <ArrowDown className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={sendToBack}
-                      className="p-2 bg-gray-100 text-slate-500 rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors text-xs"
+                      className="p-2 bg-gray-100 text-gray-500 font-medium rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors text-xs"
                       title="Send to Back"
                     >
                       <ChevronDown className="w-3.5 h-3.5" />
@@ -1556,7 +1556,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                       className="w-full template-range"
                       disabled={isElementLocked(selectedElement)}
                     />
-                    <div className="flex justify-between text-xs text-slate-500 mt-1">
+                    <div className="flex justify-between text-xs text-gray-500 font-medium mt-1">
                       <span>0°</span>
                       <span className="font-medium">
                         {selectedElementData.rotation || 0}°
@@ -1617,7 +1617,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                           }
                           className="w-full template-range"
                         />
-                        <span className="text-sm text-slate-500 text-center block mt-1">
+                        <span className="text-sm text-gray-500 font-medium text-center block mt-1">
                           {Math.round(
                             ((selectedElementData as LogoElement).opacity ||
                               1) * 100
@@ -1715,7 +1715,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                           }
                           className="w-full template-range"
                         />
-                        <span className="text-xs text-slate-500 text-center block mt-1">
+                        <span className="text-xs text-gray-500 font-medium text-center block mt-1">
                           {Math.round(
                             ((selectedElementData as TextElement).textOpacity ||
                               1) * 100
@@ -1743,7 +1743,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                           }
                           className="w-full template-range"
                         />
-                        <span className="text-xs text-slate-500 text-center block mt-1">
+                        <span className="text-xs text-gray-500 font-medium text-center block mt-1">
                           {Math.round(
                             ((selectedElementData as TextElement)
                               .backgroundOpacity || 1) * 100
@@ -1914,7 +1914,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                         className="w-full template-range"
                         disabled={isElementLocked(selectedElement)}
                       />
-                      <div className="flex justify-between text-xs text-slate-500 mt-1">
+                      <div className="flex justify-between text-xs text-gray-500 font-medium mt-1">
                         <span>0°</span>
                         <span className="font-medium">
                           {selectedElementData.rotation || 0}°
@@ -1985,7 +1985,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                         }
                         className="w-full template-range"
                       />
-                      <div className="flex justify-between text-sm text-slate-500 mt-1">
+                      <div className="flex justify-between text-sm text-gray-500 font-medium mt-1">
                         <span>1%</span>
                         <span className="font-medium">
                           {Math.round(
@@ -2028,7 +2028,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
             )}
 
             {!selectedElementData && (
-              <div className="text-center py-6 md:py-12 text-slate-500">
+              <div className="text-center py-6 md:py-12 text-gray-500 font-medium">
                 <div className="bg-gray-50 rounded-md p-4 md:p-6">
                   <Palette className="w-6 h-6 md:w-8 md:h-8 mx-auto mb-2 md:mb-3 text-gray-400" />
                   <p className="text-xs md:text-sm font-medium mb-1">
@@ -2086,7 +2086,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
         <div className="flex-shrink-0 px-3 py-1 md:py-2.5 bg-white border-b border-gray-200">
           <div className="flex items-center justify-between">
             {/* Canvas Info */}
-            <div className="text-xs text-slate-500 font-mono">
+            <div className="text-xs text-gray-500 font-medium font-mono">
               {canvasDimensions && (
                 <>
                   <span className="hidden sm:inline">
@@ -2109,7 +2109,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
               >
                 −
               </button>
-              <span className="text-xs text-slate-500 min-w-8 md:min-w-12 text-center">
+              <span className="text-xs text-gray-500 font-medium min-w-8 md:min-w-12 text-center">
                 {Math.round(zoomLevel * 100)}%
               </span>
               <button

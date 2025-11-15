@@ -31,7 +31,7 @@ export function PricingCard({
 
   return (
     <div
-      className={`rounded-2xl overflow-hidden shadow-md transition-transform duration-300  ${
+      className={`rounded-md overflow-hidden shadow-md transition-transform duration-300  ${
         !isLocked ? "hover:shadow-md hover:-translate-y-2" : ""
       } ${isLocked ? "opacity-60" : "opacity-100"}`}
     >

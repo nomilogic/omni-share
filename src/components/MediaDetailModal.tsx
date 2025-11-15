@@ -161,7 +161,7 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
       className={`flex items-center gap-2 px-4 py-2.5 rounded-md text-sm font-medium transition-colors ${
         activeTab === id
           ? "bg-blue-100 text-blue-700"
-          : "text-slate-500 hover:text-slate-900 hover:bg-gray-50"
+          : "text-gray-500 font-medium hover:text-slate-900 hover:bg-gray-50"
       }`}
     >
       {icon}
@@ -180,7 +180,7 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
                 <h2 className="text-xl font-semibold text-slate-900">
                   {asset.filename}
                 </h2>
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-gray-500 font-medium">
                   {asset.format.toUpperCase()} • {formatFileSize(asset.size)}
                 </p>
               </div>
@@ -191,14 +191,14 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
                 <>
                   <button
                     onClick={() => setIsEditing(true)}
-                    className="p-2 text-slate-500 hover:text-slate-900 hover:bg-gray-100 rounded-md transition-colors"
+                    className="p-2 text-gray-500 font-medium hover:text-slate-900 hover:bg-gray-100 rounded-md transition-colors"
                     title="Edit"
                   >
                     <Edit className="w-5 h-5" />
                   </button>
                   <button
                     onClick={handleDownload}
-                    className="p-2 text-slate-500 hover:text-slate-900 hover:bg-gray-100 rounded-md transition-colors"
+                    className="p-2 text-gray-500 font-medium hover:text-slate-900 hover:bg-gray-100 rounded-md transition-colors"
                     title="Download"
                   >
                     <Download className="w-5 h-5" />
@@ -239,7 +239,7 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
 
               <button
                 onClick={onClose}
-                className="p-2 text-slate-500 hover:text-slate-900 hover:bg-gray-100 rounded-md transition-colors ml-2"
+                className="p-2 text-gray-500 font-medium hover:text-slate-900 hover:bg-gray-100 rounded-md transition-colors ml-2"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -484,11 +484,11 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
                                 <div className="font-medium text-slate-900">
                                   Post #{index + 1}
                                 </div>
-                                <div className="text-sm text-slate-500">
+                                <div className="text-sm text-gray-500 font-medium">
                                   Used in post {postId}
                                 </div>
                               </div>
-                              <div className="text-sm text-slate-500">
+                              <div className="text-sm text-gray-500 font-medium">
                                 {new Date().toLocaleDateString()}
                               </div>
                             </div>
@@ -505,7 +505,7 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
                       <h3 className="text-lg font-medium text-slate-900 mb-2">
                         Media Analytics
                       </h3>
-                      <p className="text-slate-500">
+                      <p className="text-gray-500 font-medium">
                         Detailed analytics for this media asset will be
                         available soon.
                       </p>
@@ -530,7 +530,7 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
                 <h3 className="text-lg font-semibold text-slate-900">
                   Delete Media Asset
                 </h3>
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-gray-500 font-medium">
                   This action cannot be undone.
                 </p>
               </div>

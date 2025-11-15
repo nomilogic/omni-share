@@ -6,6 +6,8 @@ import Icon from "./Icon";
 import logoText from "../assets/logo-text.svg";
 import { ArrowLeftIcon } from "lucide-react";
 import { notify } from "@/utils/toast";
+import { navigateOnce } from "@/lib/navigation";
+import { useNavigate } from "react-router-dom";
 type OtpModalProps = {
   open: boolean;
   onClose: () => void;
@@ -53,6 +55,7 @@ export function OtpModal({
 
     return () => clearInterval(timer);
   }, [open]);
+  const navigate = useNavigate();
 
   const formatTime = (seconds: any) => {
     const m = Math.floor(seconds / 60);
@@ -87,26 +90,33 @@ export function OtpModal({
     try {
       setVerifying(true);
       const fn = verifyOtp || (async () => ({ token: undefined }));
-      const result = await fn(otp);
+      const result: any = await fn(otp);
 
       if (result?.token) {
         localStorage.setItem("auth_token", result.token!);
         localStorage.removeItem("email_token");
 
         onSuccess(result?.user);
-        notify("success", 
-        "Verification Sucessful"
-      );
+        notify("success", "Verification Successful");
+
+        if (
+          result.user.profile &&
+          (result.user.profile as any).isOnboarding === false
+        ) {
+          import("../lib/navigation")
+            .then(({ navigateOnce }) => {
+              navigateOnce(navigate, "/onboarding/profile", { replace: true });
+            })
+            .catch(() => {
+              navigate("/onboarding/profile", { replace: true });
+            });
+        }
         onClose();
       } else {
         throw new Error("OTP verification failed");
       }
-      
     } catch (e: unknown) {
-      // const message = "OTP verification failed";
-      notify("error", 
-        "OTP verification failed"
-      );
+      notify("error", "OTP verification failed");
     } finally {
       setVerifying(false);
     }
@@ -122,14 +132,9 @@ export function OtpModal({
       setTimeLeft(300);
       setExpired(false);
       setRemaining(40);
-          notify("success", 
-        "OTP Resend Successfully"
-      );
+      notify("success", "OTP Resend Successfully");
     } catch (e: unknown) {
-      // const message = e instanceof Error ? e.message : "Failed to resend OTP";
-          notify("error", 
-        "Failed to resend OTP"
-      );
+      notify("error", "Failed to resend OTP");
     } finally {
       setResending(false);
     }
@@ -176,11 +181,7 @@ export function OtpModal({
           />
           <div id="otp-status" className="sr-only" aria-live="polite" />
         </div>
-        {emailHint ? (
-          <p className="mt-1 text-sm text-purple-600">
-            We sent a one-time code to your email .
-          </p>
-        ) : null}
+
         {!expired ? (
           <p className="mt-2 text-sm text-purple-600">
             OTP expires in{" "}
@@ -231,11 +232,6 @@ export function OtpModal({
               : "Resend OTP"}
           </button>
         </div>
-
-        <p className="mt-3 text-xs text-purple-600">
-          Didn&apos;t receive the code? Check your spam or wait a moment before
-          resending.
-        </p>
       </div>
     </div>
   );

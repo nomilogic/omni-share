@@ -70,10 +70,10 @@ export const FeatureRestriction: React.FC<FeatureRestrictionProps> = ({
             onClick={() => setShowUpgradeModal(true)}
             className="bg-white shadow-md rounded-md px-6 py-3 flex items-center space-x-3 hover:shadow-md transition-all duration-200"
           >
-            <Lock className="w-5 h-5 text-slate-500" />
+            <Lock className="w-5 h-5 text-gray-500 font-medium" />
             <div className="text-left">
               <p className="font-medium text-slate-900">Upgrade Required</p>
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-gray-500 font-medium">
                 {feature} requires {getPlanName(requiredPlan)}
               </p>
             </div>
@@ -89,14 +89,14 @@ export const FeatureRestriction: React.FC<FeatureRestrictionProps> = ({
       {/* Upgrade Modal */}
       {showUpgradeModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6">
+          <div className="bg-white rounded-md max-w-md w-full p-6">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-xl font-bold text-slate-900">
                 Upgrade Required
               </h3>
               <button
                 onClick={() => setShowUpgradeModal(false)}
-                className="text-gray-400 hover:text-slate-500"
+                className="text-gray-400 hover:text-gray-500 font-medium"
               >
                 <X className="w-6 h-6" />
               </button>
@@ -113,7 +113,7 @@ export const FeatureRestriction: React.FC<FeatureRestrictionProps> = ({
               <h4 className="text-lg font-semibold text-slate-900 mb-2">
                 {feature} is available with {getPlanName(requiredPlan)}
               </h4>
-              <p className="text-slate-500">
+              <p className="text-gray-500 font-medium">
                 You're currently on {getPlanName(currentPlan)}. Upgrade to
                 unlock this feature.
               </p>

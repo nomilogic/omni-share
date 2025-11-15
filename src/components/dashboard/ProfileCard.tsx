@@ -3,7 +3,7 @@ import { useAppContext } from "../../context/AppContext";
 import { useNavigate } from "react-router-dom";
 
 function ProfileCard() {
-  const {  state, dispatch, setProfileEditing} = useAppContext();
+  const { state, dispatch, setProfileEditing } = useAppContext();
 
   const navigate = useNavigate();
 
@@ -27,40 +27,29 @@ function ProfileCard() {
   const initials = getInitials(fullName);
 
   return (
-    <div className="flex lg:flex-row flex-col md:justify-between  ">
+    <div className="flex flex-row items-start  justify-between  ">
       <div className="flex items-center gap-2">
-        <div className="w-14 h-14 bg-gray-900 rounded-full flex items-center justify-center text-white text-lg font-bold flex-shrink-0">
-          
+        <div className="lg:w-14 lg:h-14 w-12 h-12 bg-gray-900 rounded-full flex items-center justify-center text-white text-lg font-bold flex-shrink-0">
           <img
             className=" rounded-full object-cover theme-bg-trinary"
             src={
               state?.user?.avatarUrl
                 ? state?.user?.avatarUrl
                 : `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                    state?.user?.profile?.fullName ||
-                      state?.user?.email ||  "U"
-                    
+                    state?.user?.profile?.fullName || state?.user?.email || "U"
                   )}&background=00000000&color=fff`
-          }
+            }
             alt={state?.user?.profile?.fullName}
           />
         </div>
         <div>
-          <div className="text-base font-bold text-gray-900">{fullName}</div>
-          <div className="text-sm text-[#7650e3]">{email}</div>
+          <div className="text-lg font-semibold  text-gray-900 ">
+            {fullName}
+          </div>
+          <div className="text-sm text-[#7650e3] -mt-1">{email}</div>
         </div>
       </div>
-      <div className="flex items-center gap-5 justify-end">
-        <button
-          className="flex items-center rounded-md gap-1.5 transition-colors text-[13px] font-semibold"
-          style={{
-            color: "#7650e3",
-          }}
-          onClick={() => navigate("/settings")}
-        >
-          <Settings className="w-[18px] h-[18px]" />
-          <span className="hover:underline text-decoration-line">Setting</span>
-        </button>
+      <div className="flex lg:flex-row flex-col items-start  lg:gap-5 gap-2 justify-end">
         <button
           className="flex items-center rounded-md gap-2 transition-colors text-[13px] font-semibold "
           style={{

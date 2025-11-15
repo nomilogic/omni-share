@@ -191,7 +191,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
           <div className="mt-6">
             <button
               onClick={onGetStarted}
-              className="bg-white text-slate-900 px-12 py-4 rounded-2xl font-bold text-xl hover:bg-gray-100 transition-colors duration-300 shadow-md hover:shadow-3xl transform hover:scale-105"
+              className="bg-white text-slate-900 px-12 py-4 rounded-md font-bold text-xl hover:bg-gray-100 transition-colors duration-300 shadow-md hover:shadow-3xl transform hover:scale-105"
             >
               Get Started Free
             </button>

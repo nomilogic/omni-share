@@ -124,7 +124,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
       case "post":
         return <Bell className="w-5 h-5 text-purple-500" />;
       default:
-        return <Bell className="w-5 h-5 text-slate-500" />;
+        return <Bell className="w-5 h-5 text-gray-500 font-medium" />;
     }
   };
 
@@ -142,7 +142,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
               <Bell className="w-5 h-5" />
               <h2 className="text-lg font-semibold">Notifications</h2>
               {unreadCount > 0 && (
-                <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+                <span className="bg-purple-500 text-white text-xs px-2 py-1 rounded-full">
                   {unreadCount}
                 </span>
               )}
@@ -228,7 +228,9 @@ const NotificationsTab: React.FC<{
     return (
       <div className="p-4 text-center">
         <div className="animate-spin w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full mx-auto"></div>
-        <p className="text-slate-500 mt-2 text-sm">Loading notifications...</p>
+        <p className="text-gray-500 font-medium mt-2 text-sm">
+          Loading notifications...
+        </p>
       </div>
     );
   }
@@ -237,7 +239,9 @@ const NotificationsTab: React.FC<{
     return (
       <div className="p-6 text-center">
         <Bell className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-        <p className="text-slate-500 font-medium">No notifications yet</p>
+        <p className="text-gray-500 font-medium font-medium">
+          No notifications yet
+        </p>
         <p className="text-gray-400 text-sm mt-1">
           You'll see your notifications here when you have some
         </p>
@@ -291,7 +295,9 @@ const NotificationsTab: React.FC<{
                     </p>
                     <p
                       className={`text-sm mt-1 ${
-                        !notification.read ? "text-slate-700" : "text-slate-500"
+                        !notification.read
+                          ? "text-slate-700"
+                          : "text-gray-500 font-medium"
                       }`}
                     >
                       {notification.message}
@@ -315,7 +321,7 @@ const NotificationsTab: React.FC<{
                     )}
                     <button
                       onClick={() => onToggleSelection(notification.id)}
-                      className="p-1 text-gray-400 hover:text-slate-500 transition-colors"
+                      className="p-1 text-gray-400 hover:text-gray-500 font-medium transition-colors"
                       title="More options"
                     >
                       <MoreVertical className="w-4 h-4" />
@@ -324,7 +330,7 @@ const NotificationsTab: React.FC<{
                 </div>
 
                 {notification.metadata && (
-                  <div className="mt-2 text-xs text-slate-500 bg-gray-100 rounded p-2">
+                  <div className="mt-2 text-xs text-gray-500 font-medium bg-gray-100 rounded p-2">
                     {notification.type === "reminder" &&
                       notification.metadata.scheduledPostTime && (
                         <p>

@@ -261,7 +261,7 @@
 }
 
 .btn-outline-secondary {
-  @apply btn-outline border-gray-300 text-slate-500;
+  @apply btn-outline border-gray-300 text-gray-500 font-medium;
 }
 
 .btn-outline-secondary:hover:not(:disabled) {

@@ -97,20 +97,20 @@ export const TierSelectionModal: React.FC<TierSelectionModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-md max-w-6xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-md shadow-md max-w-6xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div>
             <h2 className="text-2xl font-bold text-slate-900">
               Choose Your Plan
             </h2>
-            <p className="text-slate-500 mt-1">
+            <p className="text-gray-500 font-medium mt-1">
               Select the plan that best fits your needs
             </p>
           </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-slate-500 transition-colors"
+            className="text-gray-400 hover:text-gray-500 font-medium transition-colors"
             disabled={loading}
           >
             <X className="w-6 h-6" />
@@ -142,13 +142,15 @@ export const TierSelectionModal: React.FC<TierSelectionModalProps> = ({
                   <div className="text-center mb-6">
                     <Icon
                       className={`w-10 h-10 mx-auto mb-3 ${
-                        tier.popular ? "text-blue-600" : "text-slate-500"
+                        tier.popular
+                          ? "text-blue-600"
+                          : "text-gray-500 font-medium"
                       }`}
                     />
                     <h3 className="text-xl font-bold text-slate-900 mb-1">
                       {tier.name}
                     </h3>
-                    <p className="text-slate-500 text-sm mb-3">
+                    <p className="text-gray-500 font-medium text-sm mb-3">
                       {tier.description}
                     </p>
                     <div className="flex items-baseline justify-center">
@@ -156,7 +158,7 @@ export const TierSelectionModal: React.FC<TierSelectionModalProps> = ({
                         {tier.price}
                       </span>
                       {tier.price !== "$0" && (
-                        <span className="text-slate-500 ml-1 text-sm">
+                        <span className="text-gray-500 font-medium ml-1 text-sm">
                           /month
                         </span>
                       )}
@@ -193,7 +195,7 @@ export const TierSelectionModal: React.FC<TierSelectionModalProps> = ({
           </div>
 
           <div className="text-center mt-6">
-            <p className="text-slate-500 text-sm">
+            <p className="text-gray-500 font-medium text-sm">
               All plans include a 14-day free trial. No credit card required for
               Free plan.
             </p>
