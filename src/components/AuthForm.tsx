@@ -124,12 +124,19 @@ export const AuthForm: React.FC<AuthFormProps> = ({
 
       localStorage.setItem("forgot_token", res.data.data.token);
       localStorage.setItem("forgot_token_time", Date.now().toString());
-
-      setSuccessMessage("If that email exists, a reset link has been sent.");
-      setError("");
+notify(
+        "success",
+      "email has been sent"
+      );
+      // setSuccessMessage("If that email exists, a reset link has been sent.");
+      // setError("");
     } catch (err: any) {
-      console.error("generateForgetLink failed", err);
-      setError(err?.response?.data?.message || "Failed to send reset link");
+      // console.error("generateForgetLink failed", err);
+      // setError(err?.response?.data?.message || "Failed to send reset link");
+       notify(
+        "error",
+        err.response?.data?.message || "Failed to send reset link"
+      );
     } finally {
       setLoading(false);
     }
@@ -211,7 +218,11 @@ export const AuthForm: React.FC<AuthFormProps> = ({
       url.searchParams.set("isVerification", "true");
       window.history.pushState({}, "", url.toString());
     } catch (error: any) {
-      notify("error", error.response?.data?.message || "Authentication failed");
+      notify(
+        "error",
+        error.response?.data?.message || "Authentication failed"
+      );
+      // notify("error", error.response?.data?.message || "Authentication failed");
     } finally {
       setLoading(false);
     }

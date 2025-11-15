@@ -5,6 +5,7 @@ import { OtpInput } from "./OtpInput";
 import Icon from "./Icon";
 import logoText from "../assets/logo-text.svg";
 import { ArrowLeftIcon } from "lucide-react";
+import { notify } from "@/utils/toast";
 type OtpModalProps = {
   open: boolean;
   onClose: () => void;
@@ -93,6 +94,9 @@ export function OtpModal({
         localStorage.removeItem("email_token");
 
         onSuccess(result?.user);
+        notify("success", 
+        "Verification Sucessful"
+      );
         onClose();
       } else {
         throw new Error("OTP verification failed");
