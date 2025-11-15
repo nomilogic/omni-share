@@ -136,7 +136,7 @@ export function OtpModal({
       aria-labelledby="otp-title"
       className="fixed inset-0 z-50 flex md:items-center justify-center px-4 pt-8 "
     >
-      <div className="w-full max-w-sm md:rounded-md md:bg-white sm:p-6 md:shadow-md">
+      <div className="w-full max-w-sm md:rounded-md md:bg-white text-purple-600 sm:p-6 md:shadow-md">
         <div className={`flex  relative  justify-center gap-2 mb-5`}>
           <button
             onClick={() => {}}
@@ -169,12 +169,12 @@ export function OtpModal({
           <div id="otp-status" className="sr-only" aria-live="polite" />
         </div>
         {emailHint ? (
-          <p className="mt-1 text-sm theme-text-secondary">
+          <p className="mt-1 text-sm text-purple-600">
             We sent a one-time code to your email .
           </p>
         ) : null}
         {!expired ? (
-          <p className="mt-2 text-sm theme-text-secondary">
+          <p className="mt-2 text-sm text-purple-600">
             OTP expires in{" "}
             <span className="font-medium">{formatTime(timeLeft)}</span>
           </p>
@@ -203,7 +203,7 @@ export function OtpModal({
           <button
             onClick={handleVerify}
             disabled={verifying || otp.replace(/\D/g, "").length < 4}
-            className="inline-flex items-center justify-center rounded-md px-4 py-2.5       bg-theme-text-secondary text-white
+            className="inline-flex items-center justify-center rounded-md px-4 py-2.5       bg-purple-600 text-white
               hover:opacity-95
               disabled:opacity-50 disabled:cursor-not-allowed"
           >
@@ -213,7 +213,7 @@ export function OtpModal({
           <button
             onClick={handleResend}
             disabled={resending || remaining > 0}
-            className="inline-flex items-center justify-center rounded-md px-4 py-2.5  bg-theme-text-secondary text-white              hover:opacity-95      disabled:opacity-50 disabled:cursor-not-allowed"
+            className="inline-flex items-center justify-center rounded-md px-4 py-2.5  bg-purple-600 text-white              hover:opacity-95      disabled:opacity-50 disabled:cursor-not-allowed"
             aria-live="polite"
           >
             {resending
@@ -224,7 +224,7 @@ export function OtpModal({
           </button>
         </div>
 
-        <p className="mt-3 text-xs theme-text-secondary">
+        <p className="mt-3 text-xs text-purple-600">
           Didn&apos;t receive the code? Check your spam or wait a moment before
           resending.
         </p>
