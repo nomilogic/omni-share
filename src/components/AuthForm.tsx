@@ -124,12 +124,16 @@ export const AuthForm: React.FC<AuthFormProps> = ({
 
       localStorage.setItem("forgot_token", res.data.data.token);
       localStorage.setItem("forgot_token_time", Date.now().toString());
-
-      setSuccessMessage("If that email exists, a reset link has been sent.");
-      setError("");
+      notify("success", "email has been sent");
+      // setSuccessMessage("If that email exists, a reset link has been sent.");
+      // setError("");
     } catch (err: any) {
-      console.error("generateForgetLink failed", err);
-      setError(err?.response?.data?.message || "Failed to send reset link");
+      // console.error("generateForgetLink failed", err);
+      // setError(err?.response?.data?.message || "Failed to send reset link");
+      notify(
+        "error",
+        err.response?.data?.message || "Failed to send reset link"
+      );
     } finally {
       setLoading(false);
     }
@@ -149,9 +153,10 @@ export const AuthForm: React.FC<AuthFormProps> = ({
       const result = response.data.data;
 
       if (!result.token || !result.user) {
-        throw new Error("Invalid response from server");
+        return notify("error", "Invalid response from server");
       }
 
+      notify("success", "Login Successful");
       if (rememberMe) {
         const expirationDate = new Date();
         expirationDate.setDate(expirationDate.getDate() + 30);
@@ -180,7 +185,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
           return;
         }
       } catch (e) {
-        console.error("AuthForm fallback redirect check failed", e);
+        return notify("error", "Authentication failed");
       }
     } catch (error: any) {
       notify("error", error.response?.data?.message || "Authentication failed");
@@ -210,8 +215,10 @@ export const AuthForm: React.FC<AuthFormProps> = ({
       const url = new URL(window.location.href);
       url.searchParams.set("isVerification", "true");
       window.history.pushState({}, "", url.toString());
+      notify("success", "Email has been sent");
     } catch (error: any) {
       notify("error", error.response?.data?.message || "Authentication failed");
+      // notify("error", error.response?.data?.message || "Authentication failed");
     } finally {
       setLoading(false);
     }

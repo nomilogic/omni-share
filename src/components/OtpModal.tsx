@@ -5,6 +5,7 @@ import { OtpInput } from "./OtpInput";
 import Icon from "./Icon";
 import logoText from "../assets/logo-text.svg";
 import { ArrowLeftIcon } from "lucide-react";
+import { notify } from "@/utils/toast";
 type OtpModalProps = {
   open: boolean;
   onClose: () => void;
@@ -93,13 +94,19 @@ export function OtpModal({
         localStorage.removeItem("email_token");
 
         onSuccess(result?.user);
+        notify("success", 
+        "Verification Sucessful"
+      );
         onClose();
       } else {
         throw new Error("OTP verification failed");
       }
+      
     } catch (e: unknown) {
-      const message = "OTP verification failed";
-      setError(message);
+      // const message = "OTP verification failed";
+      notify("error", 
+        "OTP verification failed"
+      );
     } finally {
       setVerifying(false);
     }
@@ -115,9 +122,14 @@ export function OtpModal({
       setTimeLeft(300);
       setExpired(false);
       setRemaining(40);
+          notify("success", 
+        "OTP Resend Successfully"
+      );
     } catch (e: unknown) {
-      const message = e instanceof Error ? e.message : "Failed to resend OTP";
-      setError(message);
+      // const message = e instanceof Error ? e.message : "Failed to resend OTP";
+          notify("error", 
+        "Failed to resend OTP"
+      );
     } finally {
       setResending(false);
     }
