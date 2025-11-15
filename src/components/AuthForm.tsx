@@ -487,8 +487,8 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                 </button>
               </form>
 
-              <div className="flex  gap-3   items-center justify-between text-sm">
-                <label className="flex items-center gap-2 cursor-pointer">
+              <div className="flex  gap-3   items-center justify-end text-sm">
+                {/* <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={rememberMe}
@@ -498,7 +498,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                   <span className="text-slate-500 text-sm">
                     Remember me For 30 Days
                   </span>
-                </label>
+                </label> */}
                 <button
                   onClick={() => {
                     setMode("forgotPassword");

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { AppProvider, useAppContext } from "./context/AppContext";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -26,6 +26,7 @@ import GenerationAmountPage from "./pages/GenerationAmountPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import HomePage from "./pages/HomePage";
 import { Bounce, ToastContainer } from "react-toastify";
+import { themeManager } from "./lib/theme";
 
 const OAuthCallbackWrapper = () => {
   const { dispatch } = useAppContext();
@@ -39,6 +40,10 @@ const OAuthCallbackWrapper = () => {
 };
 
 function App() {
+  useEffect(() => {
+    themeManager.initialize();
+    localStorage.getItem("hasLanded");
+  }, []);
   return (
     <>
       <ToastContainer
