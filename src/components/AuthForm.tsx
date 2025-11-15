@@ -19,6 +19,7 @@ import { OtpModal } from "./OtpModal";
 import { ArrowLeftIcon, Mail } from "lucide-react";
 import logoText from "../assets/logo-text.svg";
 import backArrow from "../assets/back-arrow.png";
+import { notify } from "@/utils/toast";
 
 interface AuthFormProps {
   onAuthSuccess: (user: any) => void;
@@ -182,8 +183,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         console.error("AuthForm fallback redirect check failed", e);
       }
     } catch (error: any) {
-      console.error("Authentication error:", error.response?.data?.message);
-      setError(error.response?.data?.message || "Authentication failed");
+      notify("error", error.response?.data?.message || "Authentication failed");
     } finally {
       setLoading(false);
     }
@@ -211,8 +211,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
       url.searchParams.set("isVerification", "true");
       window.history.pushState({}, "", url.toString());
     } catch (error: any) {
-      console.error("Authentication error:", error.response?.data?.message);
-      setError(error.response?.data?.message || "Authentication failed");
+      notify("error", error.response?.data?.message || "Authentication failed");
     } finally {
       setLoading(false);
     }
@@ -262,11 +261,13 @@ export const AuthForm: React.FC<AuthFormProps> = ({
           return;
         }
       } catch (e) {
-        console.error("AuthForm Facebook fallback redirect check failed", e);
+        notify("error", "AuthForm Facebook fallback redirect check failed");
       }
     } catch (error: any) {
-      console.error("Facebook OAuth error:", error);
-      setError(error.message || "Facebook authentication failed");
+      notify(
+        "error",
+        error.response?.data?.message || "Facebook authentication failed"
+      );
     } finally {
       setLoading(false);
     }
@@ -297,7 +298,10 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         navigate("/content");
       }
     } catch (error: any) {
-      setError(error?.message || "LinkedIn authentication failed");
+      notify(
+        "error",
+        error.response?.data?.message || "LinkedIn authentication failed"
+      );
     } finally {
       setLoading(false);
     }
@@ -489,7 +493,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                     type="checkbox"
                     checked={rememberMe}
                     onChange={(e) => setRememberMe(e.target.checked)}
-                    className="rounded"
+                    className="rounded  accent-white"
                   />
                   <span className="text-slate-500 text-sm">
                     Remember me For 30 Days

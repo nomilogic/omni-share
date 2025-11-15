@@ -542,7 +542,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
 
         {filteredPosts.length === 0 ? (
           <div className="text-center py-12">
-            <div className="text-gray-400 mb-4">
+            <div className="text-purple-600 mb-4">
               <Clock className="w-16 h-16 mx-auto" />
             </div>
             <h3 className="text-lg font-semibold text-slate-900 mb-2">
