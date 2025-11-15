@@ -333,24 +333,26 @@ export const ContentPage: React.FC = () => {
 
           {/* Generate Modal - Show AI Generator as modal instead of route */}
           {showGenerateModal && state.contentData && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center z-50">
-              <div className="bg-white w-full overflow-y-auto modal-content">
-                <AIGenerator
-                  contentData={state.contentData}
-                  onComplete={(posts) => {
-                    handleGenerationComplete(posts);
-                    setShowGenerateModal(false);
-                    // Restore background scrolling when modal is closed
-                    document.body.classList.remove("modal-open");
-                    document.documentElement.classList.remove("modal-open");
-                  }}
-                  onBack={() => {
-                    setShowGenerateModal(false);
-                    // Restore background scrolling when modal is closed
-                    document.body.classList.remove("modal-open");
-                    document.documentElement.classList.remove("modal-open");
-                  }}
-                />
+            <div className="fixed inset-0 bg-black bg-opacity-50 z-50 h-full">
+              <div className="bg-white min-h-screen flex items-center justify-center w-full h-full overflow-y-auto modal-content">
+                <div className="max-w-5xl m-auto  ">
+                  <AIGenerator
+                    contentData={state.contentData}
+                    onComplete={(posts) => {
+                      handleGenerationComplete(posts);
+                      setShowGenerateModal(false);
+                      // Restore background scrolling when modal is closed
+                      document.body.classList.remove("modal-open");
+                      document.documentElement.classList.remove("modal-open");
+                    }}
+                    onBack={() => {
+                      setShowGenerateModal(false);
+                      // Restore background scrolling when modal is closed
+                      document.body.classList.remove("modal-open");
+                      document.documentElement.classList.remove("modal-open");
+                    }}
+                  />
+                </div>
               </div>
             </div>
           )}

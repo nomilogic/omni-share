@@ -1,5 +1,12 @@
 import { useState, useEffect } from "react";
 import {
+  motion,
+  useScroll,
+  useTransform,
+  AnimatePresence,
+  useSpring,
+} from "framer-motion";
+import {
   Menu,
   X,
   ChevronDown,
@@ -18,8 +25,10 @@ import {
   TrendingUp,
 } from "lucide-react";
 import Icon from "../components/Icon";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import LogoWhiteText from "../assets/logo-white-text.svg";
+import API from "@/services/api";
+import { Counter } from "./counter";
 
 function HomePage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -30,13 +39,36 @@ function HomePage() {
     null
   );
   const [showContactForm, setShowContactForm] = useState(false);
+  const [packages, setPackages] = useState<any[]>([]);
+  const [expandedFaqIndex, setExpandedFaqIndex] = useState<number | null>(null);
   const navigate = useNavigate();
+
+  const { scrollYProgress } = useScroll();
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
+  const heroScale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95]);
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+  });
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const packagesRes = await API.listPackages();
+        setPackages(packagesRes.data.data || []);
+      } catch (error) {
+        console.error("Failed to load packages/addons:", error);
+      }
+    };
+    fetchData();
+  }, []);
+  console.log("packages", packages);
 
   const allFeatures = [
     {
@@ -158,8 +190,6 @@ function HomePage() {
     },
   ];
 
-  const [expandedFaqIndex, setExpandedFaqIndex] = useState<number | null>(null);
-
   const nextReview = () => {
     setSlideDirection("left");
     setTimeout(() => {
@@ -186,147 +216,165 @@ function HomePage() {
     }
   };
 
+  // Professional animation variants with proper typing
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.08,
+        delayChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30, scale: 0.95 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+    },
+  };
+
   return (
     <div className="min-h-screen bg-white">
       {/* Navigation */}
-      <nav
-        className={`fixed top-0 w-full z-50 transition-all duration-300 ${
+      <motion.nav
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 100, damping: 20 }}
+        className={`fixed top-0 w-full z-50 transition-all duration-500 ${
           scrollY > 50
-            ? " bg-[linear-gradient(135deg,_#7650e3_0%,_#6366F1_100%)]  shadow-md"
+            ? "bg-[linear-gradient(135deg,_#7650e3_0%,_#6366F1_100%)] shadow-lg backdrop-blur-md"
             : "bg-transparent"
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20 flex-row-reverse mds:flex-row">
-            <div className="flex items-center space-x-2">
+            <motion.div
+              className="flex items-center space-x-2"
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 400, damping: 17 }}
+            >
               <Icon
                 name="logo-white"
                 size={35}
-                className={`ml-0 lg:ml-0 mt-1 lg:scale-105 ${
-                  scrollY < 50 ? "" : ""
-                }`}
+                className="ml-0 lg:ml-0 mt-1 lg:scale-105"
               />
-              <span
-                className={`${
-                  scrollY > 50 ? "text-white" : "text-white"
-                } text-2xl lg:text-[1.6rem] tracking-tight`}
-              >
-                <span className="theme-text-primary text-2xl lg:text-[1.6rem] tracking-tight">
-                  <img src={LogoWhiteText} alt="Logo" className="h-5" />
-                </span>
+              <span className="text-white text-2xl lg:text-[1.6rem] tracking-tight">
+                <img src={LogoWhiteText} alt="Logo" className="h-5" />
               </span>
-            </div>
+            </motion.div>
 
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center space-x-8">
-              <button
-                onClick={() => scrollToSection("home")}
-                className={`transition-colors hover:text-[#7650e3] ${
-                  scrollY > 50 ? "text-white" : "text-white"
-                }`}
-              >
-                Home
-              </button>
-              <button
-                onClick={() => scrollToSection("features")}
-                className={`transition-colors hover:text-[#7650e3] ${
-                  scrollY > 50 ? "text-white" : "text-white"
-                }`}
-              >
-                Features
-              </button>
-              <button
-                onClick={() => scrollToSection("pricing")}
-                className={`transition-colors hover:text-[#7650e3] ${
-                  scrollY > 50 ? "text-white" : "text-white"
-                }`}
-              >
-                Pricing
-              </button>
-              <button
-                onClick={() => scrollToSection("video")}
-                className={`transition-colors hover:text-[#7650e3] ${
-                  scrollY > 50 ? "text-white" : "text-white"
-                }`}
-              >
-                Learn
-              </button>
-              <button
-                onClick={() => scrollToSection("contact")}
-                className={`transition-colors hover:text-[#7650e3] ${
-                  scrollY > 50 ? "text-white" : "text-white"
-                }`}
-              >
-                Contact
-              </button>
-              <button
+              {["home", "features", "pricing", "video", "contact"].map(
+                (section, index) => (
+                  <motion.button
+                    key={section}
+                    onClick={() => scrollToSection(section)}
+                    className={`transition-colors relative ${
+                      scrollY > 50 ? "text-white" : "text-white"
+                    } capitalize font-medium`}
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      delay: index * 0.1,
+                      type: "spring",
+                      stiffness: 100,
+                    }}
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    {section}
+                    <motion.span
+                      className="absolute bottom-0 left-0 w-full h-0.5 bg-white origin-left"
+                      initial={{ scaleX: 0 }}
+                      whileHover={{ scaleX: 1 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 300,
+                        damping: 20,
+                      }}
+                    />
+                  </motion.button>
+                )
+              )}
+              <motion.button
                 onClick={() => navigate("/auth")}
-                className="bg-[#7650e3] text-white px-6 py-2.5 rounded-full hover:bg-[#633cd3] transition-all transform hover:scale-105 shadow-md"
+                className="bg-white text-[#7650e3] px-6 py-2.5 rounded-full font-semibold shadow-lg"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.5, type: "spring", stiffness: 200 }}
+                whileHover={{
+                  scale: 1.08,
+                  boxShadow: "0 10px 30px rgba(118, 80, 227, 0.3)",
+                }}
+                whileTap={{ scale: 0.95 }}
               >
                 Get Started
-              </button>
+              </motion.button>
             </div>
 
             {/* Mobile Menu Button */}
-            <button
+            <motion.button
               className={`md:hidden transition-colors ${
                 scrollY > 50 ? "text-white" : "text-white"
               }`}
               onClick={() => setIsMenuOpen(!isMenuOpen)}
+              whileTap={{ scale: 0.9, rotate: 90 }}
             >
               {isMenuOpen ? (
                 <X className="w-6 h-6" />
               ) : (
                 <Menu className="w-6 h-6" />
               )}
-            </button>
+            </motion.button>
           </div>
 
           {/* Mobile Menu */}
-          {isMenuOpen && (
-            <div className="md:hidden bg-white border-t">
-              <div className="px-2 pt-2 pb-3 space-y-1">
-                <button
-                  onClick={() => scrollToSection("home")}
-                  className="block w-full text-left px-3 py-2.5 text-slate-700 hover:bg-gray-100"
-                >
-                  Home
-                </button>
-                <button
-                  onClick={() => scrollToSection("features")}
-                  className="block w-full text-left px-3 py-2.5 text-slate-700 hover:bg-gray-100"
-                >
-                  Features
-                </button>
-                <button
-                  onClick={() => scrollToSection("pricing")}
-                  className="block w-full text-left px-3 py-2.5 text-slate-700 hover:bg-gray-100"
-                >
-                  Pricing
-                </button>
-                <button
-                  onClick={() => scrollToSection("video")}
-                  className="block w-full text-left px-3 py-2.5 text-slate-700 hover:bg-gray-100"
-                >
-                  Learn
-                </button>
-                <button
-                  onClick={() => scrollToSection("contact")}
-                  className="block w-full text-left px-3 py-2.5 text-slate-700 hover:bg-gray-100"
-                >
-                  Contact
-                </button>
-                <button
-                  onClick={() => navigate("/auth")}
-                  className="block w-full text-left px-3 py-2.5 bg-blue-600 text-white hover:bg-blue-700"
-                >
-                  Get Started
-                </button>
-              </div>
-            </div>
-          )}
+          <AnimatePresence>
+            {isMenuOpen && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="md:hidden bg-white border-t overflow-hidden"
+              >
+                <div className="px-2 pt-2 pb-3 space-y-1">
+                  {["home", "features", "pricing", "video", "contact"].map(
+                    (section, index) => (
+                      <motion.button
+                        key={section}
+                        onClick={() => scrollToSection(section)}
+                        className="block w-full text-left px-3 py-2.5 text-slate-700 hover:bg-gray-100 rounded-lg capitalize"
+                        initial={{ x: -50, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        transition={{ delay: index * 0.05 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        {section}
+                      </motion.button>
+                    )
+                  )}
+                  <motion.button
+                    onClick={() => navigate("/auth")}
+                    className="block w-full text-left px-3 py-2.5 bg-blue-600 text-white hover:bg-blue-700 rounded-lg"
+                    initial={{ x: -50, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: 0.25 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    Get Started
+                  </motion.button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-      </nav>
+      </motion.nav>
 
       {/* Hero Section */}
       <section
@@ -345,138 +393,196 @@ function HomePage() {
           }}
         />
 
-        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1
+        <motion.div
+          className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center"
+          style={{ opacity: heroOpacity, scale: heroScale }}
+        >
+          <motion.h1
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              duration: 0.8,
+              delay: 0.2,
+              type: "spring",
+              stiffness: 80,
+            }}
             className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight"
-            style={{ transform: `translateY(${scrollY * 0.1}px)` }}
           >
             AI-Powered Social Media
             <br />
-            Made Simple
-          </h1>
-          <p
+            <motion.span
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.5, type: "spring", stiffness: 100 }}
+              className="bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent"
+            >
+              Made Simple
+            </motion.span>
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              duration: 0.8,
+              delay: 0.4,
+              type: "spring",
+              stiffness: 80,
+            }}
             className="text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto leading-relaxed"
-            style={{ transform: `translateY(${scrollY * 0.15}px)` }}
           >
             Create, schedule, and publish stunning content across Facebook,
             Instagram, YouTube, LinkedIn, and TikTok - all from one powerful
             platform powered by AI.
-          </p>
+          </motion.p>
 
-          <div
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
             className="flex flex-wrap items-center justify-center gap-6 mb-8"
-            style={{ transform: `translateY(${scrollY * 0.17}px)` }}
           >
-            <svg
-              className="w-10 h-10 text-white/80 hover:text-white transition-colors"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-            >
-              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-            </svg>
-            <svg
-              className="w-10 h-10 text-white/80 hover:text-white transition-colors"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-            >
-              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-            </svg>
-            <svg
-              className="w-10 h-10 text-white/80 hover:text-white transition-colors"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-            >
-              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
-            </svg>
-            <svg
-              className="w-10 h-10 text-white/80 hover:text-white transition-colors"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-            >
-              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-            </svg>
-            <svg
-              className="w-10 h-10 text-white/80 hover:text-white transition-colors"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-            >
-              <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" />
-            </svg>
-          </div>
+            {[0, 1, 2, 3, 4].map((index) => (
+              <motion.svg
+                key={index}
+                className="w-10 h-10 text-white/80 hover:text-white transition-colors"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                initial={{ opacity: 0, scale: 0, rotate: -180 }}
+                animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                transition={{
+                  delay: 0.8 + index * 0.1,
+                  type: "spring",
+                  stiffness: 200,
+                  damping: 15,
+                }}
+                whileHover={{ scale: 1.3, rotate: 10, y: -5 }}
+              >
+                {index === 0 && (
+                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                )}
+                {index === 1 && (
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                )}
+                {index === 2 && (
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                )}
+                {index === 3 && (
+                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                )}
+                {index === 4 && (
+                  <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" />
+                )}
+              </motion.svg>
+            ))}
+          </motion.div>
 
-          <button
+          <motion.button
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              duration: 0.8,
+              delay: 0.8,
+              type: "spring",
+              stiffness: 100,
+            }}
             onClick={() => navigate("/auth")}
-            className="bg-white text-[#7650e3] px-8 py-4 rounded-full text-lg font-semibold hover:bg-[#d7d7fc] transition-all transform hover:scale-105 shadow-md inline-flex items-center space-x-2"
-            style={{ transform: `translateY(${scrollY * 0.2}px)` }}
+            className="bg-white text-[#7650e3] px-8 py-4 rounded-full text-lg font-semibold shadow-2xl inline-flex items-center space-x-2"
+            whileHover={{
+              scale: 1.08,
+              boxShadow: "0 20px 40px rgba(0, 0, 0, 0.2)",
+              y: -5,
+            }}
+            whileTap={{ scale: 0.95 }}
           >
             <span>Get Started Free</span>
-            <ChevronDown className="w-5 h-5 animate-bounce" />
-          </button>
-        </div>
+            <motion.div
+              animate={{ y: [0, 5, 0] }}
+              transition={{
+                duration: 1.5,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            >
+              <ChevronDown className="w-5 h-5" />
+            </motion.div>
+          </motion.button>
+        </motion.div>
 
-        <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2">
-          <ChevronDown className="w-8 h-8 text-white animate-bounce" />
-        </div>
+        <motion.div
+          className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <ChevronDown className="w-8 h-8 text-white" />
+        </motion.div>
       </section>
 
       {/* Active Users Stats Section */}
       <section className="py-16 bg-white border-y border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div className="group">
-              <div className="flex items-center justify-center mb-3">
-                <Users className="w-8 h-8 text-[#7650e3] group-hover:scale-110 transition-transform" />
-              </div>
-              <div className="text-4xl md:text-5xl font-bold text-[#000] mb-2">
-                50K+
-              </div>
-              <div className="text-slate-500 font-medium">Active Users</div>
-            </div>
-            <div className="group">
-              <div className="flex items-center justify-center mb-3">
-                <TrendingUp className="w-8 h-8 text-[#7650e3] group-hover:scale-110 transition-transform" />
-              </div>
-              <div className="text-4xl md:text-5xl font-bold text-[#000] mb-2">
-                10M+
-              </div>
-              <div className="text-slate-500 font-medium">Posts Created</div>
-            </div>
-            <div className="group">
-              <div className="flex items-center justify-center mb-3">
-                <Share2 className="w-8 h-8 text-[#7650e3] group-hover:scale-110 transition-transform" />
-              </div>
-              <div className="text-4xl md:text-5xl font-bold text-[#000] mb-2">
-                5
-              </div>
-              <div className="text-slate-500 font-medium">
-                Platforms Supported
-              </div>
-            </div>
-            <div className="group">
-              <div className="flex items-center justify-center mb-3">
-                <Sparkles className="w-8 h-8 text-[#7650e3] group-hover:scale-110 transition-transform" />
-              </div>
-              <div className="text-4xl md:text-5xl font-bold text-[#000] mb-2">
-                99.9%
-              </div>
-              <div className="text-slate-500 font-medium">Uptime</div>
-            </div>
-          </div>
+          <motion.div
+            className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={containerVariants}
+          >
+            {[
+              { icon: Users, end: 1000, suffix: "+", label: "Active Users" },
+              {
+                icon: TrendingUp,
+                end: 99.9,
+                suffix: "+",
+                label: "Posts Created",
+              },
+              {
+                icon: Share2,
+                end: 5,
+                suffix: "",
+                label: "Platforms Supported",
+              },
+              { icon: Sparkles, end: 99.9, suffix: "%", label: "Uptime" },
+            ].map((stat, index) => (
+              <motion.div key={index} className="group" variants={itemVariants}>
+                <motion.div
+                  className="flex items-center justify-center mb-3"
+                  whileHover={{ scale: 1.2, rotate: 10 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                >
+                  <stat.icon className="w-8 h-8 text-[#7650e3]" />
+                </motion.div>
+                <div className="text-4xl md:text-5xl font-bold text-[#000] mb-2">
+                  <Counter end={stat.end} suffix={stat.suffix} />
+                </div>
+                <div className="text-slate-500 font-medium">{stat.label}</div>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 bg-gray-50 relative">
-        <div
+      <section
+        id="features"
+        className="py-20 bg-gray-50 relative overflow-hidden"
+      >
+        <motion.div
           className="absolute inset-0 opacity-5"
-          style={{ transform: `translateY(${(scrollY - 600) * 0.3}px)` }}
+          style={{ y: useTransform(smoothProgress, [0, 1], [0, -200]) }}
         >
           <div className="absolute top-20 left-10 w-72 h-72 bg-[#7650e3] rounded-full blur-3xl"></div>
           <div className="absolute bottom-20 right-10 w-96 h-96 bg-[#6366F1] rounded-full blur-3xl"></div>
-        </div>
+        </motion.div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center mb-16">
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6, type: "spring", stiffness: 80 }}
+          >
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               Powerful Features
             </h2>
@@ -484,55 +590,91 @@ function HomePage() {
               Everything you need to dominate social media marketing in one
               place
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+          <motion.div
+            className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={containerVariants}
+          >
             {displayedFeatures.map((feature, index) => (
-              <div
+              <motion.div
                 key={index}
-                className="bg-white p-8 rounded-2xl shadow-md hover:shadow-md transition-all transform hover:-translate-y-2 border border-gray-100"
-                style={{
-                  animation: `fadeInUp 0.6s ease-out ${index * 0.1}s both`,
-                }}
+                variants={itemVariants}
+                className="bg-white p-8 rounded-2xl shadow-md border border-gray-100 cursor-pointer group"
+                whileHover={{ y: -8, scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 300 }}
               >
-                <div className="text-[#7650e3] mb-4">{feature.icon}</div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                <motion.div
+                  className="text-[#7650e3] mb-4"
+                  whileHover={{ scale: 1.15, rotate: 8 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                >
+                  {feature.icon}
+                </motion.div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-[#7650e3] transition-colors">
                   {feature.title}
                 </h3>
                 <p className="text-slate-500 leading-relaxed">
                   {feature.description}
                 </p>
-              </div>
+                <motion.div
+                  className="mt-4 h-1 bg-gradient-to-r from-[#7650e3] to-[#6366F1] rounded-full"
+                  initial={{ scaleX: 0 }}
+                  whileHover={{ scaleX: 1 }}
+                  transition={{ duration: 0.3 }}
+                  style={{ transformOrigin: "left" }}
+                />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
 
-          <div className="text-center">
-            <button
+          <motion.div
+            className="text-center"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+          >
+            <motion.button
               onClick={() => setShowAllFeatures(!showAllFeatures)}
-              className="bg-[#7650e3] text-white px-8 py-3 rounded-full hover:bg-[#633cd3] transition-all transform hover:scale-105 shadow-md inline-flex items-center space-x-2"
+              className="bg-[#7650e3] text-white px-8 py-3 rounded-full shadow-lg inline-flex items-center space-x-2"
+              whileHover={{
+                scale: 1.05,
+                boxShadow: "0 10px 30px rgba(118, 80, 227, 0.3)",
+              }}
+              whileTap={{ scale: 0.95 }}
             >
               <span>{showAllFeatures ? "Show Less" : "View All Features"}</span>
-              <ChevronDown
-                className={`w-5 h-5 transition-transform ${
-                  showAllFeatures ? "rotate-180" : ""
-                }`}
-              />
-            </button>
-          </div>
+              <motion.div
+                animate={{ rotate: showAllFeatures ? 180 : 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <ChevronDown className="w-5 h-5" />
+              </motion.div>
+            </motion.button>
+          </motion.div>
         </div>
       </section>
 
       {/* Video Section */}
       <section id="video" className="py-20 bg-white relative overflow-hidden">
-        <div
+        <motion.div
           className="absolute inset-0 opacity-5"
-          style={{ transform: `translateY(${(scrollY - 1200) * 0.2}px)` }}
+          style={{ y: useTransform(smoothProgress, [0.3, 0.6], [100, -100]) }}
         >
           <div className="absolute top-40 right-20 w-80 h-80 bg-[#7650e3] rounded-full blur-3xl"></div>
-        </div>
+        </motion.div>
 
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center mb-12">
+          <motion.div
+            className="text-center mb-12"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6, type: "spring", stiffness: 80 }}
+          >
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               See Omnishare in Action
             </h2>
@@ -540,13 +682,31 @@ function HomePage() {
               Watch how easy it is to create and schedule content across all
               platforms
             </p>
-          </div>
+          </motion.div>
 
-          <div className="relative rounded-2xl overflow-hidden shadow-md bg-gray-900 aspect-video">
+          <motion.div
+            className="relative rounded-2xl overflow-hidden shadow-2xl bg-gray-900 aspect-video"
+            initial={{ opacity: 0, scale: 0.9, y: 50 }}
+            whileInView={{ opacity: 1, scale: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6, type: "spring", stiffness: 80 }}
+            whileHover={{ scale: 1.02, transition: { duration: 0.3 } }}
+          >
             <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#7650e3] to-[#6366F1]">
-              <button className="bg-white rounded-full p-6 hover:scale-110 transition-transform shadow-md">
-                <Play className="w-12 h-12 text-[#7650e3] ml-1" />
-              </button>
+              <motion.button
+                className="bg-white rounded-full p-6 shadow-2xl relative"
+                whileHover={{ scale: 1.2 }}
+                whileTap={{ scale: 0.9 }}
+                animate={{ scale: [1, 1.05, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                <motion.div
+                  className="absolute inset-0 bg-white rounded-full"
+                  animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0, 0.5] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                />
+                <Play className="w-12 h-12 text-[#7650e3] ml-1 relative z-10" />
+              </motion.button>
             </div>
             <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/70 to-transparent">
               <p className="text-white text-lg font-semibold">
@@ -556,222 +716,253 @@ function HomePage() {
                 Learn how to maximize your social media presence
               </p>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-20 bg-gray-50 relative">
+      <section
+        id="pricing"
+        className="py-20 bg-gray-50 relative overflow-hidden"
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6, type: "spring", stiffness: 80 }}
+          >
             <h2 className="text-4xl md:text-5xl font-bold text-[#7650e3] mb-4">
               Simple, Transparent Pricing
             </h2>
             <p className="text-xl text-slate-500">
               Choose the plan that's right for your business
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            {/* Basic Plan */}
-            <div className="bg-white rounded-2xl shadow-md p-8 border-2 border-gray-200 hover:border-[#7650e3] transition-all transform hover:scale-105">
-              <div className="text-center mb-4">
-                <h3 className="text-2xl font-bold text-[#7650e3] mb-2">
-                  Basic
-                </h3>
-                <p className="text-[#7650e3] mb-4">
-                  Perfect for individuals and small teams
-                </p>
-                <div className="flex items-baseline justify-center">
-                  <span className="text-5xl font-bold text-[#7650e3]">$29</span>
-                  <span className="text-[#7650e3] ml-2">/month</span>
-                </div>
-              </div>
-              <button
-                onClick={() => (window.location.href = "/auth?plan=basic")}
-                className="w-full bg-[#7650e3] text-white py-3 my-3 rounded-full hover:bg-[#7650e3)] transition-all font-semibold"
-              >
-                Get Started
-              </button>
-              <ul className="space-y-4 mb-8">
-                <li className="flex items-start">
-                  <Check className="w-6 h-6 text-green-500 mr-3 flex-shrink-0" />
-                  <span className="text-[#7650e3]">
-                    Up to 3 social media accounts
-                  </span>
-                </li>
-                <li className="flex items-start">
-                  <Check className="w-6 h-6 text-green-500 mr-3 flex-shrink-0" />
-                  <span className="text-[#7650e3]">
-                    30 AI-generated posts per month
-                  </span>
-                </li>
-                <li className="flex items-start">
-                  <Check className="w-6 h-6 text-green-500 mr-3 flex-shrink-0" />
-                  <span className="text-[#7650e3]">
-                    Basic analytics dashboard
-                  </span>
-                </li>
-                <li className="flex items-start">
-                  <Check className="w-6 h-6 text-green-500 mr-3 flex-shrink-0" />
-                  <span className="text-[#7650e3]">
-                    Schedule posts up to 1 week ahead
-                  </span>
-                </li>
-                <li className="flex items-start">
-                  <Check className="w-6 h-6 text-green-500 mr-3 flex-shrink-0" />
-                  <span className="text-[#7650e3]">Email support</span>
-                </li>
-              </ul>
-            </div>
+          <motion.div
+            className="grid xl:grid-cols-3 lg:grid-cols-2 gap-5 mx-auto"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={containerVariants}
+          >
+            {packages.map((tier: any, tierIndex: number) => {
+              const isFree = tier.amount === 0;
 
-            {/* Pro Plan */}
-            <div className="bg-gradient-to-br from-[#7650e3] to-[#6366F1] rounded-2xl shadow-md p-8 transform hover:scale-105 transition-all relative">
-              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                <span className="bg-yellow-400 text-gray-900 px-4 py-1 rounded-full text-sm font-bold">
-                  MOST POPULAR
-                </span>
-              </div>
+              return (
+                <motion.div
+                  key={tier.id}
+                  variants={itemVariants}
+                  className="rounded-2xl bg-gray-100 overflow-hidden shadow-md relative group"
+                  whileHover={{ y: -8, scale: 1.02 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <motion.div className="absolute inset-0 bg-gradient-to-br from-[#7650e3]/5 to-[#6366F1]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-              <div className="text-center mb-4">
-                <h3 className="text-2xl font-bold text-white mb-2">Pro</h3>
-                <p className="text-white/90 mb-4">
-                  For professionals and growing businesses
-                </p>
-                <div className="flex items-baseline justify-center">
-                  <span className="text-5xl font-bold text-white">$79</span>
-                  <span className="text-white/90 ml-2">/month</span>
-                </div>
-              </div>
-              <button
-                onClick={() => (window.location.href = "/auth?plan=pro")}
-                className="w-full bg-white text-[#7650e3] py-3 my-3 rounded-full hover:bg-[#d7d7fc] transition-all font-semibold"
-              >
-                Get Started
-              </button>
-              <ul className="space-y-4 mb-8">
-                <li className="flex items-start">
-                  <Check className="w-6 h-6 text-yellow-400 mr-3 flex-shrink-0" />
-                  <span className="text-white">
-                    Unlimited social media accounts
-                  </span>
-                </li>
-                <li className="flex items-start">
-                  <Check className="w-6 h-6 text-yellow-400 mr-3 flex-shrink-0" />
-                  <span className="text-white">
-                    Unlimited AI-generated posts
-                  </span>
-                </li>
-                <li className="flex items-start">
-                  <Check className="w-6 h-6 text-yellow-400 mr-3 flex-shrink-0" />
-                  <span className="text-white">
-                    Advanced analytics & insights
-                  </span>
-                </li>
-                <li className="flex items-start">
-                  <Check className="w-6 h-6 text-yellow-400 mr-3 flex-shrink-0" />
-                  <span className="text-white">
-                    Schedule posts unlimited time ahead
-                  </span>
-                </li>
-                <li className="flex items-start">
-                  <Check className="w-6 h-6 text-yellow-400 mr-3 flex-shrink-0" />
-                  <span className="text-white">Priority 24/7 support</span>
-                </li>
-                <li className="flex items-start">
-                  <Check className="w-6 h-6 text-yellow-400 mr-3 flex-shrink-0" />
-                  <span className="text-white">Team collaboration tools</span>
-                </li>
-                <li className="flex items-start">
-                  <Check className="w-6 h-6 text-yellow-400 mr-3 flex-shrink-0" />
-                  <span className="text-white">
-                    Custom branding & white-label
-                  </span>
-                </li>
-              </ul>
-            </div>
-          </div>
+                  <div className="bg-gradient-to-br from-[#c7bdef] to-[#c7bdef] px-10 py-10 h-64 text-center relative">
+                    <motion.h3
+                      className="text-[#7650e3] text-3xl font-semibold mb-3"
+                      whileHover={{ y: -5 }}
+                    >
+                      {tier.name}
+                    </motion.h3>
+
+                    <motion.div
+                      className="flex items-baseline justify-center gap-3 mb-6"
+                      whileHover={{ scale: 1.05 }}
+                    >
+                      <span className="text-[40px] text-purple-600 font-semibold">
+                        <span className="text-[#7650e3] font-semibold text-2xl mr-1">
+                          $
+                        </span>
+                        {tier.amount}
+                      </span>
+                      <span className="text-2xl font-medium text-[#7650e3]">
+                        /{isFree ? "Forever" : "Month"}
+                      </span>
+                    </motion.div>
+
+                    {!isFree && (
+                      <motion.div
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <Link
+                          to="/auth"
+                          className="w-full py-3 px-6 rounded-md font-semibold transition-all text-base bg-[#7650e3] text-white hover:bg-[#5d3ccc] inline-block shadow-lg"
+                        >
+                          Choose Plan
+                        </Link>
+                      </motion.div>
+                    )}
+                  </div>
+
+                  <div className="px-6 py-4 relative z-10">
+                    <div className="mb-5 border-b-2 border-purple-600 h-[120px] text-center">
+                      <p className="text-xl text-purple-600 font-semibold mb-2">
+                        Ideal for:
+                      </p>
+                      <p className="text-lg text-slate-800 font-medium">
+                        Small agency, growing business, content team
+                      </p>
+                    </div>
+
+                    <ul className="space-y-4">
+                      {tier.features?.map((feature: string, idx: number) => (
+                        <motion.li
+                          key={idx}
+                          className="flex items-start gap-3"
+                          initial={{ opacity: 0, x: -20 }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          viewport={{ once: true }}
+                          transition={{
+                            delay: tierIndex * 0.1 + idx * 0.05,
+                            type: "spring",
+                          }}
+                        >
+                          <Check className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                          <span className="text-sm text-slate-800">
+                            {feature}
+                          </span>
+                        </motion.li>
+                      ))}
+                    </ul>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </motion.div>
         </div>
       </section>
 
       {/* Reviews Section */}
       <section className="py-20 bg-gradient-to-br from-[#d7d7fc] to-white relative overflow-hidden">
         <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-20 left-20 w-96 h-96 bg-[#7650e3] rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 right-20 w-96 h-96 bg-[#6366F1] rounded-full blur-3xl"></div>
+          <motion.div
+            className="absolute top-20 left-20 w-96 h-96 bg-[#7650e3] rounded-full blur-3xl"
+            animate={{ scale: [1, 1.2, 1], x: [0, 50, 0] }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.div
+            className="absolute bottom-20 right-20 w-96 h-96 bg-[#6366F1] rounded-full blur-3xl"
+            animate={{ scale: [1, 1.3, 1], x: [0, -50, 0] }}
+            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+          />
         </div>
 
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center mb-16">
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6, type: "spring", stiffness: 80 }}
+          >
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               Loved by Creators Worldwide
             </h2>
             <p className="text-xl text-slate-500">
               See what our customers have to say about Omnishare
             </p>
-          </div>
+          </motion.div>
 
           <div className="relative pb-8">
-            <div
-              className={`bg-white rounded-3xl shadow-md p-8 md:p-12 max-w-4xl mx-auto transition-all duration-300 ${
-                slideDirection === "left"
-                  ? "opacity-0 -translate-x-12"
-                  : slideDirection === "right"
-                  ? "opacity-0 translate-x-12"
-                  : "opacity-100 translate-x-0"
-              }`}
-            >
-              <div className="flex items-center justify-center mb-6">
-                {[...Array(reviews[currentReviewIndex].rating)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className="w-6 h-6 text-yellow-400 fill-yellow-400"
-                  />
-                ))}
-              </div>
-
-              <p className="text-xl md:text-2xl text-slate-700 text-center mb-8 leading-relaxed italic">
-                "{reviews[currentReviewIndex].text}"
-              </p>
-
-              <div className="flex items-center justify-center space-x-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-[#7650e3] to-[#6366F1] rounded-full flex items-center justify-center text-white font-bold text-xl">
-                  {reviews[currentReviewIndex].avatar}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentReviewIndex}
+                initial={{
+                  opacity: 0,
+                  x: slideDirection === "left" ? 100 : -100,
+                  scale: 0.9,
+                }}
+                animate={{ opacity: 1, x: 0, scale: 1 }}
+                exit={{
+                  opacity: 0,
+                  x: slideDirection === "left" ? -100 : 100,
+                  scale: 0.9,
+                }}
+                transition={{ type: "spring", stiffness: 100, damping: 20 }}
+                className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 max-w-4xl mx-auto"
+              >
+                <div className="flex items-center justify-center mb-6">
+                  {[...Array(reviews[currentReviewIndex].rating)].map(
+                    (_, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, scale: 0, rotate: -180 }}
+                        animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                        transition={{
+                          delay: i * 0.1,
+                          type: "spring",
+                          stiffness: 200,
+                        }}
+                      >
+                        <Star className="w-6 h-6 text-yellow-400 fill-yellow-400" />
+                      </motion.div>
+                    )
+                  )}
                 </div>
-                <div className="text-left">
-                  <p className="font-bold text-gray-900 text-lg">
-                    {reviews[currentReviewIndex].name}
-                  </p>
-                  <p className="text-slate-500">
-                    {reviews[currentReviewIndex].role}
-                  </p>
-                  <p className="text-slate-500 text-sm">
-                    {reviews[currentReviewIndex].company}
-                  </p>
-                </div>
-              </div>
-            </div>
 
-            <button
+                <p className="text-xl md:text-2xl text-slate-700 text-center mb-8 leading-relaxed italic">
+                  "{reviews[currentReviewIndex].text}"
+                </p>
+
+                <div className="flex items-center justify-center space-x-4">
+                  <motion.div
+                    className="w-16 h-16 bg-gradient-to-br from-[#7650e3] to-[#6366F1] rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg"
+                    whileHover={{ scale: 1.15, rotate: 5 }}
+                    transition={{ type: "spring", stiffness: 400 }}
+                  >
+                    {reviews[currentReviewIndex].avatar}
+                  </motion.div>
+                  <div className="text-left">
+                    <p className="font-bold text-gray-900 text-lg">
+                      {reviews[currentReviewIndex].name}
+                    </p>
+                    <p className="text-slate-500">
+                      {reviews[currentReviewIndex].role}
+                    </p>
+                    <p className="text-slate-500 text-sm">
+                      {reviews[currentReviewIndex].company}
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+
+            <motion.button
               onClick={prevReview}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-12 bg-white rounded-full p-3 shadow-md hover:shadow-md transition-all hover:scale-110"
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-12 bg-white rounded-full p-3 shadow-xl"
+              whileHover={{
+                scale: 1.15,
+                x: -8,
+                boxShadow: "0 10px 30px rgba(0, 0, 0, 0.2)",
+              }}
+              whileTap={{ scale: 0.9 }}
               aria-label="Previous review"
             >
               <ChevronLeft className="w-6 h-6 text-slate-700" />
-            </button>
+            </motion.button>
 
-            <button
+            <motion.button
               onClick={nextReview}
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-12 bg-white rounded-full p-3 shadow-md hover:shadow-md transition-all hover:scale-110"
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-12 bg-white rounded-full p-3 shadow-xl"
+              whileHover={{
+                scale: 1.15,
+                x: 8,
+                boxShadow: "0 10px 30px rgba(0, 0, 0, 0.2)",
+              }}
+              whileTap={{ scale: 0.9 }}
               aria-label="Next review"
             >
               <ChevronRight className="w-6 h-6 text-slate-700" />
-            </button>
+            </motion.button>
           </div>
 
           <div className="flex justify-center mt-8 space-x-2">
             {reviews.map((_, index) => (
-              <button
+              <motion.button
                 key={index}
                 onClick={() => {
                   if (index > currentReviewIndex) {
@@ -789,6 +980,8 @@ function HomePage() {
                     ? "bg-[#7650e3] w-8 h-3"
                     : "bg-gray-300 hover:bg-gray-400 w-3 h-3"
                 }`}
+                whileHover={{ scale: 1.3 }}
+                whileTap={{ scale: 0.9 }}
                 aria-label={`Go to review ${index + 1}`}
               />
             ))}
@@ -799,109 +992,161 @@ function HomePage() {
       {/* Contact Section */}
       <section id="contact" className="py-20 bg-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
+          <motion.div
+            className="text-center mb-12"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6, type: "spring", stiffness: 80 }}
+          >
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               Contact Us
             </h2>
             <p className="text-xl text-slate-500 mb-8">
               Have questions? We'd love to hear from you.
             </p>
-            <button
+            <motion.button
               onClick={() => setShowContactForm(!showContactForm)}
-              className="bg-[#7650e3] text-white px-8 py-3 rounded-full hover:bg-[#633cd3] transition-all transform hover:scale-105 shadow-md inline-flex items-center space-x-2"
+              className="bg-[#7650e3] text-white px-8 py-3 rounded-full shadow-lg inline-flex items-center space-x-2"
+              whileHover={{
+                scale: 1.05,
+                boxShadow: "0 10px 30px rgba(118, 80, 227, 0.3)",
+              }}
+              whileTap={{ scale: 0.95 }}
             >
               <span>{showContactForm ? "Hide Form" : "Get in Touch"}</span>
-              <ChevronDown
-                className={`w-5 h-5 transition-transform ${
-                  showContactForm ? "rotate-180" : ""
-                }`}
-              />
-            </button>
-          </div>
-
-          <div
-            className={`overflow-hidden transition-all duration-500 ease-in-out ${
-              showContactForm
-                ? "max-h-[800px] opacity-100"
-                : "max-h-0 opacity-0"
-            }`}
-          >
-            <form className="space-y-6 pt-8">
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">
-                    First Name
-                  </label>
-                  <input
-                    type="text"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#7650e3] focus:border-transparent transition-all"
-                    placeholder="John"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">
-                    Last Name
-                  </label>
-                  <input
-                    type="text"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#7650e3] focus:border-transparent transition-all"
-                    placeholder="Doe"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#7650e3] focus:border-transparent transition-all"
-                  placeholder="john@example.com"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2">
-                  Message
-                </label>
-                <textarea
-                  rows={6}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#7650e3] focus:border-transparent transition-all"
-                  placeholder="Tell us about your needs..."
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="w-full bg-[#7650e3] text-white py-4 rounded-md hover:bg-[#633cd3] transition-all font-semibold text-lg shadow-md"
+              <motion.div
+                animate={{ rotate: showContactForm ? 180 : 0 }}
+                transition={{ duration: 0.3 }}
               >
-                Send Message
-              </button>
-            </form>
-          </div>
+                <ChevronDown className="w-5 h-5" />
+              </motion.div>
+            </motion.button>
+          </motion.div>
+
+          <AnimatePresence>
+            {showContactForm && (
+              <motion.form
+                className="space-y-6 pt-8"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="grid md:grid-cols-2 gap-6">
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.1, type: "spring" }}
+                  >
+                    <label className="block text-sm font-semibold text-slate-700 mb-2">
+                      First Name
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7650e3] focus:border-transparent transition-all"
+                      placeholder="John"
+                    />
+                  </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.1, type: "spring" }}
+                  >
+                    <label className="block text-sm font-semibold text-slate-700 mb-2">
+                      Last Name
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7650e3] focus:border-transparent transition-all"
+                      placeholder="Doe"
+                    />
+                  </motion.div>
+                </div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2, type: "spring" }}
+                >
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7650e3] focus:border-transparent transition-all"
+                    placeholder="john@example.com"
+                  />
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3, type: "spring" }}
+                >
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">
+                    Message
+                  </label>
+                  <textarea
+                    rows={6}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7650e3] focus:border-transparent transition-all"
+                    placeholder="Tell us about your needs..."
+                  />
+                </motion.div>
+
+                <motion.button
+                  type="submit"
+                  className="w-full bg-[#7650e3] text-white py-4 rounded-lg font-semibold text-lg shadow-lg"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4, type: "spring" }}
+                  whileHover={{
+                    scale: 1.02,
+                    boxShadow: "0 10px 30px rgba(118, 80, 227, 0.3)",
+                  }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  Send Message
+                </motion.button>
+              </motion.form>
+            )}
+          </AnimatePresence>
         </div>
       </section>
 
       {/* FAQ Section */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6, type: "spring", stiffness: 80 }}
+          >
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               Frequently Asked Questions
             </h2>
             <p className="text-xl text-slate-500">
               Everything you need to know about Omnishare
             </p>
-          </div>
+          </motion.div>
 
-          <div className="space-y-4">
+          <motion.div
+            className="space-y-4"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={containerVariants}
+          >
             {faqs.map((faq, index) => (
-              <div
+              <motion.div
                 key={index}
-                className="bg-white rounded-md shadow-md overflow-hidden transition-all hover:shadow-md"
+                variants={itemVariants}
+                className="bg-white rounded-xl shadow-md overflow-hidden transition-all hover:shadow-lg"
+                whileHover={{ x: 5 }}
               >
-                <button
+                <motion.button
                   onClick={() =>
                     setExpandedFaqIndex(
                       expandedFaqIndex === index ? null : index
@@ -912,32 +1157,57 @@ function HomePage() {
                   <span className="font-semibold text-gray-900 text-lg pr-8">
                     {faq.question}
                   </span>
-                  <ChevronDown
-                    className={`w-6 h-6 text-[#7650e3] flex-shrink-0 transition-transform ${
-                      expandedFaqIndex === index ? "rotate-180" : ""
-                    }`}
-                  />
-                </button>
-                {expandedFaqIndex === index && (
-                  <div className="px-6 pb-5 text-slate-500 leading-relaxed">
-                    {faq.answer}
-                  </div>
-                )}
-              </div>
+                  <motion.div
+                    animate={{ rotate: expandedFaqIndex === index ? 180 : 0 }}
+                    transition={{
+                      duration: 0.3,
+                      type: "spring",
+                      stiffness: 200,
+                    }}
+                  >
+                    <ChevronDown className="w-6 h-6 text-[#7650e3] flex-shrink-0" />
+                  </motion.div>
+                </motion.button>
+                <AnimatePresence>
+                  {expandedFaqIndex === index && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-6 pb-5 text-slate-500 leading-relaxed">
+                        {faq.answer}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
 
-          <div className="mt-12 text-center">
+          <motion.div
+            className="mt-12 text-center"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+          >
             <p className="text-slate-500">
               Still have questions? Scroll up to contact us.
             </p>
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* Footer */}
       <div className="relative pt-16 bg-theme-secondary">
-        <footer className="w-full px-4 py-4 text-center text-sm theme-text-light absolute bottom-0">
+        <motion.footer
+          className="w-full px-4 py-4 text-center text-sm theme-text-light absolute bottom-0"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+        >
           <div className="max-w-full mx-auto flex md:flex-row items-center gap-2 md:justify-between justify-center flex-col">
             <span>© {new Date().getFullYear()} OMNISHARE</span>
             <div>
@@ -950,21 +1220,8 @@ function HomePage() {
               </a>
             </div>
           </div>
-        </footer>
+        </motion.footer>
       </div>
-
-      <style>{`
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-      `}</style>
     </div>
   );
 }
