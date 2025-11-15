@@ -101,9 +101,12 @@ export function OtpModal({
       } else {
         throw new Error("OTP verification failed");
       }
+      
     } catch (e: unknown) {
-      const message = "OTP verification failed";
-      setError(message);
+      // const message = "OTP verification failed";
+      notify("error", 
+        "OTP verification failed"
+      );
     } finally {
       setVerifying(false);
     }
@@ -119,9 +122,14 @@ export function OtpModal({
       setTimeLeft(300);
       setExpired(false);
       setRemaining(40);
+          notify("success", 
+        "OTP Resend Successfully"
+      );
     } catch (e: unknown) {
-      const message = e instanceof Error ? e.message : "Failed to resend OTP";
-      setError(message);
+      // const message = e instanceof Error ? e.message : "Failed to resend OTP";
+          notify("error", 
+        "Failed to resend OTP"
+      );
     } finally {
       setResending(false);
     }
