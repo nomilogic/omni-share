@@ -37,7 +37,7 @@ const SubscriptionPauseModal = ({
   return (
     <div className="relative w-full md:max-w-3xl lg:max-w-5xl  md:rounded-md  shadow-md overflow-hidden bg-white md:h-[600px] h-full ">
       <div className="flex  flex-col sm:grid sm:grid-cols-1 md:grid-cols-2 h-full ">
-        <div className=" bg-purple-600 flex pl-6 md:pt-10  md:rounded-md w-full md:h-full h-[40%]">
+        <div className=" bg-purple-600 flex pl-6 md:pt-10  md:rounded-l-md w-full md:h-full h-[40%]">
           <img
             src={ModalIllustrationPng}
             alt="Pause Illustration"

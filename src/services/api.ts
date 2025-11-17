@@ -82,6 +82,7 @@ interface APIInstance extends AxiosInstance {
   listPackages: () => Promise<any>;
   cancelPackage: () => Promise<any>;
   cancelDowngradeRequest: () => Promise<any>;
+  getCustomerPortal: () => Promise<any>;
   requestDowngrade: (id: any) => Promise<any>;
   reactivatePackage: () => Promise<any>;
   buyPackage: (packageId: string) => Promise<any>;
@@ -212,6 +213,7 @@ API.cancelPackage = () => API.delete(`/client/package/cancel`);
 API.reactivatePackage = () => API.get(`/client/package/reactivate`);
 API.requestDowngrade = (id: any) => API.get(`/client/package/downgrade/${id}`);
 API.cancelDowngradeRequest = () => API.delete(`/client/package/downgrade`);
+API.getCustomerPortal = () => API.get(`/client/package/customer-portal`);
 
 API.listMedia = () => API.get("/client/media");
 API.uploadMedia = (formData) => API.post("/client/media/upload", formData);

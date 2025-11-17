@@ -4,7 +4,7 @@ import Illustration from "../assets/manarge-subscription-img.png";
 import Transactions from "../assets/transactions.png";
 import SubscriptionPauseModal from "./SubscriptionPauseModal";
 import TransactionHistory from "@/pages/TransectionHistory";
-import { useNavigate } from "react-router-dom";
+import { data, useNavigate } from "react-router-dom";
 import { useAppContext } from "@/context/AppContext";
 import API from "@/services/api";
 
@@ -61,6 +61,19 @@ export const ManageSubscriptionModal: React.FC<any> = ({
     }
   };
 
+  const getCustomerPortal = async () => {
+    try {
+      const response = await API.getCustomerPortal();
+      if (response?.data?.data?.portalUrl) {
+        window.location.href = response?.data?.data?.portalUrl;
+      } else {
+        console.error("No portal URL returned from API.");
+      }
+    } catch (error) {
+      console.error("Error opening customer portal:", error);
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-10 flex items-center justify-center p-0">
       <div
@@ -83,7 +96,7 @@ export const ManageSubscriptionModal: React.FC<any> = ({
         }`}
       >
         <div className="flex flex-col sm:grid sm:grid-cols-1 md:grid-cols-2 h-full">
-          <div className="bg-purple-600 md:py-8 px-5 flex items-center justify-center md:rounded-md w-full md:h-full h-[40%]">
+          <div className="bg-purple-600 md:py-8 px-5 flex items-center justify-center md:rounded-l-md w-full md:h-full h-[40%]">
             <img
               src={Illustration}
               alt="Manage subscription illustration"
@@ -157,11 +170,7 @@ export const ManageSubscriptionModal: React.FC<any> = ({
 
                           switch (action.key) {
                             case "update":
-                              actionFn = () => {
-                                onUpdatePayment?.();
-                                setIsModalOpen(false);
-                                navigate("/pricing");
-                              };
+                              actionFn = () => getCustomerPortal();
                               break;
                             case "invoices":
                               actionFn = onViewInvoices;

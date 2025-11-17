@@ -344,7 +344,7 @@ export const PricingPage: React.FC = () => {
                       <button
                         onClick={() => {
                           if (hasCancelRequested && isCurrentPlan)
-                            setReactivateOpen(true);
+                            openManageSubscription();
                           else if (isPendingDowngradePackage)
                             setCancelDowngradeOpen(true);
                           else if (isCurrentPlan && !hasPendingDowngrade)
@@ -365,7 +365,7 @@ export const PricingPage: React.FC = () => {
                         {loadingPackage && selectedPlan?.id === tier.id
                           ? "Processing..."
                           : isCurrentPlan && hasCancelRequested
-                          ? "Reactivate"
+                          ? "Manage"
                           : isCurrentPlan && !hasPendingDowngrade
                           ? "Manage"
                           : isCurrentPlan
