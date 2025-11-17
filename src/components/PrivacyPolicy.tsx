@@ -12,12 +12,12 @@ const PrivacyPolicy: React.FC = () => {
         <div className="mb-8">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center text-blue-600 hover:text-blue-800 mb-4 transition-colors"
+            className="flex items-center text-[#7650e3] hover:text-[#6840c7] mb-4 transition-colors font-medium"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back
           </button>
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">
+          <h1 className="text-3xl font-bold text-[#7650e3] mb-2">
             Privacy Policy
           </h1>
           <p className="text-gray-500 font-medium">
@@ -26,10 +26,10 @@ const PrivacyPolicy: React.FC = () => {
         </div>
 
         {/* Content */}
-        <div className="bg-white rounded-md shadow-md border border-gray-200 p-8">
+        <div className="bg-white rounded-md shadow-md border-2 border-[#7650e3] p-8">
           <div className="prose prose-gray max-w-none">
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-slate-900 mb-4">
+              <h2 className="text-2xl font-semibold text-[#7650e3] mb-4">
                 1. Introduction
               </h2>
               <p className="text-slate-700 mb-4">
@@ -46,11 +46,11 @@ const PrivacyPolicy: React.FC = () => {
             </section>
 
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-slate-900 mb-4">
+              <h2 className="text-2xl font-semibold text-[#7650e3] mb-4">
                 2. Information We Collect
               </h2>
 
-              <h3 className="text-xl font-medium text-slate-800 mb-3">
+              <h3 className="text-xl font-medium text-[#7650e3] mb-3">
                 2.1 Personal Information
               </h3>
               <ul className="list-disc pl-6 mb-4 text-slate-700">
@@ -65,7 +65,7 @@ const PrivacyPolicy: React.FC = () => {
                 </li>
               </ul>
 
-              <h3 className="text-xl font-medium text-slate-800 mb-3">
+              <h3 className="text-xl font-medium text-[#7650e3] mb-3">
                 2.2 Content Data
               </h3>
               <ul className="list-disc pl-6 mb-4 text-slate-700">
@@ -75,7 +75,7 @@ const PrivacyPolicy: React.FC = () => {
                 <li>Campaign data and analytics</li>
               </ul>
 
-              <h3 className="text-xl font-medium text-slate-800 mb-3">
+              <h3 className="text-xl font-medium text-[#7650e3] mb-3">
                 2.3 Technical Data
               </h3>
               <ul className="list-disc pl-6 mb-4 text-slate-700">
@@ -87,7 +87,7 @@ const PrivacyPolicy: React.FC = () => {
             </section>
 
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-slate-900 mb-4">
+              <h2 className="text-2xl font-semibold text-[#7650e3] mb-4">
                 3. How We Use Your Information
               </h2>
               <ul className="list-disc pl-6 text-slate-700">
@@ -108,7 +108,7 @@ const PrivacyPolicy: React.FC = () => {
             </section>
 
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-slate-900 mb-4">
+              <h2 className="text-2xl font-semibold text-[#7650e3] mb-4">
                 4. AI and Machine Learning
               </h2>
               <p className="text-slate-700 mb-4">
@@ -134,7 +134,7 @@ const PrivacyPolicy: React.FC = () => {
             </section>
 
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-slate-900 mb-4">
+              <h2 className="text-2xl font-semibold text-[#7650e3] mb-4">
                 5. Social Media Integration
               </h2>
               <p className="text-slate-700 mb-4">
@@ -150,14 +150,14 @@ const PrivacyPolicy: React.FC = () => {
             </section>
 
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-slate-900 mb-4">
+              <h2 className="text-2xl font-semibold text-[#7650e3] mb-4">
                 6. Data Sharing and Third Parties
               </h2>
               <p className="text-slate-700 mb-4">
                 We may share your information with:
               </p>
 
-              <h3 className="text-xl font-medium text-slate-800 mb-3">
+              <h3 className="text-xl font-medium text-[#7650e3] mb-3">
                 6.1 Service Providers
               </h3>
               <ul className="list-disc pl-6 mb-4 text-slate-700">
@@ -167,7 +167,7 @@ const PrivacyPolicy: React.FC = () => {
                 <li>Analytics and monitoring services</li>
               </ul>
 
-              <h3 className="text-xl font-medium text-slate-800 mb-3">
+              <h3 className="text-xl font-medium text-[#7650e3] mb-3">
                 6.2 Legal Requirements
               </h3>
               <p className="text-slate-700 mb-4">
@@ -175,7 +175,7 @@ const PrivacyPolicy: React.FC = () => {
                 legal process.
               </p>
 
-              <h3 className="text-xl font-medium text-slate-800 mb-3">
+              <h3 className="text-xl font-medium text-[#7650e3] mb-3">
                 6.3 Business Transfers
               </h3>
               <p className="text-slate-700">
@@ -185,7 +185,7 @@ const PrivacyPolicy: React.FC = () => {
             </section>
 
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-slate-900 mb-4">
+              <h2 className="text-2xl font-semibold text-[#7650e3] mb-4">
                 7. Data Security
               </h2>
               <p className="text-slate-700 mb-4">
@@ -217,7 +217,7 @@ const PrivacyPolicy: React.FC = () => {
             </section>
 
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-slate-900 mb-4">
+              <h2 className="text-2xl font-semibold text-[#7650e3] mb-4">
                 9. Data Retention
               </h2>
               <p className="text-slate-700 mb-4">
@@ -236,7 +236,7 @@ const PrivacyPolicy: React.FC = () => {
             </section>
 
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-slate-900 mb-4">
+              <h2 className="text-2xl font-semibold text-[#7650e3] mb-4">
                 10. International Data Transfers
               </h2>
               <p className="text-slate-700">
@@ -248,7 +248,7 @@ const PrivacyPolicy: React.FC = () => {
             </section>
 
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-slate-900 mb-4">
+              <h2 className="text-2xl font-semibold text-[#7650e3] mb-4">
                 11. Children's Privacy
               </h2>
               <p className="text-slate-700">
@@ -261,7 +261,7 @@ const PrivacyPolicy: React.FC = () => {
             </section>
 
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-slate-900 mb-4">
+              <h2 className="text-2xl font-semibold text-[#7650e3] mb-4">
                 12. Updates to This Policy
               </h2>
               <p className="text-slate-700">
@@ -294,7 +294,7 @@ const PrivacyPolicy: React.FC = () => {
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold text-slate-900 mb-4">
+              <h2 className="text-2xl font-semibold text-[#7650e3] mb-4">
                 14. Consent
               </h2>
               <p className="text-slate-700">

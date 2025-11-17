@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { AppProvider, useAppContext } from "./context/AppContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import { SubscriptionModalProvider } from "./context/SubscriptionModalContext";
+import { PricingModalProvider } from "./context/PricingModalContext";
 import { AppLayout } from "./components/Layout/AppLayout";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AuthPage } from "./pages/AuthPage";
@@ -63,7 +64,8 @@ function App() {
       <AppProvider>
         <AuthProvider>
           <SubscriptionModalProvider>
-            <Routes>
+            <PricingModalProvider>
+              <Routes>
               {/* <Route path="/" element={showlanded() ? <HomePage /> : <LandingPage />} />   */}
               <Route path="/" element={<HomePage />} />
 
@@ -255,6 +257,7 @@ function App() {
               {/* Catch all - redirect to auth by default if not logged in, otherwise to dashboard */}
               <Route path="*" element={<Navigate to="/auth" replace />} />
             </Routes>
+            </PricingModalProvider>
           </SubscriptionModalProvider>
         </AuthProvider>
       </AppProvider>

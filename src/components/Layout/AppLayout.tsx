@@ -18,6 +18,7 @@ import {
 import { useAppContext } from "../../context/AppContext";
 import { useLoading } from "../../context/LoadingContext";
 import { useSubscriptionModal } from "../../context/SubscriptionModalContext";
+import { PricingModals } from "../PricingModals";
 
 import { useUnreadPosts } from "../../hooks/useUnreadPosts";
 import Icon from "../Icon";
@@ -721,6 +722,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             navigate("/pricing?tab=addons");
           }}
         />
+        <PricingModals />
         <PreloaderOverlay loadingState={loadingState} />
       </>
     </ResizeContext.Provider>

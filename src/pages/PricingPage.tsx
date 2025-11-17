@@ -8,9 +8,35 @@ import API from "../services/api";
 import { useSearchParams } from "react-router-dom";
 import Icon from "../components/Icon";
 import { useSubscriptionModal } from "../context/SubscriptionModalContext";
+import { usePricingModal } from "../context/PricingModalContext";
 
 export const PricingPage: React.FC = () => {
   const { state, refreshUser } = useAppContext();
+  const { openManageSubscription } = useSubscriptionModal();
+  const {
+    confirmOpen,
+    selectedPlan,
+    openConfirm,
+    closeConfirm,
+    loadingPackage,
+    setLoadingPackage,
+    setConfirmHandler,
+    addonConfirmOpen,
+    selectedAddon,
+    openAddonConfirm,
+    closeAddonConfirm,
+    loadingAddon,
+    setLoadingAddon,
+    setAddonHandler,
+    downgradeRequestOpen,
+    openDowngradeRequest,
+    closeDowngradeRequest,
+    downgradeLoading,
+    setDowngradeLoading,
+    downgradeReason,
+    setDowngradeReason,
+    setDowngradeHandler,
+  } = usePricingModal();
 
   const [packages, setPackages] = useState<any[]>([]);
   const [addons, setAddons] = useState<any[]>([]);
@@ -19,22 +45,9 @@ export const PricingPage: React.FC = () => {
 
   const [activeTab, setActiveTab] = useState<"" | "addons">(initialTab);
 
-  const [loadingPackage, setLoadingPackage] = useState(false);
-  const [loadingAddon, setLoadingAddon] = useState(false);
-
-  const [confirmOpen, setConfirmOpen] = useState(false);
-  const [addonConfirmOpen, setAddonConfirmOpen] = useState(false);
-
-  const [downgradeRequestOpen, setDowngradeRequestOpen] = useState(false);
   const [cancelDowngradeOpen, setCancelDowngradeOpen] = useState(false);
   const [reactivateOpen, setReactivateOpen] = useState(false);
   const [cancelPackageOpen, setCancelPackageOpen] = useState(false);
-
-  const [downgradeLoading, setDowngradeLoading] = useState(false);
-  const [downgradeReason, setDowngradeReason] = useState("");
-
-  const [selectedPlan, setSelectedPlan] = useState<any | null>(null);
-  const [selectedAddon, setSelectedAddon] = useState<any | null>(null);
 
   const [isDowngradeBlocked, setIsDowngradeBlocked] = useState(false);
 
@@ -83,8 +96,6 @@ export const PricingPage: React.FC = () => {
 
   const hasCancelRequested = !!activePackage?.cancelRequested;
 
-  const { openManageSubscription } = useSubscriptionModal();
-
   const handleTabChange = (tab: "" | "addons") => {
     setActiveTab(tab);
     setSearchParams({ tab });
@@ -96,8 +107,7 @@ export const PricingPage: React.FC = () => {
     if (hasCancelRequested || hasPendingDowngrade) return;
 
     if (!currentTier) {
-      setSelectedPlan(plan);
-      setConfirmOpen(true);
+      openConfirm(plan);
       return;
     }
 
@@ -110,13 +120,11 @@ export const PricingPage: React.FC = () => {
       new Date(activePackage.expiredAt) < new Date();
 
     if (!isUpgrade && !currentExpired) {
-      setSelectedPlan(plan);
-      setDowngradeRequestOpen(true);
+      openDowngradeRequest(plan);
       return;
     }
 
-    setSelectedPlan(plan);
-    setConfirmOpen(true);
+    openConfirm(plan);
   };
 
   const handleSubscribe = async (plan: any) => {
@@ -125,15 +133,14 @@ export const PricingPage: React.FC = () => {
       const res = await API.buyPackage(plan.id);
       const redirectUrl = res?.data?.data?.url;
       if (redirectUrl) {
-        window.location.href = redirectUrl; //window.open(redirectUrl, "_blank");
+        window.location.href = redirectUrl;
       }
     } catch (error) {
       console.error("Failed to buy package:", error);
       alert("Something went wrong while processing your Buy.");
     } finally {
       setLoadingPackage(false);
-      setConfirmOpen(false);
-      setSelectedPlan(null);
+      closeConfirm();
     }
   };
 
@@ -145,8 +152,7 @@ export const PricingPage: React.FC = () => {
     } catch (error) {
     } finally {
       setLoadingPackage(false);
-      setConfirmOpen(false);
-      setSelectedPlan(null);
+      closeConfirm();
     }
   };
   const handleRequestDowngrade = async () => {
@@ -154,9 +160,7 @@ export const PricingPage: React.FC = () => {
     setDowngradeLoading(true);
     try {
       await API.requestDowngrade(selectedPlan.id);
-      setDowngradeRequestOpen(false);
-      setDowngradeReason("");
-      setSelectedPlan(null);
+      closeDowngradeRequest();
       setTimeout(() => refreshUser(), 50);
     } catch (error) {
       console.error("Request downgrade failed:", error);
@@ -209,38 +213,32 @@ export const PricingPage: React.FC = () => {
     }
   };
 
-  const handleBuyAddon = async (selectedAddon: any) => {
+  const handleBuyAddon = async (addon: any) => {
     setLoadingAddon(true);
-    if (!selectedAddon) return;
+    if (!addon) return;
     try {
-      const res = await API.buyAddons(selectedAddon.id);
+      const res = await API.buyAddons(addon.id);
       const redirectUrl = res?.data?.data?.checkoutUrl;
       if (redirectUrl) {
         window.location.href = redirectUrl;
-        setLoadingAddon(false);
-        setSelectedAddon(null);
       }
     } catch (error) {
       console.error("Buy addon failed:", error);
       alert("Something went wrong while buying add-on");
     } finally {
       setLoadingAddon(false);
-      setAddonConfirmOpen(false);
-      setSelectedAddon(null);
+      closeAddonConfirm();
     }
   };
 
   const handleClosePopup = () => {
-    setConfirmOpen(false);
-    setAddonConfirmOpen(false);
-    setDowngradeRequestOpen(false);
+    closeConfirm();
+    closeAddonConfirm();
+    closeDowngradeRequest();
     setCancelDowngradeOpen(false);
     setReactivateOpen(false);
     setCancelPackageOpen(false);
-    setSelectedPlan(null);
-    setSelectedAddon(null);
     setIsDowngradeBlocked(false);
-    setDowngradeReason("");
   };
 
   const formatDate = (date: Date | null) => {
@@ -462,8 +460,8 @@ export const PricingPage: React.FC = () => {
                     <button
                       disabled={selectedAddon?.id === addon?.id || loadingAddon}
                       onClick={() => {
-                        setSelectedAddon(addon);
-                        handleBuyAddon(addon);
+                        openAddonConfirm(addon);
+                        setAddonHandler(() => handleBuyAddon(addon));
                       }}
                       className="rounded-md theme-bg-light  w-fit  px-3 disabled:cursor-not-allowed  font-bold text-base py-1  border-2 border-[#7650e3] text-[#7650e3] hover:bg-[#7650e3] hover:text-white"
                     >
@@ -586,136 +584,6 @@ export const PricingPage: React.FC = () => {
         </div>
       )}
 
-      {/* done */}
-      {downgradeRequestOpen && selectedPlan && (
-        <div className="fixed  inset-0 bg-black/30 backdrop-blur-sm flex lg:items-center justify-center p-4 z-50">
-          <div className="bg-gray-50 rounded-md shadow-md w-full max-w-md px-8 py-6 max-h-[80vh] h-fit overflow-auto relative">
-            <div className="flex justify-between items-center mb-3">
-              <h2 className="text-2xl font-bold text-purple-700">
-                Request Downgrade To
-              </h2>
-            </div>
-
-            {/* Price Box */}
-            <div className="border border-purple-600 bg-white rounded-md px-4 text-center mb-6">
-              <p className="text-2xl font-bold text-purple-700 mb-1 mt-2">
-                {selectedPlan.name}
-              </p>
-
-              <div className="flex justify-center items-end gap-4">
-                <span className="text-[45px] text-purple-600 font-bold leading-none">
-                  ${selectedPlan.amount || "0.00"}
-                </span>
-
-                <div className="flex flex-col items-start leading-none font-semibold">
-                  <span className="text-sm font-bold text-purple-700">USD</span>
-                  <span className="text-sm font-bold text-purple-700">
-                    Month
-                  </span>
-                </div>
-              </div>
-              <hr className="h-[1px] bg-gray-100 my-2 " />
-              <p className="text-[12px]  font-semibold text-black  mb-3">
-                Includes GST of $0.00.
-              </p>
-            </div>
-
-            <div className="flex gap-3">
-              <button
-                onClick={handleClosePopup}
-                className="flex-1 py-2.5 border border-purple-600 text-purple-600 font-semibold rounded-md hover:bg-purple-50 transition"
-              >
-                Back
-              </button>
-
-              <button
-                onClick={handleRequestDowngrade}
-                disabled={downgradeLoading}
-                className="flex-1 py-2.5 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {downgradeLoading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Confirming...
-                  </>
-                ) : (
-                  "Confirm"
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-      {/* done */}
-      {confirmOpen && selectedPlan && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex lg:items-center justify-center p-4 z-50">
-          <div className="bg-gray-50 rounded-md shadow-md w-full max-w-md px-8 py-6 h-fit relative">
-            <div className="flex justify-between items-center mb-3">
-              <h2 className="text-2xl font-bold text-purple-700 ">
-                Confirm Plan
-              </h2>
-            </div>
-
-            {/* Price Box */}
-            <div className="border border-purple-600 bg-white rounded-md  px-4 text-center ">
-              <p className="text-2xl font-bold text-purple-700 mb-1 mt-2">
-                {selectedPlan.name || "Standard"}
-              </p>
-
-              <div className="flex justify-center items-end gap-4">
-                <span className="text-[45px]   text-purple-600 font-bold leading-none">
-                  ${selectedPlan.amount + ".00" || "25.00"}
-                </span>
-
-                <div className="flex flex-col items-start leading-none  font-semibold">
-                  <span className="text-sm font-bold text-purple-700">USD</span>
-                  <span className="text-sm font-bold text-purple-700">
-                    Month
-                  </span>
-                </div>
-              </div>
-
-              <p className="text-[12px] font-semibold  text-black mt-2 mb-3">
-                Includes GST of $0.00.
-              </p>
-            </div>
-
-            <div className="text-center text-[13px] text-gray-500 font-medium my-6">
-              We are committed to secure payments for businesses and service
-              providers without any limitations.
-            </div>
-            <div>
-              <button
-                className="w-full py-2.5 border border-purple-600  bg-purple-600 text-white text-[15px] font-semibold rounded-md 
-                 hover:bg-purple-700 transition shadow-md flex items-center justify-center gap-2"
-                onClick={() => {
-                  if (activePackage?.package?.tier === "free") {
-                    handleSubscribe(selectedPlan);
-                  } else {
-                    handleUpdatePackage(selectedPlan);
-                  }
-                }}
-                disabled={loadingPackage}
-              >
-                {loadingPackage ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Processing...
-                  </>
-                ) : (
-                  "Proceed to Checkout"
-                )}
-              </button>
-              <button
-                onClick={handleClosePopup}
-                className="flex-1 py-2.5 w-full mt-2 border border-purple-600 text-purple-600 font-semibold rounded-md hover:bg-purple-50 transition"
-              >
-                Back
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
       {/* done */}
       {cancelPackageOpen && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
