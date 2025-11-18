@@ -307,7 +307,7 @@ function HomePage() {
 
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center space-x-8">
-              {["home", "features", "pricing", "FAQ", "contact"].map(
+              {["home", "features",  "FAQ", "contact"].map(
                 (section, index) => (
                   <motion.button
                     key={section}
@@ -382,7 +382,7 @@ function HomePage() {
                 className="md:hidden bg-white border-t overflow-hidden"
               >
                 <div className="px-2 pt-2 pb-3 space-y-1">
-                  {["home", "features", "pricing", "video", "contact"].map(
+                  {["home", "features",  "video", "contact"].map(
                     (section, index) => (
                       <motion.button
                         key={section}
@@ -775,7 +775,7 @@ function HomePage() {
       </section>
 
       {/* Pricing Section */}
-      <section
+      {/* <section
         id="pricing"
         className="py-20 bg-gray-50 relative overflow-hidden"
       >
@@ -888,7 +888,7 @@ function HomePage() {
             })}
           </motion.div>
         </div>
-      </section>
+      </section> */}
 
       {/* Reviews Section */}
       <section className="py-20 bg-gradient-to-br from-[#d7d7fc] to-white relative overflow-hidden">
