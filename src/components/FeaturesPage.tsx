@@ -1,20 +1,21 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-  Search,
+  Sparkles,
+  TvMinimalPlay, 
   BarChart3,
   Star,
-  MessageSquare,
   Plus,
   Minus,
 } from "lucide-react";
-import pic from "../assets/choco.png";
-import pic2 from "../assets/conn.png";
+import pic from "../assets/content creation.jpg";
+import pic2 from "../assets/content creation-post 2.jpg";
 import pic3 from "../assets/dash.png";
 import pic4 from "../assets/full.png";
 import pic5 from "../assets/invoi.png";
 import pic6 from "../assets/omni home.png";
 import pic7 from "../assets/manage subs.png";
 import pic8 from "../assets/preview.png";
+
 
 type Feature = {
   id: number;
@@ -29,43 +30,37 @@ type Feature = {
 const features: Feature[] = [
   {
     id: 1,
-    title: "Multi-Platform Management & Automation",
+    title: "Post Automation",
     description: (
-      <>
-        Publish seamlessly across{" "}
-        <strong className="text-purple-600">
+        <p className="text-gray-500 text-lg leading-relaxed md:w-full">Publish seamlessly across <span className="text-purple-600 text-xl font-medium">
           Facebook, Instagram, YouTube, LinkedIn, and TikTok
-        </strong>{" "}
-        with a single click. Omni Share automatically generates{" "}
-        <strong className="text-purple-600">
-          AI-powered text and image posts
-        </strong>
-        , ensuring your content reaches every platform quickly and efficiently.
-      </>
+        </span> with a single click. Omni Share automatically generates <span className="text-purple-600 text-xl font-medium">
+          AI-powered text and image posts </span>
+        , ensuring your content reaches every platform quickly and efficiently.</p>
     ),
-    icon: <Search className="w-6 h-6" />,
+    icon: <Sparkles className="w-6 h-6" />,
     mobileImage: pic,
     desktopMain: pic,
-    desktopFloat: [pic],
+    desktopFloat: [pic2],
   },
   {
     id: 2,
     title: "Media Optimization",
     description: (
-      <>
-        Automatically <strong className="text-purple-600">resize posts</strong>{" "}
+      <p className="text-gray-500 text-lg leading-relaxed md:w-full">
+        Automatically <span className="text-purple-600 text-xl font-medium">resize posts</span>{" "}
         for each platform and create{" "}
-        <strong className="text-purple-600">striking video thumbnails</strong>{" "}
+        <span className="text-purple-600 text-xl font-medium">striking video thumbnails</span>{" "}
         for YouTube uploads. All this happens within an{" "}
-        <strong className="text-purple-600">intuitive editing suite</strong>,
+        <span className="text-purple-600 text-xl font-medium">intuitive editing suite</span>,
         allowing{" "}
-        <strong className="text-purple-600">
+        <span className="text-purple-600 text-xl font-medium">
           fast, seamless customization
-        </strong>{" "}
+        </span>{" "}
         so your content looks perfect every time.
-      </>
+      </p>
     ),
-    icon: <BarChart3 className="w-6 h-6" />,
+    icon: <TvMinimalPlay className="w-6 h-6" />,
     mobileImage: pic2,
     desktopMain: pic3,
     desktopFloat: [pic5, pic7],
@@ -74,16 +69,16 @@ const features: Feature[] = [
     id: 3,
     title: "Smart Insights",
     description: (
-      <>
+      <p className="text-gray-500 text-lg leading-relaxed md:w-full">
         Get{" "}
-        <strong className="text-purple-600">clear, actionable insights</strong>{" "}
+        <span className="text-purple-600 text-xl font-medium">clear, actionable insights</span>{" "}
         on your content performance across all platforms. Track{" "}
-        <strong className="text-purple-600">engagement</strong> and{" "}
-        <strong className="text-purple-600">reach</strong> to make smarter
+        <span className="text-purple-600 text-xl font-medium">engagement</span> and{" "}
+        <span className="text-purple-600 text-xl font-medium">reach</span> to make smarter
         decisions and continuously improve your social media strategy.
-      </>
+      </p>
     ),
-    icon: <Star className="w-6 h-6" />,
+    icon: <BarChart3 className="w-6 h-6" />,
     mobileImage: pic4,
     desktopMain: pic5,
     desktopFloat: [pic6],
@@ -92,18 +87,18 @@ const features: Feature[] = [
     id: 4,
     title: "Instant Publishing",
     description: (
-      <>
+      <p className="text-gray-500 text-lg leading-relaxed md:w-full">
         Publish your content{" "}
-        <strong className="text-purple-600">instantly</strong> with our
+        <span className="text-purple-600 text-xl font-medium">instantly</span> with our
         lightning-fast, reliable system. Reach your audience at the{" "}
-        <strong className="text-purple-600">right moment</strong>, every time,
+        <span className="text-purple-600 text-xl font-medium">right moment</span>, every time,
         ensuring{" "}
-        <strong className="text-purple-600">
+        <span className="text-purple-600 text-xl font-medium">
           maximum engagement and impact.
-        </strong>
-      </>
+        </span>
+      </p>
     ),
-    icon: <MessageSquare className="w-6 h-6" />,
+    icon: <Star className="w-6 h-6" />,
     mobileImage: pic8,
     desktopMain: pic4,
     desktopFloat: [pic, pic6],
@@ -276,7 +271,7 @@ const FeaturesPage: React.FC = () => {
                       </div>
                       {isActive && (
                         <div className="mt-2 md:ml-6 md:pl-8 md:pr-2">
-                          <div className="text-gray-500 text-sm md:max-w-[350px] md:ml-3">
+                          <div className="text-gray-500 text-lg md:w-full md:ml-3">
                             {item.description}
                           </div>
                           <div className="md:hidden mt-4">

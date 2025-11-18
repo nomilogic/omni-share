@@ -479,7 +479,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
 
       case "instagram":
         return (
-          <div className="bg-white border border-gray-200 rounded-md overflow-hidden max-w-sm shadow-md">
+          <div className="bg-white border border-gray-200 rounded-md overflow-hidden w-full max-w-lg shadow-md">
             <div className="p-3 border-b border-gray-100">
               <div className="flex items-center space-x-3">
                 <div

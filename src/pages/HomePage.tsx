@@ -161,35 +161,36 @@ function HomePage() {
 
   const faqs = [
     {
-      question: "How does the AI content generation work?",
-      answer:
-        "Our advanced AI analyzes your brand voice, target audience, and platform-specific best practices to generate engaging, relevant content. You can customize the tone and style to match your preferences.",
-    },
-    {
-      question: "Can I schedule posts for all platforms at once?",
+      question: "What is OmniShare?",
       answer:
         "Yes! You can create one post and publish it across Facebook, Instagram, YouTube, LinkedIn, and TikTok simultaneously, or schedule them at different optimal times for each platform.",
     },
     {
+      question: "How does OmniShare's AI-powered content creation work?",
+      answer:
+        "Our AI analyzes your brand voice, industry trends, and platform requirements to generate high-quality posts, captions, descriptions, and hashtags. You get ready-to-publish content tailored for each social platform.",
+    },
+    
+    {
       question:
-        "What happens if I exceed my monthly post limit on the Basic plan?",
+        "Which social media platforms does OmniShare support?",
       answer:
-        "You'll receive a notification when approaching your limit. You can either upgrade to Pro for unlimited posts or wait until your next billing cycle. No posts are automatically deleted.",
+        "You can manage Facebook, Instagram, YouTube, LinkedIn, and TikTok — all through one centralized system.",
     },
     {
-      question: "Can I cancel my subscription at any time?",
+      question: "Can I publish on multiple platforms at once?",
       answer:
-        "Absolutely. You can cancel anytime from your account settings. You'll retain access until the end of your current billing period, and no future charges will be made.",
+        "Yes. With one click, OmniShare lets you publish your content across all connected platforms. The system also auto-generates AI text and images when needed.",
     },
     {
-      question: "Do you offer a free trial?",
+      question: "Does OmniShare optimize media for each platform?",
       answer:
-        "Yes! We offer a 14-day free trial with full access to all Pro features. No credit card required to start your trial.",
+        "Absolutely. OmniShare automatically resizes your images and videos, creates YouTube thumbnails, and ensures every post meets the exact platform specifications.",
     },
     {
-      question: "How secure is my social media data?",
+      question: "What kind of insights does OmniShare provide?",
       answer:
-        "We use bank-level encryption and never store your social media passwords. All connections use OAuth 2.0, and we're fully GDPR and SOC 2 compliant.",
+        "You get clear, actionable analytics on engagement, reach, performance trends, and audience behavior — helping you make smarter decisions to improve your social strategy.",
     },
   ];
 
@@ -520,7 +521,9 @@ function HomePage() {
           <ChevronDown className="w-8 h-8 text-white" />
         </motion.div>
       </section>
-
+      <FeaturesPage />
+      <TwoColumnSection />
+      <TwoColumnSection2 />
       {/* Active Users Stats Section */}
       <section className="py-16 bg-white border-y border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -567,9 +570,6 @@ function HomePage() {
         </div>
       </section>
 
-      <TwoColumnSection2 />
-      <FeaturesPage />
-      <TwoColumnSection />
       {/* Features Section */}
       <section
         id="features"

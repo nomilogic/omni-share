@@ -10,7 +10,7 @@ const TwoColumnSection: React.FC = () => {
         items-center w-full  bg-white
       "
     >
-      {" "}
+      
       {/* Left Side - Image */}
       <div className="flex justify-center w-full ml-auto">
         <img src={mainImage} className="rounded-lg max-w-full h-auto" />
@@ -20,12 +20,10 @@ const TwoColumnSection: React.FC = () => {
           React to the <span className="text-purple-600">trends</span> that
           matter
         </h2>
-        <p className="leading-relaxed   text-base sm:text-lg text-gray-500                 ">
+        <p className="leading-relaxed text-base sm:text-lg text-gray-500                 ">
           Access the world’s largest archive of consumer opinion and leverage
-          advanced proprietary and generative AI to{" "}
-          <strong>
-            {" "}
-            discover new trends before anyone else and make smarter decisions.{" "}
+          advanced proprietary and generative AI to <strong>
+            discover new trends before anyone else and make smarter decisions.
           </strong>
         </p>
         <div>
@@ -36,7 +34,7 @@ const TwoColumnSection: React.FC = () => {
             hover:bg-purple-100 transition 
           "
           >
-            Get started{" "}
+            Get started
             <span className="inline-block transform transition-transform duration-300 group-hover:translate-x-1">
               →
             </span>
