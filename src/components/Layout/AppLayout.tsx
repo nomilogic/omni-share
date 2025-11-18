@@ -18,7 +18,6 @@ import {
 import { useAppContext } from "../../context/AppContext";
 import { useLoading } from "../../context/LoadingContext";
 import { useSubscriptionModal } from "../../context/SubscriptionModalContext";
-import { PricingModals } from "../PricingModals";
 
 import { useUnreadPosts } from "../../hooks/useUnreadPosts";
 import Icon from "../Icon";
@@ -345,19 +344,19 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                       Privacy Policy
                     </Link>
                     <span className="text-white/20">•</span>
-                    <Link
-                      to="/terms"
+                    <a
+                      href="#"
                       className="hover:theme-text-primary transition-colors duration-200"
                     >
                       Terms of Service
-                    </Link>
+                    </a>
                     <span className="text-white/20">•</span>
-                    <Link
-                      to="/support"
+                    <a
+                      href="#"
                       className="hover:theme-text-primary transition-colors duration-200"
                     >
                       Support
-                    </Link>
+                    </a>
                   </div>
                   <div className="flex justify-center space-x-1 text-xs theme-text-light w-full">
                     {/* social media links icons */}
@@ -366,14 +365,13 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                         target="_blank"
                         rel="noreferrer"
                         className="hover:text-secondary-foreground transition-colors"
-                        href="https://www.instagram.com/omnishare.ai/"
-                        onClick={(e) => e.stopPropagation()}
+                        href="#"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           width="20"
                           height="20"
-                          viewBox="0 0 24 24"
+                          viewBox="0 0 25 25"
                           fill="none"
                         >
                           <g clip-path="url(#clip0_367_3134)">
@@ -406,8 +404,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                         target="_blank"
                         rel="noreferrer"
                         className="hover:text-secondary-foreground transition-colors"
-                        href="https://www.linkedin.com/company/omnishare-ai"
-                        onClick={(e) => e.stopPropagation()}
+                        href="#"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -438,8 +435,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                         target="_blank"
                         rel="noreferrer"
                         className="hover:text-secondary-foreground transition-colors"
-                        href="https://www.youtube.com/@OmniShare-ai"
-                        onClick={(e) => e.stopPropagation()}
+                        href="#"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -470,54 +466,40 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                         target="_blank"
                         rel="noreferrer"
                         className="hover:text-secondary-foreground transition-colors"
-                        href="https://www.tiktok.com/@omnishare.ai?is_from_webapp=1&sender_device=pc"
-                        onClick={(e) => e.stopPropagation()}
+                        href="#"
                       >
                         <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="20"
-                          height="20"
+                          width="24"
+                          height="24"
                           viewBox="0 0 24 24"
                           fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5"
                         >
-                          <g clip-path="url(#clip0_tiktok)">
-                            <path
-                              d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.68v12.7a2.85 2.85 0 1 1-5.92-2.86 2.85 2.85 0 0 1 2.31 1.09V9.4a6.53 6.53 0 1 0 5.63 5.63V8.13a8.34 8.34 0 0 0 5.81 2.32v-3.7a4.5 4.5 0 0 1-.54-.06z"
-                              fill="#fff"
-                            />
-                          </g>
-                          <defs>
-                            <clipPath id="clip0_tiktok">
-                              <rect width="24" height="24" fill="white" />
-                            </clipPath>
-                          </defs>
+                          <path
+                            d="M18.3263 1.90393H21.6998L14.3297 10.3274L23 21.7899H16.2112L10.894 14.838L4.80993 21.7899H1.43442L9.31742 12.78L0.999985 1.90393H7.96109L12.7674 8.25826L18.3263 1.90393ZM17.1423 19.7707H19.0116L6.94538 3.81706H4.93945L17.1423 19.7707Z"
+                            fill="currentColor"
+                          ></path>
                         </svg>
                       </a>
                       <a
                         target="_blank"
                         rel="noreferrer"
                         className="hover:text-secondary-foreground transition-colors"
-                        href="https://www.facebook.com/share/1H74CpLTCK/"
-                        onClick={(e) => e.stopPropagation()}
+                        href="#"
                       >
                         <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="20"
-                          height="20"
+                          width="24"
+                          height="24"
                           viewBox="0 0 24 24"
                           fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5"
                         >
-                          <g clip-path="url(#clip0_fb)">
-                            <path
-                              d="M24 12C24 5.37258 18.6274 0 12 0C5.37258 0 0 5.37258 0 12C0 17.9895 4.3882 22.954 10.125 23.8542V15.4688H7.07813V12H10.125V9.35625C10.125 6.34875 11.9166 4.6875 14.6576 4.6875C15.9701 4.6875 17.3438 4.92188 17.3438 4.92188V7.875H15.8306C14.34 7.875 13.875 8.80008 13.875 9.75V12H17.2031L16.6711 15.4688H13.875V23.8542C19.6118 22.954 24 17.9895 24 12Z"
-                              fill="#fff"
-                            />
-                          </g>
-                          <defs>
-                            <clipPath id="clip0_fb">
-                              <rect width="24" height="24" fill="white" />
-                            </clipPath>
-                          </defs>
+                          <path
+                            d="M24 12C24 5.37258 18.6274 0 12 0C5.37258 0 0 5.37258 0 12C0 17.9895 4.3882 22.954 10.125 23.8542V15.4688H7.07813V12H10.125V9.35625C10.125 6.34875 11.9166 4.6875 14.6576 4.6875C15.9701 4.6875 17.3438 4.92188 17.3438 4.92188V7.875H15.8306C14.34 7.875 13.875 8.80008 13.875 9.75V12H17.2031L16.6711 15.4688H13.875V23.8542C19.6118 22.954 24 17.9895 24 12Z"
+                            fill="currentColor"
+                          ></path>
                         </svg>
                       </a>
                     </div>
@@ -529,180 +511,181 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               </div>
             </div>
           </div>
-          <div className=" top-0 z-10  border-b border-white/20 md:px-4 py-4  px-3">
-            <div className=" flex items-center justify-between mt-0 ">
-              <div className="flex items-center">
-                <button
-                  onClick={() => setIsMobileMenuOpen(true)}
-                  className=" rounded-md theme-text-primary hover:theme-text-secondary relative"
-                >
-                  <Menu className="w-6 h-6" />
-                  {unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 rounded-full flex items-center justify-center text-xs text-white font-bold">
-                      {unreadCount > 99 ? "99+" : unreadCount}
-                    </span>
-                  )}
-                </button>
-              </div>
-              <div className="-ml-[73px] absolute  left-[50%] ">
-                <img src={logoText} alt="Logo" className="h-4   " />
-              </div>
-
-              <div className="flex items-center space-x-1">
-                <div className="flex gap-x-4 items-center">
-                  <WalletBalance
-                    setShowPackage={() => setShowPackage(!showPackage)}
-                    balance={balance.toLocaleString()}
-                    showPackage={showPackage}
-                  />
-
-                  {showPackage && (
-                    <div className="absolute bg-gray-50  z-20 lg:left-auto top-8 left-3 right-3 mt-6 rounded-md shadow-md md:px-6 px-4 py-6 border md:w-[370px] w-auto">
-                      {user?.wallet?.package ? (
-                        <>
-                          <div className="flex justify-between items-start mb-3">
-                            <div className="flex items-start gap-2">
-                              <Icon name="crown" size={24} />
-                              <div>
-                                <div className="flex items-center gap-3">
-                                  <h2 className="text-base font-semibold text-slate-800">
-                                    My Plan
-                                  </h2>
-                                  <span
-                                    className="text-slate-300 cursor-pointer text-xs"
-                                    title="Current subscription details"
-                                  >
-                                    <Icon name="question-mark" size={17} />
-                                  </span>
-                                </div>
-                                <p className="text-sm text-slate-700   font-medium  ">
-                                  Renewing on:{" "}
-                                  <span className="text-slate-700 font-medium">
-                                    {user.wallet.expiresAt
-                                      ? new Date(
-                                          user.wallet.expiresAt
-                                        ).toLocaleDateString("en-GB", {
-                                          day: "2-digit",
-                                          month: "short",
-                                          year: "numeric",
-                                        })
-                                      : "N/A"}
-                                  </span>
-                                </p>
-                              </div>
-                            </div>
-
-                            <span
-                              className="text-base font-semibold "
-                              style={{ color: "#7650e3" }}
-                            >
-                              {user.wallet?.package?.name || "FREE"}
-                            </span>
-                          </div>
-
-                          <div className=" space-y-3 ">
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2 text-slate-800 text-md font-medium">
-                                <Icon name="spiral-logo" />
-                                <div className="flex items-center gap-3">
-                                  <p>Omni Coins</p>
-
-                                  <span
-                                    className="text-slate-300 text-xs cursor-pointer"
-                                    title="Coins info"
-                                  >
-                                    <Icon name="question-mark" size={17} />
-                                  </span>
-                                </div>
-                              </div>
-                              <p
-                                className="text-base font-semibold"
-                                style={{ color: "#7650e3" }}
-                              >
-                                {user.wallet.coins.toLocaleString() ?? 0}/{" "}
-                                {user.wallet.package.coinLimit.toLocaleString()}
-                              </p>
-                            </div>
-
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2 text-md text-slate-800 font-medium ">
-                                <Icon name="share" className="scale-[0.8] " />
-
-                                <div className="flex items-center gap-3">
-                                  <p> Referral Coins</p>
-
-                                  <span
-                                    className="text-slate-300 text-xs cursor-pointer"
-                                    title="Coins info"
-                                  >
-                                    <Icon name="question-mark" size={17} />
-                                  </span>
-                                </div>
-                              </div>
-                              <p
-                                className="text-base font-semibold"
-                                style={{ color: "#7650e3" }}
-                              >
-                                {user?.wallet?.referralCoin?.toLocaleString()}
-                              </p>
-                            </div>
-                          </div>
-                          <p className="text-base my-4">
-                            More information in our{" "}
-                            <Link className="text-purple-600 font-medium" to="/faq"> FAQ
-                            </Link>
-                          </p>
-
-                          {user?.wallet?.package?.tier !== "free" && (
-                            <button
-                              onClick={() => openManageSubscription()}
-                              className="w-full py-2.5  text-md font-semibold rounded-md border bg-white flex items-center justify-center gap-2 transition  hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
-                              style={{
-                                borderColor: "#7650e3",
-                                color: "#7650e3",
-                              }}
-                            >
-                              <Icon
-                                name="manage-subs"
-                                size={20}
-                                className="filter-omni"
-                              />
-                              Manage Subscription
-                            </button>
-                          )}
-
-                          <Link
-                            to="/pricing"
-                            onClick={() => setShowPackage(false)}
-                            className="w-full mt-3 px-3 py-2.5  border  text-md font-semibold rounded-md group flex items-center justify-center gap-2  text-white bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] border-[#7650e3]  "
-                          >
-                            <div className="group-hover:filter-omni h-full w-full text-center">
-                              <Icon
-                                name="white-diamond"
-                                size={20}
-                                className="mr-2"
-                              />
-                              Upgrade
-                            </div>
-                          </Link>
-                        </>
-                      ) : (
-                        <p className="text-gray-500 font-medium text-md text-center">
-                          No active package found
-                        </p>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
 
           <main
             id="mainContent"
             ref={mainContentRef}
             className="py-0 min-h-screen overflow-auto theme-bg-card  "
           >
+            <div className=" top-0 z-10  border-b border-white/20 md:px-4 py-4  px-3">
+              <div className=" flex items-center justify-between mt-0 ">
+                <div className="flex items-center">
+                  <button
+                    onClick={() => setIsMobileMenuOpen(true)}
+                    className=" rounded-md theme-text-primary hover:theme-text-secondary relative"
+                  >
+                    <Menu className="w-6 h-6" />
+                    {unreadCount > 0 && (
+                      <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 rounded-full flex items-center justify-center text-xs text-white font-bold">
+                        {unreadCount > 99 ? "99+" : unreadCount}
+                      </span>
+                    )}
+                  </button>
+                </div>
+                <div className="-ml-[73px] absolute  left-[50%] ">
+                  <img src={logoText} alt="Logo" className="h-4   " />
+                </div>
+
+                <div className="flex items-center space-x-1">
+                  <div className="flex gap-x-4 items-center">
+                    <WalletBalance
+                      setShowPackage={() => setShowPackage(!showPackage)}
+                      balance={balance.toLocaleString()}
+                      showPackage={showPackage}
+                    />
+
+                    {showPackage && (
+                      <div className="absolute bg-gray-50  z-20 lg:left-auto top-8 left-3 right-3 mt-6 rounded-md shadow-md md:px-6 px-4 py-6 border md:w-[370px] w-auto">
+                        {user?.wallet?.package ? (
+                          <>
+                            <div className="flex justify-between items-start mb-3">
+                              <div className="flex items-start gap-2">
+                                <Icon name="crown" size={24} />
+                                <div>
+                                  <div className="flex items-center gap-3">
+                                    <h2 className="text-base font-semibold text-slate-800">
+                                      My Plan
+                                    </h2>
+                                    <span
+                                      className="text-slate-300 cursor-pointer text-xs"
+                                      title="Current subscription details"
+                                    >
+                                      <Icon name="question-mark" size={17} />
+                                    </span>
+                                  </div>
+                                  <p className="text-sm text-slate-700   font-medium  ">
+                                    Renewing on:{" "}
+                                    <span className="text-slate-700 font-medium">
+                                      {user.wallet.expiresAt
+                                        ? new Date(
+                                            user.wallet.expiresAt
+                                          ).toLocaleDateString("en-GB", {
+                                            day: "2-digit",
+                                            month: "short",
+                                            year: "numeric",
+                                          })
+                                        : "N/A"}
+                                    </span>
+                                  </p>
+                                </div>
+                              </div>
+
+                              <span
+                                className="text-base font-semibold "
+                                style={{ color: "#7650e3" }}
+                              >
+                                {user.wallet?.package?.name || "FREE"}
+                              </span>
+                            </div>
+
+                            <div className=" space-y-3 ">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2 text-slate-800 text-md font-medium">
+                                  <Icon name="spiral-logo" />
+                                  <div className="flex items-center gap-3">
+                                    <p>Omni Coins</p>
+
+                                    <span
+                                      className="text-slate-300 text-xs cursor-pointer"
+                                      title="Coins info"
+                                    >
+                                      <Icon name="question-mark" size={17} />
+                                    </span>
+                                  </div>
+                                </div>
+                                <p
+                                  className="text-base font-semibold"
+                                  style={{ color: "#7650e3" }}
+                                >
+                                  {user.wallet.coins.toLocaleString() ?? 0}/{" "}
+                                  {user.wallet.package.coinLimit.toLocaleString()}
+                                </p>
+                              </div>
+
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2 text-md text-slate-800 font-medium ">
+                                  <Icon name="share" className="scale-[0.8] " />
+
+                                  <div className="flex items-center gap-3">
+                                    <p> Referral Coins</p>
+
+                                    <span
+                                      className="text-slate-300 text-xs cursor-pointer"
+                                      title="Coins info"
+                                    >
+                                      <Icon name="question-mark" size={17} />
+                                    </span>
+                                  </div>
+                                </div>
+                                <p
+                                  className="text-base font-semibold"
+                                  style={{ color: "#7650e3" }}
+                                >
+                                  {user?.wallet?.referralCoin?.toLocaleString()}
+                                </p>
+                              </div>
+                            </div>
+                            <p className="text-base my-4">
+                              More information in our{" "}
+                              <span className="text-purple-600 font-medium">
+                                FAQ.
+                              </span>
+                            </p>
+
+                            {user?.wallet?.package?.tier !== "free" && (
+                              <button
+                                onClick={() => openManageSubscription()}
+                                className="w-full py-2.5  text-md font-semibold rounded-md border bg-white flex items-center justify-center gap-2 transition  hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
+                                style={{
+                                  borderColor: "#7650e3",
+                                  color: "#7650e3",
+                                }}
+                              >
+                                <Icon
+                                  name="manage-subs"
+                                  size={20}
+                                  className="filter-omni"
+                                />
+                                Manage Subscription
+                              </button>
+                            )}
+
+                            <Link
+                              to="/pricing"
+                              onClick={() => setShowPackage(false)}
+                              className="w-full mt-3 px-3 py-2.5  border  text-md font-semibold rounded-md group flex items-center justify-center gap-2  text-white bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] border-[#7650e3]  "
+                            >
+                              <div className="group-hover:filter-omni h-full w-full text-center">
+                                <Icon
+                                  name="white-diamond"
+                                  size={20}
+                                  className="mr-2"
+                                />
+                                Upgrade
+                              </div>
+                            </Link>
+                          </>
+                        ) : (
+                          <p className="text-gray-500 font-medium text-md text-center">
+                            No active package found
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
             <div className="w-full mx-auto overflow-fit max-w-5xl">
               {children}
             </div>
@@ -738,7 +721,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             navigate("/pricing?tab=addons");
           }}
         />
-        <PricingModals />
         <PreloaderOverlay loadingState={loadingState} />
       </>
     </ResizeContext.Provider>

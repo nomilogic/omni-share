@@ -1,17 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { X, FileText, ChevronRight, PlusCircle } from "lucide-react";
 import Illustration from "../assets/manarge-subscription-img.png";
 import Transactions from "../assets/transactions.png";
 import SubscriptionPauseModal from "./SubscriptionPauseModal";
 import TransactionHistory from "@/pages/TransectionHistory";
-import { data, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAppContext } from "@/context/AppContext";
 import API from "@/services/api";
 
 export const ManageSubscriptionModal: React.FC<any> = ({
   isOpen,
   onClose,
-  onUpdatePayment,
   onCancelSubscription,
   onAddCoins,
   isCanceled,
@@ -21,8 +20,15 @@ export const ManageSubscriptionModal: React.FC<any> = ({
   const [showTransactions, setShowTransactions] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isReactive, setIsReactive] = useState(false);
-  const navigate = useNavigate();
   const { user, refreshUser } = useAppContext();
+
+  useEffect(() => {
+    if (isReactive || isOpen || isModalOpen || showTransactions) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }, [isReactive, isOpen, isModalOpen, showTransactions]);
 
   if (!isOpen) return null;
 
@@ -60,8 +66,8 @@ export const ManageSubscriptionModal: React.FC<any> = ({
       setIsReactive(false);
     }
   };
-
   const getCustomerPortal = async () => {
+    setIsReactive(true);
     try {
       const response = await API.getCustomerPortal();
       if (response?.data?.data?.portalUrl) {
@@ -71,6 +77,8 @@ export const ManageSubscriptionModal: React.FC<any> = ({
       }
     } catch (error) {
       console.error("Error opening customer portal:", error);
+    } finally {
+      setIsReactive(false);
     }
   };
 
@@ -135,7 +143,9 @@ export const ManageSubscriptionModal: React.FC<any> = ({
                       label: "View Invoices",
                       icon: <FileText className="w-4 h-4 text-white" />,
                     },
-                    ...(user?.wallet?.cancelRequested === false
+                    ...(user?.wallet?.downgradeRequested !== null
+                      ? []
+                      : user?.wallet?.cancelRequested === false
                       ? [
                           {
                             key: "cancel",

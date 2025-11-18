@@ -3,7 +3,6 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { AppProvider, useAppContext } from "./context/AppContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import { SubscriptionModalProvider } from "./context/SubscriptionModalContext";
-import { PricingModalProvider } from "./context/PricingModalContext";
 import { AppLayout } from "./components/Layout/AppLayout";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AuthPage } from "./pages/AuthPage";
@@ -20,9 +19,6 @@ import { CampaignsPage } from "./pages/CampaignsPage";
 import { AccountsPage } from "./pages/AccountsPage";
 import { HistoryPage } from "./pages/HistoryPage";
 import PrivacyPolicy from "./components/PrivacyPolicy";
-import FAQ from "./components/FAQ";
-import  Support  from "./components/Support";
-import Terms from "./components/Terms";
 import AddonSuccessPage from "./pages/PackageAddonSuccess";
 import PackageSuccessPage from "./pages/PackagePaymentSuccess";
 import TransactionHistory from "./pages/TransectionHistory";
@@ -31,8 +27,7 @@ import ResetPasswordPage from "./pages/ResetPasswordPage";
 import HomePage from "./pages/HomePage";
 import { Bounce, ToastContainer } from "react-toastify";
 import { themeManager } from "./lib/theme";
-
-//Support
+import { PricingProvider } from "./context/PricingContext";
 
 const OAuthCallbackWrapper = () => {
   const { dispatch } = useAppContext();
@@ -69,204 +64,200 @@ function App() {
       <AppProvider>
         <AuthProvider>
           <SubscriptionModalProvider>
-            <PricingModalProvider>
+            <PricingProvider>
               <Routes>
-              {/* <Route path="/" element={showlanded() ? <HomePage /> : <LandingPage />} />   */}
-              <Route path="/" element={<HomePage />} />
+                {/* <Route path="/" element={showlanded() ? <HomePage /> : <LandingPage />} />   */}
+                <Route path="/" element={<HomePage />} />
 
-              <Route path="/auth" element={<AuthPage />} />
-              <Route path="/privacy" element={<PrivacyPolicy />} />
-              <Route path="/terms" element={<Terms />} />
-              <Route path="/home" element={<HomePage />} />
-              <Route path="/support" element={<Support />} />
-              <Route path="/faq" element={<FAQ />} />
+                <Route path="/auth" element={<AuthPage />} />
+                <Route path="/privacy" element={<PrivacyPolicy />} />
+                <Route path="/home" element={<HomePage />} />
 
+                <Route
+                  path="/oauth/:platform/callback"
+                  element={<OAuthCallback />}
+                />
 
-              <Route
-                path="/oauth/:platform/callback"
-                element={<OAuthCallback />}
-              />
+                <Route
+                  path="/auth/:provider/callback"
+                  element={<OAuthCallbackWrapper />}
+                />
 
-              <Route
-                path="/auth/:provider/callback"
-                element={<OAuthCallbackWrapper />}
-              />
+                <Route
+                  path="/pricing"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <PricingPage />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route
-                path="/pricing"
-                element={
-                  <ProtectedRoute>
-                    <AppLayout>
-                      <PricingPage />
-                    </AppLayout>
-                  </ProtectedRoute>
-                }
-              />
+                <Route
+                  path="/payment/addon/success"
+                  element={
+                    <ProtectedRoute>
+                      <AddonSuccessPage />
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route
-                path="/payment/addon/success"
-                element={
-                  <ProtectedRoute>
-                    <AddonSuccessPage />
-                  </ProtectedRoute>
-                }
-              />
+                <Route
+                  path="/payment/package/success"
+                  element={
+                    <ProtectedRoute>
+                      <PackageSuccessPage />{" "}
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route
-                path="/payment/package/success"
-                element={
-                  <ProtectedRoute>
-                    <PackageSuccessPage />{" "}
-                  </ProtectedRoute>
-                }
-              />
+                <Route
+                  path="/onboarding/*"
+                  element={
+                    <ProtectedRoute>
+                      <OnboardingPage />
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route
-                path="/onboarding/*"
-                element={
-                  <ProtectedRoute>
-                    <OnboardingPage />
-                  </ProtectedRoute>
-                }
-              />
+                <Route
+                  path="/dashboard"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <DashboardPage />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/transaction-history"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <TransactionHistory />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/generate-amount"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <GenerationAmountPage />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route path="/reset-password" element={<ResetPasswordPage />} />
 
-              <Route
-                path="/dashboard"
-                element={
-                  <ProtectedRoute>
-                    <AppLayout>
-                      <DashboardPage />
-                    </AppLayout>
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/transaction-history"
-                element={
-                  <ProtectedRoute>
-                    <AppLayout>
-                      <TransactionHistory />
-                    </AppLayout>
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/generate-amount"
-                element={
-                  <ProtectedRoute>
-                    <AppLayout>
-                      <GenerationAmountPage />
-                    </AppLayout>
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="/reset-password" element={<ResetPasswordPage />} />
+                <Route
+                  path="/profile/*"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <ProfilePage />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route
-                path="/profile/*"
-                element={
-                  <ProtectedRoute>
-                    <AppLayout>
-                      <ProfilePage />
-                    </AppLayout>
-                  </ProtectedRoute>
-                }
-              />
+                {/* New campaigns route */}
+                <Route
+                  path="/campaigns/*"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <CampaignsPage />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
 
-              {/* New campaigns route */}
-              <Route
-                path="/campaigns/*"
-                element={
-                  <ProtectedRoute>
-                    <AppLayout>
-                      <CampaignsPage />
-                    </AppLayout>
-                  </ProtectedRoute>
-                }
-              />
+                {/* Companies route redirects to campaigns for backward compatibility */}
+                {/* <Route path="/campaigns/*" element={<Navigate to="/campaigns" replace />} /> */}
 
-              {/* Companies route redirects to campaigns for backward compatibility */}
-              {/* <Route path="/campaigns/*" element={<Navigate to="/campaigns" replace />} /> */}
+                <Route
+                  path="/content/*"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <ContentPage />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route
-                path="/content/*"
-                element={
-                  <ProtectedRoute>
-                    <AppLayout>
-                      <ContentPage />
-                    </AppLayout>
-                  </ProtectedRoute>
-                }
-              />
+                {/* Direct /generate route - redirects to /content (Generate now shows as modal overlay) */}
+                <Route
+                  path="/generate"
+                  element={
+                    <ProtectedRoute>
+                      <Navigate to="/content" replace />
+                    </ProtectedRoute>
+                  }
+                />
 
-              {/* Direct /generate route - redirects to /content (Generate now shows as modal overlay) */}
-              <Route
-                path="/generate"
-                element={
-                  <ProtectedRoute>
-                    <Navigate to="/content" replace />
-                  </ProtectedRoute>
-                }
-              />
+                <Route
+                  path="/schedule"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <SchedulePage />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/posts/schedule"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <SchedulePage />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route
-                path="/schedule"
-                element={
-                  <ProtectedRoute>
-                    <AppLayout>
-                      <SchedulePage />
-                    </AppLayout>
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/posts/schedule"
-                element={
-                  <ProtectedRoute>
-                    <AppLayout>
-                      <SchedulePage />
-                    </AppLayout>
-                  </ProtectedRoute>
-                }
-              />
+                <Route
+                  path="/settings/*"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <SettingsPage />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route
-                path="/settings/*"
-                element={
-                  <ProtectedRoute>
-                    <AppLayout>
-                      <SettingsPage />
-                    </AppLayout>
-                  </ProtectedRoute>
-                }
-              />
+                <Route
+                  path="/accounts"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <AccountsPage />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route
-                path="/accounts"
-                element={
-                  <ProtectedRoute>
-                    <AppLayout>
-                      <AccountsPage />
-                    </AppLayout>
-                  </ProtectedRoute>
-                }
-              />
+                <Route
+                  path="/history"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <HistoryPage />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route
-                path="/history"
-                element={
-                  <ProtectedRoute>
-                    <AppLayout>
-                      <HistoryPage />
-                    </AppLayout>
-                  </ProtectedRoute>
-                }
-              />
-
-              {/* Catch all - redirect to auth by default if not logged in, otherwise to dashboard */}
-              <Route path="*" element={<Navigate to="/auth" replace />} />
-            </Routes>
-            </PricingModalProvider>
+                {/* Catch all - redirect to auth by default if not logged in, otherwise to dashboard */}
+                <Route path="*" element={<Navigate to="/auth" replace />} />
+              </Routes>
+            </PricingProvider>
           </SubscriptionModalProvider>
         </AuthProvider>
       </AppProvider>
