@@ -171,7 +171,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
               <button
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="rounded-md theme-text-light hover:theme-text-primary mr-1"
+                className="rounded-md theme-text-light  mr-1"
               >
                 <X className="w-6 h-6" />
               </button>
@@ -243,7 +243,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                         setShowUserMenu(false);
                         setIsMobileMenuOpen(false);
                       }}
-                      className="group flex items-center px-4 ml-1 text-md theme-text-light hover:theme-bg-secondary hover:theme-text-primary transition-all duration-150 ease-in-out"
+                      className="group flex items-center px-4 ml-1 text-md theme-text-light hover:theme-bg-secondary  transition-all duration-150 ease-in-out"
                     >
                       <div className="flex items-center justify-center w-9 h-9 rounded-md theme-bg-trinary group-hover:theme-bg-primary mr-3 transition-colors duration-150">
                         <Settings className="h-5 w-5 theme-text-light group-hover:theme-text-secondary" />
@@ -290,10 +290,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                   <Link
                     key={item.name}
                     to={item.path}
-                    className={`flex items-center justify-between px-3 py-2.5 text-md font-medium rounded-md transition-colors ${
+                    className={` hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] flex items-center justify-between px-3 py-2.5 text-md font-medium rounded-md transition-colors ${
                       isActive
                         ? "theme-bg-primary theme-text-secondary"
-                        : "theme-text-light hover:theme-bg-secondary hover:theme-text-primary"
+                        : "theme-text-light "
                     }`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
@@ -321,7 +321,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                   setShowUserMenu(false);
                   setIsMobileMenuOpen(false);
                 }}
-                className="flex items-center justify-between px-3 py-2.5 text-md font-medium rounded-md transition-colors  "
+                className=" hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] flex items-center justify-between px-3 py-2.5 text-md font-medium rounded-md transition-colors  "
               >
                 <div className="flex  justify-center items-center">
                   <LogOut className="h-5 w-5 mr-3" />
@@ -339,7 +339,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                   <div className="flex justify-center space-x-1 text-sm theme-text-light mb-1">
                     <Link
                       to="/privacy"
-                      className="hover:theme-text-primary transition-colors duration-200"
+                      className=" transition-colors duration-200"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Privacy Policy
@@ -347,14 +347,14 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                     <span className="text-white/20">•</span>
                     <Link
                       to="/terms"
-                      className="hover:theme-text-primary transition-colors duration-200"
+                      className=" transition-colors duration-200"
                     >
                       Terms of Service
                     </Link>
                     <span className="text-white/20">•</span>
                     <Link
                       to="/support"
-                      className="hover:theme-text-primary transition-colors duration-200"
+                      className=" transition-colors duration-200"
                     >
                       Support
                     </Link>
@@ -649,7 +649,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                           </div>
                           <p className="text-base my-4">
                             More information in our{" "}
-                            <Link className="text-purple-600 font-medium" to="/faq"> FAQ
+                            <Link
+                              className="text-purple-600 font-medium"
+                              to="/faq"
+                            >
+                              {" "}
+                              FAQ
                             </Link>
                           </p>
 
