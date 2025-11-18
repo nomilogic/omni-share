@@ -87,7 +87,8 @@ export const PricingModals: React.FC = () => {
               </button>
               <button
                 onClick={closeConfirm}
-                className="flex-1 py-2.5 w-full mt-2 border border-purple-600 text-purple-600 font-semibold rounded-md hover:bg-purple-50 transition"
+                className="flex-1 py-2.5 w-full mt-2 border border-purple-600 text-purple-600 font-semibold rounded-md 
+           hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition"
               >
                 Back
               </button>
@@ -161,7 +162,8 @@ export const PricingModals: React.FC = () => {
               </button>
               <button
                 onClick={closeAddonConfirm}
-                className="flex-1 py-2.5 w-full mt-2 border border-purple-600 text-purple-600 font-semibold rounded-md hover:bg-purple-50 transition"
+                className="flex-1 py-2.5 w-full mt-2 border border-purple-600 text-purple-600 font-semibold rounded-md 
+           hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition"
               >
                 Back
               </button>
