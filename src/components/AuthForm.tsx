@@ -594,7 +594,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                 disabled={loading}
                 className="w-full  text-white bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] border-[#7650e3] border font-semibold py-2  text-base rounded-md transition disabled:opacity-50"
               >
-                {loading ? "Creating account..." : "Sign Up"}
+                {loading ? "Creating account..." : "Register"}
               </button>
 
               {(error || externalError) && (

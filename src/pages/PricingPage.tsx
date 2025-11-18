@@ -8,6 +8,7 @@ import API from "../services/api";
 import { useSearchParams } from "react-router-dom";
 import Icon from "../components/Icon";
 import { useSubscriptionModal } from "../context/SubscriptionModalContext";
+import { notify } from "../utils/toast";
 
 export const PricingPage: React.FC = () => {
   const { state, refreshUser } = useAppContext();
@@ -221,8 +222,7 @@ export const PricingPage: React.FC = () => {
         setSelectedAddon(null);
       }
     } catch (error) {
-      console.error("Buy addon failed:", error);
-      alert("Something went wrong while buying add-on");
+      notify("error", "Something went wrong while buying add-on");
     } finally {
       setLoadingAddon(false);
       setAddonConfirmOpen(false);
