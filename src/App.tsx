@@ -20,6 +20,9 @@ import { CampaignsPage } from "./pages/CampaignsPage";
 import { AccountsPage } from "./pages/AccountsPage";
 import { HistoryPage } from "./pages/HistoryPage";
 import PrivacyPolicy from "./components/PrivacyPolicy";
+import FAQ from "./components/FAQ";
+import  Support  from "./components/Support";
+import Terms from "./components/Terms";
 import AddonSuccessPage from "./pages/PackageAddonSuccess";
 import PackageSuccessPage from "./pages/PackagePaymentSuccess";
 import TransactionHistory from "./pages/TransectionHistory";
@@ -28,6 +31,8 @@ import ResetPasswordPage from "./pages/ResetPasswordPage";
 import HomePage from "./pages/HomePage";
 import { Bounce, ToastContainer } from "react-toastify";
 import { themeManager } from "./lib/theme";
+
+//Support
 
 const OAuthCallbackWrapper = () => {
   const { dispatch } = useAppContext();
@@ -71,7 +76,11 @@ function App() {
 
               <Route path="/auth" element={<AuthPage />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />
+              <Route path="/terms" element={<Terms />} />
               <Route path="/home" element={<HomePage />} />
+              <Route path="/support" element={<Support />} />
+              <Route path="/faq" element={<FAQ />} />
+
 
               <Route
                 path="/oauth/:platform/callback"

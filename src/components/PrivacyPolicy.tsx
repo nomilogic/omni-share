@@ -6,7 +6,7 @@ const PrivacyPolicy: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="h-full-dec-hf  x-2 bg-gray-50 py-8">
+    <div className="  x-2  py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
@@ -21,290 +21,163 @@ const PrivacyPolicy: React.FC = () => {
             Privacy Policy
           </h1>
           <p className="text-gray-500 font-medium">
-            Last updated: {new Date().toLocaleDateString()}
+            <strong>OmniShare</strong> – Social Media Management Platform
+          </p>
+          <p className="text-gray-500 font-medium">
+            <strong>Last Updated:</strong> November 17, 2025
+          </p>
+          <p className="text-gray-500 font-medium">
+            <strong>Company Location:</strong> United Arab Emirates (UAE)
           </p>
         </div>
 
         {/* Content */}
-        <div className="bg-white rounded-md shadow-md border-2 border-[#7650e3] p-8">
-          <div className="prose prose-gray max-w-none">
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-[#7650e3] mb-4">
-                1. Introduction
-              </h2>
-              <p className="text-slate-700 mb-4">
-                Welcome to Omni Share ("we," "our," or "us"). We are committed
-                to protecting your privacy and ensuring the security of your
-                personal information. This Privacy Policy explains how we
-                collect, use, disclose, and safeguard your information when you
-                use our AI-powered social media content generation platform.
-              </p>
-              <p className="text-slate-700">
-                By accessing or using our service, you agree to the collection
-                and use of information in accordance with this policy.
-              </p>
-            </section>
-
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-[#7650e3] mb-4">
-                2. Information We Collect
-              </h2>
-
-              <h3 className="text-xl font-medium text-[#7650e3] mb-3">
-                2.1 Personal Information
-              </h3>
-              <ul className="list-disc pl-6 mb-4 text-slate-700">
-                <li>Account information (name, email address, password)</li>
-                <li>Profile information and preferences</li>
-                <li>
-                  Social media account connections and authorization tokens
-                </li>
-                <li>
-                  Billing and payment information (processed securely through
-                  third-party payment processors)
-                </li>
-              </ul>
-
-              <h3 className="text-xl font-medium text-[#7650e3] mb-3">
-                2.2 Content Data
-              </h3>
-              <ul className="list-disc pl-6 mb-4 text-slate-700">
-                <li>Content you create, generate, or upload</li>
-                <li>AI prompts and inputs</li>
-                <li>Generated social media posts, images, and schedules</li>
-                <li>Campaign data and analytics</li>
-              </ul>
-
-              <h3 className="text-xl font-medium text-[#7650e3] mb-3">
-                2.3 Technical Data
-              </h3>
-              <ul className="list-disc pl-6 mb-4 text-slate-700">
-                <li>Device information and browser type</li>
-                <li>IP address and location data</li>
-                <li>Usage patterns and feature interactions</li>
-                <li>Error logs and performance data</li>
-              </ul>
-            </section>
-
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-[#7650e3] mb-4">
-                3. How We Use Your Information
-              </h2>
-              <ul className="list-disc pl-6 text-slate-700">
-                <li>Provide and maintain our AI content generation services</li>
-                <li>Process and fulfill your content creation requests</li>
-                <li>Improve and optimize our AI models and algorithms</li>
-                <li>Personalize your experience and content recommendations</li>
-                <li>
-                  Connect and post to your authorized social media accounts
-                </li>
-                <li>Send service-related communications and updates</li>
-                <li>
-                  Analyze usage patterns to enhance platform functionality
-                </li>
-                <li>Ensure platform security and prevent fraud</li>
-                <li>Comply with legal obligations and resolve disputes</li>
-              </ul>
-            </section>
-
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-[#7650e3] mb-4">
-                4. AI and Machine Learning
-              </h2>
-              <p className="text-slate-700 mb-4">
-                Our platform uses advanced AI technologies, including large
-                language models and image generation systems. Here's how we
-                handle your data in relation to AI processing:
-              </p>
-              <ul className="list-disc pl-6 mb-4 text-slate-700">
-                <li>
-                  Your content inputs may be processed by third-party AI
-                  services (OpenAI, Anthropic, Google AI)
-                </li>
-                <li>
-                  We may use anonymized and aggregated data to improve our AI
-                  models
-                </li>
-                <li>
-                  Personal content is not used to train external AI models
-                  without your consent
-                </li>
-                <li>AI-generated content remains your intellectual property</li>
-              </ul>
-            </section>
-
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-[#7650e3] mb-4">
-                5. Social Media Integration
-              </h2>
-              <p className="text-slate-700 mb-4">
-                When you connect your social media accounts, we:
-              </p>
-              <ul className="list-disc pl-6 mb-4 text-slate-700">
-                <li>Store only necessary authorization tokens securely</li>
-                <li>Access only the permissions you explicitly grant</li>
-                <li>Post content only with your explicit approval</li>
-                <li>Never store your social media passwords</li>
-                <li>Allow you to revoke access at any time</li>
-              </ul>
-            </section>
-
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-[#7650e3] mb-4">
-                6. Data Sharing and Third Parties
-              </h2>
-              <p className="text-slate-700 mb-4">
-                We may share your information with:
-              </p>
-
-              <h3 className="text-xl font-medium text-[#7650e3] mb-3">
-                6.1 Service Providers
-              </h3>
-              <ul className="list-disc pl-6 mb-4 text-slate-700">
-                <li>AI service providers (OpenAI, Anthropic, Google AI)</li>
-                <li>Cloud hosting and database services (Supabase)</li>
-                <li>Payment processors</li>
-                <li>Analytics and monitoring services</li>
-              </ul>
-
-              <h3 className="text-xl font-medium text-[#7650e3] mb-3">
-                6.2 Legal Requirements
-              </h3>
-              <p className="text-slate-700 mb-4">
-                We may disclose information if required by law, regulation, or
-                legal process.
-              </p>
-
-              <h3 className="text-xl font-medium text-[#7650e3] mb-3">
-                6.3 Business Transfers
-              </h3>
-              <p className="text-slate-700">
-                In case of merger, acquisition, or sale of assets, user
-                information may be transferred.
-              </p>
-            </section>
-
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-[#7650e3] mb-4">
-                7. Data Security
-              </h2>
-              <p className="text-slate-700 mb-4">
-                We implement robust security measures:
-              </p>
-              <ul className="list-disc pl-6 text-slate-700">
-                <li>Encryption of data in transit and at rest</li>
-                <li>Regular security audits and monitoring</li>
-                <li>Access controls and authentication protocols</li>
-                <li>Secure API integrations</li>
-                <li>Regular backups and disaster recovery procedures</li>
-              </ul>
-            </section>
-
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-slate-900 mb-4">
-                8. Your Rights and Choices
-              </h2>
-              <p className="text-slate-700 mb-4">You have the right to:</p>
-              <ul className="list-disc pl-6 text-slate-700">
-                <li>Access, update, or delete your personal information</li>
-                <li>Download your data in a portable format</li>
-                <li>Opt-out of marketing communications</li>
-                <li>Disconnect social media accounts</li>
-                <li>Request restriction of data processing</li>
-                <li>Object to automated decision-making</li>
-                <li>Lodge a complaint with regulatory authorities</li>
-              </ul>
-            </section>
-
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-[#7650e3] mb-4">
-                9. Data Retention
-              </h2>
-              <p className="text-slate-700 mb-4">
-                We retain your information only as long as necessary to:
-              </p>
-              <ul className="list-disc pl-6 text-slate-700">
-                <li>Provide our services to you</li>
-                <li>Comply with legal obligations</li>
-                <li>Resolve disputes and enforce agreements</li>
-                <li>Improve our services (using anonymized data)</li>
-              </ul>
-              <p className="text-slate-700 mt-4">
-                You can request deletion of your account and associated data at
-                any time.
-              </p>
-            </section>
-
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-[#7650e3] mb-4">
-                10. International Data Transfers
-              </h2>
-              <p className="text-slate-700">
-                Your information may be transferred to and processed in
-                countries other than your own. We ensure appropriate safeguards
-                are in place to protect your data in accordance with this
-                privacy policy and applicable laws.
-              </p>
-            </section>
-
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-[#7650e3] mb-4">
-                11. Children's Privacy
-              </h2>
-              <p className="text-slate-700">
-                Our service is not intended for individuals under 18 years of
-                age. We do not knowingly collect personal information from
-                children under 18. If you are a parent or guardian and believe
-                your child has provided us with personal information, please
-                contact us.
-              </p>
-            </section>
-
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-[#7650e3] mb-4">
-                12. Updates to This Policy
-              </h2>
-              <p className="text-slate-700">
-                We may update this Privacy Policy from time to time. We will
-                notify you of any changes by posting the new Privacy Policy on
-                this page and updating the "Last updated" date. We encourage you
-                to review this Privacy Policy periodically for any changes.
-              </p>
-            </section>
-
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-slate-900 mb-4">
-                13. Contact Us
-              </h2>
-              <p className="text-slate-700 mb-4">
-                If you have any questions about this Privacy Policy or our data
-                practices, please contact us:
-              </p>
-              <div className="bg-gray-50 p-4 rounded-md">
-                <p className="text-slate-700 mb-2">
-                  <strong>Email:</strong> privacy@socialaiagent.com
-                </p>
-                <p className="text-slate-700 mb-2">
-                  <strong>Address:</strong> [Your Company Address]
-                </p>
-                <p className="text-slate-700">
-                  <strong>Phone:</strong> [Your Contact Number]
-                </p>
-              </div>
-            </section>
 
             <section>
-              <h2 className="text-2xl font-semibold text-[#7650e3] mb-4">
-                14. Consent
-              </h2>
-              <p className="text-slate-700">
-                By using our service, you consent to our Privacy Policy and
-                agree to its terms. If you do not agree with this policy, please
-                do not use our service.
-              </p>
+              <p className="mb-4">Your privacy is important to us. This Privacy Policy explains how OmniShare ("we", "our", "us") collects, uses, stores, protects, and shares your information when you use our website, mobile app, and services (collectively, the "Service").</p>
+              <p className="mb-4">By accessing or using OmniShare, you agree to the practices described in this Privacy Policy.</p>
             </section>
-          </div>
-        </div>
+            <hr className="my-4" />
+            <section>
+              <h2 className="text-xl font-bold mb-2 text-[#7650e3]">1. Information We Collect</h2>
+              <h3 className="font-semibold mb-1">1.1 Information You Provide to Us</h3>
+              <ul className="list-disc pl-6 mb-2">
+                <li><strong>Account details:</strong> Name, email address, phone number, and password</li>
+                <li><strong>Business information:</strong> Company name, profiles, brand data</li>
+                <li><strong>Content:</strong> Posts, captions, images, videos you upload or generate</li>
+                <li><strong>Payment details:</strong> Processed securely through third-party payment providers; we do not store full card information</li>
+              </ul>
+              <h3 className="font-semibold mb-1">1.2 Automatically Collected Information</h3>
+              <ul className="list-disc pl-6 mb-2">
+                <li><strong>Device information</strong> (browser type, device model, OS)</li>
+                <li><strong>IP address and location</strong> (approximate)</li>
+                <li><strong>Usage data</strong> (pages visited, features used, time spent)</li>
+                <li><strong>Cookies and similar tracking technologies</strong></li>
+              </ul>
+              <h3 className="font-semibold mb-1">1.3 Third-Party Integration Data</h3>
+              <p>When you connect social profiles (Facebook, Instagram, TikTok, YouTube, LinkedIn), we may receive:</p>
+              <ul className="list-disc pl-6 mb-2">
+                <li><strong>Profile name and ID</strong></li>
+                <li><strong>Permissions granted</strong></li>
+                <li><strong>Publishing access</strong></li>
+                <li><strong>Analytics and engagement metrics</strong></li>
+              </ul>
+              <p>We only access the data needed to provide our services.</p>
+            </section>
+            <hr className="my-4" />
+            <section>
+              <h2 className="text-xl font-bold mb-2 text-[#7650e3]">2. How We Use Your Information</h2>
+              <p>We use your information to:</p>
+              <ul className="list-disc pl-6 mb-2">
+                <li>Create and manage your account</li>
+                <li>Provide AI-powered content creation</li>
+                <li>Publish and schedule posts across platforms</li>
+                <li>Improve media optimization and insights</li>
+                <li>Show analytics and performance reports</li>
+                <li>Communicate updates, alerts, or support messages</li>
+                <li>Enhance platform performance and security</li>
+                <li>Personalize your user experience</li>
+                <li>Process subscription payments</li>
+              </ul>
+              <p>We do not sell your data to third parties.</p>
+            </section>
+            <hr className="my-4" />
+            <section>
+              <h2 className="text-xl font-bold mb-2 text-[#7650e3]">3. How We Share Your Information</h2>
+              <p>We may share your data only with:</p>
+              <h3 className="font-semibold mb-1">3.1 Service Providers</h3>
+              <ul className="list-disc pl-6 mb-2">
+                <li><strong>Process payments</strong></li>
+                <li><strong>Host the platform</strong></li>
+                <li><strong>Provide analytics</strong></li>
+                <li><strong>Deliver email notifications</strong></li>
+              </ul>
+              <h3 className="font-semibold mb-1">3.2 Social Media Platforms</h3>
+              <p>Only when you authorize integration, and strictly as needed for posting and analytics.</p>
+              <h3 className="font-semibold mb-1">3.3 Legal Requirements</h3>
+              <ul className="list-disc pl-6 mb-2">
+                <li><strong>UAE laws</strong></li>
+                <li><strong>Court orders</strong></li>
+                <li><strong>Government or regulatory authorities</strong></li>
+              </ul>
+              <p>We never share your content unless legally required.</p>
+            </section>
+            <hr className="my-4" />
+            <section>
+              <h2 className="text-xl font-bold mb-2 text-[#7650e3]">4. Data Storage & Security</h2>
+              <p>We use industry-standard encryption and security protocols to protect your data.</p>
+              <ul className="list-disc pl-6 mb-2">
+                <li><strong>Data is stored</strong> securely on accredited servers</li>
+                <li><strong>Access is limited</strong> to authorized personnel only</li>
+                <li><strong>Regular security audits</strong> and monitoring are performed</li>
+              </ul>
+              <p>However, no system is 100% secure, and we cannot guarantee absolute protection.</p>
+            </section>
+            <hr className="my-4" />
+            <section>
+              <h2 className="text-xl font-bold mb-2 text-[#7650e3]">5. Your Rights & Choices</h2>
+              <p>Depending on your jurisdiction, you may have rights such as:</p>
+              <ul className="list-disc pl-6 mb-2">
+                <li><strong>Access: </strong>Request a copy of your personal data</li>
+                <li><strong>Correction:</strong> Update or correct your information</li>
+                <li><strong>Deletion:</strong> Request account or data deletion</li>
+                <li><strong>Restriction:</strong> Limit data processing in certain cases</li>
+                <li><strong>Unlink Accounts:</strong> Disconnect social media profiles anytime</li>
+              </ul>
+              <p>To exercise these rights, contact us at:</p>
+              <p>support@omishare.ai</p>
+            </section>
+            <hr className="my-4" />
+            <section>
+              <h2 className="text-xl font-bold mb-2 text-[#7650e3]">6. Cookies & Tracking Technologies</h2>
+              <p>We use cookies to:</p>
+              <ul className="list-disc pl-6 mb-2">
+                <li><strong>Improve performance</strong></li>
+                <li><strong>Analyze user behavior</strong></li>
+                <li><strong>Personalize content</strong></li>
+                <li><strong>Remember preferences and login sessions</strong></li>
+              </ul>
+              <p>You may disable cookies through your browser settings, but some features may not function properly.</p>
+            </section>
+            <hr className="my-4" />
+            <section>
+              <h2 className="text-xl font-bold mb-2 text-[#7650e3]">7. Data Retention</h2>
+              <p>We retain your information as long as:</p>
+              <ul className="list-disc pl-6 mb-2">
+                <li><strong>Your account is active,</strong> or</li>
+                <li><strong>Needed to provide our services,</strong> or</li>
+                <li><strong>Required by UAE law</strong></li>
+              </ul>
+              <p>After account deletion, some data may remain stored for legal or security purposes.</p>
+            </section>
+            <hr className="my-4" />
+            <section>
+              <h2 className="text-xl font-bold mb-2 text-[#7650e3]">8. Children's Privacy</h2>
+              <p>OmniShare is not intended for individuals under 18 years.</p>
+              <p>We do not knowingly collect data from minors.</p>
+            </section>
+            <hr className="my-4" />
+            <section>
+              <h2 className="text-xl font-bold mb-2 text-[#7650e3]">9. International Transfers</h2>
+              <p>Your data may be stored or processed outside the UAE depending on server locations.</p>
+              <p>We ensure all transfers follow industry-standard security and comply with applicable laws.</p>
+            </section>
+            <hr className="my-4" />
+            <section>
+              <h2 className="text-xl font-bold mb-2 text-[#7650e3]">10. Changes to This Privacy Policy</h2>
+              <p>We may update this Privacy Policy from time to time.</p>
+              <p>If major changes occur, we will notify you via email or platform alert.</p>
+              <p>Continued use of OmniShare means you accept the updated terms.</p>
+            </section>
+            <hr className="my-4" />
+            <section>
+              <h2 className="text-xl font-bold mb-2 text-[#7650e3]">11. Contact Us</h2>
+              <p>If you have questions, concerns, or requests, contact us:</p>
+              <p>📧 support@omnishare.ai</p>
+              <p>🌐 www.omnishare.ai</p>
+              <p>📍 United Arab Emirates</p>
+            </section>
+       
 
         {/* Footer */}
         <div className="mt-8 text-center">

@@ -345,19 +345,19 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                       Privacy Policy
                     </Link>
                     <span className="text-white/20">•</span>
-                    <a
-                      href="#"
+                    <Link
+                      to="/terms"
                       className="hover:theme-text-primary transition-colors duration-200"
                     >
                       Terms of Service
-                    </a>
+                    </Link>
                     <span className="text-white/20">•</span>
-                    <a
-                      href="#"
+                    <Link
+                      to="/support"
                       className="hover:theme-text-primary transition-colors duration-200"
                     >
                       Support
-                    </a>
+                    </Link>
                   </div>
                   <div className="flex justify-center space-x-1 text-xs theme-text-light w-full">
                     {/* social media links icons */}
@@ -366,13 +366,14 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                         target="_blank"
                         rel="noreferrer"
                         className="hover:text-secondary-foreground transition-colors"
-                        href="#"
+                        href="https://www.instagram.com/omnishare.ai/"
+                        onClick={(e) => e.stopPropagation()}
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           width="20"
                           height="20"
-                          viewBox="0 0 25 25"
+                          viewBox="0 0 24 24"
                           fill="none"
                         >
                           <g clip-path="url(#clip0_367_3134)">
@@ -405,7 +406,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                         target="_blank"
                         rel="noreferrer"
                         className="hover:text-secondary-foreground transition-colors"
-                        href="#"
+                        href="https://www.linkedin.com/company/omnishare-ai"
+                        onClick={(e) => e.stopPropagation()}
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -436,7 +438,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                         target="_blank"
                         rel="noreferrer"
                         className="hover:text-secondary-foreground transition-colors"
-                        href="#"
+                        href="https://www.youtube.com/@OmniShare-ai"
+                        onClick={(e) => e.stopPropagation()}
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -467,40 +470,54 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                         target="_blank"
                         rel="noreferrer"
                         className="hover:text-secondary-foreground transition-colors"
-                        href="#"
+                        href="https://www.tiktok.com/@omnishare.ai?is_from_webapp=1&sender_device=pc"
+                        onClick={(e) => e.stopPropagation()}
                       >
                         <svg
-                          width="24"
-                          height="24"
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="20"
+                          height="20"
                           viewBox="0 0 24 24"
                           fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5"
                         >
-                          <path
-                            d="M18.3263 1.90393H21.6998L14.3297 10.3274L23 21.7899H16.2112L10.894 14.838L4.80993 21.7899H1.43442L9.31742 12.78L0.999985 1.90393H7.96109L12.7674 8.25826L18.3263 1.90393ZM17.1423 19.7707H19.0116L6.94538 3.81706H4.93945L17.1423 19.7707Z"
-                            fill="currentColor"
-                          ></path>
+                          <g clip-path="url(#clip0_tiktok)">
+                            <path
+                              d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.68v12.7a2.85 2.85 0 1 1-5.92-2.86 2.85 2.85 0 0 1 2.31 1.09V9.4a6.53 6.53 0 1 0 5.63 5.63V8.13a8.34 8.34 0 0 0 5.81 2.32v-3.7a4.5 4.5 0 0 1-.54-.06z"
+                              fill="#fff"
+                            />
+                          </g>
+                          <defs>
+                            <clipPath id="clip0_tiktok">
+                              <rect width="24" height="24" fill="white" />
+                            </clipPath>
+                          </defs>
                         </svg>
                       </a>
                       <a
                         target="_blank"
                         rel="noreferrer"
                         className="hover:text-secondary-foreground transition-colors"
-                        href="#"
+                        href="https://www.facebook.com/share/1H74CpLTCK/"
+                        onClick={(e) => e.stopPropagation()}
                       >
                         <svg
-                          width="24"
-                          height="24"
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="20"
+                          height="20"
                           viewBox="0 0 24 24"
                           fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5"
                         >
-                          <path
-                            d="M24 12C24 5.37258 18.6274 0 12 0C5.37258 0 0 5.37258 0 12C0 17.9895 4.3882 22.954 10.125 23.8542V15.4688H7.07813V12H10.125V9.35625C10.125 6.34875 11.9166 4.6875 14.6576 4.6875C15.9701 4.6875 17.3438 4.92188 17.3438 4.92188V7.875H15.8306C14.34 7.875 13.875 8.80008 13.875 9.75V12H17.2031L16.6711 15.4688H13.875V23.8542C19.6118 22.954 24 17.9895 24 12Z"
-                            fill="currentColor"
-                          ></path>
+                          <g clip-path="url(#clip0_fb)">
+                            <path
+                              d="M24 12C24 5.37258 18.6274 0 12 0C5.37258 0 0 5.37258 0 12C0 17.9895 4.3882 22.954 10.125 23.8542V15.4688H7.07813V12H10.125V9.35625C10.125 6.34875 11.9166 4.6875 14.6576 4.6875C15.9701 4.6875 17.3438 4.92188 17.3438 4.92188V7.875H15.8306C14.34 7.875 13.875 8.80008 13.875 9.75V12H17.2031L16.6711 15.4688H13.875V23.8542C19.6118 22.954 24 17.9895 24 12Z"
+                              fill="#fff"
+                            />
+                          </g>
+                          <defs>
+                            <clipPath id="clip0_fb">
+                              <rect width="24" height="24" fill="white" />
+                            </clipPath>
+                          </defs>
                         </svg>
                       </a>
                     </div>
@@ -632,9 +649,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                           </div>
                           <p className="text-base my-4">
                             More information in our{" "}
-                            <span className="text-purple-600 font-medium">
-                              FAQ.
-                            </span>
+                            <Link className="text-purple-600 font-medium" to="/faq"> FAQ
+                            </Link>
                           </p>
 
                           {user?.wallet?.package?.tier !== "free" && (
