@@ -293,7 +293,7 @@ const FeaturesPage: React.FC = () => {
                 key={activeFeature.id}
                 className="relative w-full t-fade-in t-height-auto"
               >
-                <div className="relative w-full p-4 bg-white rounded-xl shadow-2xl transition-opacity-transform-200 t-scale-94-100 tff-translate3d-000">
+                <div className="relative w-full  bg-white rounded-xl shadow-2xl transition-opacity-transform-200 t-scale-94-100 tff-translate3d-000">
                   <img
                     src={activeFeature.desktopMain}
                     alt={activeFeature.title}
@@ -302,7 +302,7 @@ const FeaturesPage: React.FC = () => {
                 </div>
                 {floatImages[0] && (
                   <div
-                    className="absolute p-2 bg-white rounded-xl shadow-xl transition-opacity-transform-300 t-scale-94-100 tff-translate3d-000 z-10"
+                    className="absolute bg-white rounded-xl shadow-xl transition-opacity-transform-300 t-scale-94-100 tff-translate3d-000 z-10"
                     style={getFloatStyles(activeFeature.id, 0)}
                   >
                     <img
