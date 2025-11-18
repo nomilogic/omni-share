@@ -2049,9 +2049,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
             <button
               onClick={exportImage}
               disabled={isSaving}
-             className="bg-purple-600 text-white font-medium w-full px-3 py-2.5 mx-1 rounded-md border border-transparent hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition-colors"
-              
-
+              className="border-purple-600 border text-purple-600 flex justify-center items-center gap-2  font-medium w-full px-3 py-2.5  mx-1 rounded-md"
             >
               {isSaving ? (
                 <>
@@ -2074,8 +2072,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
             </div> */}
             <button
               onClick={onCancel}
-              className="border-purple-600 border text-purple-600 flex justify-center items-center gap-2 font-medium w-full px-3 py-2.5 mx-1 rounded-md hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition-colors"
-
+              className="bg-purple-600  text-white font-medium w-full  px-3 py-2.5  mx-1 rounded-md"
             >
               Back
             </button>
