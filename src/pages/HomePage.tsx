@@ -32,6 +32,7 @@ import { Counter } from "./counter";
 import TwoColumnSection2 from "@/components/TwoColumnSection2";
 import FeaturesPage from "@/components/FeaturesPage";
 import TwoColumnSection from "@/components/TwoColumnSection";
+import IntroVideo from "../assets/OMNISHARE.00.mp4"
 
 function HomePage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -170,10 +171,9 @@ function HomePage() {
       answer:
         "Our AI analyzes your brand voice, industry trends, and platform requirements to generate high-quality posts, captions, descriptions, and hashtags. You get ready-to-publish content tailored for each social platform.",
     },
-    
+
     {
-      question:
-        "Which social media platforms does OmniShare support?",
+      question: "Which social media platforms does OmniShare support?",
       answer:
         "You can manage Facebook, Instagram, YouTube, LinkedIn, and TikTok — all through one centralized system.",
     },
@@ -191,6 +191,26 @@ function HomePage() {
       question: "What kind of insights does OmniShare provide?",
       answer:
         "You get clear, actionable analytics on engagement, reach, performance trends, and audience behavior — helping you make smarter decisions to improve your social strategy.",
+    },
+    {
+      question: "How fast is OmniShare's publishing system?",
+      answer:
+        "Our instant publishing engine ensures your posts go live immediately and reliably — so you can reach your audience at the perfect moment.",
+    },
+    {
+      question: "Can OmniShare help with trend-based content?",
+      answer:
+        "Yes! OmniShare scans real-time trends and transforms them into powerful captions, descriptions, and viral hashtags tailored to each platform.",
+    },
+    {
+      question: "Is OmniShare suitable for businesses and teams?",
+      answer:
+        "Definitely. OmniShare is built for individuals, agencies, brands, and teams managing content across different platforms, regions, or client accounts.",
+    },
+    {
+      question: "Do you offer demos or product walkthroughs?",
+      answer:
+        "Yes! You can explore the full potential of OmniShare with a personalized product demo to see how it can elevate your social growth.",
     },
   ];
 
@@ -571,10 +591,7 @@ function HomePage() {
       </section>
 
       {/* Features Section */}
-      <section
-        id="features"
-        className="py-20 bg-gray-50 relative overflow-hidden"
-      >
+      <section id="features" className=" bg-gray-50 relative overflow-hidden">
         <motion.div
           className="absolute inset-0 opacity-5"
           style={{ y: useTransform(smoothProgress, [0, 1], [0, -200]) }}
@@ -583,7 +600,7 @@ function HomePage() {
           <div className="absolute bottom-20 right-10 w-96 h-96 bg-[#6366F1] rounded-full blur-3xl"></div>
         </motion.div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        {/* <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div
             className="text-center mb-16"
             initial={{ opacity: 0, y: 30 }}
@@ -663,7 +680,7 @@ function HomePage() {
               </motion.div>
             </motion.button>
           </motion.div>
-        </div>
+        </div> */}
       </section>
 
       {/* Video Section */}
@@ -675,58 +692,72 @@ function HomePage() {
           <div className="absolute top-40 right-20 w-80 h-80 bg-[#7650e3] rounded-full blur-3xl"></div>
         </motion.div>
 
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <motion.div
-            className="text-center mb-12"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6, type: "spring", stiffness: 80 }}
-          >
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              See Omnishare in Action
-            </h2>
-            <p className="text-xl text-gray-500 font-medium">
-              Watch how easy it is to create and schedule content across all
-              platforms
-            </p>
-          </motion.div>
+         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <motion.div
+        className="text-center mb-12"
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.6, type: "spring", stiffness: 80 }}
+      >
+        <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          See Omnishare in Action
+        </h2>
+        <p className="text-xl text-gray-500 font-medium">
+          Watch how easy it is to create and schedule content across all
+          platforms
+        </p>
+      </motion.div>
 
-          <motion.div
-            className="relative rounded-md overflow-hidden shadow-2xl bg-gray-900 aspect-video"
-            initial={{ opacity: 0, scale: 0.9, y: 50 }}
-            whileInView={{ opacity: 1, scale: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6, type: "spring", stiffness: 80 }}
-            whileHover={{ scale: 1.02, transition: { duration: 0.3 } }}
-          >
-            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#7650e3] to-[#6366F1]">
-              <motion.button
-                className="bg-white rounded-full p-6 shadow-2xl relative"
-                whileHover={{ scale: 1.2 }}
-                whileTap={{ scale: 0.9 }}
-                animate={{ scale: [1, 1.05, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                <motion.div
-                  className="absolute inset-0 bg-white rounded-full"
-                  animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0, 0.5] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                />
-                <Play className="w-12 h-12 text-[#7650e3] ml-1 relative z-10" />
-              </motion.button>
-            </div>
-            <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/70 to-transparent">
-              <p className="text-white text-lg font-semibold">
-                Introduction to Omnishare
-              </p>
-              <p className="text-white/80">
-                Learn how to maximize your social media presence
-              </p>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+      <motion.div
+  className="relative rounded-md overflow-hidden shadow-2xl bg-gray-900 aspect-video"
+  initial={{ opacity: 0, scale: 0.9, y: 50 }}
+  whileInView={{ opacity: 1, scale: 1, y: 0 }}
+  viewport={{ once: true, margin: "-100px" }}
+  transition={{ duration: 0.6, type: "spring", stiffness: 80 }}
+  whileHover={{ scale: 1.02, transition: { duration: 0.3 } }}
+>
+  {/* 🎥 Actual Video Layer */}
+  <video
+    src={IntroVideo}
+    autoPlay
+    muted
+    loop
+    playsInline
+    className="absolute inset-0 w-full h-full object-cover"
+  />
+
+  {/* 🔮 Overlay Button */}
+  {/* <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#7650e3] to-[#6366F1]">
+    <motion.button
+      className="bg-white rounded-full p-6 shadow-2xl relative"
+      whileHover={{ scale: 1.2 }}
+      whileTap={{ scale: 0.9 }}
+      animate={{ scale: [1, 1.05, 1] }}
+      transition={{ duration: 2, repeat: Infinity }}
+    >
+      <motion.div
+        className="absolute inset-0 bg-white rounded-full"
+        animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0, 0.5] }}
+        transition={{ duration: 2, repeat: Infinity }}
+      />
+      <Play className="w-12 h-12 text-[#7650e3] ml-1 relative z-10" />
+    </motion.button>
+  </div> */}
+
+  {/* 📝 Text Overlay */}
+  <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/70 to-transparent">
+    <p className="text-white text-lg font-semibold">
+      Introduction to Omnishare
+    </p>
+    <p className="text-white/80">
+      Learn how to maximize your social media presence
+    </p>
+  </div>
+</motion.div>
+
+    </div>
+  </section>
 
       {/* Pricing Section */}
       <section
@@ -989,6 +1020,94 @@ function HomePage() {
       </section>
 
       {/* Contact Section */}
+
+      {/* FAQ Section */}
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6, type: "spring", stiffness: 80 }}
+          >
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-xl text-gray-500 font-medium">
+              Everything you need to know about Omnishare
+            </p>
+          </motion.div>
+
+          <motion.div
+            className="space-y-4"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={containerVariants}
+          >
+            {faqs.map((faq, index) => (
+              <motion.div
+                key={index}
+                variants={itemVariants}
+                className="bg-white rounded-md shadow-md overflow-hidden transition-all hover:shadow-lg"
+                whileHover={{ x: 5 }}
+              >
+                <motion.button
+                  onClick={() =>
+                    setExpandedFaqIndex(
+                      expandedFaqIndex === index ? null : index
+                    )
+                  }
+                  className="w-full px-6 py-5 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
+                >
+                  <span className="font-semibold text-gray-900 text-lg pr-8">
+                    {faq.question}
+                  </span>
+                  <motion.div
+                    animate={{ rotate: expandedFaqIndex === index ? 180 : 0 }}
+                    transition={{
+                      duration: 0.3,
+                      type: "spring",
+                      stiffness: 200,
+                    }}
+                  >
+                    <ChevronDown className="w-6 h-6 text-[#7650e3] flex-shrink-0" />
+                  </motion.div>
+                </motion.button>
+                <AnimatePresence>
+                  {expandedFaqIndex === index && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-6 pb-5 text-gray-500 font-medium leading-relaxed">
+                        {faq.answer}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            ))}
+          </motion.div>
+
+          <motion.div
+            className="mt-12 text-center"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+          >
+            <p className="text-gray-500 font-medium">
+              Still have questions? Scroll up to contact us.
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
       <section id="contact" className="py-20 bg-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -1113,111 +1232,38 @@ function HomePage() {
         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6, type: "spring", stiffness: 80 }}
-          >
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              Frequently Asked Questions
-            </h2>
-            <p className="text-xl text-gray-500 font-medium">
-              Everything you need to know about Omnishare
-            </p>
-          </motion.div>
-
-          <motion.div
-            className="space-y-4"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={containerVariants}
-          >
-            {faqs.map((faq, index) => (
-              <motion.div
-                key={index}
-                variants={itemVariants}
-                className="bg-white rounded-md shadow-md overflow-hidden transition-all hover:shadow-lg"
-                whileHover={{ x: 5 }}
-              >
-                <motion.button
-                  onClick={() =>
-                    setExpandedFaqIndex(
-                      expandedFaqIndex === index ? null : index
-                    )
-                  }
-                  className="w-full px-6 py-5 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
-                >
-                  <span className="font-semibold text-gray-900 text-lg pr-8">
-                    {faq.question}
-                  </span>
-                  <motion.div
-                    animate={{ rotate: expandedFaqIndex === index ? 180 : 0 }}
-                    transition={{
-                      duration: 0.3,
-                      type: "spring",
-                      stiffness: 200,
-                    }}
-                  >
-                    <ChevronDown className="w-6 h-6 text-[#7650e3] flex-shrink-0" />
-                  </motion.div>
-                </motion.button>
-                <AnimatePresence>
-                  {expandedFaqIndex === index && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3, ease: "easeInOut" }}
-                      className="overflow-hidden"
-                    >
-                      <div className="px-6 pb-5 text-gray-500 font-medium leading-relaxed">
-                        {faq.answer}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
-            ))}
-          </motion.div>
-
-          <motion.div
-            className="mt-12 text-center"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
-          >
-            <p className="text-gray-500 font-medium">
-              Still have questions? Scroll up to contact us.
-            </p>
-          </motion.div>
-        </div>
-      </section>
-
-      <div className="relative pt-16 bg-theme-secondary">
+      <div className="relative pt-16 bg-theme-secondary ">
         <motion.footer
-          className="w-full px-4 py-4 text-center text-sm theme-text-light absolute bottom-0"
+          className="w-full  px-4 py-4 text-center text-sm theme-text-light absolute bottom-0"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
         >
-          <div className="max-w-full mx-auto flex md:flex-row items-center gap-2 md:justify-between justify-center flex-col">
+          <div className="max-w-7xl mx-auto flex md:flex-row items-center gap-2 md:justify-between justify-center flex-col">
             <span>© {new Date().getFullYear()} OMNISHARE</span>
-            <div>
-              <a href="/privacy" className="text-primary hover:underline">
-                Privacy
-              </a>
-              &nbsp; | &nbsp;
-              <a href="/terms" className="text-primary hover:underline">
-                Terms
-              </a>
-            </div>
+            <div className="flex justify-center space-x-1 text-sm theme-text-light mb-1">
+                    <Link
+                      to="/privacy"
+                      className=" transition-colors duration-200"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Privacy Policy
+                    </Link>
+                    <span className="text-white/20">•</span>
+                    <Link
+                      to="/terms"
+                      className=" transition-colors duration-200"
+                    >
+                      Terms of Service
+                    </Link>
+                    <span className="text-white/20">•</span>
+                    <Link
+                      to="/support"
+                      className=" transition-colors duration-200"
+                    >
+                      Support
+                    </Link>
+                  </div>
           </div>
         </motion.footer>
       </div>
