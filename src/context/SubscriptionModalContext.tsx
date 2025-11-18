@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState } from "react";
 
 interface SubscriptionModalContextType {
   showManageSubscription: boolean;
@@ -6,9 +6,13 @@ interface SubscriptionModalContextType {
   closeManageSubscription: () => void;
 }
 
-const SubscriptionModalContext = createContext<SubscriptionModalContextType | undefined>(undefined);
+const SubscriptionModalContext = createContext<
+  SubscriptionModalContextType | undefined
+>(undefined);
 
-export const SubscriptionModalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const SubscriptionModalProvider: React.FC<{
+  children: React.ReactNode;
+}> = ({ children }) => {
   const [showManageSubscription, setShowManageSubscription] = useState(false);
 
   const openManageSubscription = () => {
@@ -35,7 +39,9 @@ export const SubscriptionModalProvider: React.FC<{ children: React.ReactNode }> 
 export const useSubscriptionModal = () => {
   const context = useContext(SubscriptionModalContext);
   if (context === undefined) {
-    throw new Error('useSubscriptionModal must be used within a SubscriptionModalProvider');
+    throw new Error(
+      "useSubscriptionModal must be used within a SubscriptionModalProvider"
+    );
   }
   return context;
 };
