@@ -29,6 +29,7 @@ import { Link, useNavigate } from "react-router-dom";
 import LogoWhiteText from "../assets/logo-white-text.svg";
 import API from "@/services/api";
 import { Counter } from "./counter";
+import TwoColumnSection2 from "@/components/anotherone";
 
 function HomePage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -563,6 +564,8 @@ function HomePage() {
           </motion.div>
         </div>
       </section>
+
+      <TwoColumnSection2 />
 
       {/* Features Section */}
       <section

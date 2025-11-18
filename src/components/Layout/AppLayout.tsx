@@ -511,181 +511,181 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               </div>
             </div>
           </div>
-          <div className=" top-0 z-10  border-b border-white/20 md:px-4 py-4  px-3">
-            <div className=" flex items-center justify-between mt-0 ">
-              <div className="flex items-center">
-                <button
-                  onClick={() => setIsMobileMenuOpen(true)}
-                  className=" rounded-md theme-text-primary hover:theme-text-secondary relative"
-                >
-                  <Menu className="w-6 h-6" />
-                  {unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 rounded-full flex items-center justify-center text-xs text-white font-bold">
-                      {unreadCount > 99 ? "99+" : unreadCount}
-                    </span>
-                  )}
-                </button>
-              </div>
-              <div className="-ml-[73px] absolute  left-[50%] ">
-                <img src={logoText} alt="Logo" className="h-4   " />
-              </div>
-
-              <div className="flex items-center space-x-1">
-                <div className="flex gap-x-4 items-center">
-                  <WalletBalance
-                    setShowPackage={() => setShowPackage(!showPackage)}
-                    balance={balance.toLocaleString()}
-                    showPackage={showPackage}
-                  />
-
-                  {showPackage && (
-                    <div className="absolute bg-gray-50  z-20 lg:left-auto top-8 left-3 right-3 mt-6 rounded-md shadow-md md:px-6 px-4 py-6 border md:w-[370px] w-auto">
-                      {user?.wallet?.package ? (
-                        <>
-                          <div className="flex justify-between items-start mb-3">
-                            <div className="flex items-start gap-2">
-                              <Icon name="crown" size={24} />
-                              <div>
-                                <div className="flex items-center gap-3">
-                                  <h2 className="text-base font-semibold text-slate-800">
-                                    My Plan
-                                  </h2>
-                                  <span
-                                    className="text-slate-300 cursor-pointer text-xs"
-                                    title="Current subscription details"
-                                  >
-                                    <Icon name="question-mark" size={17} />
-                                  </span>
-                                </div>
-                                <p className="text-sm text-slate-700   font-medium  ">
-                                  Renewing on:{" "}
-                                  <span className="text-slate-700 font-medium">
-                                    {user.wallet.expiresAt
-                                      ? new Date(
-                                          user.wallet.expiresAt
-                                        ).toLocaleDateString("en-GB", {
-                                          day: "2-digit",
-                                          month: "short",
-                                          year: "numeric",
-                                        })
-                                      : "N/A"}
-                                  </span>
-                                </p>
-                              </div>
-                            </div>
-
-                            <span
-                              className="text-base font-semibold "
-                              style={{ color: "#7650e3" }}
-                            >
-                              {user.wallet?.package?.name || "FREE"}
-                            </span>
-                          </div>
-
-                          <div className=" space-y-3 ">
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2 text-slate-800 text-md font-medium">
-                                <Icon name="spiral-logo" />
-                                <div className="flex items-center gap-3">
-                                  <p>Omni Coins</p>
-
-                                  <span
-                                    className="text-slate-300 text-xs cursor-pointer"
-                                    title="Coins info"
-                                  >
-                                    <Icon name="question-mark" size={17} />
-                                  </span>
-                                </div>
-                              </div>
-                              <p
-                                className="text-base font-semibold"
-                                style={{ color: "#7650e3" }}
-                              >
-                                {user.wallet.coins.toLocaleString() ?? 0}/{" "}
-                                {user.wallet.package.coinLimit.toLocaleString()}
-                              </p>
-                            </div>
-
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2 text-md text-slate-800 font-medium ">
-                                <Icon name="share" className="scale-[0.8] " />
-
-                                <div className="flex items-center gap-3">
-                                  <p> Referral Coins</p>
-
-                                  <span
-                                    className="text-slate-300 text-xs cursor-pointer"
-                                    title="Coins info"
-                                  >
-                                    <Icon name="question-mark" size={17} />
-                                  </span>
-                                </div>
-                              </div>
-                              <p
-                                className="text-base font-semibold"
-                                style={{ color: "#7650e3" }}
-                              >
-                                {user?.wallet?.referralCoin?.toLocaleString()}
-                              </p>
-                            </div>
-                          </div>
-                          <p className="text-base my-4">
-                            More information in our{" "}
-                            <span className="text-purple-600 font-medium">
-                              FAQ.
-                            </span>
-                          </p>
-
-                          {user?.wallet?.package?.tier !== "free" && (
-                            <button
-                              onClick={() => openManageSubscription()}
-                              className="w-full py-2.5  text-md font-semibold rounded-md border bg-white flex items-center justify-center gap-2 transition  hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
-                              style={{
-                                borderColor: "#7650e3",
-                                color: "#7650e3",
-                              }}
-                            >
-                              <Icon
-                                name="manage-subs"
-                                size={20}
-                                className="filter-omni"
-                              />
-                              Manage Subscription
-                            </button>
-                          )}
-
-                          <Link
-                            to="/pricing"
-                            onClick={() => setShowPackage(false)}
-                            className="w-full mt-3 px-3 py-2.5  border  text-md font-semibold rounded-md group flex items-center justify-center gap-2  text-white bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] border-[#7650e3]  "
-                          >
-                            <div className="group-hover:filter-omni h-full w-full text-center">
-                              <Icon
-                                name="white-diamond"
-                                size={20}
-                                className="mr-2"
-                              />
-                              Upgrade
-                            </div>
-                          </Link>
-                        </>
-                      ) : (
-                        <p className="text-gray-500 font-medium text-md text-center">
-                          No active package found
-                        </p>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
 
           <main
             id="mainContent"
             ref={mainContentRef}
             className="py-0 min-h-screen overflow-auto theme-bg-card  "
           >
+            <div className=" top-0 z-10  border-b border-white/20 md:px-4 py-4  px-3">
+              <div className=" flex items-center justify-between mt-0 ">
+                <div className="flex items-center">
+                  <button
+                    onClick={() => setIsMobileMenuOpen(true)}
+                    className=" rounded-md theme-text-primary hover:theme-text-secondary relative"
+                  >
+                    <Menu className="w-6 h-6" />
+                    {unreadCount > 0 && (
+                      <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 rounded-full flex items-center justify-center text-xs text-white font-bold">
+                        {unreadCount > 99 ? "99+" : unreadCount}
+                      </span>
+                    )}
+                  </button>
+                </div>
+                <div className="-ml-[73px] absolute  left-[50%] ">
+                  <img src={logoText} alt="Logo" className="h-4   " />
+                </div>
+
+                <div className="flex items-center space-x-1">
+                  <div className="flex gap-x-4 items-center">
+                    <WalletBalance
+                      setShowPackage={() => setShowPackage(!showPackage)}
+                      balance={balance.toLocaleString()}
+                      showPackage={showPackage}
+                    />
+
+                    {showPackage && (
+                      <div className="absolute bg-gray-50  z-20 lg:left-auto top-8 left-3 right-3 mt-6 rounded-md shadow-md md:px-6 px-4 py-6 border md:w-[370px] w-auto">
+                        {user?.wallet?.package ? (
+                          <>
+                            <div className="flex justify-between items-start mb-3">
+                              <div className="flex items-start gap-2">
+                                <Icon name="crown" size={24} />
+                                <div>
+                                  <div className="flex items-center gap-3">
+                                    <h2 className="text-base font-semibold text-slate-800">
+                                      My Plan
+                                    </h2>
+                                    <span
+                                      className="text-slate-300 cursor-pointer text-xs"
+                                      title="Current subscription details"
+                                    >
+                                      <Icon name="question-mark" size={17} />
+                                    </span>
+                                  </div>
+                                  <p className="text-sm text-slate-700   font-medium  ">
+                                    Renewing on:{" "}
+                                    <span className="text-slate-700 font-medium">
+                                      {user.wallet.expiresAt
+                                        ? new Date(
+                                            user.wallet.expiresAt
+                                          ).toLocaleDateString("en-GB", {
+                                            day: "2-digit",
+                                            month: "short",
+                                            year: "numeric",
+                                          })
+                                        : "N/A"}
+                                    </span>
+                                  </p>
+                                </div>
+                              </div>
+
+                              <span
+                                className="text-base font-semibold "
+                                style={{ color: "#7650e3" }}
+                              >
+                                {user.wallet?.package?.name || "FREE"}
+                              </span>
+                            </div>
+
+                            <div className=" space-y-3 ">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2 text-slate-800 text-md font-medium">
+                                  <Icon name="spiral-logo" />
+                                  <div className="flex items-center gap-3">
+                                    <p>Omni Coins</p>
+
+                                    <span
+                                      className="text-slate-300 text-xs cursor-pointer"
+                                      title="Coins info"
+                                    >
+                                      <Icon name="question-mark" size={17} />
+                                    </span>
+                                  </div>
+                                </div>
+                                <p
+                                  className="text-base font-semibold"
+                                  style={{ color: "#7650e3" }}
+                                >
+                                  {user.wallet.coins.toLocaleString() ?? 0}/{" "}
+                                  {user.wallet.package.coinLimit.toLocaleString()}
+                                </p>
+                              </div>
+
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2 text-md text-slate-800 font-medium ">
+                                  <Icon name="share" className="scale-[0.8] " />
+
+                                  <div className="flex items-center gap-3">
+                                    <p> Referral Coins</p>
+
+                                    <span
+                                      className="text-slate-300 text-xs cursor-pointer"
+                                      title="Coins info"
+                                    >
+                                      <Icon name="question-mark" size={17} />
+                                    </span>
+                                  </div>
+                                </div>
+                                <p
+                                  className="text-base font-semibold"
+                                  style={{ color: "#7650e3" }}
+                                >
+                                  {user?.wallet?.referralCoin?.toLocaleString()}
+                                </p>
+                              </div>
+                            </div>
+                            <p className="text-base my-4">
+                              More information in our{" "}
+                              <span className="text-purple-600 font-medium">
+                                FAQ.
+                              </span>
+                            </p>
+
+                            {user?.wallet?.package?.tier !== "free" && (
+                              <button
+                                onClick={() => openManageSubscription()}
+                                className="w-full py-2.5  text-md font-semibold rounded-md border bg-white flex items-center justify-center gap-2 transition  hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
+                                style={{
+                                  borderColor: "#7650e3",
+                                  color: "#7650e3",
+                                }}
+                              >
+                                <Icon
+                                  name="manage-subs"
+                                  size={20}
+                                  className="filter-omni"
+                                />
+                                Manage Subscription
+                              </button>
+                            )}
+
+                            <Link
+                              to="/pricing"
+                              onClick={() => setShowPackage(false)}
+                              className="w-full mt-3 px-3 py-2.5  border  text-md font-semibold rounded-md group flex items-center justify-center gap-2  text-white bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] border-[#7650e3]  "
+                            >
+                              <div className="group-hover:filter-omni h-full w-full text-center">
+                                <Icon
+                                  name="white-diamond"
+                                  size={20}
+                                  className="mr-2"
+                                />
+                                Upgrade
+                              </div>
+                            </Link>
+                          </>
+                        ) : (
+                          <p className="text-gray-500 font-medium text-md text-center">
+                            No active package found
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
             <div className="w-full mx-auto overflow-fit max-w-5xl">
               {children}
             </div>
