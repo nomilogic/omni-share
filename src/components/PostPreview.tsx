@@ -1121,7 +1121,9 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                         saveChanges();
                         setEditingMode(false);
                       }}
-                      className="flex items-center gap-2 px-4 py-2.5 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors font-medium"
+                      className="flex items-center w-auto gap-2 px-4 py-2.5 bg-purple-600 text-white rounded-md border border-transparent hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition-colors font-medium"
+
+
                     >
                       <Save className="w-4 h-4" />
                       Save Changes
@@ -1130,7 +1132,8 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                       onClick={() => {
                         discardChanges();
                       }}
-                      className="flex items-center gap-2 px-4 py-2.5 border border-purple-600 text-purple-600 rounded-md hover:bg-gray-600 transition-colors font-medium"
+                      className="flex items-center w-auto gap-2 px-4 py-2.5 border border-purple-600 text-purple-600 rounded-md hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition-colors font-medium"
+
                     >
                       <X className="w-4 h-4" />
                       Cancel
@@ -1238,14 +1241,16 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
           <>
             <button
               onClick={onPublish}
-              className="w-full bg-transparent border-purple-600 border text-purple-600 flex items-center gap-2 justify-center hover:border-purple-600  font-semibold py-2.5  text-base rounded-md transition disabled:opacity-50"
+              className="w-full bg-transparent border-purple-600 border text-purple-600 flex items-center gap-2 justify-center hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
             >
               Continue
             </button>
 
             <button
               onClick={handleRegenerateClick}
-              className="w-full bg-purple-600 flex items-center gap-2 justify-center hover:bg-purple-700 text-white font-semibold py-2.5  text-base rounded-md transition disabled:opacity-50"
+              
+              className="w-full bg-purple-600 text-white hover:text-[#7650e3] flex items-center gap-2 justify-center hover:bg-[#d7d7fc] border border-[#7650e3] font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
+
             >
               <Edit className="w-5 h-5" />
               Regenerate
@@ -1261,7 +1266,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
             {/* Text Area */}
             <div className="mb-4">
               <textarea
-                value={regenerationPrompt}
+                value={ regenerationPrompt}
                 onChange={(e) => {
                   const value = e.target.value;
                   setRegenerationPrompt(value);

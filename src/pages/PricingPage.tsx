@@ -463,7 +463,10 @@ export const PricingPage: React.FC = () => {
                         openAddonConfirm(addon);
                         setAddonHandler(() => handleBuyAddon(addon));
                       }}
-                      className="rounded-md theme-bg-light  w-fit  px-3 disabled:cursor-not-allowed  font-bold text-base py-1  border-2 border-[#7650e3] text-[#7650e3] hover:bg-[#7650e3] hover:text-white"
+                      className="rounded-md theme-bg-light px-3 disabled:cursor-not-allowed font-semibold text-base py-1 border w-[130px] border-[#7650e3] text-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
+
+
+
                     >
                       {selectedAddon?.id === addon?.id
                         ? "Buying...."

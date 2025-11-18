@@ -21,7 +21,7 @@ const TransactionsHistoryBox = ({ data }: any) => {
               {item?.hostedInvoiceUrl ? (
                 <button
                   onClick={() => window.open(item?.hostedInvoiceUrl, "_blank")}
-                  className="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-2 py-1 text-xs rounded transition-colors"
+                  className="bg-purple-600 hover:bg-[#d7d7fc] text-white font-semibold px-2 py-1 text-xs rounded transition-colors border border-transparent hover:text-[#7650e3] hover:border-[#7650e3]"
                 >
                   Invoice
                 </button>

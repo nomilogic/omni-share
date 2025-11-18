@@ -136,7 +136,9 @@ const SubscriptionPauseModal = ({
           <div className="space-y-2">
             <button
               onClick={onPause}
-              className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2.5 disabled:cursor-not-allowed  px-3 text-sm sm:text-base rounded-md transition disabled:opacity-50 flex justify-between items-center border   border-[#7F56D9]"
+              className="w-full bg-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] text-white font-semibold py-2.5 disabled:cursor-not-allowed px-3 text-sm sm:text-base rounded-md transition-all duration-150 disabled:opacity-50 flex justify-between items-center border border-[#7F56D9]"
+
+
             >
               <span>Continue with Subscription</span>
               <ArrowRightIcon className="w-5 h-5" />

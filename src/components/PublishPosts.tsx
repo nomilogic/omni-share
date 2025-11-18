@@ -698,7 +698,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
 
         <button
           onClick={onBack}
-          className="text-center w-full text-white font-semibold transition-colors bg-purple-600 hover:bg-purple-700 border border-gray-200 px-4 py-2.5  rounded-md mb-5"
+          class="text-center w-full text-white font-semibold transition-colors bg-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3] border border-[#7650e3] px-4 py-2.5 rounded-md mb-5"
         >
           Close
         </button>
