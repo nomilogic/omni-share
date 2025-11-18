@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
 import ProfileCard from "../components/dashboard/ProfileCard";
@@ -8,6 +8,7 @@ import Analytics from "../components/dashboard/Analytics";
 import NewsUpdates from "../components/dashboard/NewsUpdates";
 import ReferralSection from "../components/dashboard/ReferralSection";
 import ProfileSetupSinglePage from "@/components/ProfileSetupSinglePage";
+import API from "@/services/api";
 
 export const DashboardPage: React.FC = () => {
   const { user } = useAppContext();
@@ -17,10 +18,33 @@ export const DashboardPage: React.FC = () => {
 
   // Get user plan and tier info
   const userPlan = user?.wallet?.package?.tier || "free";
-  const planRenewalDate = user?.wallet?.package?.renewalDate || "No Expire";
-  const coinBalance = Math.floor(user?.wallet?.balance || 0);
+  const planRenewalDate = user?.wallet?.expiresAt
+    ? new Date(user.wallet.expiresAt).toLocaleDateString("en-US", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : "No Expire";
+  const coinBalance = Math.floor(user?.wallet?.coins || 0);
   const coinLimit = user?.wallet?.package?.coinLimit || 0;
   const referralCoin = user?.wallet?.referralCoin || 0;
+
+  const [post, setPosts] = useState([]);
+  const fetchPostHistory = async () => {
+    try {
+      const response = await API.getHistory();
+      const data = response?.data?.data || [];
+      setPosts(data);
+    } catch (err: any) {
+      console.error("Failed to fetch posts:", err);
+    } finally {
+    }
+  };
+
+  useEffect(() => {
+    fetchPostHistory();
+  }, []);
 
   return (
     <>
@@ -34,7 +58,7 @@ export const DashboardPage: React.FC = () => {
                 <StatsCard
                   iconName="crown"
                   title="My Plan"
-                  badge={userPlan.toUpperCase()}
+                  badge={userPlan}
                   subtitle={`Renewing on: ${planRenewalDate}`}
                   buttonText="Switch Plan"
                   onButtonClick={() => navigate("/pricing")}
@@ -47,7 +71,7 @@ export const DashboardPage: React.FC = () => {
                   stats={`${coinBalance.toLocaleString()}/${coinLimit.toLocaleString()}`}
                   subtitle="You can add coins to your package anytime."
                   buttonText="Add Coins"
-                  onButtonClick={() => navigate("/pricing")}
+                  onButtonClick={() => navigate("/pricing?tab=addons")}
                 />
 
                 <StatsCard
@@ -56,11 +80,12 @@ export const DashboardPage: React.FC = () => {
                   stats={referralCoin.toLocaleString()}
                   subtitle="Earn 100 Omni Coins each per referral!"
                   buttonText="Refer & Earn!"
+                  onButtonClick={() => navigate("/pricing?tab=addons")}
                 />
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <RecentPosts />
+              <RecentPosts post={post} />
               <Analytics />
               <NewsUpdates />
             </div>

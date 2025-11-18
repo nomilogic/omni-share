@@ -49,7 +49,7 @@ function StatsCard({
             <p className="text-base font-semibold text-[#7650e3] ">{stats}</p>
           )}
           {badge && (
-            <span className="text-[#7650e3] rounded text-md font-bold inline-block">
+            <span className="text-[#7650e3] rounded text-md font-semibold capitalize inline-block">
               {badge}
             </span>
           )}

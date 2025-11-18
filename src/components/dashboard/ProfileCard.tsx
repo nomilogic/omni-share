@@ -3,9 +3,7 @@ import { useAppContext } from "../../context/AppContext";
 import { useNavigate } from "react-router-dom";
 
 function ProfileCard() {
-  const { state, dispatch, setProfileEditing } = useAppContext();
-
-  const navigate = useNavigate();
+  const { state, setProfileEditing } = useAppContext();
 
   // Extract user information
   const fullName =

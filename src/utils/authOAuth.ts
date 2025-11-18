@@ -150,7 +150,6 @@ export const initiateGoogleOAuth = (
       const checkClosed = setInterval(() => {
         if (popup.closed) {
           cleanup();
-          reject(new Error("Authentication cancelled or popup closed"));
         }
       }, 1000);
     } catch (err: any) {
@@ -324,7 +323,6 @@ export const initiateLinkedInOAuth = (
       const checkClosed = setInterval(() => {
         if (popup.closed) {
           cleanup();
-          reject(new Error("Authentication cancelled or popup closed"));
         }
       }, 1000);
     } catch (err: any) {
