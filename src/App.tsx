@@ -29,6 +29,7 @@ import HomePage from "./pages/HomePage";
 import { Bounce, ToastContainer } from "react-toastify";
 import { themeManager } from "./lib/theme";
 import { FAQ, Support, Terms } from "./components";
+import PackageErrorPage from "./pages/PackageErrorPage";
 
 const OAuthCallbackWrapper = () => {
   const { dispatch } = useAppContext();
@@ -109,10 +110,10 @@ function App() {
                 />
 
                 <Route
-                  path="/payment/package/success"
+                  path="/payment/error"
                   element={
                     <ProtectedRoute>
-                      <PackageSuccessPage />{" "}
+                      <PackageErrorPage />{" "}
                     </ProtectedRoute>
                   }
                 />
