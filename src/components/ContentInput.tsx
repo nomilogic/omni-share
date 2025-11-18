@@ -2126,10 +2126,10 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         selectedPostType === "text" ? "" : "text"
                       );
                     }}
-                    className={`  border  duration-200 text-center px-2 py-3 rounded-md ${
+                    className={`  border  duration-200 text-center px-2 py-3 rounded-md  ${
                       selectedPostType === "text"
-                        ? "theme-bg-trinary theme-text-light shadow-md"
-                        : "theme-bg-primary "
+                        ? "selected-main-button"
+                        : "unselected-main-button"
                     }`}
                   >
                     <div className="flex flex-col items-center">
@@ -2137,21 +2137,11 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         <img
                           src={TextPostIcon}
                           alt=""
-                          className={`${
-                            selectedPostType === "text"
-                              ? "brightness-0 invert "
-                              : "theme-text-secondary"
-                          }  md:w-[44px] md:h-[44px] w-[38px] h-[38px] `}
+                          className={`  md:w-[44px] md:h-[44px] w-[38px] h-[38px] `}
                         />
                       </div>
                       <div>
-                        <h3
-                          className={`font-semibold leading-[1.2rem] mt-1  ${
-                            selectedPostType === "text"
-                              ? "text-white"
-                              : "theme-text-primary"
-                          }`}
-                        >
+                        <h3 className={`font-semibold leading-[1.2rem] mt-1  `}>
                           Create
                           <br />
                           Text Post
@@ -2175,10 +2165,10 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
                       setSelectedPostType("image");
                     }}
-                    className={` relative  border shadow-md backdrop-blur-md border-slate-200/70 transition-all duration-200 text-center px-2 py-3 rounded-md ${
+                    className={` relative  border shadow-md backdrop-blur-md border-slate-200/70 transition-all duration-200  text-center px-2 py-3 rounded-md ${
                       selectedPostType === "image"
-                        ? "theme-bg-trinary theme-text-light shadow-md"
-                        : "theme-bg-primary theme-text-primary"
+                        ? "selected-main-button"
+                        : "unselected-main-button"
                     }`}
                   >
                     <div className="flex flex-col items-center">
@@ -2186,20 +2176,12 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         <img
                           src={ImagePostIcon}
                           alt=""
-                          className={`${
-                            selectedPostType === "image"
-                              ? "brightness-0 invert "
-                              : "theme-text-secondary"
-                          }  md:w-[48px] md:h-[48px] w-[38px] h-[38px] `}
+                          className={`md:w-[48px] md:h-[48px] w-[38px] h-[38px] `}
                         />
                       </div>
                       <div>
                         <h3
-                          className={`font-semibold text-md leading-[1.2rem] mt-1 text p-0 ${
-                            selectedPostType === "image"
-                              ? "text-white"
-                              : "theme-text-primary"
-                          }`}
+                          className={`font-semibold text-md leading-[1.2rem] mt-1 text p-0 `}
                         >
                           Create
                           <br />
@@ -2252,31 +2234,19 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         ${selectedPostType === "image" ? "" : "hidden"}
                         ${
                           selectedImageMode === "upload"
-                            ? "theme-bg-trinary text-white shadow-md hover:theme-bg-quaternary"
-                            : "theme-bg-light hover:theme-bg-quaternary"
+                            ? "selected-sub-button "
+                            : "unselected-sub-button"
                         }`}
                         >
                           <div className="flex flex-col items-center space-y-0">
-                            <div className="cret">
-                              <Icon
-                                name="upload"
-                                size={40}
-                                className={`${
-                                  selectedImageMode === "upload"
-                                    ? "brightness-0 invert"
-                                    : ""
-                                }`}
-                              />
+                            <div>
+                              <Icon name="upload" size={40} />
                             </div>
                             <div>
                               <h3
                                 className={`font-semibold text-sm leading-[1.2rem] mt-1 text
                         
-                        ${
-                          selectedImageMode === "upload"
-                            ? "text-white"
-                            : "theme-text-secondary"
-                        }`}
+                       `}
                               >
                                 Upload
                                 <br />
@@ -2317,29 +2287,21 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         ${selectedPostType === "image" ? "" : "hidden"}
                         ${
                           selectedImageMode === "textToImage"
-                            ? "theme-bg-trinary text-white shadow-md"
-                            : "theme-bg-quaternary"
+                            ? "selected-sub-button "
+                            : "unselected-sub-button"
                         }`}
                         >
-                          <div className="flex flex-col items-center space-y-0">
+                          <div className="flex flex-col items-center space-y-0 ">
                             <div>
                               <Icon
                                 name="text-to-image"
                                 size={44}
-                                className={`${
-                                  selectedImageMode === "textToImage"
-                                    ? "brightness-0 invert"
-                                    : ""
-                                }`}
+                                className={``}
                               />
                             </div>
                             <div>
                               <h3
-                                className={`font-semibold text-sm leading-[1.2rem] mt-1 text ${
-                                  selectedImageMode === "textToImage"
-                                    ? "text-white"
-                                    : "theme-text-secondary"
-                                }`}
+                                className={`font-semibold text-sm leading-[1.2rem] mt-1 text`}
                               >
                                 Text
                                 <br /> to Image
@@ -2380,8 +2342,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                     }}
                     className={`relative border shadow-md backdrop-blur-md border-slate-200/70 transition-all duration-200 text-center px-2 py-3 rounded-md ${
                       selectedPostType === "video"
-                        ? "theme-bg-trinary theme-text-light shadow-md"
-                        : "theme-bg-primary theme-text-primary"
+                        ? "selected-main-button"
+                        : "unselected-main-button"
                     }`}
                   >
                     <div className="flex flex-col items-center">
@@ -2389,20 +2351,12 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         <img
                           src={VideoPostIcon}
                           alt=""
-                          className={`${
-                            selectedPostType === "video"
-                              ? "brightness-0 invert "
-                              : "theme-text-secondary"
-                          }  md:w-[48px] md:h-[48px] w-[38px] h-[38px] `}
+                          className={` md:w-[48px] md:h-[48px] w-[38px] h-[38px] `}
                         />
                       </div>
                       <div>
                         <h3
-                          className={`font-semibold text-md leading-[1.2rem] mt-1 text p-0 ${
-                            selectedPostType === "video"
-                              ? "text-white"
-                              : "theme-text-primary"
-                          }`}
+                          className={`font-semibold text-md leading-[1.2rem] mt-1 text p-0 `}
                         >
                           Create
                           <br />
@@ -2448,28 +2402,20 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             ${selectedPostType === "video" ? "" : "hidden"}
                             ${
                               selectedVideoMode === "upload"
-                                ? "theme-bg-trinary text-white shadow-md"
-                                : "theme-bg-quaternary"
+                                ? "selected-sub-button "
+                                : "unselected-sub-button"
                             }
                           `}
                         >
                           <div className="flex flex-col items-center space-y-0">
                             <div>
                               <div
-                                className={`w-10 h-6 border mx-auto mb-2  ${
-                                  selectedVideoMode === "upload"
-                                    ? "shadow-md brightness-0 invert border-2"
-                                    : "theme-border-trinary border-2"
-                                }`}
+                                className={`w-10 h-6 border mx-auto mb-2  video-icon `}
                               ></div>
                             </div>
                             <div>
                               <h3
-                                className={`font-semibold text-sm leading-[1.2rem] mt-1 text ${
-                                  selectedVideoMode === "upload"
-                                    ? "text-white"
-                                    : "theme-text-secondary"
-                                }`}
+                                className={`font-semibold text-sm leading-[1.2rem] mt-1 text `}
                               >
                                 Upload
                                 <br />
@@ -2508,8 +2454,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             ${selectedPostType === "video" ? "" : "hidden"}
                             ${
                               selectedVideoMode === "uploadShorts"
-                                ? "theme-bg-trinary text-white shadow-md"
-                                : "theme-bg-quaternary"
+                                ? "selected-sub-button"
+                                : "unselected-sub-button"
                             }
                           `}
                         >
@@ -2519,20 +2465,12 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               {/* <Icon name="video-post" size={44} className={`${selectedVideoMode === 'uploadShorts' ? 'brightness-0 invert' : ''}`} /> */}
 
                               <div
-                                className={`w-6 h-10 border mx-auto mb-2  ${
-                                  selectedVideoMode === "uploadShorts"
-                                    ? "shadow-md brightness-0 invert border-2"
-                                    : "theme-border-trinary border-2"
-                                }`}
+                                className={`w-6 h-10 border mx-auto mb-2 video-icon `}
                               ></div>
                             </div>
                             <div>
                               <h3
-                                className={`font-semibold text-sm leading-[1.2rem] mt-1 text ${
-                                  selectedVideoMode === "uploadShorts"
-                                    ? "text-white"
-                                    : "theme-text-secondary"
-                                }`}
+                                className={`font-semibold text-sm leading-[1.2rem] mt-1 text `}
                               >
                                 Upload
                                 <br />
@@ -3421,7 +3359,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                       }
                       className="rounded-md flex-1 flex items-center justify-between theme-bg-trinary theme-text-light border border-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] transition-colors duration-200 py-2.5 px-3 font-medium disabled:opacity-50 disabled:cursor-not-allowed text-sm
 "
-
                     >
                       {isGeneratingBoth ? (
                         <div className="flex items-center">
