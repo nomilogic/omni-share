@@ -283,11 +283,11 @@ function HomePage() {
         transition={{ type: "spring", stiffness: 100, damping: 20 }}
         className={`fixed top-0 w-full z-50 transition-all duration-500 ${
           scrollY > 50
-            ? "bg-[linear-gradient(135deg,_#7650e3_0%,_#6366F1_100%)] shadow-lg backdrop-blur-md"
+            ? "bg-[#7650e3] shadow-lg backdrop-blur-md"
             : "bg-transparent"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-[10%]">
           <div className="flex justify-between items-center h-20 flex-row-reverse md:flex-row">
             <div className="lg:hidden"></div>
             <motion.div
@@ -298,7 +298,7 @@ function HomePage() {
               <Icon
                 name="spiral-logo"
                 size={35}
-                className="ml-0 lg:ml-0 mt-1 lg:scale-100 brightness-[300%]"
+                className="ml-0 lg:ml-0 mt-1 lg:scale-100 brightness-[1000%]"
               />
               <span className="text-white text-2xl lg:text-[1.6rem] tracking-tight">
                 <img src={LogoWhiteText} alt="Logo" className="h-5" />
@@ -307,7 +307,7 @@ function HomePage() {
 
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center space-x-8">
-              {["home", "features", "pricing", "video", "contact"].map(
+              {["home", "features", "pricing", "FAQ", "contact"].map(
                 (section, index) => (
                   <motion.button
                     key={section}
@@ -545,7 +545,19 @@ function HomePage() {
           <ChevronDown className="w-8 h-8 text-white" />
         </motion.div>
       </section>
-      <FeaturesPage />
+      <motion.div
+        id="features"
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{
+          duration: 0.8,
+          delay: 0.2,
+          type: "spring",
+          stiffness: 80,
+        }}
+      >
+        <FeaturesPage />
+      </motion.div>
       <TwoColumnSection />
       <TwoColumnSection2 />
       {/* Active Users Stats Section */}
@@ -595,7 +607,7 @@ function HomePage() {
       </section>
 
       {/* Features Section */}
-      <section id="features" className=" bg-gray-50 relative overflow-hidden">
+      <section className=" bg-gray-50 relative overflow-hidden">
         <motion.div
           className="absolute inset-0 opacity-5"
           style={{ y: useTransform(smoothProgress, [0, 1], [0, -200]) }}
@@ -1025,7 +1037,7 @@ function HomePage() {
       {/* Contact Section */}
 
       {/* FAQ Section */}
-      <section className="py-20 bg-gray-50">
+      <section id="FAQ" className="py-20 bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             className="text-center mb-16"
@@ -1242,7 +1254,7 @@ function HomePage() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
         >
-          <div className="max-w-7xl mx-auto flex md:flex-row items-center gap-2 md:justify-between justify-center flex-col">
+          <div className="w-full mx-auto flex md:flex-row items-center gap-2 md:justify-between justify-center flex-col px-[10%]">
             <span>© {new Date().getFullYear()} OMNISHARE</span>
             <div className="flex justify-center space-x-1 text-sm theme-text-light mb-1">
               <Link
