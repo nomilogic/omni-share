@@ -4,7 +4,7 @@ import mainImage from "../assets/omni.jpeg";
 const TwoColumnSection2 = () => {
   return (
     <section
-      className="  max-w-5xl mx-auto px-3  lg:px-8 py-5
+      className=" relative max-w-7xl mx-auto px-6 md:px-8
         grid md:grid-cols-2  gap-10
         
         items-center w-full  bg-white

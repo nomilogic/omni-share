@@ -29,7 +29,9 @@ import { Link, useNavigate } from "react-router-dom";
 import LogoWhiteText from "../assets/logo-white-text.svg";
 import API from "@/services/api";
 import { Counter } from "./counter";
-import TwoColumnSection2 from "@/components/anotherone";
+import TwoColumnSection2 from "@/components/TwoColumnSection2";
+import FeaturesPage from "@/components/FeaturesPage";
+import TwoColumnSection from "@/components/TwoColumnSection";
 
 function HomePage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -566,7 +568,8 @@ function HomePage() {
       </section>
 
       <TwoColumnSection2 />
-
+      <FeaturesPage />
+      <TwoColumnSection />
       {/* Features Section */}
       <section
         id="features"
@@ -940,11 +943,8 @@ function HomePage() {
               onClick={prevReview}
               className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-12 bg-white rounded-full p-3 shadow-xl"
               whileHover={{
-                scale: 1.15,
-                x: -8,
                 boxShadow: "0 10px 30px rgba(0, 0, 0, 0.2)",
               }}
-              whileTap={{ scale: 0.9 }}
               aria-label="Previous review"
             >
               <ChevronLeft className="w-6 h-6 text-slate-700" />
@@ -953,12 +953,6 @@ function HomePage() {
             <motion.button
               onClick={nextReview}
               className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-12 bg-white rounded-full p-3 shadow-xl"
-              whileHover={{
-                scale: 1.15,
-                x: 8,
-                boxShadow: "0 10px 30px rgba(0, 0, 0, 0.2)",
-              }}
-              whileTap={{ scale: 0.9 }}
               aria-label="Next review"
             >
               <ChevronRight className="w-6 h-6 text-slate-700" />
