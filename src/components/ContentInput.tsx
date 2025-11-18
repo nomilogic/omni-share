@@ -2248,12 +2248,12 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             setImageAnalysis("");
                             setSelectedImageMode("upload");
                           }}
-                          className={`p-3 rounded-md border transition shadow-md backdrop-blur-md border-slate-200/70 transition-all duration-200 text-center
+                          className={`p-3 rounded-md border transition shadow-md backdrop-blur-md border-slate-200/70 transition-all duration-200 text-center 
                         ${selectedPostType === "image" ? "" : "hidden"}
                         ${
                           selectedImageMode === "upload"
-                            ? "theme-bg-trinary text-white shadow-md"
-                            : "theme-bg-quaternary"
+                            ? "theme-bg-trinary text-white shadow-md hover:theme-bg-quaternary"
+                            : "theme-bg-light hover:theme-bg-quaternary"
                         }`}
                         >
                           <div className="flex flex-col items-center space-y-0">

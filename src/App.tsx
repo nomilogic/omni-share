@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { AppProvider, useAppContext } from "./context/AppContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import { SubscriptionModalProvider } from "./context/SubscriptionModalContext";
+import { PricingModalProvider } from "./context/PricingModalContext";
 import { AppLayout } from "./components/Layout/AppLayout";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AuthPage } from "./pages/AuthPage";
@@ -27,7 +28,7 @@ import ResetPasswordPage from "./pages/ResetPasswordPage";
 import HomePage from "./pages/HomePage";
 import { Bounce, ToastContainer } from "react-toastify";
 import { themeManager } from "./lib/theme";
-import { PricingProvider } from "./context/PricingContext";
+import { FAQ, Support, Terms } from "./components";
 
 const OAuthCallbackWrapper = () => {
   const { dispatch } = useAppContext();
@@ -64,7 +65,7 @@ function App() {
       <AppProvider>
         <AuthProvider>
           <SubscriptionModalProvider>
-            <PricingProvider>
+            <PricingModalProvider>
               <Routes>
                 {/* <Route path="/" element={showlanded() ? <HomePage /> : <LandingPage />} />   */}
                 <Route path="/" element={<HomePage />} />
@@ -72,6 +73,10 @@ function App() {
                 <Route path="/auth" element={<AuthPage />} />
                 <Route path="/privacy" element={<PrivacyPolicy />} />
                 <Route path="/home" element={<HomePage />} />
+                <Route path="/terms" element={<Terms />} />
+                <Route path="/home" element={<HomePage />} />
+                <Route path="/support" element={<Support />} />
+                <Route path="/faq" element={<FAQ />} />
 
                 <Route
                   path="/oauth/:platform/callback"
@@ -257,7 +262,7 @@ function App() {
                 {/* Catch all - redirect to auth by default if not logged in, otherwise to dashboard */}
                 <Route path="*" element={<Navigate to="/auth" replace />} />
               </Routes>
-            </PricingProvider>
+            </PricingModalProvider>
           </SubscriptionModalProvider>
         </AuthProvider>
       </AppProvider>
