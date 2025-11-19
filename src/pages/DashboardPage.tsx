@@ -82,7 +82,7 @@ export const DashboardPage: React.FC = () => {
                   stats={referralCoin.toLocaleString()}
                   subtitle="Earn 100 Omni Coins each per referral!"
                   buttonText="Refer & Earn!"
-                  onButtonClick={() => navigate("/pricing?tab=addons")}
+                  onButtonClick={() => {}}
                 />
               </div>
             </div>
