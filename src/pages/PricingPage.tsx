@@ -130,7 +130,7 @@ export const PricingPage: React.FC = () => {
       }
     } catch (error) {
       console.error("Failed to buy package:", error);
-      alert("Something went wrong while processing your Buy.");
+      notify("error", "Something went wrong while processing your Buy.");
     } finally {
       setLoadingPackage(false);
       setConfirmOpen(false);
@@ -161,7 +161,7 @@ export const PricingPage: React.FC = () => {
       setTimeout(() => refreshUser(), 50);
     } catch (error) {
       console.error("Request downgrade failed:", error);
-      alert("Failed to request downgrade");
+      notify("error", "Failed to request downgrade");
     } finally {
       setDowngradeLoading(false);
     }
@@ -175,7 +175,7 @@ export const PricingPage: React.FC = () => {
       setTimeout(() => refreshUser(), 50);
     } catch (error) {
       console.error("Cancel downgrade failed:", error);
-      alert("Failed to cancel downgrade request");
+      notify("error", "Failed to cancel downgrade request");
     } finally {
       setDowngradeLoading(false);
       setCancelDowngradeOpen(false);
@@ -189,7 +189,7 @@ export const PricingPage: React.FC = () => {
       setTimeout(() => refreshUser(), 50);
     } catch (error) {
       console.error("Cancel subscription failed:", error);
-      alert("Unable to cancel subscription");
+      notify("error", "Unable to cancel subscription");
     } finally {
       setIsCanceled(false);
       setCancelPackageOpen(false);
@@ -203,7 +203,7 @@ export const PricingPage: React.FC = () => {
       setTimeout(() => refreshUser(), 50);
     } catch (error) {
       console.error("Reactivation failed:", error);
-      alert("Unable to reactivate subscription");
+      notify("error", "Unable to reactivate subscription");
     } finally {
       setIsCanceled(false);
       setReactivateOpen(false);
@@ -222,7 +222,7 @@ export const PricingPage: React.FC = () => {
         setSelectedAddon(null);
       }
     } catch (error) {
-      notify("error", "Something went wrong while buying add-on");
+      notify("error", "Coin Limit Exceed");
     } finally {
       setLoadingAddon(false);
       setAddonConfirmOpen(false);
@@ -461,7 +461,7 @@ export const PricingPage: React.FC = () => {
                           setSelectedAddon(addon);
                           handleBuyAddon(addon);
                         }}
-                        className="rounded-md theme-bg-light  w-fit  px-3 disabled:cursor-not-allowed  font-bold text-base py-1  border-2 border-[#7650e3] text-[#7650e3] hover:bg-[#7650e3] hover:text-white"
+                        className="rounded-md theme-bg-light  w-fit  px-3 disabled:cursor-not-allowed  font-bold text-base py-1  border border-[#7650e3] text-[#7650e3] hover:bg-[#d7d7fc] transition hover:text-purple-600"
                       >
                         {selectedAddon?.id === addon?.id
                           ? "Buying...."
@@ -620,7 +620,7 @@ export const PricingPage: React.FC = () => {
             <div className="flex gap-3">
               <button
                 onClick={handleClosePopup}
-                className="flex-1 py-2.5 border border-purple-600 text-purple-600 font-semibold rounded-md hover:bg-purple-50 transition"
+                className="flex-1 py-2.5 border border-[#7650e3] text-purple-600 font-semibold rounded-md hover:bg-[#d7d7fc] transition"
               >
                 Back
               </button>
@@ -628,11 +628,12 @@ export const PricingPage: React.FC = () => {
               <button
                 onClick={handleRequestDowngrade}
                 disabled={downgradeLoading}
-                className="flex-1 py-2.5 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 py-2.5 bg-[#7650e3] text-white font-semibold rounded-md border border-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+
               >
                 {downgradeLoading ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <Loader2 className="w-4 h-4 animate-spin " />
                     Confirming...
                   </>
                 ) : (
