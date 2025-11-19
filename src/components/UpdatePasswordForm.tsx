@@ -46,19 +46,17 @@ function UpdatePasswordForm() {
   const onSubmit = async (data: PasswordFormType) => {
     setLoading(true);
     try {
-      const response = await API.updatePassword({
+      await API.updatePassword({
         currentPassword: data.currentPassword,
         newPassword: data.newPassword,
       });
 
-      if (response.data.success) {
-        notify("success", "Password updated successfully!");
-        reset();
+      notify("success", "Password updated successfully!");
+      reset();
 
-        setTimeout(() => {
-          setPasswordEditing(false);
-        }, 1500);
-      }
+      setTimeout(() => {
+        setPasswordEditing(false);
+      }, 1500);
     } catch (err: any) {
       notify(
         "error",
