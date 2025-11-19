@@ -366,12 +366,12 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
   );
 
   return (
-    <div className="h-fit md:p-4 p-3 ">
+    <div className="h-fit p-4 py-2 ">
       {/* Header */}
       <div className="">
         <div className=" max-w-5xl mx-auto mb-6">
           <div className="flex justify-between items-center gap-4">
-            <h2 className="text-3xl font-semibold theme-text-primary mb-2">
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">
               Post History
             </h2>
             <button

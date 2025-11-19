@@ -240,7 +240,7 @@ export const AccountsPage: React.FC = () => {
     <div className="max-w-full mx-auto md:px-4 px-3 py-2.5 flex flex-col gap-y-3">
       <div className="flex flex-col gap-y-3">
         <div className="">
-          <h2 className="text-2xl font-bold theme-text-primary mb-1">
+          <h2 className="text-3xl font-bold theme-text-primary mb-1">
             Connect Your Accounts
           </h2>
           {/* <p className="text-sm text-gray-500 font-medium ">

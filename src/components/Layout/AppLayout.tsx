@@ -192,10 +192,20 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                     user?.avatarUrl
                       ? user?.avatarUrl
                       : `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                          user?.profile?.fullName || user?.email || "User"
+                          user?.profile?.fullName ||
+                            user?.email ||
+                            "U"
                         )}&background=00000000&color=fff`
                   }
                   alt={user?.profile?.fullName}
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                      user?.profile?.fullName ||
+                        user?.email ||
+                        "U"
+                    )}&background=00000000&color=fff`;
+                  }}
                 />
                 <div className="flex-1 min-w-0 text-left">
                   <div className="text-md font-medium theme-text-light truncate">

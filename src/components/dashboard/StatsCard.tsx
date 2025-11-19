@@ -37,12 +37,7 @@ function StatsCard({
               ) : null}
             </>
           )}
-          <h3 className="text-lg font-semibold ">
-            {title}
-            {showicon2 && (
-              <Icon name="question-mark" size={18} className="ml-2" />
-            )}
-          </h3>
+          <h3 className="text-lg font-semibold ">{title}</h3>
         </div>
         <>
           {stats && (

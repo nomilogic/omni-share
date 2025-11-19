@@ -471,7 +471,7 @@ const ProfileSetupSinglePage: React.FC = () => {
   const onSubmit = async (data: ProfileFormData) => {
     setLoading(true);
     try {
-      const submitData = { ...data };
+      const submitData = {  ...data };
       const form = document.querySelector("form");
       const formD = new FormData(form as HTMLFormElement);
       const fileBase64 = await convertFileToBase64(formD.get("brandLogo"));
@@ -482,8 +482,9 @@ const ProfileSetupSinglePage: React.FC = () => {
       const cleanData = {
         ...submitData,
       };
+      const { email, ...all  } = cleanData;
 
-      await API.updateProfileData(cleanData);
+      await API.updateProfileData(all);
       localStorage.removeItem(STORAGE_KEY);
       setProfileEditing(false);
       refreshUser();
@@ -511,18 +512,20 @@ const ProfileSetupSinglePage: React.FC = () => {
   return (
     <div className="bg-transparent">
       <div className=" flex flex-col md:flex-row-reverse jusitify-between items-between w-full p-4">
-        <button
-          onClick={handleSkip}
-          className="flex items-center gap-2 text-[#7650e3] hover:text-[#6540cc] font-semibold  transition-colors w-full justify-end text-sm hover:underline"
-        >
-          <ArrowLeft className="w-5 h-5" />
-          Back to Dashboard
-        </button>
         <div className="w-full">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Complete Your Profile
-          </h1>
-          <p className="text-gray-600">
+          <div className="flex justify-between items-center gap-2 mb-2">
+            <h1 className="text-3xl font-bold text-black  w-full">
+              Complete Your Profile
+            </h1>
+            <button
+              onClick={handleSkip}
+              className="flex  gap-2 top-5 text-[#7650e3] hover:text-[#6540cc] font-semibold transition-colors w-full justify-end text-sm hover:underline"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              Back to Dashboard
+            </button>
+          </div>
+          <p className="text-gray-500">
             Tell us about yourself to personalize your experience
           </p>
         </div>
@@ -530,7 +533,6 @@ const ProfileSetupSinglePage: React.FC = () => {
       <div className="w-full max-w-5xl  mx-auto">
         <div className="bg-transparent  overflow-hidden relative">
           {/* Header */}
-    
 
           <div className="p-4">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
@@ -582,7 +584,9 @@ const ProfileSetupSinglePage: React.FC = () => {
                                     fieldError
                                       ? "border-red-500"
                                       : "border-gray-300"
-                                  }`}
+                                  }
+                                //not editable if field is email
+                                ${field.type == "email" ? "disabled text-gray-500 border-gray-300 border" : ""}`}
                                   placeholder={field.placeholder || ""}
                                 />
                                 {field.helperText && (

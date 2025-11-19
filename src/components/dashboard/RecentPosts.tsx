@@ -12,6 +12,7 @@ function RecentPosts({ post }: any) {
   const navigate = useNavigate();
 
   const allPosts = post || state?.generatedPosts || [];
+
   const socialPlatforms: Platform[] = [
     "linkedin",
     "facebook",
@@ -24,50 +25,21 @@ function RecentPosts({ post }: any) {
     allPosts[0]?.platform || "all"
   );
 
-  // Get only the top (latest) post for the selected platform
   const topPost =
     selectedPlatform === "all"
       ? allPosts[0]
-      : allPosts.find((p: any) => p.platform == selectedPlatform);
+      : allPosts.find((p: any) => p.platform === selectedPlatform);
 
-  if (!topPost) {
-    return (
-      <div className="bg-gray-100 rounded-md p-5 flex items-center justify-center h-full w-full text-gray-500">
-        No posts available
-      </div>
-    );
-  }
-
+  // Safely destructure values from topPost
   const {
-    content,
-    postUrl,
-    publishedAt,
-    metadata: {
-      title,
-      description,
-      likes,
-      views,
-      shares,
-      comments,
-      platform_image,
-    } = {},
-  } = topPost;
-
-  const getFormattedDate = (dateStr: string) => {
-    const date = new Date(dateStr);
-    return date.toLocaleString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
+    content = "",
+    postUrl = "",
+    metadata: { title = "", description = "" } = {},
+  } = topPost || {};
 
   return (
-    <div className="bg-gray-100 rounded-md p-5 flex flex-col h-full w-full">
-      {/* Platform Filters */}
-      <div className="flex gap-3 mb-5">
+    <div className="bg-gray-100 rounded-md p-5 flex flex-col  w-full">
+      <div className="flex gap-3 mb-3">
         {socialPlatforms.map((platform, i) => {
           const IconComponent = getPlatformIcon(platform);
           const bgColor = getPlatformIconBackgroundColors(platform);
@@ -87,45 +59,32 @@ function RecentPosts({ post }: any) {
         })}
       </div>
 
-      {/* Top Post */}
-      <div className="flex-1 mb-5 h-full bg-white shadow-md rounded-md p-4 flex flex-col">
-        {/* Platform Image */}
-        {platform_image && (
-          <div className="flex items-center mb-3 gap-2">
-            <img
-              src={platform_image}
-              alt={selectedPlatform}
-              className="w-6 h-6 rounded-full"
-            />
-            <span className="font-semibold capitalize">{selectedPlatform}</span>
-            <span className="text-gray-400 text-sm ml-auto">
-              {getFormattedDate(publishedAt)}
-            </span>
-          </div>
-        )}
+      {!topPost ? (
+        <div className="bg-gray-100 rounded-md p-5 flex items-center justify-center h-full w-full text-gray-500">
+          No posts available
+        </div>
+      ) : (
+        <div className="flex-1  h-full bg-white shadow-md rounded-md px-3 py-2 flex flex-col">
+          <h3 className="text-gray-800 font-bold text-lg mb-2">
+            {title || "No Title"}
+          </h3>
 
-        {/* Title */}
-        <h3 className="text-gray-800 font-bold text-lg mb-2">
-          {title || "No Title"}
-        </h3>
+          <p className="text-gray-700 text-sm mb-3">
+            {description || content || "No content available"}
+          </p>
 
-        {/* Description / Content */}
-        <p className="text-gray-700 text-sm mb-3">
-          {description || content || "No content available"}
-        </p>
-
-        {/* Post Link */}
-        {postUrl && (
-          <a
-            href={postUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-600 hover:underline text-sm mb-3"
-          >
-            View Post
-          </a>
-        )}
-      </div>
+          {postUrl && (
+            <a
+              href={postUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:underline text-sm mb-3"
+            >
+              View Post
+            </a>
+          )}
+        </div>
+      )}
 
       <button
         onClick={() => navigate("/content")}

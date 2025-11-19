@@ -67,6 +67,7 @@ interface NewPasswordPayload {
 interface APIInstance extends AxiosInstance {
   login: (data: LoginPayload) => Promise<any>;
   registerUser: (data: RegisterPayload) => Promise<any>;
+  contactUs: (data: any) => Promise<any>;
   resendOtp: () => void;
   logout: () => Promise<any>;
   getUser: () => Promise<any>;
@@ -171,6 +172,7 @@ API.interceptors.request.use(
 
 API.login = (data) => API.post("/auth/login", data);
 API.registerUser = (data) => API.post("/auth/register", data);
+API.contactUs = (data) => API.post("/auth/contact-us", data);
 API.resendOtp = () => {
   const emailToken: any = JSON.parse(
     JSON.stringify(localStorage.getItem("email_token"))

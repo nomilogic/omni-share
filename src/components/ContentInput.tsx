@@ -2082,11 +2082,11 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   };
 
   return (
-    <div className="w-full mx-auto rounded-md border border-white/10  p-4 ">
+    <div className="w-full mx-auto rounded-md border border-white/10  p-4 py-2 ">
       {!showTemplateEditor && (
         <>
           <div className="text-left mb-4">
-            <h2 className="text-3xl md:font-bold font-semibold theme-text-primary mb-2  leading-8">
+            <h2 className="text-3xl md:font-bold font-semibold theme-text-primary mb-2  ">
               Create auto‑optimize social posts with AI
             </h2>
             <p className="text-sm text-gray-500 font-medium md:font-semibold font-medium ">
