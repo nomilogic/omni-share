@@ -471,7 +471,7 @@ const ProfileSetupSinglePage: React.FC = () => {
   const onSubmit = async (data: ProfileFormData) => {
     setLoading(true);
     try {
-      const submitData = { ...data };
+      const submitData = {  ...data };
       const form = document.querySelector("form");
       const formD = new FormData(form as HTMLFormElement);
       const fileBase64 = await convertFileToBase64(formD.get("brandLogo"));
@@ -482,8 +482,9 @@ const ProfileSetupSinglePage: React.FC = () => {
       const cleanData = {
         ...submitData,
       };
+      const { email, ...all  } = cleanData;
 
-      await API.updateProfileData(cleanData);
+      await API.updateProfileData(all);
       localStorage.removeItem(STORAGE_KEY);
       setProfileEditing(false);
       refreshUser();
@@ -583,7 +584,9 @@ const ProfileSetupSinglePage: React.FC = () => {
                                     fieldError
                                       ? "border-red-500"
                                       : "border-gray-300"
-                                  }`}
+                                  }
+                                //not editable if field is email
+                                ${field.type == "email" ? "disabled text-gray-500 border-gray-300 border" : ""}`}
                                   placeholder={field.placeholder || ""}
                                 />
                                 {field.helperText && (
