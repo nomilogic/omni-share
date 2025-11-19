@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   motion,
   useScroll,
@@ -54,6 +54,7 @@ function HomePage() {
   const [showContactForm, setShowContactForm] = useState(false);
   const [packages, setPackages] = useState<any[]>([]);
   const [expandedFaqIndex, setExpandedFaqIndex] = useState<number | null>(null);
+  const isInitialMount = useRef(true);
   const navigate = useNavigate();
 
   const { scrollYProgress } = useScroll();
@@ -76,6 +77,10 @@ function HomePage() {
     const handleScroll = () => setScrollY(window.scrollY);
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    isInitialMount.current = false;
   }, []);
 
   useEffect(() => {
@@ -312,11 +317,11 @@ function HomePage() {
         transition={{ type: "spring", stiffness: 100, damping: 20 }}
         className={`fixed top-0 w-full z-50 transition-all duration-500 ${
           scrollY > 50
-            ? "bg-[linear-gradient(135deg,_#7650e3_0%,_#6366F1_100%)] shadow-lg backdrop-blur-md"
+            ? "bg-[#7650e3] shadow-lg backdrop-blur-md"
             : "bg-transparent"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-[10%]">
           <div className="flex justify-between items-center h-20 flex-row-reverse md:flex-row">
             <div className="lg:hidden"></div>
             <motion.div
@@ -327,7 +332,7 @@ function HomePage() {
               <Icon
                 name="spiral-logo"
                 size={35}
-                className="ml-0 lg:ml-0 mt-1 lg:scale-100 brightness-[300%]"
+                className="ml-0 lg:ml-0 mt-1 lg:scale-100 brightness-[1000%]"
               />
               <span className="text-white text-2xl lg:text-[1.6rem] tracking-tight">
                 <img src={LogoWhiteText} alt="Logo" className="h-5" />
@@ -336,38 +341,36 @@ function HomePage() {
 
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center space-x-8">
-              {["home", "features", "pricing", "video", "contact"].map(
-                (section, index) => (
-                  <motion.button
-                    key={section}
-                    onClick={() => scrollToSection(section)}
-                    className={`transition-colors relative ${
-                      scrollY > 50 ? "text-white" : "text-white"
-                    } capitalize font-medium`}
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
+              {["home", "features", "FAQ", "contact"].map((section, index) => (
+                <motion.button
+                  key={section}
+                  onClick={() => scrollToSection(section)}
+                  className={`transition-colors relative ${
+                    scrollY > 50 ? "text-white" : "text-white"
+                  } capitalize font-medium`}
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    delay: index * 0.1,
+                    type: "spring",
+                    stiffness: 100,
+                  }}
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {section}
+                  <motion.span
+                    className="absolute bottom-0 left-0 w-full h-0.5 bg-white origin-left"
+                    initial={{ scaleX: 0 }}
+                    whileHover={{ scaleX: 1 }}
                     transition={{
-                      delay: index * 0.1,
                       type: "spring",
-                      stiffness: 100,
+                      stiffness: 300,
+                      damping: 20,
                     }}
-                    whileHover={{ scale: 1.05, y: -2 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {section}
-                    <motion.span
-                      className="absolute bottom-0 left-0 w-full h-0.5 bg-white origin-left"
-                      initial={{ scaleX: 0 }}
-                      whileHover={{ scaleX: 1 }}
-                      transition={{
-                        type: "spring",
-                        stiffness: 300,
-                        damping: 20,
-                      }}
-                    />
-                  </motion.button>
-                )
-              )}
+                  />
+                </motion.button>
+              ))}
               <motion.button
                 onClick={() => navigate("/auth")}
                 className="bg-white text-[#7650e3] px-6 py-2.5 rounded-full font-semibold shadow-lg"
@@ -411,7 +414,7 @@ function HomePage() {
                 className="md:hidden bg-white border-t overflow-hidden"
               >
                 <div className="px-2 pt-2 pb-3 space-y-1">
-                  {["home", "features", "pricing", "video", "contact"].map(
+                  {["home", "features", "video", "contact"].map(
                     (section, index) => (
                       <motion.button
                         key={section}
@@ -507,30 +510,70 @@ function HomePage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="flex flex-wrap items-center justify-center gap-6 mb-8"
+            className="flex flex-wrap items-center justify-center  mb-8"
           >
-            <div className="flex gap-3 mb-5 scale-[1.4]">
-              {socialPlatforms.map((platform, i) => {
-                const IconComponent = getPlatformIcon(platform);
-                const bgColor = getPlatformIconBackgroundColors(platform);
-                return (
-                  <motion.div
-                    key={i}
-                    className={`w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-white ${bgColor}`}
+            <div className="flex gap-3 mb-5 scale-[1.4] justify-center items-center">
+              {[
+                {
+                  name: "facebook",
+                  url: "https://www.facebook.com/share/1H74CpLTCK/",
+                  index: 0,
+                },
+                {
+                  name: "instagram",
+                  url: "https://omnishare.ai/",
+                  index: 1,
+                },
+                {
+                  name: "youtube",
+                  url: "https://www.youtube.com/@OmniShare-ai",
+                  index: 2,
+                },
+                {
+                  name: "linkedin",
+                  url: "https://www.linkedin.com/company/omnishare-ai",
+                  index: 3,
+                },
+                {
+                  name: "tiktok",
+                  url: "https://www.tiktok.com/@omnishare",
+                  index: 4,
+                },
+              ].map((icons) => (
+                <button onClick={() => window.open(icons.url, "_blank")}>
+                  <motion.svg
+                    key={icons.index}
+                    className="w-10 h-10 text-white/80 hover:text-white transition-colors"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
                     initial={{ opacity: 0, scale: 0, rotate: -180 }}
                     animate={{ opacity: 1, scale: 1, rotate: 0 }}
                     transition={{
-                      delay: 0.8 + i * 0.1,
+                      delay: isInitialMount.current ? 0.8 + icons.index * 0.1 : 0,
                       type: "spring",
                       stiffness: 200,
                       damping: 15,
                     }}
-                    whileHover={{ scale: 1.15, rotate: 10, y: -5 }}
+                    whileHover={{ scale: 1.3, rotate: 10, y: -5, transition: { delay: 0 } }}
                   >
-                    <IconComponent className="w-5 h-5" />
-                  </motion.div>
-                );
-              })}
+                    {icons.index === 0 && (
+                      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                    )}
+                    {icons.index === 1 && (
+                      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                    )}
+                    {icons.index === 2 && (
+                      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                    )}
+                    {icons.index === 3 && (
+                      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                    )}
+                    {icons.index === 4 && (
+                      <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" />
+                    )}
+                  </motion.svg>
+                </button>
+              ))}
             </div>
           </motion.div>
 
@@ -574,7 +617,15 @@ function HomePage() {
           <ChevronDown className="w-8 h-8 text-white" />
         </motion.div>
       </section>
-      <FeaturesPage />
+      <motion.div
+        id="features"
+            initial={{ opacity: 0, y: 130,}}
+            whileInView={{ opacity: 1, y: 0,  }}
+            viewport={{ once: true, margin: "-300px" }}
+            transition={{ duration: 1.6, type: "spring", stiffness: 80 }}
+      >
+        <FeaturesPage />
+      </motion.div>
       <TwoColumnSection />
       <TwoColumnSection2 />
       {/* Active Users Stats Section */}
@@ -624,7 +675,7 @@ function HomePage() {
       </section>
 
       {/* Features Section */}
-      <section id="features" className=" bg-gray-50 relative overflow-hidden">
+      <section className=" bg-gray-50 relative overflow-hidden">
         <motion.div
           className="absolute inset-0 opacity-5"
           style={{ y: useTransform(smoothProgress, [0, 1], [0, -200]) }}
@@ -792,7 +843,7 @@ function HomePage() {
       </section>
 
       {/* Pricing Section */}
-      <section
+      {/* <section
         id="pricing"
         className="py-20 bg-gray-50 relative overflow-hidden"
       >
@@ -905,7 +956,7 @@ function HomePage() {
             })}
           </motion.div>
         </div>
-      </section>
+      </section> */}
 
       {/* Reviews Section */}
       <section className="py-20 bg-gradient-to-br from-[#d7d7fc] to-white relative overflow-hidden">
@@ -1054,7 +1105,7 @@ function HomePage() {
       {/* Contact Section */}
 
       {/* FAQ Section */}
-      <section className="py-20 bg-gray-50">
+      <section id="FAQ" className="py-20 bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             className="text-center mb-16"
@@ -1311,7 +1362,7 @@ function HomePage() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
         >
-          <div className="max-w-7xl mx-auto flex md:flex-row items-center gap-2 md:justify-between justify-center flex-col">
+          <div className="w-full mx-auto flex md:flex-row items-center gap-2 md:justify-between justify-center flex-col px-[10%]">
             <span>© {new Date().getFullYear()} OMNISHARE</span>
             <div className="flex justify-center space-x-1 text-sm theme-text-light mb-1">
               <Link

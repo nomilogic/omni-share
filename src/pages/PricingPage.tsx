@@ -683,8 +683,9 @@ export const PricingPage: React.FC = () => {
             </div>
             <div>
               <button
-                className="w-full py-2.5 border border-purple-600  bg-purple-600 text-white text-[15px] font-semibold rounded-md 
-                 hover:bg-purple-700 transition shadow-md flex items-center justify-center gap-2"
+                className="w-full py-2.5 border border-purple-600 bg-purple-600 text-white text-[15px] font-semibold rounded-md 
+           hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] 
+           transition shadow-md flex items-center justify-center gap-2"
                 onClick={() => {
                   if (activePackage?.package?.tier === "free") {
                     handleSubscribe(selectedPlan);
@@ -705,7 +706,8 @@ export const PricingPage: React.FC = () => {
               </button>
               <button
                 onClick={handleClosePopup}
-                className="flex-1 py-2.5 w-full mt-2 border border-purple-600 text-purple-600 font-semibold rounded-md hover:bg-purple-50 transition"
+                className="flex-1 py-2.5 w-full mt-2 border border-purple-600 text-purple-600 font-semibold rounded-md 
+           hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition"
               >
                 Back
               </button>

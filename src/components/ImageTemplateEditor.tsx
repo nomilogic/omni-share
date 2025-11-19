@@ -549,12 +549,12 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
       context.font = "bold 16px Arial";
       context.textAlign = "center";
       context.textBaseline = "middle";
-      context.fillText("Logo", element.x, element.y);
+      context.fillText("Image", element.x, element.y);
 
       // Draw upload hint
       context.fillStyle = "#9ca3af";
       context.font = "12px Arial";
-      context.fillText("Click to upload", element.x, element.y + 20);
+      // context.fillText("Click to upload", element.x, element.y + 20);
     } else {
       // Draw logo image
       const logoImg = logoImages[element.src];
@@ -2049,13 +2049,13 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
             <button
               onClick={exportImage}
               disabled={isSaving}
-              className="border-purple-600 border text-purple-600 flex justify-center items-center gap-2  font-medium w-full px-3 py-2.5  mx-1 rounded-md"
+              className="bg-purple-600  text-white font-medium w-full  px-3 py-2.5  mx-1 rounded-md border border-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3]"
             >
               {isSaving ? (
                 <>
                   <Loader className="w-3 h-3 md:w-4 md:h-4 animate-spin " />
                   <span className="hidden sm:inline text-sm">
-                    Saving Image...
+                    Saving 
                   </span>
                   <span className="sm:hidden text-sm">Saving...</span>
                 </>
@@ -2072,7 +2072,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
             </div> */}
             <button
               onClick={onCancel}
-              className="bg-purple-600  text-white font-medium w-full  px-3 py-2.5  mx-1 rounded-md"
+              className="text-purple-600 flex justify-center items-center gap-2  font-medium w-full px-3 py-2.5  mx-1 rounded-md border border-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3]"
             >
               Back
             </button>

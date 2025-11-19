@@ -8,6 +8,7 @@ import Analytics from "../components/dashboard/Analytics";
 import NewsUpdates from "../components/dashboard/NewsUpdates";
 import ReferralSection from "../components/dashboard/ReferralSection";
 import ProfileSetupSinglePage from "@/components/ProfileSetupSinglePage";
+import UpdatePasswordForm from "@/components/UpdatePasswordForm";
 import API from "@/services/api";
 
 export const DashboardPage: React.FC = () => {
@@ -15,6 +16,7 @@ export const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const { state, dispatch, setProfileEditing } = useAppContext();
   const isEditing = state?.isProfileEditing || false;
+  const isPasswordEditing = state?.isPasswordEditing || false;
 
   // Get user plan and tier info
   const userPlan = user?.wallet?.package?.tier || "free";
@@ -48,7 +50,7 @@ export const DashboardPage: React.FC = () => {
 
   return (
     <>
-      {!isEditing && (
+      {!isEditing && !isPasswordEditing && (
         <div className="min-h-screen ">
           <main className="max-w-8xl mx-auto  flex flex-col gap-y-8 ">
             <div className="bg-gray-50  lg:px-4 px-3 py-4 rounded-md flex flex-col gap-4">
@@ -99,6 +101,13 @@ export const DashboardPage: React.FC = () => {
         <div className="relative w-full">
           <div className="p-0 w-full">
             <ProfileSetupSinglePage />
+          </div>
+        </div>
+      )}
+      {isPasswordEditing && (
+        <div className="relative w-full">
+          <div className="p-0 w-full">
+            <UpdatePasswordForm />
           </div>
         </div>
       )}

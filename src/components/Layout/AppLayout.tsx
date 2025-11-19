@@ -314,7 +314,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 );
               })}
             </nav>
-            <div className="flex-1 px-1 hover:bg-white hover:text-purple-600 flex flex-col rounded-md text-white mx-2 gap-y-2">
+            <div className="flex-1 px-1 hover:text-purple-600 flex flex-col rounded-md text-white mx-2 gap-y-2">
               <button
                 onClick={() => {
                   handleLogout();

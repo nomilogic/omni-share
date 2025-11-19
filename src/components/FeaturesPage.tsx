@@ -15,7 +15,13 @@ import pic5 from "../assets/invoi.png";
 import pic6 from "../assets/omni home.png";
 import pic7 from "../assets/manage subs.png";
 import pic8 from "../assets/preview.png";
-
+import {
+  motion,
+  useScroll,
+  useTransform,
+  AnimatePresence,
+  useSpring,
+} from "framer-motion";
 
 type Feature = {
   id: number;
@@ -225,7 +231,7 @@ const FeaturesPage: React.FC = () => {
           <div className="mt-12 grid md:grid-cols-2 md:gap-12 items-start">
             <div className="relative" ref={listRef}>
               <div
-                className="absolute left-8 w-px bg-purple-600 transition-all duration-300 z-0 hidden md:block"
+                className="absolute left-8 w-px bg-purple-600 transition-all  z-0 hidden md:block"
                 style={{
                   top: `${progressTop}px`,
                   height: `${progressHeight}px`,
@@ -237,10 +243,10 @@ const FeaturesPage: React.FC = () => {
                   return (
                     <div
                       key={item.id}
-                      className={`cursor-pointer transition-all p-4 rounded-xl ${
+                      className={`cursor-pointer transition-all  p-4 rounded-xl ${
                         isActive
                           ? "bg-gray-200"
-                          : "bg-gray-100 hover:bg-gray-200"
+                          : "bg-gray-100 hover:bg-gray-200 "
                       } md:p-2 md:bg-transparent md:hover:bg-transparent`}
                       onClick={() => handleItemClick(item.id)}
                     >
@@ -278,7 +284,7 @@ const FeaturesPage: React.FC = () => {
                             <img
                               src={activeFeature.mobileImage}
                               alt={activeFeature.title}
-                              className="w-full h-auto rounded-xl shadow-lg"
+                              className="w-full h-auto rounded-xl shadow-lg  "
                             />
                           </div>
                         </div>
