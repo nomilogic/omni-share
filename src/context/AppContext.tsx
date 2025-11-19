@@ -81,6 +81,7 @@ export interface AppState {
   hasProfileSetup: boolean;
   balance: number;
   isProfileEditing?: boolean;
+  isPasswordEditing?: boolean;
 }
 
 import { Platform } from "../types";
@@ -105,6 +106,7 @@ type AppAction =
   | { type: "SET_TIER_SELECTED"; payload: boolean }
   | { type: "SET_PROFILE_SETUP"; payload: boolean }
   | { type: "SET_PROFILE_EDITING"; payload: boolean }
+  | { type: "SET_PASSWORD_EDITING"; payload: boolean }
   | { type: "RESET_STATE" }
   | { type: "SET_BUSINESS_ACCOUNT"; payload: boolean }
   | { type: "SET_BALANCE"; payload: number };
@@ -242,6 +244,8 @@ function appReducer(state: AppState, action: AppAction): AppState {
       return { ...state, hasProfileSetup: action.payload };
     case "SET_PROFILE_EDITING":
       return { ...state, isProfileEditing: action.payload };
+    case "SET_PASSWORD_EDITING":
+      return { ...state, isPasswordEditing: action.payload };
     case "RESET_STATE":
       // Clear localStorage when resetting state
       setStoredContentData(null);
@@ -467,5 +471,7 @@ export const useAppContext = () => {
     logout,
     setProfileEditing: (v: boolean) =>
       context.dispatch({ type: "SET_PROFILE_EDITING", payload: v }),
+    setPasswordEditing: (v: boolean) =>
+      context.dispatch({ type: "SET_PASSWORD_EDITING", payload: v }),
   };
 };

@@ -147,6 +147,7 @@ interface APIInstance extends AxiosInstance {
   scrapeProfileData: (data: ScrapperPayload) => Promise<any>;
   generateForgetLink: (data: GenerateForgetLinkPayload) => Promise<any>;
   setNewPassword: (data: NewPasswordPayload, config?: any) => Promise<any>;
+  updatePassword: (data: any) => Promise<any>;
 }
 
 export const API = axios.create({
@@ -299,5 +300,7 @@ API.createGenerateAmount = (data: any) =>
   API.post("/admin/generation-amount", data);
 API.deleteGenerateAmount = (id: any) =>
   API.delete(`/admin/generation-amount/${id}`);
+API.updatePassword = (data: any) =>
+  API.post("/auth/update-password", data);
 
 export default API;

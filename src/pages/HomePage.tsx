@@ -590,14 +590,10 @@ function HomePage() {
       </section>
       <motion.div
         id="features"
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{
-          duration: 0.8,
-          delay: 0.2,
-          type: "spring",
-          stiffness: 80,
-        }}
+            initial={{ opacity: 0, y: 130,}}
+            whileInView={{ opacity: 1, y: 0,  }}
+            viewport={{ once: true, margin: "-300px" }}
+            transition={{ duration: 1.6, type: "spring", stiffness: 80 }}
       >
         <FeaturesPage />
       </motion.div>

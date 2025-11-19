@@ -13,6 +13,7 @@ import {
   Share2,
   Flag,
   X,
+  ArrowLeft,
 } from "lucide-react";
 import { FieldName, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -508,28 +509,30 @@ const ProfileSetupSinglePage: React.FC = () => {
     });
   };
   return (
-    <div className="p-4 bg-transparent">
+    <div className="bg-transparent">
+      <div className=" flex flex-col md:flex-row-reverse jusitify-between items-between w-full p-4">
+        <button
+          onClick={handleSkip}
+          className="flex items-center gap-2 text-[#7650e3] hover:text-[#6540cc] font-semibold  transition-colors w-full justify-end text-sm hover:underline"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          Back to Dashboard
+        </button>
+        <div className="w-full">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Complete Your Profile
+          </h1>
+          <p className="text-gray-600">
+            Tell us about yourself to personalize your experience
+          </p>
+        </div>
+      </div>
       <div className="w-full max-w-5xl  mx-auto">
-        <div className="bg-white  overflow-hidden relative">
+        <div className="bg-transparent  overflow-hidden relative">
           {/* Header */}
-          <div className="theme-bg-trinary px-4 pt-6 pb-2 text-white relative rounded-t-2xl">
-            <h1 className="text-3xl font-bold">Complete Your Profile</h1>
-            <p className="text-blue-100">
-              Tell us about yourself to personalize your experience
-            </p>
+    
 
-            <div className="top-4 right-4 flex justify-end">
-              <button
-                onClick={handleSkip}
-                className="absolute right-3 top-3 w-6 h-6 z-10 rounded-full border-[#7650e3] flex items-center justify-center text-[#7650e3] bg-[#F7F5FB] transition-shadow border-[2px]"
-                aria-label="Close manage subscription dialog"
-              >
-                <X className="w-4 h-4 color-[#7650e3] stroke-[#7650e3] stroke-[3]" />
-              </button>
-            </div>
-          </div>
-
-          <div className="p-4 bg-white">
+          <div className="p-4">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
               {profileFormConfig.map((section) => {
                 return (
