@@ -38,6 +38,10 @@ import {
   getPlatformIcon,
   getPlatformIconBackgroundColors,
 } from "../utils/platformIcons";
+import { notify } from "@/utils/toast";
+import z from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 function HomePage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -274,6 +278,31 @@ function HomePage() {
     },
   };
 
+  const contactSchema = z.object({
+    firstName: z.string().min(2, "First name is too short"),
+    lastName: z.string().min(2, "Last name is too short"),
+    email: z.string().email("Invalid email address"),
+    message: z.string().min(5, "Message must be at least 5 characters"),
+  });
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(contactSchema),
+  });
+  const onSubmit = async (data: any) => {
+    try {
+      await API.contactUs(data);
+
+      notify("success", "Message sent successfully");
+      reset();
+    } catch (err: any) {
+      notify("error", err.response?.data?.message || "Something went wrong");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white">
       {/* Navigation */}
@@ -387,7 +416,7 @@ function HomePage() {
                       <motion.button
                         key={section}
                         onClick={() => scrollToSection(section)}
-                        className="block w-full text-left px-3 py-2.5 text-slate-700 hover:bg-gray-100 rounded-md capitalize"
+                        className="block w-full text-left px-3 py-2.5 text-black hover:bg-gray-100 rounded-md capitalize"
                         initial={{ x: -50, opacity: 0 }}
                         animate={{ x: 0, opacity: 1 }}
                         transition={{ delay: index * 0.05 }}
@@ -698,7 +727,7 @@ function HomePage() {
 
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div
-            className="text-center mb-12"
+            className="text-center mb-8"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
@@ -946,7 +975,7 @@ function HomePage() {
                   )}
                 </div>
 
-                <p className="text-xl md:text-2xl text-slate-700 text-center mb-8 leading-relaxed italic">
+                <p className="text-xl md:text-2xl text-black text-center mb-8 leading-relaxed italic">
                   "{reviews[currentReviewIndex].text}"
                 </p>
 
@@ -981,7 +1010,7 @@ function HomePage() {
               }}
               aria-label="Previous review"
             >
-              <ChevronLeft className="w-6 h-6 text-slate-700" />
+              <ChevronLeft className="w-6 h-6 text-black" />
             </motion.button>
 
             <motion.button
@@ -989,7 +1018,7 @@ function HomePage() {
               className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-12 bg-white rounded-full p-3 shadow-xl"
               aria-label="Next review"
             >
-              <ChevronRight className="w-6 h-6 text-slate-700" />
+              <ChevronRight className="w-6 h-6 text-black" />
             </motion.button>
           </div>
 
@@ -1123,7 +1152,7 @@ function HomePage() {
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               Contact Us
             </h2>
-            <p className="text-xl text-gray-500 font-medium mb-8">
+            <p className="text-xl text-gray-500 font-medium mb-5">
               Have questions? We'd love to hear from you.
             </p>
             <motion.button
@@ -1148,75 +1177,115 @@ function HomePage() {
           <AnimatePresence>
             {showContactForm && (
               <motion.form
-                className="space-y-6 pt-8"
+                onSubmit={handleSubmit(onSubmit)} // ❗ remove onError here
+                className="space-y-6 pt-2"
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
                 transition={{ duration: 0.3 }}
               >
                 <div className="grid md:grid-cols-2 gap-6">
+                  {/* First Name */}
                   <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.1, type: "spring" }}
                   >
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">
+                    <label className="block text-sm font-semibold text-black mb-2">
                       First Name
                     </label>
                     <input
+                      {...register("firstName")}
                       type="text"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#7650e3] focus:border-transparent transition-all"
-                      placeholder="John"
+                      className="w-full px-4 py-2.5 border border-purple-600 rounded-md focus-visible:ring-0 focus:ring-0 transition-all"
+                      placeholder="First Name"
                     />
+
+                    {/* ❗ Zod Error Here */}
+                    {errors.firstName && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.firstName.message}
+                      </p>
+                    )}
                   </motion.div>
+
+                  {/* Last Name */}
                   <motion.div
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.1, type: "spring" }}
                   >
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">
+                    <label className="block text-sm font-semibold text-black mb-2">
                       Last Name
                     </label>
                     <input
+                      {...register("lastName")}
                       type="text"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#7650e3] focus:border-transparent transition-all"
-                      placeholder="Doe"
+                      className="w-full px-4 py-2.5 border border-purple-600 rounded-md focus-visible:ring-0 focus:ring-0 transition-all"
+                      placeholder="Last Name"
                     />
+
+                    {/* ❗ Zod Error Here */}
+                    {errors.lastName && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.lastName.message}
+                      </p>
+                    )}
                   </motion.div>
                 </div>
 
+                {/* Email */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2, type: "spring" }}
                 >
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">
+                  <label className="block text-sm font-semibold text-black mb-2">
                     Email
                   </label>
                   <input
+                    {...register("email")}
                     type="email"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#7650e3] focus:border-transparent transition-all"
-                    placeholder="john@example.com"
+                    className="w-full px-4 py-2.5 border border-purple-600 rounded-md focus-visible:ring-0 focus:ring-0 transition-all"
+                    placeholder="Email Address"
                   />
+
+                  {/* ❗ Zod Error Here */}
+                  {errors.email && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.email.message}
+                    </p>
+                  )}
                 </motion.div>
 
+                {/* Message */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3, type: "spring" }}
                 >
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">
+                  <label className="block text-sm font-semibold text-black mb-2">
                     Message
                   </label>
                   <textarea
+                    {...register("message")}
                     rows={6}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#7650e3] focus:border-transparent transition-all"
+                    className="w-full px-4 py-2.5 border border-purple-600 rounded-md focus-visible:ring-0 focus:ring-0 transition-all"
                     placeholder="Tell us about your needs..."
                   />
+
+                  {/* ❗ Zod Error Here */}
+                  {errors.message && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.message.message}
+                    </p>
+                  )}
                 </motion.div>
 
+                {/* Submit Button */}
                 <motion.button
                   type="submit"
+                  disabled={isSubmitting}
                   className="w-full bg-[#7650e3] text-white py-4 rounded-md font-semibold text-lg shadow-lg"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -1227,7 +1296,7 @@ function HomePage() {
                   }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  Send Message
+                  {isSubmitting ? "Sending..." : " Send Message"}
                 </motion.button>
               </motion.form>
             )}
@@ -1248,7 +1317,7 @@ function HomePage() {
               <Link
                 to="/privacy"
                 className=" transition-colors duration-200"
-                onClick={() => setIsMobileMenuOpen(false)}
+                // onClick={() => setIsMobileMenuOpen(false)}
               >
                 Privacy Policy
               </Link>
