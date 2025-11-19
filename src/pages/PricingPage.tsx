@@ -8,6 +8,7 @@ import API from "../services/api";
 import { useSearchParams } from "react-router-dom";
 import Icon from "../components/Icon";
 import { useSubscriptionModal } from "../context/SubscriptionModalContext";
+import { usePricingModal } from "../context/PricingModalContext";
 import { notify } from "../utils/toast";
 
 export const PricingPage: React.FC = () => {
@@ -20,26 +21,24 @@ export const PricingPage: React.FC = () => {
 
   const [activeTab, setActiveTab] = useState<"" | "addons">(initialTab);
 
+  // Local loading flags for actions initiated from this page
   const [loadingPackage, setLoadingPackage] = useState(false);
   const [loadingAddon, setLoadingAddon] = useState(false);
-
-  const [confirmOpen, setConfirmOpen] = useState(false);
-  const [addonConfirmOpen, setAddonConfirmOpen] = useState(false);
-
-  const [downgradeRequestOpen, setDowngradeRequestOpen] = useState(false);
-  const [cancelDowngradeOpen, setCancelDowngradeOpen] = useState(false);
-  const [reactivateOpen, setReactivateOpen] = useState(false);
-  const [cancelPackageOpen, setCancelPackageOpen] = useState(false);
-
-  const [downgradeLoading, setDowngradeLoading] = useState(false);
-  const [downgradeReason, setDowngradeReason] = useState("");
-
-  const [selectedPlan, setSelectedPlan] = useState<any | null>(null);
   const [selectedAddon, setSelectedAddon] = useState<any | null>(null);
 
-  const [isDowngradeBlocked, setIsDowngradeBlocked] = useState(false);
+  // Pricing modals are controlled by shared context rendered inside AppLayout
+  const {
+    openConfirm,
+    openAddonConfirm,
+    openDowngradeRequest,
+    setConfirmHandler,
+    setAddonHandler,
+    setDowngradeHandler,
+    openCancelDowngrade,
+    setCancelDowngradeHandler,
+  } = usePricingModal();
 
-  const [isCanceled, setIsCanceled] = useState(false);
+  const [downgradeLoading, setDowngradeLoading] = useState(false);
 
   const activePackage = state?.user?.wallet;
 
@@ -96,12 +95,6 @@ export const PricingPage: React.FC = () => {
 
     if (hasCancelRequested || hasPendingDowngrade) return;
 
-    if (!currentTier) {
-      setSelectedPlan(plan);
-      setConfirmOpen(true);
-      return;
-    }
-
     const nextAmount = Number(plan.amount ?? 0);
     const currentAmount = Number(currentTier?.amount ?? 0);
     const isUpgrade = nextAmount > currentAmount;
@@ -110,14 +103,24 @@ export const PricingPage: React.FC = () => {
       activePackage?.expiredAt &&
       new Date(activePackage.expiredAt) < new Date();
 
-    if (!isUpgrade && !currentExpired) {
-      setSelectedPlan(plan);
-      setDowngradeRequestOpen(true);
+    // If it's a downgrade (lower price) on an active, not-expired plan, open downgrade modal
+    if (currentTier && !isUpgrade && !currentExpired) {
+      openDowngradeRequest(plan);
+      setDowngradeHandler(async () => {
+        await handleRequestDowngrade(plan);
+      });
       return;
     }
 
-    setSelectedPlan(plan);
-    setConfirmOpen(true);
+    // Otherwise confirm flow: use buyPackage for free tier, upgrade endpoint for paid tiers
+    openConfirm(plan);
+    setConfirmHandler(async () => {
+      if (activePackage?.package?.tier === "free") {
+        await handleSubscribe(plan);
+      } else {
+        await handleUpdatePackage(plan);
+      }
+    });
   };
 
   const handleSubscribe = async (plan: any) => {
@@ -133,8 +136,6 @@ export const PricingPage: React.FC = () => {
       alert("Something went wrong while processing your Buy.");
     } finally {
       setLoadingPackage(false);
-      setConfirmOpen(false);
-      setSelectedPlan(null);
     }
   };
 
@@ -146,18 +147,12 @@ export const PricingPage: React.FC = () => {
     } catch (error) {
     } finally {
       setLoadingPackage(false);
-      setConfirmOpen(false);
-      setSelectedPlan(null);
     }
   };
-  const handleRequestDowngrade = async () => {
-    if (!selectedPlan) return;
+  const handleRequestDowngrade = async (plan: any) => {
     setDowngradeLoading(true);
     try {
-      await API.requestDowngrade(selectedPlan.id);
-      setDowngradeRequestOpen(false);
-      setDowngradeReason("");
-      setSelectedPlan(null);
+      await API.requestDowngrade(plan.id);
       setTimeout(() => refreshUser(), 50);
     } catch (error) {
       console.error("Request downgrade failed:", error);
@@ -171,76 +166,31 @@ export const PricingPage: React.FC = () => {
     setDowngradeLoading(true);
     try {
       await API.cancelDowngradeRequest();
-      setCancelDowngradeOpen(false);
       setTimeout(() => refreshUser(), 50);
     } catch (error) {
       console.error("Cancel downgrade failed:", error);
       alert("Failed to cancel downgrade request");
     } finally {
       setDowngradeLoading(false);
-      setCancelDowngradeOpen(false);
     }
   };
 
-  const cancelSubscription = async () => {
-    try {
-      setIsCanceled(true);
-      await API.cancelPackage();
-      setTimeout(() => refreshUser(), 50);
-    } catch (error) {
-      console.error("Cancel subscription failed:", error);
-      alert("Unable to cancel subscription");
-    } finally {
-      setIsCanceled(false);
-      setCancelPackageOpen(false);
-    }
-  };
-
-  const reactivateSubscription = async () => {
-    try {
-      setIsCanceled(true);
-      await API.reactivatePackage();
-      setTimeout(() => refreshUser(), 50);
-    } catch (error) {
-      console.error("Reactivation failed:", error);
-      alert("Unable to reactivate subscription");
-    } finally {
-      setIsCanceled(false);
-      setReactivateOpen(false);
-    }
-  };
-
-  const handleBuyAddon = async (selectedAddon: any) => {
+  const handleBuyAddon = async (addon: any) => {
+    if (!addon) return;
     setLoadingAddon(true);
-    if (!selectedAddon) return;
+    setSelectedAddon(addon);
     try {
-      const res = await API.buyAddons(selectedAddon.id);
+      const res = await API.buyAddons(addon.id);
       const redirectUrl = res?.data?.data?.checkoutUrl;
       if (redirectUrl) {
         window.location.href = redirectUrl;
-        setLoadingAddon(false);
-        setSelectedAddon(null);
       }
     } catch (error) {
       notify("error", "Something went wrong while buying add-on");
     } finally {
       setLoadingAddon(false);
-      setAddonConfirmOpen(false);
       setSelectedAddon(null);
     }
-  };
-
-  const handleClosePopup = () => {
-    setConfirmOpen(false);
-    setAddonConfirmOpen(false);
-    setDowngradeRequestOpen(false);
-    setCancelDowngradeOpen(false);
-    setReactivateOpen(false);
-    setCancelPackageOpen(false);
-    setSelectedPlan(null);
-    setSelectedAddon(null);
-    setIsDowngradeBlocked(false);
-    setDowngradeReason("");
   };
 
   return (
@@ -338,8 +288,16 @@ export const PricingPage: React.FC = () => {
                           onClick={() => {
                             if (hasCancelRequested && isCurrentPlan)
                               openManageSubscription();
-                            else if (isPendingDowngradePackage)
-                              setCancelDowngradeOpen(true);
+                            else if (isPendingDowngradePackage) {
+                              openCancelDowngrade({
+                                currentPlanName: currentTier?.name ?? "",
+                                currentPlanAmount: Number(currentTier?.amount ?? 0),
+                                downgradePlanName: pendingDowngradePackage?.name ?? "",
+                              });
+                              setCancelDowngradeHandler(async () => {
+                                await handleCancelDowngradeRequest();
+                              });
+                            }
                             else if (isCurrentPlan) openManageSubscription();
                             else if (isCurrentPlan && !hasPendingDowngrade)
                               openManageSubscription();
@@ -355,8 +313,8 @@ export const PricingPage: React.FC = () => {
                               ? "cursor-not-allowed opacity-60"
                               : "cursor-pointer"
                           }`}
-                        >
-                          {loadingPackage && selectedPlan?.id === tier.id
+>                        
+                          {loadingPackage
                             ? "Processing..."
                             : isCurrentPlan && hasCancelRequested
                             ? "Manage"
@@ -454,18 +412,14 @@ export const PricingPage: React.FC = () => {
                         ${addon.amount.toLocaleString()}
                       </p>
                       <button
-                        disabled={
-                          selectedAddon?.id === addon?.id || loadingAddon
-                        }
+                        disabled={selectedAddon?.id === addon.id || loadingAddon}
                         onClick={() => {
                           setSelectedAddon(addon);
                           handleBuyAddon(addon);
                         }}
                         className="rounded-md theme-bg-light  w-fit  px-3 disabled:cursor-not-allowed  font-bold text-base py-1  border-2 border-[#7650e3] text-[#7650e3] hover:bg-[#7650e3] hover:text-white"
                       >
-                        {selectedAddon?.id === addon?.id
-                          ? "Buying...."
-                          : "Buy Now"}
+                        {selectedAddon?.id === addon.id ? "Buying...." : "Buy Now"}
                       </button>
                     </div>
                   </div>
@@ -475,311 +429,6 @@ export const PricingPage: React.FC = () => {
           </div>
         )}
       </div>
-      {reactivateOpen && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-gray-50 rounded-md shadow-md w-full max-w-md px-8 py-6 relative h-fit">
-            <div className="flex justify-between items-center mb-3">
-              <h2 className="text-2xl font-bold text-purple-700">
-                Reactivate Your Subscription
-              </h2>
-            </div>
-
-            <p className="text-gray-500 text-sm mb-6">
-              Are you sure you want to reactivate your subscription? Your{" "}
-              <span className="font-semibold mr-1 text-purple-600">
-                {currentTier?.name} Plan
-              </span>
-              will continue.
-            </p>
-
-            {/* Buttons */}
-            <div className="flex gap-3">
-              <button
-                onClick={handleClosePopup}
-                className="flex-1 py-2.5 border border-purple-600 text-purple-600 font-semibold rounded-md hover:bg-purple-50 transition"
-              >
-                Back
-              </button>
-
-              <button
-                onClick={reactivateSubscription}
-                disabled={isCanceled}
-                className="flex-1 py-2.5 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isCanceled ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Confirming...
-                  </>
-                ) : (
-                  "Confirm "
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {cancelDowngradeOpen && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-gray-50 rounded-md shadow-md w-full max-w-md px-8 py-6 relative h-fit">
-            {/* Header */}
-            <div className="flex justify-between items-center mb-3">
-              <h2 className="text-2xl font-bold text-purple-700">
-                Cancel Downgrade Request
-              </h2>
-            </div>
-
-            <p className="text-gray-500 text-sm mb-4">
-              Are you sure you want to cancel your downgrade request? You will{" "}
-              continue with your current plan after expiration.
-            </p>
-
-            {/* Info Box */}
-            <div className="bg-white border text-gray-500 border-purple-600 rounded-md p-4 mb-6">
-              <p className="text-sm font-semibold ">
-                <span className="">Active Plan:</span>{" "}
-                <span className="text-purple-600">{currentTier?.name}</span>
-              </p>
-
-              <p className="text-sm font-semibold mt-2 border-b pb-3">
-                <span className=""> Monthly Cost:</span>{" "}
-                <span className=" text-purple-600 ">
-                  ${currentTier?.amount}/month
-                </span>{" "}
-              </p>
-
-              <p className="text-sm  font-semibold mt-2">
-                <span className="">Planned Downgrade:</span>{" "}
-                <span className=" text-purple-600 ">
-                  {pendingDowngradePackage?.name}
-                </span>
-              </p>
-            </div>
-            <div className="flex gap-3">
-              <button
-                onClick={handleClosePopup}
-                className="flex-1 py-2.5 border border-purple-600 text-purple-600 font-semibold rounded-md hover:bg-purple-50 transition"
-              >
-                Back
-              </button>
-
-              <button
-                onClick={handleCancelDowngradeRequest}
-                disabled={downgradeLoading}
-                className="flex-1 py-2.5 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {downgradeLoading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Canceling...
-                  </>
-                ) : (
-                  "Confirm"
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* done */}
-      {downgradeRequestOpen && selectedPlan && (
-        <div className="fixed  inset-0 bg-black/30 backdrop-blur-sm flex lg:items-center justify-center p-4 z-50">
-          <div className="bg-gray-50 rounded-md shadow-md w-full max-w-md px-8 py-6 max-h-[80vh] h-fit overflow-auto relative">
-            <div className="flex justify-between items-center mb-3">
-              <h2 className="text-2xl font-bold text-purple-700">
-                Request Downgrade To
-              </h2>
-            </div>
-
-            {/* Price Box */}
-            <div className="border border-purple-600 bg-white rounded-md px-4 text-center mb-6">
-              <p className="text-2xl font-bold text-purple-700 mb-1 mt-2">
-                {selectedPlan.name}
-              </p>
-
-              <div className="flex justify-center items-end gap-4">
-                <span className="text-[45px] text-purple-600 font-bold leading-none">
-                  ${selectedPlan.amount || "0.00"}
-                </span>
-
-                <div className="flex flex-col items-start leading-none font-semibold">
-                  <span className="text-sm font-bold text-purple-700">USD</span>
-                  <span className="text-sm font-bold text-purple-700">
-                    Month
-                  </span>
-                </div>
-              </div>
-              <hr className="h-[1px] bg-gray-100 my-2 " />
-              <p className="text-[12px]  font-semibold text-black  mb-3">
-                Includes GST of $0.00.
-              </p>
-            </div>
-
-            <div className="flex gap-3">
-              <button
-                onClick={handleClosePopup}
-                className="flex-1 py-2.5 border border-purple-600 text-purple-600 font-semibold rounded-md hover:bg-purple-50 transition"
-              >
-                Back
-              </button>
-
-              <button
-                onClick={handleRequestDowngrade}
-                disabled={downgradeLoading}
-                className="flex-1 py-2.5 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {downgradeLoading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Confirming...
-                  </>
-                ) : (
-                  "Confirm"
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-      {/* done */}
-      {confirmOpen && selectedPlan && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex lg:items-center justify-center p-4 z-50">
-          <div className="bg-gray-50 rounded-md shadow-md w-full max-w-md px-8 py-6 h-fit relative">
-            <div className="flex justify-between items-center mb-3">
-              <h2 className="text-2xl font-bold text-purple-700 ">
-                Confirm Plan
-              </h2>
-            </div>
-
-            {/* Price Box */}
-            <div className="border border-purple-600 bg-white rounded-md  px-4 text-center ">
-              <p className="text-2xl font-bold text-purple-700 mb-1 mt-2">
-                {selectedPlan.name || "Standard"}
-              </p>
-
-              <div className="flex justify-center items-end gap-4">
-                <span className="text-[45px]   text-purple-600 font-bold leading-none">
-                  ${selectedPlan.amount + ".00" || "25.00"}
-                </span>
-
-                <div className="flex flex-col items-start leading-none  font-semibold">
-                  <span className="text-sm font-bold text-purple-700">USD</span>
-                  <span className="text-sm font-bold text-purple-700">
-                    Month
-                  </span>
-                </div>
-              </div>
-
-              <p className="text-[12px] font-semibold  text-black mt-2 mb-3">
-                Includes GST of $0.00.
-              </p>
-            </div>
-
-            <div className="text-center text-[13px] text-gray-500 font-medium my-6">
-              We are committed to secure payments for businesses and service
-              providers without any limitations.
-            </div>
-            <div>
-              <button
-                className="w-full py-2.5 border border-purple-600 bg-purple-600 text-white text-[15px] font-semibold rounded-md 
-           hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] 
-           transition shadow-md flex items-center justify-center gap-2"
-                onClick={() => {
-                  if (activePackage?.package?.tier === "free") {
-                    handleSubscribe(selectedPlan);
-                  } else {
-                    handleUpdatePackage(selectedPlan);
-                  }
-                }}
-                disabled={loadingPackage}
-              >
-                {loadingPackage ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Processing...
-                  </>
-                ) : (
-                  "Proceed to Checkout"
-                )}
-              </button>
-              <button
-                onClick={handleClosePopup}
-                className="flex-1 py-2.5 w-full mt-2 border border-purple-600 text-purple-600 font-semibold rounded-md 
-           hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition"
-              >
-                Back
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-      {/* done */}
-      {cancelPackageOpen && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-gray-50 rounded-md shadow-md w-full max-w-md px-8 py-6 relative h-fit ">
-            {/* Header */}
-            <div className="flex justify-between items-center mb-3">
-              <h2 className="text-2xl font-bold text-purple-700">
-                Cancel Your Subscription
-              </h2>
-
-              <button
-                onClick={handleClosePopup}
-                className="w-6 h-6 flex items-center justify-center border border-purple-700 rounded-full"
-              >
-                <X className="w-4 h-4 text-purple-700 stroke-[3px]" />
-              </button>
-            </div>
-
-            {/* Message */}
-            <p className="text-purple-700 font-medium mb-4">
-              We're sorry to see you go! Are you sure you want to cancel your{" "}
-              <span className="font-semibold">{currentTier?.name}</span> plan?
-            </p>
-
-            {/* Plan Info Box */}
-            <div className="bg-purple-50 border border-purple-200 rounded-md p-4 mb-6">
-              <p className="text-sm text-purple-700">
-                <span className="font-semibold text-purple-700">Plan:</span>{" "}
-                {currentTier?.name}
-              </p>
-              <p className="text-sm text-purple-700 mt-2">
-                <span className="font-semibold text-purple-700">
-                  Monthly Cost:
-                </span>{" "}
-                ${currentTier?.amount}/month
-              </p>
-            </div>
-
-            {/* Buttons */}
-            <div className="flex gap-3">
-              <button
-                onClick={handleClosePopup}
-                className="flex-1 py-2.5 border border-purple-600 text-purple-600 font-semibold rounded-md hover:bg-purple-50 transition"
-              >
-                Keep Plan
-              </button>
-
-              <button
-                onClick={cancelSubscription}
-                disabled={isCanceled}
-                className="flex-1 py-2.5 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isCanceled ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Canceling...
-                  </>
-                ) : (
-                  "Yes, Cancel Plan"
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

@@ -1,4 +1,5 @@
-import React, { useCallback } from "react";
+import React from "react";
+import { createPortal } from "react-dom";
 import { Loader2, X } from "lucide-react";
 import { usePricingModal } from "../context/PricingModalContext";
 
@@ -8,23 +9,29 @@ export const PricingModals: React.FC = () => {
     selectedPlan,
     loadingPackage,
     closeConfirm,
-    setConfirmHandler,
+    runConfirmHandler,
 
-    addonConfirmOpen,
-    selectedAddon,
-    loadingAddon,
-    closeAddonConfirm,
-    setAddonHandler,
+    // Addon confirm modal no longer used; Omni Coins go directly to Stripe
+    // addonConfirmOpen,
+    // selectedAddon,
+    // loadingAddon,
+    // closeAddonConfirm,
+    // runAddonHandler,
 
     downgradeRequestOpen,
     downgradeLoading,
     downgradeReason,
     setDowngradeReason,
     closeDowngradeRequest,
-    setDowngradeHandler,
+    runDowngradeHandler,
+
+    cancelDowngradeOpen,
+    cancelDowngradeData,
+    closeCancelDowngrade,
+    runCancelDowngradeHandler,
   } = usePricingModal();
 
-  return (
+  const modalContent = (
     <>
       {/* Confirm Plan Modal */}
       {confirmOpen && selectedPlan && (
@@ -71,9 +78,7 @@ export const PricingModals: React.FC = () => {
             <div>
               <button
                 className="w-full py-2.5 border border-purple-600 bg-purple-600 text-white text-[15px] font-semibold rounded-md hover:bg-purple-700 transition shadow-md flex items-center justify-center gap-2"
-                onClick={() => {
-                  setConfirmHandler(async () => {});
-                }}
+                onClick={runConfirmHandler}
                 disabled={loadingPackage}
               >
                 {loadingPackage ? (
@@ -97,80 +102,7 @@ export const PricingModals: React.FC = () => {
         </div>
       )}
 
-      {/* Addon Confirm Modal */}
-      {addonConfirmOpen && selectedAddon && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex lg:items-center justify-center p-4 z-50">
-          <div className="bg-gray-50 rounded-md shadow-md w-full max-w-md px-8 py-6 h-fit relative">
-            <button
-              onClick={closeAddonConfirm}
-              className="absolute top-4 right-4 w-6 h-6 flex items-center justify-center border border-purple-700 rounded-full hover:bg-purple-50"
-            >
-              <X className="w-4 h-4 text-purple-700 stroke-[3px]" />
-            </button>
-
-            <div className="flex justify-between items-center mb-3">
-              <h2 className="text-2xl font-bold text-purple-700">Confirm Purchase</h2>
-            </div>
-
-            {/* Price Box */}
-            <div className="border border-purple-600 bg-white rounded-md px-4 text-center">
-              <p className="text-2xl font-bold text-purple-700 mb-1 mt-2">
-                {selectedAddon.coins?.toLocaleString() || "0"} Coins
-              </p>
-
-              {selectedAddon.bonus > 0 && (
-                <p className="text-sm text-[#7650e3] font-semibold mb-2">
-                  + {selectedAddon.bonus?.toLocaleString()} Bonus
-                </p>
-              )}
-
-              <div className="flex justify-center items-end gap-4 mt-4">
-                <span className="text-[45px] text-purple-600 font-bold leading-none">
-                  ${selectedAddon.amount}
-                </span>
-
-                <div className="flex flex-col items-start leading-none font-semibold">
-                  <span className="text-sm font-bold text-purple-700">USD</span>
-                </div>
-              </div>
-
-              <p className="text-[12px] font-semibold text-black mt-2 mb-3">
-                One-time purchase
-              </p>
-            </div>
-
-            <div className="text-center text-[13px] text-gray-500 font-medium my-6">
-              Secure payment processing for instant coin delivery.
-            </div>
-
-            <div>
-              <button
-                className="w-full py-2.5 border border-purple-600 bg-purple-600 text-white text-[15px] font-semibold rounded-md hover:bg-purple-700 transition shadow-md flex items-center justify-center gap-2"
-                onClick={() => {
-                  setAddonHandler(async () => {});
-                }}
-                disabled={loadingAddon}
-              >
-                {loadingAddon ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Processing...
-                  </>
-                ) : (
-                  "Buy Now"
-                )}
-              </button>
-              <button
-                onClick={closeAddonConfirm}
-                className="flex-1 py-2.5 w-full mt-2 border border-purple-600 text-purple-600 font-semibold rounded-md 
-           hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition"
-              >
-                Back
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Addon Confirm Modal removed - Omni Coins purchase goes directly to Stripe */}
 
       {/* Downgrade Request Modal */}
       {downgradeRequestOpen && selectedPlan && (
@@ -218,9 +150,7 @@ export const PricingModals: React.FC = () => {
               </button>
 
               <button
-                onClick={() => {
-                  setDowngradeHandler(async () => {});
-                }}
+                onClick={runDowngradeHandler}
                 disabled={downgradeLoading}
                 className="flex-1 py-2.5 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
@@ -237,6 +167,75 @@ export const PricingModals: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Cancel Downgrade Modal */}
+      {cancelDowngradeOpen && cancelDowngradeData && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-gray-50 rounded-md shadow-md w-full max-w-md px-8 py-6 relative h-fit">
+            <div className="flex justify-between items-center mb-3">
+              <h2 className="text-2xl font-bold text-purple-700">
+                Cancel Downgrade Request
+              </h2>
+            </div>
+
+            <p className="text-gray-500 text-sm mb-4">
+              Are you sure you want to cancel your downgrade request? You will
+              continue with your current plan after expiration.
+            </p>
+
+            <div className="bg-white border text-gray-500 border-purple-600 rounded-md p-4 mb-6">
+              <p className="text-sm font-semibold ">
+                <span className="">Active Plan:</span>{" "}
+                <span className="text-purple-600">
+                  {cancelDowngradeData.currentPlanName}
+                </span>
+              </p>
+
+              <p className="text-sm font-semibold mt-2 border-b pb-3">
+                <span className=""> Monthly Cost:</span>{" "}
+                <span className=" text-purple-600 ">
+                  ${cancelDowngradeData.currentPlanAmount}/month
+                </span>{" "}
+              </p>
+
+              <p className="text-sm  font-semibold mt-2">
+                <span className="">Planned Downgrade:</span>{" "}
+                <span className=" text-purple-600 ">
+                  {cancelDowngradeData.downgradePlanName}
+                </span>
+              </p>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={closeCancelDowngrade}
+                className="flex-1 py-2.5 border border-purple-600 text-purple-600 font-semibold rounded-md hover:bg-purple-50 transition"
+              >
+                Back
+              </button>
+
+              <button
+                onClick={runCancelDowngradeHandler}
+                disabled={downgradeLoading}
+                className="flex-1 py-2.5 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {downgradeLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Canceling...
+                  </>
+                ) : (
+                  "Confirm"
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
+
+  if (typeof document === "undefined") return null;
+
+  return createPortal(modalContent, document.body);
 };
