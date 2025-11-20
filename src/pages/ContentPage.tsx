@@ -314,8 +314,8 @@ export const ContentPage: React.FC = () => {
 
           {/* Publish Modal */}
           {showPublishModal && state.generatedPosts && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center z-50">
-              <div className="bg-white w-full overflow-y-auto modal-content">
+            <div className="fixed inset-0 bg-white flex justify-center z-50 h-full-dec-hf ">
+              <div className="bg-white w-full ">
                 <PublishPosts
                   posts={state.generatedPosts}
                   onBack={() => {
