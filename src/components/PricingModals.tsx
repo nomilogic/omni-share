@@ -31,6 +31,23 @@ export const PricingModals: React.FC = () => {
     runCancelDowngradeHandler,
   } = usePricingModal();
 
+  // Lock body scroll while any pricing modal is open
+  React.useEffect(() => {
+    if (typeof document === "undefined") return;
+    const originalOverflow = document.body.style.overflow;
+    const anyOpen = confirmOpen || downgradeRequestOpen || cancelDowngradeOpen;
+
+    if (anyOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = originalOverflow || "";
+    }
+
+    return () => {
+      document.body.style.overflow = originalOverflow || "";
+    };
+  }, [confirmOpen, downgradeRequestOpen, cancelDowngradeOpen]);
+
   const modalContent = (
     <>
       {/* Confirm Plan Modal */}
