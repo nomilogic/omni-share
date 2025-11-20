@@ -256,7 +256,7 @@ export const PricingPage: React.FC = () => {
                   : ""
               }`}
             >
-              Planes
+              Plans
             </button>
             {activePackage?.package?.tier !== "free" && !hasCancelRequested && (
               <button
