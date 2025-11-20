@@ -9,6 +9,7 @@ export interface PricingModalContextType {
   closeConfirm: () => void;
   setLoadingPackage: (loading: boolean) => void;
   setConfirmHandler: (handler: () => Promise<void>) => void;
+  runConfirmHandler: () => Promise<void>;
 
   // Addon Confirm Modal
   addonConfirmOpen: boolean;
@@ -18,6 +19,7 @@ export interface PricingModalContextType {
   closeAddonConfirm: () => void;
   setLoadingAddon: (loading: boolean) => void;
   setAddonHandler: (handler: () => Promise<void>) => void;
+  runAddonHandler: () => Promise<void>;
 
   // Downgrade Request Modal
   downgradeRequestOpen: boolean;
@@ -28,6 +30,23 @@ export interface PricingModalContextType {
   setDowngradeReason: (reason: string) => void;
   setDowngradeLoading: (loading: boolean) => void;
   setDowngradeHandler: (handler: () => Promise<void>) => void;
+  runDowngradeHandler: () => Promise<void>;
+
+  // Cancel Downgrade Modal
+  cancelDowngradeOpen: boolean;
+  cancelDowngradeData: {
+    currentPlanName: string;
+    currentPlanAmount: number;
+    downgradePlanName: string;
+  } | null;
+  openCancelDowngrade: (data: {
+    currentPlanName: string;
+    currentPlanAmount: number;
+    downgradePlanName: string;
+  }) => void;
+  closeCancelDowngrade: () => void;
+  setCancelDowngradeHandler: (handler: () => Promise<void>) => void;
+  runCancelDowngradeHandler: () => Promise<void>;
 }
 
 const PricingModalContext = createContext<PricingModalContextType | undefined>(undefined);
@@ -48,6 +67,14 @@ export const PricingModalProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const [downgradeReason, setDowngradeReason] = useState('');
   const downgradeHandlerRef = useRef<(() => Promise<void>) | null>(null);
 
+  const [cancelDowngradeOpen, setCancelDowngradeOpen] = useState(false);
+  const [cancelDowngradeData, setCancelDowngradeData] = useState<{
+    currentPlanName: string;
+    currentPlanAmount: number;
+    downgradePlanName: string;
+  } | null>(null);
+  const cancelDowngradeHandlerRef = useRef<(() => Promise<void>) | null>(null);
+
   const openConfirm = useCallback((plan: any) => {
     setSelectedPlan(plan);
     setConfirmOpen(true);
@@ -63,6 +90,18 @@ export const PricingModalProvider: React.FC<{ children: React.ReactNode }> = ({ 
     confirmHandlerRef.current = handler;
   }, []);
 
+  const runConfirmHandler = useCallback(async () => {
+    if (!confirmHandlerRef.current) return;
+    try {
+      setLoadingPackage(true);
+      await confirmHandlerRef.current();
+    } finally {
+      setLoadingPackage(false);
+      setConfirmOpen(false);
+      setSelectedPlan(null);
+    }
+  }, []);
+
   const openAddonConfirm = useCallback((addon: any) => {
     setSelectedAddon(addon);
     setAddonConfirmOpen(true);
@@ -76,6 +115,18 @@ export const PricingModalProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
   const setAddonHandler = useCallback((handler: () => Promise<void>) => {
     addonHandlerRef.current = handler;
+  }, []);
+
+  const runAddonHandler = useCallback(async () => {
+    if (!addonHandlerRef.current) return;
+    try {
+      setLoadingAddon(true);
+      await addonHandlerRef.current();
+    } finally {
+      setLoadingAddon(false);
+      setAddonConfirmOpen(false);
+      setSelectedAddon(null);
+    }
   }, []);
 
   const openDowngradeRequest = useCallback((plan: any) => {
@@ -95,6 +146,49 @@ export const PricingModalProvider: React.FC<{ children: React.ReactNode }> = ({ 
     downgradeHandlerRef.current = handler;
   }, []);
 
+  const runDowngradeHandler = useCallback(async () => {
+    if (!downgradeHandlerRef.current) return;
+    try {
+      setDowngradeLoading(true);
+      await downgradeHandlerRef.current();
+    } finally {
+      setDowngradeLoading(false);
+      setDowngradeRequestOpen(false);
+      setSelectedPlan(null);
+      setDowngradeReason('');
+    }
+  }, []);
+
+  const openCancelDowngrade = useCallback((data: {
+    currentPlanName: string;
+    currentPlanAmount: number;
+    downgradePlanName: string;
+  }) => {
+    setCancelDowngradeData(data);
+    setCancelDowngradeOpen(true);
+  }, []);
+
+  const closeCancelDowngrade = useCallback(() => {
+    setCancelDowngradeOpen(false);
+    setCancelDowngradeData(null);
+  }, []);
+
+  const setCancelDowngradeHandler = useCallback((handler: () => Promise<void>) => {
+    cancelDowngradeHandlerRef.current = handler;
+  }, []);
+
+  const runCancelDowngradeHandler = useCallback(async () => {
+    if (!cancelDowngradeHandlerRef.current) return;
+    try {
+      setDowngradeLoading(true);
+      await cancelDowngradeHandlerRef.current();
+    } finally {
+      setDowngradeLoading(false);
+      setCancelDowngradeOpen(false);
+      setCancelDowngradeData(null);
+    }
+  }, []);
+
   return (
     <PricingModalContext.Provider
       value={{
@@ -105,6 +199,7 @@ export const PricingModalProvider: React.FC<{ children: React.ReactNode }> = ({ 
         closeConfirm,
         setLoadingPackage,
         setConfirmHandler,
+        runConfirmHandler,
 
         addonConfirmOpen,
         selectedAddon,
@@ -113,6 +208,7 @@ export const PricingModalProvider: React.FC<{ children: React.ReactNode }> = ({ 
         closeAddonConfirm,
         setLoadingAddon,
         setAddonHandler,
+        runAddonHandler,
 
         downgradeRequestOpen,
         downgradeLoading,
@@ -122,6 +218,14 @@ export const PricingModalProvider: React.FC<{ children: React.ReactNode }> = ({ 
         setDowngradeReason,
         setDowngradeLoading,
         setDowngradeHandler,
+        runDowngradeHandler,
+
+        cancelDowngradeOpen,
+        cancelDowngradeData,
+        openCancelDowngrade,
+        closeCancelDowngrade,
+        setCancelDowngradeHandler,
+        runCancelDowngradeHandler,
       }}
     >
       {children}
