@@ -9,16 +9,16 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-import pic from "../assets/content creation.jpg";
-import pic10 from "../assets/content creation-post 2.jpg";
+import pic from "../assets/Post Automtaion.jpg";
+import pic10 from "../assets/Post Automtaion (post).jpg";
 import pic3 from "../assets/Media Optimization.jpg";
 import pic4 from "../assets/Media Optimization (post).jpg";
 import pic5 from "../assets/Smart Insights.jpg";
 import pic6 from "../assets/Smart Insights (post).jpg";
 import pic7 from "../assets/Instant Publishing.jpg";
-import pic8 from "../assets/Instant Publishing (post).jpg";
-import pic9 from "../assets/Instant Publishing (post 2).jpg";
-import pic2 from "../assets/Media Optimization (post 2).jpg";
+import pic8 from "../assets/Instant Publishing(instagram).jpg";
+import pic9 from "../assets/Instant Publishing (facebook).jpg";
+import pic2 from "../assets/Post Automtaion (post02).jpg";
 
 type Feature = {
   id: number;
@@ -50,7 +50,7 @@ const features: Feature[] = [
     icon: <Sparkles className="w-6 h-6" />,
     mobileImage: pic,
     desktopMain: pic,
-    desktopFloat: [pic2],
+    desktopFloat: [pic2, pic10],
   },
   {
     id: 2,
@@ -77,7 +77,7 @@ const features: Feature[] = [
     icon: <TvMinimalPlay className="w-6 h-6" />,
     mobileImage: pic3,
     desktopMain: pic3,
-    desktopFloat: [pic4, pic10],
+    desktopFloat: [pic4],
   },
   {
     id: 3,
@@ -124,15 +124,15 @@ const features: Feature[] = [
 
 const getFloatStyles = (id: number, floatIndex: number) => {
   if (floatIndex === 0) {
-    if (id === 1) return { bottom: "20%", right: "-20%", width: "40%" };
-    if (id === 2) return { bottom: "15%", right: "-15%", width: "40%", height: "50%" };
-    if (id === 3) return { top: "20%", right: "-10%", width: "40%" };
-    if (id === 4) return { bottom: "25%", right: "3%", width: "60%", height: "60%" };
+    if (id === 1) return { bottom: "47%", right: "-20%", width: "40%" };
+    if (id === 2) return { bottom: "-10%", right: "-15%", width: "40%", height: "70%" };
+    if (id === 3) return { top: "60%", right: "-9%", width: "40%" };
+    if (id === 4) return { bottom: "35%", right: "-19%", width: "27%", height: "50%" };
     return { bottom: "-5%", left: "-4%", width: "29.5%" };
   }
   if (floatIndex === 1) {
-    if (id === 2) return { bottom: "-5%", left: "-5%", width: "40%" };
-    if (id === 4) return { bottom: "3%", right: "-30%", width: "60%", height: "auto" };
+    if (id === 1) return { bottom: "-20%", left: "-10%", width: "40%" };
+    if (id === 4) return { bottom: "-20%", right: "-20%", width: "28%", height: "53%" };
     return { bottom: "18%", right: "-12%", width: "31%" };
   }
   return {};
@@ -318,7 +318,7 @@ const FeaturesPage: React.FC = () => {
                       animate="animate"
                       exit="exit"
                     >
-                      <img src={floatImages[0]} className="w-full h-auto rounded-lg" />
+                      <img src={floatImages[0]} className="w-full h-full rounded-lg" />
                     </motion.div>
                   )}
 
@@ -326,12 +326,12 @@ const FeaturesPage: React.FC = () => {
                     <motion.div
                       className="absolute p-2 bg-white rounded-xl shadow-xl z-10"
                       style={getFloatStyles(activeFeature.id, 1)}
-                      variants={floatVariants}
+                      variants={floatVariants}       
                       initial="initial"
                       animate="animate"
                       exit="exit"
                     >
-                      <img src={floatImages[1]} className="w-full h-auto rounded-lg" />
+                      <img src={floatImages[1]} className="w-full h-full rounded-lg" />
                     </motion.div>
                   )}
                 </motion.div>
