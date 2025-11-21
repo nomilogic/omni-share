@@ -101,22 +101,22 @@ export const ContentPage: React.FC = () => {
   const handleGoToPublish = () => {
     setShowPublishModal(true);
     // Prevent background scrolling when modal is open
-    document.body.classList.add("modal-open");
-    document.documentElement.classList.add("modal-open");
-    document.documentElement.scrollTop = 0; // Scroll to top when modal opens
-    document.body.scrollTop = 0;
-    document.body.scrollTop = 0;
-    const elemnt: HTMLElement = document.querySelector(".preview");
+    // document.body.classList.add("modal-open");
+    // document.documentElement.classList.add("modal-open");
+    // document.documentElement.scrollTop = 0; // Scroll to top when modal opens
+    // document.body.scrollTop = 0;
+    // document.body.scrollTop = 0;
+    // const elemnt: HTMLElement = document.querySelector(".preview");
 
-    // Adjust timeout as needed
-    if (elemnt) {
-      // elemnt.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // // Adjust timeout as needed
+    // if (elemnt) {
+    //   // elemnt.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-      elemnt.style.display = "none";
-      setTimeout(() => {
-        elemnt.style.display = "block";
-      }, 100);
-    }
+    //   elemnt.style.display = "none";
+    //   setTimeout(() => {
+    //     elemnt.style.display = "block";
+    //   }, 100);
+    // }
   };
 
   // Handle individual platform regeneration
@@ -279,57 +279,68 @@ export const ContentPage: React.FC = () => {
 
                 return state.generatedPosts &&
                   state.generatedPosts.length > 0 ? (
-                  <PostPreview
-                    posts={state.generatedPosts}
-                    onEdit={() => {
-                      console.log(
-                        "Edit Content clicked - navigating to /content"
-                      );
-                      navigate("/content");
-                    }}
-                    onBack={() => {
-                      console.log(
-                        "Regenerate clicked - clearing posts and navigating to generate"
-                      );
-                      // Clear the generated posts to trigger fresh generation
-                      dispatch({ type: "SET_GENERATED_POSTS", payload: [] });
-                      // Navigate to generate route which will start fresh AI generation
-                      navigate("/content/generate");
-                    }}
-                    onPublish={handleGoToPublish}
-                    onPostsUpdate={(updatedPosts) => {
-                      dispatch({
-                        type: "SET_GENERATED_POSTS",
-                        payload: updatedPosts,
-                      });
-                    }}
-                    onRegeneratePlatform={handleRegeneratePlatform}
-                  />
+                  <>
+                    {!showPublishModal && (
+                      <PostPreview
+                        posts={state.generatedPosts}
+                        onEdit={() => {
+                          console.log(
+                            "Edit Content clicked - navigating to /content"
+                          );
+                          navigate("/content");
+                        }}
+                        onBack={() => {
+                          console.log(
+                            "Regenerate clicked - clearing posts and navigating to generate"
+                          );
+                          // Clear the generated posts to trigger fresh generation
+                          dispatch({
+                            type: "SET_GENERATED_POSTS",
+                            payload: [],
+                          });
+                          // Navigate to generate route which will start fresh AI generation
+                          navigate("/content/generate");
+                        }}
+                        onPublish={handleGoToPublish}
+                        onPostsUpdate={(updatedPosts) => {
+                          dispatch({
+                            type: "SET_GENERATED_POSTS",
+                            payload: updatedPosts,
+                          });
+                        }}
+                        onRegeneratePlatform={handleRegeneratePlatform}
+                      />
+                    )}
+                    {/* Publish Modal */}
+                    {showPublishModal && state.generatedPosts && (
+                      <div className=" inset-0 bg-white flex justify-center z-50 ` ">
+                        <div className="bg-white w-full ">
+                          <PublishPosts
+                            posts={state.generatedPosts}
+                            onBack={() => {
+                              setShowPublishModal(false);
+                              // Restore background scrolling when modal is closed
+                              document.body.classList.remove("modal-open");
+                              document.documentElement.classList.remove(
+                                "modal-open"
+                              );
+                            }}
+                            onReset={handlePublishReset}
+                            userId={state.user?.id || ""}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </>
                 ) : (
                   <Navigate to="/content" replace />
                 );
+              
+              
               })()}
             />
+           
           </Routes>
-
-          {/* Publish Modal */}
-          {showPublishModal && state.generatedPosts && (
-            <div className="fixed inset-0 bg-white flex justify-center z-50 h-full-dec-hf ">
-              <div className="bg-white w-full ">
-                <PublishPosts
-                  posts={state.generatedPosts}
-                  onBack={() => {
-                    setShowPublishModal(false);
-                    // Restore background scrolling when modal is closed
-                    document.body.classList.remove("modal-open");
-                    document.documentElement.classList.remove("modal-open");
-                  }}
-                  onReset={handlePublishReset}
-                  userId={state.user?.id || ""}
-                />
-              </div>
-            </div>
-          )}
 
           {/* Generate Modal - Show AI Generator as modal instead of route */}
           {showGenerateModal && state.contentData && (

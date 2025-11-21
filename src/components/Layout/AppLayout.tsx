@@ -151,7 +151,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   return (
     <ResizeContext.Provider value={{ handleResizeMainToFullScreen }}>
       <>
-        <div className="relative z-10 min-h-screen">
+        <div className="">
           <div
             className={`fixed inset-y-0 left-0 z-50 w-full xl:w-[18%] sm:w-[40%] theme-bg-trinary border-r border-white/10 transform ${
               isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
@@ -539,7 +539,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               </div>
             </div>
           </div>
-          <div className=" top-0 z-10  border-b border-white/20 md:px-4 py-4  px-3">
+          <div className="fixed top-0 z-10 w-full  border-b border-white/20 md:px-4 py-4  px-3 bg-white h-[60px]">
             <div className=" flex items-center justify-between mt-0 ">
               <div className="flex items-center">
                 <button
@@ -716,9 +716,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           <main
             id="mainContent"
             ref={mainContentRef}
-            className="py-0 min-h-screen overflow-auto theme-bg-card  "
+            className="py-0 h-screen-dec-hf overflow-auto theme-bg-card  mt-[60px] "
           >
-            {/* <div className=" top-0 z-10  border-b border-white/20 md:px-4 py-4  px-3">
+            {
+            /* 
+
+            <div className=" top-0 z-10  border-b border-white/20 md:px-4 py-4  px-3">
               <div className=" flex items-center justify-between mt-0 ">
                 <div className="flex items-center">
                   <button

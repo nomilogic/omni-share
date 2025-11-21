@@ -345,7 +345,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
   };
 
   return (
-    <div className="theme-bg-light max-w-4xl mx-auto h-full-dec-hf overflow-y-auto  ">
+    <div className="theme-bg-light max-w-4xl mx-auto   ">
       <div className="lg:px-4 px-3 lg:py-8 py-4">
         <h2 className="text-2xl font-bold theme-text-primary mb-1">
           Publish Your Posts
