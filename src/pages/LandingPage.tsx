@@ -26,7 +26,7 @@ export const LandingPage: React.FC = () => {
           dispatch({ type: 'SET_ONBOARDING_COMPLETE', payload: (profile as any).isOnboarding });
         }
         if ((profile as any).isOnboarding === false) {
-          navigate('/onboarding/profile');
+          navigate('/dashboard?profile=true');
           return;
         }
       }

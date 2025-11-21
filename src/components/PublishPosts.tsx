@@ -74,6 +74,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
         }
       }
       setConnectedPlatforms(connected);
+      console.log(connected, "platforms connected");
 
       if (connected.includes("facebook")) {
         await fetchFacebookPages();
@@ -98,15 +99,16 @@ export const PublishPosts: React.FC<PublishProps> = ({
 
       if (tokenResponse.data) {
         const tokenData = await tokenResponse.data;
+        console.log(tokenData)
         if (tokenData.connected && tokenData.token?.access_token) {
-          const pagesResponse = await fetch(
-            `/api/facebook/pages?access_token=${tokenData.token.access_token}`
-          );
-          if (pagesResponse.ok) {
-            const pagesData = await pagesResponse.json();
-            setFacebookPages(pagesData.pages || []);
+          const pagesResponse = await API.facebookPages(tokenData.token.access_token)
+            console.log(pagesResponse, "pages"); 
+          
+          if (pagesResponse.status=="200") {
+            const pagesData = await pagesResponse.data.data;
+            setFacebookPages(pagesData || []);
             if (
-              pagesData.pages &&
+              pagesData.pages &&  
               pagesData.pages.length > 0 &&
               !selectedFacebookPage
             ) {
@@ -221,6 +223,8 @@ export const PublishPosts: React.FC<PublishProps> = ({
       );
     } finally {
       setConnectingPlatforms((prev) => prev.filter((p) => p !== platform));
+     // checkConnectedPlatforms();
+
     }
   };
 
@@ -341,7 +345,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
   };
 
   return (
-    <div className="theme-bg-light max-w-4xl mx-auto  ">
+    <div className="theme-bg-light max-w-4xl mx-auto h-full-dec-hf overflow-y-auto  ">
       <div className="lg:px-4 px-3 lg:py-8 py-4">
         <h2 className="text-2xl font-bold theme-text-primary mb-1">
           Publish Your Posts
@@ -593,7 +597,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
                       {/* Published indicator - Show when platform is published */}
                       {isConnected &&
                         publishedPlatforms.includes(post.platform) && (
-                          <div className="flex items-center gap-2 px-3 py-1 rounded-md bg-purple-600 bg-green-100 text-green-800 text-sm font-medium">
+                          <div className="flex items-center gap-2 px-3 py-1 rounded-md bg-purple-200 bg-green-100 text-purple-600 text-sm font-medium">
                             <svg
                               className="w-4 h-4"
                               fill="currentColor"

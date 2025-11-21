@@ -209,7 +209,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         // Default video: all platforms except Twitter (disabled temporarily)
         return ["facebook", "instagram", "linkedin", "tiktok", "youtube"];
       default:
-        return ["linkedin"]; // Default fallback
+        return ["linkedin", "facebook"]; // Default fallback
     }
   };
 
