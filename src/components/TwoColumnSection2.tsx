@@ -4,7 +4,7 @@ import mainImage from "../assets/Omni sshare-layout-02.png";
 const TwoColumnSection2 = () => {
   return (
     <section
-      className=" my-10 relative max-w-7xl mx-auto px-6 md:px-8
+      className=" my-10 relative max-w-[80%] mx-auto px-6 md:px-0
         grid md:grid-cols-2  gap-10
         
         items-center w-full  bg-white

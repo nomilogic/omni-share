@@ -197,7 +197,7 @@ const FeaturesPage: React.FC = () => {
   return (
     <div className="w-full">
       <section className="relative overflow-hidden py-16 md:py-24">
-        <div className="relative max-w-7xl mx-auto px-6 md:px-8">
+        <div className="relative w-full md:w-[80%] mx-auto px-6 md:px-0">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 text-center">
             <span className="font-bold">
               A Complete Suite for Social Success
@@ -216,7 +216,7 @@ const FeaturesPage: React.FC = () => {
             <div className="relative" ref={listRef}>
               {/* Static Vertical Line */}
               <div
-                className="absolute left-8 w-px bg-gray-300 z-0 hidden md:block"
+                className="absolute left-6 w-px bg-gray-300 z-0 hidden md:block"
                 style={{ top: staticTop, height: staticHeight }}
               />
               <div className="space-y-4">
@@ -227,7 +227,7 @@ const FeaturesPage: React.FC = () => {
                       key={item.id}
                       className={`cursor-pointer transition-all p-4 rounded-xl ${
                         isActive ? "bg-gray-200" : "bg-gray-100 hover:bg-gray-200"
-                      } md:p-2 md:bg-transparent md:hover:bg-transparent`}
+                      } md:p-0 md:bg-transparent md:hover:bg-transparent`}
                       onClick={() => handleItemClick(item.id)}
                     >
                       <div className="flex items-start justify-between">
