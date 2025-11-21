@@ -167,7 +167,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
         `${platform}_oauth`,
         "width=600,height=700,scrollbars=yes,resizable=yes"
       );
-
+      
       if (!authWindow) {
         throw new Error("OAuth popup blocked");
       }
@@ -179,41 +179,39 @@ export const PublishPosts: React.FC<PublishProps> = ({
           event.data.platform === platform
         ) {
           console.log("OAuth success for", platform);
-          // Close popup from parent window for better browser compatibility
-          try {
-            authWindow?.close();
-          } catch (error) {
-            console.warn("Could not close popup from parent:", error);
+          // Close popup immediately
+          if (authWindow && !authWindow.closed) {
+            authWindow.close();
           }
-          setTimeout(checkConnectedPlatforms, 1000);
+          clearInterval(checkClosed);
           window.removeEventListener("message", messageListener);
+          setTimeout(checkConnectedPlatforms, 500);
         } else if (event.data.type === "oauth_error") {
           console.error("OAuth error:", event.data.error);
-          // Close popup from parent window for better browser compatibility
-          try {
-            authWindow?.close();
-          } catch (error) {
-            console.warn("Could not close popup from parent:", error);
+          // Close popup immediately
+          if (authWindow && !authWindow.closed) {
+            authWindow.close();
           }
+          clearInterval(checkClosed);
+          window.removeEventListener("message", messageListener);
           setError(
             `Failed to connect ${platform}: ${
               event.data.error || "OAuth failed"
             }`
           );
-          window.removeEventListener("message", messageListener);
         }
       };
 
       window.addEventListener("message", messageListener);
 
-      // Monitor window closure
+      // Monitor window closure as fallback
       const checkClosed = setInterval(() => {
         if (authWindow?.closed) {
           clearInterval(checkClosed);
           window.removeEventListener("message", messageListener);
-          setTimeout(checkConnectedPlatforms, 1000);
+          setTimeout(checkConnectedPlatforms, 500);
         }
-      }, 1000);
+      }, 500);
     } catch (error) {
       console.error("Error connecting to platform:", error);
       setError(
@@ -555,7 +553,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
                           >
                             <div className="relative">
                               <input
-                                className="text-green-500 focus:ring-green-400 none absolute opacity-0 w-0 h-0"
+                                className="text-green-500 focus:ring-green-400 hidden absolute opacity-0 w-0 h-0"
                                 type="checkbox"
                                 checked={selectedPlatforms.includes(
                                   post.platform

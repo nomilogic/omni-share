@@ -716,7 +716,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           <main
             id="mainContent"
             ref={mainContentRef}
-            className="py-0 h-screen-dec-hf overflow-auto theme-bg-card  mt-[60px] "
+            className="py-0 h-full-dec-hf w-full overflow-auto theme-bg-card  mt-[60px] "
           >
             {
             /* 
