@@ -53,9 +53,9 @@ export const DashboardPage: React.FC = () => {
   return (
     <>
       {!isEditing && !isPasswordEditing && (
-        <div className="min-h-screen ">
+        <div className="min-h-screen my-10">
           <main className="max-w-8xl mx-auto  flex flex-col gap-y-8 ">
-            <div className="bg-gray-50  lg:px-4 px-3 py-4 rounded-md flex flex-col gap-4">
+            <div className="bg-gray-100  lg:px-4 px-3 py-4 rounded-md flex flex-col gap-4">
               <ProfileCard />
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

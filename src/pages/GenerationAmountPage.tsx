@@ -2,16 +2,17 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Edit2, Trash2, Loader2, Plus } from "lucide-react";
 import API from "@/services/api";
+import { useAppContext } from "@/context/AppContext";
 
 const API_BASE =
   import.meta.env.VITE_API_URL ||
   "https://omnishare.ai/server/api" + "/admin/generation-amount";
 
 const GenerationAmountPage = () => {
-  const [generationAmounts, setGenerationAmounts] = useState([]);
+  // const [generationAmounts, setGenerationAmounts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState(null);
-
+  const { generationAmounts } = useAppContext();
   const {
     register,
     handleSubmit,
@@ -26,22 +27,10 @@ const GenerationAmountPage = () => {
   });
 
   // Fetch Data
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const res = await API.getGenerateAmount();
-      const data = await res.data;
-      setGenerationAmounts(data.data || []);
-    } catch (err) {
-      console.error("Error fetching:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   fetchData();
+  // }, []);
 
   const onSubmit = async (formData: any) => {
     try {
@@ -52,7 +41,6 @@ const GenerationAmountPage = () => {
       if (res.data) {
         reset({ type: "", amount: "" });
         setEditingId(null);
-        fetchData();
       } else {
         window.alert("type  already exists.");
       }
@@ -74,7 +62,6 @@ const GenerationAmountPage = () => {
     if (!window.confirm("Are you sure you want to delete this item?")) return;
     try {
       await API.deleteGenerateAmount(id);
-      fetchData();
     } catch (error) {
       console.error("Error deleting:", error);
     }
