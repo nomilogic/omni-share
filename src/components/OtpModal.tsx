@@ -105,10 +105,10 @@ export function OtpModal({
         ) {
           import("../lib/navigation")
             .then(({ navigateOnce }) => {
-              navigateOnce(navigate, "/onboarding/profile", { replace: true });
+              navigateOnce(navigate, "/dashboard?profile=true", { replace: true });
             })
             .catch(() => {
-              navigate("/onboarding/profile", { replace: true });
+              navigate("/dashboard?profile=true", { replace: true });
             });
         }
         onClose();

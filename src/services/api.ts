@@ -120,6 +120,7 @@ interface APIInstance extends AxiosInstance {
   updateUser: (data: UserPayload) => Promise<any>;
   getWallet: () => Promise<any>;
   facebookPost: (data: any) => Promise<any>;
+  facebookPages: (token: any) => Promise<any>;
   instagramPost: (data: any) => Promise<any>;
   linkedinPost: (data: any) => Promise<any>;
   twitterPost: (data: any) => Promise<any>;
@@ -149,6 +150,7 @@ interface APIInstance extends AxiosInstance {
   generateForgetLink: (data: GenerateForgetLinkPayload) => Promise<any>;
   setNewPassword: (data: NewPasswordPayload, config?: any) => Promise<any>;
   updatePassword: (data: any) => Promise<any>;
+
 }
 
 export const API = axios.create({
@@ -254,8 +256,8 @@ API.updateProfile = (data) => API.patch("/auth/profile", data);
 API.getUserClient = () => API.get("/client/user");
 API.updateUser = (data) => API.patch("/client/user", data);
 API.getWallet = () => API.get("/client/wallet");
-
 API.facebookPost = (data) => API.post("/client/facebook/post", data);
+API.facebookPages = (token) =>API.get(`/client/facebook/pages?access_token=${token}`);
 API.instagramPost = (data) => API.post("/client/instagram/post", data);
 API.linkedinPost = (data) => API.post("/client/linkedin/post", data);
 API.twitterPost = (data) => API.post("/client/twitter/post", data);

@@ -174,13 +174,13 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         if (profile && (profile as any).isOnboarding === false) {
           import("../lib/navigation")
             .then(({ navigateOnce }) => {
-              navigateOnce(navigate, "/onboarding/profile", {
+              navigateOnce(navigate, "/dashboard?profile=true", {
                 replace: true,
               });
             })
             .catch((err) => {
               console.error("failed to load navigation helper", err);
-              navigate("/onboarding/profile", { replace: true });
+              navigate("/dashboard?profile=true", { replace: true });
             });
           return;
         }
@@ -259,11 +259,11 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         if (profile && (profile as any).isOnboarding === false) {
           import("../lib/navigation")
             .then(({ navigateOnce }) => {
-              navigateOnce(navigate, "/onboarding/profile", { replace: true });
+              navigateOnce(navigate, "/dashboard?profile=true", { replace: true });
             })
             .catch((err) => {
               console.error("failed to load navigation helper", err);
-              navigate("/onboarding/profile", { replace: true });
+              navigate("/dashboard?profile=true", { replace: true });
             });
           return;
         }
@@ -294,10 +294,10 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         if (profile && (profile as any).isOnboarding === false) {
           import("../lib/navigation")
             .then(({ navigateOnce }) => {
-              navigateOnce(navigate, "/onboarding/profile", { replace: true });
+              navigateOnce(navigate, "/dashboard?profile=true", { replace: true });
             })
             .catch(() => {
-              navigate("/onboarding/profile", { replace: true });
+              navigate("/dashboard?profile=true", { replace: true });
             });
           return;
         }

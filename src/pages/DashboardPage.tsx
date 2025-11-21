@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
 import ProfileCard from "../components/dashboard/ProfileCard";
 import StatsCard from "../components/dashboard/StatsCard";
@@ -14,8 +14,10 @@ import API from "@/services/api";
 export const DashboardPage: React.FC = () => {
   const { user } = useAppContext();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { state, dispatch, setProfileEditing } = useAppContext();
-  const isEditing = state?.isProfileEditing || false;
+  const profileParam = searchParams.get("profile") === "true";
+  const isEditing = profileParam || state?.isProfileEditing || false;
   const isPasswordEditing = state?.isPasswordEditing || false;
 
   // Get user plan and tier info
