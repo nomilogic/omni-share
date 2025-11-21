@@ -238,7 +238,6 @@ export async function getCurrentUser() {
   }
 
   try {
-    console.log("🔑 Fetching current user with JWT token");
     const response = await API.getUser();
 
     const responseData = await response.data.data;

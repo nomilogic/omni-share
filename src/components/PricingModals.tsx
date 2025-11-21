@@ -2,6 +2,8 @@ import React from "react";
 import { createPortal } from "react-dom";
 import { Loader2, X } from "lucide-react";
 import { usePricingModal } from "../context/PricingModalContext";
+import Icon from "./Icon";
+import { useAppContext } from "@/context/AppContext";
 
 export const PricingModals: React.FC = () => {
   const {
@@ -10,13 +12,6 @@ export const PricingModals: React.FC = () => {
     loadingPackage,
     closeConfirm,
     runConfirmHandler,
-
-    // Addon confirm modal no longer used; Omni Coins go directly to Stripe
-    // addonConfirmOpen,
-    // selectedAddon,
-    // loadingAddon,
-    // closeAddonConfirm,
-    // runAddonHandler,
 
     downgradeRequestOpen,
     downgradeLoading,
@@ -30,7 +25,7 @@ export const PricingModals: React.FC = () => {
     closeCancelDowngrade,
     runCancelDowngradeHandler,
   } = usePricingModal();
-
+  const { paymentProcessing } = useAppContext();
   // Lock body scroll while any pricing modal is open
   React.useEffect(() => {
     if (typeof document === "undefined") return;
@@ -50,7 +45,27 @@ export const PricingModals: React.FC = () => {
 
   const modalContent = (
     <>
-      {/* Confirm Plan Modal */}
+      {paymentProcessing && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex lg:items-center justify-center p-4 z-50">
+          <div className="bg-gray-50 rounded-md shadow-md w-full max-w-md px-6 py-10 h-fit relative">
+            <div className="flex justify-center items-center mb-4">
+              <Icon name="spiral-logo" size={45} className="animate-spin " />
+            </div>
+
+            <h2 className="text-2xl font-semibold text-gray-900 text-center">
+              Processing your payment
+            </h2>
+
+            <p className="text-gray-600 text-sm text-center mt-2 leading-relaxed">
+              Hold tight while we complete your secure transaction.
+            </p>
+
+            <div className="w-full mt-6 h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div className="h-full w-1/3 bg-purple-500 animate-pulse rounded-full"></div>
+            </div>
+          </div>
+        </div>
+      )}
       {confirmOpen && selectedPlan && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex lg:items-center justify-center p-4 z-50">
           <div className="bg-gray-50 rounded-md shadow-md w-full max-w-md px-8 py-6 h-fit relative">
@@ -62,7 +77,9 @@ export const PricingModals: React.FC = () => {
             </button>
 
             <div className="flex justify-between items-center mb-3">
-              <h2 className="text-2xl font-bold text-purple-700">Confirm Plan</h2>
+              <h2 className="text-2xl font-bold text-purple-700">
+                Confirm Plan
+              </h2>
             </div>
 
             {/* Price Box */}
@@ -78,7 +95,9 @@ export const PricingModals: React.FC = () => {
 
                 <div className="flex flex-col items-start leading-none font-semibold">
                   <span className="text-sm font-bold text-purple-700">USD</span>
-                  <span className="text-sm font-bold text-purple-700">Month</span>
+                  <span className="text-sm font-bold text-purple-700">
+                    Month
+                  </span>
                 </div>
               </div>
 
@@ -133,7 +152,9 @@ export const PricingModals: React.FC = () => {
             </button>
 
             <div className="flex justify-between items-center mb-3">
-              <h2 className="text-2xl font-bold text-purple-700">Request Downgrade To</h2>
+              <h2 className="text-2xl font-bold text-purple-700">
+                Request Downgrade To
+              </h2>
             </div>
 
             {/* Price Box */}
@@ -149,7 +170,9 @@ export const PricingModals: React.FC = () => {
 
                 <div className="flex flex-col items-start leading-none font-semibold">
                   <span className="text-sm font-bold text-purple-700">USD</span>
-                  <span className="text-sm font-bold text-purple-700">Month</span>
+                  <span className="text-sm font-bold text-purple-700">
+                    Month
+                  </span>
                 </div>
               </div>
               <hr className="h-[1px] bg-gray-100 my-2" />

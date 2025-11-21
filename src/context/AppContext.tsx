@@ -198,7 +198,6 @@ const initialState: AppState = {
   balance: 0, // ✅ added
 };
 
-// Reducer
 function appReducer(state: AppState, action: AppAction): AppState {
   switch (action.type) {
     case "SET_LOADING":
@@ -257,13 +256,15 @@ function appReducer(state: AppState, action: AppAction): AppState {
   }
 }
 
-// Context
 const AppContext = createContext<{
   state: AppState;
   dispatch: React.Dispatch<AppAction>;
+  processing: boolean;
+  setProcessing: any;
+  generationAmounts: any;
+  setGenerationAmounts: any;
 } | null>(null);
 
-// Provider
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
@@ -285,25 +286,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     const initializeAuth = async () => {
-      console.log("initializeAuth");
       try {
         const persistentToken = localStorage.getItem("auth_token");
-        const expiry = localStorage.getItem("auth_token_expiry");
-        const remember = localStorage.getItem("auth_remember");
 
-        if (persistentToken && expiry && remember === "true") {
-          const expiryDate = new Date(expiry);
-          if (new Date() > expiryDate) {
-            localStorage.removeItem("auth_token");
-            localStorage.removeItem("auth_token_expiry");
-            localStorage.removeItem("auth_remember");
-            dispatch({ type: "SET_LOADING", payload: false });
-            return;
-          }
-        }
-
-        const sessionToken = sessionStorage.getItem("auth_token");
-        if (!persistentToken && !sessionToken) {
+        if (!persistentToken) {
           dispatch({ type: "SET_LOADING", payload: false });
           return;
         }
@@ -345,32 +331,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     initializeAuth();
   }, []);
 
+  const [processing, setProcessing] = useState<any>(false);
+
   useEffect(() => {
     if (!state.user?.id) return;
 
     const channel = pusher.subscribe(`user-${state.user.id}`);
-
-    const handleSubscriptionSuccess = async (data: any) => {
-      if (data.success) {
-        try {
-          const updatedAuthResult: any = await getCurrentUser();
-          dispatch({ type: "SET_USER", payload: updatedAuthResult.user });
-          if (updatedAuthResult?.user?.profile) {
-            const updatedProfile = updatedAuthResult.user.profile;
-
-            dispatch({ type: "SET_SELECTED_PROFILE", payload: updatedProfile });
-            if (updatedProfile.plan) {
-              dispatch({ type: "SET_USER_PLAN", payload: updatedProfile.plan });
-            }
-            if (updatedProfile.type === "business") {
-              dispatch({ type: "SET_BUSINESS_ACCOUNT", payload: true });
-            }
-          }
-          fetchBalance();
-        } catch (error) {
-          console.error("Error refreshing profile after subscription:", error);
-        }
-      }
+    const handleSubscriptionSuccess = async () => {
+      try {
+        const updatedAuthResult: any = await getCurrentUser();
+        dispatch({ type: "SET_USER", payload: updatedAuthResult.user });
+        fetchBalance();
+      } catch (error) {}
     };
 
     channel.bind("subscription-success", handleSubscriptionSuccess);
@@ -399,45 +371,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     };
   }, [state.user?.id]);
 
-  return (
-    <LoadingProvider>
-      <AppContext.Provider value={{ state, dispatch }}>
-        {children}
-      </AppContext.Provider>
-    </LoadingProvider>
-  );
-};
-
-// Hook with convenience methods
-export const useAppContext = () => {
-  const context = useContext(AppContext);
-  if (!context) {
-    throw new Error("useAppContext must be used within an AppProvider");
-  }
-
-  // Add convenience methods for campaign management
-  const selectCampaign = (campaign: Campaign | null) => {
-    context.dispatch({ type: "SET_SELECTED_CAMPAIGN", payload: campaign });
-  };
-
-  const refreshUser = async () => {
-    const authResult = await getCurrentUser();
-
-    if (authResult && authResult.user) {
-      context.dispatch({ type: "SET_USER", payload: authResult.user });
-      return;
-    }
-  };
-
-  const logout = async () => {
-    localStorage.clear();
-
-    context.dispatch({ type: "RESET_STATE" });
-  };
-
   const [generationAmounts, setGenerationAmounts] = useState<any>({});
 
   const fetchData = async () => {
+    if (!state.user?.id) return;
+
     try {
       const res = await API.getGenerateAmount();
       const data = await res.data;
@@ -458,9 +396,54 @@ export const useAppContext = () => {
     fetchData();
   }, []);
 
+  return (
+    <LoadingProvider>
+      <AppContext.Provider
+        value={{
+          state,
+          dispatch,
+          processing,
+          setProcessing,
+          generationAmounts,
+          setGenerationAmounts,
+        }}
+      >
+        {children}
+      </AppContext.Provider>
+    </LoadingProvider>
+  );
+};
+
+export const useAppContext = () => {
+  const context = useContext(AppContext);
+  if (!context) {
+    throw new Error("useAppContext must be used within an AppProvider");
+  }
+
+  const selectCampaign = (campaign: Campaign | null) => {
+    context.dispatch({ type: "SET_SELECTED_CAMPAIGN", payload: campaign });
+  };
+
+  const refreshUser = async () => {
+    const authResult = await getCurrentUser();
+
+    if (authResult && authResult.user) {
+      context.dispatch({ type: "SET_USER", payload: authResult.user });
+      return;
+    }
+  };
+
+  const logout = async () => {
+    localStorage.clear();
+
+    context.dispatch({ type: "RESET_STATE" });
+  };
+
   return {
-    generationAmounts: generationAmounts,
+    generationAmounts: context.generationAmounts,
     state: context.state,
+    paymentProcessing: context.processing,
+    setProcessing: context.setProcessing,
     refreshUser: refreshUser,
     dispatch: context.dispatch,
     user: context.state.user,
