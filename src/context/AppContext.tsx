@@ -380,7 +380,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       const res = await API.getGenerateAmount();
       const data = await res.data;
 
-      // Convert array → object (keyed by type)
       const formattedData = (data.data || []).reduce((acc: any, item: any) => {
         acc[item.type] = item.amount;
         return acc;
@@ -394,7 +393,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [state.user?.id]);
 
   return (
     <LoadingProvider>

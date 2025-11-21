@@ -1313,7 +1313,6 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
 
   return (
     <div className="fixed inset-0 bg-white z-50 flex flex-col-reverse md:flex-row">
-      {/* Tools Panel - Top Row on Mobile, Left Column on Desktop - Fixed Height/Width with Scroll */}
       <div
         className={`w-full md:w-80 md:min-w-80 md:max-w-80 ${
           aspectRatio === "1:1" ? "h-[50vh]" : ""
@@ -1321,22 +1320,8 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
           aspectRatio === "9:16" ? "h-[50vh]" : ""
         }  md:h-full bg-white border-b md:border-b-0 md:border-r border-gray-200 flex flex-col`}
       >
-        {/* Tools Header - Fixed */}
-        {/* <div className="flex-shrink-0 p-3 md:p-4 border-b border-gray-200 bg-white">
-          <div className="flex items-center justify-between">
-            <h3 className="text-base md:text-lg font-semibold text-slate-900">Template Editor</h3>
-            <button
-              onClick={onCancel}
-              className="text-gray-400 hover:text-gray-500 font-medium text-xl md:text-2xl font-bold leading-none p-1 hover:bg-gray-100 rounded transition-colors"
-            >
-              ×
-            </button>
-          </div>
-        </div> */}
-
-        {/* Tools Content - Scrollable */}
-        <div className="flex overflow-y-auto p-3 md:p-4 min-h-0">
-          <div className="space-y-3 md:space-y-4">
+        <div className="flex w-full overflow-y-auto p-3 md:p-4 min-h-0">
+          <div className="space-y-3 md:space-y-4 w-full">
             {/* Element Creation Toolbar */}
             <div className="border border-gray-200 rounded-md p-2 md:p-3 bg-gray-50">
               <h4 className="text-xs md:text-sm font-semibold text-slate-700 mb-2 md:mb-3">
@@ -2043,8 +2028,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
           </div>
         </div>
 
-        {/* Tools Actions - Fixed at bottom of tools panel */}
-        <div className="flex-shrink-0 px-1 ">
+        <div className="p-3 md:p-4 ">
           <div className="flex flex-row-reverse justify-center ">
             <button
               onClick={exportImage}
@@ -2054,22 +2038,16 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
               {isSaving ? (
                 <>
                   <Loader className="w-3 h-3 md:w-4 md:h-4 animate-spin " />
-                  <span className="hidden sm:inline text-sm">
-                    Saving 
-                  </span>
+                  <span className="hidden sm:inline text-sm">Saving</span>
                   <span className="sm:hidden text-sm">Saving...</span>
                 </>
               ) : (
                 <>
-                  {/* <Download className="w-3 h-3 md:w-4 md:h-4" /> */}
                   <span className="sm:inline">Continue</span>
-                  {/* <span className="sm:hidden">Save</span> */}
                 </>
               )}
             </button>
-            {/* <div className="text-center theme-text-secondary ">
-              <span className="text-lg font-medium">or</span>
-            </div> */}
+
             <button
               onClick={onCancel}
               className="text-purple-600 flex justify-center items-center gap-2  font-medium w-full px-3 py-2.5  mx-1 rounded-md border border-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3]"
@@ -2080,12 +2058,9 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
         </div>
       </div>
 
-      {/* Canvas Area - Bottom Row on Mobile, Right Column on Desktop - Flexible Height/Width with Scroll */}
       <div className="flex-1 bg-gray-50 flex flex-col min-h-0">
-        {/* Canvas Controls - Fixed Header */}
         <div className="flex-shrink-0 px-3 py-1 md:py-2.5 bg-white border-b border-gray-200">
           <div className="flex items-center justify-between">
-            {/* Canvas Info */}
             <div className="text-xs text-gray-500 font-medium font-mono">
               {canvasDimensions && (
                 <>
@@ -2100,7 +2075,6 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
               )}
             </div>
 
-            {/* Zoom Controls */}
             <div className="flex items-center space-x-1.5 md:space-x-2">
               <button
                 onClick={() => setZoomLevel(Math.max(0.1, zoomLevel - 0.1))}
