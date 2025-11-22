@@ -1,10 +1,11 @@
 import { Share2, Copy, Users } from "lucide-react";
 import { useState } from "react";
 import Referal from "../../assets/referal.png";
+import { useAppContext } from "@/context/AppContext";
 function ReferralSection() {
   const [copied, setCopied] = useState(false);
-  const referralLink =
-    "https://omnishare.ai/auth?referralId=25803be2-d178-48e9-8631-d73b042f6dee";
+  const { user } = useAppContext();
+  const referralLink = `http://localhost:5000/auth?referralId=${user.id}`;
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(referralLink);

@@ -25,7 +25,7 @@ function ProfileCard() {
   const initials = getInitials(fullName);
 
   return (
-    <div className="flex flex-col-reverse md:flex-row items-center  justify-between  ">
+    <div className="flex md:flex-row flex-col-reverse md:items-center gap-5  md:justify-between   ">
       <div className="flex items-center gap-2">
         <div className="lg:w-14 lg:h-14 w-12 h-12 bg-gray-900 rounded-full flex items-center justify-center text-white text-lg font-bold flex-shrink-0">
           <img
@@ -53,7 +53,7 @@ function ProfileCard() {
           <div className="text-sm text-[#7650e3] -mt-1">{email}</div>
         </div>
       </div>
-      <div className="flex  items-center  lg:gap-5 gap-2 justify-center w-full md:w-auto">
+      <div className="flex  items-center  lg:gap-5 gap-2 md:justify-center justify-end ">
         <button
           className="flex items-center rounded-md gap-2 transition-colors text-sm font-semibold "
           style={{
