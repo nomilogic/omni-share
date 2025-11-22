@@ -1373,7 +1373,7 @@ function HomePage() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
         >
-          <div className="w-full mx-auto flex pt-2 md:flex-row items-center gap-2 md:justify-between justify-center flex-col px-[10%] sm:text-sm text-xs">
+          <div className="w-full mx-auto flex pt-2 md:flex-row items-center gap-2 md:justify-between justify-center flex-col md:px-[10%] px-3 text-sm ">
             <span>© {new Date().getFullYear()} OMNISHARE</span>
             <div className="flex justify-center space-x-1 text-sm theme-text-light mb-1">
               <Link
