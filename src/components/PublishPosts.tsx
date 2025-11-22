@@ -21,6 +21,14 @@ interface PublishProps {
   onReset?: () => void;
 }
 
+const ALL_PLATFORMS: Platform[] = [
+  "linkedin",
+  "facebook",
+  "instagram",
+  "youtube",
+  "tiktok",
+];
+
 export const PublishPosts: React.FC<PublishProps> = ({
   posts,
   userId,
@@ -344,9 +352,9 @@ export const PublishPosts: React.FC<PublishProps> = ({
   };
 
   return (
-    <div className="theme-bg-light max-w-4xl mx-auto   ">
+    <div className="theme-bg-light max-w-4xl mx-auto    ">
       <div className="lg:px-4 px-3 lg:py-8 py-4">
-        <h2 className="text-2xl font-bold theme-text-primary mb-1">
+        <h2 className="text-2xl font-bold theme-text-primary mb-2">
           Publish Your Posts
         </h2>
         {/* <p className="text-sm text-gray-500 font-medium">
@@ -354,7 +362,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
           directly.
         </p> */}
 
-        {posts.some((post) => !connectedPlatforms.includes(post.platform)) && (
+        {/* {posts.some((post) => !connectedPlatforms.includes(post.platform)) && (
           <div className=" p-4 theme-bg-quaternary rounded-md border border-purple-600 my-3">
             <div className="flex items-start gap-4">
               <div>
@@ -368,9 +376,17 @@ export const PublishPosts: React.FC<PublishProps> = ({
               </div>
             </div>
           </div>
-        )}
+        )} */}
 
-        <div className="md:mb-8 mb-4">
+        <div className=" p-2 bg-blue-50 border border-blue-200 rounded-md">
+          <p className="text-sm text-blue-800">
+            <span className="font-medium">{connectedPlatforms.length}</span> of{" "}
+            <span className="font-medium">{ALL_PLATFORMS.length}</span>{" "}
+            platforms connected
+          </p>
+        </div>
+
+        <div className="md:mb-8 mb-4 mt-4">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="font-semibold text-slate-900 mb-1">
