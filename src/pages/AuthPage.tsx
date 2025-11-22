@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { AuthForm } from "../components/AuthForm";
 import { useAppContext } from "../context/AppContext";
 import API from "../services/api";
+import { notify } from "@/utils/toast";
 
 export const AuthPage: React.FC = () => {
   const { state, dispatch } = useAppContext();
@@ -53,7 +54,7 @@ export const AuthPage: React.FC = () => {
       await API.setNewPassword({ new_password }, {
         headers: { authorization: token },
       } as any);
-      alert("Password updated successfully");
+      notify("error", "Password updated successfully");
       navigate("/login");
     } catch (err: any) {
       console.error("setNewPassword failed", err);

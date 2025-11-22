@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { Copy, Share2, X } from "lucide-react";
+import { notify } from "@/utils/toast";
 
 type InviteOpts = {
   title?: string;
@@ -46,7 +47,8 @@ const InviteModal: React.FC<{
     } else {
       // fallback to copy
       copy();
-      alert(
+      notify(
+        "error",
         "Share API not supported in this browser — link copied to clipboard"
       );
     }

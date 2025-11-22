@@ -277,8 +277,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   const fetchBalance = async () => {
     try {
       const response = await API.userBalance();
+      const updatedAuthResult: any = await getCurrentUser();
       const { data } = response;
       dispatch({ type: "SET_BALANCE", payload: data?.data ?? 0 });
+      dispatch({ type: "SET_USER", payload: updatedAuthResult.user });
     } catch (error) {
       console.error("Error fetching wallet balance:", error);
     }
@@ -294,14 +296,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
           return;
         }
 
-        const authResult = await getCurrentUser();
+        const authResult: any = await getCurrentUser();
+
+        dispatch({ type: "SET_USER", payload: authResult.user });
+        dispatch({
+          type: "SET_BALANCE",
+          payload:
+            authResult?.user.wallet.coins +
+            authResult?.user.wallet.referralCoin,
+        });
         if (!authResult?.user) {
           dispatch({ type: "SET_LOADING", payload: false });
           return;
         }
-
-        dispatch({ type: "SET_USER", payload: authResult.user });
-
         const profile = authResult.user.profile;
         if (profile) {
           dispatch({ type: "SET_SELECTED_PROFILE", payload: profile });
@@ -339,10 +346,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     const channel = pusher.subscribe(`user-${state.user.id}`);
     const handleSubscriptionSuccess = async () => {
       try {
-        const updatedAuthResult: any = await getCurrentUser();
-        dispatch({ type: "SET_USER", payload: updatedAuthResult.user });
         fetchBalance();
-      } catch (error) {}
+      } catch (error) {
+        console.log("error", error);
+      }
     };
 
     channel.bind("subscription-success", handleSubscriptionSuccess);

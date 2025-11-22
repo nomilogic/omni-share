@@ -68,7 +68,6 @@ function App() {
           <SubscriptionModalProvider>
             <PricingModalProvider>
               <Routes>
-                {/* <Route path="/" element={showlanded() ? <HomePage /> : <LandingPage />} />   */}
                 <Route path="/" element={<HomePage />} />
 
                 <Route path="/auth" element={<AuthPage />} />
@@ -170,7 +169,6 @@ function App() {
                   }
                 />
 
-                {/* New campaigns route */}
                 <Route
                   path="/campaigns/*"
                   element={
@@ -181,9 +179,6 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
-
-                {/* Companies route redirects to campaigns for backward compatibility */}
-                {/* <Route path="/campaigns/*" element={<Navigate to="/campaigns" replace />} /> */}
 
                 <Route
                   path="/content/*"
@@ -196,7 +191,6 @@ function App() {
                   }
                 />
 
-                {/* Direct /generate route - redirects to /content (Generate now shows as modal overlay) */}
                 <Route
                   path="/generate"
                   element={
@@ -260,7 +254,6 @@ function App() {
                   }
                 />
 
-                {/* Catch all - redirect to auth by default if not logged in, otherwise to dashboard */}
                 <Route path="*" element={<Navigate to="/auth" replace />} />
               </Routes>
             </PricingModalProvider>

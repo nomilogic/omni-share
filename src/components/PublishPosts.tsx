@@ -57,7 +57,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
 
   useEffect(() => {
     console.log("Publishing posts for user:", userId);
-    //alert('Publishing posts for user: ' + userId);
+    //notify("error",'Publishing posts for user: ' + userId);
     checkConnectedPlatforms();
   }, [userId, posts]);
 

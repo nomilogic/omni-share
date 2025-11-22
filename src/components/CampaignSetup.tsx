@@ -15,6 +15,7 @@ import {
   DollarSign,
 } from "lucide-react";
 import { CampaignInfo } from "../types";
+import { notify } from "@/utils/toast";
 
 interface CampaignSetupProps {
   onNext: (data: CampaignInfo) => void;
@@ -143,12 +144,12 @@ export const CampaignSetup: React.FC<CampaignSetupProps> = ({
 
     // Validate required fields
     if (!formData.name || formData.name.trim() === "") {
-      alert("Please enter a campaign name");
+      notify("error", "Please enter a campaign name");
       return;
     }
 
     if (!formData.platforms || formData.platforms.length === 0) {
-      alert("Please select at least one platform");
+      notify("error", "Please select at least one platform");
       return;
     }
 

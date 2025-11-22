@@ -46,6 +46,7 @@ import { useLoadingAPI } from "../hooks/useLoadingAPI";
 import API from "@/services/api";
 import { useNavigate } from "react-router-dom";
 import { ImageUploader } from ".";
+import { notify } from "@/utils/toast";
 
 // Helper function to convert file to base64
 const fileToBase64 = (file: File): Promise<string> => {
@@ -854,7 +855,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         !formData.mediaUrl
       ) {
         console.log("🎯 Image generation required - no image found");
-        alert(
+        notify(
+          "error",
           'Please generate an image first using the "Generate Image" button, then generate the post.'
         );
         return;
@@ -867,7 +869,10 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         !formData.media
       ) {
         console.log("🎯 Image upload required");
-        alert("Please upload an image first, then generate the post.");
+        notify(
+          "error",
+          "Please upload an image first, then generate the post."
+        );
         return;
       }
 
@@ -1869,7 +1874,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     try {
       const userResult = await getCurrentUser();
       if (!userResult?.user) {
-        alert("You must be signed in to upload a thumbnail");
+        notify("error", "You must be signed in to upload a thumbnail");
         return;
       }
 
@@ -1934,7 +1939,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       }
     } catch (err) {
       console.error("Failed to upload custom thumbnail:", err);
-      alert("Failed to upload thumbnail");
+      notify("error", "Failed to upload thumbnail");
     } finally {
       setCustomThumbnailUploading(false);
       if (thumbnailInputRef.current) thumbnailInputRef.current.value = "";
@@ -2074,7 +2079,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       console.error("❌ Error in combined generation with post:", error);
       if (error instanceof Error) {
         console.error("❌ Error details:", error.message, error.stack);
-        alert(`Failed to generate image: ${error.message}`);
+        notify("error", `Failed to generate image: ${error.message}`);
       }
       setIsGeneratingBoth(false);
     }
