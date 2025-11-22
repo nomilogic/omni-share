@@ -337,6 +337,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     const walletChannel = pusher.subscribe(`wallet-${userId}`);
     const handleCoinsUpdate = (data: { coins: number }) => {
       dispatch({ type: "SET_BALANCE", payload: data.coins });
+      fetchBalance();
     };
 
     walletChannel.bind("coins-update", handleCoinsUpdate);
