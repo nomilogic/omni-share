@@ -99,16 +99,18 @@ export const PublishPosts: React.FC<PublishProps> = ({
 
       if (tokenResponse.data) {
         const tokenData = await tokenResponse.data;
-        console.log(tokenData)
+        console.log(tokenData);
         if (tokenData.connected && tokenData.token?.access_token) {
-          const pagesResponse = await API.facebookPages(tokenData.token.access_token)
-            console.log(pagesResponse, "pages"); 
-          
-          if (pagesResponse.status=="200") {
+          const pagesResponse = await API.facebookPages(
+            tokenData.token.access_token
+          );
+          console.log(pagesResponse, "pages");
+
+          if (pagesResponse.status == "200") {
             const pagesData = await pagesResponse.data.data;
             setFacebookPages(pagesData || []);
             if (
-              pagesData.pages &&  
+              pagesData.pages &&
               pagesData.pages.length > 0 &&
               !selectedFacebookPage
             ) {
@@ -167,7 +169,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
         `${platform}_oauth`,
         "width=600,height=700,scrollbars=yes,resizable=yes"
       );
-      
+
       if (!authWindow) {
         throw new Error("OAuth popup blocked");
       }
@@ -221,8 +223,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
       );
     } finally {
       setConnectingPlatforms((prev) => prev.filter((p) => p !== platform));
-     // checkConnectedPlatforms();
-
+      // checkConnectedPlatforms();
     }
   };
 
@@ -699,13 +700,6 @@ export const PublishPosts: React.FC<PublishProps> = ({
         )}
 
         <button
-          onClick={onBack}
-          class="text-center w-full text-white font-semibold transition-colors bg-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3] border border-[#7650e3] px-4 py-2.5 rounded-md mb-5"
-        >
-          Close
-        </button>
-
-        <button
           onClick={handlePublish}
           disabled={
             publishing ||
@@ -715,7 +709,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
                 !publishedPlatforms.includes(p)
             ).length === 0
           }
-          className={`w-full rounded-md py-2.5  px-4 font-medium theme-text-light transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 ${
+          className={`w-full rounded-md py-2.5 px-4 font-medium theme-text-light transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mb-5 text-center text-white font-semibold transition-colors bg-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3] border border-[#7650e3] ${
             selectedPlatforms.filter(
               (p) =>
                 connectedPlatforms.includes(p) &&
@@ -754,6 +748,13 @@ export const PublishPosts: React.FC<PublishProps> = ({
               </span>
             </div>
           )}
+        </button>
+
+        <button
+          onClick={onBack}
+          class="rounded-md theme-bg-light px-4 py-2.5 w-full text-center font-semibold text-base border border-[#7650e3] text-[#7650e3] transition-colors hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] disabled:cursor-not-allowed"
+        >
+          Close
         </button>
 
         {/* Helper text */}
