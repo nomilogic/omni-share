@@ -471,7 +471,7 @@ const ProfileSetupSinglePage: React.FC = () => {
   const onSubmit = async (data: ProfileFormData) => {
     setLoading(true);
     try {
-      const submitData = {  ...data };
+      const submitData = { ...data };
       const form = document.querySelector("form");
       const formD = new FormData(form as HTMLFormElement);
       const fileBase64 = await convertFileToBase64(formD.get("brandLogo"));
@@ -482,7 +482,7 @@ const ProfileSetupSinglePage: React.FC = () => {
       const cleanData = {
         ...submitData,
       };
-      const { email, ...all  } = cleanData;
+      const { email, ...all } = cleanData;
 
       await API.updateProfileData(all);
       localStorage.removeItem(STORAGE_KEY);
@@ -511,9 +511,9 @@ const ProfileSetupSinglePage: React.FC = () => {
   };
   return (
     <div className="bg-transparent">
-      <div className=" flex flex-col md:flex-row-reverse jusitify-between items-between w-full p-4">
+      <div className=" flex flex-col md:flex-row-reverse jusitify-between items-between w-full md:p-4 p-3">
         <div className="w-full">
-          <div className="flex justify-between items-center gap-2 mb-2">
+          <div className="flex md:justify-between md:flex-row flex-col-reverse items-center gap-2 mb-2">
             <h1 className="text-3xl font-bold text-black  w-full">
               Complete Your Profile
             </h1>
@@ -534,7 +534,7 @@ const ProfileSetupSinglePage: React.FC = () => {
         <div className="bg-transparent  overflow-hidden relative">
           {/* Header */}
 
-          <div className="p-4">
+          <div className="md:p-4 p-3">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
               {profileFormConfig.map((section) => {
                 return (
@@ -586,7 +586,11 @@ const ProfileSetupSinglePage: React.FC = () => {
                                       : "border-gray-300"
                                   }
                                 //not editable if field is email
-                                ${field.type == "email" ? "disabled text-gray-500 border-gray-300 border" : ""}`}
+                                ${
+                                  field.type == "email"
+                                    ? "disabled text-gray-500 border-gray-300 border"
+                                    : ""
+                                }`}
                                   placeholder={field.placeholder || ""}
                                 />
                                 {field.helperText && (
@@ -736,7 +740,7 @@ const ProfileSetupSinglePage: React.FC = () => {
                                   {field.label} {field.required && "*"}
                                 </label>
 
-                                <div className="mt-1 flex flex-col items-center justify-center p-4 border-2 border-gray-300 border-dashed rounded-md relative overflow-hidden">
+                                <div className="mt-1 flex flex-col items-center justify-center md:p-4 p-3 border-2 border-gray-300 border-dashed rounded-md relative overflow-hidden">
                                   {/* Preview if exists */}
                                   {formData[fieldName] ? (
                                     <div className="flex flex-col items-center space-y-2">

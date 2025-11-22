@@ -58,7 +58,9 @@ const features: Feature[] = [
     description: (
       <p className="text-gray-500 text-lg leading-relaxed md:w-full">
         Automatically{" "}
-        <span className="text-purple-600 text-xl font-medium">resize posts</span>{" "}
+        <span className="text-purple-600 text-xl font-medium">
+          resize posts
+        </span>{" "}
         for each platform and create{" "}
         <span className="text-purple-600 text-xl font-medium">
           striking video thumbnails
@@ -108,7 +110,9 @@ const features: Feature[] = [
         Publish your content{" "}
         <span className="text-purple-600 text-xl font-medium">instantly</span>{" "}
         with our lightning-fast, reliable system. Reach your audience at the{" "}
-        <span className="text-purple-600 text-xl font-medium">right moment</span>
+        <span className="text-purple-600 text-xl font-medium">
+          right moment
+        </span>
         , every time, ensuring{" "}
         <span className="text-purple-600 text-xl font-medium">
           maximum engagement and impact.
@@ -125,14 +129,17 @@ const features: Feature[] = [
 const getFloatStyles = (id: number, floatIndex: number) => {
   if (floatIndex === 0) {
     if (id === 1) return { bottom: "47%", right: "-20%", width: "40%" };
-    if (id === 2) return { bottom: "-10%", right: "-15%", width: "40%", height: "70%" };
+    if (id === 2)
+      return { bottom: "-10%", right: "-15%", width: "40%", height: "70%" };
     if (id === 3) return { top: "60%", right: "-9%", width: "40%" };
-    if (id === 4) return { bottom: "35%", right: "-19%", width: "27%", height: "50%" };
+    if (id === 4)
+      return { bottom: "35%", right: "-19%", width: "27%", height: "50%" };
     return { bottom: "-5%", left: "-4%", width: "29.5%" };
   }
   if (floatIndex === 1) {
     if (id === 1) return { bottom: "-20%", left: "-10%", width: "40%" };
-    if (id === 4) return { bottom: "-20%", right: "-20%", width: "28%", height: "53%" };
+    if (id === 4)
+      return { bottom: "-20%", right: "-20%", width: "28%", height: "53%" };
     return { bottom: "18%", right: "-12%", width: "31%" };
   }
   return {};
@@ -140,14 +147,34 @@ const getFloatStyles = (id: number, floatIndex: number) => {
 
 const imageVariants = {
   initial: { opacity: 0, y: 10, scale: 0.95 },
-  animate: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.4, ease: "easeOut" } },
-  exit: { opacity: 0, y: -10, scale: 0.95, transition: { duration: 0.3, ease: "easeIn" } },
+  animate: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.4, ease: "easeOut" },
+  },
+  exit: {
+    opacity: 0,
+    y: -10,
+    scale: 0.95,
+    transition: { duration: 0.3, ease: "easeIn" },
+  },
 };
 
 const floatVariants = {
   initial: { opacity: 0, y: 5, scale: 0.8 },
-  animate: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.5, ease: "easeOut" } },
-  exit: { opacity: 0, y: -5, scale: 0.8, transition: { duration: 0.3, ease: "easeIn" } },
+  animate: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.5, ease: "easeOut" },
+  },
+  exit: {
+    opacity: 0,
+    y: -5,
+    scale: 0.8,
+    transition: { duration: 0.3, ease: "easeIn" },
+  },
 };
 
 const FeaturesPage: React.FC = () => {
@@ -197,11 +224,11 @@ const FeaturesPage: React.FC = () => {
   return (
     <div className="w-full">
       <section className="relative overflow-hidden py-16 md:py-24">
-        <div className="relative w-full md:w-[80%] mx-auto px-6 md:px-0">
+        <div className="relative w-full max-w-full mx-auto px-4 sm:px-6 lg:px-[10%]">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 text-center">
             <span className="font-bold">
               A Complete Suite for Social Success
-              <br className="hidden md:inline" />
+              <br className="hidden md:block" />
               OmniShare – AI-Powered Content Creation
             </span>
           </h2>
@@ -226,7 +253,9 @@ const FeaturesPage: React.FC = () => {
                     <div
                       key={item.id}
                       className={`cursor-pointer transition-all p-4 rounded-xl ${
-                        isActive ? "bg-gray-200" : "bg-gray-100 hover:bg-gray-200"
+                        isActive
+                          ? "bg-gray-200"
+                          : "bg-gray-100 hover:bg-gray-200"
                       } md:p-0 md:bg-transparent md:hover:bg-transparent`}
                       onClick={() => handleItemClick(item.id)}
                     >
@@ -238,9 +267,12 @@ const FeaturesPage: React.FC = () => {
                             }`}
                             ref={(el) => (iconRefs.current[item.id] = el)}
                           >
-                            {React.cloneElement(item.icon as React.ReactElement, {
-                              className: "w-6 h-6 text-white",
-                            })}
+                            {React.cloneElement(
+                              item.icon as React.ReactElement,
+                              {
+                                className: "w-6 h-6 text-white",
+                              }
+                            )}
                           </div>
                           <div className="mt-3 ml-2 md:mt-2 md:ml-4">
                             <h3
@@ -318,7 +350,10 @@ const FeaturesPage: React.FC = () => {
                       animate="animate"
                       exit="exit"
                     >
-                      <img src={floatImages[0]} className="w-full h-full rounded-lg" />
+                      <img
+                        src={floatImages[0]}
+                        className="w-full h-full rounded-lg"
+                      />
                     </motion.div>
                   )}
 
@@ -326,12 +361,15 @@ const FeaturesPage: React.FC = () => {
                     <motion.div
                       className="absolute p-2 bg-white rounded-xl shadow-xl z-10"
                       style={getFloatStyles(activeFeature.id, 1)}
-                      variants={floatVariants}       
+                      variants={floatVariants}
                       initial="initial"
                       animate="animate"
                       exit="exit"
                     >
-                      <img src={floatImages[1]} className="w-full h-full rounded-lg" />
+                      <img
+                        src={floatImages[1]}
+                        className="w-full h-full rounded-lg"
+                      />
                     </motion.div>
                   )}
                 </motion.div>

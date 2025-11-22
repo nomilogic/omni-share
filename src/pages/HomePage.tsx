@@ -449,7 +449,7 @@ function HomePage() {
       {/* Hero Section */}
       <section
         id="home"
-        className="relative min-h-screen flex items-center justify-center overflow-hidden"
+        className="relative min-h-[100vh] flex items-center justify-center overflow-hidden"
         style={{
           background: "linear-gradient(135deg, #7650e3 0%, #6366F1 100%)",
         }}
@@ -464,7 +464,7 @@ function HomePage() {
         />
 
         <motion.div
-          className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center"
+          className="relative z-10 md:w-[80%] mx-auto  px-4 sm:px-6 lg:px-[10%]  text-center"
           style={{ opacity: heroOpacity, scale: heroScale }}
         >
           <motion.h1
@@ -484,7 +484,7 @@ function HomePage() {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.5, type: "spring", stiffness: 100 }}
-              className="bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent"
+              className="bg-gradient-to-r from-white to-purple-100 bg-clip-text text-transparent"
             >
               Made Simple
             </motion.span>
@@ -543,18 +543,25 @@ function HomePage() {
                 <button onClick={() => window.open(icons.url, "_blank")}>
                   <motion.svg
                     key={icons.index}
-                    className="w-10 h-10 text-white/80 hover:text-white transition-colors"
+                    className="md:w-10 md:h-10 w-7 h-7 text-white/80 hover:text-white transition-colors"
                     viewBox="0 0 24 24"
                     fill="currentColor"
                     initial={{ opacity: 0, scale: 0, rotate: -180 }}
                     animate={{ opacity: 1, scale: 1, rotate: 0 }}
                     transition={{
-                      delay: isInitialMount.current ? 0.8 + icons.index * 0.1 : 0,
+                      delay: isInitialMount.current
+                        ? 0.8 + icons.index * 0.1
+                        : 0,
                       type: "spring",
                       stiffness: 200,
                       damping: 15,
                     }}
-                    whileHover={{ scale: 1.3, rotate: 10, y: -5, transition: { delay: 0 } }}
+                    whileHover={{
+                      scale: 1.3,
+                      rotate: 10,
+                      y: -5,
+                      transition: { delay: 0 },
+                    }}
                   >
                     {icons.index === 0 && (
                       <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
@@ -610,7 +617,7 @@ function HomePage() {
         </motion.div>
 
         <motion.div
-          className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
+          className="absolute bottom-16 flex justify-center left-0 right-0 transform "
           animate={{ y: [0, 10, 0] }}
           transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
         >
@@ -619,10 +626,10 @@ function HomePage() {
       </section>
       <motion.div
         id="features"
-            initial={{ opacity: 0, y: 130,}}
-            whileInView={{ opacity: 1, y: 0,  }}
-            viewport={{ once: true, margin: "-300px" }}
-            transition={{ duration: 1.6, type: "spring", stiffness: 80 }}
+        initial={{ opacity: 0, y: 130 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-300px" }}
+        transition={{ duration: 1.6, type: "spring", stiffness: 80 }}
       >
         <FeaturesPage />
       </motion.div>
@@ -630,7 +637,7 @@ function HomePage() {
       <TwoColumnSection2 />
       {/* Active Users Stats Section */}
       <section className="py-16 bg-white border-y border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className=" max-w-full mx-auto px-4 sm:px-6 lg:px-[10%] w-full">
           <motion.div
             className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center"
             initial="hidden"
@@ -684,7 +691,7 @@ function HomePage() {
           <div className="absolute bottom-20 right-10 w-96 h-96 bg-[#6366F1] rounded-full blur-3xl"></div>
         </motion.div>
 
-        {/* <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        {/* <div className=" max-w-full mx-auto px-4 sm:px-6 lg:px-[10%] w-full relative z-10">
           <motion.div
             className="text-center mb-16"
             initial={{ opacity: 0, y: 30 }}
@@ -847,7 +854,7 @@ function HomePage() {
         id="pricing"
         className="py-20 bg-gray-50 relative overflow-hidden"
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className=" max-w-full mx-auto px-4 sm:px-6 lg:px-[10%] w-full">
           <motion.div
             className="text-center mb-16"
             initial={{ opacity: 0, y: 30 }}

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback } from "react";
 
 // Loading state interface
 export interface LoadingState {
@@ -22,61 +22,68 @@ interface LoadingContextType {
 // Default loading state
 const defaultLoadingState: LoadingState = {
   isLoading: false,
-  message: '',
+  message: "",
   progress: undefined,
   canCancel: false,
-  onCancel: undefined
+  onCancel: undefined,
 };
 
 // Create context
 const LoadingContext = createContext<LoadingContextType | null>(null);
 
 // Loading provider component
-export const LoadingProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [loadingState, setLoadingState] = useState<LoadingState>(defaultLoadingState);
+export const LoadingProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const [loadingState, setLoadingState] =
+    useState<LoadingState>(defaultLoadingState);
 
   // Show loading with optional configuration
-  const showLoading = useCallback((message: string, options?: Partial<LoadingState>) => {
-    console.log('🔄 Loading started:', message, options);
-    setLoadingState({
-      isLoading: true,
-      message,
-      progress: options?.progress,
-      canCancel: options?.canCancel || false,
-      onCancel: options?.onCancel
-    });
-  }, []);
+  const showLoading = useCallback(
+    (message: string, options?: Partial<LoadingState>) => {
+      setLoadingState({
+        isLoading: true,
+        message,
+        progress: options?.progress,
+        canCancel: options?.canCancel || false,
+        onCancel: options?.onCancel,
+      });
+    },
+    []
+  );
 
   // Hide loading
   const hideLoading = useCallback(() => {
-    console.log('✅ Loading ended');
     setLoadingState(defaultLoadingState);
   }, []);
 
   // Update loading message
   const updateLoadingMessage = useCallback((message: string) => {
-    setLoadingState(prev => ({
+    setLoadingState((prev) => ({
       ...prev,
-      message
+      message,
     }));
   }, []);
 
   // Update loading progress
   const updateLoadingProgress = useCallback((progress: number) => {
-    setLoadingState(prev => ({
+    setLoadingState((prev) => ({
       ...prev,
-      progress
+      progress,
     }));
   }, []);
 
   // Set loading cancellable
-  const setLoadingCancellable = useCallback((canCancel: boolean, onCancel?: () => void) => {
-    setLoadingState(prev => ({
-      ...prev,
-      canCancel,
-      onCancel
-    }));
-  }, []);
+  const setLoadingCancellable = useCallback(
+    (canCancel: boolean, onCancel?: () => void) => {
+      setLoadingState((prev) => ({
+        ...prev,
+        canCancel,
+        onCancel,
+      }));
+    },
+    []
+  );
 
   const value: LoadingContextType = {
     loadingState,
@@ -84,13 +91,11 @@ export const LoadingProvider: React.FC<{ children: React.ReactNode }> = ({ child
     hideLoading,
     updateLoadingMessage,
     updateLoadingProgress,
-    setLoadingCancellable
+    setLoadingCancellable,
   };
 
   return (
-    <LoadingContext.Provider value={value}>
-      {children}
-    </LoadingContext.Provider>
+    <LoadingContext.Provider value={value}>{children}</LoadingContext.Provider>
   );
 };
 
@@ -98,7 +103,7 @@ export const LoadingProvider: React.FC<{ children: React.ReactNode }> = ({ child
 export const useLoading = (): LoadingContextType => {
   const context = useContext(LoadingContext);
   if (!context) {
-    throw new Error('useLoading must be used within a LoadingProvider');
+    throw new Error("useLoading must be used within a LoadingProvider");
   }
   return context;
 };

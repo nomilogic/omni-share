@@ -4,13 +4,9 @@ import mainImage from "../assets/omni.jpg";
 const TwoColumnSection: React.FC = () => {
   return (
     <section
-      className=" max-w-[80%] mx-auto px-0 md:px-0
-        grid md:grid-cols-2  gap-10
-        
-        items-center w-full  bg-white
+      className="relative w-full max-w-full mx-auto px-4 sm:px-6 lg:px-[10%]      grid md:grid-cols-2  gap-10             items-center   bg-white
       "
     >
-      
       {/* Left Side - Image */}
       <div className="flex justify-center w-full ml-auto">
         <img src={mainImage} className="rounded-lg max-w-full h-auto" />
@@ -22,7 +18,8 @@ const TwoColumnSection: React.FC = () => {
         </h2>
         <p className="leading-relaxed text-base sm:text-lg text-gray-500                 ">
           Access the world’s largest archive of consumer opinion and leverage
-          advanced proprietary and generative AI to <strong>
+          advanced proprietary and generative AI to{" "}
+          <strong>
             discover new trends before anyone else and make smarter decisions.
           </strong>
         </p>
