@@ -5,7 +5,7 @@ import { useAppContext } from "@/context/AppContext";
 function ReferralSection() {
   const [copied, setCopied] = useState(false);
   const { user } = useAppContext();
-  const referralLink = `http://localhost:5000/auth?referralId=${user.id}`;
+  const referralLink = `http://omnishare.ai/auth?referralId=${user.id}`;
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(referralLink);
