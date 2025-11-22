@@ -35,7 +35,12 @@ const OAuthCallbackWrapper = () => {
   const { dispatch } = useAppContext();
 
   const handleAuthSuccess = (user: any) => {
+    console.log("user", user);
     dispatch({ type: "SET_USER", payload: user });
+    dispatch({
+      type: "SET_BALANCE",
+      payload: user.wallet.coins + user.wallet.referralCoin,
+    });
     dispatch({ type: "SET_LOADING", payload: false });
   };
 

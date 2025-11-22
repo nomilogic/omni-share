@@ -4,12 +4,19 @@ import React, {
   useReducer,
   useEffect,
   useState,
+  useCallback,
+  useMemo,
 } from "react";
-import { getCurrentUser, signInAnonymously } from "../lib/database";
-import { Campaign } from "@shared/schema";
+import { getCurrentUser } from "../lib/database"; // Assuming getCurrentUser is stable
+import { Campaign } from "@shared/schema"; // Assuming Campaign is imported from shared schema
 import { LoadingProvider } from "./LoadingContext";
+import { Platform } from "../types"; // Assuming Platform is correctly typed
+import Pusher from "pusher-js";
+import API from "../services/api"; // Assuming API client is imported
 
-// Types
+// --- 1. Types and Interfaces ---
+
+// Extended User interface for better type safety
 export interface User {
   id: string;
   email: string;
@@ -21,6 +28,8 @@ export interface User {
     name?: string;
     [key: string]: any;
   };
+  wallet: any;
+  profile: Profile | null;
 }
 
 export interface Profile {
@@ -33,11 +42,9 @@ export interface Profile {
   target_audience?: string;
   userId: string;
   plan: "free" | "ipro" | "business";
-  // Campaign fields
   campaignName?: string;
   campaignType?: string;
   campaignGoals?: string[];
-  // Additional profile fields
   profession?: string;
   location?: string;
   website?: string;
@@ -48,7 +55,6 @@ export interface Profile {
   socialGoals?: string[];
   businessGoals?: string[];
   postingFrequency?: string;
-  // Business specific fields
   businessName?: string;
   jobTitle?: string;
   campaignSize?: string;
@@ -56,18 +62,14 @@ export interface Profile {
   customIntegrations?: string[];
   monthlyBudget?: string;
   contentVolume?: string;
+  // Ensure consistency for completion checks
+  campaign_type?: string;
+  content_niche?: string;
+  business_name?: string;
 }
 
-// export interface Campaign {
-//   id: string;
-//   name: string;
-//   description?: string;
-//   profileId: string;
-//   isActive: boolean;
-// }
-
 export interface AppState {
-  user: any | null;
+  user: User | null;
   userPlan: "free" | "ipro" | "business" | null;
   selectedProfile: Profile | null;
   selectedCampaign: Campaign | null;
@@ -83,10 +85,6 @@ export interface AppState {
   isProfileEditing?: boolean;
   isPasswordEditing?: boolean;
 }
-
-import { Platform } from "../types";
-import Pusher from "pusher-js";
-import API from "../services/api";
 
 // Actions
 type AppAction =
@@ -111,77 +109,44 @@ type AppAction =
   | { type: "SET_BUSINESS_ACCOUNT"; payload: boolean }
   | { type: "SET_BALANCE"; payload: number };
 
-// Helper function to check if profile is complete based on plan requirements
+// --- 2. Utility Functions ---
+
 const checkProfileCompletion = (profile: any): boolean => {
   if (!profile || !profile.plan) {
-    console.log("❌ Profile incomplete: No profile or plan");
     return false;
   }
 
-  console.log("🔍 Checking profile completion:", {
-    hasProfile: !!profile,
-    name: profile.name,
-    plan: profile.plan,
-    type: profile.type,
-    campaign_type: profile.campaign_type,
-    business_name: profile.business_name,
-    industry: profile.industry,
-  });
-
-  // Check basic required fields for all plans
   const hasBasicInfo = !!(profile.name && profile.plan);
 
-  // For free plan, basic info + name is sufficient
   if (profile.plan === "free") {
-    const isComplete = hasBasicInfo;
-    console.log("✅ Free plan completion check:", { hasBasicInfo, isComplete });
-    return isComplete;
+    return hasBasicInfo;
   }
 
-  // For pro plan, also check campaign fields
+  // Use properties that align with profile structure for consistency
   if (profile.plan === "ipro") {
-    const hasPostsInfo = !!(profile.campaign_type || profile.content_niche);
-    const isComplete = hasBasicInfo && hasPostsInfo;
-    console.log("✅ Pro plan completion check:", {
-      hasBasicInfo,
-      hasPostsInfo,
-      isComplete,
-    });
-    return isComplete;
+    const hasPostsInfo = !!(profile.campaignType || profile.contentNiche);
+    return hasBasicInfo && hasPostsInfo;
   }
 
-  // For business plan, check additional business-specific fields and campaign info
   if (profile.plan === "business") {
-    const hasBusinessInfo = !!(profile.business_name || profile.industry);
-    const hasPostsInfo = !!(profile.campaign_type || profile.content_niche);
-    const isComplete = hasBasicInfo && hasBusinessInfo && hasPostsInfo;
-    console.log("✅ Business plan completion check:", {
-      hasBasicInfo,
-      hasBusinessInfo,
-      hasPostsInfo,
-      isComplete,
-    });
-    return isComplete;
+    const hasBusinessInfo = !!(profile.businessName || profile.industry);
+    const hasPostsInfo = !!(profile.campaignType || profile.contentNiche);
+    return hasBasicInfo && hasBusinessInfo && hasPostsInfo;
   }
 
-  // Default fallback
-  console.log("⚠️ Default fallback completion check:", hasBasicInfo);
   return hasBasicInfo;
 };
 
 const setStoredContentData = (data: any) => {
   try {
-    if (data) {
-      // localStorage.setItem('s_ai_content_data', JSON.stringify(data));
-    } else {
-      //  localStorage.removeItem('s_ai_content_data');
-    }
+    // Implement or remove localStorage logic as needed
   } catch (error) {
     console.warn("Failed to store content data:", error);
   }
 };
 
-// Initial state
+// --- 3. Reducer and Initial State ---
+
 const initialState: AppState = {
   user: null,
   userPlan: null,
@@ -190,12 +155,12 @@ const initialState: AppState = {
   loading: true,
   error: null,
   generatedPosts: [],
-  contentData: null, // Load from localStorage
+  contentData: null,
   hasCompletedOnboarding: false,
   isBusinessAccount: false,
   hasTierSelected: false,
   hasProfileSetup: false,
-  balance: 0, // ✅ added
+  balance: 0,
 };
 
 function appReducer(state: AppState, action: AppAction): AppState {
@@ -222,17 +187,12 @@ function appReducer(state: AppState, action: AppAction): AppState {
     case "SET_GENERATED_POSTS":
       return { ...state, generatedPosts: action.payload };
     case "UPDATE_SINGLE_PLATFORM_POST":
-      // Update only the specific platform's post while keeping others unchanged
       const { platform, post } = action.payload;
       const updatedPosts = state.generatedPosts.map((existingPost) =>
         existingPost.platform === platform ? post : existingPost
       );
-      console.log(
-        `🔄 Updated ${platform} post in context. Total posts: ${updatedPosts.length}`
-      );
       return { ...state, generatedPosts: updatedPosts };
     case "SET_CONTENT_DATA":
-      // Persist contentData to localStorage
       setStoredContentData(action.payload);
       return { ...state, contentData: action.payload };
     case "SET_ONBOARDING_COMPLETE":
@@ -246,7 +206,6 @@ function appReducer(state: AppState, action: AppAction): AppState {
     case "SET_PASSWORD_EDITING":
       return { ...state, isPasswordEditing: action.payload };
     case "RESET_STATE":
-      // Clear localStorage when resetting state
       setStoredContentData(null);
       return { ...initialState, loading: false, contentData: null };
     case "SET_BUSINESS_ACCOUNT":
@@ -256,35 +215,56 @@ function appReducer(state: AppState, action: AppAction): AppState {
   }
 }
 
-const AppContext = createContext<{
+// --- 4. Context Definition ---
+
+export interface AppContextType {
   state: AppState;
   dispatch: React.Dispatch<AppAction>;
   processing: boolean;
-  setProcessing: any;
+  setProcessing: React.Dispatch<React.SetStateAction<boolean>>;
   generationAmounts: any;
-  setGenerationAmounts: any;
-} | null>(null);
+  setGenerationAmounts: React.Dispatch<React.SetStateAction<any>>;
+  fetchBalance: () => Promise<void>;
+}
+
+const AppContext = createContext<AppContextType | null>(null);
+
+// --- 5. App Provider Component ---
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
-  const pusher = new Pusher("5a8f542f7e4c1f452d53", {
-    cluster: "ap2",
-    forceTLS: true,
-  });
+  const [processing, setProcessing] = useState<boolean>(false);
+  const [generationAmounts, setGenerationAmounts] = useState<any>({});
 
-  const fetchBalance = async () => {
+  const pusher = useMemo(
+    () =>
+      new Pusher("5a8f542f7e4c1f452d53", {
+        cluster: "ap2",
+        forceTLS: true,
+      }),
+    []
+  );
+
+  const fetchBalance = useCallback(async () => {
     try {
-      const response = await API.userBalance();
-      const updatedAuthResult: any = await getCurrentUser();
-      const { data } = response;
-      dispatch({ type: "SET_BALANCE", payload: data?.data ?? 0 });
-      dispatch({ type: "SET_USER", payload: updatedAuthResult.user });
+      const [balanceResponse, authResult] = await Promise.all([
+        API.userBalance(),
+        getCurrentUser(),
+      ]);
+
+      const balance = balanceResponse.data?.data ?? 0;
+      const updatedUser: User = (authResult as any).user;
+
+      if (updatedUser) {
+        dispatch({ type: "SET_USER", payload: updatedUser });
+      }
+      dispatch({ type: "SET_BALANCE", payload: balance });
     } catch (error) {
       console.error("Error fetching wallet balance:", error);
     }
-  };
+  }, []);
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -297,21 +277,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
         }
 
         const authResult: any = await getCurrentUser();
+        const user: User | null = authResult?.user || null;
 
-        dispatch({ type: "SET_USER", payload: authResult.user });
-        dispatch({
-          type: "SET_BALANCE",
-          payload:
-            authResult?.user.wallet.coins +
-            authResult?.user.wallet.referralCoin,
-        });
-        if (!authResult?.user) {
+        if (!user) {
           dispatch({ type: "SET_LOADING", payload: false });
           return;
         }
-        const profile = authResult.user.profile;
+
+        dispatch({ type: "SET_USER", payload: user });
+        dispatch({
+          type: "SET_BALANCE",
+          payload: user.wallet.coins + user.wallet.referralCoin,
+        });
+
+        const profile = user.profile;
         if (profile) {
-          dispatch({ type: "SET_SELECTED_PROFILE", payload: profile });
+          dispatch({
+            type: "SET_SELECTED_PROFILE",
+            payload: profile as Profile,
+          });
           dispatch({ type: "SET_USER_PLAN", payload: profile.plan || "free" });
           if (profile.type === "business") {
             dispatch({ type: "SET_BUSINESS_ACCOUNT", payload: true });
@@ -326,6 +310,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
           });
         }
       } catch (error) {
+        console.error("Failed to initialize authentication:", error);
         dispatch({
           type: "SET_ERROR",
           payload: "Failed to initialize authentication",
@@ -338,87 +323,77 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     initializeAuth();
   }, []);
 
-  const [processing, setProcessing] = useState<any>(false);
-
   useEffect(() => {
-    if (!state.user?.id) return;
+    const userId = state.user?.id;
+    if (!userId) return;
 
-    const channel = pusher.subscribe(`user-${state.user.id}`);
-    const handleSubscriptionSuccess = async () => {
+    const userChannel = pusher.subscribe(`user-${userId}`);
+    const handleSubscriptionSuccess = () => {
+      fetchBalance();
+    };
+
+    userChannel.bind("subscription-success", handleSubscriptionSuccess);
+
+    const walletChannel = pusher.subscribe(`wallet-${userId}`);
+    const handleCoinsUpdate = (data: { coins: number }) => {
+      dispatch({ type: "SET_BALANCE", payload: data.coins });
+    };
+
+    walletChannel.bind("coins-update", handleCoinsUpdate);
+
+    const fetchGenerationAmounts = async () => {
       try {
-        fetchBalance();
-      } catch (error) {
-        console.log("error", error);
+        const res = await API.getGenerateAmount();
+        const data = await res.data;
+
+        const formattedData = (data.data || []).reduce(
+          (acc: any, item: any) => {
+            acc[item.type] = item.amount;
+            return acc;
+          },
+          {}
+        );
+
+        setGenerationAmounts(formattedData);
+      } catch (err) {
+        console.error("Error fetching generation amounts:", err);
       }
     };
 
-    channel.bind("subscription-success", handleSubscriptionSuccess);
+    fetchGenerationAmounts();
 
+    // Cleanup function
     return () => {
-      channel.unbind("subscription-success", handleSubscriptionSuccess);
-      pusher.unsubscribe(`user-${state.user.id}`);
-    };
-  }, [state.user?.id]);
+      userChannel.unbind("subscription-success", handleSubscriptionSuccess);
+      pusher.unsubscribe(`user-${userId}`);
 
-  useEffect(() => {
-    if (!state.user?.id) return;
-
-    fetchBalance();
-
-    const userId = state.user.id;
-    const channel = pusher.subscribe(`wallet-${userId}`);
-
-    channel.bind("coins-update", (data: { coins: number }) => {
-      dispatch({ type: "SET_BALANCE", payload: data.coins });
-    });
-
-    return () => {
+      walletChannel.unbind("coins-update", handleCoinsUpdate);
       pusher.unsubscribe(`wallet-${userId}`);
-      pusher.disconnect();
     };
-  }, [state.user?.id]);
+  }, [state.user?.id, pusher, fetchBalance]);
 
-  const [generationAmounts, setGenerationAmounts] = useState<any>({});
-
-  const fetchData = async () => {
-    if (!state.user?.id) return;
-
-    try {
-      const res = await API.getGenerateAmount();
-      const data = await res.data;
-
-      const formattedData = (data.data || []).reduce((acc: any, item: any) => {
-        acc[item.type] = item.amount;
-        return acc;
-      }, {});
-
-      setGenerationAmounts(formattedData);
-    } catch (err) {
-      console.error("Error fetching generation amounts:", err);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, [state.user?.id]);
+  // Provide stable context value using useMemo
+  const contextValue = useMemo(
+    () => ({
+      state,
+      dispatch,
+      processing,
+      setProcessing,
+      generationAmounts,
+      setGenerationAmounts,
+      fetchBalance,
+    }),
+    [state, processing, generationAmounts, fetchBalance]
+  );
 
   return (
     <LoadingProvider>
-      <AppContext.Provider
-        value={{
-          state,
-          dispatch,
-          processing,
-          setProcessing,
-          generationAmounts,
-          setGenerationAmounts,
-        }}
-      >
-        {children}
-      </AppContext.Provider>
+      <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>
     </LoadingProvider>
   );
 };
+
+// --- 6. Use Context Hook ---
 
 export const useAppContext = () => {
   const context = useContext(AppContext);
@@ -426,41 +401,63 @@ export const useAppContext = () => {
     throw new Error("useAppContext must be used within an AppProvider");
   }
 
-  const selectCampaign = (campaign: Campaign | null) => {
-    context.dispatch({ type: "SET_SELECTED_CAMPAIGN", payload: campaign });
-  };
+  // Memoized action creators for function stability
+  const selectCampaign = useCallback(
+    (campaign: Campaign | null) => {
+      context.dispatch({ type: "SET_SELECTED_CAMPAIGN", payload: campaign });
+    },
+    [context.dispatch]
+  );
 
-  const refreshUser = async () => {
-    const authResult = await getCurrentUser();
+  const refreshUser = useCallback(async () => {
+    const authResult: any = await getCurrentUser();
 
     if (authResult && authResult.user) {
       context.dispatch({ type: "SET_USER", payload: authResult.user });
-      return;
     }
-  };
+  }, [context.dispatch]);
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     localStorage.clear();
-
     context.dispatch({ type: "RESET_STATE" });
-  };
+  }, [context.dispatch]);
+
+  const setProfileEditing = useCallback(
+    (v: boolean) =>
+      context.dispatch({ type: "SET_PROFILE_EDITING", payload: v }),
+    [context.dispatch]
+  );
+
+  const setPasswordEditing = useCallback(
+    (v: boolean) =>
+      context.dispatch({ type: "SET_PASSWORD_EDITING", payload: v }),
+    [context.dispatch]
+  );
 
   return {
-    generationAmounts: context.generationAmounts,
+    // State Accessors
     state: context.state,
-    paymentProcessing: context.processing,
-    setProcessing: context.setProcessing,
-    refreshUser: refreshUser,
-    dispatch: context.dispatch,
     user: context.state.user,
     balance: context.state.balance,
     profile: context.state.selectedProfile,
     campaign: context.state.selectedCampaign,
+
+    // Global State Setters
+    dispatch: context.dispatch,
+
+    // Processing/Loading State
+    paymentProcessing: context.processing,
+    setProcessing: context.setProcessing,
+
+    // Data Accessors
+    generationAmounts: context.generationAmounts,
+
+    // Actions
+    refreshUser,
+    refreshBalance: context.fetchBalance,
     selectCampaign,
     logout,
-    setProfileEditing: (v: boolean) =>
-      context.dispatch({ type: "SET_PROFILE_EDITING", payload: v }),
-    setPasswordEditing: (v: boolean) =>
-      context.dispatch({ type: "SET_PASSWORD_EDITING", payload: v }),
+    setProfileEditing,
+    setPasswordEditing,
   };
 };
