@@ -1362,14 +1362,14 @@ function HomePage() {
         </div>
       </section>
 
-      <div className="relative pt-16 bg-theme-secondary ">
+      <div className="relative  bg-theme-secondary ">
         <motion.footer
-          className="w-full  px-4 py-4 text-center text-sm theme-text-light absolute bottom-0"
+          className="w-full  px-4 py-4 text-center text-sm theme-text-light "
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
         >
-          <div className="w-full mx-auto flex md:flex-row items-center gap-2 md:justify-between justify-center flex-col px-[10%]">
+          <div className="w-full mx-auto flex pt-2 md:flex-row items-center gap-2 md:justify-between justify-center flex-col px-[10%]">
             <span>© {new Date().getFullYear()} OMNISHARE</span>
             <div className="flex justify-center space-x-1 text-sm theme-text-light mb-1">
               <Link
