@@ -1980,7 +1980,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   ): Promise<string | null> => {
     return await executeImageGeneration(async () => {
       const response = await API.generateImage({
-        prompt: `${imageDescription.trim()}. Do not include any text, words, letters, numbers, captions, watermarks, logos, or typography. Pure imagery only.`,
+        prompt: `${prompt.trim()}. Do not include any text, words, letters, numbers, captions, watermarks, logos, or typography. Pure imagery only.`,
         style: "professional",
         aspectRatio: aspectRatio,
       });

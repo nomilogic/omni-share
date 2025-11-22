@@ -48,6 +48,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
     aspectRatio: "1:1",
     quality: "standard",
   });
+  console.log("imageRequest", imageRequest);
   const [selectedModel, setSelectedModel] = useState(
     "stabilityai/stable-diffusion-xl-base-1.0"
   );
