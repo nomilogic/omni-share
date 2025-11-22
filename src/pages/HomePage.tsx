@@ -42,7 +42,7 @@ import { notify } from "@/utils/toast";
 import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-
+import OmniVideo from "../assets/video/omnishare.mp4";
 function HomePage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showAllFeatures, setShowAllFeatures] = useState(false);
@@ -450,21 +450,25 @@ function HomePage() {
       <section
         id="home"
         className="relative min-h-[100vh] flex items-center justify-center overflow-hidden"
-        style={{
-          background: "linear-gradient(135deg, #7650e3 0%, #6366F1 100%)",
-        }}
       >
-        <div
-          className="absolute inset-0 opacity-20"
-          style={{
-            transform: `translateY(${scrollY * 0.5}px)`,
-            backgroundImage:
-              'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.4"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
-          }}
+        <video
+          className="absolute inset-0 w-full h-full object-cover"
+          src={OmniVideo}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
         />
 
+        <div className="absolute inset-0 z-0 pointer-events-none w-full h-full">
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-800/50 via-purple-600/40 to-transparent backdrop-blur-[5px]" />
+          <div className="absolute inset-0 bg-white/2 pointer-events-none mix-blend-screen" />
+        </div>
+
         <motion.div
-          className="relative z-10 md:w-[80%] mx-auto  px-4 sm:px-6 lg:px-[10%]  text-center"
+          className="relative z-10 w-fit mx-auto px-4 sm:px-6 lg:px-[10%] text-center
+             rounded-2xl "
           style={{ opacity: heroOpacity, scale: heroScale }}
         >
           <motion.h1
@@ -484,7 +488,7 @@ function HomePage() {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.5, type: "spring", stiffness: 100 }}
-              className="bg-gradient-to-r from-white to-purple-100 bg-clip-text text-transparent"
+              className="bg-gradient-to-r from-white text-white bg-white bg-clip-text text-transparent"
             >
               Made Simple
             </motion.span>
@@ -499,7 +503,7 @@ function HomePage() {
               type: "spring",
               stiffness: 80,
             }}
-            className="text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto leading-relaxed"
+            className="text-xl md:text-2xl text-white mb-8 max-w-3xl mx-auto "
           >
             Create, schedule, and publish stunning content across Facebook,
             Instagram, YouTube, LinkedIn, and TikTok - all from one powerful
@@ -543,7 +547,7 @@ function HomePage() {
                 <button onClick={() => window.open(icons.url, "_blank")}>
                   <motion.svg
                     key={icons.index}
-                    className="md:w-10 md:h-10 w-7 h-7 text-white/80 hover:text-white transition-colors"
+                    className="md:w-10 md:h-10 w-7 h-7 text-white transition-colors"
                     viewBox="0 0 24 24"
                     fill="currentColor"
                     initial={{ opacity: 0, scale: 0, rotate: -180 }}

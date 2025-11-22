@@ -22,8 +22,10 @@ export const AuthPage: React.FC = () => {
 
   const handleAuthSuccess = (user: any) => {
     dispatch({ type: "SET_USER", payload: user });
-
-    // Set user plan and business account status based on login response
+    dispatch({
+      type: "SET_BALANCE",
+      payload: user?.wallet?.coins + user?.wallet?.referralCoin,
+    });
     if (user.plan) {
       dispatch({ type: "SET_USER_PLAN", payload: user.plan });
     } else {
