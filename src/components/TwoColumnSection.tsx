@@ -4,7 +4,7 @@ import mainImage from "../assets/omni.jpg";
 const TwoColumnSection: React.FC = () => {
   return (
     <section
-      className=" max-w-[80%] mx-auto px-6 md:px-0
+      className=" max-w-[80%] mx-auto px-0 md:px-0
         grid md:grid-cols-2  gap-10
         
         items-center w-full  bg-white
