@@ -69,7 +69,8 @@ function RecentPosts({ post }: any) {
             {title || "No Title"}
           </h3>
 
-          <p className="text-gray-700 text-sm mb-3">
+          <p title={description} 
+             className="text-gray-700 text-sm mb-3 line-clamp-5">
             {description || content || "No content available"}
           </p>
 

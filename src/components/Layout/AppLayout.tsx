@@ -192,18 +192,14 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                     user?.avatarUrl
                       ? user?.avatarUrl
                       : `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                          user?.profile?.fullName ||
-                            user?.email ||
-                            "U"
+                          user?.profile?.fullName || user?.email || "U"
                         )}&background=00000000&color=fff`
                   }
                   alt={user?.profile?.fullName}
                   onError={(e) => {
                     const target = e.currentTarget;
                     target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                      user?.profile?.fullName ||
-                        user?.email ||
-                        "U"
+                      user?.profile?.fullName || user?.email || "U"
                     )}&background=00000000&color=fff`;
                   }}
                 />
@@ -580,7 +576,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                   </h2>
                                   <span
                                     className="text-slate-300 cursor-pointer text-xs"
-                                    title="Current subscription details"
+                                    title={`This is your current plan: ${
+                                      user.wallet?.package?.name || "FREE"
+                                    } with ${
+                                      user.wallet?.coins ?? 0
+                                    } coins. You can also view other plans and the coins they include.`}
                                   >
                                     <Icon name="question-mark" size={17} />
                                   </span>
@@ -619,7 +619,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
                                   <span
                                     className="text-slate-300 text-xs cursor-pointer"
-                                    title="Coins info"
+                                    title={`This package gives you ${
+                                      user.wallet?.coins?.toLocaleString() ?? 0
+                                    } coins. Your vault limit is ${
+                                      user.wallet?.package?.coinLimit?.toLocaleString() ??
+                                      0
+                                    } coins. You can buy extra credits anytime, but you cannot exceed your vault limit.`}
                                   >
                                     <Icon name="question-mark" size={17} />
                                   </span>
@@ -643,7 +648,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
                                   <span
                                     className="text-slate-300 text-xs cursor-pointer"
-                                    title="Coins info"
+                                    title={`Referral coins are always used first. You currently have ${
+                                      user?.wallet?.referralCoin?.toLocaleString() ??
+                                      0
+                                    } referral coins. Once referral coins run out, your purchased package coins will be used.`}
                                   >
                                     <Icon name="question-mark" size={17} />
                                   </span>
@@ -718,8 +726,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             ref={mainContentRef}
             className="py-0 h-full-dec-hf w-full overflow-auto theme-bg-card  mt-[60px] "
           >
-            {
-            /* 
+            {/* 
 
             <div className=" top-0 z-10  border-b border-white/20 md:px-4 py-4  px-3">
               <div className=" flex items-center justify-between mt-0 ">
