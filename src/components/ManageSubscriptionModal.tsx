@@ -7,6 +7,7 @@ import TransactionHistory from "@/pages/TransectionHistory";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "@/context/AppContext";
 import API from "@/services/api";
+import { notify } from "@/utils/toast";
 
 export const ManageSubscriptionModal: React.FC<any> = ({
   isOpen,
@@ -61,7 +62,7 @@ export const ManageSubscriptionModal: React.FC<any> = ({
       }, 50);
     } catch (error) {
       console.error("Reactivation failed:", error);
-      alert("Unable to reactivate subscription");
+      notify("error", "Unable to reactivate subscription");
     } finally {
       setIsReactive(false);
     }

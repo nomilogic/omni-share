@@ -4,8 +4,8 @@ import axios, {
   InternalAxiosRequestConfig,
 } from "axios";
 
-const BASE_URL: string = import.meta.env.VITE_API_URL || "https://omnishare.ai/server/api";
-alert(BASE_URL)
+const BASE_URL: string =
+  import.meta.env.VITE_API_URL || "https://omnishare.ai/server/api";
 
 interface LoginPayload {
   email: string;
@@ -247,8 +247,10 @@ API.unreadHistory = () => API.get("/client/post-history/history/unread-count");
 API.walletTransaction = () => API.get("/client/wallet-transaction");
 API.getProfileData = () => API.get("/client/profile");
 API.updateProfileData = (data) => API.patch("/client/profile", data);
-API.scrapeProfileData = (data) => API.get("/client/profile/scrapper", { params: data });
+API.scrapeProfileData = (data) =>
+  API.get("/client/profile/scrapper", { params: data });
 API.generateForgetLink = (data) => API.post("/auth/generateForgetLink", data);
-API.setNewPassword = (data, config) => API.post("/auth/new-password", data, config);
+API.setNewPassword = (data, config) =>
+  API.post("/auth/new-password", data, config);
 
 export default API;

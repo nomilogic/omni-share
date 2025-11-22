@@ -9,6 +9,7 @@ import {
 } from "react";
 import API from "../services/api";
 import { useAppContext } from "./AppContext";
+import { notify } from "@/utils/toast";
 
 interface PricingContextType {
   // Data
@@ -147,7 +148,7 @@ export const PricingProvider: React.FC<{ children: React.ReactNode }> = ({
       const res = await API.buyPackage(plan.id);
       if (res?.data?.data?.url) window.location.href = res.data.data.url;
     } catch (err) {
-      alert("Failed");
+      notify("error", "Failed");
     } finally {
       setLoadingPackage(false);
       closeAllModals();
@@ -173,7 +174,7 @@ export const PricingProvider: React.FC<{ children: React.ReactNode }> = ({
       await API.requestDowngrade(selectedPlan.id);
       await refreshUser();
     } catch (err) {
-      alert("Failed");
+      notify("error", "Failed");
     } finally {
       setDowngradeLoading(false);
       closeAllModals();
@@ -186,7 +187,7 @@ export const PricingProvider: React.FC<{ children: React.ReactNode }> = ({
       await API.cancelDowngradeRequest();
       await refreshUser();
     } catch (err) {
-      alert("Failed");
+      notify("error", "Failed");
     } finally {
       setDowngradeLoading(false);
       closeAllModals();
@@ -198,7 +199,7 @@ export const PricingProvider: React.FC<{ children: React.ReactNode }> = ({
       await API.cancelPackage();
       await refreshUser();
     } catch (err) {
-      alert("Failed");
+      notify("error", "Failed");
     } finally {
       closeAllModals();
     }
@@ -209,7 +210,7 @@ export const PricingProvider: React.FC<{ children: React.ReactNode }> = ({
       await API.reactivatePackage();
       await refreshUser();
     } catch (err) {
-      alert("Failed");
+      notify("error", "Failed");
     } finally {
       closeAllModals();
     }
@@ -223,7 +224,7 @@ export const PricingProvider: React.FC<{ children: React.ReactNode }> = ({
       if (res?.data?.data?.checkoutUrl)
         window.location.href = res.data.data.checkoutUrl;
     } catch (err) {
-      alert("Failed");
+      notify("error", "Failed");
     } finally {
       setLoadingAddon(false);
       setSelectedAddon(null);

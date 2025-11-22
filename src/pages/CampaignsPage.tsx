@@ -9,6 +9,7 @@ import { useAppContext } from "../context/AppContext";
 import { usePlanFeatures } from "../hooks/usePlanFeatures";
 import { saveCampaign, updateCampaign } from "../lib/database";
 import { CampaignInfo } from "../types";
+import { notify } from "@/utils/toast";
 
 export const CampaignsPage: React.FC = () => {
   const { state, dispatch } = useAppContext();
@@ -31,7 +32,7 @@ export const CampaignsPage: React.FC = () => {
   const handleCreateCampaign = () => {
     setError(null); // Clear any previous errors
 
-    alert("Creating new campaign...");
+    notify("error", "Creating new campaign...");
     navigate("/campaigns/new");
   };
 

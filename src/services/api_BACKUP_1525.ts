@@ -8,7 +8,7 @@ import axios, {
 const BASE_URL: string = "https://4q2ddj89-3000.uks1.devtunnels.ms/api";
 =======
 const BASE_URL: string = import.meta.env.VITE_API_URL || "https://omnishare.ai/server/api";
-alert(BASE_URL)
+notify("error",BASE_URL)
 >>>>>>> Stashed changes
 
 interface LoginPayload {

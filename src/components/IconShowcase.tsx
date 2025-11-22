@@ -1,5 +1,6 @@
 import React from "react";
 import Icon, { IconName } from "./Icon";
+import { notify } from "@/utils/toast";
 
 const IconShowcase: React.FC = () => {
   const icons: { name: IconName; description: string }[] = [
@@ -98,19 +99,19 @@ const IconShowcase: React.FC = () => {
                 name="play"
                 size={48}
                 className="hover:scale-110 transition-transform duration-200"
-                onClick={() => alert("Play clicked!")}
+                onClick={() => notify("error", "Play clicked!")}
               />
               <Icon
                 name="edit-post"
                 size={48}
                 className="hover:scale-110 transition-transform duration-200"
-                onClick={() => alert("Edit clicked!")}
+                onClick={() => notify("error", "Edit clicked!")}
               />
               <Icon
                 name="connect-accounts"
                 size={48}
                 className="hover:scale-110 transition-transform duration-200"
-                onClick={() => alert("Connect clicked!")}
+                onClick={() => notify("error", "Connect clicked!")}
               />
             </div>
             <p className="text-sm text-gray-500 font-medium">

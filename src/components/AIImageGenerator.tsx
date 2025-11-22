@@ -131,7 +131,6 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
       });
       setCurrentImage(image);
     } catch (error) {
-      console.error("Failed to generate image:", error);
       setHasError(true);
       setCurrentImage(null);
     } finally {
@@ -148,7 +147,6 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
 
     setLoadingSuggestions(true);
     try {
-      alert(import.meta.env.VITE_API_URL + "VITE_API_URL");
       const response = await fetch(
         `${
           import.meta.env.VITE_API_URL || "http://localhost:5000/api"

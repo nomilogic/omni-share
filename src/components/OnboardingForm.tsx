@@ -1,3 +1,4 @@
+import { notify } from "@/utils/toast";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -301,7 +302,8 @@ const OnboardingForm: React.FC = () => {
       }));
 
       // Show success message with details
-      alert(
+      notify(
+        "error",
         "Successfully analyzed your profile!\n\nWe detected:\n" +
           `• Brand: ${smartData.brandInfo.brandName}\n` +
           `• Brand Tone: ${smartData.brandInfo.brandTone}\n` +
@@ -313,7 +315,8 @@ const OnboardingForm: React.FC = () => {
       );
     } catch (error) {
       console.error("Error analyzing URL:", error);
-      alert(
+      notify(
+        "error",
         "Could not analyze the URL. Please fill in the information manually."
       );
     } finally {

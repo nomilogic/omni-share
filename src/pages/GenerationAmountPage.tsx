@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { Edit2, Trash2, Loader2, Plus } from "lucide-react";
 import API from "@/services/api";
 import { useAppContext } from "@/context/AppContext";
+import { notify } from "@/utils/toast";
 
 const API_BASE =
   import.meta.env.VITE_API_URL ||
@@ -42,10 +43,10 @@ const GenerationAmountPage = () => {
         reset({ type: "", amount: "" });
         setEditingId(null);
       } else {
-        window.alert("type  already exists.");
+        notify("error", "type  already exists.");
       }
     } catch (error: any) {
-      window.alert(error.message || error.response.data.message);
+      notify("error", error.message || error.response.data.message);
       console.error("Error saving:", error);
     }
   };

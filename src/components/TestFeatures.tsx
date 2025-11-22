@@ -43,7 +43,8 @@ export const TestFeatures: React.FC = () => {
   // Handler for individual platform regeneration
   const handleRegeneratePlatform = (platform: Platform) => {
     console.log(`🔄 Regenerating content for ${platform}`);
-    alert(
+    notify(
+      "error",
       `Regenerating content for ${
         platform.charAt(0).toUpperCase() + platform.slice(1)
       }!`
@@ -53,17 +54,17 @@ export const TestFeatures: React.FC = () => {
 
   const handleBack = () => {
     console.log("🔄 Regenerating all posts");
-    alert("Regenerating all posts!");
+    notify("error", "Regenerating all posts!");
   };
 
   const handleEdit = () => {
     console.log("✏️ Edit mode activated");
-    alert("Edit mode activated!");
+    notify("error", "Edit mode activated!");
   };
 
   const handlePublish = () => {
     console.log("📤 Publishing posts");
-    alert("Publishing posts to all platforms!");
+    notify("error", "Publishing posts to all platforms!");
   };
 
   return (
