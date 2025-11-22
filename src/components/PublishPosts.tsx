@@ -21,6 +21,14 @@ interface PublishProps {
   onReset?: () => void;
 }
 
+const ALL_PLATFORMS: Platform[] = [
+  "linkedin",
+  "facebook",
+  "instagram",
+  "youtube",
+  "tiktok",
+];
+
 export const PublishPosts: React.FC<PublishProps> = ({
   posts,
   userId,
@@ -99,16 +107,18 @@ export const PublishPosts: React.FC<PublishProps> = ({
 
       if (tokenResponse.data) {
         const tokenData = await tokenResponse.data;
-        console.log(tokenData)
+        console.log(tokenData);
         if (tokenData.connected && tokenData.token?.access_token) {
-          const pagesResponse = await API.facebookPages(tokenData.token.access_token)
-            console.log(pagesResponse, "pages"); 
-          
-          if (pagesResponse.status=="200") {
+          const pagesResponse = await API.facebookPages(
+            tokenData.token.access_token
+          );
+          console.log(pagesResponse, "pages");
+
+          if (pagesResponse.status == "200") {
             const pagesData = await pagesResponse.data.data;
             setFacebookPages(pagesData || []);
             if (
-              pagesData.pages &&  
+              pagesData.pages &&
               pagesData.pages.length > 0 &&
               !selectedFacebookPage
             ) {
@@ -167,7 +177,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
         `${platform}_oauth`,
         "width=600,height=700,scrollbars=yes,resizable=yes"
       );
-      
+
       if (!authWindow) {
         throw new Error("OAuth popup blocked");
       }
@@ -221,8 +231,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
       );
     } finally {
       setConnectingPlatforms((prev) => prev.filter((p) => p !== platform));
-     // checkConnectedPlatforms();
-
+      // checkConnectedPlatforms();
     }
   };
 
@@ -343,9 +352,9 @@ export const PublishPosts: React.FC<PublishProps> = ({
   };
 
   return (
-    <div className="theme-bg-light max-w-4xl mx-auto   ">
+    <div className="theme-bg-light max-w-4xl mx-auto    ">
       <div className="lg:px-4 px-3 lg:py-8 py-4">
-        <h2 className="text-2xl font-bold theme-text-primary mb-1">
+        <h2 className="text-2xl font-bold theme-text-primary mb-2">
           Publish Your Posts
         </h2>
         {/* <p className="text-sm text-gray-500 font-medium">
@@ -353,7 +362,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
           directly.
         </p> */}
 
-        {posts.some((post) => !connectedPlatforms.includes(post.platform)) && (
+        {/* {posts.some((post) => !connectedPlatforms.includes(post.platform)) && (
           <div className=" p-4 theme-bg-quaternary rounded-md border border-purple-600 my-3">
             <div className="flex items-start gap-4">
               <div>
@@ -367,9 +376,17 @@ export const PublishPosts: React.FC<PublishProps> = ({
               </div>
             </div>
           </div>
-        )}
+        )} */}
 
-        <div className="md:mb-8 mb-4">
+        <div className=" p-2 bg-blue-50 border border-blue-200 rounded-md">
+          <p className="text-sm text-blue-800">
+            <span className="font-medium">{connectedPlatforms.length}</span> of{" "}
+            <span className="font-medium">{ALL_PLATFORMS.length}</span>{" "}
+            platforms connected
+          </p>
+        </div>
+
+        <div className="md:mb-8 mb-4 mt-4">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="font-semibold text-slate-900 mb-1">
@@ -699,13 +716,6 @@ export const PublishPosts: React.FC<PublishProps> = ({
         )}
 
         <button
-          onClick={onBack}
-          class="text-center w-full text-white font-semibold transition-colors bg-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3] border border-[#7650e3] px-4 py-2.5 rounded-md mb-5"
-        >
-          Close
-        </button>
-
-        <button
           onClick={handlePublish}
           disabled={
             publishing ||
@@ -715,7 +725,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
                 !publishedPlatforms.includes(p)
             ).length === 0
           }
-          className={`w-full rounded-md py-2.5  px-4 font-medium theme-text-light transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 ${
+          className={`w-full rounded-md py-2.5 px-4 font-medium theme-text-light transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mb-5 text-center text-white font-semibold transition-colors bg-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3] border border-[#7650e3] ${
             selectedPlatforms.filter(
               (p) =>
                 connectedPlatforms.includes(p) &&
@@ -724,7 +734,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
               ? "bg-gray-400"
               : publishing
               ? "theme-bg-trinary"
-              : "theme-bg-success"
+              : "bg-#7650e3"
           }`}
         >
           {publishing ? (
@@ -754,6 +764,13 @@ export const PublishPosts: React.FC<PublishProps> = ({
               </span>
             </div>
           )}
+        </button>
+
+        <button
+          onClick={onBack}
+          class="rounded-md theme-bg-light px-4 py-2.5 w-full text-center font-semibold text-base border border-[#7650e3] text-[#7650e3] transition-colors hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] disabled:cursor-not-allowed"
+        >
+          Close
         </button>
 
         {/* Helper text */}

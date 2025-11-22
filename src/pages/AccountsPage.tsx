@@ -258,8 +258,8 @@ export const AccountsPage: React.FC = () => {
         </div>
 
         {connectedPlatforms.length === 0 && (
-          <div className=" p-4 theme-bg-quaternary rounded-md border border-purple-600">
-            <div className="flex items-start gap-4">
+          <div>
+            {/* <div className="flex items-start gap-4">
               <div>
                 <h3 className="font-semibold theme-text-secondary mb-1">
                   No Accounts Connected
@@ -269,7 +269,7 @@ export const AccountsPage: React.FC = () => {
                   across multiple platforms.
                 </p>
               </div>
-            </div>
+            </div> */}
           </div>
         )}
       </div>
