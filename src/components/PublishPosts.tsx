@@ -734,7 +734,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
               ? "bg-gray-400"
               : publishing
               ? "theme-bg-trinary"
-              : "theme-bg-success"
+              : "bg-#7650e3"
           }`}
         >
           {publishing ? (
