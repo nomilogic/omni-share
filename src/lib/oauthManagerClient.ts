@@ -76,6 +76,7 @@ export class OAuthManagerClient {
     this.ensureAuthenticated();
     return API.statusByUser(userId);
   }
+  
 }
 
 export const oauthManagerClient = new OAuthManagerClient();

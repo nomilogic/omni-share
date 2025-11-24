@@ -709,11 +709,11 @@ export const PublishPosts: React.FC<PublishProps> = ({
             </div>
           )}
 
-        {error && (
+        {/* {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
             <p className="text-red-800 text-sm">{error}</p>
           </div>
-        )}
+        )} */}
 
         <button
           onClick={handlePublish}
@@ -768,7 +768,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
 
         <button
           onClick={onBack}
-          class="rounded-md theme-bg-light px-4 py-2.5 w-full text-center font-semibold text-base border border-[#7650e3] text-[#7650e3] transition-colors hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] disabled:cursor-not-allowed"
+          className="rounded-md theme-bg-light px-4 py-2.5 w-full text-center font-semibold text-base border border-[#7650e3] text-[#7650e3] transition-colors hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] disabled:cursor-not-allowed"
         >
           Close
         </button>
