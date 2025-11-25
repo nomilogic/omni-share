@@ -30,7 +30,7 @@ import { Bounce, ToastContainer } from "react-toastify";
 import { themeManager } from "./lib/theme";
 import { FAQ, Support, Terms } from "./components";
 import PackageErrorPage from "./pages/PackageErrorPage";
-
+import "./i18n";
 const OAuthCallbackWrapper = () => {
   const { dispatch } = useAppContext();
 

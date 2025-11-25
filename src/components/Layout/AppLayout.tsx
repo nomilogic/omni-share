@@ -28,6 +28,7 @@ import { ManageSubscriptionModal } from "../ManageSubscriptionModal";
 import API from "@/services/api";
 import logoText from "../../assets/logo-text.svg";
 import LogoWhiteText from "../../assets/logo-white-text.svg";
+import { useTranslation } from "react-i18next";
 
 // Define the props for AppLayout
 interface AppLayoutProps {
@@ -36,7 +37,9 @@ interface AppLayoutProps {
 
 export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const { user, logout, balance, refreshUser } = useAppContext();
+  const { t, i18n } = useTranslation();
 
+  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
   const { loadingState } = useLoading();
   const { unreadCount, markAllAsRead: markAllUnreadAsRead } = useUnreadPosts();
   const location = useLocation();
@@ -115,18 +118,23 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   };
 
   const navigation = [
-    // { name: "Profile", path: "/profile", icon: User },
-    { name: "Dashboard", path: "/dashboard", icon: Home },
-    { name: "Create Content", path: "/content", icon: Plus },
-    { name: "Accounts", path: "/accounts", icon: Building2 },
-    { name: "History", path: "/history", icon: History },
-    { name: "Pricing Plan", path: "/pricing", icon: CreditCard },
-    // {
-    //   name: "Transaction History",
-    //   path: "/transaction-history",
-    //   icon: HistoryIcon,
-    // },
+    { key: "dashboard", name: "Dashboard", path: "/dashboard", icon: Home },
+    {
+      key: "create_content",
+      name: "Create Content",
+      path: "/content",
+      icon: Plus,
+    },
+    { key: "accounts", name: "Accounts", path: "/accounts", icon: Building2 },
+    { key: "history", name: "History", path: "/history", icon: History },
+    {
+      key: "pricing_plan",
+      name: "Pricing Plan",
+      path: "/pricing",
+      icon: CreditCard,
+    },
   ];
+
   const [showPackage, setShowPackage] = useState(false);
   const [isCanceled, setIsCanceled] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -286,7 +294,44 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               } */}
             </div>
 
-            {/* Navigation */}
+            <div className="flex gap-2 mt-2.5 px-3">
+              <button
+                onClick={() => i18n.changeLanguage("en")}
+                className={`px-3 py-1 rounded-md text-sm 
+      ${
+        i18n.language === "en"
+          ? "bg-purple-600 text-white border border-white"
+          : "bg-white text-purple-600 hover:bg-gray-100"
+      }`}
+              >
+                EN
+              </button>
+
+              <button
+                onClick={() => i18n.changeLanguage("es")}
+                className={`px-3 py-1 rounded-md text-sm 
+      ${
+        i18n.language === "es"
+          ? "bg-purple-600 text-white border border-white"
+          : "bg-white text-purple-600 hover:bg-gray-100"
+      }`}
+              >
+                ES
+              </button>
+
+              <button
+                onClick={() => i18n.changeLanguage("zh")}
+                className={`px-3 py-1 rounded-md text-sm 
+      ${
+        i18n.language === "zh"
+          ? "bg-purple-600 text-white border border-white"
+          : "bg-white text-purple-600 hover:bg-gray-100"
+      }`}
+              >
+                中文
+              </button>
+            </div>
+
             <nav className="flex-1 px-1 py-2.5 flex flex-col mx-2 gap-y-2">
               {navigation.map((item) => {
                 const isActive = location.pathname === item.path;
@@ -305,7 +350,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                   >
                     <div className="flex  justify-center items-center">
                       <Icon size={20} className="mr-3" />
-                      {item.name}
+                      {t(item.key)}
                     </div>
                     {showBadge && (
                       <button
