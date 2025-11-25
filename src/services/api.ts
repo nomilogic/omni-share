@@ -64,6 +64,13 @@ interface NewPasswordPayload {
   new_password: string;
 }
 
+// OAUTH Exchange code payload
+interface ExchangeCodePayload {
+  code: string; 
+  platform:string
+  state:string
+}
+
 interface APIInstance extends AxiosInstance {
   login: (data: LoginPayload) => Promise<any>;
   registerUser: (data: RegisterPayload) => Promise<any>;
@@ -150,6 +157,7 @@ interface APIInstance extends AxiosInstance {
   generateForgetLink: (data: GenerateForgetLinkPayload) => Promise<any>;
   setNewPassword: (data: NewPasswordPayload, config?: any) => Promise<any>;
   updatePassword: (data: any) => Promise<any>;
+  OauthExchangeCode: (data: ExchangeCodePayload) => Promise<any>;
 
 }
 
@@ -175,7 +183,7 @@ API.interceptors.request.use(
 API.login = (data) => API.post("/auth/login", data);
 API.registerUser = (data) => API.post("/auth/register", data);
 API.contactUs = (data) => API.post("/auth/contact-us", data);
-API.resendOtp = () => {
+API.resendOtp = () => {``
   const emailToken: any = JSON.parse(
     JSON.stringify(localStorage.getItem("email_token"))
   );
@@ -306,5 +314,6 @@ API.deleteGenerateAmount = (id: any) =>
   API.delete(`/admin/generation-amount/${id}`);
 API.updatePassword = (data: any) =>
   API.post("/auth/update-password", data);
+API.OauthExchangeCode = (data: any) => API.post("/client/oauth/exchange-code", data);
 
 export default API;

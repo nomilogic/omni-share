@@ -55,19 +55,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { handleResizeMainToFullScreen } = useResize();
-  // Toggle full screen on small/mobile screens and on resize
-  useEffect(() => {
-    const checkAndResize = () => {
-      const isSmallScreen = window.innerWidth < 768;
-      handleResizeMainToFullScreen(isSmallScreen);
-    };
-    checkAndResize();
-    window.addEventListener("resize", checkAndResize);
-    return () => {
-      window.removeEventListener("resize", checkAndResize);
-      handleResizeMainToFullScreen(false);
-    };
-  }, [handleResizeMainToFullScreen]);
+
   const logoInputRef = useRef<HTMLInputElement>(null);
   const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null);
   const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>(null);
@@ -1301,17 +1289,6 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
   };
 
   const selectedElementData = elements.find((el) => el.id === selectedElement);
-
-  // Disable body scroll when template editor is open
-  useEffect(() => {
-    // Disable body scroll when component mounts
-    document.body.style.overflow = "hidden";
-
-    // Re-enable body scroll when component unmounts
-    return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, []);
 
   if (isLoading) {
     return (

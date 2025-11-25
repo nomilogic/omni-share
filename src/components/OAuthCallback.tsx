@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { oauthManagerClient } from "../lib/oauthManagerClient";
-import { Loader } from "lucide-react";
+import { CheckCircle, Loader, XCircle } from "lucide-react";
+import Icon from "./Icon";
+import API from "@/services/api";
 
 export const OAuthCallback: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -10,15 +12,39 @@ export const OAuthCallback: React.FC = () => {
     "processing"
   );
   const [message, setMessage] = useState("Processing OAuth callback...");
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [platform, setPlatform] = useState<string | null>(null);
+
+  const hasRunRef = useRef(false);
 
   useEffect(() => {
     const handleCallback = async () => {
+      // Prevent multiple simultaneous OAuth requests and StrictMode double-invoke
+      if (hasRunRef.current || isProcessing) {
+        console.log(
+          "OAuth callback already in progress or already handled, skipping..."
+        );
+        return;
+      }
+      hasRunRef.current = true;
+
+      setIsProcessing(true);
       try {
         const code = searchParams.get("code");
         const state = searchParams.get("state");
         const error = searchParams.get("error");
         const platform = window.location.pathname.split("/")[2]; // Extract platform from /oauth/{platform}/callback
+        setPlatform(platform);
 
+        console.log(
+          "Handling OAuth callback for platform:",
+          platform,
+          "code:",
+          code,
+          "state:",
+          state
+        );
         if (error) {
           throw new Error(`OAuth error: ${error}`);
         }
@@ -27,44 +53,48 @@ export const OAuthCallback: React.FC = () => {
           throw new Error("Missing code or state parameter");
         }
 
+        if (!platform) {
+          throw new Error("Invalid platform");
+        }
+
         setMessage(`Connecting to ${platform}...`);
 
-        // Try to extract user ID from state parameter (it might be JSON)
-        let userId: string | undefined;
-        try {
-          const stateData = JSON.parse(state);
-          userId = stateData.userId || stateData.user_id;
-        } catch {
-          // If state is not JSON, try to get userId from localStorage or other means
-          userId = localStorage.getItem("currentUserId") || "default-user";
-        }
-
-        // Set the user ID in the oauth manager client
-        if (userId) {
-          oauthManagerClient.setUserId(userId);
-        }
-
         // Handle the OAuth callback
-        const credentials = await oauthManagerClient.handleCallback(
-          platform,
-          code,
-          state
-        );
+        const credentials = await API.OauthExchangeCode({
+          platform: platform,
+          code: code,
+          state: state,
+        });
 
         setStatus("success");
         setMessage(`Successfully connected to ${platform}!`);
 
+        // Extract user info from credentials response
+        const username =
+          credentials?.userProfile?.username ||
+          credentials?.userProfile?.name ||
+          "User";
+        const connectedAt =
+          credentials?.connectedAt || new Date().getTime();
+
+        // POST MESSAGE FIRST before attempting any window operations
+        // This ensures the parent gets the message even if window.close() doesn't work
+        const messageData = {
+          type: "oauth_success",
+          platform: platform,
+          username: username,
+          connectedAt: connectedAt,
+          credentials: credentials,
+        };
+
+        console.log("Posting message to parent:", messageData);
+
         // Notify parent window if opened in popup
         if (window.opener) {
-          window.opener.postMessage(
-            {
-              type: "oauth_success",
-              platform: platform,
-              credentials: credentials,
-            },
-            "*"
-          );
-          // Add small delay to ensure message is sent before closing
+          window.opener.postMessage(messageData, "*");
+          
+          // Try to close after a short delay
+          // If this fails due to redirects, the parent will close it based on window monitoring
           setTimeout(() => {
             try {
               window.close();
@@ -84,24 +114,24 @@ export const OAuthCallback: React.FC = () => {
         }
       } catch (error) {
         console.error("OAuth callback error:", error);
+        const errorMessage =
+          error instanceof Error ? error.message : "Authentication failed";
         setStatus("error");
-        setMessage(
-          error instanceof Error ? error.message : "Authentication failed"
-        );
+        setMessage(errorMessage);
+
+        // POST ERROR MESSAGE FIRST
+        const messageData = {
+          type: "oauth_error",
+          error: errorMessage,
+        };
+
+        console.log("Posting error message to parent:", messageData);
 
         // Notify parent window if opened in popup
         if (window.opener) {
-          window.opener.postMessage(
-            {
-              type: "oauth_error",
-              error:
-                error instanceof Error
-                  ? error.message
-                  : "Authentication failed",
-            },
-            "*"
-          );
-          // Add small delay to ensure message is sent before closing
+          window.opener.postMessage(messageData, "*");
+          
+          // Try to close after a short delay
           setTimeout(() => {
             try {
               window.close();
@@ -115,8 +145,10 @@ export const OAuthCallback: React.FC = () => {
           // Redirect to settings page after error
           setTimeout(() => {
             navigate("/settings");
-          }, 30000);
+          }, 2000);
         }
+      } finally {
+        setIsProcessing(false);
       }
     };
 
@@ -124,63 +156,48 @@ export const OAuthCallback: React.FC = () => {
   }, [searchParams, navigate]);
 
   return (
-    <div className="h-full-dec-hf  x-2 flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      <div className="max-w-md w-full bg-white/80 backdrop-blur-sm rounded-md shadow-md border border-white/20 p-8 text-center">
+    <div className="h-full-dec-hf  x-2 flex items-center justify-center ">
+      <div>
         <div className="mb-6">
           {status === "processing" && (
-            <Loader className="w-12 h-12 text-blue-600 animate-spin mx-auto" />
+            <div className=" flex justify-center items-center">
+              <Icon name="spiral-logo" size={45} className="animate-spin" />
+            </div>
           )}
           {status === "success" && (
             <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-              <svg
-                className="w-6 h-6 text-green-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M5 13l4 4L19 7"
-                ></path>
-              </svg>
+              <CheckCircle className="w-6 h-6 text-green-600" />
             </div>
           )}
           {status === "error" && (
             <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto">
-              <svg
-                className="w-6 h-6 text-red-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M6 18L18 6M6 6l12 12"
-                ></path>
-              </svg>
+              <XCircle className="w-6 h-6 text-red-600" />
             </div>
           )}
         </div>
 
-        <h2 className="text-xl font-semibold text-slate-900 mb-2">
-          {status === "processing" && "Connecting Account"}
-          {status === "success" && "Connection Successful"}
-          {status === "error" && "Connection Failed"}
+        <h2 className="text-xl font-semibold theme-text-primary mb-2">
+          {status === "processing" &&
+            `Connecting to ${platform}...`}
+          {status === "success" && "Authentication Successful"}
+          {status === "error" && "Authentication Failed"}
         </h2>
 
-        <p className="text-gray-500 font-medium">{message}</p>
+        <p className=" text-gray-500">{message}</p>
 
-        {status !== "processing" && (
+        {status === "success" && (
+          <div className="mt-4 text-sm theme-text-secondary">
+            Redirecting to create content...
+          </div>
+        )}
+
+        {status === "error" && (
           <div className="mt-6">
             <button
-              onClick={() => navigate("/settings")}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-md hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-md"
+              onClick={() => navigate("/auth")}
+              className="theme-button-primary px-6 py-3 rounded-md hover:theme-button-hover transition-all duration-200"
             >
-              Continue to Settings
+              Back to Login
             </button>
           </div>
         )}

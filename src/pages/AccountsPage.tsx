@@ -150,7 +150,7 @@ export const AccountsPage: React.FC = () => {
         `${platform}_oauth`,
         "width=600,height=700,scrollbars=yes,resizable=yes"
       );
-
+      console.log(authWindow,"authWindow");
       if (!authWindow) {
         throw new Error("OAuth popup blocked");
       }
@@ -412,11 +412,11 @@ export const AccountsPage: React.FC = () => {
       )}
 
       {/* Error Messages */}
-      {error && (
+      {/* {error && (
         <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
           <p className="text-red-800 text-sm">{error}</p>
         </div>
-      )}
+      )} */}
     </div>
   );
 };
