@@ -66,9 +66,9 @@ interface NewPasswordPayload {
 
 // OAUTH Exchange code payload
 interface ExchangeCodePayload {
-  code: string; 
-  platform:string
-  state:string
+  code: string;
+  platform: string;
+  state: string;
 }
 
 interface APIInstance extends AxiosInstance {
@@ -158,7 +158,7 @@ interface APIInstance extends AxiosInstance {
   setNewPassword: (data: NewPasswordPayload, config?: any) => Promise<any>;
   updatePassword: (data: any) => Promise<any>;
   OauthExchangeCode: (data: ExchangeCodePayload) => Promise<any>;
-
+  subscribe: (data: ExchangeCodePayload) => Promise<any>;
 }
 
 export const API = axios.create({
@@ -183,7 +183,8 @@ API.interceptors.request.use(
 API.login = (data) => API.post("/auth/login", data);
 API.registerUser = (data) => API.post("/auth/register", data);
 API.contactUs = (data) => API.post("/auth/contact-us", data);
-API.resendOtp = () => {``
+API.resendOtp = () => {
+  ``;
   const emailToken: any = JSON.parse(
     JSON.stringify(localStorage.getItem("email_token"))
   );
@@ -265,7 +266,8 @@ API.getUserClient = () => API.get("/client/user");
 API.updateUser = (data) => API.patch("/client/user", data);
 API.getWallet = () => API.get("/client/wallet");
 API.facebookPost = (data) => API.post("/client/facebook/post", data);
-API.facebookPages = (token) =>API.get(`/client/facebook/pages?access_token=${token}`);
+API.facebookPages = (token) =>
+  API.get(`/client/facebook/pages?access_token=${token}`);
 API.instagramPost = (data) => API.post("/client/instagram/post", data);
 API.linkedinPost = (data) => API.post("/client/linkedin/post", data);
 API.twitterPost = (data) => API.post("/client/twitter/post", data);
@@ -312,8 +314,9 @@ API.createGenerateAmount = (data: any) =>
   API.post("/admin/generation-amount", data);
 API.deleteGenerateAmount = (id: any) =>
   API.delete(`/admin/generation-amount/${id}`);
-API.updatePassword = (data: any) =>
-  API.post("/auth/update-password", data);
-API.OauthExchangeCode = (data: any) => API.post("/client/oauth/exchange-code", data);
+API.updatePassword = (data: any) => API.post("/auth/update-password", data);
+API.OauthExchangeCode = (data: any) =>
+  API.post("/client/oauth/exchange-code", data);
+API.subscribe = (data: any) => API.post("/client/subscribe", { email: data });
 
 export default API;

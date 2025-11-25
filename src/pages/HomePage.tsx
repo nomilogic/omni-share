@@ -48,6 +48,8 @@ import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import OmniVideo from "../assets/video/omnishare.mp4";
+import { div } from "framer-motion/client";
+import { fa } from "zod/locales";
 function HomePage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showAllFeatures, setShowAllFeatures] = useState(false);
@@ -312,6 +314,7 @@ function HomePage() {
       notify("error", err.response?.data?.message || "Something went wrong");
     }
   };
+  const [loading, setLoading] = useState(false);
 
   return (
     <div className="min-h-screen bg-white overflow-x-hidden">
@@ -857,7 +860,7 @@ function HomePage() {
               stiffness: 100,
             }}
             onClick={() => navigate("/auth")}
-            className="bg-white text-[#7650e3] px-8 py-4 rounded-full text-lg font-semibold shadow-2xl inline-flex items-center space-x-2"
+            className="bg-white text-[#7650e3] px-8 py-4 rounded-md text-lg font-semibold shadow-2xl inline-flex items-center space-x-2"
             whileHover={{
               scale: 1.08,
               boxShadow: "0 20px 40px rgba(0, 0, 0, 0.2)",
@@ -1607,7 +1610,7 @@ function HomePage() {
                 <motion.button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-[#7650e3] text-white py-4 rounded-md font-semibold text-lg shadow-lg"
+                  className="w-full bg-[#7650e3] text-white py-3 rounded-md font-semibold text-lg shadow-lg"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4, type: "spring" }}
@@ -1625,31 +1628,101 @@ function HomePage() {
         </div>
       </section>
 
-      <div className="relative  bg-theme-secondary ">
+      <div className="relative bg-theme-secondary">
         <motion.footer
-          className="w-full  px-4 py-4 text-center text-sm theme-text-light "
+          className="w-full px-4 py-4 text-center text-sm theme-text-light"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
         >
-          <div className="w-full mx-auto flex pt-2 md:flex-row items-center gap-2 md:justify-between justify-center flex-col md:px-[10%] px-3 text-sm ">
-            <span>© {new Date().getFullYear()} OMNISHARE</span>
-            <div className="flex justify-center space-x-1 text-sm theme-text-light mb-1">
-              <Link
-                to="/privacy"
-                className=" transition-colors duration-200"
-                // onClick={() => setIsMobileMenuOpen(false)}
+          <div className="w-full mx-auto pt-2 md:px-[10%] px-3 flex flex-col md:flex-row items-center md:justify-between gap-3">
+            <div className="flex flex-col items-center md:items-start text-sm">
+              <span className="mb-2">
+                © {new Date().getFullYear()} OMNISHARE
+              </span>
+
+              <div className="flex justify-center md:justify-start space-x-1 text-sm theme-text-light">
+                <Link to="/privacy" className="transition-colors duration-200">
+                  Privacy Policy
+                </Link>
+                <span className="text-white/20">•</span>
+                <Link to="/terms" className="transition-colors duration-200">
+                  Terms of Service
+                </Link>
+                <span className="text-white/20">•</span>
+                <Link to="/support" className="transition-colors duration-200">
+                  Support
+                </Link>
+              </div>
+            </div>
+
+            <div className="w-full md:w-auto flex flex-col items-center md:items-end">
+              <form
+                onSubmit={async (e: any) => {
+                  e.preventDefault();
+                  try {
+                    setLoading(true);
+
+                    const email = e.target.email.value;
+                    await API.subscribe(email);
+
+                    setLoading(false);
+                    e.target.reset();
+                    notify("success", "Subscribed successfully");
+                  } catch (error) {
+                    notify("error", "Subscription failed");
+                    setLoading(false);
+                  }
+                }}
+                className="flex  w-full sm:w-auto items-center gap-2"
               >
-                Privacy Policy
-              </Link>
-              <span className="text-white/20">•</span>
-              <Link to="/terms" className=" transition-colors duration-200">
-                Terms of Service
-              </Link>
-              <span className="text-white/20">•</span>
-              <Link to="/support" className=" transition-colors duration-200">
-                Support
-              </Link>
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Enter your email"
+                  className="px-3 py-2 w-64 rounded-md bg-white border border-purple-600 text-purple-600 placeholder-purple-600/80 focus:outline-none focus:ring-2 focus:ring-purple-600 transition"
+                  required
+                />
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className={`px-4 py-2 w-full sm:w-[130px] rounded-md border font-medium shadow-lg transition
+        ${
+          loading
+            ? "bg-purple-600 text-white border-purple-600 cursor-not-allowed"
+            : "bg-white text-theme-secondary border-purple-600"
+        }`}
+                >
+                  {loading ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <svg
+                        className="animate-spin h-4 w-4 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16 8 8 0 01-8-8z"
+                        ></path>
+                      </svg>
+                      Subscribing...
+                    </div>
+                  ) : (
+                    "Subscribe"
+                  )}
+                </button>
+              </form>
             </div>
           </div>
         </motion.footer>
