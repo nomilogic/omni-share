@@ -1,5 +1,5 @@
 import { useResize } from "../context/ResizeContext";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import {
   Template,
   TemplateElement,
@@ -34,6 +34,7 @@ import {
 import { uploadMedia, getCurrentUser } from "../lib/database";
 import "../styles/drag-prevention.css";
 import "../styles/template-editor.css";
+import { useNavigate } from "react-router-dom";
 
 interface ImageTemplateEditorProps {
   imageUrl: string;
@@ -112,6 +113,10 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
   }>({ width: 800, height: 800 });
   const [zoomLevel, setZoomLevel] = useState<number>(1);
   const [maxZoom, setMaxZoom] = useState<number>(1);
+  const [showDiscardModal, setShowDiscardModal] = useState<boolean>(false);
+  const [pendingDiscardAction, setPendingDiscardAction] = useState<(() => void) | null>(null);
+  const navigate = useNavigate();
+
 
   // Utility function to convert hex color to rgba with opacity
   const hexToRgba = (hex: string, opacity: number = 1): string => {
@@ -292,6 +297,12 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
       }
     }
   }, [elements, ctx, backgroundImage, isLoading]);
+
+  const handleDiscardClick = useCallback(() => {
+    setPendingDiscardAction(onCancel);
+    setShowDiscardModal(true);
+  }, [onCancel]);
+  
 
   const redrawCanvas = (
     context: CanvasRenderingContext2D,
@@ -1117,6 +1128,8 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
     setElements((prev) => [...prev, newElement]);
     setSelectedElement(newElement.id);
   };
+
+  
 
   const createNewShapeElement = (shape: "rectangle" | "circle") => {
     if (!canvas) return;
@@ -2049,11 +2062,13 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
             </button>
 
             <button
-              onClick={onCancel}
+              onClick={()=> {setShowDiscardModal(true);}}
+
               className="text-purple-600 flex justify-center items-center gap-2  font-medium w-full px-3 py-2.5  mx-1 rounded-md border border-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3]"
             >
-              Back
+              Discard Image
             </button>
+            
           </div>
         </div>
       </div>
@@ -2149,6 +2164,43 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
           </div>
         </div>
       </div>
+      {showDiscardModal && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-gray-50 rounded-md shadow-md w-full max-w-md px-8 py-6">
+            <h2 className="text-2xl font-bold text-purple-700 mb-4 items-center flex justify-center">
+              Discard Image ?
+            </h2>
+
+            <p className="text-gray-500 text-sm mb-8 text-center leading-relaxed">
+              You will loose this image and the coins you used to generate. <br />
+              Are you sure you want to discard them and go back?
+            </p>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setShowDiscardModal(false);
+                  setPendingDiscardAction(null);
+                }}
+                className="flex-1  bg-transparent border-purple-600 border text-purple-600 flex items-center gap-2 justify-center hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={() => {
+                  onCancel();
+                  setShowDiscardModal(false);
+                  setPendingDiscardAction(null);
+                }}
+                className="flex-1  bg-purple-600 text-white hover:text-[#7650e3] flex items-center gap-2 justify-center hover:bg-[#d7d7fc] border border-[#7650e3] font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

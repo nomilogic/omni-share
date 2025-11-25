@@ -462,7 +462,7 @@ function HomePage() {
         />
 
         <div className="absolute inset-0 z-0 pointer-events-none w-full h-full">
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-800/50 via-purple-600/40 to-transparent backdrop-blur-[5px]" />
+          <div className="absolute inset-0 bg-gradient-to-br bg-purple-900/70 to-transparent backdrop-blur-[5px]" />
           <div className="absolute inset-0 bg-white/2 pointer-events-none mix-blend-screen" />
         </div>
 
@@ -1205,7 +1205,7 @@ function HomePage() {
       <section id="contact" className="py-20 bg-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
-            className="text-center mb-12"
+            className="text-center mb-5"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}

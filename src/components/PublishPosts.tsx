@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { GeneratedPost, Platform } from "../types";
 import { postToAllPlatforms } from "../lib/socialPoster";
 import { SocialMediaManager } from "./SocialMediaManager";
@@ -13,6 +13,7 @@ import {
   getPlatformDisplayName,
 } from "../utils/platformIcons";
 import API from "../services/api";
+import { useNavigate } from "react-router-dom";
 
 interface PublishProps {
   posts: GeneratedPost[];
@@ -54,6 +55,9 @@ export const PublishPosts: React.FC<PublishProps> = ({
   const [selectedYoutubeChannel, setSelectedYoutubeChannel] =
     useState<string>("");
   const [publishedPlatforms, setPublishedPlatforms] = useState<Platform[]>([]);
+  const [showDiscardModal, setShowDiscardModal] = useState<boolean>(false);
+  const [pendingDiscardAction, setPendingDiscardAction] = useState<(() => void) | null>(null); 
+  const navigate = useNavigate();
 
   useEffect(() => {
     console.log("Publishing posts for user:", userId);
@@ -97,6 +101,11 @@ export const PublishPosts: React.FC<PublishProps> = ({
       setConnectedPlatforms([]);
     }
   };
+
+  const handleDiscardClick = useCallback(() => {
+    setPendingDiscardAction(onBack);
+    setShowDiscardModal(true);
+  }, [onBack]);
 
   const fetchFacebookPages = async () => {
     try {
@@ -387,7 +396,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
         </div>
 
         <div className="md:mb-8 mb-4 mt-4">
-          <div className="flex items-center justify-between mb-4">
+          {/* <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="font-semibold text-slate-900 mb-1">
                 Select Platforms to Publish:
@@ -420,10 +429,10 @@ export const PublishPosts: React.FC<PublishProps> = ({
                 </button>
               </div>
             )}
-          </div>
+          </div> */}
 
           {/* Selection Summary */}
-          {connectedPlatforms.length > 0 && (
+          {/* {connectedPlatforms.length > 0 && (
             <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
               <p className="text-sm text-blue-800">
                 <span className="font-medium">
@@ -454,7 +463,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
                 </p>
               )}
             </div>
-          )}
+          )} */}
 
           <div className="space-y-3">
             {posts.map((post) => {
@@ -770,7 +779,14 @@ export const PublishPosts: React.FC<PublishProps> = ({
           onClick={onBack}
           class="rounded-md theme-bg-light px-4 py-2.5 w-full text-center font-semibold text-base border border-[#7650e3] text-[#7650e3] transition-colors hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] disabled:cursor-not-allowed"
         >
-          Close
+          Back
+        </button>
+
+        <button
+          onClick={()=> {setShowDiscardModal(true);}}
+          class=" mt-5 rounded-md theme-bg-light px-4 py-2.5 w-full text-center font-semibold text-base border border-[#7650e3] text-[#7650e3] transition-colors hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] disabled:cursor-not-allowed"
+        >
+          Discard Post
         </button>
 
         {/* Helper text */}
@@ -886,6 +902,43 @@ export const PublishPosts: React.FC<PublishProps> = ({
           </div>
         )}
       </div>
+      {showDiscardModal && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-gray-50 rounded-md shadow-md w-full max-w-md px-8 py-6">
+            <h2 className="text-2xl font-bold text-purple-700 mb-4 items-center flex justify-center">
+              Discard Post ?
+            </h2>
+
+            <p className="text-gray-500 text-sm mb-8 text-center leading-relaxed">
+              You will loose your post. <br />
+              Are you sure you want to discard them and go back?
+            </p>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setShowDiscardModal(false);
+                  setPendingDiscardAction(null);
+                }}
+                className="flex-1  bg-transparent border-purple-600 border text-purple-600 flex items-center gap-2 justify-center hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={() => {
+                navigate("/content");
+                  setShowDiscardModal(false);
+                  setPendingDiscardAction(null);
+                }}
+                className="flex-1  bg-purple-600 text-white hover:text-[#7650e3] flex items-center gap-2 justify-center hover:bg-[#d7d7fc] border border-[#7650e3] font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
