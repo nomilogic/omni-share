@@ -1357,8 +1357,7 @@ const handleDiscardClick = useCallback(() => {
             </h2>
 
             <p className="text-gray-500 text-sm mb-8 text-center leading-relaxed">
-              You will loose your AI Generated post. <br />
-              Are you sure you want to discard them and go back?
+              Discarding will permanently remove the generated post and the coins spent to create it.
             </p>
 
             <div className="flex gap-3">

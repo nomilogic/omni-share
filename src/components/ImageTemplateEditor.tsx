@@ -2149,8 +2149,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
             </h2>
 
             <p className="text-gray-500 text-sm mb-8 text-center leading-relaxed">
-              You will loose this image and the coins you used to generate. <br />
-              Are you sure you want to discard them and go back?
+              Discarding will undo all applied changes and return you to the previous page.
             </p>
 
             <div className="flex gap-3">

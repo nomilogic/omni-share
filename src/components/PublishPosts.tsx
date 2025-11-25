@@ -56,7 +56,9 @@ export const PublishPosts: React.FC<PublishProps> = ({
     useState<string>("");
   const [publishedPlatforms, setPublishedPlatforms] = useState<Platform[]>([]);
   const [showDiscardModal, setShowDiscardModal] = useState<boolean>(false);
-  const [pendingDiscardAction, setPendingDiscardAction] = useState<(() => void) | null>(null); 
+  const [pendingDiscardAction, setPendingDiscardAction] = useState<
+    (() => void) | null
+  >(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -776,17 +778,19 @@ export const PublishPosts: React.FC<PublishProps> = ({
         </button>
 
         <button
-          onClick={onBack}
-          className="rounded-md theme-bg-light px-4 py-2.5 w-full text-center font-semibold text-base border border-[#7650e3] text-[#7650e3] transition-colors hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] disabled:cursor-not-allowed"
+          onClick={() => {
+            setShowDiscardModal(true);
+          }}
+          class="  rounded-md theme-bg-light px-4 py-2.5 w-full text-center font-semibold text-base border border-[#7650e3] text-[#7650e3] transition-colors hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] disabled:cursor-not-allowed"
         >
-          Back
+          Discard Post
         </button>
 
         <button
-          onClick={()=> {setShowDiscardModal(true);}}
-          class=" mt-5 rounded-md theme-bg-light px-4 py-2.5 w-full text-center font-semibold text-base border border-[#7650e3] text-[#7650e3] transition-colors hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] disabled:cursor-not-allowed"
+          onClick={onBack}
+          className="rounded-md mt-5 theme-bg-light px-4 py-2.5 w-full text-center font-semibold text-base border border-[#7650e3] text-[#7650e3] transition-colors hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] disabled:cursor-not-allowed"
         >
-          Discard Post
+          Back
         </button>
 
         {/* Helper text */}
@@ -910,8 +914,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
             </h2>
 
             <p className="text-gray-500 text-sm mb-8 text-center leading-relaxed">
-              You will loose your post. <br />
-              Are you sure you want to discard them and go back?
+              If you discard now, everything you’ve created will be deleted.
             </p>
 
             <div className="flex gap-3">
@@ -927,7 +930,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
 
               <button
                 onClick={() => {
-                navigate("/content");
+                  navigate("/content");
                   setShowDiscardModal(false);
                   setPendingDiscardAction(null);
                 }}
