@@ -504,8 +504,11 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
         )}
 
         {loader ? (
-          <div className=" flex justify-center items-center min-h-[50vh]">
+          <div className=" flex flex-col justify-center items-center min-h-[50vh]">
             <Icon name="spiral-logo" size={45} className="animate-spin" />
+            <p className="mt-1 text-base font-medium text-gray-500">
+              Loading History....
+            </p>
           </div>
         ) : filteredPosts.length === 0 ? (
           <div className="text-center py-12">
