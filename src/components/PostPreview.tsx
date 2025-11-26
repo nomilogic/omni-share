@@ -56,8 +56,10 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
   const [regenerationPrompt, setRegenerationPrompt] = useState<string>("");
   const [isRegenerating, setIsRegenerating] = useState<boolean>(false);
   const [showDiscardModal, setShowDiscardModal] = useState<boolean>(false);
-  const [pendingDiscardAction, setPendingDiscardAction] = useState<(() => void) | null>(null); 
-const navigate = useNavigate();
+  const [pendingDiscardAction, setPendingDiscardAction] = useState<
+    (() => void) | null
+  >(null);
+  const navigate = useNavigate();
   // Calculate initial character counts for all posts
   useEffect(() => {
     const postsWithCharacterCount = generatedPosts.map((post) => ({
@@ -80,11 +82,10 @@ const navigate = useNavigate();
     );
   }, [generatedPosts]);
 
-
-const handleDiscardClick = useCallback(() => {
-  setPendingDiscardAction(onBack);
-  setShowDiscardModal(true);
-}, [onBack]);
+  const handleDiscardClick = useCallback(() => {
+    setPendingDiscardAction(onBack);
+    setShowDiscardModal(true);
+  }, [onBack]);
 
   const copyToClipboard = async (text: string) => {
     try {
@@ -550,17 +551,6 @@ const handleDiscardClick = useCallback(() => {
                     >
                       Your browser does not support the video tag.
                     </video>
-                    {/* Fallback overlay for videos without thumbnails */}
-                    {/* {!(post as any).thumbnailUrl && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-gray-800 bg-opacity-30 pointer-events-none">
-                        <div className="text-white text-center">
-                          <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mb-2 mx-auto">
-                            <span className="text-3xl">▶</span>
-                          </div>
-                          <p className="text-sm opacity-75">Video Content</p>
-                        </div>
-                      </div>
-                    )} */}
                   </>
                 ) : (
                   <img
@@ -744,8 +734,6 @@ const handleDiscardClick = useCallback(() => {
                   <h3 className="font-medium text-slate-900">
                     {getPlatformDisplayName("linkedin")}
                   </h3>
-                  {/* <p className="text-sm text-gray-500 font-medium">Campaign • 1st</p>
-                  <p className="text-xs text-gray-400">Just now</p> */}
                 </div>
               </div>
               <p
@@ -804,7 +792,6 @@ const handleDiscardClick = useCallback(() => {
       case "tiktok":
         return (
           <div className="bg-black rounded-md overflow-hidden max-w-sm shadow-md">
-            {/* TikTok Header with Icon and Name */}
             <div className="p-3 border-b border-gray-800">
               <div className="flex items-center space-x-3">
                 <div
@@ -837,12 +824,12 @@ const handleDiscardClick = useCallback(() => {
                         if (videoAspectRatio) {
                           const ratio = videoAspectRatio;
                           if (ratio >= 1.6 && ratio <= 1.9) {
-                            return "aspect-video"; // 16:9 horizontal
+                            return "aspect-video";
                           } else if (ratio >= 0.5 && ratio <= 0.65) {
-                            return "aspect-[9/16]"; // 9:16 vertical
+                            return "aspect-[9/16]";
                           }
                         }
-                        return "aspect-[9/16]"; // default for videos
+                        return "aspect-[9/16]";
                       })()
                     : "aspect-square"
                 }`}
@@ -852,9 +839,9 @@ const handleDiscardClick = useCallback(() => {
                     <>
                       <video
                         src={mediaUrl}
-                        poster={(post as any).thumbnailUrl} // Use custom thumbnail for TikTok videos
+                        poster={(post as any).thumbnailUrl}
                         controls
-                        preload="metadata" // Load video metadata to show first frame
+                        preload="metadata"
                         className="object-cover w-full h-full"
                         onError={(e) => {
                           console.error(
@@ -866,17 +853,6 @@ const handleDiscardClick = useCallback(() => {
                       >
                         Your browser does not support the video tag.
                       </video>
-                      {/* Fallback overlay for videos without thumbnails */}
-                      {/* {!(post as any).thumbnailUrl && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-gray-800 bg-opacity-30 pointer-events-none">
-                        <div className="text-white text-center">
-                          <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mb-2 mx-auto">
-                            <span className="text-3xl">▶</span>
-                          </div>
-                          <p className="text-sm opacity-75">Video Content</p>
-                        </div>
-                      </div>
-                    )} */}
                     </>
                   ) : (
                     <img
@@ -924,7 +900,6 @@ const handleDiscardClick = useCallback(() => {
               "w-full flex justify-center bg-black"
             )}
             <div className="p-4">
-              {/* YouTube Header with Icon and Name */}
               <div className="flex items-center space-x-3 mb-4">
                 <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center ${getPlatformColors(
@@ -1008,23 +983,17 @@ const handleDiscardClick = useCallback(() => {
     }
   };
 
-  const getFullPostText = (post: GeneratedPost) => {
-    return `${post.caption}\n\n${post.hashtags.join(" ")}`;
-  };
-
-  // Find the currently selected post based on the selectedPlatform
   const selectedPost = posts.find((post) => post.platform === selectedPlatform);
 
   return (
-    <div className="preview w-full mx-auto bg-transparent  md:rounded-md p-4 md:shadow-md md:px-8  md:py-10  ">
+    <div className="preview w-full mx-auto bg-transparent  md:rounded-md p-4 md:shadow-md md:px-8  md:py-6 my-5 bg-white ">
       <h2 className="text-3xl font-semibold theme-text-primary mb-1">
         {t("ai_generated_posts")}
       </h2>
       <p className="text-sm theme-text-primary">
         {t("review_copy_share")}
       </p>
-      <div className="grid grid-cols-1 lg:grid-cols-1 gap-1">
-        {/* Platform Selector */}
+      <div className="grid lg:grid-cols-1  gap-1">
         <div className="lg:col-span-1 space-y-4">
           <h3 className="text-lg font-semibold text-slate-900 mb-0 text-left lg:text-center mt-2">
             {t("select_platform")}
@@ -1042,7 +1011,6 @@ const handleDiscardClick = useCallback(() => {
                       : "hover:shadow-md"
                   }`}
                 >
-                  {/* Main Platform Icon */}
                   {IconComponent && (
                     <div
                       className={`w-12 h-12 rounded-full flex items-center justify-center text-white ${getPlatformColors(
@@ -1053,16 +1021,6 @@ const handleDiscardClick = useCallback(() => {
                     </div>
                   )}
 
-                  {/* Indicator Light */}
-                  {/* <div className={`absolute -top-1 -right-1 w-5 h-5 rounded-full border-2 border-white shadow-md ${
-                    post.engagement === "high"
-                      ? "bg-green-500"
-                      : post.engagement === "medium"
-                        ? "bg-yellow-500"
-                        : "bg-red-500"
-                  }`}></div> */}
-
-                  {/* Selected Indicator */}
                   {selectedPlatform === post.platform && (
                     <div className="absolute inset-0 rounded-full border-2 border-blue-500 animate-pulse"></div>
                   )}
@@ -1070,56 +1028,16 @@ const handleDiscardClick = useCallback(() => {
               );
             })}
           </div>
-
-          {/* {selectedPost && (
-            <div className="mt-6 space-y-3">
-              <button
-                onClick={() => copyToClipboard(getFullPostText(selectedPost))}
-                className={`w-full flex items-center justify-center space-x-2 py-3 px-4 rounded-md font-medium transition-all duration-200 ${
-                  copiedPost === selectedPlatform
-                    ? "bg-green-100 text-green-700"
-                    : "bg-blue-100 text-blue-700 hover:bg-blue-200"
-                }`}
-              >
-                <Copy className="w-4 h-4" />
-                <span>
-                  {copiedPost === selectedPlatform ? "Copied!" : "Copy Post"}
-                </span>
-              </button>
-
-              <button
-                onClick={() => {
-                  const element = document.createElement("a");
-                  const file = new Blob([getFullPostText(selectedPost)], {
-                    type: "text/plain",
-                  });
-                  element.href = URL.createObjectURL(file);
-                  element.download = `${selectedPost.platform}-post.txt`;
-                  document.body.appendChild(element);
-                  element.click();
-                  document.body.removeChild(element);
-                }}
-                className="w-full flex items-center justify-center space-x-2 py-3 px-4 bg-gray-100 text-slate-700 rounded-md font-medium hover:bg-gray-200 transition-colors duration-200"
-              >
-                <Download className="w-4 h-4" />
-                <span>Download</span>
-              </button>
-            </div>
-          )} */}
         </div>
-
-        {/* Preview */}
         <div className="lg:col-span-2">
           <h3 className="text-lg font-semibold text-slate-900 mb-1 px-1 text-left lg:text-center">
             {t("preview")}
           </h3>
 
-          {/* Platform Preview */}
-          <div className="flex justify-center mb-6">
+          <div className="flex justify-center mb-4">
             {selectedPost && renderPlatformPreview(selectedPost)}
           </div>
 
-          {/* Inline Editing Controls */}
           {selectedPost && (
             <div className="flex justify-center mb-2">
               <div className="max-w-lg w-full text-center space-y-3">
@@ -1132,8 +1050,6 @@ const handleDiscardClick = useCallback(() => {
                         setEditingMode(false);
                       }}
                       className="flex items-center w-auto gap-2 px-4 py-2.5 bg-purple-600 text-white rounded-md border border-transparent hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition-colors font-medium"
-
-
                     >
                       <Save className="w-4 h-4" />
                       {t("save_changes")}
@@ -1143,7 +1059,6 @@ const handleDiscardClick = useCallback(() => {
                         discardChanges();
                       }}
                       className="flex items-center w-auto gap-2 px-4 py-2.5 border border-purple-600 text-purple-600 rounded-md hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition-colors font-medium"
-
                     >
                       <X className="w-4 h-4" />
                       {t("cancel")}
@@ -1158,7 +1073,6 @@ const handleDiscardClick = useCallback(() => {
                     <Edit className="w-4 h-4" />
                     {t("edit_post_text")}
                   </button>
-                  
                 )}
 
                 {editingMode && (
@@ -1186,10 +1100,9 @@ const handleDiscardClick = useCallback(() => {
             </div>
           )}
 
-          {/* Post Details - Below Preview with constrained width */}
           {selectedPost && (
-            <div className="flex justify-center hidden lg:block">
-              <div className="max-w-lg w-full space-y-4">
+            <div className="flex justify-center w-full lg:block">
+              <div className="max-w-lg  mx-auto w-full space-y-4">
                 <div className="bg-gray-50 rounded-md p-4">
                   <h4 className="font-medium text-slate-900 mb-3 flex items-center gap-2">
                     {(() => {
@@ -1233,20 +1146,6 @@ const handleDiscardClick = useCallback(() => {
                         {selectedPost.hashtags.length}
                       </span>
                     </div>
-                    {/* <div className="flex justify-between md:flex-col md:items-start">
-                      <span className="text-gray-500 font-medium">Engagement:</span>
-                      <span
-                        className={`font-medium  ${
-                          selectedPost.engagement === "high"
-                            ? "text-green-600"
-                            : selectedPost.engagement === "medium"
-                              ? "text-yellow-600"
-                              : "text-red-600"
-                        }`}
-                      >
-                        {selectedPost.engagement}
-                      </span>
-                    </div> */}
                   </div>
                 </div>
               </div>
@@ -1255,23 +1154,21 @@ const handleDiscardClick = useCallback(() => {
         </div>
       </div>
 
-      {/* Action Buttons / Regeneration Mode */}
-      <div className="pt-1 mt-1 flex flex-row-reverse gap-2">
+      <div className="pt-1 mt-2 flex flex-row-reverse gap-2">
         {!isRegeneratingMode ? (
           <>
             <button
               onClick={onPublish}
               className="w-full bg-purple-600 text-white hover:text-[#7650e3] flex items-center gap-2 justify-center hover:bg-[#d7d7fc] border border-[#7650e3] font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
-              
             >
               {t("continue")}
             </button>
 
             <button
-              onClick={()=> {setShowDiscardModal(true);}}
-              
+              onClick={() => {
+                setShowDiscardModal(true);
+              }}
               className="w-full bg-transparent border-purple-600 border text-purple-600 flex items-center gap-2 justify-center hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
-
             >
               {/* <Edit className="w-5 h-5" /> */}
               {t("discard_post")}
@@ -1287,7 +1184,7 @@ const handleDiscardClick = useCallback(() => {
             {/* Text Area */}
             <div className="mb-4">
               <textarea
-                value={ regenerationPrompt}
+                value={regenerationPrompt}
                 onChange={(e) => {
                   const value = e.target.value;
                   setRegenerationPrompt(value);
@@ -1374,7 +1271,7 @@ const handleDiscardClick = useCallback(() => {
 
               <button
                 onClick={() => {
-                navigate("/content");
+                  navigate("/content");
                   setShowDiscardModal(false);
                   setPendingDiscardAction(null);
                 }}

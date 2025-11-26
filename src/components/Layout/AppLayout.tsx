@@ -294,44 +294,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               } */}
             </div>
 
-            <div className="flex gap-2 mt-2.5 px-3">
-              <button
-                onClick={() => i18n.changeLanguage("en")}
-                className={`px-3 py-1 rounded-md text-sm 
-      ${
-        i18n.language === "en"
-          ? "bg-purple-600 text-white border border-white"
-          : "bg-white text-purple-600 hover:bg-gray-100"
-      }`}
-              >
-                EN
-              </button>
-
-              <button
-                onClick={() => i18n.changeLanguage("es")}
-                className={`px-3 py-1 rounded-md text-sm 
-      ${
-        i18n.language === "es"
-          ? "bg-purple-600 text-white border border-white"
-          : "bg-white text-purple-600 hover:bg-gray-100"
-      }`}
-              >
-                ES
-              </button>
-
-              <button
-                onClick={() => i18n.changeLanguage("zh")}
-                className={`px-3 py-1 rounded-md text-sm 
-      ${
-        i18n.language === "zh"
-          ? "bg-purple-600 text-white border border-white"
-          : "bg-white text-purple-600 hover:bg-gray-100"
-      }`}
-              >
-                中文
-              </button>
-            </div>
-
             <nav className="flex-1 px-1 py-2.5 flex flex-col mx-2 gap-y-2">
               {navigation.map((item) => {
                 const isActive = location.pathname === item.path;
@@ -382,7 +344,43 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 </div>
               </button>
             </div>
+            <div className="flex gap-2 mt-2.5 md:px-5 px-3">
+              <button
+                onClick={() => i18n.changeLanguage("en")}
+                className={`px-3 py-1 rounded-md text-sm 
+      ${
+        i18n.language === "en"
+          ? "bg-purple-600 text-white border border-white"
+          : "bg-white text-purple-600 hover:bg-gray-100"
+      }`}
+              >
+                EN
+              </button>
 
+              <button
+                onClick={() => i18n.changeLanguage("es")}
+                className={`px-3 py-1 rounded-md text-sm 
+      ${
+        i18n.language === "es"
+          ? "bg-purple-600 text-white border border-white"
+          : "bg-white text-purple-600 hover:bg-gray-100"
+      }`}
+              >
+                ES
+              </button>
+
+              <button
+                onClick={() => i18n.changeLanguage("zh")}
+                className={`px-3 py-1 rounded-md text-sm 
+      ${
+        i18n.language === "zh"
+          ? "bg-purple-600 text-white border border-white"
+          : "bg-white text-purple-600 hover:bg-gray-100"
+      }`}
+              >
+                中文
+              </button>
+            </div>
             {/* Footer */}
             <div className="absolute bottom-0 left-0 right-0 ">
               <div className="w-full mx-auto ">

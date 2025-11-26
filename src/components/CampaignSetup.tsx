@@ -140,9 +140,6 @@ export const CampaignSetup: React.FC<CampaignSetupProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log("CampaignSetup form submitted with data:", formData);
-
-    // Validate required fields
     if (!formData.name || formData.name.trim() === "") {
       notify("error", "Please enter a campaign name");
       return;
@@ -153,7 +150,6 @@ export const CampaignSetup: React.FC<CampaignSetupProps> = ({
       return;
     }
 
-    console.log("Form validation passed, calling onNext with:", formData);
     onNext(formData);
   };
 

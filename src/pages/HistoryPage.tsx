@@ -21,6 +21,7 @@ import { historyRefreshService } from "../services/historyRefreshService";
 import { getPlatformIcon, getPlatformColors } from "../utils/platformIcons";
 import API from "../services/api";
 import { t } from "i18next";
+import { Icon } from "@/components";
 
 // Export interface for external access
 export interface HistoryPageRef {
@@ -68,12 +69,11 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
   const [timePeriod, setTimePeriod] = useState<TimePeriod>("all");
   const [sortBy, setSortBy] = useState<SortBy>("date_desc");
   const [showFilters, setShowFilters] = useState(false);
-
+  const [loader, setLoader] = useState(false);
   useEffect(() => {
     fetchPostHistory();
   }, []);
 
-  // Register with global history refresh service
   useEffect(() => {
     const refreshCallback = async () => {
       console.log("📋 Post history refresh triggered from global service");
@@ -90,24 +90,17 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
 
   const fetchPostHistory = async () => {
     try {
-      const token = localStorage.getItem("auth_token");
-      if (!token) {
-        setError("No authentication token found");
-        setLoading(false);
-        return;
-      }
-
+      setLoader(true);
       const response = await API.getHistory();
-
       const data = await response.data.data;
       setPosts(data || []);
+      setLoader(false);
     } catch (err) {
-      console.error("Error fetching post history:", err);
       setError(
         err instanceof Error ? err.message : "Failed to fetch post history"
       );
     } finally {
-      setLoading(false);
+      setTimeout(() => setLoading(false), 1000);
     }
   };
 
@@ -144,7 +137,6 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
     }
   };
 
-  // Reset all filters to default
   const resetFilters = () => {
     setReadFilter("all");
     setPlatformFilter("all");
@@ -152,15 +144,11 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
     setSortBy("date_desc");
   };
 
-  // Check if any filters are active (non-default)
   const hasActiveFilters =
     readFilter !== "all" ||
     platformFilter !== "all" ||
     timePeriod !== "all" ||
     sortBy !== "date_desc";
-
-  // Don't refetch data when filters change - handle all filtering client-side
-  // This improves performance and provides instant filtering
 
   const renderPlatformIcon = (platform: Platform) => {
     const IconComponent = getPlatformIcon(platform);
@@ -251,7 +239,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
     }
 
     return (
-      <div className="p-4 flex-shrink-0 w-32 h-24 bg-gray-200 border-r border-gray-200 relative">
+      <div className=" flex-shrink-0 w-32 p-1 bg-gray-300 border-r border-gray-200 relative">
         <img
           src={thumbnailUrl}
           alt="Post thumbnail"
@@ -288,7 +276,6 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
     );
   };
 
-  // Expose refresh function through ref
   useImperativeHandle(
     ref,
     () => ({
@@ -301,24 +288,20 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
     []
   );
 
-  // Apply client-side filtering as fallback (in case server-side filtering isn't working perfectly)
   let filteredPosts = posts;
 
-  // Apply read filter
   if (readFilter === "read") {
     filteredPosts = filteredPosts.filter((post) => post.isRead);
   } else if (readFilter === "unread") {
     filteredPosts = filteredPosts.filter((post) => !post.isRead);
   }
 
-  // Apply platform filter
   if (platformFilter !== "all") {
     filteredPosts = filteredPosts.filter(
       (post) => post.platform === platformFilter
     );
   }
 
-  // Apply time period filter
   if (timePeriod !== "all") {
     const now = new Date();
     const filterDate = new Date();
@@ -341,7 +324,6 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
     });
   }
 
-  // Apply sorting
   filteredPosts = [...filteredPosts].sort((a, b) => {
     switch (sortBy) {
       case "date_asc":
@@ -368,13 +350,13 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
 
   return (
     <div className="h-fit p-4 py-2 ">
-      {/* Header */}
-      <div className="">
+      <div>
         <div className=" max-w-5xl mx-auto mb-6">
           <div className="flex justify-between items-center gap-4">
             <h2 className="text-3xl font-bold text-gray-900 mb-2">
               {t("post_history")}
             </h2>
+            <h2 className="text-3xl font-bold text-gray-900 ">Post History</h2>
             <button
               onClick={() => setShowFilters(!showFilters)}
               className={`flex items-center gap-2 text-sm font-medium px-3 py-1.5 rounded-md border transition-colors ${
@@ -397,7 +379,6 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
           </div>
         </div>
 
-        {/* Filters Section */}
         {showFilters && (
           <div className="w-full mb-6 p-4 bg-white border border-gray-200 rounded-md">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -526,7 +507,11 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
           </div>
         )}
 
-        {filteredPosts.length === 0 ? (
+        {loader ? (
+          <div className=" flex justify-center items-center min-h-[50vh]">
+            <Icon name="spiral-logo" size={45} className="animate-spin" />
+          </div>
+        ) : filteredPosts.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-purple-600 mb-4">
               <Clock className="w-16 h-16 mx-auto" />
@@ -638,5 +623,4 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
   );
 });
 
-// Add display name for better debugging
 HistoryPage.displayName = "HistoryPage";
