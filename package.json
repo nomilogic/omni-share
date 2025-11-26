@@ -7,8 +7,8 @@
   "scripts": {
     "dev": "vite --port 5000",
     "build": "vite build",
-    "preview": "vite preview",
-    "start": "npm run preview --port 5000",
+    "preview": "vite preview --port 5000",
+    "start": "npm run preview",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
