@@ -47,6 +47,7 @@ import API from "@/services/api";
 import { useNavigate } from "react-router-dom";
 import { ImageUploader } from ".";
 import { notify } from "@/utils/toast";
+import { useTranslation } from "react-i18next";
 
 // Helper function to convert file to base64
 const fileToBase64 = (file: File): Promise<string> => {
@@ -89,6 +90,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     showLoading,
     hideLoading,
   } = useLoadingAPI();
+  const { t, i18n } = useTranslation();
+  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
 
   const getCost = () => {
     if (!selectedPostType || !generationAmounts) return 0;
@@ -2092,11 +2095,10 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         <>
           <div className="text-left mb-4">
             <h2 className="text-3xl md:font-bold font-semibold theme-text-primary mb-2  ">
-              Create auto‑optimize social posts with AI
+              {t("create_auto_optimize")}
             </h2>
             <p className="text-sm text-gray-500 font-medium md:font-semibold font-medium ">
-              Generate on‑brand content, auto‑design visuals, and publish
-              everywhere in one click. Meet your new 24/7 content teammate.
+              {t("generate_on_brand")}
             </p>
           </div>
 
@@ -2104,7 +2106,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
             <div className="grid grid-cols-1 gap-4 ">
               <div className="z-10">
                 <label className="block text-sm font-semibold theme-text-primary mb-2 ">
-                  Select Post Type
+                  {t("select_post_type")}
                 </label>
                 <div className="grid grid-cols-3 gap-4 text-sm md:text-base">
                   <button
@@ -2147,9 +2149,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                       </div>
                       <div>
                         <h3 className={`font-semibold leading-[1.2rem] mt-1  `}>
-                          Create
+                          {t("create")}
                           <br />
-                          Text Post
+                          {t("text_post")}
                         </h3>
                       </div>
                     </div>
@@ -2188,9 +2190,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         <h3
                           className={`font-semibold text-md leading-[1.2rem] mt-1 text p-0 `}
                         >
-                          Create
+                          {t("create")}
                           <br />
-                          Image Post
+                          {t("image_post")}
                         </h3>
                       </div>
                     </div>
@@ -2253,9 +2255,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         
                        `}
                               >
-                                Upload
+                                {t("upload")}
                                 <br />
-                                Image
+                                {t("image")}
                               </h3>
                             </div>
                           </div>
@@ -2308,8 +2310,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               <h3
                                 className={`font-semibold text-sm leading-[1.2rem] mt-1 text`}
                               >
-                                Text
-                                <br /> to Image
+                                {t("text")}
+                                <br /> {t("to_image")}
                               </h3>
                             </div>
                           </div>
@@ -2363,9 +2365,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         <h3
                           className={`font-semibold text-md leading-[1.2rem] mt-1 text p-0 `}
                         >
-                          Create
+                          {t("create")}
                           <br />
-                          Video Post
+                          {t("video_post")}
                         </h3>
                       </div>
                     </div>
@@ -2422,9 +2424,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               <h3
                                 className={`font-semibold text-sm leading-[1.2rem] mt-1 text `}
                               >
-                                Upload
+                                {t("upload")}
                                 <br />
-                                Video (16:9)
+                                {t("video")} (16:9)
                               </h3>
                               {/* <p className={`text-xs mt-1 ${selectedVideoMode === 'upload' ? 'text-white/80' : 'theme-text-tertiary'}`}>
                               Horizontal format
@@ -2477,9 +2479,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               <h3
                                 className={`font-semibold text-sm leading-[1.2rem] mt-1 text `}
                               >
-                                Upload
+                                {t("upload")}
                                 <br />
-                                Short (9:16)
+                                {t("short")} (9:16)
                               </h3>
                               {/* <p className={`text-xs mt-1 ${selectedVideoMode === 'uploadShorts' ? 'text-white/80' : 'theme-text-tertiary'}`}>
                               Vertical format
@@ -2498,7 +2500,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                   {selectedImageMode === "upload" && (
                     <div>
                       <h4 className="text-sm font-medium theme-text-primary  mb-2 flex items-center">
-                        Upload Image *
+                        {t("upload_image")}
                       </h4>
 
                       {/* Upload Area */}
@@ -2610,7 +2612,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                   className="text-red-400 hover:text-red-300 text-xs font-medium flex items-center space-x-1"
                                 >
                                   <Trash2 className="w-3 h-3" />
-                                  <span>Remove</span>
+                                  <span>{t("remove")}</span>
                                 </button>
                               </div>
                             </div>
@@ -2619,7 +2621,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               <Icon name="upload" size={44} />
                               <div>
                                 <p className="font-medium theme-text-primary text-sm mb-1">
-                                  Click to browse image
+                                  {t("click_browse_image")}
                                 </p>
                                 <p className="theme-text-secondary text-xs"></p>
                               </div>
@@ -2837,7 +2839,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                 className="text-red-400 hover:text-red-300 text-xs font-medium flex items-center space-x-1"
                               >
                                 <Trash2 className="w-3 h-3" />
-                                <span>Remove</span>
+                                <span>{t("remove")}</span>
                               </button>
                             </div>
                           </div>
@@ -2852,9 +2854,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                 <div>
                   <label className="block text-sm font-medium theme-text-primary  mb-2">
                     {selectedVideoMode === "uploadShorts" ? (
-                      <span>Upload Shorts Video (9:16) *</span>
+                      <span>{t("upload_shorts_video")}</span>
                     ) : (
-                      <span>Upload Video (16:9) *</span>
+                      <span>{t("upload_video")}</span>
                     )}
                   </label>
                   <div className="  theme-bg-primary  border border-slate-200/70 backdrop-blur-sm rounded-md shadow-md p-6">
@@ -3073,7 +3075,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                   className="w-4 h-4"
                                 />
                                 <span className="text-sm theme-text-secondary">
-                                  Generate thumbnail with AI
+                                  {t("generate_thumbnail_ai")}
                                 </span>
                               </label>
 
@@ -3093,11 +3095,11 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                     }
                                     className="px-3 py-1 border rounded text-sm"
                                   >
-                                    Upload custom thumbnail
+                                    {t("upload_custom_thumbnail")}
                                   </button>
                                   {customThumbnailUploading && (
                                     <span className="text-xs text-blue-300 ml-2">
-                                      Uploading...
+                                      {t("uploading")}
                                     </span>
                                   )}
                                 </>
@@ -3138,7 +3140,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                   className="flex-1 bg-red-500/80 text-white px-3 py-1.5 rounded text-xs hover:bg-red-600/80 transition-colors flex items-center justify-center space-x-1"
                                 >
                                   <Trash2 className="w-3 h-3" />
-                                  <span>Remove</span>
+                                  <span>{t("remove")}</span>
                                 </button>
                               </div>
                             </div>
@@ -3159,7 +3161,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                           }}
                           className="text-red-400 hover:text-red-300 text-xs font-medium text-center w-full flex items-center justify-center space-x-1  "
                         >
-                          Remove
+                          {t("remove")}
                         </button>
                       </div>
                     ) : (
@@ -3181,7 +3183,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               <Icon name="upload-video" size={44} />
                               <div>
                                 <p className="font-medium theme-text-primary text-sm mb-1">
-                                  Click to browse video
+                                  {t("click_browse_video")}
                                 </p>
                                 <p className="theme-text-secondary text-xs">
                                   {!selectedVideoMode &&
@@ -3238,8 +3240,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                     <div className="flex-1">
                       <label className=" text-sm font-medium theme-text-primary  mb-2  flex items-center">
                         {selectedImageMode === "textToImage"
-                          ? "Generate Image and Post with AI *"
-                          : "Content Description *"}
+                          ? t("generate_image_post_ai")
+                          : t("content_description")}
                       </label>
 
                       <textarea
@@ -3251,7 +3253,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                           }))
                         }
                         className="w-full px-3 py-2.5  theme-bg-primary transition-all duration-200 min-h-[160px] lg:min-h-[180px] text-sm  rounded-md placeholder-gray-500 bg-white"
-                        placeholder="Describe what you want to share... (e.g., 'Launch of our new eco-friendly water bottles')"
+                        placeholder={t("describe_placeholder")}
                         required
                       />
                     </div>
@@ -3260,7 +3262,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                       selectedImageMode === "upload") && (
                       <div className="">
                         <label className="text-sm font-medium theme-text-primary  mb-2 flex items-center">
-                          Image Dimensions *
+                          {t("image_dimensions")}
                         </label>
                         <div className="grid grid-cols-3 gap-4">
                           {[
@@ -3378,7 +3380,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                       ) : (
                         <div className="flex items-center">
                           <Wand2 className="w-[23px] h-[23px] mr-1" />
-                          GENERATE POST
+                          {t("generate_post")}
                         </div>
                       )}
 

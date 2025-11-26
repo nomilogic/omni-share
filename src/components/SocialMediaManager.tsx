@@ -13,6 +13,7 @@ import {
   getPlatformDisplayName,
   getPlatformColors,
 } from "../utils/platformIcons";
+import { useTranslation } from "react-i18next";
 
 interface SocialMediaManagerProps {
   userId: string;
@@ -92,6 +93,8 @@ export const SocialMediaManager: React.FC<SocialMediaManagerProps> = ({
   onCredentialsUpdate,
   selectedPlatforms,
 }) => {
+  const { t, i18n } = useTranslation();
+  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
   const [platformStatuses, setPlatformStatuses] = useState<PlatformStatus[]>(
     []
   );
@@ -365,7 +368,7 @@ export const SocialMediaManager: React.FC<SocialMediaManagerProps> = ({
                         </span>
                       ) : (
                         <span className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full">
-                          Not Connected
+                          {t("not_connected")}
                         </span>
                       )}
                     </div>

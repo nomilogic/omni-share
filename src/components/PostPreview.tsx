@@ -24,6 +24,7 @@ import {
 } from "../utils/platformIcons";
 import { useAppContext } from "@/context/AppContext";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 interface PostPreviewProps {
   posts: any[];
@@ -43,6 +44,8 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
   onPostsUpdate,
   onRegeneratePlatform,
 }) => {
+  const { t, i18n } = useTranslation();
+  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
   const [selectedPlatform, setSelectedPlatform] = useState<Platform>(
     generatedPosts[0]?.platform || "facebook"
   );
@@ -471,15 +474,15 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                 <div className="flex items-center space-x-6">
                   <button className="flex items-center space-x-2 text-gray-500 font-medium hover:text-blue-600">
                     <ThumbsUp className="w-4 h-4" />
-                    <span className="text-sm">Like</span>
+                    <span className="text-sm">{t("like")}</span>
                   </button>
                   <button className="flex items-center space-x-2 text-gray-500 font-medium hover:text-blue-600">
                     <MessageCircle className="w-4 h-4" />
-                    <span className="text-sm">Comment</span>
+                    <span className="text-sm">{t("comment")}</span>
                   </button>
                   <button className="flex items-center space-x-2 text-gray-500 font-medium hover:text-blue-600">
                     <Share2 className="w-4 h-4" />
-                    <span className="text-sm">Share</span>
+                    <span className="text-sm">{t("share")}</span>
                   </button>
                 </div>
               </div>
@@ -689,19 +692,19 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                   <div className="flex items-center justify-between mt-3 max-w-md">
                     <button className="flex items-center space-x-2 text-gray-500 font-medium hover:text-blue-500">
                       <MessageCircle className="w-4 h-4" />
-                      <span className="text-sm">Reply</span>
+                      <span className="text-sm">{t("reply")}</span>
                     </button>
                     <button className="flex items-center space-x-2 text-gray-500 font-medium hover:text-green-500">
                       <Repeat2 className="w-4 h-4" />
-                      <span className="text-sm">Repost</span>
+                      <span className="text-sm">{t("repost")}</span>
                     </button>
                     <button className="flex items-center space-x-2 text-gray-500 font-medium hover:text-red-500">
                       <Heart className="w-4 h-4" />
-                      <span className="text-sm">Like</span>
+                      <span className="text-sm">{t("like")}</span>
                     </button>
                     <button className="flex items-center space-x-2 text-gray-500 font-medium hover:text-blue-500">
                       <Share2 className="w-4 h-4" />
-                      <span className="text-sm">Share</span>
+                      <span className="text-sm">{t("share")}</span>
                     </button>
                   </div>
                 </div>
@@ -773,15 +776,15 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
               <div className="flex items-center justify-between pt-3 border-t border-gray-100">
                 <button className="flex items-center space-x-2 text-gray-500 font-medium hover:text-blue-600">
                   <ThumbsUp className="w-4 h-4" />
-                  <span className="text-sm">Like</span>
+                  <span className="text-sm">{t("like")}</span>
                 </button>
                 <button className="flex items-center space-x-2 text-gray-500 font-medium hover:text-blue-600">
                   <MessageCircle className="w-4 h-4" />
-                  <span className="text-sm">Comment</span>
+                  <span className="text-sm">{t("comment")}</span>
                 </button>
                 <button className="flex items-center space-x-2 text-gray-500 font-medium hover:text-blue-600">
                   <Share2 className="w-4 h-4" />
-                  <span className="text-sm">Share</span>
+                  <span className="text-sm">{t("share")}</span>
                 </button>
               </div>
             </div>
@@ -987,15 +990,15 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
   return (
     <div className="preview w-full mx-auto bg-transparent  md:rounded-md p-4 md:shadow-md md:px-8  md:py-6 my-5 bg-white ">
       <h2 className="text-3xl font-semibold theme-text-primary mb-1">
-        Your AI-Generated Posts
+        {t("ai_generated_posts")}
       </h2>
-      <p className="text-sm text-gray-500">
-        Review, copy, and share your optimized content
+      <p className="text-sm theme-text-primary">
+        {t("review_copy_share")}
       </p>
       <div className="grid lg:grid-cols-1  gap-1">
         <div className="lg:col-span-1 space-y-4">
           <h3 className="text-lg font-semibold text-slate-900 mb-0 text-left lg:text-center mt-2">
-            Select Platform
+            {t("select_platform")}
           </h3>
           <div className="flex flex-wrap gap-3 justify-center">
             {generatedPosts.map((post, index) => {
@@ -1030,7 +1033,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
         </div>
         <div className="lg:col-span-2">
           <h3 className="text-lg font-semibold text-slate-900 mb-1 px-1 text-left lg:text-center">
-            Preview
+            {t("preview")}
           </h3>
 
           <div className="flex justify-center mb-4">
@@ -1051,7 +1054,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                       className="flex items-center w-auto gap-2 px-4 py-2.5 bg-purple-600 text-white rounded-md border border-transparent hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition-colors font-medium"
                     >
                       <Save className="w-4 h-4" />
-                      Save Changes
+                      {t("save_changes")}
                     </button>
                     <button
                       onClick={() => {
@@ -1060,7 +1063,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                       className="flex items-center w-auto gap-2 px-4 py-2.5 border border-purple-600 text-purple-600 rounded-md hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition-colors font-medium"
                     >
                       <X className="w-4 h-4" />
-                      Cancel
+                      {t("cancel")}
                     </button>
                   </div>
                 ) : (
@@ -1070,7 +1073,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                     className="w-full py-2.5  text-md font-semibold rounded-md border flex items-center justify-center gap-2 transition  hover:bg-[#d7d7fc] text-[#7650e3] border-[#7650e3]"
                   >
                     <Edit className="w-4 h-4" />
-                    Edit Post Text
+                    {t("edit_post_text")}
                   </button>
                 )}
 
@@ -1087,12 +1090,14 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                   </p>
                 )}
                 <button
-                  onClick={handleRegenerateClick}
-                  className="w-full bg-purple-600 text-white hover:text-[#7650e3] flex items-center gap-2 justify-center hover:bg-[#d7d7fc] border border-[#7650e3] font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
-                >
-                  <Edit className="w-5 h-5" />
-                  Regenerate
-                </button>
+              onClick={handleRegenerateClick}
+              
+              className="w-full bg-purple-600 text-white hover:text-[#7650e3] flex items-center gap-2 justify-center hover:bg-[#d7d7fc] border border-[#7650e3] font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
+
+            >
+              <Edit className="w-5 h-5" />
+              {t("regenerate")}
+            </button>
               </div>
             </div>
           )}
@@ -1129,7 +1134,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
                     <div className="flex justify-between md:flex-col md:items-start">
                       <span className="text-gray-500 font-medium">
-                        Character Count:
+                        {t("character_count")}:
                       </span>
                       <span className="font-medium">
                         {selectedPost.characterCount}
@@ -1137,7 +1142,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                     </div>
                     <div className="flex justify-between md:flex-col md:items-start">
                       <span className="text-gray-500 font-medium">
-                        Hashtags:
+                        {t("hashtags")}:
                       </span>
                       <span className="font-medium">
                         {selectedPost.hashtags.length}
@@ -1158,7 +1163,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
               onClick={onPublish}
               className="w-full bg-purple-600 text-white hover:text-[#7650e3] flex items-center gap-2 justify-center hover:bg-[#d7d7fc] border border-[#7650e3] font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
             >
-              Continue
+              {t("continue")}
             </button>
 
             <button
@@ -1168,14 +1173,14 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
               className="w-full bg-transparent border-purple-600 border text-purple-600 flex items-center gap-2 justify-center hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
             >
               {/* <Edit className="w-5 h-5" /> */}
-              Discard Post
+              {t("discard_post")}
             </button>
           </>
         ) : (
           // Regeneration mode - show textarea and generate button
           <div className="theme-bg-quaternary rounded-md lg:p-5 p-3 border border-purple-200 w-full">
             <h4 className="text-lg font-semibold theme-text-secondary mb-3 text-left ">
-              Generate Post Text
+              {t("generate_post_text")}
             </h4>
 
             {/* Text Area */}
@@ -1220,7 +1225,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                 ) : (
                   <Wand2 className="w-[23px] h-[23px] mr-1" />
                 )}
-                {isRegenerating ? "REGENERATING..." : "GENERATE POST TEXT"}
+                {isRegenerating ? "REGENERATING..." : t("generate_post_text")}
               </div>
               <div className="sm:inline-block rounded-md theme-bg-quaternary theme-text-secondary px-2 py-1">
                 <Icon
@@ -1238,7 +1243,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                 onClick={handleRegenerateCancel}
                 className="w-full py-2.5  text-md font-semibold rounded-md border flex items-center justify-center gap-2 transition  hover:bg-[#d7d7fc] text-[#7650e3] border-[#7650e3]"
               >
-                Cancel
+                {t("cancel")}
               </button>
             </div>
           </div>
@@ -1252,8 +1257,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
             </h2>
 
             <p className="text-gray-500 text-sm mb-8 text-center leading-relaxed">
-              You will loose your AI Generated post. <br />
-              Are you sure you want to discard them and go back?
+              Discarding will permanently remove the generated post and the coins spent to create it.
             </p>
 
             <div className="flex gap-3">

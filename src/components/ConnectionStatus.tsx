@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React from "react";
 
 interface ConnectionStatusProps {
@@ -10,7 +11,10 @@ export const ConnectionStatus: React.FC<ConnectionStatusProps> = ({
   isConnected,
   label,
   className = "",
+  
 }) => {
+  const { t, i18n } = useTranslation();
+  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
   return (
     <div
       className={`theme-bg-quaternary rounded-md p-4 border border-purple-200 ${className}`}
@@ -28,7 +32,7 @@ export const ConnectionStatus: React.FC<ConnectionStatusProps> = ({
               isConnected ? "text-green-500" : "text-red-500"
             }`}
           >
-            {isConnected ? "Connected" : "Not Connected"}
+            {isConnected ? t("connected") : t("not_connected")}
           </span>
         </div>
       </div>
