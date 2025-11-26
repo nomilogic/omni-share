@@ -24,6 +24,7 @@ import {
 } from "../utils/platformIcons";
 import { useAppContext } from "@/context/AppContext";
 import { useNavigate } from "react-router-dom";
+import { t } from "i18next";
 
 interface PostPreviewProps {
   posts: any[];
@@ -470,15 +471,15 @@ const handleDiscardClick = useCallback(() => {
                 <div className="flex items-center space-x-6">
                   <button className="flex items-center space-x-2 text-gray-500 font-medium hover:text-blue-600">
                     <ThumbsUp className="w-4 h-4" />
-                    <span className="text-sm">Like</span>
+                    <span className="text-sm">{t("like")}</span>
                   </button>
                   <button className="flex items-center space-x-2 text-gray-500 font-medium hover:text-blue-600">
                     <MessageCircle className="w-4 h-4" />
-                    <span className="text-sm">Comment</span>
+                    <span className="text-sm">{t("comment")}</span>
                   </button>
                   <button className="flex items-center space-x-2 text-gray-500 font-medium hover:text-blue-600">
                     <Share2 className="w-4 h-4" />
-                    <span className="text-sm">Share</span>
+                    <span className="text-sm">{t("share")}</span>
                   </button>
                 </div>
               </div>
@@ -699,19 +700,19 @@ const handleDiscardClick = useCallback(() => {
                   <div className="flex items-center justify-between mt-3 max-w-md">
                     <button className="flex items-center space-x-2 text-gray-500 font-medium hover:text-blue-500">
                       <MessageCircle className="w-4 h-4" />
-                      <span className="text-sm">Reply</span>
+                      <span className="text-sm">{t("reply")}</span>
                     </button>
                     <button className="flex items-center space-x-2 text-gray-500 font-medium hover:text-green-500">
                       <Repeat2 className="w-4 h-4" />
-                      <span className="text-sm">Repost</span>
+                      <span className="text-sm">{t("repost")}</span>
                     </button>
                     <button className="flex items-center space-x-2 text-gray-500 font-medium hover:text-red-500">
                       <Heart className="w-4 h-4" />
-                      <span className="text-sm">Like</span>
+                      <span className="text-sm">{t("like")}</span>
                     </button>
                     <button className="flex items-center space-x-2 text-gray-500 font-medium hover:text-blue-500">
                       <Share2 className="w-4 h-4" />
-                      <span className="text-sm">Share</span>
+                      <span className="text-sm">{t("share")}</span>
                     </button>
                   </div>
                 </div>
@@ -785,15 +786,15 @@ const handleDiscardClick = useCallback(() => {
               <div className="flex items-center justify-between pt-3 border-t border-gray-100">
                 <button className="flex items-center space-x-2 text-gray-500 font-medium hover:text-blue-600">
                   <ThumbsUp className="w-4 h-4" />
-                  <span className="text-sm">Like</span>
+                  <span className="text-sm">{t("like")}</span>
                 </button>
                 <button className="flex items-center space-x-2 text-gray-500 font-medium hover:text-blue-600">
                   <MessageCircle className="w-4 h-4" />
-                  <span className="text-sm">Comment</span>
+                  <span className="text-sm">{t("comment")}</span>
                 </button>
                 <button className="flex items-center space-x-2 text-gray-500 font-medium hover:text-blue-600">
                   <Share2 className="w-4 h-4" />
-                  <span className="text-sm">Share</span>
+                  <span className="text-sm">{t("share")}</span>
                 </button>
               </div>
             </div>
@@ -1017,16 +1018,16 @@ const handleDiscardClick = useCallback(() => {
   return (
     <div className="preview w-full mx-auto bg-transparent  md:rounded-md p-4 md:shadow-md md:px-8  md:py-10  ">
       <h2 className="text-3xl font-semibold theme-text-primary mb-1">
-        Your AI-Generated Posts
+        {t("ai_generated_posts")}
       </h2>
       <p className="text-sm theme-text-primary">
-        Review, copy, and share your optimized content
+        {t("review_copy_share")}
       </p>
       <div className="grid grid-cols-1 lg:grid-cols-1 gap-1">
         {/* Platform Selector */}
         <div className="lg:col-span-1 space-y-4">
           <h3 className="text-lg font-semibold text-slate-900 mb-0 text-left lg:text-center mt-2">
-            Select Platform
+            {t("select_platform")}
           </h3>
           <div className="flex flex-wrap gap-3 justify-center">
             {generatedPosts.map((post, index) => {
@@ -1110,7 +1111,7 @@ const handleDiscardClick = useCallback(() => {
         {/* Preview */}
         <div className="lg:col-span-2">
           <h3 className="text-lg font-semibold text-slate-900 mb-1 px-1 text-left lg:text-center">
-            Preview
+            {t("preview")}
           </h3>
 
           {/* Platform Preview */}
@@ -1135,7 +1136,7 @@ const handleDiscardClick = useCallback(() => {
 
                     >
                       <Save className="w-4 h-4" />
-                      Save Changes
+                      {t("save_changes")}
                     </button>
                     <button
                       onClick={() => {
@@ -1145,7 +1146,7 @@ const handleDiscardClick = useCallback(() => {
 
                     >
                       <X className="w-4 h-4" />
-                      Cancel
+                      {t("cancel")}
                     </button>
                   </div>
                 ) : (
@@ -1155,7 +1156,7 @@ const handleDiscardClick = useCallback(() => {
                     className="w-full py-2.5  text-md font-semibold rounded-md border flex items-center justify-center gap-2 transition  hover:bg-[#d7d7fc] text-[#7650e3] border-[#7650e3]"
                   >
                     <Edit className="w-4 h-4" />
-                    Edit Post Text
+                    {t("edit_post_text")}
                   </button>
                   
                 )}
@@ -1179,7 +1180,7 @@ const handleDiscardClick = useCallback(() => {
 
             >
               <Edit className="w-5 h-5" />
-              Regenerate
+              {t("regenerate")}
             </button>
               </div>
             </div>
@@ -1218,7 +1219,7 @@ const handleDiscardClick = useCallback(() => {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
                     <div className="flex justify-between md:flex-col md:items-start">
                       <span className="text-gray-500 font-medium">
-                        Character Count:
+                        {t("character_count")}:
                       </span>
                       <span className="font-medium">
                         {selectedPost.characterCount}
@@ -1226,7 +1227,7 @@ const handleDiscardClick = useCallback(() => {
                     </div>
                     <div className="flex justify-between md:flex-col md:items-start">
                       <span className="text-gray-500 font-medium">
-                        Hashtags:
+                        {t("hashtags")}:
                       </span>
                       <span className="font-medium">
                         {selectedPost.hashtags.length}
@@ -1263,7 +1264,7 @@ const handleDiscardClick = useCallback(() => {
               className="w-full bg-purple-600 text-white hover:text-[#7650e3] flex items-center gap-2 justify-center hover:bg-[#d7d7fc] border border-[#7650e3] font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
               
             >
-              Continue
+              {t("continue")}
             </button>
 
             <button
@@ -1273,14 +1274,14 @@ const handleDiscardClick = useCallback(() => {
 
             >
               {/* <Edit className="w-5 h-5" /> */}
-              Discard Post
+              {t("discard_post")}
             </button>
           </>
         ) : (
           // Regeneration mode - show textarea and generate button
           <div className="theme-bg-quaternary rounded-md lg:p-5 p-3 border border-purple-200 w-full">
             <h4 className="text-lg font-semibold theme-text-secondary mb-3 text-left ">
-              Generate Post Text
+              {t("generate_post_text")}
             </h4>
 
             {/* Text Area */}
@@ -1325,7 +1326,7 @@ const handleDiscardClick = useCallback(() => {
                 ) : (
                   <Wand2 className="w-[23px] h-[23px] mr-1" />
                 )}
-                {isRegenerating ? "REGENERATING..." : "GENERATE POST TEXT"}
+                {isRegenerating ? "REGENERATING..." : t("generate_post_text")}
               </div>
               <div className="sm:inline-block rounded-md theme-bg-quaternary theme-text-secondary px-2 py-1">
                 <Icon
@@ -1343,7 +1344,7 @@ const handleDiscardClick = useCallback(() => {
                 onClick={handleRegenerateCancel}
                 className="w-full py-2.5  text-md font-semibold rounded-md border flex items-center justify-center gap-2 transition  hover:bg-[#d7d7fc] text-[#7650e3] border-[#7650e3]"
               >
-                Cancel
+                {t("cancel")}
               </button>
             </div>
           </div>

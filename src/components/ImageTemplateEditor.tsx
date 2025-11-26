@@ -35,6 +35,7 @@ import { uploadMedia, getCurrentUser } from "../lib/database";
 import "../styles/drag-prevention.css";
 import "../styles/template-editor.css";
 import { useNavigate } from "react-router-dom";
+import { t } from "i18next";
 
 interface ImageTemplateEditorProps {
   imageUrl: string;
@@ -1315,7 +1316,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
             {/* Element Creation Toolbar */}
             <div className="border border-gray-200 rounded-md p-2 md:p-3 bg-gray-50">
               <h4 className="text-xs md:text-sm font-semibold text-slate-700 mb-2 md:mb-3">
-                Add Elements
+                {t("add_elements")}
               </h4>
               <div className="grid grid-cols-4 md:grid-cols-2 gap-1.5 md:gap-2">
                 <button
@@ -1324,7 +1325,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                   title="Add Text"
                 >
                   <Type className="w-4 h-4 md:w-5 md:h-5" />
-                  <span className="text-xs font-medium">Text</span>
+                  <span className="text-xs font-medium">{t("text")}</span>
                 </button>
                 <button
                   onClick={createNewLogoElement}
@@ -1332,7 +1333,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                   title="Add Logo"
                 >
                   <Upload className="w-4 h-4 md:w-5 md:h-5" />
-                  <span className="text-xs font-medium">Image</span>
+                  <span className="text-xs font-medium">{t("image")}</span>
                 </button>
                 <button
                   onClick={() => createNewShapeElement("rectangle")}
@@ -1340,7 +1341,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                   title="Add Rectangle"
                 >
                   <Square className="w-4 h-4 md:w-5 md:h-5" />
-                  <span className="text-xs font-medium">Rectangle</span>
+                  <span className="text-xs font-medium">{t("rectangle")}</span>
                 </button>
                 <button
                   onClick={() => createNewShapeElement("circle")}
@@ -1348,7 +1349,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                   title="Add Circle"
                 >
                   <Circle className="w-4 h-4 md:w-5 md:h-5" />
-                  <span className="text-xs font-medium">Circle</span>
+                  <span className="text-xs font-medium">{t("circle")}</span>
                 </button>
               </div>
             </div>
@@ -2007,10 +2008,10 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                 <div className="bg-gray-50 rounded-md p-4 md:p-6">
                   <Palette className="w-6 h-6 md:w-8 md:h-8 mx-auto mb-2 md:mb-3 text-gray-400" />
                   <p className="text-xs md:text-sm font-medium mb-1">
-                    No Element Selected
+                    {t("no_element_selected")}
                   </p>
                   <p className="text-xs text-gray-400">
-                    Click on a template element to edit its properties
+                    {t("click_template_edit")}
                   </p>
                 </div>
               </div>
@@ -2028,12 +2029,12 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
               {isSaving ? (
                 <>
                   <Loader className="w-3 h-3 md:w-4 md:h-4 animate-spin " />
-                  <span className="hidden sm:inline text-sm">Saving</span>
-                  <span className="sm:hidden text-sm">Saving...</span>
+                  <span className="hidden sm:inline text-sm">{t("saving")}</span>
+                  <span className="sm:hidden text-sm">{t("saving")}</span>
                 </>
               ) : (
                 <>
-                  <span className="sm:inline">Continue</span>
+                  <span className="sm:inline">{t("continue")}</span>
                 </>
               )}
             </button>
@@ -2043,7 +2044,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
 
               className="text-purple-600 flex justify-center items-center gap-2  font-medium w-full px-3 py-2.5  mx-1 rounded-md border border-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3]"
             >
-              Discard Image
+              {t("discard_image")}
             </button>
             
           </div>

@@ -7,6 +7,7 @@ import {
   getPlatformDisplayName,
   getPlatformColors,
 } from "../utils/platformIcons";
+import { t } from "i18next";
 
 interface AIGeneratorProps {
   contentData: any;
@@ -178,10 +179,10 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
           <Brain className="w-8 h-8 text-blue-600" />
         </div>
         <h2 className="text-3xl font-bold text-slate-900 mb-2">
-          AI is Crafting Your Posts
+          {t("ai_crafting_posts")}
         </h2>
         <p className="text-gray-500 font-medium">
-          Creating optimized content for each platform
+          {t("creating_optimized_content")}
         </p>
       </div>
 
@@ -214,10 +215,10 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
               </div>
               <div>
                 <p className="text-lg font-medium text-slate-800">
-                  Optimizing for {getPlatformDisplayName(currentPlatform)}
+                  {t("optimizing_for")} {getPlatformDisplayName(currentPlatform)}
                 </p>
                 <p className="text-sm text-gray-500 font-medium">
-                  Analyzing audience, tone, and platform best practices...
+                  {t("analyzing_audience")}
                 </p>
               </div>
               <div className="flex space-x-1">
@@ -239,34 +240,34 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-white border border-gray-200 p-4 rounded-md">
             <Sparkles className="w-6 h-6 text-blue-600 mb-2" />
-            <h3 className="font-medium text-slate-900">Smart Optimization</h3>
+            <h3 className="font-medium text-slate-900">{t("smart_optimization")}</h3>
             <p className="text-sm text-gray-500 font-medium">
-              Tailoring content for each platform's unique audience
+              {t("tailoring_content")}
             </p>
           </div>
           <div className="bg-white border border-gray-200 p-4 rounded-md">
             <Zap className="w-6 h-6 text-blue-600 mb-2" />
-            <h3 className="font-medium text-slate-900">Hashtag Research</h3>
+            <h3 className="font-medium text-slate-900">{t("hashtag_research")}</h3>
             <p className="text-sm text-gray-500 font-medium">
-              Finding trending and relevant hashtags
+              {t("finding_hashtags")}
             </p>
           </div>
           <div className="bg-white border border-gray-200 p-4 rounded-md">
             <Brain className="w-6 h-6 text-blue-600 mb-2" />
-            <h3 className="font-medium text-slate-900">Tone Analysis</h3>
+            <h3 className="font-medium text-slate-900">{t("tone_analysis")}</h3>
             <p className="text-sm text-gray-500 font-medium">
-              Matching your brand voice perfectly
+              {t("matching_brand_voice")}
             </p>
           </div>
         </div>
 
         <div className="text-center text-sm text-gray-500 font-medium">
           <p>
-            Processing{" "}
+            {t("processing")}{" "}
             {contentData?.selectedPlatforms?.length ||
               contentData?.platforms?.length ||
               1}{" "}
-            platform
+            {t("platforms")}
             {(contentData?.selectedPlatforms?.length ||
               contentData?.platforms?.length ||
               1) > 1

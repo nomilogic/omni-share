@@ -20,6 +20,7 @@ import {
 import { historyRefreshService } from "../services/historyRefreshService";
 import { getPlatformIcon, getPlatformColors } from "../utils/platformIcons";
 import API from "../services/api";
+import { t } from "i18next";
 
 // Export interface for external access
 export interface HistoryPageRef {
@@ -372,7 +373,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
         <div className=" max-w-5xl mx-auto mb-6">
           <div className="flex justify-between items-center gap-4">
             <h2 className="text-3xl font-bold text-gray-900 mb-2">
-              Post History
+              {t("post_history")}
             </h2>
             <button
               onClick={() => setShowFilters(!showFilters)}
@@ -383,7 +384,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
               }`}
             >
               <Filter className="w-3 h-3" />
-              Filters
+              {t("filters")}
               {hasActiveFilters && (
                 <span className="ml-1 w-2 h-2 bg-blue-600 rounded-full"></span>
               )}
@@ -403,17 +404,17 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
               {/* Read Status Filter */}
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Read Status
+                  {t("read_status")}
                 </label>
                 <select
                   value={readFilter}
                   onChange={(e) => setReadFilter(e.target.value as ReadFilter)}
                   className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                 >
-                  <option value="all">All Posts</option>
-                  <option value="unread">Unread ({unreadCount})</option>
+                  <option value="all">{t("all_posts")}</option>
+                  <option value="unread">{t("unread")} ({unreadCount})</option>
                   <option value="read">
-                    Read ({posts.length - unreadCount})
+                    {t("read")} ({posts.length - unreadCount})
                   </option>
                 </select>
               </div>
@@ -421,7 +422,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
               {/* Platform Filter */}
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Platform
+                  {t("platform")}
                 </label>
                 <select
                   value={platformFilter}
@@ -430,7 +431,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
                   }
                   className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                 >
-                  <option value="all">All Platforms</option>
+                  <option value="all">{t("all_platforms")}</option>
                   {availablePlatforms.map((platform) => (
                     <option key={platform} value={platform}>
                       {platform.charAt(0).toUpperCase() + platform.slice(1)}
@@ -441,33 +442,33 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Time Period
+                  {t("time_period")}
                 </label>
                 <select
                   value={timePeriod}
                   onChange={(e) => setTimePeriod(e.target.value as TimePeriod)}
                   className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                 >
-                  <option value="all">All Time</option>
-                  <option value="today">Today</option>
-                  <option value="week">Last 7 Days</option>
-                  <option value="month">Last 30 Days</option>
+                  <option value="all">{t("all_time")}</option>
+                  <option value="today">{t("today")}</option>
+                  <option value="week">{t("last_7_days")}</option>
+                  <option value="month">{t("last_30_days")}</option>
                 </select>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Sort By
+                  {t("sort_by")}
                 </label>
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as SortBy)}
                   className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                 >
-                  <option value="date_desc">Newest First</option>
-                  <option value="date_asc">Oldest First</option>
-                  <option value="platform_asc">Platform A-Z</option>
-                  <option value="platform_desc">Platform Z-A</option>
+                  <option value="date_desc">{t("newest_first")}</option>
+                  <option value="date_asc">{t("oldest_first")}</option>
+                  <option value="platform_asc">{t("platform_a_z")}</option>
+                  <option value="platform_desc">{t("platform_z_a")}</option>
                 </select>
               </div>
             </div>
@@ -479,7 +480,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
                   className="flex items-center gap-2 text-sm px-3 py-1 text-gray-500 font-medium hover:text-slate-800 hover:bg-gray-100 rounded-md transition-colors"
                 >
                   <RotateCcw className="w-4 h-4" />
-                  Reset Filters
+                  {t("reset_filters")}
                 </button>
               </div>
             )}
@@ -489,7 +490,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
         {hasActiveFilters && (
           <div className=" mb-4">
             <div className="flex items-center gap-2 text-sm text-gray-500 font-medium">
-              <span>Showing:</span>
+              <span>{t("showing")}:</span>
               {readFilter !== "all" && (
                 <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded">
                   {readFilter === "read" ? "Read posts" : "Unread posts"}
@@ -532,13 +533,13 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
             </div>
             <h3 className="text-lg font-semibold text-slate-900 mb-2">
               {hasActiveFilters
-                ? "No posts match your filters"
-                : "No posts yet"}
+                ? t("no_posts_match")
+                : t("no_posts_yet")}
             </h3>
             <p className="text-gray-500 font-medium">
               {hasActiveFilters
-                ? "Try adjusting your filters to see more posts"
-                : "Your published posts will appear here"}
+                ? t("adjust_filters")
+                : t("published_posts_here")}
             </p>
             {hasActiveFilters && (
               <button

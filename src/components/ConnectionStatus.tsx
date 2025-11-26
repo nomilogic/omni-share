@@ -1,3 +1,4 @@
+import { t } from "i18next";
 import React from "react";
 
 interface ConnectionStatusProps {
@@ -28,7 +29,7 @@ export const ConnectionStatus: React.FC<ConnectionStatusProps> = ({
               isConnected ? "text-green-500" : "text-red-500"
             }`}
           >
-            {isConnected ? "Connected" : "Not Connected"}
+            {isConnected ? t("connected") : t("not_connected")}
           </span>
         </div>
       </div>

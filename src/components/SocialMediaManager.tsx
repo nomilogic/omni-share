@@ -13,6 +13,7 @@ import {
   getPlatformDisplayName,
   getPlatformColors,
 } from "../utils/platformIcons";
+import { t } from "i18next";
 
 interface SocialMediaManagerProps {
   userId: string;
@@ -365,7 +366,7 @@ export const SocialMediaManager: React.FC<SocialMediaManagerProps> = ({
                         </span>
                       ) : (
                         <span className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full">
-                          Not Connected
+                          {t("not_connected")}
                         </span>
                       )}
                     </div>

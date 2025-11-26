@@ -9,6 +9,7 @@ import {
   getPlatformDisplayName,
 } from "../utils/platformIcons";
 import API from "../services/api";
+import { t } from "i18next";
 
 // Define all available platforms
 const ALL_PLATFORMS: Platform[] = [
@@ -241,7 +242,7 @@ export const AccountsPage: React.FC = () => {
       <div className="flex flex-col gap-y-3">
         <div className="">
           <h2 className="text-3xl font-bold theme-text-primary mb-1">
-            Connect Your Accounts
+            {t("connect_accounts")}
           </h2>
           {/* <p className="text-sm text-gray-500 font-medium ">
             Connect your social media accounts to enable publishing across all
@@ -253,7 +254,7 @@ export const AccountsPage: React.FC = () => {
           <p className="text-sm text-blue-800">
             <span className="font-medium">{connectedPlatforms.length}</span> of{" "}
             <span className="font-medium">{ALL_PLATFORMS.length}</span>{" "}
-            platforms connected
+            {t("platforms_connected")}
           </p>
         </div>
 
@@ -304,7 +305,7 @@ export const AccountsPage: React.FC = () => {
                       isConnected ? "text-green-600" : "text-red-600"
                     }`}
                   >
-                    {isConnected ? "Connected" : "Not Connected"}
+                    {isConnected ? t("connected") : t("not_connected")}
                   </p>
                 </div>
               </div>
@@ -356,7 +357,7 @@ export const AccountsPage: React.FC = () => {
                         <span>Connecting...</span>
                       </>
                     ) : (
-                      "Connect"
+                      t("connect")
                     )}
                   </button>
                 )}

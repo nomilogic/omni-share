@@ -14,6 +14,7 @@ import {
 } from "../utils/platformIcons";
 import API from "../services/api";
 import { useNavigate } from "react-router-dom";
+import { t } from "i18next";
 
 interface PublishProps {
   posts: GeneratedPost[];
@@ -366,7 +367,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
     <div className="theme-bg-light max-w-4xl mx-auto    ">
       <div className="lg:px-4 px-3 lg:py-8 py-4">
         <h2 className="text-2xl font-bold theme-text-primary mb-2">
-          Publish Your Posts
+          {t("publish_posts")}
         </h2>
         {/* <p className="text-sm text-gray-500 font-medium">
           Connect your social media accounts and publish your AI-generated posts
@@ -393,7 +394,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
           <p className="text-sm text-blue-800">
             <span className="font-medium">{connectedPlatforms.length}</span> of{" "}
             <span className="font-medium">{ALL_PLATFORMS.length}</span>{" "}
-            platforms connected
+            {t("platforms_connected")}
           </p>
         </div>
 
@@ -508,7 +509,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
                           isConnected ? "text-green-600" : "text-red-600"
                         }`}
                       >
-                        {isConnected ? "Connected" : "Not Connected"}
+                        {isConnected ? t("connected") : t("not_connected")}
                       </p>
                       {progress && (
                         <p
@@ -652,7 +653,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
                               <span>Connecting...</span>
                             </>
                           ) : (
-                            "Connect"
+                            t("connect")
                           )}
                         </button>
                       )}
@@ -769,9 +770,9 @@ export const PublishPosts: React.FC<PublishProps> = ({
                     !publishedPlatforms.includes(p)
                 ).length === 0
                   ? publishedPlatforms.length > 0
-                    ? "All Selected Platforms Published"
-                    : "Select Platform to Publish"
-                  : "Publish to Platforms"}
+                    ? t("all_selected_platforms_published")
+                    : t("select_platform_publish")
+                  : t("publish_to_platforms")}
               </span>
             </div>
           )}
@@ -783,14 +784,14 @@ export const PublishPosts: React.FC<PublishProps> = ({
           }}
           class="  rounded-md theme-bg-light px-4 py-2.5 w-full text-center font-semibold text-base border border-[#7650e3] text-[#7650e3] transition-colors hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] disabled:cursor-not-allowed"
         >
-          Discard Post
+          {t("discard_post")}
         </button>
 
         <button
           onClick={onBack}
           className="rounded-md mt-5 theme-bg-light px-4 py-2.5 w-full text-center font-semibold text-base border border-[#7650e3] text-[#7650e3] transition-colors hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] disabled:cursor-not-allowed"
         >
-          Back
+          {t("back")}
         </button>
 
         {/* Helper text */}
@@ -800,7 +801,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
         ).length === 0 &&
           publishedPlatforms.length === 0 && (
             <p className="mt-3 text-sm text-gray-500 font-medium text-center">
-              Please select at least one connected platform to publish.
+              {t("select_platform_warning")}
             </p>
           )}
 
