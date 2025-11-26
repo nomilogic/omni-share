@@ -35,7 +35,7 @@ import { uploadMedia, getCurrentUser } from "../lib/database";
 import "../styles/drag-prevention.css";
 import "../styles/template-editor.css";
 import { useNavigate } from "react-router-dom";
-import { t } from "i18next";
+import { useTranslation } from "react-i18next";
 
 interface ImageTemplateEditorProps {
   imageUrl: string;
@@ -56,6 +56,8 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { handleResizeMainToFullScreen } = useResize();
+  const { t, i18n } = useTranslation();
+  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
 
   const logoInputRef = useRef<HTMLInputElement>(null);
   const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null);

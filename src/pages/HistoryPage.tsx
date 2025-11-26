@@ -20,7 +20,7 @@ import {
 import { historyRefreshService } from "../services/historyRefreshService";
 import { getPlatformIcon, getPlatformColors } from "../utils/platformIcons";
 import API from "../services/api";
-import { t } from "i18next";
+import { useTranslation } from "react-i18next";
 import { Icon } from "@/components";
 
 // Export interface for external access
@@ -59,9 +59,12 @@ type TimePeriod = "all" | "today" | "week" | "month";
 type SortBy = "date_desc" | "date_asc" | "platform_asc" | "platform_desc";
 
 export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
+  
   const [posts, setPosts] = useState<PostHistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { t, i18n } = useTranslation();
+  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
 
   // Filter states
   const [readFilter, setReadFilter] = useState<ReadFilter>("all");
@@ -356,7 +359,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
             <h2 className="text-3xl font-bold text-gray-900 mb-2">
               {t("post_history")}
             </h2>
-            <h2 className="text-3xl font-bold text-gray-900 ">Post History</h2>
+            {/* <h2 className="text-3xl font-bold text-gray-900 ">Post History</h2> */}
             <button
               onClick={() => setShowFilters(!showFilters)}
               className={`flex items-center gap-2 text-sm font-medium px-3 py-1.5 rounded-md border transition-colors ${

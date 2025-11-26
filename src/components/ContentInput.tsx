@@ -47,7 +47,7 @@ import API from "@/services/api";
 import { useNavigate } from "react-router-dom";
 import { ImageUploader } from ".";
 import { notify } from "@/utils/toast";
-import { t } from "i18next";
+import { useTranslation } from "react-i18next";
 
 // Helper function to convert file to base64
 const fileToBase64 = (file: File): Promise<string> => {
@@ -90,6 +90,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     showLoading,
     hideLoading,
   } = useLoadingAPI();
+  const { t, i18n } = useTranslation();
+  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
 
   const getCost = () => {
     if (!selectedPostType || !generationAmounts) return 0;

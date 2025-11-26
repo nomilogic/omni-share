@@ -14,7 +14,7 @@ import {
 } from "../utils/platformIcons";
 import API from "../services/api";
 import { useNavigate } from "react-router-dom";
-import { t } from "i18next";
+import { useTranslation } from "react-i18next";
 
 interface PublishProps {
   posts: GeneratedPost[];
@@ -37,6 +37,8 @@ export const PublishPosts: React.FC<PublishProps> = ({
   onBack,
   onReset,
 }) => {
+  const { t, i18n } = useTranslation();
+  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
   const [selectedPlatforms, setSelectedPlatforms] = useState<Platform[]>(
     posts.map((p) => p.platform)
   );

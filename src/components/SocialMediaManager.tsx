@@ -13,7 +13,7 @@ import {
   getPlatformDisplayName,
   getPlatformColors,
 } from "../utils/platformIcons";
-import { t } from "i18next";
+import { useTranslation } from "react-i18next";
 
 interface SocialMediaManagerProps {
   userId: string;
@@ -93,6 +93,8 @@ export const SocialMediaManager: React.FC<SocialMediaManagerProps> = ({
   onCredentialsUpdate,
   selectedPlatforms,
 }) => {
+  const { t, i18n } = useTranslation();
+  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
   const [platformStatuses, setPlatformStatuses] = useState<PlatformStatus[]>(
     []
   );

@@ -9,7 +9,7 @@ import {
   getPlatformDisplayName,
 } from "../utils/platformIcons";
 import API from "../services/api";
-import { t } from "i18next";
+import { useTranslation } from "react-i18next";
 
 // Define all available platforms
 const ALL_PLATFORMS: Platform[] = [
@@ -21,6 +21,8 @@ const ALL_PLATFORMS: Platform[] = [
 ];
 
 export const AccountsPage: React.FC = () => {
+  const { t, i18n } = useTranslation();
+  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
   const [connectedPlatforms, setConnectedPlatforms] = useState<Platform[]>([]);
   const [connectingPlatforms, setConnectingPlatforms] = useState<Platform[]>(
     []

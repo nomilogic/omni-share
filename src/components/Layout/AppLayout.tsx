@@ -36,6 +36,7 @@ interface AppLayoutProps {
 }
 
 export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
+  
   const { user, logout, balance, refreshUser } = useAppContext();
   const { t, i18n } = useTranslation();
 

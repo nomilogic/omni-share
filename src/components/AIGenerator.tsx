@@ -7,7 +7,7 @@ import {
   getPlatformDisplayName,
   getPlatformColors,
 } from "../utils/platformIcons";
-import { t } from "i18next";
+import { useTranslation } from "react-i18next";
 
 interface AIGeneratorProps {
   contentData: any;
@@ -23,6 +23,8 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
   const [isGenerating, setIsGenerating] = useState(false);
   const [currentPlatform, setCurrentPlatform] = useState<Platform | null>(null);
   const [progress, setProgress] = useState(0);
+  const { t, i18n } = useTranslation();
+  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
 
   const useRefFlag = React.useRef(false);
   useEffect(() => {

@@ -24,7 +24,7 @@ import {
 } from "../utils/platformIcons";
 import { useAppContext } from "@/context/AppContext";
 import { useNavigate } from "react-router-dom";
-import { t } from "i18next";
+import { useTranslation } from "react-i18next";
 
 interface PostPreviewProps {
   posts: any[];
@@ -44,6 +44,8 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
   onPostsUpdate,
   onRegeneratePlatform,
 }) => {
+  const { t, i18n } = useTranslation();
+  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
   const [selectedPlatform, setSelectedPlatform] = useState<Platform>(
     generatedPosts[0]?.platform || "facebook"
   );
