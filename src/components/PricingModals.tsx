@@ -26,7 +26,6 @@ export const PricingModals: React.FC = () => {
     runCancelDowngradeHandler,
   } = usePricingModal();
   const { paymentProcessing } = useAppContext();
-  // Lock body scroll while any pricing modal is open
   React.useEffect(() => {
     if (typeof document === "undefined") return;
     const originalOverflow = document.body.style.overflow;
@@ -45,7 +44,7 @@ export const PricingModals: React.FC = () => {
 
   const modalContent = (
     <>
-      {paymentProcessing && (
+      {paymentProcessing ? (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex lg:items-center justify-center p-4 z-50">
           <div className="bg-gray-50 rounded-md shadow-md w-full max-w-md px-6 py-10 h-fit relative">
             <div className="flex justify-center items-center mb-4">
@@ -65,7 +64,7 @@ export const PricingModals: React.FC = () => {
             </div>
           </div>
         </div>
-      )}
+      ) : null}
       {confirmOpen && selectedPlan && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex lg:items-center justify-center p-4 z-50">
           <div className="bg-gray-50 rounded-md shadow-md w-full max-w-md px-8 py-6 h-fit relative">

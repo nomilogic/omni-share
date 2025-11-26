@@ -8,7 +8,6 @@ import React, {
   useMemo,
 } from "react";
 import { getCurrentUser } from "../lib/database"; // Assuming getCurrentUser is stable
-import { Campaign } from "@shared/schema"; // Assuming Campaign is imported from shared schema
 import { LoadingProvider } from "./LoadingContext";
 import { Platform } from "../types"; // Assuming Platform is correctly typed
 import Pusher from "pusher-js";
@@ -72,7 +71,7 @@ export interface AppState {
   user: User | null;
   userPlan: "free" | "ipro" | "business" | null;
   selectedProfile: Profile | null;
-  selectedCampaign: Campaign | null;
+  selectedCampaign: null;
   loading: boolean;
   error: string | null;
   generatedPosts: any[];
@@ -92,7 +91,7 @@ type AppAction =
   | { type: "SET_USER"; payload: User | null }
   | { type: "SET_USER_PLAN"; payload: "free" | "ipro" | "business" | null }
   | { type: "SET_SELECTED_PROFILE"; payload: Profile | null }
-  | { type: "SET_SELECTED_CAMPAIGN"; payload: Campaign | null }
+  | { type: "SET_SELECTED_CAMPAIGN"; payload: null }
   | { type: "SET_ERROR"; payload: string | null }
   | { type: "SET_GENERATED_POSTS"; payload: any[] }
   | {
@@ -220,8 +219,8 @@ function appReducer(state: AppState, action: AppAction): AppState {
 export interface AppContextType {
   state: AppState;
   dispatch: React.Dispatch<AppAction>;
-  processing: boolean;
-  setProcessing: React.Dispatch<React.SetStateAction<boolean>>;
+  processing: any;
+  setProcessing: any;
   generationAmounts: any;
   setGenerationAmounts: React.Dispatch<React.SetStateAction<any>>;
   fetchBalance: () => Promise<void>;
@@ -373,7 +372,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     };
   }, [state.user?.id, pusher, fetchBalance]);
 
-  // Provide stable context value using useMemo
   const contextValue = useMemo(
     () => ({
       state,
@@ -384,7 +382,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       setGenerationAmounts,
       fetchBalance,
     }),
-    [state, processing, generationAmounts, fetchBalance]
+    [
+      state,
+      processing,
+      generationAmounts,
+      fetchBalance,
+      setProcessing,
+      setGenerationAmounts,
+    ]
   );
 
   return (
@@ -401,10 +406,30 @@ export const useAppContext = () => {
   if (!context) {
     throw new Error("useAppContext must be used within an AppProvider");
   }
+  const [packages, setPackages] = useState<any[]>([]);
+  const [addons, setAddons] = useState<any[]>([]);
+  const [loader, setLoader] = useState(false);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoader(true);
+        const packagesRes = await API.listPackages();
+        setPackages(packagesRes.data.data || []);
+
+        const addonsRes = await API.listAddons();
+        setAddons(addonsRes.data.data || []);
+        setLoader(false);
+      } catch (error) {
+        setLoader(false);
+        console.error("Failed to load packages/addons:", error);
+      }
+    };
+    fetchData();
+  }, []);
   // Memoized action creators for function stability
   const selectCampaign = useCallback(
-    (campaign: Campaign | null) => {
+    (campaign: null) => {
       context.dispatch({ type: "SET_SELECTED_CAMPAIGN", payload: campaign });
     },
     [context.dispatch]
@@ -442,7 +467,9 @@ export const useAppContext = () => {
     balance: context.state.balance,
     profile: context.state.selectedProfile,
     campaign: context.state.selectedCampaign,
-
+    loader: loader,
+    addons: addons,
+    packages: packages,
     // Global State Setters
     dispatch: context.dispatch,
 
