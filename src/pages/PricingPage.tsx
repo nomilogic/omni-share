@@ -126,7 +126,8 @@ export const PricingPage: React.FC = () => {
   const handleSubscribe = async (plan: any) => {
     setLoadingPackage(true);
     try {
-      const res = await API.buyPackage(plan.id);
+      const language = localStorage.getItem("siteLang") ?? "en";
+      const res = await API.buyPackage(plan.id, language);
       const redirectUrl = res?.data?.data?.url;
       if (redirectUrl) {
         window.location.href = redirectUrl; //window.open(redirectUrl, "_blank");
@@ -184,8 +185,10 @@ export const PricingPage: React.FC = () => {
     if (!addon) return;
     setLoadingAddon(true);
     setSelectedAddon(addon);
+
+    const language = localStorage.getItem("siteLang") ?? "en";
     try {
-      const res = await API.buyAddons(addon.id);
+      const res = await API.buyAddons(addon.id, language);
       const redirectUrl = res?.data?.data?.checkoutUrl;
       if (redirectUrl) {
         window.location.href = redirectUrl;
@@ -347,8 +350,8 @@ export const PricingPage: React.FC = () => {
                     </div>
 
                     <div className=" px-6 py-4">
-                      <div className="mb-4 border-b-2 border-purple-600  h-[115px] text-center">
-                        <p className=" text-purple-600 font-bold text-2xl mb-2 ">
+                      <div className="mb-5 border-b-2 border-purple-600  h-[130px] text-center">
+                        <p className=" text-purple-600 font-bold text-2xl mb-1 ">
                           {t("ideal_for")}
                         </p>
                         <p className="text-lg text-slate-800 font-medium">
@@ -448,7 +451,7 @@ export const PricingPage: React.FC = () => {
                         >
                           {selectedAddon?.id === addon.id
                             ? "Buying...."
-                            : t('buy_now')}
+                            : t("buy_now")}
                         </button>
                       </div>
                     </div>

@@ -2073,14 +2073,14 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   };
 
   return (
-    <div className="w-full mx-auto rounded-md border border-white/10  p-4 py-2 ">
+    <div className="w-full mx-auto rounded-md border border-white/10  md:p-5 p-3 ">
       {!showTemplateEditor && (
         <>
           <div className="text-left mb-4">
             <h2 className="text-3xl md:font-bold font-semibold theme-text-primary mb-2  ">
               {t("create_auto_optimize")}
             </h2>
-            <p className="text-sm text-gray-500 font-medium md:font-semibold font-medium ">
+            <p className="text-sm text-gray-500 font-medium md:font-semibold ">
               {t("generate_on_brand")}
             </p>
           </div>

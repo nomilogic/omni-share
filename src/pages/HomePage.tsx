@@ -10,8 +10,6 @@ import {
   Menu,
   X,
   ChevronDown,
-  Play,
-  Check,
   Share2,
   Zap,
   BarChart3,
@@ -27,7 +25,6 @@ import {
   Plus,
   Building2,
   History,
-  CreditCard,
 } from "lucide-react";
 import Icon from "../components/Icon";
 import { Link, useNavigate } from "react-router-dom";
@@ -39,17 +36,13 @@ import FeaturesPage from "@/components/FeaturesPage";
 import TwoColumnSection from "@/components/TwoColumnSection";
 import IntroVideo from "../assets/OMNISHARE.00.mp4";
 import { Platform } from "@/types";
-import {
-  getPlatformIcon,
-  getPlatformIconBackgroundColors,
-} from "../utils/platformIcons";
+
 import { notify } from "@/utils/toast";
 import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import OmniVideo from "../assets/video/omnishare.mp4";
-import { div } from "framer-motion/client";
-import { fa } from "zod/locales";
+
 function HomePage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showAllFeatures, setShowAllFeatures] = useState(false);
@@ -269,7 +262,6 @@ function HomePage() {
     }
   };
 
-  // Professional animation variants with proper typing
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -318,7 +310,6 @@ function HomePage() {
 
   return (
     <div className="min-h-screen bg-white overflow-x-hidden">
-      {/* Backdrop Overlay - Must be outside nav */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
@@ -332,7 +323,6 @@ function HomePage() {
         )}
       </AnimatePresence>
 
-      {/* Mobile Menu - Sidebar Style - Must be outside nav */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
@@ -363,7 +353,6 @@ function HomePage() {
               </button>
             </div>
 
-            {/* Navigation Items with Icons */}
             <nav className="flex-1 px-1 py-2.5 flex flex-col mx-2 gap-y-2">
               {[
                 { name: "Home", icon: Home },
@@ -386,7 +375,6 @@ function HomePage() {
               ))}
             </nav>
 
-            {/* Get Started Button */}
             <div className="px-3 py-4">
               <motion.button
                 onClick={() => {
@@ -613,7 +601,6 @@ function HomePage() {
         )}
       </AnimatePresence>
 
-      {/* Navigation */}
       <motion.nav
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -690,7 +677,6 @@ function HomePage() {
               </motion.button>
             </div>
 
-            {/* Mobile Menu Button */}
             <motion.button
               className={`md:hidden transition-colors ${
                 scrollY > 50 ? "text-white" : "text-white"
@@ -708,7 +694,6 @@ function HomePage() {
         </div>
       </motion.nav>
 
-      {/* Hero Section */}
       <section
         id="home"
         className="relative min-h-[100vh] flex items-center justify-center overflow-hidden"
@@ -937,7 +922,6 @@ function HomePage() {
         </div>
       </section>
 
-      {/* Features Section */}
       <section className=" bg-gray-50 relative overflow-hidden">
         <motion.div
           className="absolute inset-0 opacity-5"
@@ -946,91 +930,8 @@ function HomePage() {
           <div className="absolute top-20 left-10 w-72 h-72 bg-[#7650e3] rounded-full blur-3xl"></div>
           <div className="absolute bottom-20 right-10 w-96 h-96 bg-[#6366F1] rounded-full blur-3xl"></div>
         </motion.div>
-
-        {/* <div className=" max-w-full mx-auto px-4 sm:px-6 lg:px-[10%] w-full relative z-10">
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6, type: "spring", stiffness: 80 }}
-          >
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              Powerful Features
-            </h2>
-            <p className="text-xl text-gray-500 font-medium max-w-2xl mx-auto">
-              Everything you need to dominate social media marketing in one
-              place
-            </p>
-          </motion.div>
-
-          <motion.div
-            className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={containerVariants}
-          >
-            {displayedFeatures.map((feature, index) => (
-              <motion.div
-                key={index}
-                variants={itemVariants}
-                className="bg-white p-8 rounded-md shadow-md border border-gray-100 cursor-pointer group"
-                whileHover={{ y: -8, scale: 1.02 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <motion.div
-                  className="text-[#7650e3] mb-4"
-                  whileHover={{ scale: 1.15, rotate: 8 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                >
-                  {feature.icon}
-                </motion.div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-[#7650e3] transition-colors">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-500 font-medium leading-relaxed">
-                  {feature.description}
-                </p>
-                <motion.div
-                  className="mt-4 h-1 bg-gradient-to-r from-[#7650e3] to-[#6366F1] rounded-full"
-                  initial={{ scaleX: 0 }}
-                  whileHover={{ scaleX: 1 }}
-                  transition={{ duration: 0.3 }}
-                  style={{ transformOrigin: "left" }}
-                />
-              </motion.div>
-            ))}
-          </motion.div>
-
-          <motion.div
-            className="text-center"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-          >
-            <motion.button
-              onClick={() => setShowAllFeatures(!showAllFeatures)}
-              className="bg-[#7650e3] text-white px-8 py-3 rounded-full shadow-lg inline-flex items-center space-x-2"
-              whileHover={{
-                scale: 1.05,
-                boxShadow: "0 10px 30px rgba(118, 80, 227, 0.3)",
-              }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <span>{showAllFeatures ? "Show Less" : "View All Features"}</span>
-              <motion.div
-                animate={{ rotate: showAllFeatures ? 180 : 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <ChevronDown className="w-5 h-5" />
-              </motion.div>
-            </motion.button>
-          </motion.div>
-        </div> */}
       </section>
 
-      {/* Video Section */}
       <section id="video" className="py-20 bg-white relative overflow-hidden">
         <motion.div
           className="absolute inset-0 opacity-5"
@@ -1064,7 +965,6 @@ function HomePage() {
             transition={{ duration: 0.6, type: "spring", stiffness: 80 }}
             whileHover={{ scale: 1.02, transition: { duration: 0.3 } }}
           >
-            {/* 🎥 Actual Video Layer */}
             <video
               src={IntroVideo}
               autoPlay
@@ -1074,25 +974,6 @@ function HomePage() {
               className="absolute inset-0 w-full h-full object-cover"
             />
 
-            {/* 🔮 Overlay Button */}
-            {/* <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#7650e3] to-[#6366F1]">
-    <motion.button
-      className="bg-white rounded-full p-6 shadow-2xl relative"
-      whileHover={{ scale: 1.2 }}
-      whileTap={{ scale: 0.9 }}
-      animate={{ scale: [1, 1.05, 1] }}
-      transition={{ duration: 2, repeat: Infinity }}
-    >
-      <motion.div
-        className="absolute inset-0 bg-white rounded-full"
-        animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0, 0.5] }}
-        transition={{ duration: 2, repeat: Infinity }}
-      />
-      <Play className="w-12 h-12 text-[#7650e3] ml-1 relative z-10" />
-    </motion.button>
-  </div> */}
-
-            {/* 📝 Text Overlay */}
             <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/70 to-transparent">
               <p className="text-white text-lg font-semibold">
                 Introduction to Omnishare
@@ -1105,123 +986,6 @@ function HomePage() {
         </div>
       </section>
 
-      {/* Pricing Section */}
-      {/* <section
-        id="pricing"
-        className="py-20 bg-gray-50 relative overflow-hidden"
-      >
-        <div className=" max-w-full mx-auto px-4 sm:px-6 lg:px-[10%] w-full">
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6, type: "spring", stiffness: 80 }}
-          >
-            <h2 className="text-4xl md:text-5xl font-bold text-[#7650e3] mb-4">
-              Simple, Transparent Pricing
-            </h2>
-            <p className="text-xl text-gray-500 font-medium">
-              Choose the plan that's right for your business
-            </p>
-          </motion.div>
-
-          <motion.div
-            className="grid xl:grid-cols-3 lg:grid-cols-2 gap-5 mx-auto"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={containerVariants}
-          >
-            {packages.map((tier: any, tierIndex: number) => {
-              const isFree = tier.amount === 0;
-
-              return (
-                <motion.div
-                  key={tier.id}
-                  variants={itemVariants}
-                  className="rounded-md bg-gray-100 overflow-hidden shadow-md relative group"
-                  whileHover={{ y: -8, scale: 1.02 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <motion.div className="absolute inset-0 bg-gradient-to-br from-[#7650e3]/5 to-[#6366F1]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                  <div className="bg-gradient-to-br from-[#c7bdef] to-[#c7bdef] px-6 py-10 h-64 text-center relative">
-                    <motion.h3
-                      className="text-[#7650e3] text-3xl font-semibold mb-3"
-                      whileHover={{ y: -5 }}
-                    >
-                      {tier.name}
-                    </motion.h3>
-
-                    <motion.div
-                      className="flex items-baseline justify-center gap-3 mb-6"
-                      whileHover={{ scale: 1.05 }}
-                    >
-                      <span className="text-[40px] text-purple-600 font-semibold">
-                        <span className="text-[#7650e3] font-semibold text-2xl mr-1">
-                          $
-                        </span>
-                        {tier.amount}
-                      </span>
-                      <span className="text-2xl font-medium text-[#7650e3]">
-                        /{isFree ? "Forever" : "Month"}
-                      </span>
-                    </motion.div>
-
-                    {!isFree && (
-                      <motion.div
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        <Link
-                          to="/auth"
-                          className="w-full py-3 px-6 rounded-md font-semibold transition-all text-base bg-[#7650e3] text-white hover:bg-[#5d3ccc] inline-block shadow-lg"
-                        >
-                          Choose Plan
-                        </Link>
-                      </motion.div>
-                    )}
-                  </div>
-
-                  <div className="px-6 py-4 relative z-10">
-                    <div className="mb-5 border-b-2 border-purple-600 h-[120px] text-center">
-                      <p className="text-xl text-purple-600 font-semibold mb-2">
-                        Ideal for:
-                      </p>
-                      <p className="text-lg text-slate-800 font-medium">
-                        Small agency, growing business, content team
-                      </p>
-                    </div>
-
-                    <ul className="space-y-4">
-                      {tier.features?.map((feature: string, idx: number) => (
-                        <motion.li
-                          key={idx}
-                          className="flex items-start gap-3"
-                          initial={{ opacity: 0, x: -20 }}
-                          whileInView={{ opacity: 1, x: 0 }}
-                          viewport={{ once: true }}
-                          transition={{
-                            delay: tierIndex * 0.1 + idx * 0.05,
-                            type: "spring",
-                          }}
-                        >
-                          <Check className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                          <span className="text-sm text-slate-800">
-                            {feature}
-                          </span>
-                        </motion.li>
-                      ))}
-                    </ul>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </motion.div>
-        </div>
-      </section> */}
-
-      {/* Reviews Section */}
       <section className="py-20 bg-gradient-to-br from-[#d7d7fc] to-white relative overflow-hidden">
         <div className="absolute inset-0 opacity-5">
           <motion.div
@@ -1365,9 +1129,6 @@ function HomePage() {
         </div>
       </section>
 
-      {/* Contact Section */}
-
-      {/* FAQ Section */}
       <section id="FAQ" className="py-20 bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
