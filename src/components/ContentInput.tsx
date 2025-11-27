@@ -1,22 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import {
-  Upload,
-  FileText,
-  Camera,
   Wand2,
   Eye,
   Loader,
   Sparkles,
-  Plus,
   X,
   CheckCircle,
   AlertCircle,
-  Target,
-  Hash,
-  MousePointer,
   Palette,
-  Brain,
-  Zap,
   Edit3,
   Trash2,
 } from "lucide-react";
@@ -45,11 +36,9 @@ import { useLoadingAPI } from "../hooks/useLoadingAPI";
 
 import API from "@/services/api";
 import { useNavigate } from "react-router-dom";
-import { ImageUploader } from ".";
 import { notify } from "@/utils/toast";
 import { useTranslation } from "react-i18next";
 
-// Helper function to convert file to base64
 const fileToBase64 = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -57,7 +46,7 @@ const fileToBase64 = (file: File): Promise<string> => {
     reader.onload = () => {
       const result = reader.result;
       if (typeof result === "string") {
-        resolve(result.split(",")[1]); // Get base64 part
+        resolve(result.split(",")[1]);
       } else {
         reject(new Error("FileReader result is not a string"));
       }
@@ -81,8 +70,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   selectedPlatforms,
   editMode,
 }) => {
-  const { state, balance, generationAmounts } = useAppContext();
-  console.log("generationAmounts", generationAmounts);
+  const { state, generationAmounts } = useAppContext();
   const {
     executeVideoThumbnailGeneration,
     executeImageGeneration,
@@ -90,8 +78,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     showLoading,
     hideLoading,
   } = useLoadingAPI();
-  const { t, i18n } = useTranslation();
-  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
+  const { t } = useTranslation();
 
   const getCost = () => {
     if (!selectedPostType || !generationAmounts) return 0;
@@ -139,23 +126,19 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   >();
   const [templatedImageUrl, setTemplatedImageUrl] = useState<string>("");
   const [showImageMenu, setShowImageMenu] = useState(false);
-  // Video post menu and mode state
   const [showVideoMenu, setShowVideoMenu] = useState(false);
   const [selectedVideoMode, setSelectedVideoMode] = useState<
     "upload" | "uploadShorts" | ""
   >("");
 
-  // Post type selection state
   const [selectedPostType, setSelectedPostType] = useState<
     "text" | "image" | "video" | ""
   >("");
 
-  // Image post sub-type selection state
   const [selectedImageMode, setSelectedImageMode] = useState<
     "upload" | "textToImage" | ""
   >("");
 
-  // Video-related state - MUST be declared before useEffect that uses them
   const [videoThumbnailUrl, setVideoThumbnailUrl] = useState<string>("");
   const [originalVideoFile, setOriginalVideoFile] = useState<File | null>(null);
   const [videoAspectRatio, setVideoAspectRatio] = useState<number | null>(null);
@@ -2937,7 +2920,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               </div>
                             </div>
                           ) : (
-                            /* Video preview - Show video player with controls */
                             <div className="relative">
                               <video
                                 src={
@@ -2965,11 +2947,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               >
                                 Your browser does not support the video tag.
                               </video>
-                              {/* <div className="absolute top-2 left-2 bg-black/60 text-white px-2 py-1 rounded text-xs flex items-center">
-                              <Icon name="video-post" size={12} className="mr-1" />
-                              {videoAspectRatio && is9x16Video(videoAspectRatio) ? 'Vertical Video' : 
-                               videoAspectRatio && is16x9Video(videoAspectRatio) ? 'Horizontal Video' : 'Video'}
-                            </div> */}
                             </div>
                           )}
                         </div>
@@ -2986,46 +2963,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             )}
                           </div>
 
-                          {/* Compact checkboxes */}
-                          {/* <div className="flex gap-2">
-                            <div className="flex items-center space-x-1 p-2 theme-bg-primary/20 rounded text-xs">
-                              <input
-                                type="checkbox"
-                                id="useForAI"
-                                checked={useForAIReference}
-                                onChange={(e) =>
-                                  setUseForAIReference(e.target.checked)
-                                }
-                                className="w-3 h-3 text-blue-600"
-                              />
-                              <Brain className="w-3 h-3 text-blue-400" />
-                              <label
-                                htmlFor="useForAI"
-                                className="theme-text-secondary cursor-pointer"
-                              >
-                                AI Reference
-                              </label>
-                            </div>
-
-                            <div className="flex items-center space-x-1 p-2 theme-bg-primary/20 rounded text-xs">
-                              <input
-                                type="checkbox"
-                                id="useInPost"
-                                checked={useInPost}
-                                onChange={(e) => setUseInPost(e.target.checked)}
-                                className="w-3 h-3 text-green-600"
-                              />
-                              <Target className="w-3 h-3 text-green-400" />
-                              <label
-                                htmlFor="useInPost"
-                                className="theme-text-secondary cursor-pointer"
-                              >
-                                Use in Post
-                              </label>
-                            </div>
-                          </div> */}
-
-                          {/* Status indicators */}
                           {analyzingImage && (
                             <div className="flex items-center justify-center p-2 bg-blue-500/10 border border-blue-400/20 rounded text-xs">
                               <Loader className="w-3 h-3 animate-spin mr-2 text-blue-400" />
@@ -3034,7 +2971,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               </span>
                             </div>
                           )}
-                          {/* Upload preloader is now handled by enhanced preloader overlay */}
                           {videoAspectRatioWarning ? (
                             <div className="flex items-center justify-start p-3 bg-red-500/10 border border-red-400/20 rounded text-xs">
                               <AlertCircle className="w-4 h-4 mr-2 text-red-400 flex-shrink-0" />
@@ -3401,8 +3337,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
               {selectedImageMode === "" &&
                 selectedVideoMode === "" &&
                 selectedPostType !== "text" && (
-                  <div className="flex-1 w-full aspect-video ">
-                    <div className="relative rounded-md overflow-hidden shadow-md bg-gray-900 aspect-video">
+                  <div className="flex-1 w-full  ">
+                    <div className="relative rounded-md overflow-hidden shadow-md bg-gray-900 h-[450px] w-full">
                       <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#7650e3] to-[#6366F1]">
                         <button className="bg-white rounded-full p-6 hover:scale-110 transition-transform shadow-md">
                           <svg
@@ -3472,7 +3408,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
             onBack={() => setShowPreview(false)}
             onEdit={() => {}}
             onPostsUpdate={(updatedPosts) => setGeneratedResults(updatedPosts)}
-            onRegeneratePlatform={(platform) => {}}
           />
         </div>
       )}
