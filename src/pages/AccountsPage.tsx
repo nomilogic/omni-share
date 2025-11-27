@@ -22,7 +22,6 @@ const ALL_PLATFORMS: Platform[] = [
 
 export const AccountsPage: React.FC = () => {
   const { t, i18n } = useTranslation();
-  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
   const [connectedPlatforms, setConnectedPlatforms] = useState<Platform[]>([]);
   const [connectingPlatforms, setConnectingPlatforms] = useState<Platform[]>(
     []
@@ -153,7 +152,7 @@ export const AccountsPage: React.FC = () => {
         `${platform}_oauth`,
         "width=600,height=700,scrollbars=yes,resizable=yes"
       );
-      console.log(authWindow,"authWindow");
+      console.log(authWindow, "authWindow");
       if (!authWindow) {
         throw new Error("OAuth popup blocked");
       }

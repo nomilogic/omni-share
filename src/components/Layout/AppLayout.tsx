@@ -36,7 +36,6 @@ interface AppLayoutProps {
 }
 
 export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
-  
   const { user, logout, balance, refreshUser } = useAppContext();
   const { t, i18n } = useTranslation();
   const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
@@ -346,7 +345,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             </div>
             <div className="flex gap-2 mt-2.5 md:px-5 px-3">
               <button
-                onClick={() => i18n.changeLanguage("en")}
+                onClick={() => {
+                  i18n.changeLanguage("en");
+                  localStorage.setItem("siteLang", "en");
+                }}
                 className={`px-3 py-1 rounded-md text-sm 
       ${
         i18n.language === "en"
@@ -358,7 +360,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               </button>
 
               <button
-                onClick={() => i18n.changeLanguage("es")}
+                onClick={() => {
+                  i18n.changeLanguage("es");
+                  localStorage.setItem("siteLang", "es");
+                }}
                 className={`px-3 py-1 rounded-md text-sm 
       ${
         i18n.language === "es"
@@ -370,7 +375,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               </button>
 
               <button
-                onClick={() => i18n.changeLanguage("zh")}
+                onClick={() => {
+                  i18n.changeLanguage("zh");
+                  localStorage.setItem("siteLang", "zh");
+                }}
                 className={`px-3 py-1 rounded-md text-sm 
       ${
         i18n.language === "zh"
@@ -381,6 +389,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 中文
               </button>
             </div>
+
             {/* Footer */}
             <div className="absolute bottom-0 left-0 right-0 ">
               <div className="w-full mx-auto ">

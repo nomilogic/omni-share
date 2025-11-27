@@ -31,6 +31,8 @@ import { themeManager } from "./lib/theme";
 import { FAQ, Support, Terms } from "./components";
 import PackageErrorPage from "./pages/PackageErrorPage";
 import "./i18n";
+import i18n from "./i18n";
+import { useTranslation } from "react-i18next";
 const OAuthCallbackWrapper = () => {
   const { dispatch } = useAppContext();
 
@@ -52,6 +54,46 @@ function App() {
     themeManager.initialize();
     localStorage.getItem("hasLanded");
   }, []);
+
+  const { t, i18n } = useTranslation();
+
+  useEffect(() => {
+    const detectUserLanguage = async () => {
+      try {
+        const res = await fetch("https://api.country.is/");
+        const data = await res.json();
+
+        let lang = "en";
+
+        const chineseCountries = ["CN", "HK", "TW", "SG", "MO"];
+        const spanishCountries = ["PK", "ES", "MX", "AR", "CO", "PE"];
+        console.log("data", data);
+        if (spanishCountries.includes(data.country)) {
+          lang = "es";
+        } else if (chineseCountries.includes(data.country)) {
+          lang = "zh";
+        }
+
+        i18n.changeLanguage(lang);
+
+        localStorage.setItem("siteLang", lang);
+      } catch (error) {
+        console.log("Location detection failed:", error);
+      }
+    };
+
+    // --- MAIN LOGIC ---
+    const savedLang = localStorage.getItem("siteLang");
+    console.log("savedLang", savedLang);
+    if (savedLang && savedLang.trim() !== "") {
+      // If saved language exists → use it (NO API CALL)
+      i18n.changeLanguage(savedLang);
+    } else {
+      // Else → detect and save it
+      detectUserLanguage();
+    }
+  }, []);
+
   return (
     <>
       <ToastContainer
