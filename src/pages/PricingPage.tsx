@@ -11,6 +11,7 @@ import { useSubscriptionModal } from "../context/SubscriptionModalContext";
 import { usePricingModal } from "../context/PricingModalContext";
 import { notify } from "../utils/toast";
 import { useTranslation } from "react-i18next";
+import { div } from "framer-motion/client";
 
 export const PricingPage: React.FC = () => {
   const { state, refreshUser, setProcessing, packages, addons, loader } =
@@ -228,8 +229,12 @@ export const PricingPage: React.FC = () => {
       {activeTab === "" && (
         <>
           {loader ? (
-            <div className=" flex justify-center items-center min-h-[40vh]">
+            <div className=" flex flex-col justify-center items-center min-h-[40vh]">
               <Icon name="spiral-logo" size={45} className="animate-spin" />
+
+              <p className="mt-1 text-base font-medium text-gray-500">
+                Loading Packages....
+              </p>
             </div>
           ) : (
             <div className="grid xl:grid-cols-3 lg:grid-cols-2 gap-5 mx-auto order-2 md:order-1">
@@ -372,8 +377,11 @@ export const PricingPage: React.FC = () => {
       {activePackage?.package?.tier !== "free" && activeTab === "addons" && (
         <>
           {loader ? (
-            <div className=" flex justify-center items-center min-h-[40vh]">
+            <div className=" flex flex-col justify-center items-center min-h-[40vh]">
               <Icon name="spiral-logo" size={45} className="animate-spin" />
+              <p className="mt-1 text-base font-medium text-gray-500">
+                Loading Omnicoins....
+              </p>
             </div>
           ) : (
             <div className="grid xl:grid-cols-3  md:grid-cols-2 gap-5">
