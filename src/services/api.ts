@@ -85,7 +85,7 @@ interface APIInstance extends AxiosInstance {
 
   listAddons: () => Promise<any>;
   confirmAddons: (data: any) => Promise<any>;
-  buyAddons: (data: any) => Promise<any>;
+  buyAddons: (data: any, language: string) => Promise<any>;
 
   listPackages: () => Promise<any>;
   cancelPackage: () => Promise<any>;
@@ -93,7 +93,7 @@ interface APIInstance extends AxiosInstance {
   getCustomerPortal: () => Promise<any>;
   requestDowngrade: (id: any) => Promise<any>;
   reactivatePackage: () => Promise<any>;
-  buyPackage: (packageId: string) => Promise<any>;
+  buyPackage: (packageId: string, language: string) => Promise<any>;
   requestUpgradePackage: (packageId: string) => Promise<any>;
   confirmPurchase: (data: any) => Promise<any>;
   listMedia: () => Promise<any>;
@@ -216,12 +216,15 @@ API.forgotPassword = (data) => API.post("/auth/forgot-password", data);
 API.resetPassword = (data) => API.post("/auth/reset-password", data);
 
 API.listAddons = () => API.get("/client/addons");
-API.buyAddons = (addonId) => API.get(`/client/addons/buy/${addonId}`);
+API.buyAddons = (addonId, language) =>
+  API.get(`/client/addons/buy/${addonId}?language=${language}`);
+
 API.confirmAddons = (id) => API.get(`/client/addons/confirm/${id}`);
 
 API.confirmPurchase = (id) => API.get(`/client/package/confirm/${id}`);
 API.listPackages = () => API.get("/client/package");
-API.buyPackage = (packageId) => API.get(`/client/package/buy/${packageId}`);
+API.buyPackage = (packageId, language) =>
+  API.get(`/client/package/buy/${packageId}?language=${language}`);
 API.requestUpgradePackage = (id) => API.get(`/client/package/upgrade/${id}`);
 API.cancelPackage = () => API.delete(`/client/package/cancel`);
 API.reactivatePackage = () => API.get(`/client/package/reactivate`);

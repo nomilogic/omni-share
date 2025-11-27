@@ -55,7 +55,7 @@ function App() {
     localStorage.getItem("hasLanded");
   }, []);
 
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
 
   useEffect(() => {
     const detectUserLanguage = async () => {
@@ -82,14 +82,11 @@ function App() {
       }
     };
 
-    // --- MAIN LOGIC ---
     const savedLang = localStorage.getItem("siteLang");
     console.log("savedLang", savedLang);
     if (savedLang && savedLang.trim() !== "") {
-      // If saved language exists → use it (NO API CALL)
       i18n.changeLanguage(savedLang);
     } else {
-      // Else → detect and save it
       detectUserLanguage();
     }
   }, []);
