@@ -5,10 +5,13 @@ import {
   getPlatformIconBackgroundColors,
 } from "../../utils/platformIcons";
 import { Platform } from "../../types";
+import { useTranslation } from "react-i18next";
 
 function Analytics() {
   const { state } = useAppContext();
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
+  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
 
   const topPosts = state?.generatedPosts?.slice(0, 3) || [];
   const socialPlatforms: Platform[] = [
@@ -95,7 +98,7 @@ function Analytics() {
         onClick={() => navigate("/dashboard")}
         className="w-full py-2.5 px-4 rounded-md font-semibold text-base transition-all border-2 mt-4 text-white border-[#7650e3]  bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
       >
-        View Analytics
+        {t("view_analytics")}
       </button>
     </div>
   );

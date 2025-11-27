@@ -40,6 +40,7 @@ import { AIModelSelector } from "./AIModelSelector";
 import { MediaDetailModal } from "./MediaDetailModal";
 import { VideoPlayerModal } from "./VideoPlayerModal";
 import { ContentInput } from "./ContentInput"; // Assuming ContentInput is in this path
+import { useTranslation } from "react-i18next";
 
 interface PostGalleryDashboardProps {
   campaignId: string;
@@ -67,6 +68,8 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
   const [editingPost, setEditingPost] = useState<PostGalleryItem | null>(null); // State to manage editing
+  const { t, i18n } = useTranslation();
+    const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
 
   // Filters
   const [filters, setFilters] = useState({
@@ -1011,7 +1014,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
               </p>
               <button className="bg-blue-600 text-white px-4 py-2.5 rounded-md hover:bg-blue-700 flex items-center gap-2 mx-auto">
                 <TrendingUp className="w-4 h-4" />
-                View Analytics
+                {t("view_analytics")}
               </button>
             </div>
           )}

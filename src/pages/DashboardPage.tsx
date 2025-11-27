@@ -9,6 +9,7 @@ import NewsUpdates from "../components/dashboard/NewsUpdates";
 import ReferralSection from "../components/dashboard/ReferralSection";
 import ProfileSetupSinglePage from "@/components/ProfileSetupSinglePage";
 import UpdatePasswordForm from "@/components/UpdatePasswordForm";
+import { useTranslation } from "react-i18next";
 import API from "@/services/api";
 
 export const DashboardPage: React.FC = () => {
@@ -19,6 +20,8 @@ export const DashboardPage: React.FC = () => {
   const profileParam = searchParams.get("profile") === "true";
   const isEditing = profileParam || state?.isProfileEditing || false;
   const isPasswordEditing = state?.isPasswordEditing || false;
+  const { t, i18n } = useTranslation();
+  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
 
   // Get user plan and tier info
   const userPlan = user?.wallet?.package?.tier || "free";
@@ -61,7 +64,7 @@ export const DashboardPage: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <StatsCard
                   iconName="crown"
-                  title="My Plan"
+                  title={t("my_plan")}
                   badge={userPlan}
                   subtitle={`Renewing on: ${planRenewalDate}`}
                   buttonText="Switch Plan"
@@ -80,7 +83,7 @@ export const DashboardPage: React.FC = () => {
 
                 <StatsCard
                   iconName="share"
-                  title="Referral Coins"
+                  title={t("referral_coins")}
                   stats={referralCoin.toLocaleString()}
                   subtitle="Earn 100 Omni Coins each per referral!"
                   buttonText="Refer & Earn!"

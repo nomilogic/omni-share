@@ -22,6 +22,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { format } from "date-fns";
+import { useTranslation } from "react-i18next";
 
 interface PostScheduleDashboardProps {
   campaignId: string;
@@ -42,6 +43,8 @@ export const PostScheduleDashboard: React.FC<PostScheduleDashboardProps> = ({
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all"); // State for filtering posts
   const [isLoading, setIsLoading] = useState(true); // State for post list loading
+  const { t, i18n } = useTranslation();
+  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
 
   // Load scheduled posts on component mount
   useEffect(() => {
@@ -207,7 +210,7 @@ export const PostScheduleDashboard: React.FC<PostScheduleDashboardProps> = ({
         }`}
       >
         <Plus className="w-4 h-4" />
-        Create Post
+        {t("create_post")}
       </button>
     </div>
   );

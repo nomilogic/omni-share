@@ -6,9 +6,12 @@ import Analytics from "../components/dashboard/Analytics";
 import NewsUpdates from "../components/dashboard/NewsUpdates";
 import ReferralSection from "../components/dashboard/ReferralSection";
 import { useAppContext } from "../context/AppContext";
+import { useTranslation } from "react-i18next";
 
 function Dashboard() {
   const { state } = useAppContext();
+  const { t, i18n } = useTranslation();
+  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
 
   return (
     <div className="min-h-screen bg-stone-100">
@@ -32,7 +35,7 @@ function Dashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           <StatsCard
             icon={<Crown className="w-6 h-6" />}
-            title="My Plan"
+            title={t("my_plan")}
             badge={state?.userPlan?.toUpperCase() || "FREE"}
             subtitle="Renewing on: 30 Nov 2025"
             buttonText="Switch Plan"
@@ -48,7 +51,7 @@ function Dashboard() {
 
           <StatsCard
             icon={<Share2 className="w-6 h-6" />}
-            title="Referral Coins"
+            title={t("referral_coins")}
             stats="0/100"
             subtitle="Earn 100 Omni Coins each per referral!"
             buttonText="Refer & Earn!"

@@ -6,6 +6,7 @@ import {
   getPlatformIconBackgroundColors,
 } from "../../utils/platformIcons";
 import { Platform } from "../../types";
+import { useTranslation } from "react-i18next";
 
 function RecentPosts({ post }: any) {
   const { state } = useAppContext();
@@ -36,6 +37,8 @@ function RecentPosts({ post }: any) {
     postUrl = "",
     metadata: { title = "", description = "" } = {},
   } = topPost || {};
+  const { t, i18n } = useTranslation();
+  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
 
   return (
     <div className="bg-gray-100 rounded-md p-5 flex flex-col  w-full">
@@ -69,8 +72,10 @@ function RecentPosts({ post }: any) {
             {title || "No Title"}
           </h3>
 
-          <p title={description} 
-             className="text-gray-700 text-sm mb-3 line-clamp-5">
+          <p
+            title={description}
+            className="text-gray-700 text-sm mb-3 line-clamp-5"
+          >
             {description || content || "No content available"}
           </p>
 
@@ -91,7 +96,7 @@ function RecentPosts({ post }: any) {
         onClick={() => navigate("/content")}
         className="w-full text-white py-2.5 px-4 rounded-md font-semibold text-md transition-all border-2 border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] mt-4"
       >
-        Create Post
+        {t("create_post")}
       </button>
     </div>
   );

@@ -624,7 +624,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                               <div>
                                 <div className="flex items-center gap-3">
                                   <h2 className="text-base font-semibold text-slate-800">
-                                    My Plan
+                                    {t("my_plan")}
                                   </h2>
                                   <span
                                     className="text-slate-300 cursor-pointer text-xs"
