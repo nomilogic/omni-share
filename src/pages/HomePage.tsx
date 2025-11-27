@@ -33,6 +33,7 @@ import API from "@/services/api";
 import { Counter } from "./counter";
 import TwoColumnSection2 from "@/components/TwoColumnSection2";
 import FeaturesPage from "@/components/FeaturesPage";
+import CommunitySignup from "@/components/CommunitySignup";
 import TwoColumnSection from "@/components/TwoColumnSection";
 import IntroVideo from "../assets/OMNISHARE.00.mp4";
 import { Platform } from "@/types";
@@ -1379,103 +1380,40 @@ function HomePage() {
         </div>
       </section>
 
-      <div className="relative bg-theme-secondary">
+      <CommunitySignup /> 
+      <div className="relative bg-theme-secondary ">
         <motion.footer
           className="w-full px-4 py-4 text-center text-sm theme-text-light"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
         >
-          <div className="w-full mx-auto pt-2 md:px-[10%] px-3 flex flex-col md:flex-row items-center md:justify-between gap-3">
-            <div className="flex flex-col items-center md:items-start text-sm">
-              <span className="mb-2">
-                © {new Date().getFullYear()} OMNISHARE
-              </span>
+          <div className="w-full mx-auto pt-2 md:px-[10%] px-3 flex flex-col sm:flex-row items-center md:justify-between gap-3">
+    
+    {/* LEFT SIDE: Copyright Text (Ab yeh pehla direct child hai) */}
+    {/* sm:text-center class add ki taaki mobile par text center ho jaaye */}
+    <div className="flex justify-center items-center text-sm sm:text-center"> 
+        <span className="mb-2">
+            © {new Date().getFullYear()} OMNISHARE
+        </span>
+    </div>
 
-              <div className="flex justify-center md:justify-start space-x-1 text-sm theme-text-light">
-                <Link to="/privacy" className="transition-colors duration-200">
-                  Privacy Policy
-                </Link>
-                <span className="text-white/20">•</span>
-                <Link to="/terms" className="transition-colors duration-200">
-                  Terms of Service
-                </Link>
-                <span className="text-white/20">•</span>
-                <Link to="/support" className="transition-colors duration-200">
-                  Support
-                </Link>
-              </div>
-            </div>
-
-            <div className="w-full md:w-auto flex flex-col items-center md:items-end">
-              <form
-                onSubmit={async (e: any) => {
-                  e.preventDefault();
-                  try {
-                    setLoading(true);
-
-                    const email = e.target.email.value;
-                    await API.subscribe(email);
-
-                    setLoading(false);
-                    e.target.reset();
-                    notify("success", "Subscribed successfully");
-                  } catch (error) {
-                    notify("error", "Subscription failed");
-                    setLoading(false);
-                  }
-                }}
-                className="flex  w-full sm:w-auto items-center gap-2"
-              >
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Enter your email"
-                  className="px-3 py-2 w-64 rounded-md bg-white border border-purple-600 text-purple-600 placeholder-purple-600/80 focus:outline-none focus:ring-2 focus:ring-purple-600 transition"
-                  required
-                />
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className={`px-4 py-2 w-full sm:w-[130px] rounded-md border font-medium shadow-lg transition
-        ${
-          loading
-            ? "bg-purple-600 text-white border-purple-600 cursor-not-allowed"
-            : "bg-white text-theme-secondary border-purple-600"
-        }`}
-                >
-                  {loading ? (
-                    <div className="flex items-center justify-center gap-2">
-                      <svg
-                        className="animate-spin h-4 w-4 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16 8 8 0 01-8-8z"
-                        ></path>
-                      </svg>
-                      Subscribing...
-                    </div>
-                  ) : (
-                    "Subscribe"
-                  )}
-                </button>
-              </form>
-            </div>
-          </div>
+    {/* RIGHT SIDE: Links (Ab yeh doosra direct child hai) */}
+    {/* is div ko flex-wrap kiya taaki agar links lambe hon to wrap ho jaayen aur mobile par center hon */}
+    <div className="flex flex-wrap justify-center space-x-1 text-sm theme-text-light">
+        <Link to="/privacy" className="transition-colors duration-200">
+            Privacy Policy
+        </Link>
+        <span className="text-white/20">•</span>
+        <Link to="/terms" className="transition-colors duration-200">
+            Terms of Service
+        </Link>
+        <span className="text-white/20">•</span>
+        <Link to="/support" className="transition-colors duration-200">
+            Support
+        </Link>
+    </div>
+</div>
         </motion.footer>
       </div>
     </div>

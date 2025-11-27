@@ -6,7 +6,7 @@ const CommunitySignup: React.FC = () => {
   return (
     // Outer container for the section, using a light background color and padding
     // Relative positioning is needed for the absolute-positioned dots
-    <div className="relative bg-white py-16 sm:py-24 lg:py-32 overflow-hidden">
+    <div className="relative bg-white pb-20 overflow-hidden">
       
       {/* Floating Decorative Dots/Shapes (Mimicking the image) 
         These are positioned absolutely to float around the main content

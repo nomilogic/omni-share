@@ -16,6 +16,7 @@ import { Tag } from "lucide-react";
 import ProfileSetupSinglePage from "../components/ProfileSetupSinglePage";
 import { useAppContext } from "../context/AppContext";
 import API from "../services/api";
+import { useTranslation } from "react-i18next";
 
 interface UserProfile {
   id: string;
@@ -36,6 +37,8 @@ export const ProfilePage: React.FC = () => {
   const isEditing = !!state.isProfileEditing;
   const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState<any>({});
+  const { t, i18n } = useTranslation();
+  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
 
   useEffect(() => {
     if (state?.user) {
@@ -131,7 +134,7 @@ export const ProfilePage: React.FC = () => {
                     className="flex items-center px-2 py-2.5 text-purple-700 text-underline rounded-md hover:bg-purple-50 transition-colors"
                   >
                     <Edit3 className="w-4 h-4 mr-2" />
-                    Edit Profile
+                    {t("edit_profile")}
                   </button>
                 </div>
               </div>

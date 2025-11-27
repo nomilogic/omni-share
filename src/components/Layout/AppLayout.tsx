@@ -560,7 +560,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                   </span>
                                 </div>
                                 <p className="text-sm text-slate-700   font-medium  ">
-                                  Renewing on:{" "}
+                                  {t("renewing_on")}{" "}
                                   <span className="text-slate-700 font-medium">
                                     {user.wallet.expiresAt
                                       ? new Date(
@@ -618,7 +618,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                 <Icon name="share" className="scale-[0.8] " />
 
                                 <div className="flex items-center gap-3">
-                                  <p> Referral Coins</p>
+                                  <p> {t("referral_coins")}</p>
 
                                   <span
                                     className="text-slate-300 text-xs cursor-pointer"
@@ -640,7 +640,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                             </div>
                           </div>
                           <p className="text-base my-4">
-                            More information in our{" "}
+                            {t("more_info")}{" "}
                             <Link
                               className="text-purple-600 font-medium"
                               to="/faq"
@@ -664,7 +664,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                 size={20}
                                 className="filter-omni"
                               />
-                              Manage Subscription
+                              {t("manage_subscription")}
                             </button>
                           )}
 
@@ -679,7 +679,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                 size={20}
                                 className="mr-2"
                               />
-                              Upgrade
+                              {t("upgrade")}
                             </div>
                           </Link>
                         </>

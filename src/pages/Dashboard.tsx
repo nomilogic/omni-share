@@ -38,23 +38,23 @@ function Dashboard() {
             title={t("my_plan")}
             badge={state?.userPlan?.toUpperCase() || "FREE"}
             subtitle="Renewing on: 30 Nov 2025"
-            buttonText="Switch Plan"
+            buttonText={t("switch_plan")}
           />
 
           <StatsCard
             icon={<Coins className="w-6 h-6" />}
             title="Omni Coins"
             stats={`${Math.floor(state?.balance || 0)}/25000`}
-            subtitle="You can add coins to your package anytime."
-            buttonText="Add Coins"
+            subtitle={t("add_coins_message")}
+            buttonText={t("add_coins")}
           />
 
           <StatsCard
             icon={<Share2 className="w-6 h-6" />}
             title={t("referral_coins")}
             stats="0/100"
-            subtitle="Earn 100 Omni Coins each per referral!"
-            buttonText="Refer & Earn!"
+            subtitle={t("referral_earn_message")}
+            buttonText={t("refer_earn")}
           />
         </div>
 

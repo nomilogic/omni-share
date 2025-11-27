@@ -67,7 +67,7 @@ export const DashboardPage: React.FC = () => {
                   title={t("my_plan")}
                   badge={userPlan}
                   subtitle={`Renewing on: ${planRenewalDate}`}
-                  buttonText="Switch Plan"
+                  buttonText={t("switch_plan")}
                   onButtonClick={() => navigate("/pricing")}
                   showicon2={true}
                 />
@@ -76,8 +76,8 @@ export const DashboardPage: React.FC = () => {
                   iconName="spiral-logo"
                   title="Omni Coins"
                   stats={`${coinBalance.toLocaleString()}/${coinLimit.toLocaleString()}`}
-                  subtitle="You can add coins to your package anytime."
-                  buttonText="Add Coins"
+                  subtitle={t("add_coins_message")}
+                  buttonText={t("add_coins")}
                   onButtonClick={() => navigate("/pricing?tab=addons")}
                 />
 
@@ -85,8 +85,8 @@ export const DashboardPage: React.FC = () => {
                   iconName="share"
                   title={t("referral_coins")}
                   stats={referralCoin.toLocaleString()}
-                  subtitle="Earn 100 Omni Coins each per referral!"
-                  buttonText="Refer & Earn!"
+                  subtitle={t("referral_earn_message")}
+                  buttonText={t("refer_earn")}
                   onButtonClick={() => {}}
                 />
               </div>

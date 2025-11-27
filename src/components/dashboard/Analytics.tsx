@@ -40,17 +40,17 @@ function Analytics() {
       </div>
 
       <div>
-        <h4 className="font-medium text-black text-base">Summary</h4>
-        <p className="text-xs text-black mb-3 font-medium ">Last 28 days</p>
+        <h4 className="font-medium text-black text-base">{t("summary")}</h4>
+        <p className="text-xs text-black mb-3 font-medium ">{t("last_28_days")}</p>
 
         <div className="space-y-1">
           <div className="flex justify-between items-center">
-            <span className="text-xs text-black font-medium">Views</span>
+            <span className="text-xs text-black font-medium">{t("views")}</span>
             <span className="text-xs font-semibold text-purple-600">100</span>
           </div>
           <div className="flex justify-between items-center">
             <span className="text-xs text-black font-medium">
-              Impressions click-through rate
+              {t("impressions_ctr")}
             </span>
             <span className="text-xs font-semibold text-purple-600 ml-1">
               2.1%
@@ -58,7 +58,7 @@ function Analytics() {
           </div>
           <div className="flex justify-between items-center">
             <span className="text-xs text-black font-medium">
-              Average view duration
+              {t("avg_view_duration")}
             </span>
             <span className="text-xs font-semibold text-purple-600">100</span>
           </div>
@@ -66,8 +66,8 @@ function Analytics() {
       </div>
       <hr className="h-[2px] bg-purple-600 mb-2 mt-3" />
       <div>
-        <h4 className="font-medium text-black mb-1 text-sm">Top Post</h4>
-        <p className="text-xs text-black mb-2 font-medium">Last 48 hours</p>
+        <h4 className="font-medium text-black mb-1 text-sm">{t("top_post")}</h4>
+        <p className="text-xs text-black mb-2 font-medium">{t("last_48_hours")}</p>
         <div className="space-y-1">
           {topPosts.length > 0 ? (
             topPosts.map((post, index) => (

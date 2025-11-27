@@ -1,9 +1,12 @@
 import { Settings, Edit, User, PenLine, Lock } from "lucide-react";
 import { useAppContext } from "../../context/AppContext";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 function ProfileCard() {
   const { state, setProfileEditing, setPasswordEditing } = useAppContext();
+  const { t, i18n } = useTranslation();
+  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
 
   // Extract user information
   const fullName =
@@ -63,7 +66,7 @@ function ProfileCard() {
         >
           <PenLine className="w-[14px] h-[14px]" />
           <span className="hover:underline text-decoration-line">
-            Edit Profile
+            {t("edit_profile")}
           </span>
         </button>
         <button
@@ -75,7 +78,7 @@ function ProfileCard() {
         >
           <Lock className="w-[14px] h-[14px]" />
           <span className="hover:underline text-decoration-line">
-            Update Password
+            {t("update_password")}
           </span>
         </button>
       </div>

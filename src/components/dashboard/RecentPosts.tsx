@@ -86,7 +86,7 @@ function RecentPosts({ post }: any) {
               rel="noopener noreferrer"
               className="text-blue-600 hover:underline text-sm mb-3"
             >
-              View Post
+              {t("view_post")}
             </a>
           )}
         </div>
