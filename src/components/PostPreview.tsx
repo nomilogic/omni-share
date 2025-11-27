@@ -1134,7 +1134,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
                     <div className="flex justify-between md:flex-col md:items-start">
                       <span className="text-gray-500 font-medium">
-                        {t("character_count")}:
+                        {t("character_count")}
                       </span>
                       <span className="font-medium">
                         {selectedPost.characterCount}
@@ -1142,7 +1142,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                     </div>
                     <div className="flex justify-between md:flex-col md:items-start">
                       <span className="text-gray-500 font-medium">
-                        {t("hashtags")}:
+                        {t("hashtags")}
                       </span>
                       <span className="font-medium">
                         {selectedPost.hashtags.length}
@@ -1253,11 +1253,11 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-gray-50 rounded-md shadow-md w-full max-w-md px-8 py-6">
             <h2 className="text-2xl font-bold text-purple-700 mb-4 items-center flex justify-center">
-              Discard Post ?
+              {t("discard_post_title")}
             </h2>
 
             <p className="text-gray-500 text-sm mb-8 text-center leading-relaxed">
-              Discarding will permanently remove the generated post and the coins spent to create it.
+              {t("discard_post_message")}
             </p>
 
             <div className="flex gap-3">
@@ -1268,7 +1268,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                 }}
                 className="flex-1  bg-transparent border-purple-600 border text-purple-600 flex items-center gap-2 justify-center hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
               >
-                Cancel
+                {t("cancel")}
               </button>
 
               <button
@@ -1279,7 +1279,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                 }}
                 className="flex-1  bg-purple-600 text-white hover:text-[#7650e3] flex items-center gap-2 justify-center hover:bg-[#d7d7fc] border border-[#7650e3] font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
               >
-                Confirm
+                {t("confirm")}
               </button>
             </div>
           </div>

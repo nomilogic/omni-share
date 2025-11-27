@@ -446,7 +446,7 @@ export const SocialMediaManager: React.FC<SocialMediaManagerProps> = ({
                     {status.loading ? (
                       <>
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        <span>Connecting...</span>
+                        <span>{t("connecting")}...</span>
                       </>
                     ) : (
                       <>

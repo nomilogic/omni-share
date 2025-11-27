@@ -10,6 +10,7 @@ import Icon from "../components/Icon";
 import { useSubscriptionModal } from "../context/SubscriptionModalContext";
 import { usePricingModal } from "../context/PricingModalContext";
 import { notify } from "../utils/toast";
+import { useTranslation } from "react-i18next";
 
 export const PricingPage: React.FC = () => {
   const { state, refreshUser, setProcessing, packages, addons, loader } =
@@ -24,6 +25,8 @@ export const PricingPage: React.FC = () => {
   const [loadingPackage, setLoadingPackage] = useState(false);
   const [loadingAddon, setLoadingAddon] = useState(false);
   const [selectedAddon, setSelectedAddon] = useState<any | null>(null);
+  const { t, i18n } = useTranslation();
+  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
 
   useEffect(() => {
     console.log("sessionId", sessionId);
@@ -206,7 +209,7 @@ export const PricingPage: React.FC = () => {
                 : ""
             }`}
           >
-            Plans
+            {t("plans")}
           </button>
           {activePackage?.package?.tier !== "free" && !hasCancelRequested && (
             <button
@@ -217,7 +220,7 @@ export const PricingPage: React.FC = () => {
                   : ""
               }`}
             >
-              Buy Omni Coins
+              {t("buy_omni_coins")}
             </button>
           )}
         </div>
@@ -324,16 +327,16 @@ export const PricingPage: React.FC = () => {
                           {loadingPackage
                             ? "Processing..."
                             : isCurrentPlan && hasCancelRequested
-                            ? "Manage"
+                            ? t("manage")
                             : isCurrentPlan && !hasPendingDowngrade
-                            ? "Manage"
+                            ? t("manage")
                             : isCurrentPlan
-                            ? "Manage"
+                            ? t("manage")
                             : isPendingDowngradePackage
-                            ? "Cancel Request"
+                            ? t("cancel_request")
                             : isLowerPlan
-                            ? "Switch Plan"
-                            : "Switch Plan"}
+                            ? t("switch_plan")
+                            : t("switch_plan")}
                         </button>
                       )}
                     </div>
@@ -341,10 +344,10 @@ export const PricingPage: React.FC = () => {
                     <div className=" px-6 py-4">
                       <div className="mb-4 border-b-2 border-purple-600  h-[115px] text-center">
                         <p className=" text-purple-600 font-bold text-2xl mb-2 ">
-                          Ideal for:
+                          {t("ideal_for")}
                         </p>
                         <p className="text-lg text-slate-800 font-medium">
-                          {"Small agency, growing business, content team"}
+                          {t("free_ideal_rest")}
                         </p>
                       </div>
 
@@ -396,17 +399,17 @@ export const PricingPage: React.FC = () => {
                           </div>
                           {addon.isSale && (
                             <span className="bg-[#7650e3] text-white px-2 py-0.5 rounded text-xs font-semibold">
-                              Flash Sale
+                              {t("flash_sale")}
                             </span>
                           )}
                         </div>
                         <div className="text-[0.8rem] text-slate-800 -mt-[18px]  w-full">
                           {hasSale ? (
                             <>
-                              Total: {addon.coins.toLocaleString()}{" "}
+                              {t("total")}: {addon.coins.toLocaleString()}{" "}
                               <span className="mx-1">+</span>
                               <span className="text-[#7650e3] inline-block">
-                                {bonusAmount.toLocaleString()} Bonus
+                                {bonusAmount.toLocaleString()} {t("bonus")}
                               </span>
                             </>
                           ) : (
@@ -437,7 +440,7 @@ export const PricingPage: React.FC = () => {
                         >
                           {selectedAddon?.id === addon.id
                             ? "Buying...."
-                            : "Buy Now"}
+                            : t('buy_now')}
                         </button>
                       </div>
                     </div>

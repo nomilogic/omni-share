@@ -39,7 +39,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   
   const { user, logout, balance, refreshUser } = useAppContext();
   const { t, i18n } = useTranslation();
-
   const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
   const { loadingState } = useLoading();
   const { unreadCount, markAllAsRead: markAllUnreadAsRead } = useUnreadPosts();
@@ -340,7 +339,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 <div className="flex  justify-center items-center">
                   <LogOut className="h-5 w-5 mr-3" />
                   <div className="flex-1">
-                    <p className="font-medium">Logout</p>
+                    <p className="font-medium">{t("logout")}</p>
                   </div>
                 </div>
               </button>
@@ -392,21 +391,21 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                       className=" transition-colors duration-200"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
-                      Privacy Policy
+                      {t("privacy_policy")}
                     </Link>
                     <span className="text-white/20">•</span>
                     <Link
                       to="/terms"
                       className=" transition-colors duration-200"
                     >
-                      Terms of Service
+                      {t("terms_service")}
                     </Link>
                     <span className="text-white/20">•</span>
                     <Link
                       to="/support"
                       className=" transition-colors duration-200"
                     >
-                      Support
+                      {t("support")}
                     </Link>
                   </div>
                   <div className="flex justify-center space-x-1 text-xs theme-text-light w-full">

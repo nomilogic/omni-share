@@ -356,7 +356,7 @@ export const AccountsPage: React.FC = () => {
                     {isConnecting ? (
                       <>
                         <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
-                        <span>Connecting...</span>
+                        <span>{t("connecting")}...</span>
                       </>
                     ) : (
                       t("connect")

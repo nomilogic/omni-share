@@ -652,7 +652,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
                           {isConnecting ? (
                             <>
                               <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
-                              <span>Connecting...</span>
+                              <span>{t("connecting")}...</span>
                             </>
                           ) : (
                             t("connect")
@@ -913,11 +913,11 @@ export const PublishPosts: React.FC<PublishProps> = ({
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-gray-50 rounded-md shadow-md w-full max-w-md px-8 py-6">
             <h2 className="text-2xl font-bold text-purple-700 mb-4 items-center flex justify-center">
-              Discard Post ?
+              {t("discard_post_title")}
             </h2>
 
             <p className="text-gray-500 text-sm mb-8 text-center leading-relaxed">
-              If you discard now, everything you’ve created will be deleted.
+              {t("discard_post_warning")}
             </p>
 
             <div className="flex gap-3">
@@ -928,7 +928,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
                 }}
                 className="flex-1  bg-transparent border-purple-600 border text-purple-600 flex items-center gap-2 justify-center hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
               >
-                Cancel
+                {t("cancel")}
               </button>
 
               <button
@@ -939,7 +939,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
                 }}
                 className="flex-1  bg-purple-600 text-white hover:text-[#7650e3] flex items-center gap-2 justify-center hover:bg-[#d7d7fc] border border-[#7650e3] font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
               >
-                Confirm
+                {t("confirm")}
               </button>
             </div>
           </div>
