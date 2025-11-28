@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, lazy, Suspense } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   motion,
   useScroll,
@@ -24,6 +24,7 @@ import {
   Plus,
   Building2,
   History,
+  Video,
 } from "lucide-react";
 import Icon from "../components/Icon";
 import { Link, useNavigate } from "react-router-dom";
@@ -102,9 +103,7 @@ function HomePage() {
       "OmniShare - AI-Powered Social Media Content Generator & Scheduler";
 
     // Update meta description
-    const metaDescription = document.querySelector(
-      'meta[name="description"]'
-    );
+    const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
       metaDescription.setAttribute(
         "content",
@@ -389,7 +388,13 @@ function HomePage() {
                   size={38}
                 />
                 <span className="text-white text-2xl lg:text-[1.6rem] tracking-tight ml-3">
-                  <img src={LogoWhiteText} alt="Omnishare logo" className="h-4" decoding="async" loading="lazy" />
+                  <img
+                    src={LogoWhiteText}
+                    alt="Omnishare logo"
+                    className="h-4"
+                    decoding="async"
+                    loading="lazy"
+                  />
                 </span>
               </span>
 
@@ -673,7 +678,13 @@ function HomePage() {
                 className="ml-0 lg:ml-0 mt-1 lg:scale-100 brightness-[1000%]"
               />
               <span className="text-white text-2xl lg:text-[1.6rem] tracking-tight">
-                <img src={LogoWhiteText} alt="Omnishare logo" className="h-5" decoding="async" loading="lazy" />
+                <img
+                  src={LogoWhiteText}
+                  alt="Omnishare logo"
+                  className="h-5"
+                  decoding="async"
+                  loading="lazy"
+                />
               </span>
             </motion.div>
 
@@ -754,7 +765,6 @@ function HomePage() {
           loop
           playsInline
           preload="none"
-          poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1280 720'%3E%3Crect fill='%23111827' width='1280' height='720'/%3E%3C/svg%3E"
         />
 
         <div className="absolute inset-0 z-0 pointer-events-none w-full h-full will-change-transform">
@@ -851,9 +861,7 @@ function HomePage() {
                   initial={{ opacity: 0, scale: 0, rotate: -180 }}
                   animate={{ opacity: 1, scale: 1, rotate: 0 }}
                   transition={{
-                    delay: isInitialMount.current
-                      ? 0.8 + icons.index * 0.1
-                      : 0,
+                    delay: isInitialMount.current ? 0.8 + icons.index * 0.1 : 0,
                     type: "spring",
                     stiffness: 200,
                     damping: 15,
@@ -924,16 +932,10 @@ function HomePage() {
         viewport={{ once: true, margin: "-300px" }}
         transition={{ duration: 1.6, type: "spring", stiffness: 80 }}
       >
-        <Suspense fallback={<SectionLoader />}>
-          <FeaturesPage />
-        </Suspense>
+        <FeaturesPage />
       </motion.div>
-      <Suspense fallback={<SectionLoader />}>
-        <TwoColumnSection />
-      </Suspense>
-      <Suspense fallback={<SectionLoader />}>
-        <TwoColumnSection2 />
-      </Suspense>
+      <TwoColumnSection />
+      <TwoColumnSection2 />
       {/* Active Users Stats Section */}
       <section className="py-16 bg-white border-y border-gray-200">
         <div className=" max-w-full mx-auto px-4 sm:px-6 lg:px-[10%] w-full">
@@ -1437,7 +1439,7 @@ function HomePage() {
         </div>
       </section>
 
-      <CommunitySignup /> 
+      <CommunitySignup />
       <div className="relative bg-theme-secondary ">
         <motion.footer
           className="w-full px-4 py-4 text-center text-sm theme-text-light"
@@ -1446,31 +1448,30 @@ function HomePage() {
           viewport={{ once: true }}
         >
           <div className="w-full mx-auto pt-2 md:px-[10%] px-3 flex flex-col sm:flex-row items-center md:justify-between gap-3">
-    
-    {/* LEFT SIDE: Copyright Text (Ab yeh pehla direct child hai) */}
-    {/* sm:text-center class add ki taaki mobile par text center ho jaaye */}
-    <div className="flex justify-center items-center text-sm sm:text-center"> 
-        <span className="mb-2">
-            © {new Date().getFullYear()} OMNISHARE
-        </span>
-    </div>
+            {/* LEFT SIDE: Copyright Text (Ab yeh pehla direct child hai) */}
+            {/* sm:text-center class add ki taaki mobile par text center ho jaaye */}
+            <div className="flex justify-center items-center text-sm sm:text-center">
+              <span className="mb-2">
+                © {new Date().getFullYear()} OMNISHARE
+              </span>
+            </div>
 
-    {/* RIGHT SIDE: Links (Ab yeh doosra direct child hai) */}
-    {/* is div ko flex-wrap kiya taaki agar links lambe hon to wrap ho jaayen aur mobile par center hon */}
-    <div className="flex flex-wrap justify-center space-x-1 text-sm theme-text-light">
-        <Link to="/privacy" className="transition-colors duration-200">
-            Privacy Policy
-        </Link>
-        <span className="text-white/20">•</span>
-        <Link to="/terms" className="transition-colors duration-200">
-            Terms of Service
-        </Link>
-        <span className="text-white/20">•</span>
-        <Link to="/support" className="transition-colors duration-200">
-            Support
-        </Link>
-    </div>
-</div>
+            {/* RIGHT SIDE: Links (Ab yeh doosra direct child hai) */}
+            {/* is div ko flex-wrap kiya taaki agar links lambe hon to wrap ho jaayen aur mobile par center hon */}
+            <div className="flex flex-wrap justify-center space-x-1 text-sm theme-text-light">
+              <Link to="/privacy" className="transition-colors duration-200">
+                Privacy Policy
+              </Link>
+              <span className="text-white/20">•</span>
+              <Link to="/terms" className="transition-colors duration-200">
+                Terms of Service
+              </Link>
+              <span className="text-white/20">•</span>
+              <Link to="/support" className="transition-colors duration-200">
+                Support
+              </Link>
+            </div>
+          </div>
         </motion.footer>
       </div>
     </div>
