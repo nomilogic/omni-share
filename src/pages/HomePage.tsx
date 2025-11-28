@@ -10,10 +10,6 @@ import {
   Menu,
   X,
   ChevronDown,
-<<<<<<< Updated upstream
-=======
-  Check,
->>>>>>> Stashed changes
   Share2,
   Zap,
   BarChart3,
@@ -28,24 +24,16 @@ import {
   Plus,
   Building2,
   History,
-<<<<<<< Updated upstream
-=======
-  CreditCard,
-  Video,
->>>>>>> Stashed changes
 } from "lucide-react";
 import Icon from "../components/Icon";
 import { Link, useNavigate } from "react-router-dom";
 import LogoWhiteText from "../assets/logo-white-text.svg";
 import API from "@/services/api";
 import { Counter } from "./counter";
-<<<<<<< Updated upstream
 import TwoColumnSection2 from "@/components/TwoColumnSection2";
 import FeaturesPage from "@/components/FeaturesPage";
 import CommunitySignup from "@/components/CommunitySignup";
 import TwoColumnSection from "@/components/TwoColumnSection";
-=======
->>>>>>> Stashed changes
 import IntroVideo from "../assets/OMNISHARE.00.mp4";
 import { Platform } from "@/types";
 
@@ -55,21 +43,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import OmniVideo from "../assets/video/omnishare.mp4";
 
-<<<<<<< Updated upstream
-=======
-// Lazy load non-critical sections for better performance
-const TwoColumnSection = lazy(() => import("@/components/TwoColumnSection"));
-const TwoColumnSection2 = lazy(() => import("@/components/TwoColumnSection2"));
-const FeaturesPage = lazy(() => import("@/components/FeaturesPage"));
-
-// Loading fallback component
-const SectionLoader = () => (
-  <div className="h-96 flex items-center justify-center">
-    <div className="w-8 h-8 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin" />
-  </div>
-);
-
->>>>>>> Stashed changes
 function HomePage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showAllFeatures, setShowAllFeatures] = useState(false);
