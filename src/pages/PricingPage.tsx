@@ -11,7 +11,6 @@ import { useSubscriptionModal } from "../context/SubscriptionModalContext";
 import { usePricingModal } from "../context/PricingModalContext";
 import { notify } from "../utils/toast";
 import { useTranslation } from "react-i18next";
-import { div } from "framer-motion/client";
 
 export const PricingPage: React.FC = () => {
   const { state, refreshUser, setProcessing, packages, addons, loader } =
@@ -27,7 +26,6 @@ export const PricingPage: React.FC = () => {
   const [loadingAddon, setLoadingAddon] = useState(false);
   const [selectedAddon, setSelectedAddon] = useState<any | null>(null);
   const { t, i18n } = useTranslation();
-  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
 
   useEffect(() => {
     console.log("sessionId", sessionId);
@@ -82,6 +80,7 @@ export const PricingPage: React.FC = () => {
   }, [hasPendingDowngrade, activePackage?.downgradeRequested, getTierById]);
 
   const hasCancelRequested = !!activePackage?.cancelRequested;
+  const langToCurrency: any = { en: "USD", es: "EUR", zh: "CNY" };
 
   const { openManageSubscription } = useSubscriptionModal();
 
@@ -200,6 +199,66 @@ export const PricingPage: React.FC = () => {
       setSelectedAddon(null);
     }
   };
+  const apiKey = "80f18a670f8f17b074ee56f9";
+  const [exchangeRates, setExchangeRates] = useState<Record<string, number>>(
+    {}
+  );
+  const [convertedAmounts, setConvertedAmounts] = useState<
+    Record<string, number>
+  >({});
+  const [convertedAddonAmounts, setConvertedAddonAmounts] = useState<
+    Record<string, number>
+  >({});
+  const fetchExchangeRates = async () => {
+    const url = `https://v6.exchangerate-api.com/v6/${apiKey}/latest/USD`;
+
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (data.result === "success") {
+        setExchangeRates(data.conversion_rates);
+      }
+    } catch (error) {
+      console.error("Failed to fetch exchange rates:", error);
+    }
+  };
+  const convertAmount = (baseAmount: number, currencyCode: string) => {
+    if (!exchangeRates || !exchangeRates[currencyCode]) return baseAmount;
+    return Number((baseAmount * exchangeRates[currencyCode]).toFixed(2));
+  };
+
+  useEffect(() => {
+    fetchExchangeRates();
+  }, []); // fetch once on mount
+
+  useEffect(() => {
+    const targetCurrency = langToCurrency[i18n.language] || "USD";
+
+    packages.forEach((pkg) => {
+      setConvertedAmounts((prev) => ({
+        ...prev,
+        [pkg.id]: convertAmount(pkg.amount, targetCurrency),
+      }));
+    });
+
+    addons?.forEach((addon) => {
+      setConvertedAddonAmounts((prev) => ({
+        ...prev,
+        [addon.id]: convertAmount(addon.amount, targetCurrency),
+      }));
+    });
+  }, [exchangeRates, packages, addons, i18n.language]);
+
+  const langToCurrencySymbol: Record<string, string> = {
+    en: "$", // English → USD
+    zh: "¥", // Chinese → CNY
+    de: "€", // German → EUR
+    fr: "€", // French → EUR
+    es: "€", // French → EUR
+    ja: "¥", // Japanese → JPY
+    // add more as needed
+  };
 
   return (
     <div className="w-full h-full rounded-md mb-10 md:px-4 px-3 py-5 min-h-screen transition-colors ">
@@ -287,11 +346,11 @@ export const PricingPage: React.FC = () => {
                         {tier.name}
                       </h3>
                       <div className="flex items-baseline justify-center gap-1 mb-3">
-                        <span className="text-[50px]   text-purple-600 font-bold">
+                        <span className="text-[45px] text-purple-600 font-bold">
                           <span className="text-[#7650e3] font-bold text-2xl mr-1">
-                            $
+                            {langToCurrencySymbol[i18n.language] || "$"}
                           </span>
-                          {tier.amount}
+                          {convertedAmounts[tier.id] ?? tier.amount}
                         </span>
                         <span className="text-2xl font-bold text-[#7650e3]">
                           / {isFree ? "Forever" : "Month"}
@@ -437,7 +496,8 @@ export const PricingPage: React.FC = () => {
 
                       <div className="flex justify-between bg-purple-100 items-center px-5  py-2.5 rounded-b-md">
                         <p className="text-center text-2xl text-purple-600 font-semibold ">
-                          ${addon.amount.toLocaleString()}
+                          {langToCurrencySymbol[i18n.language] || "$"}
+                          {convertedAddonAmounts[addon.id] ?? addon.amount}
                         </p>
                         <button
                           disabled={
