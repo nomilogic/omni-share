@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, lazy, Suspense } from "react";
 import {
   motion,
   useScroll,
@@ -10,11 +10,14 @@ import {
   Menu,
   X,
   ChevronDown,
+<<<<<<< Updated upstream
+=======
+  Check,
+>>>>>>> Stashed changes
   Share2,
   Zap,
   BarChart3,
   Calendar,
-  Video,
   Sparkles,
   Star,
   ChevronLeft,
@@ -25,16 +28,24 @@ import {
   Plus,
   Building2,
   History,
+<<<<<<< Updated upstream
+=======
+  CreditCard,
+  Video,
+>>>>>>> Stashed changes
 } from "lucide-react";
 import Icon from "../components/Icon";
 import { Link, useNavigate } from "react-router-dom";
 import LogoWhiteText from "../assets/logo-white-text.svg";
 import API from "@/services/api";
 import { Counter } from "./counter";
+<<<<<<< Updated upstream
 import TwoColumnSection2 from "@/components/TwoColumnSection2";
 import FeaturesPage from "@/components/FeaturesPage";
 import CommunitySignup from "@/components/CommunitySignup";
 import TwoColumnSection from "@/components/TwoColumnSection";
+=======
+>>>>>>> Stashed changes
 import IntroVideo from "../assets/OMNISHARE.00.mp4";
 import { Platform } from "@/types";
 
@@ -44,6 +55,21 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import OmniVideo from "../assets/video/omnishare.mp4";
 
+<<<<<<< Updated upstream
+=======
+// Lazy load non-critical sections for better performance
+const TwoColumnSection = lazy(() => import("@/components/TwoColumnSection"));
+const TwoColumnSection2 = lazy(() => import("@/components/TwoColumnSection2"));
+const FeaturesPage = lazy(() => import("@/components/FeaturesPage"));
+
+// Loading fallback component
+const SectionLoader = () => (
+  <div className="h-96 flex items-center justify-center">
+    <div className="w-8 h-8 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin" />
+  </div>
+);
+
+>>>>>>> Stashed changes
 function HomePage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showAllFeatures, setShowAllFeatures] = useState(false);
@@ -95,6 +121,54 @@ function HomePage() {
     };
     fetchData();
   }, []);
+
+  // SEO Meta Tags
+  useEffect(() => {
+    // Update document title
+    document.title =
+      "OmniShare - AI-Powered Social Media Content Generator & Scheduler";
+
+    // Update meta description
+    const metaDescription = document.querySelector(
+      'meta[name="description"]'
+    );
+    if (metaDescription) {
+      metaDescription.setAttribute(
+        "content",
+        "OmniShare is an AI-powered social media management platform that helps you create, schedule, and publish engaging content across Facebook, Instagram, YouTube, LinkedIn, and TikTok in seconds."
+      );
+    }
+
+    // Add breadcrumb schema
+    const breadcrumbSchema = {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Home",
+          item: "https://omnishare.ai",
+        },
+      ],
+    };
+
+    let schemaScript = document.querySelector(
+      'script[data-type="breadcrumb-schema"]'
+    );
+    if (!schemaScript) {
+      schemaScript = document.createElement("script");
+      schemaScript.type = "application/ld+json";
+      schemaScript.setAttribute("data-type", "breadcrumb-schema");
+      schemaScript.textContent = JSON.stringify(breadcrumbSchema);
+      document.head.appendChild(schemaScript);
+    }
+
+    return () => {
+      // Cleanup if needed
+    };
+  }, []);
+
   console.log("packages", packages);
 
   const allFeatures = [
@@ -342,7 +416,7 @@ function HomePage() {
                   size={38}
                 />
                 <span className="text-white text-2xl lg:text-[1.6rem] tracking-tight ml-3">
-                  <img src={LogoWhiteText} alt="Logo" className="h-4" />
+                  <img src={LogoWhiteText} alt="Omnishare logo" className="h-4" decoding="async" loading="lazy" />
                 </span>
               </span>
 
@@ -626,7 +700,7 @@ function HomePage() {
                 className="ml-0 lg:ml-0 mt-1 lg:scale-100 brightness-[1000%]"
               />
               <span className="text-white text-2xl lg:text-[1.6rem] tracking-tight">
-                <img src={LogoWhiteText} alt="Logo" className="h-5" />
+                <img src={LogoWhiteText} alt="Omnishare logo" className="h-5" decoding="async" loading="lazy" />
               </span>
             </motion.div>
 
@@ -697,7 +771,7 @@ function HomePage() {
 
       <section
         id="home"
-        className="relative min-h-[100vh] flex items-center justify-center overflow-hidden"
+        className="relative min-h-[100vh] flex items-center justify-center overflow-hidden bg-gray-900"
       >
         <video
           className="absolute inset-0 w-full h-full object-cover"
@@ -706,17 +780,16 @@ function HomePage() {
           muted
           loop
           playsInline
-          preload="auto"
+          preload="none"
+          poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1280 720'%3E%3Crect fill='%23111827' width='1280' height='720'/%3E%3C/svg%3E"
         />
 
-        <div className="absolute inset-0 z-0 pointer-events-none w-full h-full">
-          <div className="absolute inset-0 bg-gradient-to-br bg-purple-900/70 to-transparent backdrop-blur-[5px]" />
-          <div className="absolute inset-0 bg-white/2 pointer-events-none mix-blend-screen" />
+        <div className="absolute inset-0 z-0 pointer-events-none w-full h-full will-change-transform">
+          <div className="absolute inset-0 bg-gradient-to-br bg-purple-900/70 to-transparent" />
         </div>
 
         <motion.div
-          className="relative z-10 w-fit mx-auto px-4 sm:px-6 lg:px-[10%] text-center
-             rounded-2xl "
+          className="relative z-10 w-fit mx-auto px-4 sm:px-6 lg:px-[10%] text-center rounded-2xl will-change-transform"
           style={{ opacity: heroOpacity, scale: heroScale }}
         >
           <motion.h1
@@ -792,28 +865,31 @@ function HomePage() {
                   index: 4,
                 },
               ].map((icons) => (
-                <button onClick={() => window.open(icons.url, "_blank")}>
-                  <motion.svg
-                    key={icons.index}
+                <motion.button
+                  key={icons.index}
+                  onClick={() => window.open(icons.url, "_blank")}
+                  className="will-change-transform"
+                  whileHover={{
+                    scale: 1.3,
+                    rotate: 10,
+                    y: -5,
+                    transition: { delay: 0 },
+                  }}
+                  initial={{ opacity: 0, scale: 0, rotate: -180 }}
+                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                  transition={{
+                    delay: isInitialMount.current
+                      ? 0.8 + icons.index * 0.1
+                      : 0,
+                    type: "spring",
+                    stiffness: 200,
+                    damping: 15,
+                  }}
+                >
+                  <svg
                     className="md:w-10 md:h-10 w-7 h-7 text-white transition-colors"
                     viewBox="0 0 24 24"
                     fill="currentColor"
-                    initial={{ opacity: 0, scale: 0, rotate: -180 }}
-                    animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                    transition={{
-                      delay: isInitialMount.current
-                        ? 0.8 + icons.index * 0.1
-                        : 0,
-                      type: "spring",
-                      stiffness: 200,
-                      damping: 15,
-                    }}
-                    whileHover={{
-                      scale: 1.3,
-                      rotate: 10,
-                      y: -5,
-                      transition: { delay: 0 },
-                    }}
                   >
                     {icons.index === 0 && (
                       <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
@@ -830,8 +906,8 @@ function HomePage() {
                     {icons.index === 4 && (
                       <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" />
                     )}
-                  </motion.svg>
-                </button>
+                  </svg>
+                </motion.button>
               ))}
             </div>
           </motion.div>
@@ -875,10 +951,16 @@ function HomePage() {
         viewport={{ once: true, margin: "-300px" }}
         transition={{ duration: 1.6, type: "spring", stiffness: 80 }}
       >
-        <FeaturesPage />
+        <Suspense fallback={<SectionLoader />}>
+          <FeaturesPage />
+        </Suspense>
       </motion.div>
-      <TwoColumnSection />
-      <TwoColumnSection2 />
+      <Suspense fallback={<SectionLoader />}>
+        <TwoColumnSection />
+      </Suspense>
+      <Suspense fallback={<SectionLoader />}>
+        <TwoColumnSection2 />
+      </Suspense>
       {/* Active Users Stats Section */}
       <section className="py-16 bg-white border-y border-gray-200">
         <div className=" max-w-full mx-auto px-4 sm:px-6 lg:px-[10%] w-full">
@@ -972,6 +1054,8 @@ function HomePage() {
               muted
               loop
               playsInline
+              preload="none"
+              poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080'%3E%3Crect fill='%23111827' width='1920' height='1080'/%3E%3C/svg%3E"
               className="absolute inset-0 w-full h-full object-cover"
             />
 
