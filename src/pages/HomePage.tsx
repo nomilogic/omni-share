@@ -378,7 +378,7 @@ function HomePage() {
             </nav>
 
             <div className=" p-4 space-y-3 ml-3">
-              <LanguageDropdown alignRight={false} className="text-white" />
+              <LanguageDropdown alignRight={false} />
             </div>
 
             <div className="px-3 py-4">
@@ -676,7 +676,7 @@ function HomePage() {
                 )
               )}
 
-              <LanguageDropdown alignRight={true} className="text-white" />
+              <LanguageDropdown alignRight={true} />
 
               <motion.button
                 onClick={() => navigate("/auth")}
