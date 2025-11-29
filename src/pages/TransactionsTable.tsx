@@ -1,12 +1,15 @@
 import { Copy } from "lucide-react";
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 const TransactionsHistoryBox = ({ data }: any) => {
+  const { t, i18n } = useTranslation();
+      const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
   return (
     <div className="flex flex-col gap-2 w-ful bg-transparent">
       {data?.length === 0 || !data ? (
         <p className="text-gray-500 font-medium text-center mt-10">
-          No transactions found.
+          {t("no_transactions_found")}
         </p>
       ) : (
         data?.map((item: any) => (
@@ -16,14 +19,14 @@ const TransactionsHistoryBox = ({ data }: any) => {
           >
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-lg font-semibold text-purple-600">
-                Standard Subscription
+                {t("standard_subscription")}
               </h2>
               {item?.hostedInvoiceUrl ? (
                 <button
                   onClick={() => window.open(item?.hostedInvoiceUrl, "_blank")}
                   className="bg-purple-600 hover:bg-[#d7d7fc] text-white font-semibold px-2 py-1 text-xs rounded transition-colors border border-transparent hover:text-[#7650e3] hover:border-[#7650e3]"
                 >
-                  Invoice
+                  {t("invoice")}
                 </button>
               ) : (
                 <button
@@ -37,14 +40,14 @@ const TransactionsHistoryBox = ({ data }: any) => {
 
             <div className="space-y-1 text-xs text-black">
               <div className="flex items-center justify-between">
-                <span className="font-medium">Price</span>
+                <span className="font-medium">{t("price")}</span>
                 <span className="font-semibold">
                   ${item?.amount || item?.amountPaid || 0}
                 </span>
               </div>
 
               <div className="flex items-center justify-between">
-                <span className="font-medium">Purchased at</span>
+                <span className="font-medium">{t("purchased_at")}</span>
                 <span className="font-semibold">
                   {item?.createdAt
                     ? new Date(item?.createdAt).toLocaleString()
@@ -53,7 +56,7 @@ const TransactionsHistoryBox = ({ data }: any) => {
               </div>
 
               <div className="flex  justify-between flex-row ">
-                <span className="font-medium">Purchased code</span>
+                <span className="font-medium">{t("purchased_code")}</span>
                 <div className="flex items-center gap-1">
                   <button
                     onClick={() =>

@@ -236,7 +236,7 @@ export const PricingPage: React.FC = () => {
               <Icon name="spiral-logo" size={45} className="animate-spin" />
 
               <p className="mt-1 text-base font-medium text-gray-500">
-                Loading Packages....
+                {t("loading_packages")}
               </p>
             </div>
           ) : (

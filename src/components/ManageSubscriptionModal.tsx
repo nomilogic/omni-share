@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { useAppContext } from "@/context/AppContext";
 import API from "@/services/api";
 import { notify } from "@/utils/toast";
+import { useTranslation } from "react-i18next";
 
 export const ManageSubscriptionModal: React.FC<any> = ({
   isOpen,
@@ -18,6 +19,8 @@ export const ManageSubscriptionModal: React.FC<any> = ({
   isModalOpen,
   setIsModalOpen,
 }) => {
+  const { t, i18n } = useTranslation();
+    const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
   const [showTransactions, setShowTransactions] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isReactive, setIsReactive] = useState(false);
@@ -115,7 +118,7 @@ export const ManageSubscriptionModal: React.FC<any> = ({
           <div className="px-4 py-5 md:px-8  bg-gray-50 h-full">
             <div className="flex justify-between items-center">
               <h3 className="text-2xl font-semibold text-[#7650e3]">
-                Manage Subscription
+                {t("manage_subscription")}
               </h3>
               <button
                 onClick={_onClose}
@@ -130,18 +133,18 @@ export const ManageSubscriptionModal: React.FC<any> = ({
             <div className="md:w-full z-10 flex flex-col justify-center h-full md:-mt-8">
               <div className="">
                 <div className="text-lg font-medium text-gray-500 mb-4">
-                  How can we help you today?
+                  {t("help_today")}
                 </div>
                 <div className="space-y-3">
                   {[
                     {
                       key: "update",
-                      label: "Update Payment Method",
+                      label: t("update_payment_method"),
                       icon: <FileText className="w-4 h-4 text-white" />,
                     },
                     {
                       key: "invoices",
-                      label: "View Invoices",
+                      label: t("view_invoices"),
                       icon: <FileText className="w-4 h-4 text-white" />,
                     },
                     ...(user?.wallet?.downgradeRequested !== null
@@ -150,20 +153,20 @@ export const ManageSubscriptionModal: React.FC<any> = ({
                       ? [
                           {
                             key: "cancel",
-                            label: "Cancel Your Subscription",
+                            label: t("cancel_subscription"),
                             icon: <ChevronRight />,
                           },
                         ]
                       : [
                           {
                             key: "reactive",
-                            label: "Reactive Your Subscription",
+                            label: t("reactive_your_subscription"),
                             icon: <ChevronRight />,
                           },
                         ]),
                     {
                       key: "coins",
-                      label: "Add Omni Coins",
+                      label: t("add_omni_coins"),
                       icon: <PlusCircle className="w-4 h-4" />,
                     },
                   ].map((action) => {
@@ -234,7 +237,7 @@ export const ManageSubscriptionModal: React.FC<any> = ({
           <div className="w-full px-4 py-5 md:px-8  z-10 flex bg-gray-100 flex-grow flex-col">
             <div className="flex justify-between items-center">
               <h3 className="text-2xl font-semibold text-[#7650e3]">
-                View Invoices
+                {t("view_invoices")}
               </h3>
               <button
                 onClick={_onClose}

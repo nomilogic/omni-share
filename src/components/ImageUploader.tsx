@@ -12,6 +12,7 @@ import {
   Edit3,
   Trash2,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface ImageUploaderProps {
   /** The type of media to accept: 'image', 'video', or 'both' */
@@ -81,6 +82,8 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
 }) => {
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+const { t, i18n } = useTranslation();
+  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
 
   // Get accept attribute based on acceptType
   const getAcceptAttribute = () => {
@@ -209,11 +212,11 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                       );
                     }}
                   >
-                    Your browser does not support the video tag.
+                    {t("browser_no_video_support")}
                   </video>
                   <div className="absolute top-2 left-2 bg-black/60 text-white px-2 py-1 rounded text-xs flex items-center">
                     <Video className="w-3 h-3 mr-1" />
-                    Video
+                    {t("video")}
                   </div>
                 </div>
               )}

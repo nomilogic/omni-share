@@ -2945,7 +2945,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                   );
                                 }}
                               >
-                                Your browser does not support the video tag.
+                                {t("browser_no_video_support")}
                               </video>
                             </div>
                           )}
@@ -2967,7 +2967,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             <div className="flex items-center justify-center p-2 bg-blue-500/10 border border-blue-400/20 rounded text-xs">
                               <Loader className="w-3 h-3 animate-spin mr-2 text-blue-400" />
                               <span className="text-blue-300">
-                                AI analyzing...
+                                {t("ai_analyzing")}
                               </span>
                             </div>
                           )}
@@ -2976,7 +2976,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               <AlertCircle className="w-4 h-4 mr-2 text-red-400 flex-shrink-0" />
                               <div className="text-left">
                                 <div className="font-medium text-red-300 mb-1">
-                                  Aspect Ratio Warning
+                                  {t("aspect_ratio_warning")}
                                 </div>
                                 <div className="text-red-200">
                                   {videoAspectRatioWarning}
@@ -2988,10 +2988,10 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               <CheckCircle className="w-3 h-3 mr-2 text-green-400" />
                               <span className="text-green-300">
                                 {is9x16Video(videoAspectRatio)
-                                  ? "9:16 vertical video ready - stories format (no thumbnail needed)"
+                                  ? t("vertical_video_ready_stories_format_no_thumbnail_needed")
                                   : is16x9Video(videoAspectRatio)
-                                  ? "16:9 horizontal video ready - thumbnail will be generated when you click Generate Post"
-                                  : "Video processed and ready - thumbnail will be generated when you click Generate Post"}
+                                  ? t("horizontal_video_ready_thumbnail_generated_when_click_generate_post")
+                                  : t("video_processed_ready_thumbnail_generated_when_click_generate_post")}
                               </span>
                             </div>
                           ) : null}
@@ -3011,7 +3011,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                   className="w-4 h-4"
                                 />
                                 <span className="text-sm theme-text-secondary">
-                                  {t("generate_thumbnail_ai")}
+                                  {t("generate_thumbnail_with_ai")}
                                 </span>
                               </label>
 
@@ -3058,7 +3058,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               <div className="flex justify-between mb-2">
                                 <h4 className="font-medium text-purple-300 flex  text-xs">
                                   <Palette className="w-3 h-3 mr-1" />
-                                  Image Updated: {selectedTemplate.name}
+                                  {t("image_updated")}: {selectedTemplate.name}
                                 </h4>
                               </div>
                               <div className="flex gap-2">
@@ -3068,7 +3068,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                   className="flex-1 bg-purple-500/80 text-white px-3 py-1.5 rounded text-xs hover:bg-purple-600/80 transition-colors flex items-center justify-center space-x-1"
                                 >
                                   <Edit3 className="w-3 h-3" />
-                                  <span>Edit</span>
+                                  <span>{t("edit")}</span>
                                 </button>
                                 <button
                                   type="button"
@@ -3147,7 +3147,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                       <div className="space-y-2">
                         <h4 className="font-medium text-blue-300 flex items-center text-xs">
                           <Eye className="w-3 h-3 mr-1" />
-                          AI Analysis Complete
+                          {t("ai_analysis_complete")}
                         </h4>
                         <div className="max-h-24 overflow-y-auto">
                           <p className="text-blue-200 text-xs leading-[1.05rem]elaxed">
@@ -3158,7 +3158,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                           onClick={useImageAnalysis}
                           className="bg-gradient-to-r from-blue-500/80 to-indigo-500/80 text-white px-3 py-1.5 rounded text-xs hover:from-blue-600/80 hover:to-indigo-600/80 transition-all duration-200 flex items-center space-x-1"
                         >
-                          <span>Add to Description</span>
+                          <span>{t("add_to_description")}</span>
                           <Sparkles className="w-3 h-3" />
                         </button>
                       </div>
@@ -3244,7 +3244,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                   </>
                   <div className="hidden">
                     <label className="block text-sm font-medium theme-text-primary  mb-3">
-                      Target Platforms
+                      {t("target_platforms")}
                     </label>
                     <div className="grid lg:grid-cols-1 gap-2 grid-cols-2">
                       {platformOptions.map((platform) => {
@@ -3290,7 +3290,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                       onClick={onBack}
                       className="hidden flex-1 theme-bg-primary theme-text-secondary py-3 px-6  font-medium hover:theme-bg-primary/30 transition-colors duration-200 text-sm"
                     >
-                      Back
+                      {t("back")}
                     </button>
                     <button
                       type="submit"
@@ -3306,12 +3306,12 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                       {isGeneratingBoth ? (
                         <div className="flex items-center">
                           <Loader className="w-5 h-5 mr-2 animate-spin" />
-                          GENERATING POST & IMAGE...
+                          {t('generating_post_and_image')}
                         </div>
                       ) : isGeneratingThumbnail ? (
                         <div className="flex items-center">
                           <Loader className="w-5 h-5 mr-2 animate-spin" />
-                          GENERATING THUMBNAIL...
+                          {t("generating_thumbnail")}
                         </div>
                       ) : (
                         <div className="flex items-center">
@@ -3359,10 +3359,10 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                       </div>
                       <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/70 to-transparent">
                         <p className="text-white text-lg font-semibold">
-                          Introduction to Omnishare
+                          {t("introduction_to_omnishare")}
                         </p>
                         <p className="text-white/80">
-                          Learn how to maximize your social media presence
+                          {t('learn_how_to_maximize_your_social_media_presence')}
                         </p>
                       </div>
                     </div>

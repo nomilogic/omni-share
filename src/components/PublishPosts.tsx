@@ -680,10 +680,10 @@ export const PublishPosts: React.FC<PublishProps> = ({
           facebookPages.length > 0 && (
             <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-md">
               <h4 className="font-medium text-blue-900 mb-2">
-                Facebook Page Selection
+                {t("facebook_page_selection")}
               </h4>
               <p className="text-blue-700 text-sm mb-3">
-                Choose which Facebook page to post to:
+                {t("choose_facebook_page_to_post_to")}
               </p>
               <select
                 value={selectedFacebookPage}
@@ -704,10 +704,10 @@ export const PublishPosts: React.FC<PublishProps> = ({
           youtubeChannels.length > 0 && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
               <h4 className="font-medium text-red-900 mb-2">
-                YouTube Channel Selection
+                {t("youtube_channel_selection")}
               </h4>
               <p className="text-red-700 text-sm mb-3">
-                Choose which YouTube channel to upload to:
+                {t("choose_youtube_channel_to_upload_to")}
               </p>
               <select
                 value={selectedYoutubeChannel}
@@ -754,7 +754,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
           {publishing ? (
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
-              <span>Publish...</span>
+              <span>{t("publish")}</span>
             </div>
           ) : (
             <div className="flex items-center gap-2">
@@ -813,7 +813,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
               connectedPlatforms.includes(p) && !publishedPlatforms.includes(p)
           ).length === 0 && (
             <p className="mt-3 text-sm text-green-600 text-center font-medium">
-              All selected platforms have been published successfully!
+              {t("all_selected_platforms_published_successfully")}
               {connectedPlatforms.filter((p) => !publishedPlatforms.includes(p))
                 .length === 0
                 ? "Returning to content creation..."
@@ -829,7 +829,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
         {results && (
           <div className="mt-8">
             <h3 className="font-semibold mb-4 text-slate-900">
-              Publishing Results:
+              {t("publishing_results")}
             </h3>
 
             {/* Summary */}
@@ -841,7 +841,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
                       {results._summary.total}
                     </div>
                     <div className="text-sm text-gray-500 font-medium">
-                      Total
+                      {t("total")}
                     </div>
                   </div>
                   <div>
@@ -849,7 +849,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
                       {results._summary.successful}
                     </div>
                     <div className="text-sm text-gray-500 font-medium">
-                      Successful
+                      {t("successful")}
                     </div>
                   </div>
                   <div>
@@ -857,7 +857,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
                       {results._summary.failed}
                     </div>
                     <div className="text-sm text-gray-500 font-medium">
-                      Failed
+                      {t("failed")}
                     </div>
                   </div>
                 </div>
@@ -900,7 +900,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
                     </p>
                     {!result.success && result.retryable && (
                       <p className="text-xs text-amber-600 mt-1">
-                        💡 This error might be temporary - you can try again
+                        💡{t("error_temporary_try_again")}
                       </p>
                     )}
                   </div>

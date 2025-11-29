@@ -372,10 +372,10 @@ export const AccountsPage: React.FC = () => {
       {connectedPlatforms.includes("facebook") && facebookPages.length > 0 && (
         <div className="mb-6 p-2 bg-blue-50 border border-blue-200 rounded-md">
           <h4 className="font-medium text-blue-900 mb-2">
-            Facebook Page Selection
+            {t("facebook_page_selection")}
           </h4>
           <p className="text-blue-700 text-sm mb-3">
-            Choose your default Facebook page for publishing:
+            {t("choose_default_facebook_page_for_publishing")}
           </p>
           <select
             value={selectedFacebookPage}
@@ -394,10 +394,10 @@ export const AccountsPage: React.FC = () => {
       {connectedPlatforms.includes("youtube") && youtubeChannels.length > 0 && (
         <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
           <h4 className="font-medium text-red-900 mb-2">
-            YouTube Channel Selection
+            {t("youtube_channel_selection")}
           </h4>
           <p className="text-red-700 text-sm mb-3">
-            Choose your default YouTube channel for publishing:
+            {t("choose_default_youtube_channel_for_publishing")}
           </p>
           <select
             value={selectedYoutubeChannel}

@@ -29,6 +29,7 @@ import API from "@/services/api";
 import logoText from "../../assets/logo-text.svg";
 import LogoWhiteText from "../../assets/logo-white-text.svg";
 import { useTranslation } from "react-i18next";
+import LanguageDropdown from "../LanguageDropdown";
 
 // Define the props for AppLayout
 interface AppLayoutProps {
@@ -270,7 +271,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 </div>
               </button>
             </div>
-            <div className="flex gap-2 mt-2.5 md:px-5 px-3">
+            {/* <div className="flex gap-2 mt-2.5 md:px-5 px-3">
               <button
                 onClick={() => {
                   i18n.changeLanguage("en");
@@ -315,6 +316,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               >
                 中文
               </button>
+            </div> */}
+
+            <div className="flex gap-2 mt-2.5 md:px-5 px-3 text-white ">
+              <LanguageDropdown alignRight={false} />
             </div>
 
             <div className="absolute bottom-0 left-0 right-0 ">
@@ -524,9 +529,18 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                   )}
                 </button>
               </div>
+
+              {/* <div className="-ml-[73px] absolute  left-[40%]">
+              <LanguageDropdown/>
+               </div> */}
+
               <div className="-ml-[73px] absolute  left-[50%] ">
                 <img src={logoText} alt="Logo" className="h-4   " />
               </div>
+
+              <div className=" hidden sm:block ml-[85%] bg-inherit text-purple-600 font-bold border rounded-md border-purple-600 ">
+              <LanguageDropdown />
+            </div>
 
               <div className="flex items-center space-x-1">
                 <div className="flex gap-x-4 items-center">

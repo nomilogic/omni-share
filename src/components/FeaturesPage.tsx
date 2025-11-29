@@ -8,6 +8,7 @@ import {
   Minus,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 import pic from "../assets/Post Automtaion.jpg";
 import pic10 from "../assets/Post Automtaion (post).jpg";
@@ -30,21 +31,21 @@ type Feature = {
   desktopFloat: string[];
 };
 
-const features: Feature[] = [
+const getFeatures = (t: any): Feature[] => [
   {
     id: 1,
-    title: "Post Automation",
+    title: t("post_automation"),
     description: (
       <p className="text-gray-500 text-lg leading-relaxed md:w-full">
-        Publish seamlessly across{" "}
+        {t("line_32")}{" "}
         <span className="text-purple-600 text-xl font-medium">
-          Facebook, Instagram, YouTube, LinkedIn, and TikTok
+          {t("line_33")}
         </span>{" "}
-        with a single click. Omni Share automatically generates{" "}
+        {t("line_34")}{" "}
         <span className="text-purple-600 text-xl font-medium">
-          AI-powered text and image posts
+          {t("line_35")}
         </span>
-        , ensuring your content reaches every platform quickly and efficiently.
+        {t("line_36")}
       </p>
     ),
     icon: <Sparkles className="w-6 h-6" />,
@@ -52,28 +53,29 @@ const features: Feature[] = [
     desktopMain: pic,
     desktopFloat: [pic2, pic10],
   },
+
   {
     id: 2,
-    title: "Media Optimization",
+    title: t("media_optimization"),
     description: (
       <p className="text-gray-500 text-lg leading-relaxed md:w-full">
-        Automatically{" "}
+        {t("line_10")}{" "}
         <span className="text-purple-600 text-xl font-medium">
-          resize posts
+          {t("line_11")}
         </span>{" "}
-        for each platform and create{" "}
+        {t("line_12")}{" "}
         <span className="text-purple-600 text-xl font-medium">
-          striking video thumbnails
+          {t("line_13")}
         </span>{" "}
-        for YouTube uploads. All this happens within an{" "}
+        {t("line_14")}{" "}
         <span className="text-purple-600 text-xl font-medium">
-          intuitive editing suite
+          {t("line_15")}
+        </span>{" "}
+        {t("line_16")}{" "}
+        <span className="text-purple-600 text-xl font-medium">
+          {t("line_17")}
         </span>
-        , allowing{" "}
-        <span className="text-purple-600 text-xl font-medium">
-          fast, seamless customization
-        </span>{" "}
-        so your content looks perfect every time.
+        {t("line_18")}
       </p>
     ),
     icon: <TvMinimalPlay className="w-6 h-6" />,
@@ -81,20 +83,25 @@ const features: Feature[] = [
     desktopMain: pic3,
     desktopFloat: [pic4],
   },
+
   {
     id: 3,
-    title: "Smart Insights",
+    title: t("smart_insights"),
     description: (
       <p className="text-gray-500 text-lg leading-relaxed md:w-full">
-        Get{" "}
+        {t("line_19")}{" "}
         <span className="text-purple-600 text-xl font-medium">
-          clear, actionable insights
+          {t("line_20")}
         </span>{" "}
-        on your content performance across all platforms. Track{" "}
-        <span className="text-purple-600 text-xl font-medium">engagement</span>{" "}
-        and <span className="text-purple-600 text-xl font-medium">reach</span>{" "}
-        to make smarter decisions and continuously improve your social media
-        strategy.
+        {t("line_21")}{" "}
+        <span className="text-purple-600 text-xl font-medium">
+          {t("line_22")}
+        </span>{" "}
+          {t("line_23")} {" "}
+          <span className="text-purple-600 text-xl font-medium"> 
+        {t("line_24")} {" "}
+        </span>
+        {t("line_25")}
       </p>
     ),
     icon: <BarChart3 className="w-6 h-6" />,
@@ -102,21 +109,25 @@ const features: Feature[] = [
     desktopMain: pic5,
     desktopFloat: [pic6],
   },
+
   {
     id: 4,
-    title: "Instant Publishing",
+    title: t("instant_publishing"),
     description: (
       <p className="text-gray-500 text-lg leading-relaxed md:w-full">
-        Publish your content{" "}
-        <span className="text-purple-600 text-xl font-medium">instantly</span>{" "}
-        with our lightning-fast, reliable system. Reach your audience at the{" "}
+        {t("line_26")}{" "}
         <span className="text-purple-600 text-xl font-medium">
-          right moment
-        </span>
-        , every time, ensuring{" "}
+          {t("line_27")}
+        </span>{" "}
+        {t("line_28")}{" "}
         <span className="text-purple-600 text-xl font-medium">
-          maximum engagement and impact.
+          {t("line_29")}
+        </span>{" "}
+        {t("line_30")}{" "}
+        <span className="text-purple-600 text-xl font-medium">
+          {t("line_31")}
         </span>
+        .
       </p>
     ),
     icon: <Star className="w-6 h-6" />,
@@ -179,7 +190,11 @@ const floatVariants = {
 
 const FeaturesPage: React.FC = () => {
   const [activeId, setActiveId] = useState<number>(1);
-  const activeFeature = features.find((f) => f.id === activeId) || features[0];
+   const { t, i18n } = useTranslation();
+  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
+
+  const features = getFeatures(t);
+  const activeFeature = features.find(f => f.id === activeId) || features[0];
   const floatImages = activeFeature.desktopFloat || [];
 
   const listRef = useRef<HTMLDivElement | null>(null);
@@ -221,22 +236,21 @@ const FeaturesPage: React.FC = () => {
     else setActiveId(id);
   };
 
+ 
+
   return (
     <div className="w-full">
       <section className="relative overflow-hidden py-16 md:py-24">
         <div className="relative w-full max-w-full mx-auto px-4 sm:px-6 lg:px-[10%]">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 text-center">
             <span className="font-bold">
-              A Complete Suite for Social Success
+              {t("suite_social_success")}
               <br className="hidden md:block" />
-              OmniShare – AI-Powered Content Creation
+              {t("omni_content_creation")}
             </span>
           </h2>
           <p className="hidden md:block text-xl text-gray-500 font-medium mx-auto max-w-[900px] text-center">
-            Leverage advanced AI technology to generate highly engaging posts
-            tailored to your brand and each social media platform. Craft content
-            that resonates, drives interaction, and amplifies your online
-            presence effortlessly.
+            {t("omni_content_message")}
           </p>
           <div className="mt-12 grid md:grid-cols-2 md:gap-12 items-start">
             {/* Feature List */}
