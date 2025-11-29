@@ -11,6 +11,7 @@ import { X } from "lucide-react";
 import { useAppContext } from "@/context/AppContext";
 import { Wallet } from "./../lib/wallet";
 import ModalIllustrationPng from "../assets/cancle-popup.png";
+import { useTranslation } from "react-i18next";
 /**
  * A modal component that displays a message to the user when they
  * are about to cancel their subscription. The component provides
@@ -33,6 +34,8 @@ const SubscriptionPauseModal = ({
 }: any) => {
   if (!isVisible) return null;
   const { user } = useAppContext();
+  const { t, i18n } = useTranslation();
+    const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
 
   return (
     <div className="relative w-full md:max-w-3xl lg:max-w-5xl  md:rounded-md  shadow-md overflow-hidden bg-white md:h-[600px] h-full ">
@@ -48,7 +51,7 @@ const SubscriptionPauseModal = ({
         <div className="w-full  px-4 py-5 md:px-8  flex flex-col gap-5 overflow-y-auto">
           <div className="flex items-center gap-1  ">
             <h2 className="text-2xl font-semibold text-[#7650e3]">
-              Consider Canceling Your Subscription?
+              {t("consider_cancel_subscription")}
             </h2>
             <button
               onClick={onClose}
@@ -61,12 +64,12 @@ const SubscriptionPauseModal = ({
 
           <div className=" flex flex-col justify-center gap-4">
             <p className="text-sm  text-[#000000] ">
-              By canceling now, you'll lose{" "}
+              {t("by_canceling_now_youll_lose")}{" "}
               <span className="font-medium text-[#7650e3]">
                 {user.walle}
                 {user.wallet.package.name}
               </span>{" "}
-              access on due date{" "}
+              {t("access_on_due_date")}{" "}
               <span className="font-medium text-[#7650e3]">
                 {user.wallet.expiresAt
                   ? new Date(user.wallet.expiresAt).toLocaleDateString(
@@ -79,7 +82,7 @@ const SubscriptionPauseModal = ({
                     )
                   : "N/A"}{" "}
               </span>
-              , forfeit all rollover tokens in your bank and lose these{" "}
+              , {t("forfeit_all_rollover_tokens_in_your_bank_and_lose_these")}{" "}
               <span className="font-medium text-[#7650e3]">
                 <span className="font-medium text-[#7650e3]">
                   {user.walle}
@@ -90,12 +93,12 @@ const SubscriptionPauseModal = ({
             </p>
 
             <div className="flex gap-2 flex-col">
-              <FeatureLossItem label="Video Post Generation" icon={videoIcon} />
+              <FeatureLossItem label={t("video_post_generation")} icon={videoIcon} />
               <FeatureLossItem
-                label="Images Post Generation"
+                label={t("images_post_generation")}
                 icon={imageIcon}
               />
-              <FeatureLossItem label="Text Post Generation" icon={textIcon} />
+              <FeatureLossItem label={t("text_post_generation")} icon={textIcon} />
             </div>
 
             <div className="border border-purple-600 rounded-md px-5 py-4 bg-white flex justify-between items-start">
@@ -109,16 +112,16 @@ const SubscriptionPauseModal = ({
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-slate-800">
-                    Rollover Omni Coins
+                    {t("rollover_omni_coins")}
                   </p>
                   <p className="md:text-base text-sm font-semibold text-slate-800 leading-none">
-                    Potential Coins Lost
+                    {t("potential_coins_lost")}
                   </p>
                 </div>
               </div>
               <div className="text-right">
                 <p className="text-xs font-medium text-[#000000] mb-1">
-                  Current Excess
+                  {t("current_excess")}
                 </p>
                 <p className="md:text-lg text-base font-medium text-slate-900 leading-none">
                   {user.wallet.coins}
@@ -127,9 +130,7 @@ const SubscriptionPauseModal = ({
             </div>
 
             <p className="text-sm  text-black ">
-              If you still want to cancel, select "Proceed with Cancelation".
-              Alternatively, consider pausing your subscription for 3 months to
-              save your current benefits.
+              {t("proceed_cancel_message")}
             </p>
           </div>
 
@@ -140,7 +141,7 @@ const SubscriptionPauseModal = ({
 
 
             >
-              <span>Continue with Subscription</span>
+              <span>{t("continue_subscription")}</span>
               <ArrowRightIcon className="w-5 h-5" />
             </button>
             <button
@@ -149,7 +150,7 @@ const SubscriptionPauseModal = ({
               className=" w-full hover:bg-[#d7d7fc] disabled:cursor-not-allowed hover:text-[#7650e3]  text-[#7650e3] font-semibold py-2.5  px-3  text-sm sm:text-base rounded-md transition disabled:opacity-50 flex justify-between items-center  border border-[#7F56D9]"
             >
               <span>
-                {isCanceled ? "Processing..." : "Proceed with Cancellation"}
+                {isCanceled ? t("processing2") : t("proceed_cancellation")}
               </span>
               <ArrowRightIcon className="w-5 h-5" />
             </button>

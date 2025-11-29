@@ -349,7 +349,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                 console.log("Media (video) data loaded:", post.mediaUrl)
               }
             >
-              Your browser does not support the video tag.
+              {t("browser_no_video_support")}
             </video>
             {/* Enhanced fallback overlay for videos without thumbnails */}
             {/* {!videoThumbnail && (
@@ -551,7 +551,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                         e.currentTarget.style.display = "none";
                       }}
                     >
-                      Your browser does not support the video tag.
+                      {t("browser_no_video_support")}
                     </video>
                   </>
                 ) : (
@@ -853,7 +853,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                           e.currentTarget.style.display = "none";
                         }}
                       >
-                        Your browser does not support the video tag.
+                        {t("browser_no_video_support")}
                       </video>
                     </>
                   ) : (

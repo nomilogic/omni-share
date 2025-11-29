@@ -4,8 +4,11 @@ import { Loader2, X } from "lucide-react";
 import { usePricingModal } from "../context/PricingModalContext";
 import Icon from "./Icon";
 import { useAppContext } from "@/context/AppContext";
+import { useTranslation } from "react-i18next";
 
 export const PricingModals: React.FC = () => {
+  const { t, i18n } = useTranslation();
+  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
   const {
     confirmOpen,
     selectedPlan,
@@ -152,7 +155,7 @@ export const PricingModals: React.FC = () => {
 
             <div className="flex justify-between items-center mb-3">
               <h2 className="text-2xl font-bold text-purple-700">
-                Request Downgrade To
+                {t("request_downgrade_to")}
               </h2>
             </div>
 
@@ -170,14 +173,11 @@ export const PricingModals: React.FC = () => {
                 <div className="flex flex-col items-start leading-none font-semibold">
                   <span className="text-sm font-bold text-purple-700">USD</span>
                   <span className="text-sm font-bold text-purple-700">
-                    Month
+                    {t("month")}
                   </span>
                 </div>
               </div>
               <hr className="h-[1px] bg-gray-100 my-2" />
-              <p className="text-[12px] font-semibold text-black mb-3">
-                Includes GST of $0.00.
-              </p>
             </div>
 
             <div className="flex gap-3">
@@ -185,7 +185,7 @@ export const PricingModals: React.FC = () => {
                 onClick={closeDowngradeRequest}
                 className="flex-1 py-2.5 border border-purple-600 text-purple-600 font-semibold rounded-md hover:bg-purple-50 transition"
               >
-                Back
+                {t("back")}
               </button>
 
               <button
@@ -199,7 +199,7 @@ export const PricingModals: React.FC = () => {
                     Confirming...
                   </>
                 ) : (
-                  "Confirm"
+                  t("confirm")
                 )}
               </button>
             </div>
@@ -213,32 +213,31 @@ export const PricingModals: React.FC = () => {
           <div className="bg-gray-50 rounded-md shadow-md w-full max-w-md px-8 py-6 relative h-fit">
             <div className="flex justify-between items-center mb-3">
               <h2 className="text-2xl font-bold text-purple-700">
-                Cancel Downgrade Request
+                {t("cancel_downgrade_request")}
               </h2>
             </div>
 
             <p className="text-gray-500 text-sm mb-4">
-              Are you sure you want to cancel your downgrade request? You will
-              continue with your current plan after expiration.
+              {t("cancel_downgrade_message")}
             </p>
 
             <div className="bg-white border text-gray-500 border-purple-600 rounded-md p-4 mb-6">
               <p className="text-sm font-semibold ">
-                <span className="">Active Plan:</span>{" "}
+                <span className="">{t("active_plan")}</span>{" "}
                 <span className="text-purple-600">
                   {cancelDowngradeData.currentPlanName}
                 </span>
               </p>
 
               <p className="text-sm font-semibold mt-2 border-b pb-3">
-                <span className=""> Monthly Cost:</span>{" "}
+                <span className="">{t("monthly_cost")}</span>{" "}
                 <span className=" text-purple-600 ">
                   ${cancelDowngradeData.currentPlanAmount}/month
                 </span>{" "}
               </p>
 
               <p className="text-sm  font-semibold mt-2">
-                <span className="">Planned Downgrade:</span>{" "}
+                <span className="">{t("planned_downgrade")}</span>{" "}
                 <span className=" text-purple-600 ">
                   {cancelDowngradeData.downgradePlanName}
                 </span>
@@ -250,7 +249,7 @@ export const PricingModals: React.FC = () => {
                 onClick={closeCancelDowngrade}
                 className="flex-1 py-2.5 border border-purple-600 text-purple-600 font-semibold rounded-md hover:bg-purple-50 transition"
               >
-                Back
+                {t("back")}
               </button>
 
               <button
@@ -261,10 +260,10 @@ export const PricingModals: React.FC = () => {
                 {downgradeLoading ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    Canceling...
+                    {t("canceling")}
                   </>
                 ) : (
-                  "Confirm"
+                  t("confirm")
                 )}
               </button>
             </div>

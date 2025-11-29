@@ -43,10 +43,13 @@ import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import OmniVideo from "../assets/video/omnishare.mp4";
+import LanguageDropdown from "../components/LanguageDropdown";
+import { useTranslation } from "react-i18next";
 
 function HomePage() {
+  const { t, i18n } = useTranslation();
+  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [showAllFeatures, setShowAllFeatures] = useState(false);
   const [scrollY, setScrollY] = useState(0);
   const [currentReviewIndex, setCurrentReviewIndex] = useState(0);
   const [slideDirection, setSlideDirection] = useState<"left" | "right" | null>(
@@ -143,56 +146,13 @@ function HomePage() {
 
   console.log("packages", packages);
 
-  const allFeatures = [
-    {
-      icon: <Sparkles className="w-8 h-8" />,
-      title: "AI-Powered Content",
-      description:
-        "Generate engaging posts automatically using advanced AI technology tailored for each platform.",
-    },
-    {
-      icon: <Calendar className="w-8 h-8" />,
-      title: "Smart Scheduling",
-      description:
-        "Schedule your posts across all platforms at optimal times for maximum engagement.",
-    },
-    {
-      icon: <BarChart3 className="w-8 h-8" />,
-      title: "Analytics Dashboard",
-      description:
-        "Track performance metrics and insights across all your social media platforms in real-time.",
-    },
-    {
-      icon: <Share2 className="w-8 h-8" />,
-      title: "Multi-Platform Sync",
-      description:
-        "Post simultaneously to Facebook, Instagram, YouTube, LinkedIn, and TikTok with one click.",
-    },
-    {
-      icon: <Video className="w-8 h-8" />,
-      title: "Media Optimization",
-      description:
-        "Automatically resize and optimize images and videos for each platform's requirements.",
-    },
-    {
-      icon: <Zap className="w-8 h-8" />,
-      title: "Instant Publishing",
-      description:
-        "Publish your content instantly or schedule it for later with our lightning-fast system.",
-    },
-  ];
-
-  const displayedFeatures = showAllFeatures
-    ? allFeatures
-    : allFeatures.slice(0, 3);
-
   const reviews = [
     {
       name: "Sarah Johnson",
       role: "Social Media Manager",
       company: "TechFlow Inc",
       rating: 5,
-      text: "Omnishare has completely transformed how we manage our social media presence. The AI-powered content generation saves us hours every week, and the multi-platform scheduling is seamless.",
+      text: t("testimonial_1"),
       avatar: "SJ",
     },
     {
@@ -200,7 +160,7 @@ function HomePage() {
       role: "Marketing Director",
       company: "GrowthLabs",
       rating: 5,
-      text: "The analytics dashboard is incredibly powerful. We've seen a 300% increase in engagement since switching to Omnishare. The platform pays for itself within the first month.",
+      text: t("testimonial_2"),
       avatar: "MC",
     },
     {
@@ -208,7 +168,7 @@ function HomePage() {
       role: "Content Creator",
       company: "Creative Studio",
       rating: 5,
-      text: "As a solo creator managing multiple client accounts, Omnishare is a lifesaver. The AI understands each platform's nuances and creates perfectly optimized content every time.",
+      text: t("testimonial_3"),
       avatar: "ER",
     },
     {
@@ -216,7 +176,7 @@ function HomePage() {
       role: "CEO",
       company: "StartupHub",
       rating: 5,
-      text: "Best investment we've made for our marketing stack. The time saved on content creation allows us to focus on strategy and growth. Highly recommend for any business.",
+      text: t("testimonial_4"),
       avatar: "DT",
     },
     {
@@ -224,62 +184,52 @@ function HomePage() {
       role: "Brand Manager",
       company: "Fashion Forward",
       rating: 5,
-      text: "The media optimization feature is fantastic. Our posts look professional across all platforms, and the scheduling ensures we post at optimal times for maximum reach.",
+      text: t("testimonial_5"),
       avatar: "LM",
     },
   ];
 
   const faqs = [
     {
-      question: "What is OmniShare?",
-      answer:
-        "Yes! You can create one post and publish it across Facebook, Instagram, YouTube, LinkedIn, and TikTok simultaneously, or schedule them at different optimal times for each platform.",
+      question: t("what_is_omnishare"),
+      answer: t("create_publish_message"),
     },
     {
-      question: "How does OmniShare's AI-powered content creation work?",
-      answer:
-        "Our AI analyzes your brand voice, industry trends, and platform requirements to generate high-quality posts, captions, descriptions, and hashtags. You get ready-to-publish content tailored for each social platform.",
+      question: t("ai_content_creation"),
+      answer: t("ai_content_creation_message"),
     },
 
     {
-      question: "Which social media platforms does OmniShare support?",
-      answer:
-        "You can manage Facebook, Instagram, YouTube, LinkedIn, and TikTok — all through one centralized system.",
+      question: t("platform_support"),
+      answer: t("platform_support_message"),
     },
     {
-      question: "Can I publish on multiple platforms at once?",
-      answer:
-        "Yes. With one click, OmniShare lets you publish your content across all connected platforms. The system also auto-generates AI text and images when needed.",
+      question: t("multi_publish"),
+      answer: t("multi_publish_message"),
     },
     {
-      question: "Does OmniShare optimize media for each platform?",
-      answer:
-        "Absolutely. OmniShare automatically resizes your images and videos, creates YouTube thumbnails, and ensures every post meets the exact platform specifications.",
+      question: t("does_omnishare_optimize_media_for_each_platform"),
+      answer: t("omnishare_auto_resizes_description"),
     },
     {
-      question: "What kind of insights does OmniShare provide?",
-      answer:
-        "You get clear, actionable analytics on engagement, reach, performance trends, and audience behavior — helping you make smarter decisions to improve your social strategy.",
+      question: t("insights"),
+      answer: t("insights_message"),
     },
     {
-      question: "How fast is OmniShare's publishing system?",
-      answer:
-        "Our instant publishing engine ensures your posts go live immediately and reliably — so you can reach your audience at the perfect moment.",
+      question: t("publishing_speed"),
+      answer: t("publishing_speed_message"),
     },
     {
-      question: "Can OmniShare help with trend-based content?",
-      answer:
-        "Yes! OmniShare scans real-time trends and transforms them into powerful captions, descriptions, and viral hashtags tailored to each platform.",
+      question: t("trend_content"),
+      answer: t("trend_content_message"),
     },
     {
-      question: "Is OmniShare suitable for businesses and teams?",
-      answer:
-        "Definitely. OmniShare is built for individuals, agencies, brands, and teams managing content across different platforms, regions, or client accounts.",
+      question: t("business_suitability"),
+      answer: t("business_suitability_message"),
     },
     {
-      question: "Do you offer demos or product walkthroughs?",
-      answer:
-        "Yes! You can explore the full potential of OmniShare with a personalized product demo to see how it can elevate your social growth.",
+      question: t("demos"),
+      answer: t("demos_message"),
     },
   ];
 
@@ -407,10 +357,10 @@ function HomePage() {
 
             <nav className="flex-1 px-1 py-2.5 flex flex-col mx-2 gap-y-2">
               {[
-                { name: "Home", icon: Home },
-                { name: "Features", icon: Plus },
-                { name: "FAQ", icon: Building2 },
-                { name: "Contact", icon: History },
+                { name: t("home"), icon: Home },
+                { name: t("features"), icon: Plus },
+                { name: t("faq"), icon: Building2 },
+                { name: t("contact"), icon: History },
               ].map((item, index) => (
                 <motion.button
                   key={item.name}
@@ -426,6 +376,10 @@ function HomePage() {
                 </motion.button>
               ))}
             </nav>
+
+            <div className=" p-4 space-y-3 ml-3">
+              <LanguageDropdown alignRight={false} className="text-white" />
+            </div>
 
             <div className="px-3 py-4">
               <motion.button
@@ -443,7 +397,7 @@ function HomePage() {
                 }}
                 whileTap={{ scale: 0.95 }}
               >
-                Get Started
+                {t("get_started")}
               </motion.button>
             </div>
 
@@ -457,7 +411,7 @@ function HomePage() {
                       className="transition-colors duration-200"
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      Privacy Policy
+                      {t("privacy_policy")}
                     </Link>
                     <span className="text-white/20">•</span>
                     <Link
@@ -465,7 +419,7 @@ function HomePage() {
                       className="transition-colors duration-200"
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      Terms of Service
+                      {t("terms_service")}
                     </Link>
                     <span className="text-white/20">•</span>
                     <Link
@@ -473,7 +427,7 @@ function HomePage() {
                       className="transition-colors duration-200"
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      Support
+                      {t("support")}
                     </Link>
                   </div>
                   <div className="flex justify-center space-x-1 text-xs text-white/80 w-full">
@@ -689,36 +643,41 @@ function HomePage() {
 
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center space-x-8">
-              {["home", "features", "FAQ", "contact"].map((section, index) => (
-                <motion.button
-                  key={section}
-                  onClick={() => scrollToSection(section)}
-                  className={`transition-colors relative ${
-                    scrollY > 50 ? "text-white" : "text-white"
-                  } capitalize font-medium`}
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    delay: index * 0.1,
-                    type: "spring",
-                    stiffness: 100,
-                  }}
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  {section}
-                  <motion.span
-                    className="absolute bottom-0 left-0 w-full h-0.5 bg-white origin-left"
-                    initial={{ scaleX: 0 }}
-                    whileHover={{ scaleX: 1 }}
+              {[t("home"), t("features"), t("faq2"), t("contact")].map(
+                (section, index) => (
+                  <motion.button
+                    key={section}
+                    onClick={() => scrollToSection(section)}
+                    className={`transition-colors relative ${
+                      scrollY > 50 ? "text-white" : "text-white"
+                    } capitalize font-medium`}
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{
+                      delay: index * 0.1,
                       type: "spring",
-                      stiffness: 300,
-                      damping: 20,
+                      stiffness: 100,
                     }}
-                  />
-                </motion.button>
-              ))}
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    {section}
+                    <motion.span
+                      className="absolute bottom-0 left-0 w-full h-0.5 bg-white origin-left"
+                      initial={{ scaleX: 0 }}
+                      whileHover={{ scaleX: 1 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 300,
+                        damping: 20,
+                      }}
+                    />
+                  </motion.button>
+                )
+              )}
+
+              <LanguageDropdown alignRight={true} className="text-white" />
+
               <motion.button
                 onClick={() => navigate("/auth")}
                 className="bg-white text-[#7650e3] px-6 py-2.5 rounded-full font-semibold shadow-lg"
@@ -731,7 +690,7 @@ function HomePage() {
                 }}
                 whileTap={{ scale: 0.95 }}
               >
-                Get Started
+                {t("get_started")}
               </motion.button>
             </div>
 
@@ -785,7 +744,7 @@ function HomePage() {
             }}
             className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight"
           >
-            AI-Powered Social Media
+            {t("ai_social_media")}
             <br />
             <motion.span
               initial={{ opacity: 0, scale: 0.8 }}
@@ -793,7 +752,7 @@ function HomePage() {
               transition={{ delay: 0.5, type: "spring", stiffness: 100 }}
               className="bg-gradient-to-r from-white text-white bg-white bg-clip-text text-transparent"
             >
-              Made Simple
+              {t("made_simple")}
             </motion.span>
           </motion.h1>
 
@@ -808,9 +767,7 @@ function HomePage() {
             }}
             className="text-xl md:text-2xl text-white mb-8 max-w-3xl mx-auto "
           >
-            Create, schedule, and publish stunning content across Facebook,
-            Instagram, YouTube, LinkedIn, and TikTok - all from one powerful
-            platform powered by AI.
+            {t("create_schedule_publish")}
           </motion.p>
 
           <motion.div
@@ -843,7 +800,7 @@ function HomePage() {
                 },
                 {
                   name: "tiktok",
-                  url: "https://www.tiktok.com/@omnishare",
+                  url: "https://www.tiktok.com/@omnishare.ai",
                   index: 4,
                 },
               ].map((icons) => (
@@ -910,7 +867,7 @@ function HomePage() {
             }}
             whileTap={{ scale: 0.95 }}
           >
-            <span>Get Started Free</span>
+            <span>{t("get_started_free")}</span>
 
             <ChevronDown className="w-5 h-5" />
           </motion.button>
@@ -946,20 +903,20 @@ function HomePage() {
             variants={containerVariants}
           >
             {[
-              { icon: Users, end: 1000, suffix: "+", label: "Active Users" },
+              { icon: Users, end: 1000, suffix: "+", label: t("active_users") },
               {
                 icon: TrendingUp,
                 end: 99.9,
                 suffix: "+",
-                label: "Posts Created",
+                label: t("posts_created"),
               },
               {
                 icon: Share2,
                 end: 5,
                 suffix: "",
-                label: "Platforms Supported",
+                label: t("platforms_supported"),
               },
-              { icon: Sparkles, end: 99.9, suffix: "%", label: "Uptime" },
+              { icon: Sparkles, end: 99.9, suffix: "%", label: t("uptime") },
             ].map((stat, index) => (
               <motion.div key={index} className="group" variants={itemVariants}>
                 <motion.div
@@ -1006,11 +963,10 @@ function HomePage() {
             transition={{ duration: 0.6, type: "spring", stiffness: 80 }}
           >
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              See Omnishare in Action
+              {t("see_action")}
             </h2>
             <p className="text-xl text-gray-500 font-medium">
-              Watch how easy it is to create and schedule content across all
-              platforms
+              {t("see_action_message")}
             </p>
           </motion.div>
 
@@ -1068,10 +1024,10 @@ function HomePage() {
             transition={{ duration: 0.6, type: "spring", stiffness: 80 }}
           >
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              Loved by Creators Worldwide
+              {t("loved_creators")}
             </h2>
             <p className="text-xl text-gray-500 font-medium">
-              See what our customers have to say about Omnishare
+              {t("loved_creators_message")}
             </p>
           </motion.div>
 
@@ -1198,10 +1154,10 @@ function HomePage() {
             transition={{ duration: 0.6, type: "spring", stiffness: 80 }}
           >
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              Frequently Asked Questions
+              {t("faq")}
             </h2>
             <p className="text-xl text-gray-500 font-medium">
-              Everything you need to know about Omnishare
+              {t("faq_message")}
             </p>
           </motion.div>
 
@@ -1267,9 +1223,7 @@ function HomePage() {
             viewport={{ once: true }}
             transition={{ delay: 0.3 }}
           >
-            <p className="text-gray-500 font-medium">
-              Still have questions? Scroll up to contact us.
-            </p>
+            <p className="text-gray-500 font-medium">{t("still_questions")} </p>
           </motion.div>
         </div>
       </section>
@@ -1284,10 +1238,10 @@ function HomePage() {
             transition={{ duration: 0.6, type: "spring", stiffness: 80 }}
           >
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              Contact Us
+              {t("contact_us")}
             </h2>
             <p className="text-xl text-gray-500 font-medium mb-5">
-              Have questions? We'd love to hear from you.
+              {t("contact_us_message")}
             </p>
             <motion.button
               onClick={() => setShowContactForm(!showContactForm)}
@@ -1298,7 +1252,9 @@ function HomePage() {
               }}
               whileTap={{ scale: 0.95 }}
             >
-              <span>{showContactForm ? "Hide Form" : "Get in Touch"}</span>
+              <span>
+                {showContactForm ? t("hide_form") : t("get_in_touch")}
+              </span>
               <motion.div
                 animate={{ rotate: showContactForm ? 180 : 0 }}
                 transition={{ duration: 0.3 }}
@@ -1326,13 +1282,13 @@ function HomePage() {
                     transition={{ delay: 0.1, type: "spring" }}
                   >
                     <label className="block text-sm font-semibold text-black mb-2">
-                      First Name
+                      {t("first_name")}
                     </label>
                     <input
                       {...register("firstName")}
                       type="text"
                       className="w-full px-4 py-2.5 border border-purple-600 rounded-md focus-visible:ring-0 focus:ring-0 transition-all"
-                      placeholder="First Name"
+                      placeholder={t("first_name")}
                     />
 
                     {/* ❗ Zod Error Here */}
@@ -1350,13 +1306,13 @@ function HomePage() {
                     transition={{ delay: 0.1, type: "spring" }}
                   >
                     <label className="block text-sm font-semibold text-black mb-2">
-                      Last Name
+                      {t("last_name")}
                     </label>
                     <input
                       {...register("lastName")}
                       type="text"
                       className="w-full px-4 py-2.5 border border-purple-600 rounded-md focus-visible:ring-0 focus:ring-0 transition-all"
-                      placeholder="Last Name"
+                      placeholder={t("last_name")}
                     />
 
                     {/* ❗ Zod Error Here */}
@@ -1375,13 +1331,13 @@ function HomePage() {
                   transition={{ delay: 0.2, type: "spring" }}
                 >
                   <label className="block text-sm font-semibold text-black mb-2">
-                    Email
+                    {t("email")}
                   </label>
                   <input
                     {...register("email")}
                     type="email"
                     className="w-full px-4 py-2.5 border border-purple-600 rounded-md focus-visible:ring-0 focus:ring-0 transition-all"
-                    placeholder="Email Address"
+                    placeholder={t("email_address")}
                   />
 
                   {/* ❗ Zod Error Here */}
@@ -1399,13 +1355,13 @@ function HomePage() {
                   transition={{ delay: 0.3, type: "spring" }}
                 >
                   <label className="block text-sm font-semibold text-black mb-2">
-                    Message
+                    {t("message")}
                   </label>
                   <textarea
                     {...register("message")}
                     rows={6}
                     className="w-full px-4 py-2.5 border border-purple-600 rounded-md focus-visible:ring-0 focus:ring-0 transition-all"
-                    placeholder="Tell us about your needs..."
+                    placeholder={t("message_placeholder")}
                   />
 
                   {/* ❗ Zod Error Here */}
@@ -1430,7 +1386,7 @@ function HomePage() {
                   }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  {isSubmitting ? "Sending..." : " Send Message"}
+                  {isSubmitting ? "Sending..." : t("send_message")}
                 </motion.button>
               </motion.form>
             )}

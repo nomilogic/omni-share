@@ -15,9 +15,9 @@ const FAQ: React.FC = () => {
   const faqItems: FAQItem[] = [
     {
       id: 1,
-      question: "What is OmniShare?",
+      question: t("what_is_omnishare"),
       answer:
-        "OmniShare is an all-in-one social media management platform powered by advanced AI. It helps you create content, manage multiple channels, optimize media, analyze performance, and publish instantly — all from a single dashboard.",
+        t("create_publish_message")
     },
     {
       id: 2,
