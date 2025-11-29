@@ -416,8 +416,8 @@ export const PricingPage: React.FC = () => {
                             : isPendingDowngradePackage
                             ? t("cancel_request")
                             : isLowerPlan
-                            ? t("switch_plan")
-                            : t("switch_plan")}
+                            ? t("upgrade")
+                            : t("upgrade")}
                         </button>
                       )}
                     </div>

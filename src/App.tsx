@@ -1,10 +1,11 @@
 import React, { useEffect } from "react";
+import { DiscardModalProvider } from "../src/context2/DiscardModalContext";
+import GlobalDiscardModals from "../src/context2/GlobalDiscardModals";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { AppProvider, useAppContext } from "./context/AppContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import { SubscriptionModalProvider } from "./context/SubscriptionModalContext";
 import { PricingModalProvider } from "./context/PricingModalContext";
-import { PublishPostModalProvider } from './context2/MasterModalContext';
 import { AppLayout } from "./components/Layout/AppLayout";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AuthPage } from "./pages/AuthPage";
@@ -49,6 +50,8 @@ const OAuthCallbackWrapper = () => {
 
   return <AuthOAuthCallback onAuthSuccess={handleAuthSuccess} />;
 };
+
+
 
 function App() {
   useEffect(() => {
@@ -107,7 +110,7 @@ function App() {
         theme="colored"
         transition={Bounce}
       />
-
+<DiscardModalProvider>
       <AppProvider>
         <AuthProvider>
           <SubscriptionModalProvider>
@@ -305,6 +308,7 @@ function App() {
           </SubscriptionModalProvider>
         </AuthProvider>
       </AppProvider>
+      </DiscardModalProvider>
     </>
   );
 }

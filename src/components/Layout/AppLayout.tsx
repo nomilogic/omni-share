@@ -538,11 +538,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 <img src={logoText} alt="Logo" className="h-4   " />
               </div>
 
-              <div className=" hidden sm:block ml-[85%] bg-inherit text-purple-600 font-bold border rounded-md border-purple-600 ">
-              <LanguageDropdown />
-            </div>
-
               <div className="flex items-center space-x-1">
+                <LanguageDropdown />
                 <div className="flex gap-x-4 items-center">
                   <WalletBalance
                     setShowPackage={() => setShowPackage(!showPackage)}

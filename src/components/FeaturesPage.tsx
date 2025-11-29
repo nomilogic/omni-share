@@ -41,10 +41,6 @@ const getFeatures = (t: any): Feature[] => [
         <span className="text-purple-600 text-xl font-medium">
           {t("line_33")}
         </span>{" "}
-        {t("line_34")}{" "}
-        <span className="text-purple-600 text-xl font-medium">
-          {t("line_35")}
-        </span>
         {t("line_36")}
       </p>
     ),

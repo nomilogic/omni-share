@@ -38,7 +38,7 @@ function Dashboard() {
             title={t("my_plan")}
             badge={state?.userPlan?.toUpperCase() || "FREE"}
             subtitle="Renewing on: 30 Nov 2025"
-            buttonText={t("switch_plan")}
+            buttonText={t("upgrade")}
           />
 
           <StatsCard
