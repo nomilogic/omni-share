@@ -20,7 +20,7 @@ export const ManageSubscriptionModal: React.FC<any> = ({
   setIsModalOpen,
 }) => {
   const { t, i18n } = useTranslation();
-    const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
+  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
   const [showTransactions, setShowTransactions] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isReactive, setIsReactive] = useState(false);
@@ -159,7 +159,7 @@ export const ManageSubscriptionModal: React.FC<any> = ({
                         ]
                       : [
                           {
-                            key: "reactive",
+                            key: "resume",
                             label: t("reactive_your_subscription"),
                             icon: <ChevronRight />,
                           },
@@ -192,7 +192,7 @@ export const ManageSubscriptionModal: React.FC<any> = ({
                             case "cancel":
                               actionFn = () => setIsModalOpen(true);
                               break;
-                            case "reactive":
+                            case "resume":
                               actionFn = () => reactivateSubscription();
                               break;
                             case "coins":

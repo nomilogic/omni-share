@@ -166,7 +166,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             } transition-transform duration-300 ease-in-out`}
           >
             <div className="flex items-center justify-between border-b border-white/20 p-2 py-3 ">
-              <span className="flex items-center">
+              <Link
+                to="/dashboard"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="flex items-center"
+              >
                 <Icon
                   name="spiral-logo"
                   className="ml-2 brightness-[200]"
@@ -175,7 +179,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 <span className="theme-text-primary text-2xl lg:text-[1.6rem] tracking-tight ml-3">
                   <img src={LogoWhiteText} alt="Logo" className="h-4" />
                 </span>
-              </span>
+              </Link>
 
               <button
                 onClick={() => setIsMobileMenuOpen(false)}
@@ -534,9 +538,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               <LanguageDropdown/>
                </div> */}
 
-              <div className="-ml-[73px] absolute  left-[50%] ">
+              <Link
+                to="/dashboard"
+                className="-ml-[73px] absolute  left-[50%] "
+              >
                 <img src={logoText} alt="Logo" className="h-4   " />
-              </div>
+              </Link>
 
               <div className="flex items-center space-x-1">
                 <LanguageDropdown />

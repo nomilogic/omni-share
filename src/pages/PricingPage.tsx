@@ -262,6 +262,9 @@ export const PricingPage: React.FC = () => {
 
   return (
     <div className="w-full h-full rounded-md mb-10 md:px-4 px-3 py-5 min-h-screen transition-colors ">
+      <h2 className="text-3xl font-bold theme-text-primary mb-8">
+        Chose your plan
+      </h2>
       <div className="flex justify-between items-center mb-5 border-b border-gray-200 ">
         <div className="flex flex-1">
           <button

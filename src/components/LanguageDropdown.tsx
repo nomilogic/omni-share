@@ -50,7 +50,7 @@ export const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        className={`px-4 py-1 rounded-md text-sm bg-white/10 hover:bg-white/20 border border-white/20 flex items-center gap-2 transition-all ${
+        className={`px-6 py-1 rounded-md text-sm bg-white/10 hover:bg-white/20 border border-white/20 flex items-center gap-2 transition-all ${
           className ?? ""
         }`}
       >
@@ -68,21 +68,21 @@ export const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
           <button
             role="menuitem"
             onClick={() => changeLang("en")}
-            className="w-full text-left px-4 py-2 text-sm hover:bg-purple-50 text-gray-900 font-medium transition-colors"
+            className="w-full text-left px-4 py-2 text-sm hover:bg-purple-50 text-purple-600 text-gray-900 font-medium transition-colors"
           >
             EN
           </button>
           <button
             role="menuitem"
             onClick={() => changeLang("es")}
-            className="w-full text-left px-4 py-2 text-sm hover:bg-purple-50 text-gray-900 font-medium transition-colors"
+            className="w-full text-left px-4 py-2 text-sm hover:bg-purple-50 text-purple-600 text-gray-900 font-medium transition-colors"
           >
             ES
           </button>
           <button
             role="menuitem"
             onClick={() => changeLang("zh")}
-            className="w-full text-left px-4 py-2 text-sm hover:bg-purple-50 text-gray-900 font-medium transition-colors"
+            className="w-full text-left px-4 py-2 text-sm hover:bg-purple-50 text-purple-600 text-gray-900 font-medium transition-colors"
           >
             中文
           </button>

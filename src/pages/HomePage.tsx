@@ -676,22 +676,15 @@ function HomePage() {
                 )
               )}
 
-              <LanguageDropdown alignRight={true} />
-
-              <motion.button
-                onClick={() => navigate("/auth")}
-                className="bg-white text-[#7650e3] px-6 py-2.5 rounded-full font-semibold shadow-lg"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.5, type: "spring", stiffness: 200 }}
-                whileHover={{
-                  scale: 1.08,
-                  boxShadow: "0 10px 30px rgba(118, 80, 227, 0.3)",
-                }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {t("get_started")}
-              </motion.button>
+              <data className="flex items-center gap-2 w-full">
+                <LanguageDropdown alignRight={true} />
+                <motion.button
+                  onClick={() => navigate("/auth")}
+                  className="bg-white text-[#7650e3] px-6 py-2.5 text-base rounded-full font-semibold shadow-lg"
+                >
+                  {t("get_started")}
+                </motion.button>
+              </data>
             </div>
 
             <motion.button
@@ -742,7 +735,7 @@ function HomePage() {
               type: "spring",
               stiffness: 80,
             }}
-            className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight"
+            className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight"
           >
             {t("ai_social_media")}
             <br />
@@ -893,7 +886,7 @@ function HomePage() {
       <TwoColumnSection />
       <TwoColumnSection2 />
       {/* Active Users Stats Section */}
-      <section className="py-16 bg-white border-y border-gray-200">
+      {/* <section className="py-16 bg-white border-y border-gray-200">
         <div className=" max-w-full mx-auto px-4 sm:px-6 lg:px-[10%] w-full">
           <motion.div
             className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center"
@@ -934,7 +927,7 @@ function HomePage() {
             ))}
           </motion.div>
         </div>
-      </section>
+      </section> */}
 
       <section className=" bg-gray-50 relative overflow-hidden">
         <motion.div
@@ -1403,27 +1396,26 @@ function HomePage() {
           viewport={{ once: true }}
         >
           <div className="w-full mx-auto pt-2 md:px-[10%] px-3 flex flex-col sm:flex-row items-center md:justify-between gap-3">
-            {/* LEFT SIDE: Copyright Text (Ab yeh pehla direct child hai) */}
-            {/* sm:text-center class add ki taaki mobile par text center ho jaaye */}
-            <div className="flex justify-center items-center text-sm sm:text-center">
-              <span className="mb-2">
-                © {new Date().getFullYear()} OMNISHARE
-              </span>
-            </div>
+            <span className="">© {new Date().getFullYear()} OMNISHARE</span>
 
-            {/* RIGHT SIDE: Links (Ab yeh doosra direct child hai) */}
-            {/* is div ko flex-wrap kiya taaki agar links lambe hon to wrap ho jaayen aur mobile par center hon */}
-            <div className="flex flex-wrap justify-center space-x-1 text-sm theme-text-light">
-              <Link to="/privacy" className="transition-colors duration-200">
-                Privacy Policy
+            <div className="flex flex-wrap justify-center space-x-3 text-sm theme-text-light">
+              <Link
+                to="/privacy"
+                className="transition-colors duration-200 underline"
+              >
+                {t("privacy_policy")}
               </Link>
-              <span className="text-white/20">•</span>
-              <Link to="/terms" className="transition-colors duration-200">
-                Terms of Service
+              <Link
+                to="/terms"
+                className="transition-colors duration-200 underline "
+              >
+                {t("terms_service")}
               </Link>
-              <span className="text-white/20">•</span>
-              <Link to="/support" className="transition-colors duration-200">
-                Support
+              <Link
+                to="/support"
+                className="transition-colors duration-200 underline"
+              >
+                {t("support")}
               </Link>
             </div>
           </div>
