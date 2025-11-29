@@ -99,8 +99,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     }
   };
 
-  const navigate = useNavigate();
-
   const [formData, setFormData] = useState<PostContent>({
     prompt: initialData?.prompt || "",
     tags: initialData?.tags || [],

@@ -199,6 +199,8 @@ export const PricingPage: React.FC = () => {
       setSelectedAddon(null);
     }
   };
+
+  const [selectedCurrency, setSelectedCurrency] = useState("USD");
   const apiKey = "80f18a670f8f17b074ee56f9";
   const [exchangeRates, setExchangeRates] = useState<Record<string, number>>(
     {}
@@ -230,34 +232,32 @@ export const PricingPage: React.FC = () => {
 
   useEffect(() => {
     fetchExchangeRates();
-  }, []); // fetch once on mount
+  }, []);
 
   useEffect(() => {
-    const targetCurrency = langToCurrency[i18n.language] || "USD";
+    if (!exchangeRates) return;
 
     packages.forEach((pkg) => {
       setConvertedAmounts((prev) => ({
         ...prev,
-        [pkg.id]: convertAmount(pkg.amount, targetCurrency),
+        [pkg.id]: convertAmount(pkg.amount, selectedCurrency),
       }));
     });
 
     addons?.forEach((addon) => {
       setConvertedAddonAmounts((prev) => ({
         ...prev,
-        [addon.id]: convertAmount(addon.amount, targetCurrency),
+        [addon.id]: convertAmount(addon.amount, selectedCurrency),
       }));
     });
-  }, [exchangeRates, packages, addons, i18n.language]);
+  }, [exchangeRates, packages, addons, selectedCurrency]);
 
   const langToCurrencySymbol: Record<string, string> = {
-    en: "$", // English → USD
-    zh: "¥", // Chinese → CNY
-    de: "€", // German → EUR
-    fr: "€", // French → EUR
-    es: "€", // French → EUR
-    ja: "¥", // Japanese → JPY
-    // add more as needed
+    USD: "$",
+    EUR: "€",
+    CNY: "¥",
+    GBP: "£",
+    AUD: "A$",
   };
 
   return (
@@ -287,7 +287,21 @@ export const PricingPage: React.FC = () => {
             </button>
           )}
         </div>
+        <div className="pb-1">
+          <select
+            value={selectedCurrency}
+            onChange={(e) => setSelectedCurrency(e.target.value)}
+            className="  rounded-md px-2.5 border-purple-600 border text-purple-600   py-0.5 text-sm"
+          >
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+            <option value="GBP">GBP</option>
+            <option value="CNY">CNY</option>
+            <option value="AUD">AUD</option>
+          </select>
+        </div>
       </div>
+
       {activeTab === "" && (
         <>
           {loader ? (
@@ -346,9 +360,9 @@ export const PricingPage: React.FC = () => {
                         {tier.name}
                       </h3>
                       <div className="flex items-baseline justify-center gap-1 mb-3">
-                        <span className="text-[45px] text-purple-600 font-bold">
+                        <span className="text-[43px] text-purple-600 font-bold">
                           <span className="text-[#7650e3] font-bold text-2xl mr-1">
-                            {langToCurrencySymbol[i18n.language] || "$"}
+                            {langToCurrencySymbol[selectedCurrency] || ""}
                           </span>
                           {convertedAmounts[tier.id] ?? tier.amount}
                         </span>
@@ -496,7 +510,7 @@ export const PricingPage: React.FC = () => {
 
                       <div className="flex justify-between bg-purple-100 items-center px-5  py-2.5 rounded-b-md">
                         <p className="text-center text-2xl text-purple-600 font-semibold ">
-                          {langToCurrencySymbol[i18n.language] || "$"}
+                          {langToCurrencySymbol[selectedCurrency] || ""}
                           {convertedAddonAmounts[addon.id] ?? addon.amount}
                         </p>
                         <button

@@ -1,10 +1,7 @@
 import { Platform, CampaignInfo, PostContent, GeneratedPost } from "../types";
 import API from "../services/api";
 
-
-
 // Only initialize if we have a valid API key
-
 
 export interface PlatformConfig {
   maxLength: number;

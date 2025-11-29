@@ -64,210 +64,210 @@ export const PublishPosts: React.FC<PublishProps> = ({
   >(null);
   const navigate = useNavigate();
 
-   useEffect(() => {
-      checkConnectedPlatforms();
-    }, []);
-  
-    const checkConnectedPlatforms = async () => {
-      try {
-        // Get the authentication token
-        const token = localStorage.getItem("auth_token");
-        if (!token) {
-          console.warn("No authentication token found");
-          setConnectedPlatforms([]);
-          return;
-        }
-  
-        const response = await API.connectionsStatus();
-  
-        const statusData = response.data;
-  
-        const connected: Platform[] = [];
-        for (const platform of ALL_PLATFORMS) {
-          if (statusData[platform]?.connected) {
-            connected.push(platform);
-          }
-        }
-        setConnectedPlatforms(connected);
-  
-        // Fetch Facebook pages if Facebook is connected
-        if (connected.includes("facebook")) {
-          await fetchFacebookPages();
-        }
-  
-        // Fetch YouTube channels if YouTube is connected
-        if (connected.includes("youtube")) {
-          await fetchYouTubeChannels();
-        }
-      } catch (error) {
-        console.error("Failed to check connected platforms:", error);
+  useEffect(() => {
+    checkConnectedPlatforms();
+  }, []);
+
+  const checkConnectedPlatforms = async () => {
+    try {
+      // Get the authentication token
+      const token = localStorage.getItem("auth_token");
+      if (!token) {
+        console.warn("No authentication token found");
         setConnectedPlatforms([]);
+        return;
       }
-    };
-  
-    const fetchFacebookPages = async () => {
-      try {
-        const token = localStorage.getItem("auth_token");
-        if (!token) return;
-  
-        const tokenResponse = await API.tokenForPlatform("facebook");
-  
-        if (tokenResponse?.data) {
-          const tokenData = await tokenResponse?.data;
-          if (tokenData.connected && tokenData.token?.access_token) {
-            const pagesResponse = await fetch(
-              `/api/facebook/pages?access_token=${tokenData.token.access_token}`
-            );
-            if (pagesResponse.ok) {
-              const pagesData = await pagesResponse.json();
-              setFacebookPages(pagesData.pages || []);
-              if (
-                pagesData.pages &&
-                pagesData.pages.length > 0 &&
-                !selectedFacebookPage
-              ) {
-                setSelectedFacebookPage(pagesData.pages[0].id);
-              }
+
+      const response = await API.connectionsStatus();
+
+      const statusData = response.data;
+
+      const connected: Platform[] = [];
+      for (const platform of ALL_PLATFORMS) {
+        if (statusData[platform]?.connected) {
+          connected.push(platform);
+        }
+      }
+      setConnectedPlatforms(connected);
+
+      // Fetch Facebook pages if Facebook is connected
+      if (connected.includes("facebook")) {
+        await fetchFacebookPages();
+      }
+
+      // Fetch YouTube channels if YouTube is connected
+      if (connected.includes("youtube")) {
+        await fetchYouTubeChannels();
+      }
+    } catch (error) {
+      console.error("Failed to check connected platforms:", error);
+      setConnectedPlatforms([]);
+    }
+  };
+
+  const fetchFacebookPages = async () => {
+    try {
+      const token = localStorage.getItem("auth_token");
+      if (!token) return;
+
+      const tokenResponse = await API.tokenForPlatform("facebook");
+
+      if (tokenResponse?.data) {
+        const tokenData = await tokenResponse?.data;
+        if (tokenData.connected && tokenData.token?.access_token) {
+          const pagesResponse = await fetch(
+            `/api/facebook/pages?access_token=${tokenData.token.access_token}`
+          );
+          if (pagesResponse.ok) {
+            const pagesData = await pagesResponse.json();
+            setFacebookPages(pagesData.pages || []);
+            if (
+              pagesData.pages &&
+              pagesData.pages.length > 0 &&
+              !selectedFacebookPage
+            ) {
+              setSelectedFacebookPage(pagesData.pages[0].id);
             }
           }
         }
-      } catch (error) {
-        console.error("Failed to fetch Facebook pages:", error);
       }
-    };
-  
-    const fetchYouTubeChannels = async () => {
-      try {
-        const token = localStorage.getItem("auth_token");
-        if (!token) return;
-  
-        const tokenResponse = await API.tokenForPlatform("youtube");
-        if (tokenResponse.data) {
-          const tokenData = await tokenResponse.data;
-          if (tokenData.connected && tokenData.token?.access_token) {
-            const channelsResponse = await fetch(
-              `/api/youtube/channels?access_token=${tokenData.token.access_token}`
-            );
-            if (channelsResponse.ok) {
-              const channelsData = await channelsResponse.json();
-              setYoutubeChannels(channelsData.channels || []);
-              if (
-                channelsData.channels &&
-                channelsData.channels.length > 0 &&
-                !selectedYoutubeChannel
-              ) {
-                setSelectedYoutubeChannel(channelsData.channels[0].id);
-              }
+    } catch (error) {
+      console.error("Failed to fetch Facebook pages:", error);
+    }
+  };
+
+  const fetchYouTubeChannels = async () => {
+    try {
+      const token = localStorage.getItem("auth_token");
+      if (!token) return;
+
+      const tokenResponse = await API.tokenForPlatform("youtube");
+      if (tokenResponse.data) {
+        const tokenData = await tokenResponse.data;
+        if (tokenData.connected && tokenData.token?.access_token) {
+          const channelsResponse = await fetch(
+            `/api/youtube/channels?access_token=${tokenData.token.access_token}`
+          );
+          if (channelsResponse.ok) {
+            const channelsData = await channelsResponse.json();
+            setYoutubeChannels(channelsData.channels || []);
+            if (
+              channelsData.channels &&
+              channelsData.channels.length > 0 &&
+              !selectedYoutubeChannel
+            ) {
+              setSelectedYoutubeChannel(channelsData.channels[0].id);
             }
           }
         }
-      } catch (error) {
-        console.error("Failed to fetch YouTube channels:", error);
       }
-    };
-  
-    const handleConnect = async (platform: Platform) => {
-      console.log("Connecting to platform:", platform);
-  
-      try {
-        setConnectingPlatforms((prev) => [...prev, platform]);
-        setError(null);
-  
-        // Use the OAuth client to start OAuth flow (uses JWT authentication)
-        const result: any = await oauthManagerClient.startOAuthFlow(platform);
-        const { authUrl } = result.data.data;
-        console.log("Opening OAuth popup with URL:", authUrl);
-  
-        const authWindow = window.open(
-          authUrl,
-          `${platform}_oauth`,
-          "width=600,height=700,scrollbars=yes,resizable=yes"
-        );
-        console.log(authWindow,"authWindow");
-        if (!authWindow) {
-          throw new Error("OAuth popup blocked");
+    } catch (error) {
+      console.error("Failed to fetch YouTube channels:", error);
+    }
+  };
+
+  const handleConnect = async (platform: Platform) => {
+    console.log("Connecting to platform:", platform);
+
+    try {
+      setConnectingPlatforms((prev) => [...prev, platform]);
+      setError(null);
+
+      // Use the OAuth client to start OAuth flow (uses JWT authentication)
+      const result: any = await oauthManagerClient.startOAuthFlow(platform);
+      const { authUrl } = result.data.data;
+      console.log("Opening OAuth popup with URL:", authUrl);
+
+      const authWindow = window.open(
+        authUrl,
+        `${platform}_oauth`,
+        "width=600,height=700,scrollbars=yes,resizable=yes"
+      );
+      console.log(authWindow, "authWindow");
+      if (!authWindow) {
+        throw new Error("OAuth popup blocked");
+      }
+
+      // Listen for messages from the OAuth callback
+      const messageListener = (event: MessageEvent) => {
+        if (
+          event.data.type === "oauth_success" &&
+          event.data.platform === platform
+        ) {
+          console.log("OAuth success for", platform);
+          // Close popup from parent window for better browser compatibility
+          try {
+            authWindow?.close();
+          } catch (error) {
+            console.warn("Could not close popup from parent:", error);
+          }
+          setTimeout(checkConnectedPlatforms, 1000);
+          window.removeEventListener("message", messageListener);
+        } else if (event.data.type === "oauth_error") {
+          console.error("OAuth error:", event.data.error);
+          // Close popup from parent window for better browser compatibility
+          try {
+            authWindow?.close();
+          } catch (error) {
+            console.warn("Could not close popup from parent:", error);
+          }
+          setError(
+            `Failed to connect ${platform}: ${
+              event.data.error || "OAuth failed"
+            }`
+          );
+          window.removeEventListener("message", messageListener);
         }
-  
-        // Listen for messages from the OAuth callback
-        const messageListener = (event: MessageEvent) => {
-          if (
-            event.data.type === "oauth_success" &&
-            event.data.platform === platform
-          ) {
-            console.log("OAuth success for", platform);
-            // Close popup from parent window for better browser compatibility
-            try {
-              authWindow?.close();
-            } catch (error) {
-              console.warn("Could not close popup from parent:", error);
-            }
-            setTimeout(checkConnectedPlatforms, 1000);
-            window.removeEventListener("message", messageListener);
-          } else if (event.data.type === "oauth_error") {
-            console.error("OAuth error:", event.data.error);
-            // Close popup from parent window for better browser compatibility
-            try {
-              authWindow?.close();
-            } catch (error) {
-              console.warn("Could not close popup from parent:", error);
-            }
-            setError(
-              `Failed to connect ${platform}: ${
-                event.data.error || "OAuth failed"
-              }`
-            );
-            window.removeEventListener("message", messageListener);
-          }
-        };
-  
-        window.addEventListener("message", messageListener);
-  
-        // Monitor window closure
-        const checkClosed = setInterval(() => {
-          if (authWindow?.closed) {
-            clearInterval(checkClosed);
-            window.removeEventListener("message", messageListener);
-            setTimeout(checkConnectedPlatforms, 1000);
-          }
-        }, 1000);
-      } catch (error) {
-        console.error("Error connecting to platform:", error);
-        setError(
-          `Failed to connect ${platform}: ${
-            error instanceof Error ? error.message : "Connection failed"
-          }`
-        );
-      } finally {
-        setConnectingPlatforms((prev) => prev.filter((p) => p !== platform));
-      }
-    };
-  
-    const handleDisconnect = async (platform: Platform) => {
-      try {
-        // Use the OAuth manager client for disconnecting (uses JWT authentication)
-        await oauthManagerClient.disconnectPlatform(platform);
-        checkConnectedPlatforms();
-      } catch (error) {
-        console.error("Failed to disconnect:", error);
-        setError(
-          `Failed to disconnect ${platform}: ${
-            error instanceof Error ? error.message : "Disconnection failed"
-          }`
-        );
-      }
-    };
-  
-    const renderPlatformIcon = (platform: Platform) => {
-      const IconComponent = getPlatformIcon(platform);
-  
-      if (!IconComponent) {
-        return (
-          <span className="text-lg font-bold ">{platform.substring(0, 2)}</span>
-        );
-      }
-  
-      return <IconComponent className="w-6 h-6" />;
-    };
+      };
+
+      window.addEventListener("message", messageListener);
+
+      // Monitor window closure
+      const checkClosed = setInterval(() => {
+        if (authWindow?.closed) {
+          clearInterval(checkClosed);
+          window.removeEventListener("message", messageListener);
+          setTimeout(checkConnectedPlatforms, 1000);
+        }
+      }, 1000);
+    } catch (error) {
+      console.error("Error connecting to platform:", error);
+      setError(
+        `Failed to connect ${platform}: ${
+          error instanceof Error ? error.message : "Connection failed"
+        }`
+      );
+    } finally {
+      setConnectingPlatforms((prev) => prev.filter((p) => p !== platform));
+    }
+  };
+
+  const handleDisconnect = async (platform: Platform) => {
+    try {
+      // Use the OAuth manager client for disconnecting (uses JWT authentication)
+      await oauthManagerClient.disconnectPlatform(platform);
+      checkConnectedPlatforms();
+    } catch (error) {
+      console.error("Failed to disconnect:", error);
+      setError(
+        `Failed to disconnect ${platform}: ${
+          error instanceof Error ? error.message : "Disconnection failed"
+        }`
+      );
+    }
+  };
+
+  const renderPlatformIcon = (platform: Platform) => {
+    const IconComponent = getPlatformIcon(platform);
+
+    if (!IconComponent) {
+      return (
+        <span className="text-lg font-bold ">{platform.substring(0, 2)}</span>
+      );
+    }
+
+    return <IconComponent className="w-6 h-6" />;
+  };
   const handlePublish = async () => {
     // Filter to only connected platforms that are selected and not already published
     const availablePlatforms = selectedPlatforms.filter(
@@ -365,7 +365,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
   };
 
   return (
-    <div className="theme-bg-light max-w-4xl mx-auto    ">
+    <div className="theme-bg-light max-w-5xl mx-auto    ">
       <div className="lg:px-4 px-3 lg:py-8 py-4">
         <h2 className="text-2xl font-bold theme-text-primary mb-2">
           {t("publish_posts")}

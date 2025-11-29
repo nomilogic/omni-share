@@ -339,7 +339,7 @@ export const ContentPage: React.FC = () => {
       {/* Generate Modal - Show AI Generator as modal instead of route */}
       {showGenerateModal && state.contentData && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 h-full">
-          <div className="bg-white min-h-screen flex items-center justify-center w-full h-full overflow-y-auto modal-content">
+          <div className="bg-white  w-full h-full overflow-y-auto modal-content">
             <div className="max-w-5xl m-auto  ">
               <AIGenerator
                 contentData={state.contentData}

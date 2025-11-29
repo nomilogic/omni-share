@@ -353,7 +353,6 @@ function HomePage() {
       notify("error", err.response?.data?.message || "Something went wrong");
     }
   };
-  const [loading, setLoading] = useState(false);
 
   return (
     <div className="min-h-screen bg-white overflow-x-hidden">
