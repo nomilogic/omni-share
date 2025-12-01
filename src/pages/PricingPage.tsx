@@ -461,9 +461,12 @@ export const PricingPage: React.FC = () => {
             {user?.wallet?.package.tier === "free" ? (
               <div className="col-span-3 text-center text-red-500 text-sm min-h-[40vh] flex flex-col justify-center items-center">
                 Purchase a Standard or Pro plan to get credits.{" "}
-                <span className="text-[#7650e3] underline cursor-pointer">
+                <button
+                  onClick={() => setActiveTab("")}
+                  className="text-[#7650e3] underline cursor-pointer"
+                >
                   Click here to choose your package.
-                </span>
+                </button>
               </div>
             ) : addons?.length === 0 ? (
               <p className="col-span-3 text-center text-[#7650e3]">
