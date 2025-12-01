@@ -13,7 +13,7 @@ import { notify } from "../utils/toast";
 import { useTranslation } from "react-i18next";
 
 export const PricingPage: React.FC = () => {
-  const { state, refreshUser, setProcessing, packages, addons, loader } =
+  const { state, refreshUser, setProcessing, packages, addons, loader, user } =
     useAppContext();
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -277,7 +277,7 @@ export const PricingPage: React.FC = () => {
           >
             {t("plans")}
           </button>
-          {activePackage?.package?.tier !== "free" && !hasCancelRequested && (
+          {!hasCancelRequested && (
             <button
               onClick={() => handleTabChange("addons")}
               className={`px-5 pb-2  font-semibold transition-all border-b-2 rounded-t-lg ${
@@ -344,6 +344,8 @@ export const PricingPage: React.FC = () => {
                   !isPendingDowngradePackage;
 
                 const isFree = tier.amount === 0;
+                if (Number(tier.amount) < Number(currentTier?.amount))
+                  return null;
 
                 return (
                   <div
@@ -453,90 +455,100 @@ export const PricingPage: React.FC = () => {
           )}
         </>
       )}
-      {activePackage?.package?.tier !== "free" && activeTab === "addons" && (
+      {activeTab === "addons" && (
         <>
-          {loader ? (
-            <div className=" flex flex-col justify-center items-center min-h-[40vh]">
-              <Icon name="spiral-logo" size={45} className="animate-spin" />
-              <p className="mt-1 text-base font-medium text-gray-500">
-                Loading Omnicoins....
+          <div className="grid xl:grid-cols-3 md:grid-cols-2 gap-5">
+            {user?.wallet?.package.tier === "free" ? (
+              <div className="col-span-3 text-center text-red-500 text-sm min-h-[40vh] flex flex-col justify-center items-center">
+                Purchase a Standard or Pro plan to get credits.{" "}
+                <span className="text-[#7650e3] underline cursor-pointer">
+                  Click here to choose your package.
+                </span>
+              </div>
+            ) : addons?.length === 0 ? (
+              <p className="col-span-3 text-center text-[#7650e3]">
+                No credits available
               </p>
-            </div>
-          ) : (
-            <div className="grid xl:grid-cols-3  md:grid-cols-2 gap-5">
-              {addons?.length === 0 ? (
-                <p className="col-span-3 text-center text-[#7650e3]">
-                  No credits available
+            ) : loader ? (
+              <div className="flex flex-col justify-center items-center min-h-[40vh]">
+                <Icon name="spiral-logo" size={45} className="animate-spin" />
+                <p className="mt-1 text-base font-medium text-gray-500">
+                  Loading Omnicoins....
                 </p>
-              ) : (
-                addons?.map((addon) => {
-                  const hasSale = addon.isSale;
-                  const bonusAmount = addon.bonus || 0;
-                  const totalCoins = addon.coins + bonusAmount;
+              </div>
+            ) : (
+              addons?.map((addon) => {
+                const hasSale = addon.isSale;
+                const bonusAmount = addon.bonus || 0;
+                const totalCoins = addon.coins + bonusAmount;
 
-                  return (
-                    <div
-                      key={addon.id}
-                      className="rounded-md border-3 border-gray-200 shadow-md  bg-white transform transition-all relative w-full pt-3"
-                    >
-                      <div className="text-left font-medium text-3xl px-5 py-2.5  pb-[4rem]">
-                        <div className="flex items-center gap-1 mb-1">
-                          <div className="text-[22px] font-semibold text-slate-900">
-                            {totalCoins?.toLocaleString()}
-                          </div>
-                          {addon.isSale && (
-                            <span className="bg-[#7650e3] text-white px-2 py-0.5 rounded text-xs font-semibold">
-                              {t("flash_sale")}
+                return (
+                  <div
+                    key={addon.id}
+                    className="rounded-md border-3 border-gray-200 shadow-md bg-white transform transition-all relative w-full pt-3"
+                  >
+                    <div className="text-left font-medium text-3xl px-5 py-2.5 pb-[4rem]">
+                      <div className="flex items-center gap-1 mb-1">
+                        <div className="text-[22px] font-semibold text-slate-900">
+                          {totalCoins?.toLocaleString()}
+                        </div>
+
+                        {addon.isSale && (
+                          <span className="bg-[#7650e3] text-white px-2 py-0.5 rounded text-xs font-semibold">
+                            {t("flash_sale")}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="text-[0.8rem] text-slate-800 -mt-[18px] w-full">
+                        {hasSale ? (
+                          <>
+                            {t("total")}: {addon.coins.toLocaleString()}{" "}
+                            <span className="mx-1">+</span>
+                            <span className="text-[#7650e3] inline-block">
+                              {bonusAmount.toLocaleString()} {t("bonus")}
                             </span>
-                          )}
-                        </div>
-                        <div className="text-[0.8rem] text-slate-800 -mt-[18px]  w-full">
-                          {hasSale ? (
-                            <>
-                              {t("total")}: {addon.coins.toLocaleString()}{" "}
-                              <span className="mx-1">+</span>
-                              <span className="text-[#7650e3] inline-block">
-                                {bonusAmount.toLocaleString()} {t("bonus")}
-                              </span>
-                            </>
-                          ) : (
-                            <>Total: {totalCoins.toLocaleString()}</>
-                          )}
-                        </div>
-
-                        <Icon
-                          name="spiral-grey"
-                          className="absolute -z-10 top-3 right-2"
-                          size={120}
-                        />
+                          </>
+                        ) : (
+                          <>Total: {totalCoins.toLocaleString()}</>
+                        )}
                       </div>
 
-                      <div className="flex justify-between bg-purple-100 items-center px-5  py-2.5 rounded-b-md">
-                        <p className="text-center text-2xl text-purple-600 font-semibold ">
-                          {langToCurrencySymbol[selectedCurrency] || ""}
-                          {convertedAddonAmounts[addon.id] ?? addon.amount}
-                        </p>
-                        <button
-                          disabled={
-                            selectedAddon?.id === addon.id || loadingAddon
-                          }
-                          onClick={() => {
-                            setSelectedAddon(addon);
-                            handleBuyAddon(addon);
-                          }}
-                          className="rounded-md theme-bg-light  w-fit  px-3 disabled:cursor-not-allowed  font-bold text-base py-1  border border-[#7650e3] text-[#7650e3] hover:bg-[#d7d7fc] transition hover:text-purple-600"
-                        >
-                          {selectedAddon?.id === addon.id
-                            ? "Buying...."
-                            : t("buy_now")}
-                        </button>
-                      </div>
+                      <Icon
+                        name="spiral-grey"
+                        className="absolute -z-10 top-3 right-2"
+                        size={120}
+                      />
                     </div>
-                  );
-                })
-              )}
-            </div>
-          )}
+
+                    <div className="flex justify-between bg-purple-100 items-center px-5 py-2.5 rounded-b-md">
+                      <p className="text-center text-2xl text-purple-600 font-semibold">
+                        {langToCurrencySymbol[selectedCurrency] || ""}
+                        {convertedAddonAmounts[addon.id] ?? addon.amount}
+                      </p>
+
+                      <button
+                        disabled={
+                          user?.wallet?.package.tier === "free" ||
+                          selectedAddon?.id === addon.id ||
+                          loadingAddon
+                        }
+                        onClick={() => {
+                          setSelectedAddon(addon);
+                          handleBuyAddon(addon);
+                        }}
+                        className="rounded-md theme-bg-light w-fit px-3 disabled:cursor-not-allowed font-bold text-base py-1 border border-[#7650e3] text-[#7650e3] hover:bg-[#d7d7fc] transition hover:text-purple-600"
+                      >
+                        {selectedAddon?.id === addon.id
+                          ? "Buying...."
+                          : t("buy_now")}
+                      </button>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
         </>
       )}
     </div>
