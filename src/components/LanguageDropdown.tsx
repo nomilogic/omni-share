@@ -32,7 +32,7 @@ export const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
 
   const label = i18n.language?.startsWith("zh")
     ? "中文"
-    : i18n.language?.startsWith("en")
+    : i18n.language?.startsWith("es")
     ? "ES"
     : "EN";
 

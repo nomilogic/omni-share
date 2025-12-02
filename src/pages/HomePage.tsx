@@ -409,7 +409,7 @@ function HomePage() {
               ))}
             </nav>
 
-            <div className=" p-4 space-y-3 ml-1 w-20">
+            <div className=" p-4 space-y-3 ml-1 w-[100px]">
               <LanguageDropdown alignRight={false} />
             </div>
 
