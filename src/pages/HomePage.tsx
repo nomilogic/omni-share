@@ -716,7 +716,7 @@ function HomePage() {
                 </motion.button>
                 <LanguageDropdown
                   alignRight={false}
-                  className="bg-inherit text-white border-white"
+                  className="bg-white/10 text-white border-white"
                 />
               </data>
             </div>
