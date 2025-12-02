@@ -31,7 +31,7 @@ const CommunitySignup: React.FC = () => {
   };
 
   return (
-    <div className="relative bg-gray-50 py-20 overflow-hidden">
+    <div className="relative bg-white pb-20 overflow-hidden">
       {/* Floating Decorative Dots/Shapes (Mimicking the image) */}
       {/* Top Left - Small Blue Dot */}
       <div className="absolute top-1/4 left-1/4 w-1.5 h-1.5 bg-blue-400 rounded-full opacity-60 hidden sm:block"></div>
@@ -89,7 +89,7 @@ const CommunitySignup: React.FC = () => {
                 {...register("email")}
               />
               {errors.email && (
-                <p className="text-red-500 text-sm mt-1 md:text-left text-center">
+                <p className="text-red-500 text-sm mt-1">
                   {errors.email.message}
                 </p>
               )}
@@ -98,7 +98,7 @@ const CommunitySignup: React.FC = () => {
             <div className="mt-3 sm:mt-0 sm:ml-4">
               <button
                 type="submit"
-                className={`px-4 py-2 w-[30%] sm:w-[110px] rounded-md border font-medium shadow-lg transition
+                className={`px-4 py-2 w-[40%] sm:w-[110px] rounded-md border font-medium shadow-lg transition
                     ${
                       loading
                         ? "bg-purple-600 text-white border-purple-600 cursor-not-allowed"
