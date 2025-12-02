@@ -50,7 +50,7 @@ export const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        className={`px-2  p-1 rounded-md text-sm bg-white/10 hover:bg-white/20 border border-white/20 flex justify-center items-center  transition-all ${
+        className={`px-2  p-0.5 text-xs rounded-md  bg-white/10 hover:bg-white/20 border border-white/20 flex justify-center items-center  transition-all ${
           className ?? ""
         }`}
       >
@@ -60,9 +60,7 @@ export const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
       {open && (
         <div
           role="menu"
-          className={`mt-2 w-[80px] bg-white rounded-md shadow-lg z-50 overflow-hidden ${
-            alignRight ? "right-0" : "left-0"
-          } absolute `}
+          className={`mt-2 w-[80px] bg-white rounded-md shadow-lg z-50 overflow-hidden ${"left-0"} absolute `}
         >
           <button
             role="menuitem"
