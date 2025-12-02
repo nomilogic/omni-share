@@ -709,13 +709,13 @@ function HomePage() {
               )}
 
               <data className="flex items-center gap-2 w-full">
-                <LanguageDropdown alignRight={true} />
                 <motion.button
                   onClick={() => navigate("/auth")}
                   className="bg-white text-[#7650e3] px-6 py-2.5 text-base rounded-full font-semibold shadow-lg"
                 >
                   {t("get_started")}
                 </motion.button>
+                <LanguageDropdown alignRight={true} />
               </data>
             </div>
 
