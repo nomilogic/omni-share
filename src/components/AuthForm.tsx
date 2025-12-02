@@ -259,7 +259,9 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         if (profile && (profile as any).isOnboarding === false) {
           import("../lib/navigation")
             .then(({ navigateOnce }) => {
-              navigateOnce(navigate, "/dashboard?profile=true", { replace: true });
+              navigateOnce(navigate, "/dashboard?profile=true", {
+                replace: true,
+              });
             })
             .catch((err) => {
               console.error("failed to load navigation helper", err);
@@ -294,7 +296,9 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         if (profile && (profile as any).isOnboarding === false) {
           import("../lib/navigation")
             .then(({ navigateOnce }) => {
-              navigateOnce(navigate, "/dashboard?profile=true", { replace: true });
+              navigateOnce(navigate, "/dashboard?profile=true", {
+                replace: true,
+              });
             })
             .catch(() => {
               navigate("/dashboard?profile=true", { replace: true });
@@ -340,9 +344,9 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         <div
           className={`z-10  md:max-w-md md:bg-gray-50 flex items-center flex-col w-full justify-start md:shadow-md rounded-md py-6 ${
             mode !== "login" && mode !== "signup" ? "h-[480px]" : "h-[750px]"
-          } md:py-12  sm:px-6 md:px-10  md:border md:border-slate-200/70 md:backdrop-blur-sm`}
+          } md:py-10  sm:px-6 md:px-10  md:border md:border-slate-200/70 md:backdrop-blur-sm`}
         >
-          <div className="flex relative items-center justify-center mb-6 sm:mb-8 w-full ">
+          <div className="flex relative items-center justify-center mb-4 sm:mb-6 w-full ">
             {mode !== "login" && (
               <button onClick={resetMode} className="absolute left-0">
                 <img src={backArrow} className="w-full h-full" alt="" />

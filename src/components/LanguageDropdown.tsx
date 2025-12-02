@@ -39,7 +39,7 @@ export const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
   return (
     <div
       ref={ref}
-      className={`relative border border-purple-600 bg-white text-purple-600  rounded-md  md:block hidden mr-1 ${
+      className={`relative border border-purple-600 bg-white text-purple-600  rounded-md  mr-1 ${
         className
           ? className
           : " border border-purple-600 text-purple-600 rounded-md "
@@ -50,12 +50,11 @@ export const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        className={`px-4 py-1 rounded-md text-sm bg-white/10 hover:bg-white/20 border border-white/20 flex items-center gap-2 transition-all ${
+        className={`px-2 w-[85px] p-1 rounded-md text-sm bg-white/10 hover:bg-white/20 border border-white/20 flex justify-center items-center  transition-all ${
           className ?? ""
         }`}
       >
         <span className="font-medium text-sm">{label}</span>
-        <ChevronDown className="w-4 h-4" />
       </button>
 
       {open && (
@@ -68,21 +67,21 @@ export const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
           <button
             role="menuitem"
             onClick={() => changeLang("en")}
-            className="w-full text-left px-4 py-2 text-sm hover:bg-purple-50 text-gray-900 font-medium transition-colors"
+            className="w-full text-left px-4 py-2 text-sm hover:bg-purple-50 text-purple-600 text-gray-900 font-medium transition-colors"
           >
             EN
           </button>
           <button
             role="menuitem"
             onClick={() => changeLang("es")}
-            className="w-full text-left px-4 py-2 text-sm hover:bg-purple-50 text-gray-900 font-medium transition-colors"
+            className="w-full text-left px-4 py-2 text-sm hover:bg-purple-50 text-purple-600 text-gray-900 font-medium transition-colors"
           >
             ES
           </button>
           <button
             role="menuitem"
             onClick={() => changeLang("zh")}
-            className="w-full text-left px-4 py-2 text-sm hover:bg-purple-50 text-gray-900 font-medium transition-colors"
+            className="w-full text-left px-4 py-2 text-sm hover:bg-purple-50 text-purple-600 text-gray-900 font-medium transition-colors"
           >
             中文
           </button>

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, toLocaleString } from "react";
 import { ResizeContext } from "../../context/ResizeContext";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
@@ -138,6 +138,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const [showPackage, setShowPackage] = useState(false);
   const [isCanceled, setIsCanceled] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  useEffect(() => {
+    const handleClickOutside = () => setShowPackage(false);
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, []);
 
   const cancelSubscription = async () => {
     try {
@@ -155,6 +160,36 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       setIsCanceled(false);
     }
   };
+  const [planMsgOpen, setPlanMsgOpen] = useState(false);
+  const [coinsMsgOpen, setCoinsMsgOpen] = useState(false);
+  const [referralMsgOpen, setReferralMsgOpen] = useState(false);
+
+  const planRef = useRef<HTMLDivElement>(null);
+  const coinsRef = useRef<HTMLDivElement>(null);
+  const referralRef = useRef<HTMLDivElement>(null);
+
+  // Close messages on outside click
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (planRef.current && !planRef.current.contains(event.target as Node)) {
+        setPlanMsgOpen(false);
+      }
+      if (
+        coinsRef.current &&
+        !coinsRef.current.contains(event.target as Node)
+      ) {
+        setCoinsMsgOpen(false);
+      }
+      if (
+        referralRef.current &&
+        !referralRef.current.contains(event.target as Node)
+      ) {
+        setReferralMsgOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <ResizeContext.Provider value={{ handleResizeMainToFullScreen }}>
@@ -166,7 +201,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             } transition-transform duration-300 ease-in-out`}
           >
             <div className="flex items-center justify-between border-b border-white/20 p-2 py-3 ">
-              <span className="flex items-center">
+              <Link
+                to="/dashboard"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="flex items-center"
+              >
                 <Icon
                   name="spiral-logo"
                   className="ml-2 brightness-[200]"
@@ -175,7 +214,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 <span className="theme-text-primary text-2xl lg:text-[1.6rem] tracking-tight ml-3">
                   <img src={LogoWhiteText} alt="Logo" className="h-4" />
                 </span>
-              </span>
+              </Link>
 
               <button
                 onClick={() => setIsMobileMenuOpen(false)}
@@ -271,53 +310,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 </div>
               </button>
             </div>
-            {/* <div className="flex gap-2 mt-2.5 md:px-5 px-3">
-              <button
-                onClick={() => {
-                  i18n.changeLanguage("en");
-                  localStorage.setItem("siteLang", "en");
-                }}
-                className={`px-3 py-1 rounded-md text-sm 
-      ${
-        i18n.language === "en"
-          ? "bg-purple-600 text-white border border-white"
-          : "bg-white text-purple-600 hover:bg-gray-100"
-      }`}
-              >
-                EN
-              </button>
-
-              <button
-                onClick={() => {
-                  i18n.changeLanguage("es");
-                  localStorage.setItem("siteLang", "es");
-                }}
-                className={`px-3 py-1 rounded-md text-sm 
-      ${
-        i18n.language === "es"
-          ? "bg-purple-600 text-white border border-white"
-          : "bg-white text-purple-600 hover:bg-gray-100"
-      }`}
-              >
-                ES
-              </button>
-
-              <button
-                onClick={() => {
-                  i18n.changeLanguage("zh");
-                  localStorage.setItem("siteLang", "zh");
-                }}
-                className={`px-3 py-1 rounded-md text-sm 
-      ${
-        i18n.language === "zh"
-          ? "bg-purple-600 text-white border border-white"
-          : "bg-white text-purple-600 hover:bg-gray-100"
-      }`}
-              >
-                中文
-              </button>
-            </div> */}
-
             <div className="flex gap-2 mt-2.5 md:px-5 px-3 text-white ">
               <LanguageDropdown alignRight={false} />
             </div>
@@ -516,7 +508,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           </div>
           <div className="fixed top-0 z-10 w-full  border-b border-white/20 md:px-4 py-4  px-3 bg-white h-[60px]">
             <div className=" flex items-center justify-between mt-0 ">
-              <div className="flex items-center">
+              <div className="flex gap-3 items-center">
                 <button
                   onClick={() => setIsMobileMenuOpen(true)}
                   className=" rounded-md theme-text-primary hover:theme-text-secondary relative"
@@ -530,49 +522,70 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 </button>
               </div>
 
-              {/* <div className="-ml-[73px] absolute  left-[40%]">
-              <LanguageDropdown/>
-               </div> */}
-
-              <div className="-ml-[73px] absolute  left-[50%] ">
+              <Link
+                to="/dashboard"
+                className="-ml-[73px] absolute  left-[50%] "
+              >
                 <img src={logoText} alt="Logo" className="h-4   " />
-              </div>
+              </Link>
 
               <div className="flex items-center space-x-1">
-                <LanguageDropdown />
+                <div className=" md:block hidden">
+                  <LanguageDropdown />
+                </div>
                 <div className="flex gap-x-4 items-center">
                   <WalletBalance
-                    setShowPackage={() => setShowPackage(!showPackage)}
+                    setShowPackage={(e: any) => {
+                      e.stopPropagation();
+                      setShowPackage((prev) => !prev);
+                    }}
                     balance={balance.toLocaleString()}
                     showPackage={showPackage}
                   />
 
                   {showPackage && (
-                    <div className="absolute bg-gray-50  z-20 lg:left-auto top-8 left-3 right-3 mt-6 rounded-md shadow-md md:px-6 px-4 py-6 border md:w-[370px] w-auto">
+                    <div className="absolute bg-gray-50 z-20 lg:left-auto top-5 right-16 mt-6 rounded-md shadow-md md:px-6 px-4 py-6 border md:w-[370px] w-auto">
                       {user?.wallet?.package ? (
                         <>
+                          {/* Plan Section */}
                           <div className="flex justify-between items-start mb-3">
-                            <div className="flex items-start gap-2">
+                            <div className="flex items-start gap-2 text-slate-800 text-md font-medium">
                               <Icon name="crown" size={24} />
                               <div>
                                 <div className="flex items-center gap-3">
                                   <h2 className="text-base font-semibold text-slate-800">
                                     {t("my_plan")}
                                   </h2>
-                                  <span
-                                    className="text-slate-300 cursor-pointer text-xs"
-                                    title={`This is your current plan: ${
-                                      user.wallet?.package?.name || "FREE"
-                                    } with ${
-                                      user.wallet?.coins ?? 0
-                                    } coins. You can also view other plans and the coins they include.`}
-                                  >
-                                    <Icon name="question-mark" size={17} />
-                                  </span>
+                                  <div className="relative" ref={planRef}>
+                                    <button
+                                      onClick={(e: any) => {
+                                        e.stopPropagation();
+                                        e.preventDefault();
+                                        setPlanMsgOpen((prev) => !prev);
+                                      }}
+                                      className="text-slate-300 cursor-pointer text-xs"
+                                    >
+                                      <Icon name="question-mark" size={17} />
+                                    </button>
+                                    {planMsgOpen && (
+                                      <div className="absolute left-0 top-full mt-1 w-56 p-2 bg-gray-50 border rounded-md shadow-lg z-50 text-xs text-purple-600">
+                                        This is your current plan:{" "}
+                                        <span className="font-semibold">
+                                          {user.wallet?.package?.name || "FREE"}
+                                        </span>{" "}
+                                        with{" "}
+                                        <span className="font-semibold">
+                                          {user.wallet?.coins ?? 0}
+                                        </span>{" "}
+                                        coins. You can also view other plans and
+                                        the coins they include.
+                                      </div>
+                                    )}
+                                  </div>
                                 </div>
-                                <p className="text-sm text-slate-700   font-medium  ">
+                                <p className="text-sm text-black font-medium mt-1">
                                   {t("renewing_on")}{" "}
-                                  <span className="text-slate-700 font-medium">
+                                  <span className="text-black font-medium">
                                     {user.wallet.expiresAt
                                       ? new Date(
                                           user.wallet.expiresAt
@@ -588,58 +601,91 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                             </div>
 
                             <span
-                              className="text-base font-semibold "
+                              className="text-base font-semibold"
                               style={{ color: "#7650e3" }}
                             >
                               {user.wallet?.package?.name || "FREE"}
                             </span>
                           </div>
 
-                          <div className=" space-y-3 ">
+                          {/* Omni Coins */}
+                          <div className="space-y-3">
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-2 text-slate-800 text-md font-medium">
                                 <Icon name="spiral-logo" />
                                 <div className="flex items-center gap-3">
                                   <p>Omni Coins</p>
-
-                                  <span
-                                    className="text-slate-300 text-xs cursor-pointer"
-                                    title={`This package gives you ${
-                                      user.wallet?.coins?.toLocaleString() ?? 0
-                                    } coins. Your vault limit is ${
-                                      user.wallet?.package?.coinLimit?.toLocaleString() ??
-                                      0
-                                    } coins. You can buy extra credits anytime, but you cannot exceed your vault limit.`}
-                                  >
-                                    <Icon name="question-mark" size={17} />
-                                  </span>
+                                  <div className="relative" ref={coinsRef}>
+                                    <button
+                                      onClick={(e: any) => {
+                                        e.stopPropagation();
+                                        e.preventDefault();
+                                        setCoinsMsgOpen((prev) => !prev);
+                                      }}
+                                      className="text-slate-300 text-xs cursor-pointer"
+                                    >
+                                      <Icon name="question-mark" size={17} />
+                                    </button>
+                                    {coinsMsgOpen && (
+                                      <div className="absolute left-0 top-full mt-1 w-56 p-2 bg-gray-50 border rounded-md shadow-lg z-50 text-xs text-purple-600">
+                                        This package gives you{" "}
+                                        <span className="font-semibold">
+                                          {user.wallet?.coins?.toLocaleString() ??
+                                            0}
+                                        </span>{" "}
+                                        coins. Your vault limit is{" "}
+                                        <span className="font-semibold">
+                                          {user.wallet?.package?.coinLimit?.toLocaleString() ??
+                                            0}
+                                        </span>{" "}
+                                        coins. You can buy extra credits
+                                        anytime, but you cannot exceed your
+                                        vault limit.
+                                      </div>
+                                    )}
+                                  </div>
                                 </div>
                               </div>
                               <p
                                 className="text-base font-semibold"
                                 style={{ color: "#7650e3" }}
                               >
-                                {user.wallet.coins.toLocaleString() ?? 0}/{" "}
+                                {user.wallet.coins.toLocaleString() ?? 0}/
                                 {user.wallet.package.coinLimit.toLocaleString()}
                               </p>
                             </div>
 
+                            {/* Referral Coins */}
                             <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2 text-md text-slate-800 font-medium ">
-                                <Icon name="share" className="scale-[0.8] " />
-
+                              <div className="flex items-center gap-2 text-md text-slate-800 font-medium">
+                                <Icon name="share" className="scale-[0.8]" />
                                 <div className="flex items-center gap-3">
-                                  <p> {t("referral_coins")}</p>
-
-                                  <span
-                                    className="text-slate-300 text-xs cursor-pointer"
-                                    title={`Referral coins are always used first. You currently have ${
-                                      user?.wallet?.referralCoin?.toLocaleString() ??
-                                      0
-                                    } referral coins. Once referral coins run out, your purchased package coins will be used.`}
-                                  >
-                                    <Icon name="question-mark" size={17} />
-                                  </span>
+                                  <p>{t("referral_coins")}</p>
+                                  <div className="relative" ref={referralRef}>
+                                    <button
+                                      onClick={(e: any) => {
+                                        e.stopPropagation();
+                                        e.preventDefault();
+                                        setReferralMsgOpen((prev) => !prev);
+                                      }}
+                                      className="text-slate-300 text-xs cursor-pointer"
+                                    >
+                                      <Icon name="question-mark" size={17} />
+                                    </button>
+                                    {referralMsgOpen && (
+                                      <div className="absolute left-0 top-full mt-1 w-56 p-2 bg-gray-50 border rounded-md shadow-lg z-50 text-xs text-purple-600">
+                                        Referral coins are always used first.
+                                        You currently have{" "}
+                                        <span className="font-semibold">
+                                          {user?.wallet?.referralCoin?.toLocaleString() ??
+                                            0}
+                                        </span>{" "}
+                                        referral coins. Once referral coins run
+                                        out, your purchased package coins will
+                                        be used.
+                                      </div>
+                                    )}
+                                  </div>
                                 </div>
                               </div>
                               <p
@@ -650,13 +696,14 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                               </p>
                             </div>
                           </div>
+
+                          {/* More info and buttons */}
                           <p className="text-base my-4">
                             {t("more_info")}{" "}
                             <Link
                               className="text-purple-600 font-medium"
                               to="/faq"
                             >
-                              {" "}
                               FAQ
                             </Link>
                           </p>
@@ -664,7 +711,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                           {user?.wallet?.package?.tier !== "free" && (
                             <button
                               onClick={() => openManageSubscription()}
-                              className="w-full py-2.5  text-md font-semibold rounded-md border bg-white flex items-center justify-center gap-2 transition  hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
+                              className="w-full py-2.5 text-md font-semibold rounded-md border bg-white flex items-center justify-center gap-2 transition hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
                               style={{
                                 borderColor: "#7650e3",
                                 color: "#7650e3",
@@ -682,7 +729,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                           <Link
                             to="/pricing"
                             onClick={() => setShowPackage(false)}
-                            className="w-full mt-3 px-3 py-2.5  border  text-md font-semibold rounded-md group flex items-center justify-center gap-2  text-white bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] border-[#7650e3]  "
+                            className="w-full mt-3 px-3 py-2.5 border text-md font-semibold rounded-md group flex items-center justify-center gap-2 text-white bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] border-[#7650e3]"
                           >
                             <div className="group-hover:filter-omni h-full w-full text-center">
                               <Icon
