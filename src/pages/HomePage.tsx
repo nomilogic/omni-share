@@ -1260,7 +1260,7 @@ function HomePage() {
               }}
               whileTap={{ scale: 0.95 }}
             >
-              {visibleCount === 6 ? t("Load More") : t("Show Less")}
+              {visibleCount === 6 ? t("load_more") : t("show_less")}
               <motion.div
                 animate={{ rotate: visibleCount === faqs.length ? 180 : 0 }}
                 transition={{ duration: 0.3 }}
