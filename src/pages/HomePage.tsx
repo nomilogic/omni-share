@@ -35,7 +35,7 @@ import TwoColumnSection2 from "@/components/TwoColumnSection2";
 import FeaturesPage from "@/components/FeaturesPage";
 import CommunitySignup from "@/components/CommunitySignup";
 import TwoColumnSection from "@/components/TwoColumnSection";
-import IntroVideo from "../assets/OMNISHARE.00.mp4";
+import IntroVideo from "../assets/Omnishare Ad.00.mp4";
 import { Platform } from "@/types";
 
 import { notify } from "@/utils/toast";
@@ -147,7 +147,7 @@ function HomePage() {
 
   const reviews = [
     {
-      name: "Sarah Johnson",
+      name: "Sophie Jameson",
       role: "Social Media Manager",
       company: "TechFlow Inc",
       rating: 5,
@@ -155,36 +155,36 @@ function HomePage() {
       avatar: "SJ",
     },
     {
-      name: "Michael Chen",
+      name: "Kevin Liu",
       role: "Marketing Director",
       company: "GrowthLabs",
       rating: 5,
       text: t("testimonial_2"),
-      avatar: "MC",
+      avatar: "KL",
     },
     {
-      name: "Emily Rodriguez",
+      name: "Natalie Cruz",
       role: "Content Creator",
       company: "Creative Studio",
       rating: 5,
       text: t("testimonial_3"),
-      avatar: "ER",
+      avatar: "NC",
     },
     {
-      name: "David Thompson",
+      name: "Matthew Sullivan",
       role: "CEO",
       company: "StartupHub",
       rating: 5,
       text: t("testimonial_4"),
-      avatar: "DT",
+      avatar: "MS",
     },
     {
-      name: "Lisa Martinez",
+      name: "Camila Rivera",
       role: "Brand Manager",
       company: "Fashion Forward",
       rating: 5,
       text: t("testimonial_5"),
-      avatar: "LM",
+      avatar: "CR",
     },
   ];
 
@@ -358,7 +358,7 @@ function HomePage() {
             animate={{ x: 0 }}
             exit={{ x: "-100%" }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="fixed inset-y-0 left-0 z-50 w-full sm:w-[60%] bg-[#7650e3] transform md:hidden overflow-y-auto"
+            className="fixed inset-y-0 left-0 z-50 w-full sm:w-[60%] bg-[#7650e3] transform lg:hidden overflow-y-auto"
           >
             {/* Header with Logo and Close Button */}
             <div className="flex items-center justify-between border-b border-white/20 p-2 py-3">
@@ -396,7 +396,7 @@ function HomePage() {
               ].map((item, index) => (
                 <motion.button
                   key={item.name}
-                  onClick={() => scrollToSection(item.name.toLowerCase())}
+                  onClick={() => scrollToSection(item.name)}
                   className="flex items-center px-4 py-3 text-white font-medium rounded-md transition-colors hover:bg-[#d7d7fc] hover:text-[#7650e3]"
                   initial={{ x: -50, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
@@ -409,7 +409,7 @@ function HomePage() {
               ))}
             </nav>
 
-            <div className=" p-4 space-y-3 ml-3">
+            <div className=" p-4 space-y-3 ml-1 w-20">
               <LanguageDropdown alignRight={false} />
             </div>
 
@@ -650,8 +650,7 @@ function HomePage() {
         }`}
       >
         <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-[10%]">
-          <div className="flex justify-between items-center h-20 flex-row-reverse md:flex-row">
-            <div className="lg:hidden"></div>
+          <div className="flex justify-between items-center h-20 flex-row-reverse lg:flex-row ">
             <motion.div
               className="flex items-center space-x-2"
               whileHover={{ scale: 1.05 }}
@@ -674,8 +673,8 @@ function HomePage() {
             </motion.div>
 
             {/* Desktop Menu */}
-            <div className="hidden md:flex items-center space-x-8">
-              {[t("home"), t("features"), t("faq2"), t("contact")].map(
+            <div className="hidden lg:flex items-center space-x-8 ">
+              {[t("home"), t("features"), t("faq"), t("contact")].map(
                 (section, index) => (
                   <motion.button
                     key={section}
@@ -708,19 +707,22 @@ function HomePage() {
                 )
               )}
 
-              <data className="flex items-center gap-2 w-full">
+              <data className="flex items-center gap-2 w-auto">
                 <motion.button
                   onClick={() => navigate("/auth")}
                   className="bg-white text-[#7650e3] px-6 py-2.5 text-base rounded-full font-semibold shadow-lg"
                 >
                   {t("get_started")}
                 </motion.button>
-                <LanguageDropdown alignRight={true} />
+                <LanguageDropdown
+                  alignRight={false}
+                  className="bg-inherit text-white border-white"
+                />
               </data>
             </div>
 
             <motion.button
-              className={`md:hidden transition-colors ${
+              className={`lg:hidden transition-colors ${
                 scrollY > 50 ? "text-white" : "text-white"
               }`}
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -767,7 +769,7 @@ function HomePage() {
               type: "spring",
               stiffness: 80,
             }}
-            className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight"
+            className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight"
           >
             {t("ai_social_media")}
             <br />
@@ -1012,9 +1014,10 @@ function HomePage() {
               preload="none"
               poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080'%3E%3Crect fill='%23111827' width='1920' height='1080'/%3E%3C/svg%3E"
               className="absolute inset-0 w-full h-full object-cover"
+              controls
             />
 
-            <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/70 to-transparent">
+            <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/70 to-transparent pointer-events-none hidden sm:block">
               <p className="text-white text-lg font-semibold">
                 Introduction to Omnishare
               </p>
@@ -1169,7 +1172,7 @@ function HomePage() {
         </div>
       </section>
 
-      <section id="FAQ" className="py-20 bg-gray-50">
+      <section id="faq" className="py-20 bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             className="text-center mb-16"
@@ -1179,7 +1182,7 @@ function HomePage() {
             transition={{ duration: 0.6, type: "spring", stiffness: 80 }}
           >
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              {t("faq")}
+              {t("faq2")}
             </h2>
             <p className="text-xl text-gray-500 font-medium">
               {t("faq_message")}
@@ -1447,7 +1450,7 @@ function HomePage() {
           viewport={{ once: true }}
         >
           <div className="w-full mx-auto pt-2 md:px-[10%] px-3 flex flex-col sm:flex-row items-center md:justify-between gap-3">
-            <span className="">© {new Date().getFullYear()} OMNISHARE</span>
+            <span className="">© {new Date().getFullYear()} Omni Share</span>
 
             <div className="flex flex-wrap justify-center space-x-3 text-sm theme-text-light">
               <Link
