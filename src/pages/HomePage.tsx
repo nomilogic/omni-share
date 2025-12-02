@@ -44,7 +44,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import OmniVideo from "../assets/video/omnishare.mp4";
 import LanguageDropdown from "../components/LanguageDropdown";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 
 function HomePage() {
   const { t, i18n } = useTranslation();
@@ -1275,7 +1275,7 @@ function HomePage() {
             transition={{ duration: 0.6, type: "spring", stiffness: 80 }}
           >
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              {t("contact_us")}
+              <Trans i18nKey="contact_us" components={{ br: <br /> }} />
             </h2>
             <p className="text-xl text-gray-500 font-medium mb-5">
               {t("contact_us_message")}
