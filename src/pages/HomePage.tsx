@@ -770,14 +770,7 @@ function HomePage() {
           >
             {t("ai_social_media")}
             <br />
-            <motion.span
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.5, type: "spring", stiffness: 100 }}
-              className="bg-gradient-to-r from-white text-white bg-white bg-clip-text text-transparent"
-            >
-              {t("made_simple")}
-            </motion.span>
+            
           </motion.h1>
 
           <motion.p
