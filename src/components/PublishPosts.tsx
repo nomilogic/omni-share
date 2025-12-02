@@ -15,7 +15,7 @@ import {
 import API from "../services/api";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useDiscardModals } from "../context2/DiscardModalContext";
+import { useDiscardModals } from "@/context2/DiscardModalContext";
 
 interface PublishProps {
   posts: GeneratedPost[];
@@ -904,7 +904,6 @@ export const PublishPosts: React.FC<PublishProps> = ({
           </div>
         )}
       </div>
-      
     </div>
   );
 };

@@ -25,7 +25,7 @@ import {
 import { useAppContext } from "@/context/AppContext";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useDiscardModals } from "../context2/DiscardModalContext";
+import { useDiscardModals } from "@/context2/DiscardModalContext";
 
 interface PostPreviewProps {
   posts: any[];

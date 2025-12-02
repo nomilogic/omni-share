@@ -36,6 +36,7 @@ import "../styles/drag-prevention.css";
 import "../styles/template-editor.css";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useDiscardModals } from "@/context2/DiscardModalContext";
 
 interface ImageTemplateEditorProps {
   imageUrl: string;
@@ -106,7 +107,6 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
   const [zoomLevel, setZoomLevel] = useState<number>(1);
   const [maxZoom, setMaxZoom] = useState<number>(1);
   const navigate = useNavigate();
-
 
   // Utility function to convert hex color to rgba with opacity
   const hexToRgba = (hex: string, opacity: number = 1): string => {
@@ -287,9 +287,6 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
       }
     }
   }, [elements, ctx, backgroundImage, isLoading]);
-
-
-  
 
   const redrawCanvas = (
     context: CanvasRenderingContext2D,
@@ -1115,8 +1112,6 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
     setElements((prev) => [...prev, newElement]);
     setSelectedElement(newElement.id);
   };
-
-  
 
   const createNewShapeElement = (shape: "rectangle" | "circle") => {
     if (!canvas) return;
@@ -2027,7 +2022,9 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
               {isSaving ? (
                 <>
                   <Loader className="w-3 h-3 md:w-4 md:h-4 animate-spin " />
-                  <span className="hidden sm:inline text-sm">{t("saving")}</span>
+                  <span className="hidden sm:inline text-sm">
+                    {t("saving")}
+                  </span>
                   <span className="sm:hidden text-sm">{t("saving")}</span>
                 </>
               ) : (
@@ -2039,12 +2036,10 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
 
             <button
               onClick={() => openDiscardImage(onCancel)}
-
               className="text-purple-600 flex justify-center items-center gap-2  font-medium w-full px-3 py-2.5  mx-1 rounded-md border border-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3]"
             >
               {t("discard_image")}
             </button>
-            
           </div>
         </div>
       </div>
@@ -2140,7 +2135,6 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
           </div>
         </div>
       </div>
-      
     </div>
   );
 };
