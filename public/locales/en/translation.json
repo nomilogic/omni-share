@@ -42,10 +42,10 @@
   "processing": "Processing",
   "processing2": "Processing...",
 <<<<<<< HEAD
-  "reactive_your_subscription": "Resume Your Subscription",
-=======
   "reactive_your_subscription": "Reactiveate Your Subscription",
->>>>>>> dc552a7b89a0ee59d0416e7568b67d35bfbb7ed6
+=======
+  "reactive_your_subscription": "Resume Your Subscription",
+>>>>>>> dd4a4ba7f82e7237dba66880e104bf9ba193b4d7
   "platforms": "platforms",
   "platform": "Platform",
   "faq2": "FAQ",
@@ -339,16 +339,16 @@
   "enter_confirm_password": "Confirm your new password",
   "update_password_button": "Update Password",
 <<<<<<< HEAD
-  "ai_social_media": "Create Powerful Content and Share It Everywhere with One Click",
-  "made_simple": "Made Simple",
-  "create_schedule_publish": "AI-powered platform that takes you from idea to multi-platform publishing effortlessly.",
-  "get_started_free": "Get Started Free",
-=======
   "ai_social_media": "Create Powerful Content and Share It Across Multiple Platforms in One Click",
   "made_simple": "",
   "create_schedule_publish": "AI-powered creation to distribution—with captions and descriptions optimized for each platform’s best practices.",
   "get_started_free": "Get Started for Free",
->>>>>>> dc552a7b89a0ee59d0416e7568b67d35bfbb7ed6
+=======
+  "ai_social_media": "Create Powerful Content and Share It Everywhere with One Click",
+  "made_simple": "Made Simple",
+  "create_schedule_publish": "AI-powered platform that takes you from idea to multi-platform publishing effortlessly.",
+  "get_started_free": "Get Started Free",
+>>>>>>> dd4a4ba7f82e7237dba66880e104bf9ba193b4d7
   "suite_social_success": "A Complete Platform for Social Success",
   "omni_content_creation": "AI-Powered Content That Performs",
   "omni_content_message": "Craft content that resonates, drives interaction, and amplifies your online presence effortlessly—transforming your ideas into high-impact, platform-ready posts with advanced AI to connect with your audience and strengthen your brand across every social channel.",
@@ -374,6 +374,8 @@
   "loved_creators": "Loved by Creators Worldwide",
   "loved_creators_message": "See what our customers have to say about Omnishare",
   "faq": "Frequently Asked Questions",
+  "load_more": "Load More",
+  "show_less": "Show Less",
   "faq_message": "Everything you need to know about Omnishare",
   "testimonial_1": "Omnishare has completely transformed how we manage our social media presence. The AI-powered content generation saves us hours every week, and the multi-platform scheduling is seamless.",
   "testimonial_2": "\"The analytics dashboard is incredibly powerful. We've seen a 300% increase in engagement since switching to Omnishare. The platform pays for itself within the first month.\"",

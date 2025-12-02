@@ -334,6 +334,7 @@
   "confirm_password": "Confirmar contraseña *",
   "enter_confirm_password": "Confirma tu nueva contraseña",
   "update_password_button": "Actualizar contraseña",
+<<<<<<< HEAD
   "ai_social_media": "Crea contenido poderoso y compártelo en múltiples plataformas con un solo clic",
   "made_simple": "",
   "create_schedule_publish": "Creación a distribución impulsada por IA, con subtítulos y descripciones optimizadas según las mejores prácticas de cada plataforma.",
@@ -343,6 +344,17 @@
   "omni_content_message": "Crea contenido que resuene, genere interacción y amplifique tu presencia en línea sin esfuerzo, transformando tus ideas en publicaciones de alto impacto listas para cada plataforma con IA avanzada para conectar con tu audiencia y fortalecer tu marca en todos los canales sociales.",
   "post_automation": "Automatización de publicaciones",
   "post_automation_message": "Publica tu contenido al instante con nuestro sistema rápido y confiable, ofreciendo publicación con un solo clic en todas las plataformas para llegar a tu audiencia en el momento perfecto y lograr el máximo impacto e interacción.",
+=======
+  "ai_social_media": "Crea contenido poderoso y compártelo en todas partes con un solo clic",
+  "made_simple": "Hecho simple",
+  "create_schedule_publish": "Plataforma impulsada por IA que te lleva de la idea a la publicación en múltiples plataformas sin esfuerzo.",
+  "get_started_free": "Comienza gratis",
+  "suite_social_success": "Una plataforma completa para el éxito social",
+  "omni_content_creation": "Creación de  impulsada por IA",
+  "omni_content_message": "Crea contenido que conecte, genere interacción y amplifique tu presencia en línea sin esfuerzo—transformando tus ideas en publicaciones de alto impacto y listas para plataformas con IA avanzada para conectar con tu audiencia y fortalecer tu marca en todos los canales sociales.",
+  "post_automation": "Automatización de publicaciones",
+  "post_automation_message": "Publica tu contenido al instante con nuestro sistema rápido y confiable—ofreciendo publicación con un solo clic en todas las plataformas para alcanzar a tu audiencia en el momento perfecto y lograr el máximo compromiso e impacto.",
+>>>>>>> dd4a4ba7f82e7237dba66880e104bf9ba193b4d7
   "media_optimization": "Optimización de medios",
   "media_optimization_message": "Redimensiona automáticamente las publicaciones para cada plataforma y crea miniaturas de video llamativas para las subidas de YouTube. Todo esto ocurre dentro de una suite de edición intuitiva, permitiendo una personalización rápida y fluida para que tu contenido luzca perfecto cada vez.",
   "smart_insights": "Información inteligente",
@@ -353,7 +365,11 @@
   "react_trends_message": "Accede al archivo más grande de opiniones de consumidores y aprovecha la IA avanzada para descubrir nuevas tendencias antes que nadie y tomar decisiones más inteligentes.",
   "get_started": "Comenzar",
   "manage_channels": "Gestiona todos los canales con facilidad",
+<<<<<<< HEAD
   "manage_channels_message": "Supervisa fácilmente cada plataforma desde un único panel unificado, brindando claridad, control y eficiencia a todo tu ecosistema social.",
+=======
+  "manage_channels_message": "Supervisa sin esfuerzo cada plataforma desde un solo panel unificado, aportando claridad, control y eficiencia a todo tu ecosistema social.",
+>>>>>>> dd4a4ba7f82e7237dba66880e104bf9ba193b4d7
   "active_users": "Usuarios activos",
   "posts_created": "Publicaciones creadas",
   "platforms_supported": "Plataformas compatibles",
@@ -362,6 +378,8 @@
   "see_action_message": "Experimenta la facilidad de crear y publicar contenido en todas las plataformas en cuestión de momentos.",
   "loved_creators": "Amado por creadores en todo el mundo",
   "loved_creators_message": "Mira lo que nuestros clientes dicen sobre Omnishare",
+  "load_more": "Cargar más",
+  "show_less": "Mostrar menos",
   "faq": "Preguntas frecuentes",
   "faq_message": "Todo lo que necesitas saber sobre Omnishare",
   "testimonial_1": "\"Omnishare ha transformado completamente cómo gestionamos nuestra presencia en redes sociales. La generación de contenido impulsada por IA nos ahorra horas cada semana, y la programación multiplataforma es perfecta.\"",
