@@ -19,12 +19,15 @@ export const ManageSubscriptionModal: React.FC<any> = ({
   isModalOpen,
   setIsModalOpen,
 }) => {
-  const { t, i18n } = useTranslation();
-  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
+  const { t } = useTranslation();
   const [showTransactions, setShowTransactions] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isReactive, setIsReactive] = useState(false);
-  const { user, refreshUser } = useAppContext();
+  const { user, refreshUser, packages } = useAppContext();
+  const [downgradeModal, setDowngrade] = useState(false);
+  const openDowngradeModel = () => {
+    setDowngrade(!downgradeModal);
+  };
 
   useEffect(() => {
     if (isReactive || isOpen || isModalOpen || showTransactions) {
@@ -85,6 +88,16 @@ export const ManageSubscriptionModal: React.FC<any> = ({
       setIsReactive(false);
     }
   };
+  const currentAmount = user?.wallet?.package?.amount;
+
+  const sortedPackages = [...packages].sort((a, b) => a.amount - b.amount);
+
+  const currentIndex = sortedPackages.findIndex(
+    (pkg) => pkg.amount === currentAmount
+  );
+
+  const downgradePackages =
+    currentIndex > 0 ? [sortedPackages[currentIndex - 1]] : [];
 
   return (
     <div className="fixed inset-0 z-10 flex items-center justify-center p-0">
@@ -100,6 +113,9 @@ export const ManageSubscriptionModal: React.FC<any> = ({
         isCanceled={isCanceled}
         onCancel={onCancelSubscription}
         onPause={_onClose}
+        openDowngradeModel={openDowngradeModel}
+        downgradeModal={downgradeModal}
+        downgradePackages={downgradePackages}
       />
 
       <div

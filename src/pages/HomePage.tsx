@@ -714,7 +714,10 @@ function HomePage() {
                 >
                   {t("get_started")}
                 </motion.button>
-            <LanguageDropdown alignRight={false} className="bg-inherit text-white border-white"/>
+                <LanguageDropdown
+                  alignRight={false}
+                  className="bg-white/10 text-white border-white"
+                />
               </data>
             </div>
 
