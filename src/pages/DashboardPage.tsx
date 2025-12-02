@@ -67,7 +67,7 @@ export const DashboardPage: React.FC = () => {
                   title={t("my_plan")}
                   badge={userPlan}
                   subtitle={`Renewing on: ${planRenewalDate}`}
-                  buttonText={t("switch_plan")}
+                  buttonText={t("upgrade")}
                   onButtonClick={() => navigate("/pricing")}
                   showicon2={true}
                 />

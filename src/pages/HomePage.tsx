@@ -57,7 +57,6 @@ function HomePage() {
   );
   const [showContactForm, setShowContactForm] = useState(false);
   const [packages, setPackages] = useState<any[]>([]);
-  const [expandedFaqIndex, setExpandedFaqIndex] = useState<number | null>(null);
   const isInitialMount = useRef(true);
   const navigate = useNavigate();
 
@@ -189,6 +188,9 @@ function HomePage() {
     },
   ];
 
+  const [expandedFaqIndex, setExpandedFaqIndex] = useState(null);
+  const [visibleCount, setVisibleCount] = useState(6);
+
   const faqs = [
     {
       question: t("what_is_omnishare"),
@@ -206,6 +208,10 @@ function HomePage() {
     {
       question: t("multi_publish"),
       answer: t("multi_publish_message"),
+    },
+    {
+      question: t("faq_security_audits"),
+      answer: t("faq_security_audits_answer"),
     },
     {
       question: t("does_omnishare_optimize_media_for_each_platform"),
@@ -231,7 +237,33 @@ function HomePage() {
       question: t("demos"),
       answer: t("demos_message"),
     },
+    {
+      question: t("faq_how_is_my_data_protected"),
+      answer: t("faq_how_is_my_data_protected_answer"),
+    },
+    {
+      question: t("faq_does_omnishare_store_credentials"),
+      answer: t("faq_does_omnishare_store_credentials_answer"),
+    },
+    {
+      question: t("faq_can_multiple_team_members_access"),
+      answer: t("faq_can_multiple_team_members_access_answer"),
+    },
+    {
+      question: t("faq_prevent_unauthorized_access"),
+      answer: t("faq_prevent_unauthorized_access_answer"),
+    },
+    {
+      question: t("faq_privacy_compliance"),
+      answer: t("faq_privacy_compliance_answer"),
+    },
+    {
+      question: t("faq_security_issue"),
+      answer: t("faq_security_issue_answer"),
+    },
   ];
+
+  const displayedFaqs = faqs.slice(0, visibleCount);
 
   const nextReview = () => {
     setSlideDirection("left");
@@ -1154,27 +1186,28 @@ function HomePage() {
             </p>
           </motion.div>
 
+          {/* ---------------- FIXED FAQ LOOP ---------------- */}
           <motion.div
             className="space-y-4"
-            initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
             variants={containerVariants}
           >
-            {faqs.map((faq, index) => (
+            {displayedFaqs.map((faq, index) => (
               <motion.div
                 key={index}
                 variants={itemVariants}
                 className="bg-white rounded-md shadow-md overflow-hidden transition-all hover:shadow-lg"
                 whileHover={{ x: 5 }}
               >
-                <motion.button
+                <button
                   onClick={() =>
                     setExpandedFaqIndex(
                       expandedFaqIndex === index ? null : index
                     )
                   }
                   className="w-full px-6 py-5 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
+                  aria-expanded={expandedFaqIndex === index}
                 >
                   <span className="font-semibold text-gray-900 text-lg pr-8">
                     {faq.question}
@@ -1187,9 +1220,10 @@ function HomePage() {
                       stiffness: 200,
                     }}
                   >
-                    <ChevronDown className="w-6 h-6 text-[#7650e3] flex-shrink-0" />
+                    <ChevronDown className="w-6 h-6 text-[#7650e3]" />
                   </motion.div>
-                </motion.button>
+                </button>
+
                 <AnimatePresence>
                   {expandedFaqIndex === index && (
                     <motion.div
@@ -1209,15 +1243,32 @@ function HomePage() {
             ))}
           </motion.div>
 
-          <motion.div
-            className="mt-12 text-center"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
-          >
-            <p className="text-gray-500 font-medium">{t("still_questions")} </p>
-          </motion.div>
+          <div className="mt-6 text-center">
+            <motion.button
+              onClick={() => {
+                if (visibleCount > 6) {
+                  setVisibleCount(6);
+                  setExpandedFaqIndex(null); // Critical!
+                } else {
+                  setVisibleCount(faqs.length);
+                }
+              }}
+              className="bg-[#7650e3] text-white px-8 py-3 rounded-full shadow-lg inline-flex items-center space-x-2"
+              whileHover={{
+                scale: 1.05,
+                boxShadow: "0 10px 30px rgba(118, 80, 227, 0.3)",
+              }}
+              whileTap={{ scale: 0.95 }}
+            >
+              {visibleCount === 6 ? t("Load More") : t("Show Less")}
+              <motion.div
+                animate={{ rotate: visibleCount === faqs.length ? 180 : 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <ChevronDown className="w-5 h-5" />
+              </motion.div>
+            </motion.button>
+          </div>
         </div>
       </section>
 

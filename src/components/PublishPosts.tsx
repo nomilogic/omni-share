@@ -15,6 +15,7 @@ import {
 import API from "../services/api";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useDiscardModals } from "../context2/DiscardModalContext";
 
 interface PublishProps {
   posts: GeneratedPost[];
@@ -58,11 +59,8 @@ export const PublishPosts: React.FC<PublishProps> = ({
   const [selectedYoutubeChannel, setSelectedYoutubeChannel] =
     useState<string>("");
   const [publishedPlatforms, setPublishedPlatforms] = useState<Platform[]>([]);
-  const [showDiscardModal, setShowDiscardModal] = useState<boolean>(false);
-  const [pendingDiscardAction, setPendingDiscardAction] = useState<
-    (() => void) | null
-  >(null);
   const navigate = useNavigate();
+  const { openDiscardPostWarning } = useDiscardModals();
 
   useEffect(() => {
     checkConnectedPlatforms();
@@ -780,9 +778,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
         </button>
 
         <button
-          onClick={() => {
-            setShowDiscardModal(true);
-          }}
+          onClick={() => openDiscardPostWarning(() => navigate("/content"))}
           className="  rounded-md theme-bg-light px-4 py-2.5 w-full text-center font-semibold text-base border border-[#7650e3] text-[#7650e3] transition-colors hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] disabled:cursor-not-allowed"
         >
           {t("discard_post")}
@@ -908,42 +904,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
           </div>
         )}
       </div>
-      {showDiscardModal && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-gray-50 rounded-md shadow-md w-full max-w-md px-8 py-6">
-            <h2 className="text-2xl font-bold text-purple-700 mb-4 items-center flex justify-center">
-              {t("discard_post_title")}
-            </h2>
-
-            <p className="text-gray-500 text-sm mb-8 text-center leading-relaxed">
-              {t("discard_post_warning")}
-            </p>
-
-            <div className="flex gap-3">
-              <button
-                onClick={() => {
-                  setShowDiscardModal(false);
-                  setPendingDiscardAction(null);
-                }}
-                className="flex-1  bg-transparent border-purple-600 border text-purple-600 flex items-center gap-2 justify-center hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
-              >
-                {t("cancel")}
-              </button>
-
-              <button
-                onClick={() => {
-                  navigate("/content");
-                  setShowDiscardModal(false);
-                  setPendingDiscardAction(null);
-                }}
-                className="flex-1  bg-purple-600 text-white hover:text-[#7650e3] flex items-center gap-2 justify-center hover:bg-[#d7d7fc] border border-[#7650e3] font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
-              >
-                {t("confirm")}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      
     </div>
   );
 };

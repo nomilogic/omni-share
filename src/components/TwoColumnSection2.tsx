@@ -28,9 +28,7 @@ const TwoColumnSection2 = () => {
 
         <p
           className="
-            text-base sm:text-lg text-gray-500
-           
-          "
+            text-base sm:text-lg text-gray-500"
         >
           {t("line_08")}{" "}
           <strong>
