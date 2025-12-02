@@ -520,9 +520,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                     </span>
                   )}
                 </button>
-                <div className=" md:block hidden">
-                  <LanguageDropdown />
-                </div>
               </div>
 
               <Link
@@ -533,6 +530,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               </Link>
 
               <div className="flex items-center space-x-1">
+                <div className=" md:block hidden">
+                  <LanguageDropdown />
+                </div>
                 <div className="flex gap-x-4 items-center">
                   <WalletBalance
                     setShowPackage={(e: any) => {

@@ -15,7 +15,6 @@ import {
 import API from "../services/api";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useDiscardModals } from "@/context2/DiscardModalContext";
 
 interface PublishProps {
   posts: GeneratedPost[];
@@ -59,12 +58,17 @@ export const PublishPosts: React.FC<PublishProps> = ({
   const [selectedYoutubeChannel, setSelectedYoutubeChannel] =
     useState<string>("");
   const [publishedPlatforms, setPublishedPlatforms] = useState<Platform[]>([]);
+  const [showDiscardModal, setShowDiscardModal] = useState<boolean>(false);
+  const [pendingDiscardAction, setPendingDiscardAction] = useState<
+    (() => void) | null
+  >(null);
   const navigate = useNavigate();
-  const { openDiscardPostWarning } = useDiscardModals();
 
   useEffect(() => {
+    console.log("Publishing posts for user:", userId);
+    //notify("error",'Publishing posts for user: ' + userId);
     checkConnectedPlatforms();
-  }, []);
+  }, [userId, posts]);
 
   const checkConnectedPlatforms = async () => {
     try {
@@ -81,14 +85,14 @@ export const PublishPosts: React.FC<PublishProps> = ({
       const statusData = response.data;
 
       const connected: Platform[] = [];
-      for (const platform of ALL_PLATFORMS) {
-        if (statusData[platform]?.connected) {
-          connected.push(platform);
+      for (const post of posts) {
+        if (statusData[post.platform]?.connected) {
+          connected.push(post.platform);
         }
       }
       setConnectedPlatforms(connected);
+      console.log(connected, "platforms connected");
 
-      // Fetch Facebook pages if Facebook is connected
       if (connected.includes("facebook")) {
         await fetchFacebookPages();
       }
@@ -103,6 +107,11 @@ export const PublishPosts: React.FC<PublishProps> = ({
     }
   };
 
+  const handleDiscardClick = useCallback(() => {
+    setPendingDiscardAction(onBack);
+    setShowDiscardModal(true);
+  }, [onBack]);
+
   const fetchFacebookPages = async () => {
     try {
       const token = localStorage.getItem("auth_token");
@@ -110,15 +119,18 @@ export const PublishPosts: React.FC<PublishProps> = ({
 
       const tokenResponse = await API.tokenForPlatform("facebook");
 
-      if (tokenResponse?.data) {
-        const tokenData = await tokenResponse?.data;
+      if (tokenResponse.data) {
+        const tokenData = await tokenResponse.data;
+        console.log(tokenData);
         if (tokenData.connected && tokenData.token?.access_token) {
-          const pagesResponse = await fetch(
-            `/api/facebook/pages?access_token=${tokenData.token.access_token}`
+          const pagesResponse = await API.facebookPages(
+            tokenData.token.access_token
           );
-          if (pagesResponse.ok) {
-            const pagesData = await pagesResponse.json();
-            setFacebookPages(pagesData.pages || []);
+          console.log(pagesResponse, "pages");
+
+          if (pagesResponse.status == "200") {
+            const pagesData = await pagesResponse.data.data;
+            setFacebookPages(pagesData || []);
             if (
               pagesData.pages &&
               pagesData.pages.length > 0 &&
@@ -140,6 +152,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
       if (!token) return;
 
       const tokenResponse = await API.tokenForPlatform("youtube");
+
       if (tokenResponse.data) {
         const tokenData = await tokenResponse.data;
         if (tokenData.connected && tokenData.token?.access_token) {
@@ -169,19 +182,16 @@ export const PublishPosts: React.FC<PublishProps> = ({
 
     try {
       setConnectingPlatforms((prev) => [...prev, platform]);
-      setError(null);
 
-      // Use the OAuth client to start OAuth flow (uses JWT authentication)
       const result: any = await oauthManagerClient.startOAuthFlow(platform);
       const { authUrl } = result.data.data;
-      console.log("Opening OAuth popup with URL:", authUrl);
 
       const authWindow = window.open(
         authUrl,
         `${platform}_oauth`,
         "width=600,height=700,scrollbars=yes,resizable=yes"
       );
-      console.log(authWindow, "authWindow");
+
       if (!authWindow) {
         throw new Error("OAuth popup blocked");
       }
@@ -193,41 +203,39 @@ export const PublishPosts: React.FC<PublishProps> = ({
           event.data.platform === platform
         ) {
           console.log("OAuth success for", platform);
-          // Close popup from parent window for better browser compatibility
-          try {
-            authWindow?.close();
-          } catch (error) {
-            console.warn("Could not close popup from parent:", error);
+          // Close popup immediately
+          if (authWindow && !authWindow.closed) {
+            authWindow.close();
           }
-          setTimeout(checkConnectedPlatforms, 1000);
+          clearInterval(checkClosed);
           window.removeEventListener("message", messageListener);
+          setTimeout(checkConnectedPlatforms, 500);
         } else if (event.data.type === "oauth_error") {
           console.error("OAuth error:", event.data.error);
-          // Close popup from parent window for better browser compatibility
-          try {
-            authWindow?.close();
-          } catch (error) {
-            console.warn("Could not close popup from parent:", error);
+          // Close popup immediately
+          if (authWindow && !authWindow.closed) {
+            authWindow.close();
           }
+          clearInterval(checkClosed);
+          window.removeEventListener("message", messageListener);
           setError(
             `Failed to connect ${platform}: ${
               event.data.error || "OAuth failed"
             }`
           );
-          window.removeEventListener("message", messageListener);
         }
       };
 
       window.addEventListener("message", messageListener);
 
-      // Monitor window closure
+      // Monitor window closure as fallback
       const checkClosed = setInterval(() => {
         if (authWindow?.closed) {
           clearInterval(checkClosed);
           window.removeEventListener("message", messageListener);
-          setTimeout(checkConnectedPlatforms, 1000);
+          setTimeout(checkConnectedPlatforms, 500);
         }
-      }, 1000);
+      }, 500);
     } catch (error) {
       console.error("Error connecting to platform:", error);
       setError(
@@ -237,35 +245,30 @@ export const PublishPosts: React.FC<PublishProps> = ({
       );
     } finally {
       setConnectingPlatforms((prev) => prev.filter((p) => p !== platform));
+      // checkConnectedPlatforms();
     }
   };
 
   const handleDisconnect = async (platform: Platform) => {
+    // if (
+    //   !confirm(
+    //     `Are you sure you want to disconnect ${getPlatformDisplayName(platform)}?`,
+    //   )
+    // ) {
+    //   return;
+    // }
+
     try {
       // Use the OAuth manager client for disconnecting (uses JWT authentication)
       await oauthManagerClient.disconnectPlatform(platform);
+
       checkConnectedPlatforms();
+      // window.removeEventListener("message", messageListener);
     } catch (error) {
       console.error("Failed to disconnect:", error);
-      setError(
-        `Failed to disconnect ${platform}: ${
-          error instanceof Error ? error.message : "Disconnection failed"
-        }`
-      );
     }
   };
 
-  const renderPlatformIcon = (platform: Platform) => {
-    const IconComponent = getPlatformIcon(platform);
-
-    if (!IconComponent) {
-      return (
-        <span className="text-lg font-bold ">{platform.substring(0, 2)}</span>
-      );
-    }
-
-    return <IconComponent className="w-6 h-6" />;
-  };
   const handlePublish = async () => {
     // Filter to only connected platforms that are selected and not already published
     const availablePlatforms = selectedPlatforms.filter(
@@ -363,7 +366,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
   };
 
   return (
-    <div className="theme-bg-light max-w-5xl mx-auto    ">
+    <div className="theme-bg-light max-w-4xl mx-auto    ">
       <div className="lg:px-4 px-3 lg:py-8 py-4">
         <h2 className="text-2xl font-bold theme-text-primary mb-2">
           {t("publish_posts")}
@@ -666,10 +669,10 @@ export const PublishPosts: React.FC<PublishProps> = ({
 
         {/* Hidden Social Media Manager */}
         <div className="hidden">
-          {/* <SocialMediaManager
+          <SocialMediaManager
             userId={userId || ""}
             onCredentialsUpdate={checkConnectedPlatforms}
-          /> */}
+          />
         </div>
         {/* Platform-specific options (if needed) */}
         {connectedPlatforms.includes("facebook") &&
@@ -778,8 +781,10 @@ export const PublishPosts: React.FC<PublishProps> = ({
         </button>
 
         <button
-          onClick={() => openDiscardPostWarning(() => navigate("/content"))}
-          className="  rounded-md theme-bg-light px-4 py-2.5 w-full text-center font-semibold text-base border border-[#7650e3] text-[#7650e3] transition-colors hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] disabled:cursor-not-allowed"
+          onClick={() => {
+            setShowDiscardModal(true);
+          }}
+          class="  rounded-md theme-bg-light px-4 py-2.5 w-full text-center font-semibold text-base border border-[#7650e3] text-[#7650e3] transition-colors hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] disabled:cursor-not-allowed"
         >
           {t("discard_post")}
         </button>
@@ -904,6 +909,42 @@ export const PublishPosts: React.FC<PublishProps> = ({
           </div>
         )}
       </div>
+      {showDiscardModal && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-gray-50 rounded-md shadow-md w-full max-w-md px-8 py-6">
+            <h2 className="text-2xl font-bold text-purple-700 mb-4 items-center flex justify-center">
+              {t("discard_post_title")}
+            </h2>
+
+            <p className="text-gray-500 text-sm mb-8 text-center leading-relaxed">
+              {t("discard_post_warning")}
+            </p>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setShowDiscardModal(false);
+                  setPendingDiscardAction(null);
+                }}
+                className="flex-1  bg-transparent border-purple-600 border text-purple-600 flex items-center gap-2 justify-center hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
+              >
+                {t("cancel")}
+              </button>
+
+              <button
+                onClick={() => {
+                  navigate("/content");
+                  setShowDiscardModal(false);
+                  setPendingDiscardAction(null);
+                }}
+                className="flex-1  bg-purple-600 text-white hover:text-[#7650e3] flex items-center gap-2 justify-center hover:bg-[#d7d7fc] border border-[#7650e3] font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
+              >
+                {t("confirm")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
