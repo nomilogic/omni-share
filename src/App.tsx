@@ -4,7 +4,6 @@ import { AppProvider, useAppContext } from "./context/AppContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import { SubscriptionModalProvider } from "./context/SubscriptionModalContext";
 import { PricingModalProvider } from "./context/PricingModalContext";
-import { PublishPostModalProvider } from "./context2/MasterModalContext";
 import { AppLayout } from "./components/Layout/AppLayout";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AuthPage } from "./pages/AuthPage";
@@ -67,7 +66,7 @@ function App() {
         let lang = "en";
 
         const chineseCountries = ["CN", "HK", "TW", "SG", "MO"];
-        const spanishCountries = ["PK", "ES", "MX", "AR", "CO", "PE"];
+        const spanishCountries = ["ES", "MX", "AR", "CO", "PE"];
         console.log("data", data);
         if (spanishCountries.includes(data.country)) {
           lang = "es";
