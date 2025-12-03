@@ -443,10 +443,10 @@ export const useAppContext = () => {
     }
   }, [context.dispatch]);
 
-  const logout = useCallback(async () => {
+  const logout = async () => {
     localStorage.clear();
     context.dispatch({ type: "RESET_STATE" });
-  }, [context.dispatch]);
+  };
 
   const setProfileEditing = useCallback(
     (v: boolean) =>
