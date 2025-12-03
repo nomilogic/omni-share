@@ -238,7 +238,7 @@ const FeaturesPage: React.FC = () => {
     <div className="w-full">
       <section className="relative overflow-hidden py-16 md:py-24">
         <div className="relative w-full max-w-full mx-auto px-4 sm:px-6 lg:px-[10%]">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 text-center">
+          <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4 text-center">
             <span className="font-bold">
               {t("suite_social_success")}
               <br className="hidden md:block" />

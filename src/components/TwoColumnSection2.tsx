@@ -44,7 +44,7 @@ const TwoColumnSection2 = () => {
             hover:bg-purple-100 transition 
           "
           >
-            {t("get_started")}{" "}
+            {t("get_started_free")}{" "}
             <span className="inline-block transform transition-transform duration-300 group-hover:translate-x-1">
               →
             </span>

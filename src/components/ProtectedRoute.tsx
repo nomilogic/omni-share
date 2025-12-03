@@ -18,7 +18,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
         <div className="text-center">
           <Icon name="spiral-logo" size={50} className="animate-spin mb-2" />
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            Loading Omni Share
+            Loading OmniShare
           </h2>
           <p className="text-gray-600">Setting up your workspace...</p>
         </div>

@@ -409,7 +409,7 @@ function HomePage() {
               ))}
             </nav>
 
-            <div className=" p-4 space-y-3 ml-1 w-[100px]">
+            <div className=" p-4 space-y-3 ml-2 w-[100px] text-white">
               <LanguageDropdown alignRight={false} />
             </div>
 
@@ -429,7 +429,7 @@ function HomePage() {
                 }}
                 whileTap={{ scale: 0.95 }}
               >
-                {t("get_started")}
+                {t("get_started_free")}
               </motion.button>
             </div>
 
@@ -631,7 +631,7 @@ function HomePage() {
                   </div>
                 </div>
                 <div className="text-white/80 text-center text-sm mt-1 py-1">
-                  © 2025 Omni Share
+                  © 2025 OmniShare
                 </div>
               </div>
             </div>
@@ -712,11 +712,11 @@ function HomePage() {
                   onClick={() => navigate("/auth")}
                   className="bg-white text-[#7650e3] px-6 py-2.5 text-base rounded-full font-semibold shadow-lg"
                 >
-                  {t("get_started")}
+                  {t("get_started_free")}
                 </motion.button>
                 <LanguageDropdown
                   alignRight={false}
-                  className="bg-white/10 text-white border-white"
+                  className=" text-white"
                 />
               </data>
             </div>
@@ -1012,7 +1012,7 @@ function HomePage() {
 
             <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/70 to-transparent pointer-events-none hidden sm:block">
               <p className="text-white text-lg font-semibold">
-                Introduction to Omnishare
+                Introduction to OmniShare
               </p>
               <p className="text-white/80">
                 Learn how to maximize your social media presence
@@ -1261,7 +1261,7 @@ function HomePage() {
                 animate={{ rotate: visibleCount === faqs.length ? 180 : 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <ChevronDown className="w-5 h-5" />
+                <ChevronDown className="w-7 h-5 pl-2" />
               </motion.div>
             </motion.button>
           </div>
@@ -1443,7 +1443,7 @@ function HomePage() {
           viewport={{ once: true }}
         >
           <div className="w-full mx-auto pt-2 md:px-[10%] px-3 flex flex-col sm:flex-row items-center md:justify-between gap-3">
-            <span className="">© {new Date().getFullYear()} Omni Share</span>
+            <span className="">© {new Date().getFullYear()} OmniShare</span>
 
             <div className="flex flex-wrap justify-center space-x-3 text-sm theme-text-light">
               <Link

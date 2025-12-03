@@ -502,7 +502,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 </div>
               </div>
               <div className="theme-text-light text-center text-sm mt-1 py-1">
-                © 2025 Omni Share
+                © 2025 OmniShare
               </div>
             </div>
           </div>

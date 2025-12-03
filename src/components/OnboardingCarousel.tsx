@@ -50,7 +50,7 @@ const onboardingSlides: OnboardingSlide[] = [
     title: "Start Creating Today",
     subtitle: "Get Started in Under 2 Minutes",
     description:
-      "Join thousands of creators and businesses who trust Omni Share to transform their social media presence.",
+      "Join thousands of creators and businesses who trust OmniShare to transform their social media presence.",
     icon: Zap,
     features: [
       "Quick setup & onboarding",
@@ -196,7 +196,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
               Get Started Free
             </button>
             <p className="text-white/70 mt-4">
-              Join thousands of creators and businesses already using Omni Share
+              Join thousands of creators and businesses already using OmniShare
             </p>
           </div>
         </div>

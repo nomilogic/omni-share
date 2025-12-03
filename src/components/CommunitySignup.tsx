@@ -64,7 +64,7 @@ const CommunitySignup: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           {/* Main Headline Text */}
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl leading-relaxed">
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
             {t("join_our_community_today_and")}
             <br />
             {t("never_miss_an_update")}
@@ -84,7 +84,7 @@ const CommunitySignup: React.FC = () => {
                 name="email"
                 type="email"
                 autoComplete="email"
-                className="px-3 py-2 w-64 rounded-md bg-white border border-purple-600 text-purple-600 placeholder-purple-600/80 focus:outline-none focus:ring-2 focus:ring-purple-600 transition"
+                className="px-3 py-2 w-64 rounded-md bg-white border border-purple-600 text-purple-600 placeholder-black-600/80 focus:outline-none focus:ring-2 focus:ring-purple-600 transition"
                 placeholder={t("email_address")}
                 {...register("email")}
               />

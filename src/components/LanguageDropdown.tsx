@@ -1,6 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ChevronDown } from "lucide-react";
+import {
+  motion,
+} from "framer-motion";
 
 interface LanguageDropdownProps {
   className?: string;
@@ -39,10 +42,10 @@ export const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
   return (
     <div
       ref={ref}
-      className={`relative border border-purple-600 bg-white text-purple-600  rounded-md  mr-1 ${
+      className={`relative text-purple-600 mr-1 ${
         className
           ? className
-          : " border border-purple-600 text-purple-600 rounded-md  "
+          : "  text-purple-600   "
       }`}
     >
       <button
@@ -50,11 +53,17 @@ export const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        className={`px-2 w-[60px] p-1 text-purple-600 rounded-md text-sm bg-white/10 hover:bg-white/20 border border-white/20 flex justify-center items-center  transition-all ${
+        className={`px-2 w-[70px] p-1 text-white text-sm flex justify-center items-center  transition-all ${
           className ?? ""
         }`}
       >
         <span className="font-medium text-sm">{label}</span>
+        <motion.div
+                animate={{ rotate: open ? 180 : 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <ChevronDown className=" h-5 pl-1" />
+              </motion.div>
       </button>
 
       {open && (

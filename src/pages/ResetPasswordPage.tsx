@@ -162,7 +162,7 @@ const ResetPasswordPage: React.FC = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder="Enter new password"
-                className="w-full px-3 py-2.5 rounded-md border-2 border-purple-500 bg-white text-slate-800 placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all duration-200"
+                className="w-full px-3 py-2.5 rounded-md border-2 border-purple-500 bg-white text-slate-800 placeholder-gray-400 focus:ring-2 focus:ring-purple-600 focus:border-transparent outline-none transition-all duration-200"
               />
             </div>
 
@@ -176,7 +176,7 @@ const ResetPasswordPage: React.FC = () => {
                 onChange={(e) => setConfirm(e.target.value)}
                 required
                 placeholder="Re-enter password"
-                className="w-full px-3 py-2.5 rounded-md border-2 border-purple-500 bg-white text-slate-800 placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all duration-200"
+                className="w-full px-3 py-2.5 rounded-md border-2 border-purple-500 bg-white text-slate-800 placeholder-gray-400 focus:ring-2 focus:ring-purple-600 focus:border-transparent outline-none transition-all duration-200"
               />
             </div>
 
