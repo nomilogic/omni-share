@@ -311,7 +311,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               </button>
             </div>
             <div className="flex gap-2 mt-2.5 md:px-5 px-3 text-white ">
-              <LanguageDropdown alignRight={false} />
+              <LanguageDropdown alignRight={false} className="text-white"/>
             </div>
 
             <div className="absolute bottom-0 left-0 right-0 ">
@@ -530,7 +530,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               </Link>
 
               <div className="flex items-center space-x-1">
-                <div className=" md:block hidden">
+                <div className=" md:block hidden text-white ">
                   <LanguageDropdown />
                 </div>
                 <div className="flex gap-x-4 items-center">
