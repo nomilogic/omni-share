@@ -12,7 +12,6 @@ import {
   initiateLinkedInOAuth,
   isOAuthConfigured,
 } from "../utils/authOAuth";
-import Icon from "./Icon";
 
 import API from "../services/api";
 import { OtpModal } from "./OtpModal";
@@ -20,6 +19,7 @@ import { ArrowLeftIcon, Mail } from "lucide-react";
 import logoText from "../assets/logo-text.svg";
 import backArrow from "../assets/back-arrow.png";
 import { notify } from "@/utils/toast";
+import Icon from "./Icon";
 
 interface AuthFormProps {
   onAuthSuccess: (user: any) => void;
@@ -358,7 +358,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
               }`}
             >
               <div className="text-center flex gap-2 items-center">
-                <Icon name="logo" size={50} />
+                <Icon name="spiral-logo" size={50} />
                 <span className="theme-text-primary text-xl md:text-2xl tracking-tight">
                   <img
                     src={logoText || "/placeholder.svg"}

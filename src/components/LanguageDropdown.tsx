@@ -1,18 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ChevronDown } from "lucide-react";
-import {
-  motion,
-} from "framer-motion";
+import { ChevronDown, Globe } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface LanguageDropdownProps {
   className?: string;
   alignRight?: boolean;
+  showGlobe?: boolean;
 }
 
 export const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
   className,
   alignRight = true,
+  showGlobe = false,
 }) => {
   const { i18n } = useTranslation();
   const [open, setOpen] = useState(false);
@@ -42,10 +42,8 @@ export const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
   return (
     <div
       ref={ref}
-      className={`relative text-purple-600 mr-1 ${
-        className
-          ? className
-          : "  text-purple-600   "
+      className={`relative text-purple-600  ${
+        className ? className : "  text-purple-600   "
       }`}
     >
       <button
@@ -53,23 +51,29 @@ export const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        className={`px-2 w-[70px] p-1 text-white text-sm flex justify-center items-center  transition-all ${
-          className ?? ""
-        }`}
+        className={`w-auto p-2 ml-1 flex items-center text-purple-600 text-sm transition-all ${
+          className ?? "" 
+        } `}
       >
-        <span className="font-medium text-sm">{label}</span>
+        {/* Globe left */}
+        {showGlobe && <Globe className="w-5 h-5 mr-4" />}
+
+        {/* Label */}
+        <span className="font-medium text-sm mr-1  ">{label}</span>
+
+        {/* Chevron right */}
         <motion.div
-                animate={{ rotate: open ? 180 : 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <ChevronDown className=" h-5 pl-1" />
-              </motion.div>
+          animate={{ rotate: open ? 180 : 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <ChevronDown className="h-5" />
+        </motion.div>
       </button>
 
       {open && (
         <div
           role="menu"
-          className={`mt-2 w-[80px] bg-white rounded-md shadow-lg z-50 overflow-hidden ${"left-0"} absolute `}
+          className={`mt-2 w-[80px] bg-white rounded-md shadow-lg z-50 overflow-hidden  absolute ${alignRight ? "right-0" : "left-0"} `}
         >
           <button
             role="menuitem"

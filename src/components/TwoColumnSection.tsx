@@ -26,10 +26,10 @@ const TwoColumnSection: React.FC = () => {
             {t("line_05")}
           </strong>
         </p>
-        <div>
+        <div className="flex justify-center sm:justify-start">
           <button
           onClick={() => navigate("/auth")}
-            className=" 
+            className="  
             group px-6 py-2.5 border border-purple-600 
             text-purple-600 font-semibold rounded-md 
             hover:bg-purple-100 transition 

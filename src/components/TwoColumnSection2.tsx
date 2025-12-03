@@ -9,7 +9,7 @@ const TwoColumnSection2 = () => {
     const navigate = useNavigate();
   return (
     <section
-      className=" my-10 relative  max-w-full mx-auto px-4 sm:px-6 lg:px-[10%]
+      className=" pt-14 relative  max-w-full mx-auto px-4 sm:px-6 lg:px-[10%]
         grid md:grid-cols-2  gap-10
         
         items-center w-full  bg-white
@@ -35,7 +35,7 @@ const TwoColumnSection2 = () => {
             {t("line_09")}
           </strong>
         </p>
-        <div>
+        <div className="flex justify-center sm:justify-start">
           <button
           onClick={() => navigate("/auth")}
             className="
