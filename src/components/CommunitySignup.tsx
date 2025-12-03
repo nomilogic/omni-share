@@ -31,7 +31,7 @@ const CommunitySignup: React.FC = () => {
   };
 
   return (
-    <div className="relative bg-white pb-14 overflow-hidden">
+    <div className="relative bg-white pb-8 md:pb-14 overflow-hidden">
       {/* Floating Decorative Dots/Shapes (Mimicking the image) */}
       {/* Top Left - Small Blue Dot */}
       <div className="absolute top-1/4 left-1/4 w-1.5 h-1.5 bg-blue-400 rounded-full opacity-60 hidden sm:block"></div>
