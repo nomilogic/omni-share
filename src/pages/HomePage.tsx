@@ -409,8 +409,12 @@ function HomePage() {
               ))}
             </nav>
 
-            <div className=" p-4 space-y-3 ml-2 w-[100px] text-white">
-              <LanguageDropdown alignRight={false} />
+            <div className="pl-4">
+              <LanguageDropdown
+                alignRight={false}
+                showGlobe={true}
+                className="text-white"
+              />
             </div>
 
             <div className="px-3 py-4">
@@ -649,93 +653,95 @@ function HomePage() {
             : "bg-transparent"
         }`}
       >
-        <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-[10%]">
-          <div className="flex justify-between items-center h-20 flex-row-reverse lg:flex-row ">
-            <motion.div
-              className="flex items-center space-x-2"
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 400, damping: 17 }}
-            >
-              <Icon
-                name="spiral-logo"
-                size={35}
-                className="ml-0 lg:ml-0 mt-1 lg:scale-100 brightness-[1000%]"
-              />
-              <span className="text-white text-2xl lg:text-[1.6rem] tracking-tight">
-                <img
-                  src={LogoWhiteText}
-                  alt="Omnishare logo"
-                  className="h-5"
-                  decoding="async"
-                  loading="lazy"
-                />
-              </span>
-            </motion.div>
+        
+  <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-[10%]">
+  <div className="relative flex justify-between lg:justify-between items-center h-20 flex-row-reverse lg:flex-row">
 
-            {/* Desktop Menu */}
-            <div className="hidden lg:flex items-center space-x-8 ">
-              {[t("home"), t("features"), t("faq"), t("contact")].map(
-                (section, index) => (
-                  <motion.button
-                    key={section}
-                    onClick={() => scrollToSection(section)}
-                    className={`transition-colors relative ${
-                      scrollY > 50 ? "text-white" : "text-white"
-                    } capitalize font-medium`}
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      delay: index * 0.1,
-                      type: "spring",
-                      stiffness: 100,
-                    }}
-                    whileHover={{ scale: 1.05, y: -2 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {section}
-                    <motion.span
-                      className="absolute bottom-0 left-0 w-full h-0.5 bg-white origin-left"
-                      initial={{ scaleX: 0 }}
-                      whileHover={{ scaleX: 1 }}
-                      transition={{
-                        type: "spring",
-                        stiffness: 300,
-                        damping: 20,
-                      }}
-                    />
-                  </motion.button>
-                )
-              )}
+    {/* 🔹 MOBILE: Invisible box on right to balance hamburger */}
+    <div className="lg:hidden w-6 h-6"></div>
 
-              <data className="flex items-center gap-2 w-auto">
-                <motion.button
-                  onClick={() => navigate("/auth")}
-                  className="bg-white text-[#7650e3] px-6 py-2.5 text-base rounded-full font-semibold shadow-lg"
-                >
-                  {t("get_started_free")}
-                </motion.button>
-                <LanguageDropdown
-                  alignRight={false}
-                  className=" text-white"
-                />
-              </data>
-            </div>
+    {/* 🔹 CENTERED LOGO */}
+    <motion.div
+      className="absolute left-1/2 -translate-x-1/2 flex items-center space-x-2 lg:static lg:translate-x-0"
+      whileHover={{ scale: 1.05 }}
+      transition={{ type: "spring", stiffness: 400, damping: 17 }}
+    >
+      <Icon
+        name="spiral-logo"
+        size={35}
+        className="mt-1 brightness-[1000%]"
+      />
 
-            <motion.button
-              className={`lg:hidden transition-colors ${
-                scrollY > 50 ? "text-white" : "text-white"
-              }`}
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              whileTap={{ scale: 0.9, rotate: 90 }}
-            >
-              {isMenuOpen ? (
-                <X className="w-6 h-6" />
-              ) : (
-                <Menu className="w-6 h-6" />
-              )}
-            </motion.button>
-          </div>
-        </div>
+      <img
+        src={LogoWhiteText}
+        alt="Omnishare logo"
+        className="h-5"
+        decoding="async"
+        loading="lazy"
+      />
+    </motion.div>
+
+    {/* 🔹 MOBILE HAMBURGER (LEFT) — behaves EXACTLY as before */}
+    <motion.button
+      className={`lg:hidden transition-colors ${
+        scrollY > 50 ? "text-white" : "text-white"
+      }`}
+      onClick={() => setIsMenuOpen(!isMenuOpen)}
+      whileTap={{ scale: 0.9, rotate: 90 }}
+    >
+      {isMenuOpen ? (
+        <X className="w-6 h-6" />
+      ) : (
+        <Menu className="w-6 h-6" />
+      )}
+    </motion.button>
+
+    {/* 🔹 DESKTOP MENU — UNTOUCHED */}
+    <div className="hidden lg:flex items-center space-x-8">
+      {[t("home"), t("features"), t("faq"), t("contact")].map(
+        (section, index) => (
+          <motion.button
+            key={section}
+            onClick={() => scrollToSection(section)}
+            className="transition-colors relative text-white capitalize font-medium"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              delay: index * 0.1,
+              type: "spring",
+              stiffness: 100,
+            }}
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            {section}
+            <motion.span
+              className="absolute bottom-0 left-0 w-full h-0.5 bg-white origin-left"
+              initial={{ scaleX: 0 }}
+              whileHover={{ scaleX: 1 }}
+              transition={{
+                type: "spring",
+                stiffness: 300,
+                damping: 20,
+              }}
+            />
+          </motion.button>
+        )
+      )}
+
+      <div className="flex items-center gap-2 w-auto">
+        <motion.button
+          onClick={() => navigate("/auth")}
+          className="bg-white text-[#7650e3] px-6 py-2.5 text-base rounded-full font-semibold shadow-lg"
+        >
+          {t("get_started_free")}
+        </motion.button>
+
+        <LanguageDropdown alignRight={false} className="text-white" />
+      </div>
+    </div>
+  </div>
+</div>
       </motion.nav>
 
       <section
@@ -773,7 +779,6 @@ function HomePage() {
           >
             {t("ai_social_media")}
             <br />
-            
           </motion.h1>
 
           <motion.p
@@ -966,7 +971,7 @@ function HomePage() {
         </motion.div>
       </section>
 
-      <section id="video" className="py-20 bg-white relative overflow-hidden">
+      <section id="video" className="py-14 bg-white relative overflow-hidden">
         <motion.div
           className="absolute inset-0 opacity-5"
           style={{ y: useTransform(smoothProgress, [0.3, 0.6], [100, -100]) }}
@@ -1012,10 +1017,10 @@ function HomePage() {
 
             <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/70 to-transparent pointer-events-none hidden sm:block">
               <p className="text-white text-lg font-semibold">
-                Introduction to OmniShare
+                {t("introduction_to_omnishare")}
               </p>
               <p className="text-white/80">
-                Learn how to maximize your social media presence
+                {t("learn_how_to_maximize_your_social_media_presence")}
               </p>
             </div>
           </motion.div>
@@ -1165,7 +1170,7 @@ function HomePage() {
         </div>
       </section>
 
-      <section id="faq" className="py-20 bg-gray-50">
+      <section id="faq" className="py-14 bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             className="text-center mb-16"
@@ -1268,7 +1273,7 @@ function HomePage() {
         </div>
       </section>
 
-      <section id="contact" className="py-20 bg-white">
+      <section id="contact" className="py-14 bg-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             className="text-center mb-5"

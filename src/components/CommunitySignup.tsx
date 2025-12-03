@@ -31,7 +31,7 @@ const CommunitySignup: React.FC = () => {
   };
 
   return (
-    <div className="relative bg-white pb-20 overflow-hidden">
+    <div className="relative bg-white pb-14 overflow-hidden">
       {/* Floating Decorative Dots/Shapes (Mimicking the image) */}
       {/* Top Left - Small Blue Dot */}
       <div className="absolute top-1/4 left-1/4 w-1.5 h-1.5 bg-blue-400 rounded-full opacity-60 hidden sm:block"></div>
@@ -97,42 +97,47 @@ const CommunitySignup: React.FC = () => {
 
             <div className="mt-3 sm:mt-0 sm:ml-4">
               <button
-                type="submit"
-                className={`px-4 py-2 w-[40%] sm:w-[110px] rounded-md border font-medium shadow-lg transition
-                    ${
-                      loading
-                        ? "bg-purple-600 text-white border-purple-600 cursor-not-allowed"
-                        : "bg-white text-theme-secondary border-purple-600"
-                    }`}
-              >
-                {loading ? (
-                  <div className="flex items-center justify-center gap-2">
-                    <svg
-                      className="animate-spin h-4 w-4 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16 8 8 0 01-8-8z"
-                      ></path>
-                    </svg>
-                    {t("joining")}...
-                  </div>
-                ) : (
-                  t("join_now")
-                )}
-              </button>
+  type="submit"
+  className={`
+    transition font-medium shadow-lg inline-flex items-center justify-center space-x-2
+
+    /* MOBILE (<640px) style */
+    bg-[#7650e3] text-white px-8 py-3 rounded-full
+
+    /* DESKTOP (>=640px) — KEEP EXACTLY ORIGINAL */
+    sm:px-4 sm:py-2 sm:w-[110px] sm:rounded-md sm:border
+    ${loading ? "sm:bg-purple-600 sm:text-white sm:border-purple-600 sm:cursor-not-allowed"
+             : "sm:bg-white sm:text-theme-secondary sm:border-purple-600"}
+  `}
+>
+  {loading ? (
+    <div className="flex items-center justify-center gap-2">
+      <svg
+        className="animate-spin h-4 w-4 text-white"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          className="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          strokeWidth="4"
+        ></circle>
+        <path
+          className="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16 8 8 0 01-8-8z"
+        ></path>
+      </svg>
+      {t("joining")}...
+    </div>
+  ) : (
+    t("join_now")
+  )}
+</button>
             </div>
           </form>
         </div>

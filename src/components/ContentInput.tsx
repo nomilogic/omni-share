@@ -26,6 +26,8 @@ import { TemplateSelector } from "./TemplateSelector";
 import { ImageTemplateEditor } from "./ImageTemplateEditor";
 import { Template } from "../types/templates";
 import { getTemplateById } from "../utils/templates";
+import IntroVideo from "../assets/Omnishare Tutorial.Final.00.mp4";
+import { motion } from "framer-motion";
 import {
   isVideoFile,
   getVideoAspectRatio,
@@ -2986,10 +2988,16 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               <CheckCircle className="w-3 h-3 mr-2 text-green-400" />
                               <span className="text-green-300">
                                 {is9x16Video(videoAspectRatio)
-                                  ? t("vertical_video_ready_stories_format_no_thumbnail_needed")
+                                  ? t(
+                                      "vertical_video_ready_stories_format_no_thumbnail_needed"
+                                    )
                                   : is16x9Video(videoAspectRatio)
-                                  ? t("horizontal_video_ready_thumbnail_generated_when_click_generate_post")
-                                  : t("video_processed_ready_thumbnail_generated_when_click_generate_post")}
+                                  ? t(
+                                      "horizontal_video_ready_thumbnail_generated_when_click_generate_post"
+                                    )
+                                  : t(
+                                      "video_processed_ready_thumbnail_generated_when_click_generate_post"
+                                    )}
                               </span>
                             </div>
                           ) : null}
@@ -3304,7 +3312,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                       {isGeneratingBoth ? (
                         <div className="flex items-center">
                           <Loader className="w-5 h-5 mr-2 animate-spin" />
-                          {t('generating_post_and_image')}
+                          {t("generating_post_and_image")}
                         </div>
                       ) : isGeneratingThumbnail ? (
                         <div className="flex items-center">
@@ -3335,36 +3343,50 @@ export const ContentInput: React.FC<ContentInputProps> = ({
               {selectedImageMode === "" &&
                 selectedVideoMode === "" &&
                 selectedPostType !== "text" && (
-                  <div className="flex-1 w-full  ">
-                    <div className="relative rounded-md overflow-hidden shadow-md bg-gray-900 h-[450px] w-full">
-                      <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#7650e3] to-[#6366F1]">
-                        <button className="bg-white rounded-full p-6 hover:scale-110 transition-transform shadow-md">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            className="lucide lucide-play w-12 h-12 text-[#7650e3] ml-1"
-                          >
-                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                          </svg>
-                        </button>
-                      </div>
-                      <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/70 to-transparent">
+                  <motion.div
+                    className="flex-1 w-full"
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{
+                      duration: 0.6,
+                      type: "spring",
+                      stiffness: 80,
+                    }}
+                  >
+                    <div className="relative  rounded-md overflow-hidden shadow-md bg-gray-900 aspect-video w-full">
+                      {/* VIDEO REPLACING SVG BUTTON */}
+                      <motion.video
+                        src={IntroVideo}
+                        
+                        muted
+                        loop
+                        playsInline
+                        controls
+                        preload="none"
+                        poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080'%3E%3Crect fill='%23111827' width='1920' height='1080'/%3E%3C/svg%3E"
+                        className="absolute w-full h-full object-cover"
+                        initial={{ scale: 0.95, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{
+                          duration: 0.6,
+                          type: "spring",
+                          stiffness: 80,
+                        }}
+                      />
+
+                      <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/70 to-transparent pointer-events-none hidden sm:block">
                         <p className="text-white text-lg font-semibold">
                           {t("introduction_to_omnishare")}
                         </p>
                         <p className="text-white/80">
-                          {t('learn_how_to_maximize_your_social_media_presence')}
+                          {t(
+                            "learn_how_to_maximize_your_social_media_presence"
+                          )}
                         </p>
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
                 )}
             </div>
           </form>

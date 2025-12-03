@@ -310,8 +310,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 </div>
               </button>
             </div>
-            <div className="flex gap-2 mt-2.5 md:px-5 px-3 text-white ">
-              <LanguageDropdown alignRight={false} className="text-white"/>
+            <div className="flex gap-2 mt-3 px-2.5 md:px-2.5">
+              <LanguageDropdown showGlobe={true} alignRight={true} className="text-white"/>
             </div>
 
             <div className="absolute bottom-0 left-0 right-0 ">
@@ -530,8 +530,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               </Link>
 
               <div className="flex items-center space-x-1">
-                <div className=" md:block hidden text-white ">
-                  <LanguageDropdown />
+                <div className=" md:block hidden ">
+                  <LanguageDropdown/>
                 </div>
                 <div className="flex gap-x-4 items-center">
                   <WalletBalance
@@ -568,7 +568,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                       <Icon name="question-mark" size={17} />
                                     </button>
                                     {planMsgOpen && (
-                                      <div className="absolute left-0 top-full mt-1 w-56 p-2 bg-gray-50 border rounded-md shadow-lg z-50 text-xs text-purple-600">
+                                      <div className="absolute left-0 top-full mt-1 w-56 p-2 bg-gray-50 border rounded-md shadow-lg z-50 text-xs text-black">
                                         This is your current plan:{" "}
                                         <span className="font-semibold">
                                           {user.wallet?.package?.name || "FREE"}
@@ -627,7 +627,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                       <Icon name="question-mark" size={17} />
                                     </button>
                                     {coinsMsgOpen && (
-                                      <div className="absolute left-0 top-full mt-1 w-56 p-2 bg-gray-50 border rounded-md shadow-lg z-50 text-xs text-purple-600">
+                                      <div className="absolute left-0 top-full mt-1 w-56 p-2 bg-gray-50 border rounded-md shadow-lg z-50 text-xs text-black">
                                         This package gives you{" "}
                                         <span className="font-semibold">
                                           {user.wallet?.coins?.toLocaleString() ??
@@ -673,7 +673,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                       <Icon name="question-mark" size={17} />
                                     </button>
                                     {referralMsgOpen && (
-                                      <div className="absolute left-0 top-full mt-1 w-56 p-2 bg-gray-50 border rounded-md shadow-lg z-50 text-xs text-purple-600">
+                                      <div className="absolute left-0 top-full mt-1 w-56 p-2 bg-gray-50 border rounded-md shadow-lg z-50 text-xs text-black">
                                         Referral coins are always used first.
                                         You currently have{" "}
                                         <span className="font-semibold">
