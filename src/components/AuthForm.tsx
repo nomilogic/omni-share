@@ -15,7 +15,7 @@ import {
 
 import API from "../services/api";
 import { OtpModal } from "./OtpModal";
-import { ArrowLeftIcon, Mail } from "lucide-react";
+import { Mail } from "lucide-react";
 import logoText from "../assets/logo-text.svg";
 import backArrow from "../assets/back-arrow.png";
 import { notify } from "@/utils/toast";
@@ -31,7 +31,6 @@ interface AuthFormProps {
 
 type AuthMode = "login" | "signup" | "forgotPassword" | "resetPassword";
 
-// Validation Schemas
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
@@ -499,17 +498,6 @@ export const AuthForm: React.FC<AuthFormProps> = ({
               </form>
 
               <div className="flex  gap-3   items-center justify-end text-sm">
-                {/* <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={rememberMe}
-                    onChange={(e) => setRememberMe(e.target.checked)}
-                    className="rounded  accent-white"
-                  />
-                  <span className="text-gray-500 font-medium text-sm">
-                    Remember me For 30 Days
-                  </span>
-                </label> */}
                 <button
                   onClick={() => {
                     setMode("forgotPassword");
