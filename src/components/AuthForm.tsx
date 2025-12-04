@@ -429,7 +429,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                   <svg className="w-5 h-5" fill="#0A66C2" viewBox="0 0 24 24">
                     <path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5zM.2 8.98h4.6V24H.2V8.98zM9.98 8.98h4.4v2.06h.06c.61-1.16 2.1-2.38 4.32-2.38 4.62 0 5.47 3.04 5.47 6.99V24h-4.6v-6.92c0-1.65-.03-3.78-2.3-3.78-2.31 0-2.66 1.8-2.66 3.67V24h-4.6V8.98z" />
                   </svg>
-                  <span className="hidden sm:inline mt-1">LinkedIn</span>
+                  <span className="hidden sm:inline ">LinkedIn</span>
                   <span className="sm:hidden ">LinkedIn</span>
                 </button>
 
