@@ -31,7 +31,6 @@ import LogoWhiteText from "../../assets/logo-white-text.svg";
 import { useTranslation } from "react-i18next";
 import LanguageDropdown from "../LanguageDropdown";
 
-// Define the props for AppLayout
 interface AppLayoutProps {
   children: React.ReactNode;
 }
@@ -39,7 +38,6 @@ interface AppLayoutProps {
 export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const { user, logout, balance, refreshUser } = useAppContext();
   const { t, i18n } = useTranslation();
-  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
   const { loadingState } = useLoading();
   const { unreadCount, markAllAsRead: markAllUnreadAsRead } = useUnreadPosts();
   const location = useLocation();
@@ -69,7 +67,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Close user menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (

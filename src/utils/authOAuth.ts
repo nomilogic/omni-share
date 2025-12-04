@@ -33,8 +33,6 @@ export const oauthConfig: OAuthConfig = {
   linkedin: {
     clientId: import.meta.env.VITE_LINKEDIN_CLIENT_ID || "",
     redirectUri: `${window.location.origin}/auth/linkedin/callback`,
-    // redirectUri: `https://omnishare.ai/server/api/client/oauth/linkedin/callback`,
-    // redirectUri: `https://4q2ddj89-3000.uks1.devtunnels.ms/api/client/oauth/linkedin/callback`,
   },
 };
 
@@ -46,12 +44,12 @@ export const generateOAuthState = (): string => {
 };
 
 export const storeOAuthState = (state: string): void => {
-  sessionStorage.setItem("oauth_state", state);
+  localStorage.setItem("oauth_state", state);
 };
 
 export const verifyOAuthState = (state: string): boolean => {
-  const storedState = sessionStorage.getItem("oauth_state");
-  sessionStorage.removeItem("oauth_state");
+  const storedState = localStorage.getItem("oauth_state");
+  localStorage.removeItem("oauth_state");
   return storedState === state;
 };
 
@@ -74,7 +72,7 @@ export const initiateGoogleOAuth = (
         scope: "openid email profile",
         state: state,
         access_type: "offline",
-        prompt: "consent",
+        prompt: "select_account",
       });
 
       const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
@@ -173,7 +171,7 @@ export const initiateFacebookOAuth = (): Promise<{
         client_id: oauthConfig.facebook.appId,
         redirect_uri: oauthConfig.facebook.redirectUri,
         response_type: "code",
-        scope: "email,public_profile,business_management",
+        scope: "email,public_profile",
         state: state,
       });
 

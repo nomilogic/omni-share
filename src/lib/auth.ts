@@ -13,7 +13,7 @@ export interface User {
   profile_type?: "individual" | "business";
   plan?: "free" | "ipro" | "business";
   created_at?: Date;
-  profile?:any
+  profile?: any;
 }
 
 export interface AuthResponse {
@@ -54,7 +54,6 @@ class JWTAuthService {
         this.setUser(data.user);
         this.scheduleTokenRefresh(data.token);
         return { success: true, user: data.user, token: data.token };
-      
       } else {
         return { success: false, error: data.error };
       }
@@ -319,7 +318,6 @@ export const signUpWithEmail = (
   password: string,
   name?: string
 ) => authService.register(email, password, name);
-export const signOut = () => authService.logout();
 
 // For demo purposes - create temporary demo user for testing
 export const signInAnonymously = async () => {

@@ -15,12 +15,11 @@ import {
 
 import API from "../services/api";
 import { OtpModal } from "./OtpModal";
-import { ArrowLeftIcon, Mail } from "lucide-react";
+import { Mail } from "lucide-react";
 import logoText from "../assets/logo-text.svg";
 import backArrow from "../assets/back-arrow.png";
 import { notify } from "@/utils/toast";
 import Icon from "./Icon";
-import { div } from "framer-motion/client";
 
 interface AuthFormProps {
   onAuthSuccess: (user: any) => void;
@@ -32,7 +31,6 @@ interface AuthFormProps {
 
 type AuthMode = "login" | "signup" | "forgotPassword" | "resetPassword";
 
-// Validation Schemas
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
@@ -344,10 +342,10 @@ export const AuthForm: React.FC<AuthFormProps> = ({
       {!showOtpPopup && (
         <div
           className={`z-10  md:max-w-md md:bg-gray-50 flex items-center flex-col w-full justify-start md:shadow-md rounded-md py-6 ${
-            mode !== "login" && mode !== "signup" ? "h-[480px]" : "h-[750px]"
+            mode !== "login" && mode !== "signup" ? "h-[480px]" : "h-[780px]"
           } md:py-10  sm:px-6 md:px-10  md:border md:border-slate-200/70 md:backdrop-blur-sm`}
         >
-          <div className="flex relative items-center justify-center mb-4 sm:mb-6 w-full ">
+          <div className="flex relative items-center justify-center mb-4 sm:mb-4 w-full ">
             {/* {mode !== "login" && (
               <button onClick={resetMode} className="absolute left-0">
                 <img src={backArrow} className="w-full h-full" alt="" />
@@ -355,14 +353,17 @@ export const AuthForm: React.FC<AuthFormProps> = ({
             )} */}
 
             <div className="mb-8">
-              <button 
-              onClick={() => navigate("/home")}
-              className="group">
-                <img
-                  src={backArrow}
-                  className="absolute left-0 "
-                  alt=""
-                />
+              <button
+                onClick={() => {
+                  if (mode == "login") {
+                    navigate("/home");
+                  } else {
+                    setMode("login");
+                  }
+                }}
+                className="group"
+              >
+                <img src={backArrow} className="absolute left-0 " alt="" />
               </button>
             </div>
 
@@ -371,7 +372,6 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                 mode !== "login" ? "" : "mx-auto"
               }`}
             >
-              
               <div className="text-center flex gap-2 items-center">
                 <Icon name="spiral-logo" size={50} />
                 <span className="theme-text-primary text-xl md:text-2xl tracking-tight">
@@ -386,7 +386,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
           </div>
 
           {mode === "login" && (
-            <div className="space-y-4 sm:space-y-5 md:space-y-6 w-full">
+            <div className="space-y-4 w-full">
               <h2 className="text-center text-base font-medium text-black">
                 Sign up or Login with
               </h2>
@@ -444,7 +444,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                   <svg className="w-5 h-5" fill="#0A66C2" viewBox="0 0 24 24">
                     <path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5zM.2 8.98h4.6V24H.2V8.98zM9.98 8.98h4.4v2.06h.06c.61-1.16 2.1-2.38 4.32-2.38 4.62 0 5.47 3.04 5.47 6.99V24h-4.6v-6.92c0-1.65-.03-3.78-2.3-3.78-2.31 0-2.66 1.8-2.66 3.67V24h-4.6V8.98z" />
                   </svg>
-                  <span className="hidden sm:inline mt-1">LinkedIn</span>
+                  <span className="hidden sm:inline ">LinkedIn</span>
                   <span className="sm:hidden ">LinkedIn</span>
                 </button>
 
@@ -470,7 +470,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
               </div>
               <form
                 onSubmit={loginForm.handleSubmit(handleLoginSubmit)}
-                className="space-y-3 sm:space-y-4"
+                className="flex flex-col gap-y-3 sm:gap-y-4"
               >
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">
@@ -513,18 +513,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                 </button>
               </form>
 
-              <div className="flex  gap-3   items-center justify-end text-sm">
-                {/* <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={rememberMe}
-                    onChange={(e) => setRememberMe(e.target.checked)}
-                    className="rounded  accent-white"
-                  />
-                  <span className="text-gray-500 font-medium text-sm">
-                    Remember me For 30 Days
-                  </span>
-                </label> */}
+              <div className="flex    items-center justify-end text-sm">
                 <button
                   onClick={() => {
                     setMode("forgotPassword");
