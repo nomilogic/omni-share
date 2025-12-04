@@ -5,7 +5,10 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 const schema = z.object({
-  email: z.string().min(1, "Please enter your email address").email("Please enter a valid email address"),
+  email: z
+    .string()
+    .min(1, "Please enter your email address")
+    .email("Please enter a valid email address"),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -22,8 +25,7 @@ const CommunitySignup: React.FC = () => {
   } = useForm<FormData>({ resolver: zodResolver(schema) });
 
   const onSubmit = (data: FormData) => {
-    setLoading(true);
-    // keep your submit behavior minimal
+    setLoading(true);                           
     setTimeout(() => {
       console.log("Form submitted:", data);
       setLoading(false);
@@ -31,7 +33,7 @@ const CommunitySignup: React.FC = () => {
   };
 
   return (
-    <div className="relative bg-gray-50 pb-8 md:pb-14 overflow-hidden">
+    <div className="relative bg-gray-50 pt-8 md:pt-14 pb-8 md:pb-14 overflow-hidden">
       {/* Floating Decorative Dots/Shapes (Mimicking the image) */}
       {/* Top Left - Small Blue Dot */}
       <div className="absolute top-1/4 left-1/4 w-1.5 h-1.5 bg-blue-400 rounded-full opacity-60 hidden sm:block"></div>
@@ -60,10 +62,8 @@ const CommunitySignup: React.FC = () => {
       {/* Bottom Right - Small Blue Dot */}
       <div className="absolute bottom-[25%] right-[20%] w-1.5 h-1.5 bg-blue-400 rounded-full opacity-60 hidden sm:block"></div>
 
-      {/* Main Content Area: Centered Container */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center">
-          {/* Main Headline Text */}
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
             {t("join_our_community_today_and")}
             <br />
@@ -76,7 +76,7 @@ const CommunitySignup: React.FC = () => {
             onSubmit={handleSubmit(onSubmit)}
           >
             <div className="min-w-0 flex-1">
-              <label htmlFor="email-address" className="sr-only">
+              <label htmlFor="email-address" className="sr-only ">
                 Email Address
               </label>
               <input
@@ -88,7 +88,7 @@ const CommunitySignup: React.FC = () => {
                 {...register("email")}
               />
               {errors.email && (
-                <p className="text-red-500 text-sm mt-1">
+                <p className="text-red-500 text-sm mt-1 text-left w-64 mx-auto sm:mx-0"> 
                   {errors.email.message}
                 </p>
               )}

@@ -428,7 +428,7 @@ function HomePage() {
                 {t("get_started_free")}
               </motion.button>
             </div>
-            <div className="pl-4">
+            <div className="pl-4 pt-3">
               <LanguageDropdown
                 alignRight={false}
                 showGlobe={true}
