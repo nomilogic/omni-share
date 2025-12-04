@@ -15,7 +15,8 @@ const TwoColumnSection2 = () => {
       {/* Left Side - Text */}
       <div className="flex flex-col gap-3 md:gap-4 items-center md:items-start">
         <h2 className="font-bold text-4xl sm:text-5xl text-black">
-          <span className="text-purple-600">{t("line_06")}</span> {t("line_07")}
+          <span className="text-purple-600 font-medium">{t("line_06")}</span>{" "}
+          {t("line_07")}
         </h2>
 
         <p className="text-base sm:text-lg text-gray-500">
