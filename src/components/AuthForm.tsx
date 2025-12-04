@@ -20,6 +20,7 @@ import logoText from "../assets/logo-text.svg";
 import backArrow from "../assets/back-arrow.png";
 import { notify } from "@/utils/toast";
 import Icon from "./Icon";
+import { useTranslation } from "react-i18next";
 
 interface AuthFormProps {
   onAuthSuccess: (user: any) => void;
@@ -75,6 +76,8 @@ export const AuthForm: React.FC<AuthFormProps> = ({
   const [error, setError] = useState("");
   const [showOtpPopup, setShowOtpPopup] = useState<boolean>(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const { t, i18n } = useTranslation();
+  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
 
   const params = new URLSearchParams(window.location.search);
   const referralId: any = params.get("referralId");
@@ -388,7 +391,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
           {mode === "login" && (
             <div className="space-y-4 w-full">
               <h2 className="text-center text-base font-medium text-black">
-                Sign up or Login with
+                {t("sign_up_or_login_with")}
               </h2>
               <div className="space-y-2 sm:space-y-3">
                 <button
@@ -454,8 +457,8 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                   className="w-full border-2 border-purple-600 rounded-md py-2.5  flex items-center justify-start bg-white px-4 gap-2 hover:bg-purple-50 transition font-medium text-base text-slate-700 disabled:opacity-50"
                 >
                   <Mail className="w-5 h-5" />
-                  <span className="hidden sm:inline">Continue with Email</span>
-                  <span className="sm:hidden ">Email</span>
+                  <span className="hidden sm:inline">{t("continue_with_email")}</span>
+                  <span className="sm:hidden ">{t("email")}</span>
                 </button>
               </div>
               <div className="relative">
@@ -474,11 +477,11 @@ export const AuthForm: React.FC<AuthFormProps> = ({
               >
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Email
+                    {t("email")}
                   </label>
                   <input
                     type="email"
-                    placeholder="Enter your email"
+                    placeholder={t("enter_your_email")}
                     {...loginForm.register("email")}
                     className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
                   />
@@ -490,11 +493,11 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Password
+                    {t("password")}
                   </label>
                   <input
                     type="password"
-                    placeholder="Enter your Password"
+                    placeholder={t("enter_your_password")}
                     {...loginForm.register("password")}
                     className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
                   />
@@ -509,7 +512,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                   disabled={loading}
                   className="w-full bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3]  border border-[#7650e3] text-white font-semibold py-2 text-base rounded-md transition disabled:opacity-50"
                 >
-                  {loading ? "Signing in..." : "Sign in"}
+                  {loading ? "Signing in..." : t("sign_in")}
                 </button>
               </form>
 
@@ -521,7 +524,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                   }}
                   className="text-purple-600 hover:underline font-medium text-sm text-left sm:text-right"
                 >
-                  Forgot Password
+                  {t("forgot_password")}
                 </button>
               </div>
             </div>
@@ -534,11 +537,11 @@ export const AuthForm: React.FC<AuthFormProps> = ({
             >
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Name
+                  {t("name")}
                 </label>
                 <input
                   type="text"
-                  placeholder="Enter your Full Name"
+                  placeholder={t("enter_your_full_name")}
                   {...signupForm.register("name")}
                   className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
                 />
@@ -551,11 +554,11 @@ export const AuthForm: React.FC<AuthFormProps> = ({
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Email
+                  {t("email")}
                 </label>
                 <input
                   type="email"
-                  placeholder="Enter your email"
+                  placeholder={t("enter_your_email")}
                   {...signupForm.register("email")}
                   className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
                 />
@@ -568,11 +571,11 @@ export const AuthForm: React.FC<AuthFormProps> = ({
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Password
+                  {t("password")}
                 </label>
                 <input
                   type="password"
-                  placeholder="Enter your Password"
+                  placeholder={t("enter_your_password")}
                   {...signupForm.register("password")}
                   className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
                 />
@@ -602,7 +605,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                 disabled={loading}
                 className="w-full  text-white bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] border-[#7650e3] border font-semibold py-2  text-base rounded-md transition disabled:opacity-50"
               >
-                {loading ? "Creating account..." : "Register"}
+                {loading ? "Creating account..." : t("register")}
               </button>
 
               {(error || externalError) && (
@@ -622,20 +625,20 @@ export const AuthForm: React.FC<AuthFormProps> = ({
             >
               <div className="mb-10">
                 <h2 className="text-center text-base font-medium text-black">
-                  Forgot Password
+                  {t("forgot_password")}
                 </h2>
                 <p className="text-center text-sm  text-gray-500 font-medium">
-                  Enter your registered email address below.
+                  {t("enter_registered_email")}
                 </p>
               </div>
 
               <div className="mb-4">
                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Email
+                  {t("email")}
                 </label>
                 <input
                   type="email"
-                  placeholder="Enter your email"
+                  placeholder={t("enter_your_email")}
                   {...forgotPasswordForm.register("email")}
                   className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
                 />
@@ -651,7 +654,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                   disabled={loading}
                   className="w-full bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3]  border border-[#7650e3] text-white font-semibold py-2 mb-4 text-base rounded-md transition disabled:opacity-50"
                 >
-                  {loading ? "Sending..." : "Forgot Password"}
+                  {loading ? "Sending..." : t("forgot_password")}
                 </button>
               </div>
             </form>
@@ -665,16 +668,16 @@ export const AuthForm: React.FC<AuthFormProps> = ({
               className="space-y-4 sm:space-y-5 w-full"
             >
               <h2 className="text-base sm:text-lg font-semibold text-slate-800 mb-4 sm:mb-6">
-                Reset Your Password
+                {t("reset_your_password")}
               </h2>
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                  New Password
+                  {t("new_password")}
                 </label>
                 <input
                   type="password"
-                  placeholder="Enter new Password"
+                  placeholder={t("enter_your_password")}
                   {...resetPasswordForm.register("password")}
                   className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
                 />
@@ -687,7 +690,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Confirm Password
+                  {t("confirm_password")}
                 </label>
                 <input
                   type="password"
