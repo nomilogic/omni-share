@@ -20,6 +20,7 @@ import logoText from "../assets/logo-text.svg";
 import backArrow from "../assets/back-arrow.png";
 import { notify } from "@/utils/toast";
 import Icon from "./Icon";
+import { div } from "framer-motion/client";
 
 interface AuthFormProps {
   onAuthSuccess: (user: any) => void;
@@ -347,16 +348,30 @@ export const AuthForm: React.FC<AuthFormProps> = ({
           } md:py-10  sm:px-6 md:px-10  md:border md:border-slate-200/70 md:backdrop-blur-sm`}
         >
           <div className="flex relative items-center justify-center mb-4 sm:mb-6 w-full ">
-            {mode !== "login" && (
+            {/* {mode !== "login" && (
               <button onClick={resetMode} className="absolute left-0">
                 <img src={backArrow} className="w-full h-full" alt="" />
               </button>
-            )}
+            )} */}
+
+            <div className="mb-8">
+              <button 
+              onClick={() => navigate("/home")}
+              className="group">
+                <img
+                  src={backArrow}
+                  className="absolute left-0 "
+                  alt=""
+                />
+              </button>
+            </div>
+
             <div
-              className={`flex items-center gap-2 relative ${
+              className={`flex items-center  relative ${
                 mode !== "login" ? "" : "mx-auto"
               }`}
             >
+              
               <div className="text-center flex gap-2 items-center">
                 <Icon name="spiral-logo" size={50} />
                 <span className="theme-text-primary text-xl md:text-2xl tracking-tight">
