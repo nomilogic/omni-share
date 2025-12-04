@@ -25,7 +25,7 @@ const TwoColumnSection: React.FC = () => {
       {t("line_01")} <span className="text-purple-600">{t("line_02")}</span> {t("line_03")}
     </h2>
     <p className="leading-relaxed text-base sm:text-lg text-gray-500">
-      {t("line_04")} <strong>{t("line_05")}</strong>
+      {t("line_04")} <strong className="text-xl">{t("line_05")}</strong>
     </p>
     <div className="flex justify-center md:justify-start w-full">
       <button

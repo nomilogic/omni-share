@@ -42,19 +42,13 @@ const CommunitySignup: React.FC = () => {
       <div className="absolute top-1/3 left-[20%] w-2 h-2 bg-indigo-900 rounded-full hidden sm:block"></div>
 
       {/* Top Left - Large Purple Dot */}
-      <div className="absolute top-[25%] left-[30%] w-3 h-3 bg-indigo-600 rounded-full hidden sm:block"></div>
+      
 
       {/* Mid Center - Small Diamond */}
-      <div
-        className="absolute bottom-[20%] left-1/2 w-2 h-2 bg-blue-500 transform rotate-45 hidden sm:block"
-        style={{ width: "8px", height: "8px" }}
-      ></div>
+      
 
       {/* Top Right - Diamond */}
-      <div
-        className="absolute top-[28%] right-[32%] w-2 h-2 bg-blue-500 transform rotate-45 hidden sm:block"
-        style={{ width: "8px", height: "8px" }}
-      ></div>
+      
 
       {/* Mid Right - Dark Blue Dot */}
       <div className="absolute top-1/2 right-[25%] w-3 h-3 bg-indigo-900 rounded-full hidden sm:block"></div>
