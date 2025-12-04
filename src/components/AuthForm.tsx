@@ -20,7 +20,6 @@ import logoText from "../assets/logo-text.svg";
 import backArrow from "../assets/back-arrow.png";
 import { notify } from "@/utils/toast";
 import Icon from "./Icon";
-import { div } from "framer-motion/client";
 
 interface AuthFormProps {
   onAuthSuccess: (user: any) => void;
@@ -343,10 +342,10 @@ export const AuthForm: React.FC<AuthFormProps> = ({
       {!showOtpPopup && (
         <div
           className={`z-10  md:max-w-md md:bg-gray-50 flex items-center flex-col w-full justify-start md:shadow-md rounded-md py-6 ${
-            mode !== "login" && mode !== "signup" ? "h-[480px]" : "h-[750px]"
+            mode !== "login" && mode !== "signup" ? "h-[480px]" : "h-[780px]"
           } md:py-10  sm:px-6 md:px-10  md:border md:border-slate-200/70 md:backdrop-blur-sm`}
         >
-          <div className="flex relative items-center justify-center mb-4 sm:mb-6 w-full ">
+          <div className="flex relative items-center justify-center mb-4 sm:mb-4 w-full ">
             {/* {mode !== "login" && (
               <button onClick={resetMode} className="absolute left-0">
                 <img src={backArrow} className="w-full h-full" alt="" />
@@ -354,14 +353,17 @@ export const AuthForm: React.FC<AuthFormProps> = ({
             )} */}
 
             <div className="mb-8">
-              <button 
-              onClick={() => navigate("/home")}
-              className="group">
-                <img
-                  src={backArrow}
-                  className="absolute left-0 "
-                  alt=""
-                />
+              <button
+                onClick={() => {
+                  if (mode == "login") {
+                    navigate("/home");
+                  } else {
+                    setMode("login");
+                  }
+                }}
+                className="group"
+              >
+                <img src={backArrow} className="absolute left-0 " alt="" />
               </button>
             </div>
 
@@ -370,7 +372,6 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                 mode !== "login" ? "" : "mx-auto"
               }`}
             >
-              
               <div className="text-center flex gap-2 items-center">
                 <Icon name="spiral-logo" size={50} />
                 <span className="theme-text-primary text-xl md:text-2xl tracking-tight">
@@ -385,7 +386,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
           </div>
 
           {mode === "login" && (
-            <div className="space-y-4 sm:space-y-5 md:space-y-6 w-full">
+            <div className="space-y-4 w-full">
               <h2 className="text-center text-base font-medium text-black">
                 Sign up or Login with
               </h2>
@@ -469,7 +470,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
               </div>
               <form
                 onSubmit={loginForm.handleSubmit(handleLoginSubmit)}
-                className="space-y-3 sm:space-y-4"
+                className="flex flex-col gap-y-3 sm:gap-y-4"
               >
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">
@@ -512,7 +513,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                 </button>
               </form>
 
-              <div className="flex  gap-3   items-center justify-end text-sm">
+              <div className="flex    items-center justify-end text-sm">
                 <button
                   onClick={() => {
                     setMode("forgotPassword");

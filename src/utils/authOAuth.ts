@@ -72,7 +72,7 @@ export const initiateGoogleOAuth = (
         scope: "openid email profile",
         state: state,
         access_type: "offline",
-        prompt: "consent",
+        prompt: "select_account",
       });
 
       const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
