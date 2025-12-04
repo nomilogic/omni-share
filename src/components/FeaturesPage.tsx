@@ -236,7 +236,7 @@ const FeaturesPage: React.FC = () => {
 
   return (
     <div className="w-full">
-      <section className="relative overflow-hidden py-8 md:py-14">
+      <section className="relative overflow-hidden py-8  lg:px-28 lg:pt-14">
         <div className="relative w-full max-w-full mx-auto px-4 sm:px-6 lg:px-[10%]">
           <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4 text-center">
             <span className="font-bold">
@@ -248,7 +248,7 @@ const FeaturesPage: React.FC = () => {
           <p className="hidden md:block text-xl text-gray-500 font-medium mx-auto max-w-[900px] text-center">
             {t("omni_content_message")}
           </p>
-          <div className="mt-12 grid md:grid-cols-2 md:gap-12 items-start">
+          <div className=" mt-0 md:mt-12  grid md:grid-cols-2 md:gap-12 items-start">
             {/* Feature List */}
             <div className="relative" ref={listRef}>
               {/* Static Vertical Line */}

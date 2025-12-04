@@ -10,7 +10,7 @@ const TwoColumnSection: React.FC = () => {
   return (
     <section
   className="relative w-full max-w-full mx-auto px-4 sm:px-6 lg:px-[10%]
-    grid md:grid-cols-2 gap-10 items-center 
+    grid md:grid-cols-2 gap-4 md:gap-10 lg:gap-10 items-center 
     text-center md:text-left
   "
 >
@@ -20,7 +20,7 @@ const TwoColumnSection: React.FC = () => {
   </div>
 
   {/* Right Side - Text + Button */}
-  <div className="w-full flex flex-col gap-4 items-center md:items-start">
+  <div className="w-full flex flex-col gap-3 md:gap-4 items-center md:items-start">
     <h2 className="font-bold text-4xl sm:text-5xl text-black">
       {t("line_01")} <span className="text-purple-600">{t("line_02")}</span> {t("line_03")}
     </h2>

@@ -3374,17 +3374,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                           stiffness: 80,
                         }}
                       />
-
-                      <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/70 to-transparent pointer-events-none hidden sm:block">
-                        <p className="text-white text-lg font-semibold">
-                          {t("introduction_to_omnishare")}
-                        </p>
-                        <p className="text-white/80">
-                          {t(
-                            "learn_how_to_maximize_your_social_media_presence"
-                          )}
-                        </p>
-                      </div>
                     </div>
                   </motion.div>
                 )}

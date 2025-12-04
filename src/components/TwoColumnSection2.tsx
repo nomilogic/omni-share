@@ -10,10 +10,10 @@ const TwoColumnSection2 = () => {
   return (
     <section
   className="pt-8 md:pt-14 relative max-w-full mx-auto px-4 sm:px-6 lg:px-[10%]
-    grid md:grid-cols-2 gap-10 items-center w-full bg-white text-center md:text-left"
+    grid md:grid-cols-2 gap-4 md:gap-10 lg:gap-10 items-center w-full bg-white text-center md:text-left"
 >
   {/* Left Side - Text */}
-  <div className="flex flex-col gap-4 items-center md:items-start">
+  <div className="flex flex-col gap-3 md:gap-4 items-center md:items-start">
     <h2 className="font-bold text-4xl sm:text-5xl text-black">
       <span className="text-purple-600">{t("line_06")}</span> {t("line_07")}
     </h2>
@@ -22,7 +22,7 @@ const TwoColumnSection2 = () => {
       {t("line_08")} <strong>{t("line_09")}</strong>
     </p>
 
-    <div className="flex justify-center md:justify-start w-full">
+    <div className="flex justify-center md:justify-start w-full ">
       <button
         onClick={() => navigate("/auth")}
         className="group px-6 py-2.5 border border-purple-600 text-purple-600 font-semibold rounded-md hover:bg-purple-100 transition"

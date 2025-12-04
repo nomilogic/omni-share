@@ -312,10 +312,10 @@ function HomePage() {
   };
 
   const contactSchema = z.object({
-    firstName: z.string().min(2, "First name is too short"),
-    lastName: z.string().min(2, "Last name is too short"),
-    email: z.string().email("Invalid email address"),
-    message: z.string().min(5, "Message must be at least 5 characters"),
+    firstName: z.string().min(2, "First name is required"),
+    lastName: z.string().min(2, "Last name is required"),
+    email: z.string().min(1, "Please enter your email address").email("Please enter a valid email address"),
+    message: z.string().min(5, "Please enter your message"),
   });
   const {
     register,
@@ -741,8 +741,8 @@ function HomePage() {
       </motion.nav>
 
       <section
-        id="home"
-        className="relative min-h-[100vh] flex items-center justify-center overflow-hidden bg-gray-900"
+        id="Home"
+        className="  relative min-h-[100vh] flex items-center justify-center overflow-hidden bg-gray-900"
       >
         <video
           className="absolute inset-0 w-full h-full object-cover"
@@ -806,7 +806,7 @@ function HomePage() {
                 },
                 {
                   name: "instagram",
-                  url: "https://omnishare.ai/",
+                  url: "https://www.instagram.com/omnishare.ai/",
                   index: 1,
                 },
                 {
@@ -903,13 +903,14 @@ function HomePage() {
         </motion.div>
       </section>
       <motion.div
-        id="features"
+        id="Features"
+        className="scroll-mt-20"
         initial={{ opacity: 0, y: 130 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-300px" }}
         transition={{ duration: 1.6, type: "spring", stiffness: 80 }}
       >
-        <FeaturesPage />
+        <FeaturesPage  />
       </motion.div>
       <TwoColumnSection />
       <TwoColumnSection2 />
@@ -1039,7 +1040,7 @@ function HomePage() {
 
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div
-            className="text-center mb-16"
+            className="text-center mb-4 md:mb-16"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
@@ -1166,10 +1167,10 @@ function HomePage() {
         </div>
       </section>
 
-      <section id="faq" className="py-8 md:py-14 bg-gray-50">
+      <section id="Faq" className=" scroll-mt-20 py-8 md:py-14 bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
-            className="text-center mb-16"
+            className="text-center mb-4 md:mb-16"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
@@ -1230,7 +1231,7 @@ function HomePage() {
                       transition={{ duration: 0.3, ease: "easeInOut" }}
                       className="overflow-hidden"
                     >
-                      <div className="px-6 pb-5 text-gray-500 font-medium leading-relaxed">
+                      <div className="px-6 pb-5 text-gray-500 font-semibold leading-relaxed">
                         {faq.answer}
                       </div>
                     </motion.div>
@@ -1269,7 +1270,7 @@ function HomePage() {
         </div>
       </section>
 
-      <section id="contact" className="py-8 md:py-14 bg-white">
+      <section id="Contact" className="scroll-mt-20 py-8 md:py-14 bg-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             className="text-center mb-5"
@@ -1376,7 +1377,7 @@ function HomePage() {
                   </label>
                   <input
                     {...register("email")}
-                    type="email"
+                    type="text"
                     className="w-full px-4 py-2.5 border border-purple-600 rounded-md focus-visible:ring-0 focus:ring-0 transition-all"
                     placeholder={t("email_address")}
                   />
@@ -1439,17 +1440,17 @@ function HomePage() {
       <div className="relative bg-theme-secondary ">
      
         <motion.footer
-          className="w-full px-4 py-4 text-center text-sm theme-text-light"
+          className="w-full  py-4 text-center text-sm theme-text-light"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
         >
-          <div className="w-full mx-auto pt-2 md:px-[10%] px-3 flex flex-col sm:flex-row items-center md:justify-between gap-3">
+          <div className=" w-full mx-auto md:px-[10%] px-3 flex flex-col justify-between sm:flex-row items-center md:justify-between ">
             <span className="">© {new Date().getFullYear()} OmniShare</span>
-            
-            {" "}
-            <div className="flex flex-row gap-4">
-              {" "}
+
+            <div className="hidden lg:flex flex-row gap-4 justify-center lg:-mr-36">
+
+
               <a
                 target="_blank"
                 rel="noreferrer"
@@ -1676,11 +1677,12 @@ function HomePage() {
               </a>
              
             </div>
-             {/* 2. Policy/Service Links */}
+             
             <div className="flex flex-wrap justify-center space-x-3 text-sm theme-text-light">
               
               <Link
                 to="/privacy"
+                onClick={() => window.scrollTo(0, 0)}
                 className="transition-colors duration-200 underline"
               >
                 {t("privacy_policy")}
@@ -1688,6 +1690,7 @@ function HomePage() {
               
               <Link
                 to="/terms"
+                onClick={() => window.scrollTo(0, 0)}
                 className="transition-colors duration-200 underline "
               >
                {t("terms_service")}
@@ -1695,6 +1698,7 @@ function HomePage() {
               
               <Link
                 to="/support"
+                onClick={() => window.scrollTo(0, 0)}
                 className="transition-colors duration-200 underline"
               >
                 {t("support")}
