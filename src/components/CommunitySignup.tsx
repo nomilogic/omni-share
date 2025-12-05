@@ -4,28 +4,33 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-const schema = z.object({
-  email: z
-    .string()
-    .min(1, "Please enter your email address")
-    .email("Please enter a valid email address"),
-});
+const schema = (t: any) =>
+  z.object({
+    email: z
+      .string()
+      .min(1, t("please_enter_email_address"))
+      .email(t("please_enter_valid_email")),
+  });
 
-type FormData = z.infer<typeof schema>;
+type FormData = {
+  email: string;
+};
 
 const CommunitySignup: React.FC = () => {
-  const { t, i18n } = useTranslation();
   const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
   const [loading, setLoading] = useState(false);
 
+  const { t, i18n } = useTranslation();
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>({ resolver: zodResolver(schema) });
+  } = useForm({
+    resolver: zodResolver(schema(t)),
+  });
 
   const onSubmit = (data: FormData) => {
-    setLoading(true);                           
+    setLoading(true);
     setTimeout(() => {
       console.log("Form submitted:", data);
       setLoading(false);
@@ -42,13 +47,10 @@ const CommunitySignup: React.FC = () => {
       <div className="absolute top-1/3 left-[20%] w-2 h-2 bg-indigo-900 rounded-full hidden sm:block"></div>
 
       {/* Top Left - Large Purple Dot */}
-      
 
       {/* Mid Center - Small Diamond */}
-      
 
       {/* Top Right - Diamond */}
-      
 
       {/* Mid Right - Dark Blue Dot */}
       <div className="absolute top-1/2 right-[25%] w-3 h-3 bg-indigo-900 rounded-full hidden sm:block"></div>
@@ -82,7 +84,7 @@ const CommunitySignup: React.FC = () => {
                 {...register("email")}
               />
               {errors.email && (
-                <p className="text-red-500 text-sm mt-1 text-left w-64 mx-auto sm:mx-0"> 
+                <p className="text-red-500 text-sm mt-1 text-left w-64 mx-auto sm:mx-0">
                   {errors.email.message}
                 </p>
               )}

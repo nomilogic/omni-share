@@ -19,7 +19,7 @@ const TwoColumnSection2 = () => {
     </h2>
 
     <p className="text-base sm:text-lg text-gray-500">
-      {t("line_08")} <strong className="text-xl"> {t("line_09")}</strong>
+      {t("line_08")} <span className="text-xl font-medium"> {t("line_09")}</span>
     </p>
 
     <div className="flex justify-center md:justify-start w-full ">

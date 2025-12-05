@@ -32,37 +32,40 @@ interface AuthFormProps {
 
 type AuthMode = "login" | "signup" | "forgotPassword" | "resetPassword";
 
-const loginSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+const loginSchema = (t: any) => z.object({
+  email: z.string().email(t("please_enter_valid_email")),
+  password: z.string().min(6, t("password_min_length")),
 });
 
-const signupSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Please enter a valid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+const signupSchema = (t: any) =>
+z.object({
+  name: z.string().min(2, t("name_min_length")),
+  email: z.string().email(t("please_enter_valid_email")),
+  password: z.string().min(6, t("password_min_length")),
 });
 
-const forgotPasswordSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
+const forgotPasswordSchema = (t: any) =>
+  z.object({
+  email: z.string().email(t("please_enter_valid_email")),
 });
 
-const resetPasswordSchema = z
+const resetPasswordSchema = (t: any) => 
+  z
   .object({
-    password: z.string().min(6, "Password must be at least 6 characters"),
+    password: z.string().min(6, t("password_min_length")),
     confirmPassword: z
       .string()
-      .min(6, "Password must be at least 6 characters"),
+      .min(6, t("password_min_length")),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
     path: ["confirmPassword"],
   });
 
-type LoginFormData = z.infer<typeof loginSchema>;
-type SignupFormData = z.infer<typeof signupSchema>;
-type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
-type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
+type LoginFormData = z.infer<ReturnType<typeof loginSchema>>;
+type SignupFormData = z.infer<ReturnType<typeof signupSchema>>;
+type ForgotPasswordFormData = z.infer<ReturnType<typeof forgotPasswordSchema>>;
+type ResetPasswordFormData = z.infer<ReturnType<typeof resetPasswordSchema>>;
 
 export const AuthForm: React.FC<AuthFormProps> = ({
   onAuthSuccess,
@@ -85,25 +88,25 @@ export const AuthForm: React.FC<AuthFormProps> = ({
 
   // Login Form
   const loginForm = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
+    resolver: zodResolver(loginSchema(t)),
     defaultValues: { email: "", password: "" },
   });
 
   // Signup Form
   const signupForm = useForm<SignupFormData>({
-    resolver: zodResolver(signupSchema),
+    resolver: zodResolver(signupSchema(t)),
     defaultValues: { name: "", email: "", password: "" },
   });
 
   // Forgot Password Form
   const forgotPasswordForm = useForm<ForgotPasswordFormData>({
-    resolver: zodResolver(forgotPasswordSchema),
+    resolver: zodResolver(forgotPasswordSchema(t)),
     defaultValues: { email: "" },
   });
 
   // Reset Password Form
   const resetPasswordForm = useForm<ResetPasswordFormData>({
-    resolver: zodResolver(resetPasswordSchema),
+    resolver: zodResolver(resetPasswordSchema(t)),
     defaultValues: { password: "", confirmPassword: "" },
   });
 
