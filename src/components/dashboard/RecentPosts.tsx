@@ -1,5 +1,5 @@
 import { useAppContext } from "../../context/AppContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   getPlatformIcon,
@@ -26,12 +26,19 @@ function RecentPosts({ post }: any) {
     allPosts[0]?.platform || "all"
   );
 
-  const topPost =
-    selectedPlatform === "all"
-      ? allPosts[0]
-      : allPosts.find((p: any) => p.platform === selectedPlatform);
+  useEffect(() => {
+    setSelectedPlatform(allPosts[0]?.platform || "all");
+  }, [allPosts]);
 
-  // Safely destructure values from topPost
+  const topPost = allPosts
+    .filter(
+      (p: any) => selectedPlatform === "all" || p.platform === selectedPlatform
+    )
+    .sort(
+      (a: any, b: any) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    )[0];
+
   const {
     content = "",
     postUrl = "",

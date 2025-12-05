@@ -164,9 +164,7 @@ export const ManageSubscriptionModal: React.FC<any> = ({
                       label: t("view_invoices"),
                       icon: <FileText className="w-4 h-4 text-white" />,
                     },
-                    ...(user?.wallet?.downgradeRequested !== null
-                      ? []
-                      : user?.wallet?.cancelRequested === false
+                    ...(user?.wallet?.cancelRequested === false
                       ? [
                           {
                             key: "cancel",

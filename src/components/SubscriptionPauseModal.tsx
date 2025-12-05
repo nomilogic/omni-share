@@ -90,11 +90,11 @@ const SubscriptionPauseModal = ({
         pendingDowngradeId &&
         downgradeModal ? (
           <div className="w-full px-4 py-5 md:px-8 flex flex-col gap-3 overflow-y-auto">
-            <h2 className="text-2xl font-semibold text-[#7650e3] text-center">
+            <h2 className="text-2xl font-semibold text-[#7650e3] text-left">
               Downgrade Request Pending
             </h2>
 
-            <p className="text-sm text-gray-700 text-center">
+            <p className="text-sm text-gray-700 text-left">
               You have already requested a downgrade. It will be applied in your
               next billing cycle.
             </p>
@@ -148,7 +148,7 @@ const SubscriptionPauseModal = ({
                 className="w-full bg-purple-600 disabled:cursor-not-allowed hover:bg-[#d7d7fc] hover:text-[#7650e3] 
           text-white font-semibold py-2.5 rounded-md border border-[#7F56D9] transition"
               >
-                Cancel Request
+                {downgradeLoading ? "Processing..." : " Cancel Request"}
               </button>
 
               <button
@@ -216,7 +216,7 @@ const SubscriptionPauseModal = ({
                         className="w-full mt-2 bg-purple-600 disabled:cursor-not-allowed hover:bg-[#d7d7fc] hover:text-[#7650e3] 
           text-white font-semibold py-2.5 rounded-md border border-[#7F56D9] transition"
                       >
-                        Downgrade
+                        {downgradeLoading ? "Processing..." : "Downgrade"}
                       </button>
                       <button
                         onClick={openDowngradeModel}
@@ -250,7 +250,6 @@ const SubscriptionPauseModal = ({
               <p className="text-sm  text-[#000000] ">
                 {t("by_canceling_now_youll_lose")}{" "}
                 <span className="font-medium text-[#7650e3]">
-                  {user.walle}
                   {user.wallet.package.name}
                 </span>{" "}
                 {t("access_on_due_date")}{" "}
@@ -332,17 +331,18 @@ const SubscriptionPauseModal = ({
                 <span>{t("continue_subscription")}</span>
                 <ArrowRightIcon className="w-5 h-5" />
               </button>
-              <button
-                disabled={isCanceled}
-                onClick={onCancel}
-                className=" w-full hover:bg-[#d7d7fc] disabled:cursor-not-allowed hover:text-[#7650e3]  text-[#7650e3] font-semibold py-2.5  px-3  text-sm sm:text-base rounded-md transition disabled:opacity-50 flex justify-between items-center  border border-[#7F56D9]"
-              >
-                <span>
-                  {isCanceled ? t("processing2") : t("proceed_cancellation")}
-                </span>
-                <ArrowRightIcon className="w-5 h-5" />
-              </button>
-
+              {user?.wallet?.downgradeRequested == null && (
+                <button
+                  disabled={isCanceled}
+                  onClick={onCancel}
+                  className=" w-full hover:bg-[#d7d7fc] disabled:cursor-not-allowed hover:text-[#7650e3]  text-[#7650e3] font-semibold py-2.5  px-3  text-sm sm:text-base rounded-md transition disabled:opacity-50 flex justify-between items-center  border border-[#7F56D9]"
+                >
+                  <span>
+                    {isCanceled ? t("processing2") : t("proceed_cancellation")}
+                  </span>
+                  <ArrowRightIcon className="w-5 h-5" />
+                </button>
+              )}
               <button
                 onClick={openDowngradeModel}
                 className=" w-full hover:bg-[#d7d7fc] disabled:cursor-not-allowed hover:text-[#7650e3]  text-[#7650e3] font-semibold py-2.5  px-3  text-sm sm:text-base rounded-md transition disabled:opacity-50 flex justify-between items-center  border border-[#7F56D9]"
