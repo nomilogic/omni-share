@@ -755,7 +755,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             ref={mainContentRef}
             className="py-0 h-full-dec-hf w-full overflow-auto theme-bg-card  mt-[60px] "
           >
-            <div className="w-full mx-auto overflow-fit max-w-5xl">
+            <div className="w-full mx-auto overflow-fit max-w-5xl ">
               {children}
             </div>
           </main>

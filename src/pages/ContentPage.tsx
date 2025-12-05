@@ -310,8 +310,8 @@ export const ContentPage: React.FC = () => {
                 )}
                 {/* Publish Modal */}
                 {showPublishModal && state.generatedPosts && (
-                  <div className=" inset-0 bg-white flex justify-center z-50 ` ">
-                    <div className="bg-white w-full ">
+                  <div className=" inset-0  flex justify-center z-50 ` ">
+                    <div className="bg-white w-full mt-6">
                       <PublishPosts
                         posts={state.generatedPosts}
                         onBack={() => {
@@ -338,8 +338,8 @@ export const ContentPage: React.FC = () => {
 
       {/* Generate Modal - Show AI Generator as modal instead of route */}
       {showGenerateModal && state.contentData && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 h-full">
-          <div className="bg-white  w-full h-full overflow-y-auto modal-content">
+        <div className="fixed inset-0 bg-[#fafafa] z-50 h-full">
+          <div className="  w-full h-full overflow-y-auto modal-content">
             <div className="max-w-5xl m-auto  ">
               <AIGenerator
                 contentData={state.contentData}

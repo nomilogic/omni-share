@@ -366,7 +366,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
   };
 
   return (
-    <div className="theme-bg-light max-w-4xl mx-auto    ">
+    <div className="theme-bg-light max-w-4xl mx-auto mt-4">
       <div className="lg:px-4 px-3 lg:py-8 py-4">
         <h2 className="text-2xl font-bold theme-text-primary mb-2">
           {t("publish_posts")}
@@ -395,12 +395,12 @@ export const PublishPosts: React.FC<PublishProps> = ({
         <div className=" p-2 bg-blue-50 border border-blue-200 rounded-md">
           <p className="text-sm text-blue-800">
             <span className="font-medium">{connectedPlatforms.length}</span> of{" "}
-            <span className="font-medium">{ALL_PLATFORMS.length}</span>{" "}
+            <span className="font-medium">{posts.length}</span>{" "}
             {t("platforms_connected")}
           </p>
         </div>
 
-        <div className="md:mb-8 mb-4 mt-4">
+        <div className="mb-4 mt-4">
           {/* <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="font-semibold text-slate-900 mb-1">
@@ -470,7 +470,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
             </div>
           )} */}
 
-          <div className="space-y-3">
+          <div className="space-y-4">
             {posts.map((post) => {
               const isConnected = connectedPlatforms.includes(post.platform);
               const isConnecting = connectingPlatforms.includes(post.platform);
@@ -678,7 +678,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
         {connectedPlatforms.includes("facebook") &&
           selectedPlatforms.includes("facebook") &&
           facebookPages.length > 0 && (
-            <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-md">
+            <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-md">
               <h4 className="font-medium text-blue-900 mb-2">
                 {t("facebook_page_selection")}
               </h4>
@@ -702,7 +702,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
         {connectedPlatforms.includes("youtube") &&
           selectedPlatforms.includes("youtube") &&
           youtubeChannels.length > 0 && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
+            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-md">
               <h4 className="font-medium text-red-900 mb-2">
                 {t("youtube_channel_selection")}
               </h4>
@@ -739,7 +739,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
                 !publishedPlatforms.includes(p)
             ).length === 0
           }
-          className={`w-full rounded-md py-2.5 px-4 font-medium theme-text-light transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mb-5 text-center text-white font-semibold transition-colors bg-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3] border border-[#7650e3] ${
+          className={`w-full rounded-md py-2.5 px-4 font-medium theme-text-light transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mb-4 text-center text-white font-semibold transition-colors bg-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3] border border-[#7650e3] ${
             selectedPlatforms.filter(
               (p) =>
                 connectedPlatforms.includes(p) &&
