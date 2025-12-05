@@ -93,9 +93,9 @@ const getFeatures = (t: any): Feature[] => [
         <span className="text-purple-600 text-xl font-medium">
           {t("line_22")}
         </span>{" "}
-          {t("line_23")} {" "}
-          <span className="text-purple-600 text-xl font-medium"> 
-        {t("line_24")} {" "}
+        {t("line_23")}{" "}
+        <span className="text-purple-600 text-xl font-medium">
+          {t("line_24")}{" "}
         </span>
         {t("line_25")}
       </p>
@@ -186,11 +186,11 @@ const floatVariants = {
 
 const FeaturesPage: React.FC = () => {
   const [activeId, setActiveId] = useState<number>(1);
-   const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
 
   const features = getFeatures(t);
-  const activeFeature = features.find(f => f.id === activeId) || features[0];
+  const activeFeature = features.find((f) => f.id === activeId) || features[0];
   const floatImages = activeFeature.desktopFloat || [];
 
   const listRef = useRef<HTMLDivElement | null>(null);
@@ -232,11 +232,9 @@ const FeaturesPage: React.FC = () => {
     else setActiveId(id);
   };
 
- 
-
   return (
     <div className="w-full">
-      <section className="relative overflow-hidden py-8 md:pb-24 lg:px-28 lg:pt-14">
+      <section className="relative overflow-hidden py-8 md:pb-24 lg:px-28 lg:pt-14 lg:pb-24">
         <div className="relative w-full max-w-full mx-auto px-4 sm:px-6 lg:px-[10%]">
           <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4 text-center">
             <span className="font-bold">
