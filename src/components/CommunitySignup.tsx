@@ -68,7 +68,7 @@ const CommunitySignup: React.FC = () => {
 
           {/* Email Signup Form/Input Area */}
           <form
-            className="mt-8 max-w-sm mx-auto sm:flex sm:justify-center sm:gap-3"
+            className="mt-4 md:mt-5 max-w-sm mx-auto sm:flex sm:justify-center sm:gap-3"
             onSubmit={handleSubmit(onSubmit)}
           >
             <div className="min-w-0 flex-1">

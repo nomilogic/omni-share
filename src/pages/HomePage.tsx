@@ -661,25 +661,27 @@ function HomePage() {
             <div className="lg:hidden w-6 h-6"></div>
 
             {/* 🔹 CENTERED LOGO */}
-            <motion.div
-              className=" flex items-center space-x-2 lg:static lg:translate-x-0"
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 400, damping: 17 }}
-            >
-              <Icon
-                name="spiral-logo"
-                size={35}
-                className=" brightness-[1000%]"
-              />
+            <Link to="/">
+              <motion.div
+                className=" flex items-center space-x-2 lg:static lg:translate-x-0"
+                whileHover={{ scale: 1.05 }}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
+              >
+                <Icon
+                  name="spiral-logo"
+                  size={35}
+                  className=" brightness-[1000%]"
+                />
 
-              <img
-                src={LogoWhiteText}
-                alt="Omnishare logo"
-                className="h-5"
-                decoding="async"
-                loading="lazy"
-              />
-            </motion.div>
+                <img
+                  src={LogoWhiteText}
+                  alt="Omnishare logo"
+                  className="h-5"
+                  decoding="async"
+                  loading="lazy"
+                />
+              </motion.div>
+            </Link>
 
             {/* 🔹 MOBILE HAMBURGER (LEFT) — behaves EXACTLY as before */}
             <motion.button
@@ -985,13 +987,13 @@ function HomePage() {
 
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div
-            className="text-center mb-8"
+            className="text-center mb-4 md:mb-8"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.6, type: "spring", stiffness: 80 }}
           >
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 md:mb-5">
               {t("see_action")}
             </h2>
             <p className="text-xl text-gray-500 font-medium">
@@ -1000,7 +1002,7 @@ function HomePage() {
           </motion.div>
 
           <motion.div
-            className="relative rounded-md overflow-hidden shadow-2xl bg-gray-900 aspect-video"
+            className="relative rounded-md overflow-hidden shadow-2xl p-8 md:p-12 max-w-4xl mx-auto bg-gray-900 aspect-video"
             initial={{ opacity: 0, scale: 0.9, y: 50 }}
             whileInView={{ opacity: 1, scale: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
@@ -1038,16 +1040,16 @@ function HomePage() {
 
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div
-            className="text-center mb-4 md:mb-16"
+            className="text-center mb-4 md:mb-5"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.6, type: "spring", stiffness: 80 }}
           >
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            <h2 className="text-4xl md:text-5xl mb-4 font-bold text-gray-900 md:mb-5">
               {t("loved_creators")}
             </h2>
-            <p className="text-xl text-gray-500 font-medium">
+            <p className="text-xl text-gray-500 mb-4 font-medium md:mb-5">
               {t("loved_creators_message")}
             </p>
           </motion.div>
@@ -1165,19 +1167,22 @@ function HomePage() {
         </div>
       </section>
 
-      <section id="Faq" className=" scroll-mt-20 py-8 md:py-14 bg-gray-50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section
+        id="Faq"
+        className=" scroll-mt-20 max-w-4xl mx-auto py-8 md:py-14 bg-gray-50"
+      >
+        <div className="max-w-4xl mx-4 md:mx-auto  sm:px-6 ">
           <motion.div
-            className="text-center mb-4 md:mb-16"
+            className="text-center mb-4 md:mb-5"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.6, type: "spring", stiffness: 80 }}
           >
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 md:mb-5">
               {t("faq2")}
             </h2>
-            <p className="text-xl text-gray-500 ">{t("faq_message")}</p>
+            <p className="text-xl text-gray-500 mb-4 md:mb-5 ">{t("faq_message")}</p>
           </motion.div>
 
           {/* ---------------- FIXED FAQ LOOP ---------------- */}
@@ -1247,7 +1252,7 @@ function HomePage() {
                   setVisibleCount(faqs.length);
                 }
               }}
-              className="bg-[#7650e3] text-white px-8 py-3 rounded-full shadow-lg inline-flex items-center space-x-2"
+              className="bg-[#7650e3] text-white text-base font-semibold px-8 py-3 rounded-full shadow-lg inline-flex items-center space-x-2"
               whileHover={{
                 scale: 1.05,
                 boxShadow: "0 10px 30px rgba(118, 80, 227, 0.3)",
@@ -1267,15 +1272,15 @@ function HomePage() {
       </section>
 
       <section id="Contact" className="scroll-mt-20 py-8 md:py-14 bg-white">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-4 md:mx-auto ">
           <motion.div
-            className="text-center mb-5"
+            className="text-center md:mb-5"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.6, type: "spring", stiffness: 80 }}
           >
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 md:mb-5">
               <Trans i18nKey="contact_us" components={{ br: <br /> }} />
             </h2>
             <p className="text-xl text-gray-500 font-medium mb-5">
@@ -1290,7 +1295,7 @@ function HomePage() {
               }}
               whileTap={{ scale: 0.95 }}
             >
-              <span>
+              <span className="text-base font-semibold">
                 {showContactForm ? t("hide_form") : t("get_in_touch")}
               </span>
               <motion.div
