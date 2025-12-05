@@ -330,7 +330,7 @@ const FeaturesPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Image Display */}
+            
             <div className="hidden md:block md:col-span-1 w-full h-auto">
               <AnimatePresence mode="wait">
                 <motion.div
