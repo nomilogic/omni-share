@@ -35,7 +35,7 @@ import {
   is9x16Video,
 } from "../utils/videoUtils";
 import { useLoadingAPI } from "../hooks/useLoadingAPI";
-
+import VideoPoster from "../assets/videoposter-02.jpg"
 import API from "@/services/api";
 import { useNavigate } from "react-router-dom";
 import { notify } from "@/utils/toast";
@@ -3354,7 +3354,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                       stiffness: 80,
                     }}
                   >
-                    <div className="relative  rounded-md overflow-hidden shadow-md bg-gray-900 aspect-video w-full">
+                    <div className="relative  rounded-md overflow-hidden shadow-md aspect-video w-full">
                       {/* VIDEO REPLACING SVG BUTTON */}
                       <motion.video
                         src={IntroVideo}
@@ -3364,7 +3364,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         playsInline
                         controls
                         preload="none"
-                        poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080'%3E%3Crect fill='%23111827' width='1920' height='1080'/%3E%3C/svg%3E"
+                        poster={VideoPoster}
                         className="absolute w-full h-full object-cover"
                         initial={{ scale: 0.95, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
