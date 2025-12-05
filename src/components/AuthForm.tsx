@@ -32,37 +32,40 @@ interface AuthFormProps {
 
 type AuthMode = "login" | "signup" | "forgotPassword" | "resetPassword";
 
-const loginSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+const loginSchema = (t: any) => z.object({
+  email: z.string().email(t("please_enter_valid_email")),
+  password: z.string().min(6, t("password_min_length")),
 });
 
-const signupSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Please enter a valid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+const signupSchema = (t: any) =>
+z.object({
+  name: z.string().min(2, t("name_min_length")),
+  email: z.string().email(t("please_enter_valid_email")),
+  password: z.string().min(6, t("password_min_length")),
 });
 
-const forgotPasswordSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
+const forgotPasswordSchema = (t: any) =>
+  z.object({
+  email: z.string().email(t("please_enter_valid_email")),
 });
 
-const resetPasswordSchema = z
+const resetPasswordSchema = (t: any) => 
+  z
   .object({
-    password: z.string().min(6, "Password must be at least 6 characters"),
+    password: z.string().min(6, t("password_min_length")),
     confirmPassword: z
       .string()
-      .min(6, "Password must be at least 6 characters"),
+      .min(6, t("password_min_length")),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
     path: ["confirmPassword"],
   });
 
-type LoginFormData = z.infer<typeof loginSchema>;
-type SignupFormData = z.infer<typeof signupSchema>;
-type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
-type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
+type LoginFormData = z.infer<ReturnType<typeof loginSchema>>;
+type SignupFormData = z.infer<ReturnType<typeof signupSchema>>;
+type ForgotPasswordFormData = z.infer<ReturnType<typeof forgotPasswordSchema>>;
+type ResetPasswordFormData = z.infer<ReturnType<typeof resetPasswordSchema>>;
 
 export const AuthForm: React.FC<AuthFormProps> = ({
   onAuthSuccess,
@@ -85,25 +88,25 @@ export const AuthForm: React.FC<AuthFormProps> = ({
 
   // Login Form
   const loginForm = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
+    resolver: zodResolver(loginSchema(t)),
     defaultValues: { email: "", password: "" },
   });
 
   // Signup Form
   const signupForm = useForm<SignupFormData>({
-    resolver: zodResolver(signupSchema),
+    resolver: zodResolver(signupSchema(t)),
     defaultValues: { name: "", email: "", password: "" },
   });
 
   // Forgot Password Form
   const forgotPasswordForm = useForm<ForgotPasswordFormData>({
-    resolver: zodResolver(forgotPasswordSchema),
+    resolver: zodResolver(forgotPasswordSchema(t)),
     defaultValues: { email: "" },
   });
 
   // Reset Password Form
   const resetPasswordForm = useForm<ResetPasswordFormData>({
-    resolver: zodResolver(resetPasswordSchema),
+    resolver: zodResolver(resetPasswordSchema(t)),
     defaultValues: { password: "", confirmPassword: "" },
   });
 
@@ -126,7 +129,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
 
       localStorage.setItem("forgot_token", res.data.data.token);
       localStorage.setItem("forgot_token_time", Date.now().toString());
-      notify("success", "email has been sent");
+      notify("success", t("email_sent_lowercase"));
       // setSuccessMessage("If that email exists, a reset link has been sent.");
       // setError("");
     } catch (err: any) {
@@ -134,7 +137,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
       // setError(err?.response?.data?.message || "Failed to send reset link");
       notify(
         "error",
-        err.response?.data?.message || "Failed to send reset link"
+        err.response?.data?.message || t("failed_send_reset_link")
       );
     } finally {
       setLoading(false);
@@ -155,10 +158,10 @@ export const AuthForm: React.FC<AuthFormProps> = ({
       const result = response.data.data;
 
       if (!result.token || !result.user) {
-        return notify("error", "Invalid response from server");
+        return notify("error", t("invalid_response_server"));
       }
 
-      notify("success", "Login Successful");
+      notify("success", t("login_successful"));
       if (rememberMe) {
         const expirationDate = new Date();
         expirationDate.setDate(expirationDate.getDate() + 30);
@@ -187,10 +190,10 @@ export const AuthForm: React.FC<AuthFormProps> = ({
           return;
         }
       } catch (e) {
-        return notify("error", "Authentication failed");
+        return notify("error", t("authentication_failed"));
       }
     } catch (error: any) {
-      notify("error", error.response?.data?.message || "Authentication failed");
+      notify("error", error.response?.data?.message || t("authentication_failed"));
     } finally {
       setLoading(false);
     }
@@ -217,9 +220,9 @@ export const AuthForm: React.FC<AuthFormProps> = ({
       const url = new URL(window.location.href);
       url.searchParams.set("isVerification", "true");
       window.history.pushState({}, "", url.toString());
-      notify("success", "Email has been sent");
+      notify("success", t("email_sent"));
     } catch (error: any) {
-      notify("error", error.response?.data?.message || "Authentication failed");
+      notify("error", error.response?.data?.message || t("authentication_failed"));
       // notify("error", error.response?.data?.message || "Authentication failed");
     } finally {
       setLoading(false);
@@ -272,12 +275,12 @@ export const AuthForm: React.FC<AuthFormProps> = ({
           return;
         }
       } catch (e) {
-        notify("error", "AuthForm Facebook fallback redirect check failed");
+        notify("error", t("authform_facebook_fallback_failed"));
       }
     } catch (error: any) {
       notify(
         "error",
-        error.response?.data?.message || "Facebook authentication failed"
+        error.response?.data?.message || t("facebook_auth_failed")
       );
     } finally {
       setLoading(false);
@@ -313,7 +316,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
     } catch (error: any) {
       notify(
         "error",
-        error.response?.data?.message || "LinkedIn authentication failed"
+        error.response?.data?.message || t("linkedin_auth_failed")
       );
     } finally {
       setLoading(false);

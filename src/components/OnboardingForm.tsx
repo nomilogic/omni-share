@@ -1,6 +1,8 @@
 import { notify } from "@/utils/toast";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import i18n from "@/i18n";
 
 // Form data types matching Profile schema
 interface FormData {
@@ -235,6 +237,8 @@ const OnboardingForm: React.FC = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
+  const { t, i18n } = useTranslation();
+    const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
   const [formData, setFormData] = useState<FormData>({
     // Section 1: Personal Information
     fullName: "",
@@ -317,7 +321,7 @@ const OnboardingForm: React.FC = () => {
       console.error("Error analyzing URL:", error);
       notify(
         "error",
-        "Could not analyze the URL. Please fill in the information manually."
+        t("url_analysis_failed")
       );
     } finally {
       setIsLoading(false);

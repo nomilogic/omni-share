@@ -311,31 +311,32 @@ function HomePage() {
     },
   };
 
-  const contactSchema = z.object({
-    firstName: z.string().min(2, "First name is required"),
-    lastName: z.string().min(2, "Last name is required"),
-    email: z
-      .string()
-      .min(1, "Please enter your email address")
-      .email("Please enter a valid email address"),
-    message: z.string().min(5, "Please enter your message"),
-  });
+  const contactSchema = (t: any) =>
+    z.object({
+      firstName: z.string().min(2, t("first_name_required")),
+      lastName: z.string().min(2, t("last_name_required")),
+      email: z
+        .string()
+        .min(1, t("please_enter_email_address"))
+        .email(t("please_enter_valid_email")),
+      message: z.string().min(5, t("please_enter_message")),
+    });
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
   } = useForm({
-    resolver: zodResolver(contactSchema),
+    resolver: zodResolver(contactSchema(t)),
   });
   const onSubmit = async (data: any) => {
     try {
       await API.contactUs(data);
 
-      notify("success", "Message sent successfully");
+      notify("success", "t(message_sent_successfully)");
       reset();
     } catch (err: any) {
-      notify("error", err.response?.data?.message || "Something went wrong");
+      notify("error", err.response?.data?.message || t("something_went_wrong"));
     }
   };
 
@@ -1101,13 +1102,13 @@ function HomePage() {
                     {reviews[currentReviewIndex].avatar}
                   </motion.div>
                   <div className="text-left">
-                    <p className="font-bold text-gray-900 text-lg">
+                    <p className="font-bold text-gray-900 text-xl">
                       {reviews[currentReviewIndex].name}
                     </p>
-                    <p className="text-gray-500 font-medium">
+                    <p className="text-gray-500 font-medium text-lg">
                       {reviews[currentReviewIndex].role}
                     </p>
-                    <p className="text-gray-500 font-medium text-sm">
+                    <p className="text-gray-500 font-medium text-base">
                       {reviews[currentReviewIndex].company}
                     </p>
                   </div>
@@ -1202,7 +1203,7 @@ function HomePage() {
                   className="w-full px-6 py-5 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
                   aria-expanded={expandedFaqIndex === index}
                 >
-                  <span className="font-semibold text-gray-900 text-lg pr-8">
+                  <span className="font-Medium text-gray-900 text-xl leading-relaxed pr-8">
                     {faq.question}
                   </span>
                   <motion.div
@@ -1324,7 +1325,7 @@ function HomePage() {
                     <input
                       {...register("firstName")}
                       type="text"
-                      className="w-full px-4 py-2.5 border border-purple-600 rounded-md focus-visible:ring-0 focus:ring-0 transition-all"
+                      className="w-full px-4 py-2.5 border border-purple-600 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600 transition-all"
                       placeholder={t("first_name")}
                     />
 
@@ -1348,7 +1349,7 @@ function HomePage() {
                     <input
                       {...register("lastName")}
                       type="text"
-                      className="w-full px-4 py-2.5 border border-purple-600 rounded-md focus-visible:ring-0 focus:ring-0 transition-all"
+                      className="w-full px-4 py-2.5 border border-purple-600 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600 transition-all"
                       placeholder={t("last_name")}
                     />
 
@@ -1373,7 +1374,7 @@ function HomePage() {
                   <input
                     {...register("email")}
                     type="text"
-                    className="w-full px-4 py-2.5 border border-purple-600 rounded-md focus-visible:ring-0 focus:ring-0 transition-all"
+                    className="w-full px-4 py-2.5 border border-purple-600 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600 transition-all"
                     placeholder={t("email_address")}
                   />
 
@@ -1397,7 +1398,7 @@ function HomePage() {
                   <textarea
                     {...register("message")}
                     rows={6}
-                    className="w-full px-4 py-2.5 border border-purple-600 rounded-md focus-visible:ring-0 focus:ring-0 transition-all"
+                    className="w-full px-4 py-2.5 border border-purple-600 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600 transition-all"
                     placeholder={t("message_placeholder")}
                   />
 

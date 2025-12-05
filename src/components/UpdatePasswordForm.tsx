@@ -8,6 +8,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { notify } from "@/utils/toast";
 import { div } from "framer-motion/client";
+import { useTranslation } from "react-i18next";
 
 // Zod Schema
 const passwordSchema = z
@@ -33,6 +34,8 @@ function UpdatePasswordForm() {
   const { setPasswordEditing } = useAppContext();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
+  const { t, i18n } = useTranslation();
+  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
 
   const {
     register,
@@ -51,7 +54,7 @@ function UpdatePasswordForm() {
         newPassword: data.newPassword,
       });
 
-      notify("success", "Password updated successfully!");
+      notify("success", t("password_updated_successfully"));
       reset();
 
       setTimeout(() => {
@@ -61,7 +64,7 @@ function UpdatePasswordForm() {
       notify(
         "error",
         err.response?.data?.message ||
-          "Failed to update password. Please try again."
+          t("failed_update_password")
       );
     } finally {
       setLoading(false);
