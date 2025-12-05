@@ -133,7 +133,7 @@ export const PricingPage: React.FC = () => {
       }
     } catch (error) {
       console.error("Failed to buy package:", error);
-      notify("error", "Something went wrong while processing your Buy.");
+      notify("error", t("buy_processing_error"));
     } finally {
       setLoadingPackage(false);
     }
@@ -160,7 +160,7 @@ export const PricingPage: React.FC = () => {
       refreshUser();
     } catch (error) {
       console.error("Request downgrade failed:", error);
-      notify("error", "Failed to request downgrade");
+      notify("error", t("failed_request_downgrade"));
     } finally {
       setDowngradeLoading(false);
     }
@@ -174,7 +174,7 @@ export const PricingPage: React.FC = () => {
       refreshUser();
     } catch (error) {
       console.error("Cancel downgrade failed:", error);
-      notify("error", "Failed to cancel downgrade request");
+      notify("error", t("failed_cancel_downgrade"));
     } finally {
       setDowngradeLoading(false);
     }
@@ -193,7 +193,7 @@ export const PricingPage: React.FC = () => {
         window.location.href = redirectUrl;
       }
     } catch (error) {
-      notify("error", "Coin Limit Exceed");
+      notify("error", t("coin_limit_exceed"));
     } finally {
       setLoadingAddon(false);
       setSelectedAddon(null);

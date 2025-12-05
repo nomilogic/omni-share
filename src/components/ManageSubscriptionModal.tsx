@@ -19,7 +19,8 @@ export const ManageSubscriptionModal: React.FC<any> = ({
   isModalOpen,
   setIsModalOpen,
 }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
   const [showTransactions, setShowTransactions] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isReactive, setIsReactive] = useState(false);
@@ -68,7 +69,7 @@ export const ManageSubscriptionModal: React.FC<any> = ({
       }, 50);
     } catch (error) {
       console.error("Reactivation failed:", error);
-      notify("error", "Unable to reactivate subscription");
+      notify("error", t("unable_reactivate_subscription"));
     } finally {
       setIsReactive(false);
     }

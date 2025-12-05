@@ -129,7 +129,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
 
       localStorage.setItem("forgot_token", res.data.data.token);
       localStorage.setItem("forgot_token_time", Date.now().toString());
-      notify("success", "email has been sent");
+      notify("success", t("email_sent_lowercase"));
       // setSuccessMessage("If that email exists, a reset link has been sent.");
       // setError("");
     } catch (err: any) {
@@ -137,7 +137,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
       // setError(err?.response?.data?.message || "Failed to send reset link");
       notify(
         "error",
-        err.response?.data?.message || "Failed to send reset link"
+        err.response?.data?.message || t("failed_send_reset_link")
       );
     } finally {
       setLoading(false);
@@ -158,10 +158,10 @@ export const AuthForm: React.FC<AuthFormProps> = ({
       const result = response.data.data;
 
       if (!result.token || !result.user) {
-        return notify("error", "Invalid response from server");
+        return notify("error", t("invalid_response_server"));
       }
 
-      notify("success", "Login Successful");
+      notify("success", t("login_successful"));
       if (rememberMe) {
         const expirationDate = new Date();
         expirationDate.setDate(expirationDate.getDate() + 30);
@@ -190,10 +190,10 @@ export const AuthForm: React.FC<AuthFormProps> = ({
           return;
         }
       } catch (e) {
-        return notify("error", "Authentication failed");
+        return notify("error", t("authentication_failed"));
       }
     } catch (error: any) {
-      notify("error", error.response?.data?.message || "Authentication failed");
+      notify("error", error.response?.data?.message || t("authentication_failed"));
     } finally {
       setLoading(false);
     }
@@ -220,9 +220,9 @@ export const AuthForm: React.FC<AuthFormProps> = ({
       const url = new URL(window.location.href);
       url.searchParams.set("isVerification", "true");
       window.history.pushState({}, "", url.toString());
-      notify("success", "Email has been sent");
+      notify("success", t("email_sent"));
     } catch (error: any) {
-      notify("error", error.response?.data?.message || "Authentication failed");
+      notify("error", error.response?.data?.message || t("authentication_failed"));
       // notify("error", error.response?.data?.message || "Authentication failed");
     } finally {
       setLoading(false);
@@ -275,12 +275,12 @@ export const AuthForm: React.FC<AuthFormProps> = ({
           return;
         }
       } catch (e) {
-        notify("error", "AuthForm Facebook fallback redirect check failed");
+        notify("error", t("authform_facebook_fallback_failed"));
       }
     } catch (error: any) {
       notify(
         "error",
-        error.response?.data?.message || "Facebook authentication failed"
+        error.response?.data?.message || t("facebook_auth_failed")
       );
     } finally {
       setLoading(false);
@@ -316,7 +316,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
     } catch (error: any) {
       notify(
         "error",
-        error.response?.data?.message || "LinkedIn authentication failed"
+        error.response?.data?.message || t("linkedin_auth_failed")
       );
     } finally {
       setLoading(false);

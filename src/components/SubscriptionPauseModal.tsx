@@ -51,7 +51,7 @@ const SubscriptionPauseModal = ({
       refreshUser();
     } catch (error) {
       console.error("Request downgrade failed:", error);
-      notify("error", "Failed to request downgrade");
+      notify("error", t("failed_request_downgrade"));
     } finally {
       setDowngradeLoading(false);
     }
@@ -66,7 +66,7 @@ const SubscriptionPauseModal = ({
       refreshUser();
     } catch (error) {
       console.error("Cancel downgrade failed:", error);
-      notify("error", "Failed to cancel downgrade request");
+      notify("error", t("failed_cancel_downgrade"));
     } finally {
       setDowngradeLoading(false);
     }

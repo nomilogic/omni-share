@@ -10,6 +10,7 @@ import {
 import API from "../services/api";
 import { useAppContext } from "./AppContext";
 import { notify } from "@/utils/toast";
+import { useTranslation } from "react-i18next";
 
 interface PricingContextType {
   // Data
@@ -54,6 +55,8 @@ export const PricingProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const { state, refreshUser } = useAppContext();
   const activePackage = state?.user?.wallet;
+  const { t, i18n } = useTranslation();
+  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
 
   const [packages, setPackages] = useState<any[]>([]);
   const [addons, setAddons] = useState<any[]>([]);
@@ -148,7 +151,7 @@ export const PricingProvider: React.FC<{ children: React.ReactNode }> = ({
       const res = await API.buyPackage(plan.id);
       if (res?.data?.data?.url) window.location.href = res.data.data.url;
     } catch (err) {
-      notify("error", "Failed");
+      notify("error", t("failed"));
     } finally {
       setLoadingPackage(false);
       closeAllModals();
@@ -174,7 +177,7 @@ export const PricingProvider: React.FC<{ children: React.ReactNode }> = ({
       await API.requestDowngrade(selectedPlan.id);
       await refreshUser();
     } catch (err) {
-      notify("error", "Failed");
+      notify("error", t("failed"));
     } finally {
       setDowngradeLoading(false);
       closeAllModals();
@@ -187,7 +190,7 @@ export const PricingProvider: React.FC<{ children: React.ReactNode }> = ({
       await API.cancelDowngradeRequest();
       await refreshUser();
     } catch (err) {
-      notify("error", "Failed");
+      notify("error", t("failed"));
     } finally {
       setDowngradeLoading(false);
       closeAllModals();
@@ -199,7 +202,7 @@ export const PricingProvider: React.FC<{ children: React.ReactNode }> = ({
       await API.cancelPackage();
       await refreshUser();
     } catch (err) {
-      notify("error", "Failed");
+      notify("error", t("failed"));
     } finally {
       closeAllModals();
     }
@@ -210,7 +213,7 @@ export const PricingProvider: React.FC<{ children: React.ReactNode }> = ({
       await API.reactivatePackage();
       await refreshUser();
     } catch (err) {
-      notify("error", "Failed");
+      notify("error", t("failed"));
     } finally {
       closeAllModals();
     }
@@ -224,7 +227,7 @@ export const PricingProvider: React.FC<{ children: React.ReactNode }> = ({
       if (res?.data?.data?.checkoutUrl)
         window.location.href = res.data.data.checkoutUrl;
     } catch (err) {
-      notify("error", "Failed");
+      notify("error", t("failed"));
     } finally {
       setLoadingAddon(false);
       setSelectedAddon(null);

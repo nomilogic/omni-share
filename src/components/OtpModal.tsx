@@ -8,6 +8,7 @@ import { ArrowLeftIcon } from "lucide-react";
 import { notify } from "@/utils/toast";
 import { navigateOnce } from "@/lib/navigation";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 type OtpModalProps = {
   open: boolean;
   onClose: () => void;
@@ -97,7 +98,7 @@ export function OtpModal({
         localStorage.removeItem("email_token");
 
         onSuccess(result?.user);
-        notify("success", "Verification Successful");
+        notify("success", t("verification_successful"));
 
         if (
           result.user.profile &&
@@ -116,7 +117,7 @@ export function OtpModal({
         throw new Error("OTP verification failed");
       }
     } catch (e: unknown) {
-      notify("error", "OTP verification failed");
+      notify("error", t("otp_verification_failed"));
     } finally {
       setVerifying(false);
     }
@@ -132,9 +133,9 @@ export function OtpModal({
       setTimeLeft(300);
       setExpired(false);
       setRemaining(40);
-      notify("success", "OTP Resend Successfully");
+      notify("success", t('otp_resend_successfully'));
     } catch (e: unknown) {
-      notify("error", "Failed to resend OTP");
+      notify("error", t("failed_resend_otp"));
     } finally {
       setResending(false);
     }
@@ -142,6 +143,8 @@ export function OtpModal({
 
   if (!open) return null;
 
+  const { t, i18n } = useTranslation();
+  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
   return (
     <div
       role="dialog"

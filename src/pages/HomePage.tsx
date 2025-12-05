@@ -333,10 +333,10 @@ function HomePage() {
     try {
       await API.contactUs(data);
 
-      notify("success", "Message sent successfully");
+      notify("success", "t(message_sent_successfully)");
       reset();
     } catch (err: any) {
-      notify("error", err.response?.data?.message || "Something went wrong");
+      notify("error", err.response?.data?.message || t("something_went_wrong"));
     }
   };
 

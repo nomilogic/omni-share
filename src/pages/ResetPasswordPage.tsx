@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logoText from "../assets/logo-text.svg";
 import Icon from "../components/Icon";
+import { useTranslation } from "react-i18next";
 
 const ResetPasswordPage: React.FC = () => {
   const [password, setPassword] = useState("");
@@ -15,6 +16,8 @@ const ResetPasswordPage: React.FC = () => {
   const [token, setToken] = useState<string | null>(null);
   const [expired, setExpired] = useState(false);
   const [remainingTime, setRemainingTime] = useState<number>(0);
+  const { t, i18n } = useTranslation();
+  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
 
   const router = useNavigate();
 
@@ -112,19 +115,18 @@ const ResetPasswordPage: React.FC = () => {
             <Icon name="logo" size={50} />
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-3">
-            Oops! Link Expired
+            {t("oops_link_expired")}
           </h2>
 
           <p className="text-gray-500 font-medium text-sm sm:text-base mb-6 px-2 sm:px-4">
-            Your password reset link has expired or is invalid. Don’t worry, you
-            can request a new one.
+            {t("password_reset_link_invalid")}
           </p>
 
           <button
             onClick={() => router("/auth")}
             className="px-4 py-2.5 bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3]  border border-[#7650e3] text-white font-semibold rounded-md shadow-md hover:shadow-md transition-all duration-300 transform hover:-translate-y-1"
           >
-            Request New Link
+            {t("request_new_link")}
           </button>
         </div>
       ) : (
@@ -141,20 +143,20 @@ const ResetPasswordPage: React.FC = () => {
           </div>
 
           <h2 className="text-xl sm:text-2xl font-bold text-slate-800 text-center mb-2">
-            Reset Your Password
+            {t("reset_your_password")}
           </h2>
           <p className="text-gray-500 font-medium text-sm sm:text-base text-center mb-6">
-            Enter your new password below.
+            {t("enter_new_password_below")}
           </p>
 
           <div className="text-center mb-4 font-medium text-purple-700">
-            Link expires in: {formatTime(remainingTime)}
+            {t("link_expires_in")} {formatTime(remainingTime)}
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium mb-1 text-slate-900">
-                New Password
+                {t("new_password")}
               </label>
               <input
                 type="password"
@@ -168,7 +170,7 @@ const ResetPasswordPage: React.FC = () => {
 
             <div>
               <label className="block text-sm font-medium mb-1 text-slate-900">
-                Confirm Password
+                {t("confirm_password")}
               </label>
               <input
                 type="password"

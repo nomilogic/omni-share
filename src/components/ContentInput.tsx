@@ -843,7 +843,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         console.log("🎯 Image generation required - no image found");
         notify(
           "error",
-          'Please generate an image first using the "Generate Image" button, then generate the post.'
+          t("generate_image_first")
         );
         return;
       }
@@ -857,7 +857,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         console.log("🎯 Image upload required");
         notify(
           "error",
-          "Please upload an image first, then generate the post."
+          t("upload_image_first")
         );
         return;
       }
@@ -1860,7 +1860,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     try {
       const userResult = await getCurrentUser();
       if (!userResult?.user) {
-        notify("error", "You must be signed in to upload a thumbnail");
+        notify("error", t("must_be_signed_in_upload_thumbnail"));
         return;
       }
 
@@ -1925,7 +1925,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       }
     } catch (err) {
       console.error("Failed to upload custom thumbnail:", err);
-      notify("error", "Failed to upload thumbnail");
+      notify("error", t("failed_upload_thumbnail"));
     } finally {
       setCustomThumbnailUploading(false);
       if (thumbnailInputRef.current) thumbnailInputRef.current.value = "";

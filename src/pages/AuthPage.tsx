@@ -4,6 +4,7 @@ import { AuthForm } from "../components/AuthForm";
 import { useAppContext } from "../context/AppContext";
 import API from "../services/api";
 import { notify } from "@/utils/toast";
+import { useTranslation } from "react-i18next";
 
 export const AuthPage: React.FC = () => {
   const { state, dispatch } = useAppContext();
@@ -11,6 +12,8 @@ export const AuthPage: React.FC = () => {
   const location = useLocation();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { t, i18n } = useTranslation();
+    const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
 
   // Check if user is already authenticated
   useEffect(() => {
@@ -56,7 +59,7 @@ export const AuthPage: React.FC = () => {
       await API.setNewPassword({ new_password }, {
         headers: { authorization: token },
       } as any);
-      notify("error", "Password updated successfully");
+      notify("error", t("password_updated_successfully"));
       navigate("/login");
     } catch (err: any) {
       console.error("setNewPassword failed", err);

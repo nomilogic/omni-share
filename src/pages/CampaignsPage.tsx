@@ -10,6 +10,8 @@ import { usePlanFeatures } from "../hooks/usePlanFeatures";
 import { saveCampaign, updateCampaign } from "../lib/database";
 import { CampaignInfo } from "../types";
 import { notify } from "@/utils/toast";
+import { useTranslation } from "react-i18next";
+import i18n from "@/i18n";
 
 export const CampaignsPage: React.FC = () => {
   const { state, dispatch } = useAppContext();
@@ -18,6 +20,8 @@ export const CampaignsPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const { t, i18n } = useTranslation();
+    const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
 
   const handleSelectCampaign = (campaign: any) => {
     // Convert to proper Campaign format for context
@@ -32,7 +36,7 @@ export const CampaignsPage: React.FC = () => {
   const handleCreateCampaign = () => {
     setError(null); // Clear any previous errors
 
-    notify("error", "Creating new campaign...");
+    notify("error", t("creating_new_campaign"));
     navigate("/campaigns/new");
   };
 
