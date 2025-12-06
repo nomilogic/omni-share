@@ -59,7 +59,6 @@ type TimePeriod = "all" | "today" | "week" | "month";
 type SortBy = "date_desc" | "date_asc" | "platform_asc" | "platform_desc";
 
 export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
-  
   const [posts, setPosts] = useState<PostHistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -72,9 +71,9 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
   const [timePeriod, setTimePeriod] = useState<TimePeriod>("all");
   const [sortBy, setSortBy] = useState<SortBy>("date_desc");
   const [showFilters, setShowFilters] = useState(false);
-  const [loader, setLoader] = useState(false);
+  const [loader, setLoader] = useState(true);
   useEffect(() => {
-    fetchPostHistory();
+    markAllAsRead();
   }, []);
 
   useEffect(() => {
@@ -93,17 +92,15 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
 
   const fetchPostHistory = async () => {
     try {
-      setLoader(true);
       const response = await API.getHistory();
       const data = await response.data.data;
       setPosts(data || []);
-      setLoader(false);
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Failed to fetch post history"
       );
     } finally {
-      setTimeout(() => setLoading(false), 1000);
+      setTimeout(() => setLoader(false), 500);
     }
   };
 
@@ -129,7 +126,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
   const markAllAsRead = async () => {
     try {
       await API.readAllHistory();
-
+      fetchPostHistory();
       setPosts((prevPosts) =>
         prevPosts.map((post) => ({ ...post, isRead: true }))
       );
@@ -139,7 +136,6 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
       console.error("Error marking all posts as read:", error);
     }
   };
-
   const resetFilters = () => {
     setReadFilter("all");
     setPlatformFilter("all");
@@ -396,7 +392,9 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
                   className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:ring-blue-600 focus:border-blue-500"
                 >
                   <option value="all">{t("all_posts")}</option>
-                  <option value="unread">{t("unread")} ({unreadCount})</option>
+                  <option value="unread">
+                    {t("unread")} ({unreadCount})
+                  </option>
                   <option value="read">
                     {t("read")} ({posts.length - unreadCount})
                   </option>
@@ -523,9 +521,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
               <Clock className="w-16 h-16 mx-auto" />
             </div>
             <h3 className="text-lg font-semibold text-slate-900 mb-2">
-              {hasActiveFilters
-                ? t("no_posts_match")
-                : t("no_posts_yet")}
+              {hasActiveFilters ? t("no_posts_match") : t("no_posts_yet")}
             </h3>
             <p className="text-gray-500 font-medium">
               {hasActiveFilters
