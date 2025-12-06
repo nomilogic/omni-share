@@ -31,7 +31,7 @@ function NewsUpdates() {
   }, [slides.length]);
 
   return (
-    <div className="bg-gray-100 rounded-md p-5 flex flex-col w-full h-full">
+    <div className="bg-gray-100 rounded-md p-5 flex flex-col w-full h-[450px]">
       <div className="flex-1 flex flex-col items-center">
         <img src={slides[currentSlide].image} alt="slide" className="" />
         <p className="text-sm text-black text-center mt-5">

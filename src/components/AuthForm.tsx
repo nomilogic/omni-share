@@ -32,35 +32,34 @@ interface AuthFormProps {
 
 type AuthMode = "login" | "signup" | "forgotPassword" | "resetPassword";
 
-const loginSchema = (t: any) => z.object({
-  email: z.string().email(t("please_enter_valid_email")),
-  password: z.string().min(6, t("password_min_length")),
-});
+const loginSchema = (t: any) =>
+  z.object({
+    email: z.string().email(t("please_enter_valid_email")),
+    password: z.string().min(6, t("password_min_length")),
+  });
 
 const signupSchema = (t: any) =>
-z.object({
-  name: z.string().min(2, t("name_min_length")),
-  email: z.string().email(t("please_enter_valid_email")),
-  password: z.string().min(6, t("password_min_length")),
-});
+  z.object({
+    name: z.string().min(2, t("name_min_length")),
+    email: z.string().email(t("please_enter_valid_email")),
+    password: z.string().min(6, t("password_min_length")),
+  });
 
 const forgotPasswordSchema = (t: any) =>
   z.object({
-  email: z.string().email(t("please_enter_valid_email")),
-});
-
-const resetPasswordSchema = (t: any) => 
-  z
-  .object({
-    password: z.string().min(6, t("password_min_length")),
-    confirmPassword: z
-      .string()
-      .min(6, t("password_min_length")),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
+    email: z.string().email(t("please_enter_valid_email")),
   });
+
+const resetPasswordSchema = (t: any) =>
+  z
+    .object({
+      password: z.string().min(6, t("password_min_length")),
+      confirmPassword: z.string().min(6, t("password_min_length")),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: "Passwords do not match",
+      path: ["confirmPassword"],
+    });
 
 type LoginFormData = z.infer<ReturnType<typeof loginSchema>>;
 type SignupFormData = z.infer<ReturnType<typeof signupSchema>>;
@@ -117,10 +116,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         setShowOtpPopup(true);
       }
     }
-    if (referralId) {
-      setMode("signup");
-    }
-  }, [referralId, isVerification]);
+  }, [isVerification]);
 
   const onForgetPassword = async (email: string) => {
     setLoading(true);
@@ -193,7 +189,10 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         return notify("error", t("authentication_failed"));
       }
     } catch (error: any) {
-      notify("error", error.response?.data?.message || t("authentication_failed"));
+      notify(
+        "error",
+        error.response?.data?.message || t("authentication_failed")
+      );
     } finally {
       setLoading(false);
     }
@@ -214,15 +213,18 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         }),
       });
 
+      setShowOtpPopup(true);
       const result = await response.data.data;
       localStorage.setItem("email_token", result?.token);
-      setShowOtpPopup(true);
       const url = new URL(window.location.href);
       url.searchParams.set("isVerification", "true");
       window.history.pushState({}, "", url.toString());
       notify("success", t("email_sent"));
     } catch (error: any) {
-      notify("error", error.response?.data?.message || t("authentication_failed"));
+      notify(
+        "error",
+        error.response?.data?.message || t("authentication_failed")
+      );
       // notify("error", error.response?.data?.message || "Authentication failed");
     } finally {
       setLoading(false);
@@ -352,12 +354,6 @@ export const AuthForm: React.FC<AuthFormProps> = ({
           } md:py-10  sm:px-6 md:px-10  md:border md:border-slate-200/70 md:backdrop-blur-sm`}
         >
           <div className="flex relative items-center justify-center mb-4 sm:mb-4 w-full ">
-            {/* {mode !== "login" && (
-              <button onClick={resetMode} className="absolute left-0">
-                <img src={backArrow} className="w-full h-full" alt="" />
-              </button>
-            )} */}
-
             <div className="mb-8">
               <button
                 onClick={() => {
@@ -460,7 +456,9 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                   className="w-full border-2 border-purple-600 rounded-md py-2.5  flex items-center justify-start bg-white px-4 gap-2 hover:bg-purple-50 transition font-medium text-base text-slate-700 disabled:opacity-50"
                 >
                   <Mail className="w-5 h-5" />
-                  <span className="hidden sm:inline">{t("continue_with_email")}</span>
+                  <span className="hidden sm:inline">
+                    {t("continue_with_email")}
+                  </span>
                   <span className="sm:hidden ">{t("email")}</span>
                 </button>
               </div>
@@ -732,17 +730,19 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         </div>
       )}
 
-      <OtpModal
-        open={showOtpPopup}
-        onClose={() => setShowOtpPopup(false)}
-        emailHint="user@example.com"
-        onSuccess={(data: any) => onAuthSuccess(data)}
-        verifyOtp={async (otp) => {
-          const res = await API.otpVerification({ otp });
-          return res.data.data;
-        }}
-        resendOtp={API.resendOtp}
-      />
+      {showOtpPopup && (
+        <OtpModal
+          open={showOtpPopup}
+          onClose={() => setShowOtpPopup(false)}
+          emailHint="user@example.com"
+          onSuccess={(data: any) => onAuthSuccess(data)}
+          verifyOtp={async (otp) => {
+            const res = await API.otpVerification({ otp });
+            return res.data.data;
+          }}
+          resendOtp={API.resendOtp}
+        />
+      )}
     </div>
   );
 };

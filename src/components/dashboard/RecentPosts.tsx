@@ -42,13 +42,12 @@ function RecentPosts({ post }: any) {
   const {
     content = "",
     postUrl = "",
-    metadata: { title = "", description = "" } = {},
+    metadata: { title = "", description = "", image } = {},
   } = topPost || {};
   const { t, i18n } = useTranslation();
-  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
-
+  console.log("topPost", topPost);
   return (
-    <div className="bg-gray-100 rounded-md p-5 flex flex-col  w-full">
+    <div className="bg-gray-100 rounded-md p-5 flex flex-col h-[450px] w-full">
       <div className="flex gap-3 mb-3">
         {socialPlatforms.map((platform, i) => {
           const IconComponent = getPlatformIcon(platform);
@@ -74,28 +73,22 @@ function RecentPosts({ post }: any) {
           No posts available
         </div>
       ) : (
-        <div className="flex-1  h-full bg-white shadow-md rounded-md px-3 py-2 flex flex-col">
-          <h3 className="text-gray-800 font-bold text-lg mb-2">
-            {title || "No Title"}
-          </h3>
+        <div
+          className={`flex-1 h-full shadow-md rounded-md px-3 py-2 flex flex-col ${
+            image ? "bg-cover bg-center text-white" : "bg-white"
+          }`}
+          style={image ? { backgroundImage: `url(${image})` } : {}}
+        >
+          <h3 className="font-bold text-lg mb-2">{title || "No Title"}</h3>
 
           <p
             title={description}
-            className="text-gray-700 text-sm mb-3 line-clamp-5"
+            className={`text-sm mb-3 line-clamp-5 ${
+              image ? "bg-black/40 p-2 rounded" : "text-gray-700"
+            }`}
           >
             {description || content || "No content available"}
           </p>
-
-          {postUrl && (
-            <a
-              href={postUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 hover:underline text-sm mb-3"
-            >
-              {t("view_post")}
-            </a>
-          )}
         </div>
       )}
 

@@ -6,7 +6,6 @@ import Icon from "./Icon";
 import logoText from "../assets/logo-text.svg";
 import { ArrowLeftIcon } from "lucide-react";
 import { notify } from "@/utils/toast";
-import { navigateOnce } from "@/lib/navigation";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 type OtpModalProps = {
@@ -106,7 +105,9 @@ export function OtpModal({
         ) {
           import("../lib/navigation")
             .then(({ navigateOnce }) => {
-              navigateOnce(navigate, "/dashboard?profile=true", { replace: true });
+              navigateOnce(navigate, "/dashboard?profile=true", {
+                replace: true,
+              });
             })
             .catch(() => {
               navigate("/dashboard?profile=true", { replace: true });
@@ -133,7 +134,7 @@ export function OtpModal({
       setTimeLeft(300);
       setExpired(false);
       setRemaining(40);
-      notify("success", t('otp_resend_successfully'));
+      notify("success", t("otp_resend_successfully"));
     } catch (e: unknown) {
       notify("error", t("failed_resend_otp"));
     } finally {
@@ -141,10 +142,9 @@ export function OtpModal({
     }
   };
 
-  if (!open) return null;
+  // if (!open) return null;
 
   const { t, i18n } = useTranslation();
-  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
   return (
     <div
       role="dialog"

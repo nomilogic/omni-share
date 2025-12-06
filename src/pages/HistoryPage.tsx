@@ -125,13 +125,12 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
 
   const markAllAsRead = async () => {
     try {
-      await API.readAllHistory();
-      fetchPostHistory();
       setPosts((prevPosts) =>
         prevPosts.map((post) => ({ ...post, isRead: true }))
       );
-
-      historyRefreshService.refreshHistory();
+      await API.readAllHistory();
+      await historyRefreshService.refreshHistory();
+      fetchPostHistory();
     } catch (error) {
       console.error("Error marking all posts as read:", error);
     }

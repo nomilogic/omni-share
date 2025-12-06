@@ -117,11 +117,11 @@ export const DashboardPage: React.FC = () => {
         </div>
       )}
       {
-        <div className="w-full mx-auto inset-0 fixed bg-black/50 overflow-hidden flex items-center min-h-[70vh] ">
-          <div className="max-w-4xl mx-auto">
-            <ReferralSection />
-          </div>
-        </div>
+        // <div className="w-full mx-auto inset-0 fixed bg-black/50 overflow-hidden flex items-center min-h-[70vh] ">
+        //   <div className="max-w-4xl mx-auto">
+        //     <ReferralSection />
+        //   </div>
+        // </div>
       }
     </>
   );

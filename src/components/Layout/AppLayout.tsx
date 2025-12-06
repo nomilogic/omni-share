@@ -308,7 +308,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               </button>
             </div>
             <div className="flex gap-2 mt-3 px-2.5 md:px-2.5">
-              <LanguageDropdown showGlobe={true} alignRight={true} className="text-white"/>
+              <LanguageDropdown
+                showGlobe={true}
+                alignRight={true}
+                className="text-white"
+              />
             </div>
 
             <div className="absolute bottom-0 left-0 right-0 ">
@@ -528,7 +532,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
               <div className="flex items-center space-x-1">
                 <div className=" md:block hidden ">
-                  <LanguageDropdown/>
+                  <LanguageDropdown />
                 </div>
                 <div className="flex gap-x-4 items-center">
                   <WalletBalance
@@ -723,20 +727,23 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                             </button>
                           )}
 
-                          <Link
-                            to="/pricing"
-                            onClick={() => setShowPackage(false)}
-                            className="w-full mt-3 px-3 py-2.5 border text-md font-semibold rounded-md group flex items-center justify-center gap-2 text-white bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] border-[#7650e3]"
-                          >
-                            <div className="group-hover:filter-omni h-full w-full text-center">
-                              <Icon
-                                name="white-diamond"
-                                size={20}
-                                className="mr-2"
-                              />
-                              {t("upgrade")}
-                            </div>
-                          </Link>
+                          {user.wallet?.downgradeRequested === null ||
+                            (user.wallet?.package?.tier !== "pro" && (
+                              <Link
+                                to="/pricing"
+                                onClick={() => setShowPackage(false)}
+                                className="w-full mt-3 px-3 py-2.5 border text-md font-semibold rounded-md group flex items-center justify-center gap-2 text-white bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] border-[#7650e3]"
+                              >
+                                <div className="group-hover:filter-omni h-full w-full text-center">
+                                  <Icon
+                                    name="white-diamond"
+                                    size={20}
+                                    className="mr-2"
+                                  />
+                                  {t("upgrade")}
+                                </div>
+                              </Link>
+                            ))}
                         </>
                       ) : (
                         <p className="text-gray-500 font-medium text-md text-center">

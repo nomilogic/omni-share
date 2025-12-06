@@ -277,18 +277,16 @@ export const PricingPage: React.FC = () => {
           >
             {t("plans")}
           </button>
-          {!hasCancelRequested && (
-            <button
-              onClick={() => handleTabChange("addons")}
-              className={`px-5 pb-2  font-semibold transition-all border-b-2 rounded-t-lg ${
-                activeTab === "addons"
-                  ? "border-purple-600 border-b  text-purple-600"
-                  : ""
-              }`}
-            >
-              {t("buy_omni_coins")}
-            </button>
-          )}
+          <button
+            onClick={() => handleTabChange("addons")}
+            className={`px-5 pb-2  font-semibold transition-all border-b-2 rounded-t-lg ${
+              activeTab === "addons"
+                ? "border-purple-600 border-b  text-purple-600"
+                : ""
+            }`}
+          >
+            {t("buy_omni_coins")}
+          </button>
         </div>
         <div className="pb-1">
           <select
