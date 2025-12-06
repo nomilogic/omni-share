@@ -11,6 +11,7 @@ import ProfileSetupSinglePage from "@/components/ProfileSetupSinglePage";
 import UpdatePasswordForm from "@/components/UpdatePasswordForm";
 import { useTranslation } from "react-i18next";
 import API from "@/services/api";
+import { useModal } from "../context2/ModalContext";
 
 export const DashboardPage: React.FC = () => {
   const { user } = useAppContext();
@@ -22,6 +23,14 @@ export const DashboardPage: React.FC = () => {
   const isPasswordEditing = state?.isPasswordEditing || false;
   const { t, i18n } = useTranslation();
   const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
+
+  const { openModal, closeModal } = useModal();
+  const handleReferralClick = () => {
+    // openModal ko call karein aur ReferralSection component ko pass karein
+    // closeModal function automatic 'close' prop ke zariye ReferralSection ko milega.
+    openModal(ReferralSection, {});
+    // Agar ReferralSection mein koi aur prop zaroori hai toh woh yahan pass karein.
+  };
 
   // Get user plan and tier info
   const userPlan = user?.wallet?.package?.tier || "free";
@@ -87,7 +96,8 @@ export const DashboardPage: React.FC = () => {
                   stats={referralCoin.toLocaleString()}
                   subtitle={t("referral_earn_message")}
                   buttonText={t("refer_earn")}
-                  onButtonClick={() => {}}
+                  // open referral modal when button clicked
+                  onButtonClick={handleReferralClick}
                 />
               </div>
             </div>
@@ -116,13 +126,6 @@ export const DashboardPage: React.FC = () => {
           </div>
         </div>
       )}
-      {
-        // <div className="w-full mx-auto inset-0 fixed bg-black/50 overflow-hidden flex items-center min-h-[70vh] ">
-        //   <div className="max-w-4xl mx-auto">
-        //     <ReferralSection />
-        //   </div>
-        // </div>
-      }
     </>
   );
 };

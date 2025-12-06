@@ -1,4 +1,6 @@
 import { useResize } from "../context/ResizeContext";
+import { useModal } from '../context2/ModalContext';
+import DiscardImageModal from '../components/modals/DiscardImageModal';
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import {
   Template,
@@ -70,6 +72,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
         }))
       : []
   );
+  const { openModal } = useModal();
   const [selectedElement, setSelectedElement] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
@@ -104,10 +107,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
   }>({ width: 800, height: 800 });
   const [zoomLevel, setZoomLevel] = useState<number>(1);
   const [maxZoom, setMaxZoom] = useState<number>(1);
-  const [showDiscardModal, setShowDiscardModal] = useState<boolean>(false);
-  const [pendingDiscardAction, setPendingDiscardAction] = useState<
-    (() => void) | null
-  >(null);
+  
   const navigate = useNavigate();
 
   // Utility function to convert hex color to rgba with opacity
@@ -291,9 +291,14 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
   }, [elements, ctx, backgroundImage, isLoading]);
 
   const handleDiscardClick = useCallback(() => {
-    setPendingDiscardAction(onCancel);
-    setShowDiscardModal(true);
-  }, [onCancel]);
+    // openModal ko call karein.
+    // onConfirmAction mein wahi function pass karein jo Confirm button par chalana hai (jo yahan onCancel hai)
+    openModal(DiscardImageModal, {
+      t: t,
+      onConfirmAction: onCancel, // 👈 onCancel function ko seedha pass kar diya
+    });
+    // Ab pendingDiscardAction state ki zaroorat nahi.
+  }, [t, onCancel]);
 
   const redrawCanvas = (
     context: CanvasRenderingContext2D,
@@ -2042,9 +2047,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
             </button>
 
             <button
-              onClick={() => {
-                setShowDiscardModal(true);
-              }}
+              onClick={handleDiscardClick}
               className="text-purple-600 flex justify-center items-center gap-2  font-medium w-full px-3 py-2.5  mx-1 rounded-md border border-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3]"
             >
               {t("discard_image")}
@@ -2144,42 +2147,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
           </div>
         </div>
       </div>
-      {showDiscardModal && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-gray-50 rounded-md shadow-md w-full max-w-md px-8 py-6">
-            <h2 className="text-2xl font-bold text-purple-700 mb-4 items-center flex justify-center">
-              {t("discard_image_title")}
-            </h2>
-
-            <p className="text-gray-500 text-sm mb-8 text-center leading-relaxed">
-              {t("discard_image_message")}
-            </p>
-
-            <div className="flex gap-3">
-              <button
-                onClick={() => {
-                  setShowDiscardModal(false);
-                  setPendingDiscardAction(null);
-                }}
-                className="flex-1  bg-transparent border-purple-600 border text-purple-600 flex items-center gap-2 justify-center hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
-              >
-                {t("cancel")}
-              </button>
-
-              <button
-                onClick={() => {
-                  onCancel();
-                  setShowDiscardModal(false);
-                  setPendingDiscardAction(null);
-                }}
-                className="flex-1  bg-purple-600 text-white hover:text-[#7650e3] flex items-center gap-2 justify-center hover:bg-[#d7d7fc] border border-[#7650e3] font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
-              >
-                {t("confirm")}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      
     </div>
   );
 };

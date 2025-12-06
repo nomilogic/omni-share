@@ -25,6 +25,8 @@ import {
 import { useAppContext } from "@/context/AppContext";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useModal } from '../context2/ModalContext';
+import DiscardPostModal from '../components/modals/DiscardPostModal';
 
 interface PostPreviewProps {
   posts: any[];
@@ -49,6 +51,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
   const [selectedPlatform, setSelectedPlatform] = useState<Platform>(
     generatedPosts[0]?.platform || "facebook"
   );
+  const { openModal } = useModal();
   const { generationAmounts } = useAppContext();
   const [copiedPost, setCopiedPost] = useState<string | null>(null);
   const [editingMode, setEditingMode] = useState<boolean>(false);
@@ -57,7 +60,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
   const [isRegeneratingMode, setIsRegeneratingMode] = useState<boolean>(false);
   const [regenerationPrompt, setRegenerationPrompt] = useState<string>("");
   const [isRegenerating, setIsRegenerating] = useState<boolean>(false);
-  const [showDiscardModal, setShowDiscardModal] = useState<boolean>(false);
+
   const [pendingDiscardAction, setPendingDiscardAction] = useState<
     (() => void) | null
   >(null);
@@ -84,10 +87,20 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
     );
   }, [generatedPosts]);
 
+  const handleDiscardAction = useCallback(() => {
+    // Yeh woh action hai jo Confirm par chalega (navigate)
+    navigate("/content"); 
+    // Agar onBack bhi karna hai toh: onBack(); navigate("/content");
+  }, [navigate]);
+
   const handleDiscardClick = useCallback(() => {
-    setPendingDiscardAction(onBack);
-    setShowDiscardModal(true);
-  }, [onBack]);
+    // openModal function ko call karein
+    openModal(DiscardPostModal, {
+      onConfirm: handleDiscardAction, // Jo action perform karna hai
+      t: t,                         // Translation function pass karein
+    });
+    // pendingDiscardAction aur state ki zaroorat khatam
+  }, [handleDiscardAction, t]);
 
   const copyToClipboard = async (text: string) => {
     try {
@@ -1163,9 +1176,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
             </button>
 
             <button
-              onClick={() => {
-                setShowDiscardModal(true);
-              }}
+                onClick={handleDiscardClick}
               className="w-full bg-transparent border-purple-600 border text-purple-600 flex items-center gap-2 justify-center hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
             >
               {/* <Edit className="w-5 h-5" /> */}
@@ -1245,42 +1256,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
           </div>
         )}
       </div>
-      {showDiscardModal && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-gray-50 rounded-md shadow-md w-full max-w-md px-8 py-6">
-            <h2 className="text-2xl font-bold text-purple-700 mb-4 items-center flex justify-center">
-              {t("discard_post_title")}
-            </h2>
-
-            <p className="text-gray-500 text-sm mb-8 text-center leading-relaxed">
-              {t("discard_post_message")}
-            </p>
-
-            <div className="flex gap-3">
-              <button
-                onClick={() => {
-                  setShowDiscardModal(false);
-                  setPendingDiscardAction(null);
-                }}
-                className="flex-1  bg-transparent border-purple-600 border text-purple-600 flex items-center gap-2 justify-center hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
-              >
-                {t("cancel")}
-              </button>
-
-              <button
-                onClick={() => {
-                  navigate("/content");
-                  setShowDiscardModal(false);
-                  setPendingDiscardAction(null);
-                }}
-                className="flex-1  bg-purple-600 text-white hover:text-[#7650e3] flex items-center gap-2 justify-center hover:bg-[#d7d7fc] border border-[#7650e3] font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
-              >
-                {t("confirm")}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      
     </div>
   );
 };

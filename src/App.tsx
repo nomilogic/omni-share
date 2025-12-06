@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { ModalProvider } from './context2/ModalContext';
 import { Routes, Route, Navigate } from "react-router-dom";
 import { AppProvider, useAppContext } from "./context/AppContext";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -106,8 +107,8 @@ function App() {
         theme="colored"
         transition={Bounce}
       />
-
       <AppProvider>
+<ModalProvider>
         <AuthProvider>
           <SubscriptionModalProvider>
             <PricingModalProvider>
@@ -303,6 +304,7 @@ function App() {
             </PricingModalProvider>
           </SubscriptionModalProvider>
         </AuthProvider>
+      </ModalProvider>
       </AppProvider>
     </>
   );
