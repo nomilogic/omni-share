@@ -9,7 +9,7 @@ const TwoColumnSection2 = () => {
   const navigate = useNavigate();
   return (
     <section
-      className="pt-8 md:pt-14 relative max-w-full mx-auto px-4 sm:px-6 lg:px-[10%]
+      className="pt-8 pb-4 md:pb-14  md:pt-14 relative max-w-full mx-auto px-4 sm:px-6 lg:px-[10%]
     grid md:grid-cols-2 gap-4 md:gap-10 lg:gap-10 items-center w-full bg-white text-center md:text-left"
     >
       {/* Left Side - Text */}

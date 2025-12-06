@@ -1,14 +1,19 @@
-import { Share2, Copy, Users } from "lucide-react";
+// ReferralSection.tsx
+import { Share2, Copy, X } from "lucide-react";
 import { useState } from "react";
 import Referal from "../../assets/referal.png";
 import { useAppContext } from "@/context/AppContext";
 import { useTranslation } from "react-i18next";
-function ReferralSection() {
+
+type Props = {
+  onClose?: () => void; // parent can pass this to close modal
+};
+
+export default function ReferralSection({ onClose }: Props) {
   const [copied, setCopied] = useState(false);
   const { user } = useAppContext();
   const referralLink = `http://omnishare.ai/auth?referralId=${user.id}`;
-  const { t, i18n } = useTranslation();
-  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
+  const { t } = useTranslation();
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(referralLink);
@@ -17,8 +22,19 @@ function ReferralSection() {
   };
 
   return (
-    <div className="bg-gray-100 rounded-md   px-5 py-4">
-      <div className="grid md:grid-cols-3 gap-5  items-center">
+    <div className="bg-gray-100 rounded-md px-5 py-4 relative">
+      {/* Close button top-right */}
+      {onClose && (
+        <button
+          onClick={onClose}
+          aria-label={t("close") || "Close"}
+          className="absolute right-3 top-3 w-6 h-6 z-10 rounded-full border-[#7650e3] flex items-center justify-center text-[#7650e3] bg-[#F7F5FB] transition-shadow border-[2px]"
+        >
+          <X className="w-4 h-4 color-[#7650e3] stroke-[#7650e3] stroke-[3]" />
+        </button>
+      )}
+
+      <div className="grid md:grid-cols-3 gap-5 items-center">
         <div className="md:col-span-2 w-full">
           <h2 className="text-3xl font-bold text-[#7650e3] mb-1">
             {t("refer_earn")}
@@ -28,7 +44,7 @@ function ReferralSection() {
           </p>
 
           <div className="mb-4">
-            <label className="text-xs text-gray-500  mb-2 block font-medium">
+            <label className="text-xs text-gray-500 mb-2 block font-medium">
               {t("copy_link_share")}
             </label>
 
@@ -42,7 +58,7 @@ function ReferralSection() {
 
               <button
                 onClick={copyToClipboard}
-                className="px-3 py-2.5  transition-colors"
+                className="px-3 py-2.5 transition-colors"
                 title="Copy to clipboard"
               >
                 <Copy className="w-4 h-4 text-purple-600" />
@@ -61,14 +77,8 @@ function ReferralSection() {
           </button>
         </div>
 
-        <img
-          src={Referal}
-          className="w-full h-full object-cover object-center"
-          alt=""
-        />
+        <img src={Referal} className="w-full h-full object-cover object-center" alt="" />
       </div>
     </div>
   );
 }
-
-export default ReferralSection;

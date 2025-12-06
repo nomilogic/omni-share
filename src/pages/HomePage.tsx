@@ -918,6 +918,55 @@ function HomePage() {
       >
         <FeaturesPage />
       </motion.div>
+      <section
+        id="video"
+        className="pb-8 md:py-14 bg-white relative overflow-hidden"
+      >
+        <motion.div
+          className="absolute inset-0 opacity-5"
+          style={{ y: useTransform(smoothProgress, [0.3, 0.6], [100, -100]) }}
+        >
+          <div className="absolute top-40 right-20 w-80 h-80 bg-[#7650e3] rounded-full blur-3xl"></div>
+        </motion.div>
+
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <motion.div
+            className="text-center mb-4 md:mb-8"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6, type: "spring", stiffness: 80 }}
+          >
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 md:mb-5">
+              {t("see_action")}
+            </h2>
+            <p className="text-xl text-gray-500 font-medium">
+              {t("see_action_message")}
+            </p>
+          </motion.div>
+
+          <motion.div
+            className="relative rounded-md overflow-hidden shadow-2xl p-8 md:p-12 max-w-4xl mx-auto bg-gray-900 aspect-video"
+            initial={{ opacity: 0, scale: 0.9, y: 50 }}
+            whileInView={{ opacity: 1, scale: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6, type: "spring", stiffness: 80 }}
+            whileHover={{ scale: 1.02, transition: { duration: 0.3 } }}
+          >
+            <video
+              src={IntroVideo}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="none"
+              poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080'%3E%3Crect fill='%23111827' width='1920' height='1080'/%3E%3C/svg%3E"
+              className="absolute inset-0 w-full h-full object-cover"
+              controls
+            />
+          </motion.div>
+        </div>
+      </section>
       <TwoColumnSection />
       <TwoColumnSection2 />
       {/* Active Users Stats Section */}
@@ -974,55 +1023,7 @@ function HomePage() {
         </motion.div>
       </section>
 
-      <section
-        id="video"
-        className="py-8 md:py-14 bg-white relative overflow-hidden"
-      >
-        <motion.div
-          className="absolute inset-0 opacity-5"
-          style={{ y: useTransform(smoothProgress, [0.3, 0.6], [100, -100]) }}
-        >
-          <div className="absolute top-40 right-20 w-80 h-80 bg-[#7650e3] rounded-full blur-3xl"></div>
-        </motion.div>
-
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <motion.div
-            className="text-center mb-4 md:mb-8"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6, type: "spring", stiffness: 80 }}
-          >
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 md:mb-5">
-              {t("see_action")}
-            </h2>
-            <p className="text-xl text-gray-500 font-medium">
-              {t("see_action_message")}
-            </p>
-          </motion.div>
-
-          <motion.div
-            className="relative rounded-md overflow-hidden shadow-2xl p-8 md:p-12 max-w-4xl mx-auto bg-gray-900 aspect-video"
-            initial={{ opacity: 0, scale: 0.9, y: 50 }}
-            whileInView={{ opacity: 1, scale: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6, type: "spring", stiffness: 80 }}
-            whileHover={{ scale: 1.02, transition: { duration: 0.3 } }}
-          >
-            <video
-              src={IntroVideo}
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="none"
-              poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080'%3E%3Crect fill='%23111827' width='1920' height='1080'/%3E%3C/svg%3E"
-              className="absolute inset-0 w-full h-full object-cover"
-              controls
-            />
-          </motion.div>
-        </div>
-      </section>
+      
 
       <section className="py-8 md:py-14 bg-gradient-to-br from-[#d7d7fc] to-white relative overflow-hidden">
         <div className="absolute inset-0 opacity-5">
@@ -1169,9 +1170,9 @@ function HomePage() {
 
       <section
         id="Faq"
-        className=" scroll-mt-20 max-w-4xl mx-auto py-8 md:py-14 bg-gray-50"
+        className=" scroll-mt-20 max-w-4xl mx-auto pt-8 md:py-14 "
       >
-        <div className="max-w-4xl mx-4 md:mx-auto  sm:px-6 ">
+        <div className="max-w-4xl  md:mx-auto px-4 md:px-0 ">
           <motion.div
             className="text-center mb-4 md:mb-5"
             initial={{ opacity: 0, y: 30 }}

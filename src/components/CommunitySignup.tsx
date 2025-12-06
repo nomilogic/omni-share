@@ -94,10 +94,10 @@ const CommunitySignup: React.FC = () => {
               <button
                 type="submit"
                 className={`
-    transition font-medium shadow-lg inline-flex items-center justify-center space-x-2
+    transition font-semibold shadow-lg inline-flex items-center justify-center space-x-2
 
     /* MOBILE (<640px) style */
-    bg-[#7650e3] text-white px-8 py-3 rounded-full
+    bg-[#7650e3] text-white px-8 py-3 rounded-full text-base
 
     /* DESKTOP (>=640px) — KEEP EXACTLY ORIGINAL */
     sm:px-4 sm:py-2 sm:w-[110px] sm:rounded-md sm:border

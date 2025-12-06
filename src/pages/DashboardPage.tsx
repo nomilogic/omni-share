@@ -23,6 +23,9 @@ export const DashboardPage: React.FC = () => {
   const { t, i18n } = useTranslation();
   const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
 
+  // Modal open state for ReferralSection
+  const [isReferralOpen, setIsReferralOpen] = useState(false);
+
   // Get user plan and tier info
   const userPlan = user?.wallet?.package?.tier || "free";
   const planRenewalDate = user?.wallet?.expiresAt
@@ -87,7 +90,8 @@ export const DashboardPage: React.FC = () => {
                   stats={referralCoin.toLocaleString()}
                   subtitle={t("referral_earn_message")}
                   buttonText={t("refer_earn")}
-                  onButtonClick={() => {}}
+                  // open referral modal when button clicked
+                  onButtonClick={() => setIsReferralOpen(true)}
                 />
               </div>
             </div>
@@ -116,13 +120,21 @@ export const DashboardPage: React.FC = () => {
           </div>
         </div>
       )}
-      {
-        <div className="w-full mx-auto inset-0 fixed bg-black/50 overflow-hidden flex items-center min-h-[70vh] ">
-          <div className="max-w-4xl mx-auto">
-            <ReferralSection />
+
+      {/* Referral modal: renders only when isReferralOpen is true */}
+      {isReferralOpen && (
+        <div
+          className="w-full mx-auto inset-0 fixed bg-black/50 overflow-hidden flex items-center min-h-[70vh] z-50"
+          onClick={() => setIsReferralOpen(false)} // clicking backdrop closes modal
+        >
+          <div
+            className="max-w-4xl mx-auto w-full px-4"
+            onClick={(e) => e.stopPropagation()} // prevent inner clicks from closing
+          >
+            <ReferralSection onClose={() => setIsReferralOpen(false)} />
           </div>
         </div>
-      }
+      )}
     </>
   );
 };
