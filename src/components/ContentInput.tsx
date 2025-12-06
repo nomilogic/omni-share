@@ -35,7 +35,7 @@ import {
   is9x16Video,
 } from "../utils/videoUtils";
 import { useLoadingAPI } from "../hooks/useLoadingAPI";
-import VideoPoster from "../assets/videoposter02.jpg"
+import VideoPoster from "../assets/omnishare-02 (5).jpg"
 import API from "@/services/api";
 import { useNavigate } from "react-router-dom";
 import { notify } from "@/utils/toast";

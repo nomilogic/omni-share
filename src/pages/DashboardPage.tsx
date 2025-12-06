@@ -11,6 +11,7 @@ import ProfileSetupSinglePage from "@/components/ProfileSetupSinglePage";
 import UpdatePasswordForm from "@/components/UpdatePasswordForm";
 import { useTranslation } from "react-i18next";
 import API from "@/services/api";
+import { useModal } from "../context2/ModalContext";
 
 export const DashboardPage: React.FC = () => {
   const { user } = useAppContext();
@@ -23,8 +24,13 @@ export const DashboardPage: React.FC = () => {
   const { t, i18n } = useTranslation();
   const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
 
-  // Modal open state for ReferralSection
-  const [isReferralOpen, setIsReferralOpen] = useState(false);
+  const { openModal, closeModal } = useModal();
+  const handleReferralClick = () => {
+    // openModal ko call karein aur ReferralSection component ko pass karein
+    // closeModal function automatic 'close' prop ke zariye ReferralSection ko milega.
+    openModal(ReferralSection, {}); 
+    // Agar ReferralSection mein koi aur prop zaroori hai toh woh yahan pass karein.
+  };
 
   // Get user plan and tier info
   const userPlan = user?.wallet?.package?.tier || "free";
@@ -91,7 +97,7 @@ export const DashboardPage: React.FC = () => {
                   subtitle={t("referral_earn_message")}
                   buttonText={t("refer_earn")}
                   // open referral modal when button clicked
-                  onButtonClick={() => setIsReferralOpen(true)}
+                  onButtonClick={handleReferralClick}
                 />
               </div>
             </div>
@@ -119,22 +125,7 @@ export const DashboardPage: React.FC = () => {
             <UpdatePasswordForm />
           </div>
         </div>
-      )}
-
-      {/* Referral modal: renders only when isReferralOpen is true */}
-      {isReferralOpen && (
-        <div
-          className="w-full mx-auto inset-0 fixed bg-black/50 overflow-hidden flex items-center min-h-[70vh] z-50"
-          onClick={() => setIsReferralOpen(false)} // clicking backdrop closes modal
-        >
-          <div
-            className="max-w-4xl mx-auto w-full px-4"
-            onClick={(e) => e.stopPropagation()} // prevent inner clicks from closing
-          >
-            <ReferralSection onClose={() => setIsReferralOpen(false)} />
-          </div>
-        </div>
-      )}
+      )}      
     </>
   );
 };
