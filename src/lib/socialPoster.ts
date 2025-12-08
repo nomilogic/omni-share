@@ -101,6 +101,30 @@ export async function postToFacebookFromServer(
   }
 }
 
+export async function postToInstagramFromServer(
+  accessToken: string,
+  post: GeneratedPost
+) {
+  try {
+    if (!post.imageUrl) {
+      throw new Error("Instagram post requires an image");
+    }
+
+    console.log("📸 Instagram posting with:", {
+      hasImage: !!post.imageUrl,
+      caption: post.caption?.substring(0, 50) + "...",
+      hashtags: post.hashtags?.length || 0,
+    });
+
+    const response = await API.instagramPost({ accessToken, post });
+
+    return response.data;
+  } catch (error: any) {
+    console.error("Instagram posting error:", error.response?.data);
+    throw new Error(error.response?.data?.error || error.message);
+  }
+}
+
 export async function postToYouTubeFromServer(
   accessToken: string,
   post: GeneratedPost,
@@ -608,8 +632,14 @@ async function postWithRealOAuth(
         };
 
       case "instagram":
-        // Add real Instagram posting logic here
-        throw new Error("Real Instagram posting not implemented yet");
+        // Post to Instagram using the backend API
+        const igResult = await postToInstagramFromServer(accessToken, post);
+        return {
+          success: true,
+          message: `Successfully posted to Instagram`,
+          postId: igResult.postId || igResult.data?.id,
+          username: igResult.username,
+        };
 
       case "twitter":
         // Add real Twitter posting logic here
