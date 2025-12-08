@@ -157,7 +157,7 @@ function App() {
                   path="/payment/error"
                   element={
                     <ProtectedRoute>
-                      <PackageErrorPage />{" "}
+                      <PackageErrorPage />
                     </ProtectedRoute>
                   }
                 />

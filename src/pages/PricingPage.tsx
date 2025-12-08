@@ -458,7 +458,7 @@ export const PricingPage: React.FC = () => {
           <div className="grid xl:grid-cols-3 md:grid-cols-2 gap-5">
             {user?.wallet?.package.tier === "free" ? (
               <div className="col-span-3 text-center text-red-500 text-sm min-h-[40vh] flex flex-col justify-center items-center">
-                Purchase a Standard or Pro plan to get credits.{" "}
+                Purchase a Standard or Pro plan to get credits.
                 <button
                   onClick={() => setActiveTab("")}
                   className="text-[#7650e3] underline cursor-pointer"
@@ -504,7 +504,7 @@ export const PricingPage: React.FC = () => {
                       <div className="text-[0.8rem] text-slate-800 -mt-[18px] w-full">
                         {hasSale ? (
                           <>
-                            {t("total")}: {addon.coins.toLocaleString()}{" "}
+                            {t("total")}: {addon.coins.toLocaleString()}
                             <span className="mx-1">+</span>
                             <span className="text-[#7650e3] inline-block">
                               {bonusAmount.toLocaleString()} {t("bonus")}

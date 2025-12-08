@@ -182,8 +182,7 @@ const PrivacyPolicy: React.FC = () => {
         {/* Footer */}
         <div className="mt-8 text-center">
           <p className="text-gray-500 font-medium text-sm">
-            This privacy policy is effective as of{" "}
-            {new Date().toLocaleDateString()} and applies to all users of Omni
+            This privacy policy is effective as of {new Date().toLocaleDateString()} and applies to all users of Omni
             Share.
           </p>
         </div>

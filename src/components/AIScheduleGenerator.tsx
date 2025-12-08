@@ -427,8 +427,7 @@ export const AIScheduleGenerator: React.FC<AIScheduleGeneratorProps> = ({
           <h4 className="font-medium text-slate-900 mb-2">Current Settings:</h4>
           <div className="grid grid-cols-2 gap-4 text-sm text-gray-500 font-medium">
             <div>
-              <strong>Platforms:</strong>{" "}
-              {selectedPlatforms.join(", ") || "None selected"}
+              <strong>Platforms:</strong> {selectedPlatforms.join(", ") || "None selected"}
             </div>
             <div>
               <strong>Time:</strong> {getTimeRangeDisplay()}

@@ -37,11 +37,9 @@ const getFeatures = (t: any): Feature[] => [
     title: t("post_automation"),
     description: (
       <p className="text-gray-500 text-lg leading-relaxed md:w-full">
-        {t("line_32")}{" "}
-        <span className="text-purple-600 text-xl font-medium">
+        {t("line_32")} <span className="text-purple-600 text-xl font-medium">
           {t("line_33")}
-        </span>{" "}
-        {t("line_36")}
+        </span> {t("line_36")}
       </p>
     ),
     icon: <Sparkles className="w-6 h-6" />,
@@ -55,20 +53,13 @@ const getFeatures = (t: any): Feature[] => [
     title: t("media_optimization"),
     description: (
       <p className="text-gray-500 text-lg leading-relaxed md:w-full">
-        {t("line_10")}{" "}
-        <span className="text-purple-600 text-xl font-medium">
+        {t("line_10")} <span className="text-purple-600 text-xl font-medium">
           {t("line_11")}
-        </span>{" "}
-        {t("line_12")}{" "}
-        <span className="text-purple-600 text-xl font-medium">
+        </span> {t("line_12")} <span className="text-purple-600 text-xl font-medium">
           {t("line_13")}
-        </span>{" "}
-        {t("line_14")}{" "}
-        <span className="text-purple-600 text-xl font-medium">
+        </span> {t("line_14")} <span className="text-purple-600 text-xl font-medium">
           {t("line_15")}
-        </span>{" "}
-        {t("line_16")}{" "}
-        <span className="text-purple-600 text-xl font-medium">
+        </span> {t("line_16")} <span className="text-purple-600 text-xl font-medium">
           {t("line_17")}
         </span>
         {t("line_18")}
@@ -85,18 +76,12 @@ const getFeatures = (t: any): Feature[] => [
     title: t("smart_insights"),
     description: (
       <p className="text-gray-500 text-lg leading-relaxed md:w-full">
-        {t("line_19")}{" "}
-        <span className="text-purple-600 text-xl font-medium">
+        {t("line_19")} <span className="text-purple-600 text-xl font-medium">
           {t("line_20")}
-        </span>{" "}
-        {t("line_21")}{" "}
-        <span className="text-purple-600 text-xl font-medium">
+        </span> {t("line_21")} <span className="text-purple-600 text-xl font-medium">
           {t("line_22")}
-        </span>{" "}
-        {t("line_23")}{" "}
-        <span className="text-purple-600 text-xl font-medium">
-          {t("line_24")}{" "}
-        </span>
+        </span> {t("line_23")} <span className="text-purple-600 text-xl font-medium">
+          {t("line_24")} </span>
         {t("line_25")}
       </p>
     ),
@@ -111,16 +96,11 @@ const getFeatures = (t: any): Feature[] => [
     title: t("instant_publishing"),
     description: (
       <p className="text-gray-500 text-lg leading-relaxed md:w-full">
-        {t("line_26")}{" "}
-        <span className="text-purple-600 text-xl font-medium">
+        {t("line_26")} <span className="text-purple-600 text-xl font-medium">
           {t("line_27")}
-        </span>{" "}
-        {t("line_28")}{" "}
-        <span className="text-purple-600 text-xl font-medium">
+        </span> {t("line_28")} <span className="text-purple-600 text-xl font-medium">
           {t("line_29")}
-        </span>{" "}
-        {t("line_30")}{" "}
-        <span className="text-purple-600 text-xl font-medium">
+        </span> {t("line_30")} <span className="text-purple-600 text-xl font-medium">
           {t("line_31")}
         </span>
         .

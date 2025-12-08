@@ -334,8 +334,7 @@ const NotificationsTab: React.FC<{
                     {notification.type === "reminder" &&
                       notification.metadata.scheduledPostTime && (
                         <p>
-                          Scheduled for:{" "}
-                          {new Date(
+                          Scheduled for: {new Date(
                             notification.metadata.scheduledPostTime
                           ).toLocaleString()}
                         </p>
@@ -344,8 +343,7 @@ const NotificationsTab: React.FC<{
                       notification.type === "error") &&
                       notification.metadata.platforms && (
                         <p>
-                          Platforms:{" "}
-                          {notification.metadata.platforms.join(", ")}
+                          Platforms: {notification.metadata.platforms.join(", ")}
                         </p>
                       )}
                   </div>

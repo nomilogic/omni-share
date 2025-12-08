@@ -187,8 +187,7 @@ export function OtpModal({
 
         {!expired ? (
           <p className="mt-2 text-sm text-black">
-            OTP expires in{" "}
-            <span className="font-medium">{formatTime(timeLeft)}</span>
+            OTP expires in <span className="font-medium">{formatTime(timeLeft)}</span>
           </p>
         ) : (
           <p className="mt-2 text-sm text-red-600">

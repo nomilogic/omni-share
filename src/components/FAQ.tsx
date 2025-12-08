@@ -161,8 +161,7 @@ const FAQ: React.FC = () => {
         {/* Footer */}
         <div className="mt-8 text-center">
   <p className="text-gray-500 font-medium text-sm">
-    {t("contact_support")}{" "}
-    <a
+    {t("contact_support")} <a
       href="mailto:support@omnishare.ai"
       className="text-[#7650e3] hover:text-[#6840c7] font-medium"
     >

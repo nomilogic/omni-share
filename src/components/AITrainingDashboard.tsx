@@ -443,8 +443,7 @@ export const AITrainingDashboard: React.FC<AITrainingDashboardProps> = ({
                     <span>Priority: {criterion.priority}/10</span>
                     <span>Conditions: {criterion.conditions.length}</span>
                     <span>
-                      Updated:{" "}
-                      {new Date(criterion.lastUpdated).toLocaleDateString()}
+                      Updated: {new Date(criterion.lastUpdated).toLocaleDateString()}
                     </span>
                   </div>
                 </div>
@@ -527,8 +526,7 @@ export const AITrainingDashboard: React.FC<AITrainingDashboardProps> = ({
                   <span>Impact: {insight.impact}/10</span>
                   <span>Data Points: {insight.dataPoints}</span>
                   <span>
-                    Generated:{" "}
-                    {new Date(insight.createdAt).toLocaleDateString()}
+                    Generated: {new Date(insight.createdAt).toLocaleDateString()}
                   </span>
                 </div>
               </div>
@@ -621,8 +619,7 @@ export const AITrainingDashboard: React.FC<AITrainingDashboardProps> = ({
                   <span>Frequency: {pattern.frequency}</span>
                   <span>Impact: {pattern.impact}/10</span>
                   <span>
-                    Updated:{" "}
-                    {new Date(pattern.lastUpdated).toLocaleDateString()}
+                    Updated: {new Date(pattern.lastUpdated).toLocaleDateString()}
                   </span>
                 </div>
 

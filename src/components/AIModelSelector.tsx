@@ -199,8 +199,7 @@ export const AIModelSelector: React.FC<AIModelSelectorProps> = ({
             <Clock className="w-3 h-3 mr-1" />
             {model.contextWindow >= 100000
               ? `${Math.round(model.contextWindow / 1000)}K`
-              : `${Math.round(model.contextWindow / 1000)}K`}{" "}
-            tokens
+              : `${Math.round(model.contextWindow / 1000)}K`} tokens
           </div>
           {model.pricing && (
             <div className="flex items-center">
@@ -250,8 +249,7 @@ export const AIModelSelector: React.FC<AIModelSelectorProps> = ({
                 {selectedModelInfo?.name || "Select AI Model"}
               </div>
               <div className="text-sm text-gray-500 font-medium">
-                {selectedModelInfo?.provider || "No provider"} •{" "}
-                {selectedModelInfo?.type || "text"}
+                {selectedModelInfo?.provider || "No provider"} • {selectedModelInfo?.type || "text"}
               </div>
             </div>
           </div>

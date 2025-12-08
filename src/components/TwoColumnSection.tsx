@@ -22,12 +22,10 @@ const TwoColumnSection: React.FC = () => {
       {/* Right Side - Text + Button */}
       <div className="w-full flex flex-col gap-3 md:gap-4 items-center md:items-start">
         <h2 className="font-bold text-4xl sm:text-5xl text-black">
-          {t("line_01")} <span className="text-purple-600">{t("line_02")}</span>{" "}
-          {t("line_03")}
+          {t("line_01")} <span className="text-purple-600">{t("line_02")}</span> {t("line_03")}
         </h2>
         <p className="leading-relaxed text-base sm:text-lg text-gray-500">
-          {t("line_04")}{" "}
-          <span className="text-xl font-medium">{t("line_05")}</span>
+          {t("line_04")} <span className="text-xl font-medium">{t("line_05")}</span>
         </p>
         <div className="flex justify-center md:justify-start w-full">
           <button

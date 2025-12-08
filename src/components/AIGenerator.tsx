@@ -197,8 +197,7 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
               </div>
               <div>
                 <p className="text-lg font-medium text-slate-800">
-                  {t("optimizing_for")}{" "}
-                  {getPlatformDisplayName(currentPlatform)}
+                  {t("optimizing_for")} {getPlatformDisplayName(currentPlatform)}
                 </p>
                 <p className="text-sm text-gray-500 font-medium">
                   {t("analyzing_audience")}
@@ -250,11 +249,9 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
 
         <div className="text-center text-sm text-gray-500 font-medium">
           <p>
-            {t("processing")}{" "}
-            {contentData?.selectedPlatforms?.length ||
+            {t("processing")} {contentData?.selectedPlatforms?.length ||
               contentData?.platforms?.length ||
-              1}{" "}
-            {t("platforms")}
+              1} {t("platforms")}
             {(contentData?.selectedPlatforms?.length ||
               contentData?.platforms?.length ||
               1) > 1

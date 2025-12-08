@@ -253,9 +253,7 @@ export const AccountsPage: React.FC = () => {
 
         <div className=" p-2 bg-blue-50 border border-blue-200 rounded-md">
           <p className="text-sm text-blue-800">
-            <span className="font-medium">{connectedPlatforms.length}</span> of{" "}
-            <span className="font-medium">{ALL_PLATFORMS.length}</span>{" "}
-            {t("platforms_connected")}
+            <span className="font-medium">{connectedPlatforms.length}</span> of <span className="font-medium">{ALL_PLATFORMS.length}</span> {t("platforms_connected")}
           </p>
         </div>
 

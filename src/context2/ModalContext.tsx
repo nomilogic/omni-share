@@ -88,7 +88,7 @@ export const ModalProvider: FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <ModalContext.Provider value={contextValue}>
             {children}
-            <ModalHost />   {" "}
+            <ModalHost />   
     </ModalContext.Provider>
   );
 };
@@ -114,7 +114,7 @@ const ModalHost: FC = () => {
 
   return ReactDOM.createPortal(
     <>
-            {/* 1. ✅ BACKDROP WITH BLUR & CORRECT STYLES */}     {" "}
+            {/* 1. ✅ BACKDROP WITH BLUR & CORRECT STYLES */}     
       <div
         style={{
           position: "fixed",
@@ -134,7 +134,7 @@ const ModalHost: FC = () => {
       >
         {/* Is div ko khali rakha gaya hai taake sirf backdrop ka role play kare */}
       </div>
-            {/* 3. ✅ SAARE MODALS RENDER KAR RAHE HAIN */}     {" "}
+            {/* 3. ✅ SAARE MODALS RENDER KAR RAHE HAIN */}     
       {modals.map((modal, index) => {
         // Har modal ko incremental zIndex diya gaya hai (1001, 1002, ...)
         const modalZIndex = baseZIndex + 1 + index;
@@ -158,7 +158,7 @@ const ModalHost: FC = () => {
           </div>
         );
       })}
-         {" "}
+         
     </>,
     modalRoot
   );

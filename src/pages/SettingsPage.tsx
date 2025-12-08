@@ -266,7 +266,7 @@ export const SettingsPage: React.FC = () => {
                           <div className="flex items-center justify-between">
                             <div>
                               <span className="theme-text-secondary text-sm">
-                                Status:{" "}
+                                Status:
                               </span>
                               <span className="text-red-400 text-sm">
                                 Disabled

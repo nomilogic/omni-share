@@ -113,8 +113,7 @@ const SubscriptionPauseModal = ({
                             {pkg.name}
                           </h3>
                           <span className="text-xl font-bold text-[#7650e3]">
-                            ${pkg.amount} /{" "}
-                            <span className="text-xl font-bold text-[#7650e3]">
+                            ${pkg.amount} / <span className="text-xl font-bold text-[#7650e3]">
                               {pkg?.tier == "free" ? "Forever" : "Month"}
                             </span>
                           </span>
@@ -187,8 +186,7 @@ const SubscriptionPauseModal = ({
                           {pkg.name}
                         </h3>
                         <span className="text-xl font-bold text-[#7650e3]">
-                          ${pkg.amount} /{" "}
-                          <span className="text-xl font-bold text-[#7650e3]">
+                          ${pkg.amount} / <span className="text-xl font-bold text-[#7650e3]">
                             {pkg?.tier == "free" ? "Forever" : "Month"}
                           </span>
                         </span>
@@ -248,12 +246,9 @@ const SubscriptionPauseModal = ({
 
             <div className=" flex flex-col justify-center gap-3">
               <p className="text-sm  text-[#000000] ">
-                {t("by_canceling_now_youll_lose")}{" "}
-                <span className="font-medium text-[#7650e3]">
+                {t("by_canceling_now_youll_lose")} <span className="font-medium text-[#7650e3]">
                   {user.wallet.package.name}
-                </span>{" "}
-                {t("access_on_due_date")}{" "}
-                <span className="font-medium text-[#7650e3]">
+                </span> {t("access_on_due_date")} <span className="font-medium text-[#7650e3]">
                   {user.wallet.expiresAt
                     ? new Date(user.wallet.expiresAt).toLocaleDateString(
                         "en-GB",
@@ -263,15 +258,13 @@ const SubscriptionPauseModal = ({
                           year: "numeric",
                         }
                       )
-                    : "N/A"}{" "}
-                </span>
-                , {t("forfeit_all_rollover_tokens_in_your_bank_and_lose_these")}{" "}
+                    : "N/A"} </span>
+                , {t("forfeit_all_rollover_tokens_in_your_bank_and_lose_these")}
                 <span className="font-medium text-[#7650e3]">
                   <span className="font-medium text-[#7650e3]">
                     {user.walle}
                     {user.wallet.package.name}
-                  </span>{" "}
-                </span>
+                  </span> </span>
                 features :
               </p>
 

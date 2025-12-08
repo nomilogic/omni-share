@@ -343,8 +343,7 @@ export const PostScheduleDashboard: React.FC<PostScheduleDashboardProps> = ({
                     {post.content.slice(0, 60)}...
                   </p>
                   <p className="text-sm theme-text-light">
-                    {new Date(post.date).toLocaleDateString()} at{" "}
-                    {scheduleUtils.formatTime(post.time)}
+                    {new Date(post.date).toLocaleDateString()} at {scheduleUtils.formatTime(post.time)}
                   </p>
                 </div>
                 <div className="flex gap-1">

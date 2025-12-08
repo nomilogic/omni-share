@@ -570,22 +570,17 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                     </button>
                                     {planMsgOpen && (
                                       <div className="absolute left-0 top-full mt-1 w-56 p-2 bg-gray-50 border rounded-md shadow-lg z-50 text-xs text-black">
-                                        This is your current plan:{" "}
-                                        <span className="font-semibold">
+                                        This is your current plan: <span className="font-semibold">
                                           {user.wallet?.package?.name || "FREE"}
-                                        </span>{" "}
-                                        with{" "}
-                                        <span className="font-semibold">
+                                        </span> with <span className="font-semibold">
                                           {user.wallet?.coins ?? 0}
-                                        </span>{" "}
-                                        coins. You can also view other plans and
-                                        the coins they include.
+                                        </span> coins. You can also view other plans and the coins they include.
                                       </div>
                                     )}
                                   </div>
                                 </div>
                                 <p className="text-sm text-black font-medium mt-1">
-                                  {t("renewing_on")}{" "}
+                                  {t("renewing_on")}
                                   <span className="text-black font-medium">
                                     {user.wallet.expiresAt
                                       ? new Date(
@@ -629,19 +624,13 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                     </button>
                                     {coinsMsgOpen && (
                                       <div className="absolute left-0 top-full mt-1 w-56 p-2 bg-gray-50 border rounded-md shadow-lg z-50 text-xs text-black">
-                                        This package gives you{" "}
-                                        <span className="font-semibold">
+                                        This package gives you <span className="font-semibold">
                                           {user.wallet?.coins?.toLocaleString() ??
                                             0}
-                                        </span>{" "}
-                                        coins. Your vault limit is{" "}
-                                        <span className="font-semibold">
+                                        </span> coins. Your vault limit is <span className="font-semibold">
                                           {user.wallet?.package?.coinLimit?.toLocaleString() ??
                                             0}
-                                        </span>{" "}
-                                        coins. You can buy extra credits
-                                        anytime, but you cannot exceed your
-                                        vault limit.
+                                        </span> coins. You can buy extra credits anytime, but you cannot exceed your vault limit.
                                       </div>
                                     )}
                                   </div>
@@ -676,14 +665,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                     {referralMsgOpen && (
                                       <div className="absolute left-0 top-full mt-1 w-56 p-2 bg-gray-50 border rounded-md shadow-lg z-50 text-xs text-black">
                                         Referral coins are always used first.
-                                        You currently have{" "}
-                                        <span className="font-semibold">
+                                        You currently have <span className="font-semibold">
                                           {user?.wallet?.referralCoin?.toLocaleString() ??
                                             0}
-                                        </span>{" "}
-                                        referral coins. Once referral coins run
-                                        out, your purchased package coins will
-                                        be used.
+                                        </span> referral coins. Once referral coins run out, your purchased package coins will be used.
                                       </div>
                                     )}
                                   </div>
@@ -700,12 +685,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
                           {/* More info and buttons */}
                           <p className="text-base my-4">
-                            {t("more_info")}{" "}
-                            <Link
-                              className="text-purple-600 font-medium"
-                              to="/faq"
-                            >
-                              FAQ
+                            {t("more_info")} <Link className="text-purple-600 font-medium" to="/faq"> 
+                            FAQ
                             </Link>
                           </p>
 

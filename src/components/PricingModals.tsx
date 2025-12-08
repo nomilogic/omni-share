@@ -223,22 +223,18 @@ export const PricingModals: React.FC = () => {
 
             <div className="bg-white border text-gray-500 border-purple-600 rounded-md p-4 mb-6">
               <p className="text-sm font-semibold ">
-                <span className="">{t("active_plan")}</span>{" "}
-                <span className="text-purple-600">
+                <span className="">{t("active_plan")}</span> <span className="text-purple-600">
                   {cancelDowngradeData.currentPlanName}
                 </span>
               </p>
 
               <p className="text-sm font-semibold mt-2 border-b pb-3">
-                <span className="">{t("monthly_cost")}</span>{" "}
-                <span className=" text-purple-600 ">
+                <span className="">{t("monthly_cost")}</span> <span className=" text-purple-600 ">
                   ${cancelDowngradeData.currentPlanAmount}/month
-                </span>{" "}
-              </p>
+                </span> </p>
 
               <p className="text-sm  font-semibold mt-2">
-                <span className="">{t("planned_downgrade")}</span>{" "}
-                <span className=" text-purple-600 ">
+                <span className="">{t("planned_downgrade")}</span> <span className=" text-purple-600 ">
                   {cancelDowngradeData.downgradePlanName}
                 </span>
               </p>

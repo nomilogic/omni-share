@@ -2619,7 +2619,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
                   {selectedImageMode === "textToImage" && (
                     <>
-                      {" "}
                       <div
                         className={`space-y-4 ${
                           generateImageWithPost ? "hidden" : "hidden"
@@ -2957,9 +2956,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             </p>
                             {formData.media && (
                               <p className="text-xs">
-                                {(formData.media.size / 1024 / 1024).toFixed(2)}{" "}
-                                MB
-                              </p>
+                                {(formData.media.size / 1024 / 1024).toFixed(2)} MB </p>
                             )}
                           </div>
 
@@ -3142,8 +3139,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                   {/* Video Aspect Ratio Warning - Always visible when there's a warning */}
                   {videoAspectRatioWarning && (
                     <div className="flex items-center justify-start p-3 theme-bg-danger border rounded-md text-xs mb-1 theme-text-light">
-                      <AlertCircle className="w-4 h-4 mr-2 flex-shrink-0" />{" "}
-                      {videoAspectRatioWarning}
+                      <AlertCircle className="w-4 h-4 mr-2 flex-shrink-0" /> {videoAspectRatioWarning}
                     </div>
                   )}
 
@@ -3243,8 +3239,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                 {ratio.label}
                               </div>
                             </button>
-                          ))}{" "}
-                        </div>
+                          ))} </div>
                       </div>
                     )}
                   </>

@@ -485,8 +485,7 @@ export const SocialMediaManager: React.FC<SocialMediaManagerProps> = ({
       {platformStatuses.filter((s) => s.connected).length > 0 && (
         <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-md">
           <p className="text-sm text-green-700">
-            ✅ You have {platformStatuses.filter((s) => s.connected).length} of{" "}
-            {platforms.length} platform(s) connected and ready for publishing!
+            ✅ You have {platformStatuses.filter((s) => s.connected).length} of {platforms.length} platform(s) connected and ready for publishing!
           </p>
         </div>
       )}

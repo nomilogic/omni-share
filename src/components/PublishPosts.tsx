@@ -406,9 +406,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
 
         <div className=" p-2 bg-blue-50 border border-blue-200 rounded-md">
           <p className="text-sm text-blue-800">
-            <span className="font-medium">{connectedPlatforms.length}</span> of{" "}
-            <span className="font-medium">{posts.length}</span>{" "}
-            {t("platforms_connected")}
+            <span className="font-medium">{connectedPlatforms.length}</span> of <span className="font-medium">{posts.length}</span> {t("platforms_connected")}
           </p>
         </div>
 
@@ -460,22 +458,22 @@ export const PublishPosts: React.FC<PublishProps> = ({
                         !publishedPlatforms.includes(p)
                     ).length
                   }
-                </span>{" "}
-                of{" "}
+                </span>
+                of
                 <span className="font-medium">
                   {
                     connectedPlatforms.filter(
                       (p) => !publishedPlatforms.includes(p)
                     ).length
                   }
-                </span>{" "}
+                </span>
                 available platforms selected for publishing
               </p>
               {publishedPlatforms.length > 0 && (
                 <p className="text-sm text-green-800 mt-1">
                   <span className="font-medium">
                     {publishedPlatforms.length}
-                  </span>{" "}
+                  </span>
                   platforms already published: {publishedPlatforms.join(", ")}
                 </p>
               )}

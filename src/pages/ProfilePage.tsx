@@ -109,7 +109,7 @@ export const ProfilePage: React.FC = () => {
                           state.user.wallet?.package?.tier ||
                             profile.plan ||
                             "free"
-                        ).toUpperCase()}{" "}
+                        ).toUpperCase()}
                         Plan
                       </span>
                       <span

@@ -377,8 +377,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
               {/* AI Model Selection */}
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                  AI Model{" "}
-                  {loadingModels && (
+                  AI Model {loadingModels && (
                     <span className="text-xs text-gray-500 font-medium">
                       (Loading...)
                     </span>
@@ -406,8 +405,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
                                 value={model.id}
                                 disabled={!model.isAvailable}
                               >
-                                {model.name} - {model.description}{" "}
-                                {!model.isAvailable && "(API Key Required)"}
+                                {model.name} - {model.description} {!model.isAvailable && "(API Key Required)"}
                               </option>
                             ))}
                         </optgroup>
@@ -439,8 +437,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
                                 value={model.id}
                                 disabled={!model.isAvailable}
                               >
-                                {model.name} - {model.description}{" "}
-                                {!model.isAvailable && "(API Key Required)"}
+                                {model.name} - {model.description} {!model.isAvailable && "(API Key Required)"}
                               </option>
                             ))}
                         </optgroup>
@@ -461,8 +458,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
                           <span className="flex items-center space-x-1">
                             <span>🔮</span>
                             <span>
-                              Using Gemini AI -{" "}
-                              {selectedModelData.isAvailable
+                              Using Gemini AI - {selectedModelData.isAvailable
                                 ? "Google Gemini image generation"
                                 : "API Key Required"}
                             </span>
@@ -482,8 +478,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
                           <span className="flex items-center space-x-1">
                             <span>🔬</span>
                             <span>
-                              Using Hugging Face -{" "}
-                              {selectedModelData.isAvailable
+                              Using Hugging Face - {selectedModelData.isAvailable
                                 ? "High quality generation"
                                 : "API Key Required"}
                             </span>

@@ -1365,8 +1365,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                 <div className="flex items-center justify-between mb-3 md:mb-4">
                   <h4 className="text-xs md:text-sm font-semibold text-slate-900">
                     {selectedElementData.type.charAt(0).toUpperCase() +
-                      selectedElementData.type.slice(1)}{" "}
-                    Element
+                      selectedElementData.type.slice(1)} Element
                   </h4>
 
                   {/* Element Control Buttons */}
@@ -2063,8 +2062,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
               {canvasDimensions && (
                 <>
                   <span className="hidden sm:inline">
-                    {canvasDimensions.width} × {canvasDimensions.height} |{" "}
-                    {Math.round(zoomLevel * 100)}%
+                    {canvasDimensions.width} × {canvasDimensions.height} | {Math.round(zoomLevel * 100)}%
                   </span>
                   <span className="sm:hidden">
                     {Math.round(zoomLevel * 100)}%
