@@ -23,7 +23,7 @@ import API from "../services/api";
 import { useTranslation } from "react-i18next";
 import { Icon } from "@/components";
 
-// Export interface for external access
+// Export inter  for external access
 export interface HistoryPageRef {
   refreshHistory: () => Promise<void>;
 }
