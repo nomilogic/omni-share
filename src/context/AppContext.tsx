@@ -460,7 +460,8 @@ export const useAppContext = () => {
   }, [context.dispatch]);
 
   const logout = async () => {
-    localStorage.clear();
+    localStorage.removeItem("auth_token");
+    localStorage.removeItem("pusherTransportTLS");
     context.dispatch({ type: "RESET_STATE" });
   };
 

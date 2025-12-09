@@ -1,18 +1,14 @@
-import React, { useState, useRef, useEffect, toLocaleString } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { ResizeContext } from "../../context/ResizeContext";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Home,
-  Settings,
   Menu,
   X,
   LogOut,
-  User,
   Building2,
   History,
   CreditCard,
-  ChevronDown,
-  ChevronUp,
   Plus,
 } from "lucide-react";
 import { useAppContext } from "../../context/AppContext";
@@ -20,7 +16,6 @@ import { useLoading } from "../../context/LoadingContext";
 import { useSubscriptionModal } from "../../context/SubscriptionModalContext";
 import { PricingModals } from "../PricingModals";
 
-import { useUnreadPosts } from "../../hooks/useUnreadPosts";
 import Icon from "../Icon";
 import { WalletBalance } from "../WalletBalance";
 import PreloaderOverlay from "../PreloaderOverlay";
@@ -43,7 +38,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const {
     showManageSubscription,
@@ -60,7 +54,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         notificationRef.current &&
         !notificationRef.current.contains(event.target as Node)
       ) {
-        setShowNotifications(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -727,7 +720,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                             </button>
                           )}
 
-                          {user.wallet?.downgradeRequested === null ||
+                          {user.wallet?.downgradeRequested !== null ||
                             (user.wallet?.package?.tier !== "pro" && (
                               <Link
                                 to="/pricing"
