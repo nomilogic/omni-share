@@ -22,6 +22,7 @@ import { getPlatformIcon, getPlatformColors } from "../utils/platformIcons";
 import API from "../services/api";
 import { useTranslation } from "react-i18next";
 import { Icon } from "@/components";
+import { useAppContext } from "@/context/AppContext";
 
 // Export interface for external access
 export interface HistoryPageRef {
@@ -63,7 +64,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { t, i18n } = useTranslation();
-  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
+  const { setUnreadCount } = useAppContext();
 
   // Filter states
   const [readFilter, setReadFilter] = useState<ReadFilter>("all");
@@ -74,20 +75,6 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
   const [loader, setLoader] = useState(true);
   useEffect(() => {
     markAllAsRead();
-  }, []);
-
-  useEffect(() => {
-    const refreshCallback = async () => {
-      console.log("📋 Post history refresh triggered from global service");
-      setLoading(true);
-      await fetchPostHistory();
-    };
-
-    const unregister =
-      historyRefreshService.registerRefreshCallback(refreshCallback);
-
-    // Cleanup on unmount
-    return unregister;
   }, []);
 
   const fetchPostHistory = async () => {
@@ -108,15 +95,12 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
     try {
       await API.readHistoryById(postId);
 
-      // Update local state
       setPosts((prevPosts) =>
         prevPosts.map((post) =>
           post.id === postId ? { ...post, isRead: true } : post
         )
       );
 
-      // Trigger global refresh to update unread counter in navigation
-      console.log("📖 Post marked as read, triggering unread count refresh...");
       historyRefreshService.refreshHistory();
     } catch (error) {
       console.error("Error marking post as read:", error);
@@ -125,12 +109,14 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
 
   const markAllAsRead = async () => {
     try {
+      setUnreadCount(0);
+
+      fetchPostHistory();
       setPosts((prevPosts) =>
         prevPosts.map((post) => ({ ...post, isRead: true }))
       );
       await API.readAllHistory();
       await historyRefreshService.refreshHistory();
-      fetchPostHistory();
     } catch (error) {
       console.error("Error marking all posts as read:", error);
     }
@@ -575,7 +561,6 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
                       title={post.isRead ? "Read" : "Mark as read"}
                     ></button>
                     <a
-                      onClick={markAllAsRead}
                       href={post.postUrl}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -607,7 +592,8 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
                             {post.metadata?.description || post.content}
                           </p>
                           <p className="text-xs text-gray-500 font-medium mb-2 ">
-                            {post.platform} • {post.postUrl && new URL(post.postUrl).hostname}
+                            {post.platform} •{" "}
+                            {post.postUrl && new URL(post.postUrl).hostname}
                           </p>
                         </div>
                       </div>

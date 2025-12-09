@@ -17,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useModal } from "../context2/ModalContext";
 import DiscardWarningModal from "../components/modals/DiscardWarningModal";
+import { useAppContext } from "@/context/AppContext";
 
 interface PublishProps {
   posts: GeneratedPost[];
@@ -62,6 +63,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
   const [loadingFacebookPages, setLoadingFacebookPages] =
     useState<boolean>(false);
   const { openModal } = useModal();
+  const { fetchUnreadCount } = useAppContext();
 
   const navigate = useNavigate();
 
@@ -109,9 +111,8 @@ export const PublishPosts: React.FC<PublishProps> = ({
   };
 
   const confirmNavigationAction = useCallback(() => {
+    fetchUnreadCount();
     navigate("/content");
-    // Puraane system mein yahan aap pendingDiscardAction(onBack) bhi chala sakte thay,
-    // Lekin aapke code ke mutabiq, yahan sirf navigate chalta hai.
   }, [navigate]);
 
   // ✅ BUTTON CLICK HANDLER
@@ -317,7 +318,6 @@ export const PublishPosts: React.FC<PublishProps> = ({
   };
 
   const handlePublish = async () => {
-    // Filter to only connected platforms that are selected and not already published
     const availablePlatforms = selectedPlatforms.filter(
       (p) => connectedPlatforms.includes(p) && !publishedPlatforms.includes(p)
     );
@@ -339,13 +339,6 @@ export const PublishPosts: React.FC<PublishProps> = ({
         availablePlatforms.includes(post.platform)
       );
 
-      console.log(
-        `Publishing to ${
-          availablePlatforms.length
-        } platforms: ${availablePlatforms.join(", ")}`
-      );
-
-      // Get thumbnail URL from YouTube post for context
       const youtubePost = selectedPosts.find(
         (post) => post.platform === "youtube"
       );
