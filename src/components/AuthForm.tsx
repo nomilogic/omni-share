@@ -513,7 +513,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                   disabled={loading}
                   className="w-full bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3]  border border-[#7650e3] text-white font-semibold py-2 text-base rounded-md transition disabled:opacity-50"
                 >
-                  {loading ? "Signing in..." : t("sign_in")}
+                  {loading ? t("signing_in") : t("sign_in")}
                 </button>
               </form>
 
@@ -590,7 +590,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
               {referralId && (
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Referral Id
+                    {t("referral_id")}
                   </label>
                   <input
                     type="text"
@@ -606,7 +606,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                 disabled={loading}
                 className="w-full  text-white bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] border-[#7650e3] border font-semibold py-2  text-base rounded-md transition disabled:opacity-50"
               >
-                {loading ? "Creating account..." : t("register")}
+                {loading ? t("creating_account") : t("register")}
               </button>
 
               {(error || externalError) && (
@@ -655,7 +655,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                   disabled={loading}
                   className="w-full bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3]  border border-[#7650e3] text-white font-semibold py-2 mb-4 text-base rounded-md transition disabled:opacity-50"
                 >
-                  {loading ? "Sending..." : t("forgot_password")}
+                  {loading ? t("sending") : t("forgot_password")}
                 </button>
               </div>
             </form>
@@ -711,7 +711,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                 disabled={loading}
                 className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2  text-base rounded-md transition disabled:opacity-50"
               >
-                {loading ? "Resetting..." : "Set New Password"}
+                {loading ? t("resetting") : t("set_new_password")}
               </button>
 
               {successMessage && (

@@ -77,13 +77,13 @@ const ResetPasswordPage: React.FC = () => {
     setSuccess(null);
 
     if (password !== confirm) {
-      setError("Passwords do not match");
+      setError(t("passwords_do_not_match"));
       return;
     }
 
     if (!token) {
       setError(
-        "This link has expired. Please request a new password reset link."
+        t("link_expired")
       );
       setExpired(true);
       return;
@@ -95,13 +95,13 @@ const ResetPasswordPage: React.FC = () => {
         { new_password: password },
         { headers: { authorization: token } }
       );
-      setSuccess("Password has been reset successfully!");
+      setSuccess(t("password_reset_success"));
       localStorage.removeItem("forgot_token");
       localStorage.removeItem("forgot_token_time");
       setTimeout(() => router("/auth"), 1000);
     } catch (err: any) {
       console.error("Reset password error", err);
-      setError(err?.response?.data?.message || "Failed to reset password");
+      setError(err?.response?.data?.message || t("password_reset_failed"));
     } finally {
       setLoading(false);
     }
@@ -187,7 +187,7 @@ const ResetPasswordPage: React.FC = () => {
               disabled={loading}
               className={`w-full py-2.5 bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3]  border border-[#7650e3] rounded-md font-semibold text-white transition-all duration-300 disabled:cursor-not-allowed`}
             >
-              {loading ? "Updating..." : "Set New Password"}
+              {loading ? t("updating") : t("set_new_password")}
             </button>
             {error && (
               <div className="text-red-500 text-sm text-center font-medium bg-red-50 py-2.5 px-3 rounded-md">

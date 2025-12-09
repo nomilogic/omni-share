@@ -76,18 +76,18 @@ function UpdatePasswordForm() {
       <div className="mb-8 w-full">
         <div className="flex justify-between items-center gap-2 mb-2">
           <h1 className="text-3xl font-bold text-black  w-full">
-            Update Password
+            {t("update_password")}
           </h1>
           <button
             onClick={() => setPasswordEditing(false)}
             className="flex  gap-2 top-5 text-[#7650e3] hover:text-[#6540cc] font-semibold transition-colors w-full justify-end text-sm hover:underline"
           >
             <ArrowLeft className="w-5 h-5" />
-            Back to Dashboard
+            {t("back_to_dashboard")}
           </button>
         </div>
         <p className="text-gray-500 ">
-          Change your password to keep your account secure
+          {t("update_password_message")}
         </p>
       </div>
 
@@ -96,11 +96,11 @@ function UpdatePasswordForm() {
           {/* Current Password */}
           <div>
             <label className="block text-sm font-medium theme-text-primary mb-2">
-              Current Password *
+              {t("current_password")}
             </label>
             <input
               type="password"
-              placeholder="Enter your current password"
+              placeholder={t("enter_current_password")}
               {...register("currentPassword")}
               className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 "
             />
@@ -114,11 +114,11 @@ function UpdatePasswordForm() {
           {/* New Password */}
           <div>
             <label className="block text-sm font-medium theme-text-primary mb-2">
-              New Password *
+              {t("new_password")}
             </label>
             <input
               type="password"
-              placeholder="Enter your new password"
+              placeholder={t("enter_new_password")}
               {...register("newPassword")}
               className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 "
             />
@@ -131,11 +131,11 @@ function UpdatePasswordForm() {
 
           <div>
             <label className="block text-sm font-medium theme-text-primary mb-2">
-              Confirm Password *
+              {t("confirm_password")}
             </label>
             <input
               type="password"
-              placeholder="Confirm your new password"
+              placeholder={t("confirm_new_password")}
               {...register("confirmPassword")}
               className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 "
             />
@@ -158,7 +158,7 @@ function UpdatePasswordForm() {
           disabled={loading}
           className="px-4 py-2.5 w-full theme-bg-trinary disabled:bg-purple-600/50 disabled:cursor-not-allowed text-white rounded-md font-semibold shadow-md disabled:opacity-50 border border-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition-colors min-w-[180px]"
         >
-          {loading ? "Updating..." : "Update Password"}
+          {loading ? t("updating") : t("update_password")}
         </button>
       </form>
     </div>

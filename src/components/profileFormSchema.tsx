@@ -1,65 +1,73 @@
 import z from "zod";
+import { useTranslation } from "react-i18next";
+import { useMemo } from "react";
 
-const profileFormSchema = z.object({
-  fullName: z.string().min(2, "Full name must be at least 2 characters").trim(),
-  email: z.string(),
-  phoneNumber: z
-    .string()
-    .regex(/^[+\d\s-()]{10,}$/, "Please enter a valid phone number"),
+export const useProfileFormSchema = () => {
+  const { t } = useTranslation();
 
-  publicUrl: z
-    .string()
-    .regex(
-      /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/,
-      "Please enter a valid URL"
-    ),
+  const profileFormSchema = useMemo(() => {
+    return z.object({
+      fullName: z.string().min(2, { message: t("error_full_name") }).trim(),
+      email: z.string(),
+      phoneNumber: z
+        .string()
+        .regex(/^[+\d\s-()]{10,}$/, { message: t("error_phone_number") }),
 
-  brandName: z.string().min(2, "Brand name must be at least 2 characters"),
+      publicUrl: z
+        .string()
+        .regex(/^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/, {
+          message: t("error_valid_url"),
+        }),
 
-  brandLogo: z
-    .string({ message: "Brand logo is required" })
-    .min(1, "Brand logo is required"),
+      brandName: z.string().min(2, { message: t("error_brand_name") }),
+      brandLogo: z.string().min(1, { message: t("error_brand_logo") }),
+      brandTone: z.string().min(1, { message: t("error_brand_tone") }),
 
-  brandTone: z.string().min(1, "Brand tone is required"),
+      audienceAgeRange: z.array(z.string().min(1)).min(1, {
+        message: t("error_audience_age"),
+      }),
 
-  audienceAgeRange: z
-    .array(z.string().min(1))
-    .min(1, "Select at least one audience age range"),
+      audienceGender: z
+        .string()
+        .min(1, { message: t("error_audience_gender") }),
 
-  audienceGender: z.string().min(1, "Audience gender is required"),
+      audienceRegions: z.array(z.string().min(1)).min(1, {
+        message: t("error_audience_region"),
+      }),
 
-  audienceRegions: z
-    .array(z.string().min(1))
-    .min(1, "Select at least one audience region"),
+      audienceInterests: z.array(z.string().min(1)).min(1, {
+        message: t("error_audience_interest"),
+      }),
 
-  audienceInterests: z
-    .array(z.string().min(1))
-    .min(1, "Select at least one audience interest"),
+      audienceSegments: z.array(z.string().min(1)).min(1, {
+        message: t("error_audience_segment"),
+      }),
 
-  audienceSegments: z
-    .array(z.string().min(1))
-    .min(1, "Select at least one audience segment"),
+      contentCategories: z.array(z.string().min(1)).min(1, {
+        message: t("error_content_category"),
+      }),
 
-  contentCategories: z
-    .array(z.string().min(1))
-    .min(1, "Select at least one content category"),
+      preferredPlatforms: z.array(z.string().min(1)).min(1, {
+        message: t("error_platform"),
+      }),
 
-  preferredPlatforms: z
-    .array(z.string().min(1))
-    .min(1, "Select at least one preferred platform"),
+      primaryPurpose: z.array(z.string().min(1)).min(1, {
+        message: t("error_primary_purpose"),
+      }),
 
-  primaryPurpose: z
-    .array(z.string().min(1))
-    .min(1, "Select at least one primary purpose"),
+      keyOutcomes: z.array(z.string().min(1)).min(1, {
+        message: t("error_key_outcome"),
+      }),
 
-  keyOutcomes: z
-    .array(z.string().min(1))
-    .min(1, "Select at least one key outcome"),
+      postingStyle: z
+        .string()
+        .min(1, { message: t("error_posting_style") }),
+    });
+  }, [t]); // <-- VERY IMPORTANT
 
-  postingStyle: z.string().min(1, "Posting style is required"),
-});
+  return profileFormSchema;
+};
 
-type ProfileFormData = z.infer<typeof profileFormSchema>;
-
-export { profileFormSchema };
-export type { ProfileFormData };
+export type ProfileFormData = z.infer<
+  ReturnType<typeof useProfileFormSchema>
+>;

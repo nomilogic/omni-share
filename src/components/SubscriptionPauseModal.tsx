@@ -237,7 +237,7 @@ const SubscriptionPauseModal = ({
               </h2>
               <button
                 onClick={onClose}
-                className="absolute right-3 top-3 w-6 h-6 z-10 rounded-full border-[#7650e3] flex items-center justify-center text-[#7650e3] bg-[#F7F5FB] transition-shadow border-[2px]"
+                className="absolute right-3 top-3 w-6 h-6 z-10 rounded-full border-[#7650e3] flex items-center justify-center text-[#7650e3] bg-[#F7F5FB] md:bg-inherit transition-shadow border-[2px]"
                 aria-label="Close manage subscription dialog"
               >
                 <X className="w-4 h-4 color-[#7650e3] stroke-[#7650e3] stroke-[3]" />

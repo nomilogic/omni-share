@@ -2,20 +2,23 @@ import { useState, useEffect } from "react";
 import laptop from "../../assets/dashboard-1.svg";
 import mobile from "../../assets/dashboard-2.svg";
 import tablet from "../../assets/dashboard-3.svg";
+import { useTranslation } from "react-i18next";
 
 function NewsUpdates() {
+  const { t, i18n } = useTranslation();
+    const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
   const slides = [
     {
       image: mobile,
-      text: "We’re also introducing a Draft Posts option, allowing you to create and save posts to publish later.",
+      text: t("draft_posts_message"),
     },
     {
       image: laptop,
-      text: "We’ll soon be launching our Scheduled Post & Announcement feature — stay tuned for the official release!",
+      text: t("scheduled_posts_message"),
     },
     {
       image: tablet,
-      text: "Create Teams & Manage Access Permissions — Coming Soon",
+      text: t("teams_permissions_message"),
     },
   ];
 

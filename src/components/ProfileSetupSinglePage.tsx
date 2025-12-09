@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import {
@@ -18,258 +18,258 @@ import {
 import { FieldName, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import API from "../services/api";
-import { profileFormSchema, ProfileFormData } from "./profileFormSchema";
+import { useProfileFormSchema, ProfileFormData } from "./profileFormSchema";
 import { useAppContext } from "../context/AppContext";
 import { input } from "framer-motion/client";
+import { useTranslation } from "react-i18next";
 
 const STORAGE_KEY = "profile_form_data";
 
-// Predefined options for form fields
-const businessAdjectives = [
-  "Creative",
-  "NextGen",
-  "Dynamic",
-  "Global",
-  "Smart",
-  "Prime",
-];
+// Configuration generator function
+const getProfileFormConfig = (t: (key: string) => string) => {
+  // Predefined options for form fields
+  const businessAdjectives = [
+    t("brand_creative"),
+    t("brand_nextGen"),
+    t("brand_dynamic"),
+    t("brand_global"),
+    t("brand_smart"),
+    t("brand_prime"),
+  ];
 
-const businessNouns = [
-  "Solutions",
-  "Studios",
-  "Tech",
-  "Hub",
-  "Works",
-  "Agency",
-  "Labs",
-];
+  const businessNouns = [
+    t("suffix_solutions"),
+    t("suffix_studios"),
+    t("suffix_tech"),
+    t("suffix_hub"),
+    t("suffix_works"),
+    t("suffix_agency"),
+    t("suffix_labs"),
+  ];
 
-const platforms = ["Instagram", "LinkedIn", "TikTok", "YouTube", "Facebook"];
+  // Social media platforms - not translated as per requirements
+  const platforms = ["Instagram", "LinkedIn", "TikTok", "YouTube", "Facebook"];
 
-const categories = [
-  "Technology",
-  "Lifestyle",
-  "Fashion",
-  "Travel",
-  "Food & Beverage",
-  "Finance",
-  "Health & Wellness",
-  "Education",
-  "Entertainment",
-  "Art & Design",
-];
+  const categories = [
+    t("category_technology"),
+    t("category_lifestyle"),
+    t("category_fashion"),
+    t("category_travel"),
+    t("category_food_beverage"),
+    t("category_finance"),
+    t("category_health_wellness"),
+    t("category_education"),
+    t("category_entertainment"),
+    t("category_art_design"),
+  ];
 
-const profileFormConfig = [
-  {
-    id: "personalInfo",
-    title: "Personal Information",
-    subtext:
-      "Let's start with the basics — tell us a bit about yourself so we can personalize your experience.",
-    icon: User,
-    fields: [
-      {
-        name: "fullName",
-        label: "Full Name",
-        type: "text",
-        placeholder: "e.g. Sarah Ahmed",
-        required: true,
-      },
-      {
-        name: "email",
-        label: "Email Address",
-        type: "email",
-        placeholder: "e.g. sarah@brandstudio.com",
-        required: false,
-      },
-      {
-        name: "phoneNumber",
-        label: "Phone Number (optional)",
-        type: "tel",
-        placeholder: "e.g. +971 50 123 4567",
-        required: false,
-      },
-    ],
-  },
-  {
-    id: "brandSetup",
-    title: "Brand Setup",
-    subtext:
-      "Share a link to your public profile or website — OmniShare will use it to understand your brand and audience.",
-    icon: Building,
-    fields: [
-      {
-        name: "publicUrl",
-        label: "Public URL (Website or Social Link)",
-        type: "url",
-        placeholder:
-          "e.g. https://instagram.com/brandstudio or https://yourbrand.com",
-        required: false,
-        helperText:
-          "You can add a website, Instagram, LinkedIn, TikTok, Behance, YouTube, or any other public link.",
-      },
-      {
-        name: "brandName",
-        label: "Brand Name",
-        type: "text",
-        placeholder: `e.g. ${businessAdjectives[0]} ${businessNouns[0]}`,
-        required: false,
-      },
-      {
-        name: "brandLogo",
-        label: "Brand Logo / Profile Image",
-        type: "file",
-        placeholder: "Upload or confirm your logo/profile image",
-        required: false,
-      },
-      {
-        name: "brandTone",
-        label: "Brand Tone",
-        type: "select",
-        options: [
-          "Professional",
-          "Casual",
-          "Friendly",
-          "Formal",
-          "Playful",
-          "Innovative",
-          "Trustworthy",
-          "Luxurious",
-        ],
-        required: false,
-      },
-    ],
-  },
-  {
-    id: "targetAudience",
-    title: "Target Audience",
-    subtext:
-      "Based on your public profile, we'll suggest an audience — you can review or update it.",
-    icon: Target,
-    fields: [
-      {
-        name: "audienceAgeRange",
-        label: "Audience Age Range",
-        type: "checkbox-group",
-        options: ["13-17", "18-24", "25-34", "35-44", "45-54", "55+"],
-        required: false,
-      },
-      {
-        name: "audienceGender",
-        label: "Audience Gender",
-        type: "radio-group",
-        options: [
-          "All Genders",
-          "Primarily Male",
-          "Primarily Female",
-          "Non-Binary Focused",
-        ],
-        required: false,
-      },
-      {
-        name: "audienceRegions",
-        label: "Audience Location / Region",
-        type: "tags",
-        placeholder: "e.g. UAE, Saudi Arabia, Germany, United Kingdom, Global",
-        required: false,
-      },
-      {
-        name: "audienceInterests",
-        label: "Audience Interests / Industry",
-        type: "tags",
-        placeholder: "e.g. Technology, Fashion, Travel, Food",
-        required: false,
-      },
-      {
-        name: "audienceSegments",
-        label: "Audience Type / Segment",
-        type: "checkbox-group",
-        options: [
-          "Students",
-          "Professionals",
-          "Parents",
-          "Entrepreneurs",
-          "Retirees",
-          "Digital Natives",
-        ],
-        required: false,
-      },
-    ],
-  },
-  {
-    id: "content",
-    title: "Content Preferences",
-    subtext:
-      "Tell us what kind of content you create and where you publish — OmniShare will optimize for those platforms.",
-    icon: Share2,
-    fields: [
-      {
-        name: "preferredPlatforms",
-        label: "Primary Platforms",
-        type: "checkbox-group",
-        options: platforms,
-        required: false,
-      },
-      {
-        name: "contentCategories",
-        label: "Content Categories",
-        type: "tags",
-        placeholder: `e.g. ${categories.slice(0, 3).join(", ")}`,
-        required: false,
-      },
-    ],
-  },
-  {
-    id: "goals",
-    title: "Goals & Objectives",
-    subtext:
-      "Why do you post on social platforms? This helps OmniShare personalize your content and recommendations.",
-    icon: Flag,
-    fields: [
-      {
-        name: "primaryPurpose",
-        label: "Primary Purpose of Posting",
-        type: "checkbox-group",
-        options: [
-          "Brand Awareness",
-          "Lead Generation",
-          "Sales Increase",
-          "Customer Engagement",
-          "Community Building",
-          "Thought Leadership",
-        ],
-        required: false,
-      },
-      {
-        name: "keyOutcomes",
-        label: "Key Outcomes Expected",
-        type: "checkbox-group",
-        options: [
-          "Increased Followers",
-          "Higher Engagement",
-          "More Website Traffic",
-          "Better Lead Quality",
-          "Improved Brand Image",
-          "Increased Sales",
-        ],
-        required: false,
-      },
-      {
-        name: "postingStyle",
-        label: "Posting Style Preference (optional)",
-        type: "select",
-        options: [
-          "Professional & Formal",
-          "Casual & Friendly",
-          "Humorous & Light",
-          "Educational & Informative",
-          "Inspirational & Motivating",
-          "Narrative & Storytelling",
-        ],
-        required: false,
-      },
-    ],
-  },
-];
+  const profileFormConfig = [
+    {
+      id: "personalInfo",
+      title: t("personal_information"),
+      subtext: t("profile_basics"),
+      icon: User,
+      fields: [
+        {
+          name: "fullName",
+          label: t("full_name"),
+          type: "text",
+          placeholder: "e.g. Sarah Ahmed",
+          required: true,
+        },
+        {
+          name: "email",
+          label: t("email_address"),
+          type: "email",
+          placeholder: "e.g. sarah@brandstudio.com",
+          required: false,
+        },
+        {
+          name: "phoneNumber",
+          label: t("phone_number_optional"),
+          type: "tel",
+          placeholder: "e.g. +971 50 123 4567",
+          required: false,
+        },
+      ],
+    },
+    {
+      id: "brandSetup",
+      title: t("brand_setup"),
+      subtext: t("brand_setup_message"),
+      icon: Building,
+      fields: [
+        {
+          name: "publicUrl",
+          label: t("public_url"),
+          type: "url",
+          placeholder: t("audience_type_example1"),
+          required: false,
+          helperText: t("brand_setup_hint"),
+        },
+        {
+          name: "brandName",
+          label: t("brand_name"),
+          type: "text",
+          placeholder: `e.g. ${businessAdjectives[0]} ${businessNouns[0]}`,
+          required: false,
+        },
+        {
+          name: "brandLogo",
+          label: t("brand_logo"),
+          type: "file",
+          placeholder: t("profileFields.brandLogo.placeholder"),
+          required: false,
+        },
+        {
+          name: "brandTone",
+          label: t("brand_tone"),
+          type: "select",
+          options: [
+            t("tone_professional"),
+            t("tone_casual"),
+            t("tone_friendly"),
+            t("tone_formal"),
+            t("tone_playful"),
+            t("tone_innovative"),
+            t("tone_trustworthy"),
+            t("tone_luxurious"),
+          ],
+          required: false,
+        },
+      ],
+    },
+    {
+      id: "targetAudience",
+      title: t("target_audience"),
+      subtext: t("audience_message"),
+      icon: Target,
+      fields: [
+        {
+          name: "audienceAgeRange",
+          label: t("audience_age_range"),
+          type: "checkbox-group",
+          options: ["13-17", "18-24", "25-34", "35-44", "45-54", "55+"],
+          required: false,
+        },
+        {
+          name: "audienceGender",
+          label: t("audience_gender"),
+          type: "radio-group",
+          options: [
+            t("all_genders"),
+            t("primarily_male"),
+            t("primarily_female"),
+            t("non_binary_focused"),
+          ],
+          required: false,
+        },
+        {
+          name: "audienceRegions",
+          label: t("audience_location"),
+          type: "tags",
+          placeholder: t("audience_location_example"),
+          required: false,
+        },
+        {
+          name: "audienceInterests",
+          label: t("audience_interests"),
+          type: "tags",
+          placeholder: t("audience_interests_example"),
+          required: false,
+        },
+        {
+          name: "audienceSegments",
+          label: t("audience_type"),
+          type: "checkbox-group",
+          options: [
+            t("audience_segment_students"),
+            t("audience_segment_professionals"),
+            t("audience_segment_parents"),
+            t("audience_segment_entrepreneurs"),
+            t("audience_segment_retirees"),
+            t("audience_segment_digital_natives"),
+          ],
+          required: false,
+        },
+      ],
+    },
+    {
+      id: "content",
+      title: t("content_preferences"),
+      subtext: t("content_preferences_message"),
+      icon: Share2,
+      fields: [
+        {
+          name: "preferredPlatforms",
+          label: t("primary_platforms"),
+          type: "checkbox-group",
+          options: platforms,
+          required: false,
+        },
+        {
+          name: "contentCategories",
+          label: t("content_categories"),
+          type: "tags",
+          placeholder: `e.g. ${categories.slice(0, 3).join(", ")}`,
+          required: false,
+        },
+      ],
+    },
+    {
+      id: "goals",
+      title: t("goals_objectives"),
+      subtext: t("goals_message"),
+      icon: Flag,
+      fields: [
+        {
+          name: "primaryPurpose",
+          label: t("primary_purpose"),
+          type: "checkbox-group",
+          options: [
+            t("purpose_brand_awareness"),
+            t("purpose_lead_generation"),
+            t("purpose_sales_increase"),
+            t("purpose_customer_engagement"),
+            t("purpose_community_building"),
+            t("purpose_thought_leadership"),
+          ],
+          required: false,
+        },
+        {
+          name: "keyOutcomes",
+          label: t("key_outcomes"),
+          type: "checkbox-group",
+          options: [
+            t("outcome_followers"),
+            t("outcome_engagement"),
+            t("outcome_traffic"),
+            t("outcome_leads"),
+            t("outcome_brand_image"),
+            t("outcome_sales"),
+          ],
+          required: false,
+        },
+        {
+          name: "postingStyle",
+          label: t("posting_style"),
+          type: "select",
+          options: [
+            t("tone_professional_formal"),
+            t("tone_casual_friendly"),
+            t("tone_humorous_light"),
+            t("tone_educational_informative"),
+            t("tone_inspirational_motivating"),
+            t("tone_narrative_storytelling"),
+          ],
+          required: false,
+        },
+      ],
+    },
+  ];
+
+  return { profileFormConfig, businessAdjectives, businessNouns, platforms, categories };
+};
 
 const ProfileSetupSinglePage: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -280,6 +280,13 @@ const ProfileSetupSinglePage: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [selectedFileName, setSelectedFileName] = useState("");
+  const { t, i18n } = useTranslation();
+  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
+  const schema = useProfileFormSchema();
+
+
+  // Generate translated configuration
+  const { profileFormConfig } = useMemo(() => getProfileFormConfig(t), [t]);
 
   console.log("updateProfile", user);
   const getDefaultValues = (): ProfileFormData => {
@@ -357,7 +364,7 @@ const ProfileSetupSinglePage: React.FC = () => {
     setValue,
     formState: { errors },
   } = useForm<ProfileFormData>({
-    resolver: zodResolver(profileFormSchema),
+    resolver: zodResolver(schema),
     mode: "onBlur",
     defaultValues: getDefaultValues(),
   });
@@ -410,7 +417,7 @@ const ProfileSetupSinglePage: React.FC = () => {
 
   const handleUrlAnalysis = async (url: string) => {
     if (!url) {
-      setUrlAnalysisError("Please enter a valid URL.");
+      setUrlAnalysisError(t("valid_url"));
       return;
     }
     setUrlAnalysisError(null);
@@ -461,7 +468,7 @@ const ProfileSetupSinglePage: React.FC = () => {
     } catch (err: any) {
       console.error("URL analysis failed:", err);
       setUrlAnalysisError(
-        err?.response?.data?.message || "Failed to analyze URL"
+        err?.response?.data?.message || t("url_failed")
       );
     } finally {
       setUrlAnalysisLoading(false);
@@ -515,18 +522,18 @@ const ProfileSetupSinglePage: React.FC = () => {
         <div className="w-full">
           <div className="flex md:justify-between md:flex-row flex-col-reverse items-center gap-2 mb-2">
             <h1 className="text-3xl font-bold text-black  w-full">
-              Complete Your Profile
+              {t("complete_profile")}
             </h1>
             <button
               onClick={handleSkip}
               className="flex  gap-2 top-5 text-[#7650e3] hover:text-[#6540cc] font-semibold transition-colors w-full justify-end text-sm hover:underline"
             >
               <ArrowLeft className="w-5 h-5" />
-              Back to Dashboard
+              {t("back_to_dashboard")}
             </button>
           </div>
           <p className="text-gray-500">
-            Tell us about yourself to personalize your experience
+            {t("profile_intro")}
           </p>
         </div>
       </div>
@@ -610,7 +617,7 @@ const ProfileSetupSinglePage: React.FC = () => {
                                         <div className="flex items-center gap-2 theme-text-secondary">
                                           <Loader2 className="h-5 w-5 animate-spin" />
                                           <span className="text-sm">
-                                            Analyzing your URL...
+                                            {t("url_analyzing")}
                                           </span>
                                         </div>
                                       ) : (
@@ -626,7 +633,7 @@ const ProfileSetupSinglePage: React.FC = () => {
                                         >
                                           <Wand2 className="h-5 w-5" />
                                           <span className="text-sm">
-                                            Auto-fill from URL
+                                            {t("auto_fill_url")}
                                           </span>
                                         </button>
                                       )}
@@ -757,7 +764,7 @@ const ProfileSetupSinglePage: React.FC = () => {
                                         }}
                                         className="text-xs text-red-500 hover:underline"
                                       >
-                                        Remove
+                                        {t("remove")}
                                       </button>
                                     </div>
                                   ) : (
@@ -781,10 +788,10 @@ const ProfileSetupSinglePage: React.FC = () => {
                                         />
                                       </svg>
                                       <span className="mt-2 text-sm theme-text-secondary">
-                                        Click to upload
+                                        {t('click_to_upload')}
                                       </span>
                                       <p className="text-xs text-gray-500 font-medium">
-                                        PNG, JPG, GIF up to 10MB
+                                        {t('file_formats')}
                                       </p>
                                     </label>
                                   )}
@@ -904,7 +911,7 @@ const ProfileSetupSinglePage: React.FC = () => {
                                     type="text"
                                     placeholder={
                                       field.placeholder ||
-                                      "Add a tag and press Space or Enter"
+                                      t("add_tag_hint")
                                     }
                                     className="flex-grow border-none focus:ring-0 text-sm outline-none min-w-[120px]"
                                     onKeyDown={(e) => {
@@ -980,7 +987,7 @@ const ProfileSetupSinglePage: React.FC = () => {
                 disabled={loading}
                 className="w-full theme-bg-trinary disabled:bg-purple-600/50 disabled:cursor-not-allowed text-white py-3 px-6 rounded-md text-lg font-semibold shadow-md disabled:opacity-50 border border-transparent hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition-colors"
               >
-                {loading ? "Saving..." : "Complete Profile Setup"}
+                {loading ? t("saving") : t("complete_profile_setup")}
               </button>
             </form>
           </div>
