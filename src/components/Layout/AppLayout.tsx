@@ -36,10 +36,10 @@ interface AppLayoutProps {
 }
 
 export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
-  const { user, logout, balance, refreshUser } = useAppContext();
-  const { t, i18n } = useTranslation();
+  const { user, logout, balance, refreshUser, unreadCount } = useAppContext();
+  const { t } = useTranslation();
   const { loadingState } = useLoading();
-  const { unreadCount, markAllAsRead: markAllUnreadAsRead } = useUnreadPosts();
+
   const location = useLocation();
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -515,8 +515,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                   className=" rounded-md theme-text-primary hover:theme-text-secondary relative"
                 >
                   <Menu className="w-6 h-6" />
-                  {unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 rounded-full flex items-center justify-center text-xs text-white font-bold">
+                  {unreadCount != 0 && (
+                    <span className="absolute -top-1 -right-1 h-5 w-5 bg-purple-500 rounded-full flex items-center justify-center text-xs text-white font-bold">
                       {unreadCount > 99 ? "99+" : unreadCount}
                     </span>
                   )}
@@ -570,11 +570,16 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                     </button>
                                     {planMsgOpen && (
                                       <div className="absolute left-0 top-full mt-1 w-56 p-2 bg-gray-50 border rounded-md shadow-lg z-50 text-xs text-black">
-                                        This is your current plan: <span className="font-semibold">
+                                        This is your current plan:{" "}
+                                        <span className="font-semibold">
                                           {user.wallet?.package?.name || "FREE"}
-                                        </span> with <span className="font-semibold">
+                                        </span>{" "}
+                                        with{" "}
+                                        <span className="font-semibold">
                                           {user.wallet?.coins ?? 0}
-                                        </span> coins. You can also view other plans and the coins they include.
+                                        </span>{" "}
+                                        coins. You can also view other plans and
+                                        the coins they include.
                                       </div>
                                     )}
                                   </div>
@@ -624,13 +629,19 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                     </button>
                                     {coinsMsgOpen && (
                                       <div className="absolute left-0 top-full mt-1 w-56 p-2 bg-gray-50 border rounded-md shadow-lg z-50 text-xs text-black">
-                                        This package gives you <span className="font-semibold">
+                                        This package gives you{" "}
+                                        <span className="font-semibold">
                                           {user.wallet?.coins?.toLocaleString() ??
                                             0}
-                                        </span> coins. Your vault limit is <span className="font-semibold">
+                                        </span>{" "}
+                                        coins. Your vault limit is{" "}
+                                        <span className="font-semibold">
                                           {user.wallet?.package?.coinLimit?.toLocaleString() ??
                                             0}
-                                        </span> coins. You can buy extra credits anytime, but you cannot exceed your vault limit.
+                                        </span>{" "}
+                                        coins. You can buy extra credits
+                                        anytime, but you cannot exceed your
+                                        vault limit.
                                       </div>
                                     )}
                                   </div>
@@ -665,10 +676,14 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                     {referralMsgOpen && (
                                       <div className="absolute left-0 top-full mt-1 w-56 p-2 bg-gray-50 border rounded-md shadow-lg z-50 text-xs text-black">
                                         Referral coins are always used first.
-                                        You currently have <span className="font-semibold">
+                                        You currently have{" "}
+                                        <span className="font-semibold">
                                           {user?.wallet?.referralCoin?.toLocaleString() ??
                                             0}
-                                        </span> referral coins. Once referral coins run out, your purchased package coins will be used.
+                                        </span>{" "}
+                                        referral coins. Once referral coins run
+                                        out, your purchased package coins will
+                                        be used.
                                       </div>
                                     )}
                                   </div>
@@ -685,8 +700,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
                           {/* More info and buttons */}
                           <p className="text-base my-4">
-                            {t("more_info")} <Link className="text-purple-600 font-medium" to="/faq"> 
-                            FAQ
+                            {t("more_info")}{" "}
+                            <Link
+                              className="text-purple-600 font-medium"
+                              to="/faq"
+                            >
+                              FAQ
                             </Link>
                           </p>
 

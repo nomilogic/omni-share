@@ -17,7 +17,6 @@ import ImagePostIcon from "../assets/create-image-post-icon-01.svg";
 import VideoPostIcon from "../assets/create-video-post-icon-01.svg";
 import { PostContent, Platform } from "../types";
 import { uploadMedia, getCurrentUser } from "../lib/database";
-import { analyzeImage as analyzeImageWithGemini } from "../lib/gemini"; // Renamed to avoid conflict
 import { PostPreview } from "./PostPreview";
 import { getPlatformColors, platformOptions } from "../utils/platformIcons";
 import { getCampaignById } from "../lib/database";
@@ -35,9 +34,8 @@ import {
   is9x16Video,
 } from "../utils/videoUtils";
 import { useLoadingAPI } from "../hooks/useLoadingAPI";
-import VideoPoster from "../assets/omnishare-02 (5).jpg"
+import VideoPoster from "../assets/omnishare-02 (5).jpg";
 import API from "@/services/api";
-import { useNavigate } from "react-router-dom";
 import { notify } from "@/utils/toast";
 import { useTranslation } from "react-i18next";
 
@@ -154,25 +152,20 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   const [isGeneratingThumbnail, setIsGeneratingThumbnail] = useState(false);
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
 
-  // Thumbnail generation preference and custom thumbnail upload
   const [generateVideoThumbnailAI, setGenerateVideoThumbnailAI] =
     useState(true);
   const thumbnailInputRef = useRef<HTMLInputElement>(null);
   const [customThumbnailUploading, setCustomThumbnailUploading] =
     useState(false);
 
-  // Upload abort controller for cancelling in-progress uploads
   const uploadAbortControllerRef = useRef<AbortController | null>(null);
 
-  // Track the current file being uploaded to prevent stale updates
   const currentFileRef = useRef<File | null>(null);
 
-  // State to hold pending post generation data
   const [pendingPostGeneration, setPendingPostGeneration] = useState<any>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Helper function to get appropriate platforms based on content type
   const getAppropiatePlatforms = (
     postType: "text" | "image" | "video",
     imageMode?: string,
@@ -180,48 +173,21 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   ): Platform[] => {
     switch (postType) {
       case "text":
-        // Text post: all platforms except YouTube, TikTok, Instagram, and Twitter (disabled temporarily)
         return ["facebook", "linkedin"];
       case "image":
-        // Image post: all platforms except TikTok, YouTube, and Twitter (disabled temporarily)
         return ["facebook", "instagram", "linkedin"];
       case "video":
         if (videoMode === "uploadShorts") {
-          // 9:16 video (shorts): all platforms except Twitter (disabled temporarily)
           return ["facebook", "instagram", "linkedin", "tiktok", "youtube"];
         } else if (videoMode === "upload") {
-          // 16:9 video: all platforms except Instagram, TikTok, and Twitter (disabled temporarily)
           return ["facebook", "linkedin", "youtube"];
         }
-        // Default video: all platforms except Twitter (disabled temporarily)
         return ["facebook", "instagram", "linkedin", "tiktok", "youtube"];
       default:
-        return ["linkedin", "facebook"]; // Default fallback
+        return ["linkedin", "facebook"];
     }
   };
 
-  // Auto-select platforms based on content type and modes
-  // useEffect(() => {
-  //   const appropriatePlatforms = getAppropiatePlatforms(
-  //     selectedPostType?.toLowerCase() as "text" | "image" | "video",
-
-  //   );
-
-  //   // Clear aspect ratio warning when video mode changes or when correct video is uploaded
-  //   if (selectedPostType === "video") {
-  //     if (videoAspectRatio) {
-  //       // If we have a video loaded, check if the mode now matches the aspect ratio
-  //     console
-  //       }
-  //     } else {
-  //       // If no video is loaded but there's a warning (from previous rejected upload), keep the warning
-  //       // This ensures the warning persists until a correct video is uploaded or mode is switched
-  //     }
-
-  // }, [
-  //   selectedPostType,
-
-  // ]);
   useEffect(() => {
     const appropriatePlatforms = getAppropiatePlatforms(
       selectedPostType?.toLowerCase() as "text" | "image" | "video",
@@ -233,10 +199,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       selectedPlatforms: appropriatePlatforms,
     }));
 
-    // Clear aspect ratio warning when video mode changes or when correct video is uploaded
     if (selectedPostType === "video") {
       if (videoAspectRatio) {
-        // If we have a video loaded, check if the mode now matches the aspect ratio
         let shouldClearWarning = false;
         if (selectedVideoMode === "upload" && is16x9Video(videoAspectRatio)) {
           shouldClearWarning = true;
@@ -251,19 +215,14 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           console.log(
             "✅ Video mode now matches aspect ratio, clearing warning"
           );
-          // Clear timeout if it exists
           if (warningTimeoutId) {
             clearTimeout(warningTimeoutId);
             setWarningTimeoutId(null);
           }
           setVideoAspectRatioWarning("");
         }
-      } else {
-        // If no video is loaded but there's a warning (from previous rejected upload), keep the warning
-        // This ensures the warning persists until a correct video is uploaded or mode is switched
       }
     } else {
-      // Clear warning when switching away from video post type
       if (videoAspectRatioWarning) {
         console.log(
           "🔄 Clearing video warning when switching away from video post type"
@@ -278,7 +237,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     videoAspectRatioWarning,
   ]);
 
-  // Initialize with existing data when in edit mode
   useEffect(() => {
     if (initialData) {
       setFormData((prev) => ({
@@ -296,12 +254,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     }
   }, [initialData, selectedPlatforms, editMode]);
 
-  // useEffect(() => {
-  //  setShowImageMenu(selectedPostType === 'image');
-
-  // }, [selectedPostType, selectedImageMode]);
-
-  // Fetch campaign information when a campaign is selected in context
   useEffect(() => {
     const fetchCampaignInfo = async () => {
       if (state.selectedCampaign && state.user?.id) {
@@ -603,19 +555,11 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         currentFileRef.current = null; // Clear current file ref
 
         setFormData((prev) => {
-          console.log("Adding URL to existing file. Previous:", {
-            media: !!prev.media,
-            mediaUrl: !!prev.mediaUrl,
-          });
-
-          // Clean up the previous blob URL if it exists
           if (prev.mediaUrl && prev.mediaUrl.startsWith("blob:")) {
             URL.revokeObjectURL(prev.mediaUrl);
             console.log("🗑️ Cleaned up previous blob URL");
           }
 
-          // Always use server URL for media (for publishing compatibility)
-          // Use server URL as both mediaUrl and serverUrl for consistent publishing
           const newData = {
             ...prev,
             media: file,
@@ -757,7 +701,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         reader.onerror = (error) => reject(error);
       });
 
-      // Call the Gemini analysis API with proper data URL format
       const dataUrl = `data:${blob.type};base64,${base64}`;
 
       const apiUrl =
@@ -778,7 +721,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.error("Analysis API error:", errorData);
         throw new Error(errorData.error || "Failed to analyze image");
       }
 
@@ -787,17 +729,12 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
       if (result.success && result.analysis) {
         setImageAnalysis(result.analysis);
-        console.log("Image analysis completed successfully");
       } else {
-        console.log("No analysis in result:", result);
         setImageAnalysis(
           "AI-generated image analyzed. Add a description for better content generation."
         );
       }
     } catch (error: any) {
-      console.error("Error analyzing AI-generated image:", error);
-      console.error("Error details:", error.message);
-      console.error("Error stack:", error.stack);
       setImageAnalysis(
         `AI-generated image loaded successfully. ${
           error.message?.includes("quota")
@@ -821,7 +758,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     // }
 
     if (formData.prompt.trim()) {
-      // For text-to-image mode with combined generation enabled, do the combined generation
       if (
         selectedImageMode === "textToImage" &&
         generateImageWithPost &&
@@ -834,17 +770,13 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         return; // Exit here as handleCombinedGenerationWithPost handles the rest
       }
 
-      // For text-to-image mode without combined generation, check if image exists
       if (
         selectedImageMode === "textToImage" &&
         !generateImageWithPost &&
         !formData.mediaUrl
       ) {
         console.log("🎯 Image generation required - no image found");
-        notify(
-          "error",
-          t("generate_image_first")
-        );
+        notify("error", t("generate_image_first"));
         return;
       }
 
@@ -855,10 +787,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         !formData.media
       ) {
         console.log("🎯 Image upload required");
-        notify(
-          "error",
-          t("upload_image_first")
-        );
+        notify("error", t("upload_image_first"));
         return;
       }
 
@@ -1285,31 +1214,17 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           return newData;
         });
 
-        // Auto-open template editor with blank template only if requested
         if (shouldAutoOpenTemplate) {
-          console.log(
-            "🎨 Auto-opening template editor with blank template for AI generated image"
-          );
-          // Get blank template
           const blankTemplate = getTemplateById("blank-template");
           if (blankTemplate) {
-            console.log(
-              "📋 Setting blank template and opening editor for AI image"
-            );
             setTimeout(() => {
               setSelectedTemplate(blankTemplate);
               setShowTemplateEditor(true);
-            }, 500); // Small delay to ensure state is updated
+            }, 500);
           } else {
-            console.error(
-              "❌ Blank template not found for AI image - this should not happen!"
-            );
-            // Don't open anything if blank template is missing - this is a critical error
           }
         }
       } else {
-        console.log("⚠️ No authenticated user, using direct URL");
-        // If no user, just use the direct URL
         setFormData((prev) => {
           console.log("🔄 Updating formData with direct URL - before:", {
             hasMedia: !!prev.media,
@@ -1324,17 +1239,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           return newData;
         });
 
-        // Auto-open template editor with blank template only if requested
         if (shouldAutoOpenTemplate) {
-          console.log(
-            "🎨 Auto-opening template editor with blank template for AI generated image (no auth)"
-          );
-          // Get blank template
           const blankTemplate = getTemplateById("blank-template");
           if (blankTemplate) {
-            console.log(
-              "📋 Setting blank template and opening editor for AI image (no auth)"
-            );
             setTimeout(() => {
               setSelectedTemplate(blankTemplate);
               setShowTemplateEditor(true);
@@ -1442,42 +1349,23 @@ export const ContentInput: React.FC<ContentInputProps> = ({
             );
             finalTemplatedUrl = uploadedUrl;
           } else {
-            console.warn(
-              "⚠️ Upload returned no URL, falling back to provided imageUrl"
-            );
           }
         } else {
-          console.warn(
-            "⚠️ No authenticated user; cannot upload templated image. Using provided URL as-is."
-          );
         }
       } else {
-        console.log(
-          "🌐 Templated image already has a server URL. Skipping upload."
-        );
       }
-    } catch (uploadErr) {
-      console.error(
-        "❌ Failed to upload templated image, using provided URL:",
-        uploadErr
-      );
-      // Keep finalTemplatedUrl as the original imageUrl
-    }
+    } catch (uploadErr) {}
 
-    // Persist the templated image URL in component state and form data
     setTemplatedImageUrl(finalTemplatedUrl);
     setFormData((prev) => ({
       ...prev,
       mediaUrl: finalTemplatedUrl,
       imageUrl: finalTemplatedUrl,
-      serverUrl: finalTemplatedUrl, // Ensure publishing flows use this stable URL
+      serverUrl: finalTemplatedUrl,
     }));
     setShowTemplateEditor(false);
 
-    // Check if we have pending post generation (from combined generation workflow)
     if (pendingPostGeneration) {
-      console.log("🚀 Continuing post generation with templated image...");
-
       const {
         prompt,
         campaignInfo: currentCampaignInfo,
@@ -1490,39 +1378,27 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         videoAspectRatio,
       } = pendingPostGeneration;
 
-      // Prepare final form data
       let currentFormData;
       let mediaAssets;
 
       if (isVideoContent && originalVideoUrl) {
-        console.log("📹 Processing video content with edited thumbnail...");
-        // For video content, keep the original video URL but use the edited thumbnail
         currentFormData = {
           ...originalFormData,
-          mediaUrl: originalVideoUrl, // Keep original video URL for publishing
-          thumbnailUrl: finalTemplatedUrl, // Store edited thumbnail separately
-          videoFile: originalVideoFile, // Keep original video file
+          mediaUrl: originalVideoUrl,
+          thumbnailUrl: finalTemplatedUrl,
+          videoFile: originalVideoFile,
           videoAspectRatio: videoAspectRatio,
         };
 
-        // Create media assets with both video and thumbnail
         mediaAssets = [
           {
             url: originalVideoUrl,
             type: "video",
-            thumbnailUrl: finalTemplatedUrl, // Edited thumbnail
+            thumbnailUrl: finalTemplatedUrl,
             aspectRatio: videoAspectRatio,
           },
         ];
-
-        console.log("📋 Video media assets prepared:", {
-          videoUrl: originalVideoUrl?.substring(0, 50) + "...",
-          thumbnailUrl: finalTemplatedUrl?.substring(0, 50) + "...",
-          aspectRatio: videoAspectRatio,
-        });
       } else {
-        console.log("🖼️ Processing image content with templated image...");
-        // For image content, use the templated image
         currentFormData = {
           ...originalFormData,
           mediaUrl: finalTemplatedUrl, // Use the templated image server URL
@@ -1532,12 +1408,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
         mediaAssets = [{ url: finalTemplatedUrl, type: "image" }];
       }
-
-      console.log("📋 Preparing final post data:", {
-        hasMediaAssets: mediaAssets.length > 0,
-        mediaType: isVideoContent ? "video" : "image",
-        prompt: prompt.substring(0, 50) + "...",
-      });
 
       const postData = {
         ...currentFormData,
@@ -1709,7 +1579,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       console.log("🗑️ Cleaned up blob URL during template editor cancel");
     }
 
-    // Reset form data media
     setFormData((prev) => ({
       ...prev,
       media: undefined,
@@ -1720,27 +1589,22 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       thumbnailUrl: undefined,
     }));
 
-    // Clear all template and media related state
     setTemplatedImageUrl("");
     setImageAnalysis("");
     setVideoThumbnailUrl("");
     setOriginalVideoFile(null);
     setVideoAspectRatio(null);
 
-    // If we have pending post generation, cancel it and reset state
     if (pendingPostGeneration) {
       console.log("❌ Template editor cancelled, aborting post generation");
       setPendingPostGeneration(null);
       setIsGeneratingBoth(false);
     }
-
-    console.log("✅ All media cleared - returning to empty state");
   };
 
   const handleTemplateSelectorCancel = () => {
     setShowTemplateSelector(false);
 
-    // If we have pending post generation, cancel it and reset state
     if (pendingPostGeneration) {
       console.log("❌ Template selector cancelled, aborting post generation");
       setPendingPostGeneration(null);
@@ -1757,7 +1621,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   const handleDeleteTemplate = () => {
     setTemplatedImageUrl("");
     setSelectedTemplate(undefined);
-    // Reset to original image if available
     setFormData((prev) => ({
       ...prev,
       mediaUrl: prev.media ? URL.createObjectURL(prev.media) : undefined,
@@ -2095,7 +1958,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                   <button
                     type="button"
                     onClick={() => {
-                      // Allow switching to text post - clear media
                       if (selectedPostType !== "text") {
                         setFormData((prev) => ({
                           ...prev,
@@ -2249,16 +2111,13 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         <button
                           type="button"
                           onClick={() => {
-                            // Abort any in-progress upload
                             if (uploadAbortControllerRef.current) {
                               uploadAbortControllerRef.current.abort();
                               uploadAbortControllerRef.current = null;
                             }
-                            // Close the upload progress modal
                             hideLoading();
                             setSelectedImageMode("textToImage");
                             setShowImageMenu(false);
-                            // Clear any previously selected/generated image when switching modes
                             setFormData((prev) => ({
                               ...prev,
                               media: undefined,
@@ -2307,23 +2166,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                   <button
                     type="button"
                     onClick={() => {
-                      // Allow switching to video post - clear media if switching from other types
                       if (selectedPostType !== "video") {
-                        // If switching from image/text, clear existing media
-                        // if (selectedPostType !== "video" && formData.media) {
-                        //   setFormData((prev) => ({
-                        //     ...prev,
-                        //     media: undefined,
-                        //     mediaUrl: undefined,
-                        //   }));
-                        //   setTemplatedImageUrl("");
-                        //   setSelectedTemplate(undefined);
-                        //   setImageAnalysis("");
-                        //   setVideoThumbnailUrl("");
-                        //   setOriginalVideoFile(null);
-                        //   setVideoAspectRatio(null);
-                        //   currentFileRef.current = null;
-                        // }
                         setShowVideoMenu(true);
                         setSelectedPostType("video");
                       } else {
@@ -2367,7 +2210,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         <button
                           type="button"
                           onClick={() => {
-                            // Clear video when switching between video modes
                             if (selectedVideoMode !== "upload") {
                               setFormData((prev) => ({
                                 ...prev,
@@ -2411,16 +2253,12 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                 <br />
                                 {t("video")} (16:9)
                               </h3>
-                              {/* <p className={`text-xs mt-1 ${selectedVideoMode === 'upload' ? 'text-white/80' : 'theme-text-tertiary'}`}>
-                              Horizontal format
-                            </p> */}
                             </div>
                           </div>
                         </button>
                         <button
                           type="button"
                           onClick={() => {
-                            // Clear video when switching between video modes
                             if (selectedVideoMode !== "uploadShorts") {
                               setFormData((prev) => ({
                                 ...prev,
@@ -2451,9 +2289,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         >
                           <div className="flex flex-col items-center space-y-0">
                             <div>
-                              {/* Fallback to video-post icon if text-to-video is not available */}
-                              {/* <Icon name="video-post" size={44} className={`${selectedVideoMode === 'uploadShorts' ? 'brightness-0 invert' : ''}`} /> */}
-
                               <div
                                 className={`w-6 h-10 border mx-auto mb-2 video-icon `}
                               ></div>
@@ -2466,9 +2301,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                 <br />
                                 {t("short")} (9:16)
                               </h3>
-                              {/* <p className={`text-xs mt-1 ${selectedVideoMode === 'uploadShorts' ? 'text-white/80' : 'theme-text-tertiary'}`}>
-                              Vertical format
-                            </p> */}
                             </div>
                           </div>
                         </button>
@@ -2555,25 +2387,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                     />
                                   );
                                 })()}
-                                {/* Remove button overlay */}
-                                {/* <button
-                                  type="button"
-                                  onClick={() => {
-                                    setFormData((prev) => ({
-                                      ...prev,
-                                      media: undefined,
-                                      mediaUrl: undefined,
-                                    }));
-                                    // Also clear template-related state
-                                    setTemplatedImageUrl("");
-                                    setSelectedTemplate(undefined);
-                                    setImageAnalysis("");
-                                  }}
-                                  className="absolute top-2 right-2 bg-purple-500 hover:bg-purple-600 text-white rounded-md p-1.5 shadow-md transition-colors duration-200"
-                                  title="Remove image"
-                                >
-                                  <X className="w-3 h-3" />
-                                </button> */}
                               </div>
                               <div className="flex items-center justify-center flex-col space-y-1">
                                 <p className="text-xs theme-text-secondary">
@@ -2587,7 +2400,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                       media: undefined,
                                       mediaUrl: undefined,
                                     }));
-                                    // Also clear template-related state
                                     setTemplatedImageUrl("");
                                     setSelectedTemplate(undefined);
                                     setImageAnalysis("");
@@ -2653,7 +2465,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                           </div>
                         </div>
 
-                        {/* Image Description Field - Only show when combined generation is NOT checked */}
                         {!generateImageWithPost && (
                           <div>
                             <label className="text-sm font-medium theme-text-primary  mb-2 flex items-center">
@@ -2734,7 +2545,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                           </div>
                         )}
                       </div>
-                      {/* Generated Image Preview */}
                       {(formData.media || formData.mediaUrl) && (
                         <div className="mt-4">
                           <div className="border border-white/20 rounded p-4">
@@ -2765,23 +2575,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                     src={imageSrc}
                                     alt="Generated Image"
                                     className="max-h-32 mx-auto shadow-md rounded"
-                                    onLoad={() => {
-                                      console.log(
-                                        "✅ Text-to-image preview loaded successfully:",
-                                        imageSrc.substring(0, 30) + "..."
-                                      );
-                                    }}
-                                    onError={(e) => {
-                                      console.error(
-                                        "❌ Text-to-image preview failed to load:",
-                                        imageSrc
-                                      );
-                                      console.error("❌ Error details:", e);
-                                    }}
                                   />
                                 );
                               })()}
-                              {/* Remove button overlay */}
                               <button
                                 type="button"
                                 onClick={() => {
@@ -2790,7 +2586,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                     media: undefined,
                                     mediaUrl: undefined,
                                   }));
-                                  // Also clear template-related state
                                   setTemplatedImageUrl("");
                                   setSelectedTemplate(undefined);
                                   setImageAnalysis("");
@@ -2813,7 +2608,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                     media: undefined,
                                     mediaUrl: undefined,
                                   }));
-                                  // Also clear template-related state
                                   setTemplatedImageUrl("");
                                   setSelectedTemplate(undefined);
                                   setImageAnalysis("");
@@ -2868,20 +2662,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                       />
                     </div>
 
-                    {/* Debug Info - Enhanced debugging */}
-                    {/* <div className="mb-2 p-2 bg-yellow-500/10 border border-yellow-400/20 rounded text-xs text-yellow-200 space-y-1">
-                <div><strong>Debug State:</strong></div>
-                <div>• media: {formData.media ? `✅ ${formData.media.type} (${formData.media.name})` : '❌ null'}</div>
-                <div>• mediaUrl: {formData.mediaUrl ? `✅ ${formData.mediaUrl.substring(0, 50)}...` : '❌ null'}</div>
-                <div>• templatedImageUrl: {templatedImageUrl ? `✅ ${templatedImageUrl.substring(0, 30)}...` : '❌ null'}</div>
-                <div>• uploading: {uploading ? '🔄 true' : '✅ false'}</div>
-                <div>• Should show preview: {(formData.media || formData.mediaUrl) ? '✅ YES' : '❌ NO'}</div>
-              </div> */}
-
                     {formData.media || formData.mediaUrl ? (
                       <div className="space-y-4">
                         <div className="relative">
-                          {/* Check if it's an image */}
                           {formData.media?.type.startsWith("image/") ||
                           (formData.mediaUrl &&
                             !formData.media &&
@@ -2891,7 +2674,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             <div className="relative">
                               <img
                                 src={
-                                  // Prioritize templated image if available, then uploaded file URL, then local file object
                                   templatedImageUrl ||
                                   formData.mediaUrl ||
                                   (formData.media
@@ -2956,7 +2738,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             </p>
                             {formData.media && (
                               <p className="text-xs">
-                                {(formData.media.size / 1024 / 1024).toFixed(2)} MB </p>
+                                {(formData.media.size / 1024 / 1024).toFixed(2)}{" "}
+                                MB{" "}
+                              </p>
                             )}
                           </div>
 
@@ -2999,7 +2783,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             </div>
                           ) : null}
 
-                          {/* Thumbnail preference: AI or custom upload (only for non-9:16 videos) */}
                           {!is9x16Video(videoAspectRatio || 0) && (
                             <div className="mt-2 flex items-center justify-center gap-3">
                               <label className="flex items-center space-x-2 cursor-pointer">
@@ -3046,7 +2829,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             </div>
                           )}
 
-                          {/* AI Analysis Button */}
                           {(formData.media || formData.mediaUrl) &&
                             (formData.media?.type.startsWith("image/") ||
                               (formData.mediaUrl &&
@@ -3093,7 +2875,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               media: undefined,
                               mediaUrl: undefined,
                             }));
-                            // Also clear template-related state
                             setTemplatedImageUrl("");
                             setSelectedTemplate(undefined);
                             setImageAnalysis("");
@@ -3136,14 +2917,13 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                     )}
                   </div>
 
-                  {/* Video Aspect Ratio Warning - Always visible when there's a warning */}
                   {videoAspectRatioWarning && (
                     <div className="flex items-center justify-start p-3 theme-bg-danger border rounded-md text-xs mb-1 theme-text-light">
-                      <AlertCircle className="w-4 h-4 mr-2 flex-shrink-0" /> {videoAspectRatioWarning}
+                      <AlertCircle className="w-4 h-4 mr-2 flex-shrink-0" />{" "}
+                      {videoAspectRatioWarning}
                     </div>
                   )}
 
-                  {/* Image Analysis Results */}
                   {imageAnalysis && (
                     <div className="bg-blue-500/10 border border-blue-400/20  p-3">
                       <div className="space-y-2">
@@ -3239,7 +3019,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                 {ratio.label}
                               </div>
                             </button>
-                          ))} </div>
+                          ))}{" "}
+                        </div>
                       </div>
                     )}
                   </>
@@ -3350,10 +3131,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                     }}
                   >
                     <div className="relative  rounded-md overflow-hidden shadow-md aspect-video w-full">
-                      {/* VIDEO REPLACING SVG BUTTON */}
                       <motion.video
                         src={IntroVideo}
-                        
                         muted
                         loop
                         playsInline
@@ -3377,7 +3156,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         </>
       )}
 
-      {/* Template Selector Modal */}
       {showTemplateSelector && (
         <TemplateSelector
           onSelectTemplate={handleTemplateSelect}
@@ -3385,7 +3163,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         />
       )}
 
-      {/* Template Editor Modal */}
       {showTemplateEditor &&
         selectedTemplate &&
         (formData.media || formData.mediaUrl || videoThumbnailUrl) && (

@@ -3,7 +3,7 @@ export interface OAuthUser {
   email: string;
   name: string;
   picture?: string;
-  provider: "google" | "facebook" | "linkedin";
+  provider: "google" | "facebook" | "linkedin" | "instagram";
 }
 
 export interface OAuthConfig {
@@ -17,6 +17,10 @@ export interface OAuthConfig {
   };
   linkedin: {
     clientId: string;
+    redirectUri: string;
+  };
+  instagram: {
+    appId: string;
     redirectUri: string;
   };
 }
@@ -33,6 +37,10 @@ export const oauthConfig: OAuthConfig = {
   linkedin: {
     clientId: import.meta.env.VITE_LINKEDIN_CLIENT_ID || "",
     redirectUri: `${window.location.origin}/auth/linkedin/callback`,
+  },
+  instagram: {
+    appId: import.meta.env.VITE_INSTAGRAM_CLIENT_ID || "",
+    redirectUri: `${window.location.origin}/auth/instagram/callback`,
   },
 };
 
@@ -332,11 +340,109 @@ export const initiateLinkedInOAuth = (
   });
 };
 
+export const initiateInstagramOAuth = (
+  referralId?: string
+): Promise<{
+  token: string;
+  user: any;
+}> => {
+  return new Promise((resolve, reject) => {
+    try {
+      const state = generateOAuthState();
+      storeOAuthState(state);
+
+      // Using new Instagram Business scope values (effective Jan 27, 2025)
+      // Old scopes deprecated: business_basic, business_content_publish, business_manage_comments, business_manage_messages
+      const params = new URLSearchParams({
+        client_id: oauthConfig.instagram.appId,
+        redirect_uri: oauthConfig.instagram.redirectUri,
+        scope: "instagram_business_basic,instagram_business_content_publish,instagram_business_manage_messages,instagram_business_manage_comments",
+        response_type: "code",
+        state: state,
+      });
+
+      const authUrl = `https://api.instagram.com/oauth/authorize?${params.toString()}`;
+
+      const popup = window.open(
+        authUrl,
+        "instagram_oauth",
+        "width=500,height=600,scrollbars=yes,resizable=yes"
+      );
+
+      if (!popup) {
+        reject(new Error("Popup blocked. Please allow popups for this site."));
+        return;
+      }
+
+      const cleanup = () => {
+        window.removeEventListener("message", messageListener);
+        clearInterval(checkClosed);
+        if (!popup.closed) popup.close();
+      };
+
+      const messageListener = (event: MessageEvent) => {
+        if (event.origin !== window.location.origin) {
+          console.warn("Message from untrusted origin:", event.origin);
+          return;
+        }
+
+        try {
+          if (
+            event.data.type === "oauth_success" &&
+            event.data.provider === "instagram"
+          ) {
+            if (!verifyOAuthState(event.data.state)) {
+              cleanup();
+              reject(new Error("Invalid OAuth state parameter"));
+              return;
+            }
+
+            if (!event.data.result || typeof event.data.result !== "object") {
+              cleanup();
+              reject(
+                new Error("Malformed OAuth response — missing result object")
+              );
+              return;
+            }
+
+            cleanup();
+            resolve(event.data.result);
+          } else if (event.data.type === "oauth_error") {
+            console.error("❌ Instagram OAuth error:", event.data.error);
+            cleanup();
+            reject(
+              new Error(event.data.error || "Instagram authentication failed")
+            );
+          }
+        } catch (err) {
+          console.error("Message handler error:", err);
+          cleanup();
+          reject(new Error("Unexpected error during OAuth message handling"));
+        }
+      };
+
+      window.addEventListener("message", messageListener);
+
+      const checkClosed = setInterval(() => {
+        if (popup.closed) {
+          cleanup();
+        }
+      }, 1000);
+    } catch (err: any) {
+      reject(
+        new Error(
+          err?.message || "Unexpected error initializing Instagram OAuth"
+        )
+      );
+    }
+  });
+};
+
 /**
  * Handle OAuth callback and exchange code for user data
  */
 export const handleOAuthCallback = async (
-  provider: "google" | "facebook" | "linkedin",
+  provider: "google" | "facebook" | "linkedin" | "instagram",
   code: string,
   state: string
 ): Promise<{ token: string; user: any }> => {
@@ -356,7 +462,9 @@ export const handleOAuthCallback = async (
             ? oauthConfig.google.redirectUri
             : provider === "facebook"
             ? oauthConfig.facebook.redirectUri
-            : oauthConfig.linkedin.redirectUri,
+            : provider === "linkedin"
+            ? oauthConfig.linkedin.redirectUri
+            : oauthConfig.instagram.redirectUri,
       }),
     });
 
@@ -387,7 +495,7 @@ export const handleOAuthCallback = async (
  * Check if OAuth is properly configured
  */
 export const isOAuthConfigured = (
-  provider: "google" | "facebook" | "linkedin"
+  provider: "google" | "facebook" | "linkedin" | "instagram"
 ): boolean => {
   if (provider === "google") {
     return !!oauthConfig.google.clientId;
@@ -397,6 +505,9 @@ export const isOAuthConfigured = (
   }
   if (provider === "linkedin") {
     return !!oauthConfig.linkedin.clientId;
+  }
+  if (provider === "instagram") {
+    return !!oauthConfig.instagram.appId;
   }
   return false;
 };

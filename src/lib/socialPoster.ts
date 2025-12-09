@@ -93,10 +93,40 @@ export async function postToFacebookFromServer(
     });
 
     const response = await API.facebookPost({ accessToken, post, pageId });
+    
+    console.log("📱 Facebook API response:", {
+      status: response.status,
+      data: response.data,
+      dataType: typeof response.data
+    });
 
     return response.data;
   } catch (error: any) {
     console.error("Facebook posting error:", error.response?.data);
+    throw new Error(error.response?.data?.error || error.message);
+  }
+}
+
+export async function postToInstagramFromServer(
+  accessToken: string,
+  post: GeneratedPost
+) {
+  try {
+    if (!post.imageUrl) {
+      throw new Error("Instagram post requires an image");
+    }
+
+    console.log("📸 Instagram posting with:", {
+      hasImage: !!post.imageUrl,
+      caption: post.caption?.substring(0, 50) + "...",
+      hashtags: post.hashtags?.length || 0,
+    });
+
+    const response = await API.instagramPost({ accessToken, post });
+
+    return response.data;
+  } catch (error: any) {
+    console.error("Instagram posting error:", error.response?.data);
     throw new Error(error.response?.data?.error || error.message);
   }
 }
@@ -577,10 +607,22 @@ async function postWithRealOAuth(
           post,
           context?.facebookPageId || post.pageId
         );
+        console.log("Facebook posting result:", fbResult);
+        
+        // Extract postId with multiple fallback paths
+        let fbPostId = fbResult?.postId || fbResult?.id || fbResult?.data?.id || fbResult?.post_id;
+        
+        // If still no ID, check for nested structures
+        if (!fbPostId && fbResult?.data) {
+          fbPostId = fbResult.data.postId || fbResult.data.id || fbResult.data.post_id;
+        }
+        
+        console.log("🔵 Extracted Facebook postId:", fbPostId);
+        
         return {
           success: true,
           message: `Successfully posted to Facebook`,
-          postId: fbResult.postId || fbResult.data?.id,
+          postId: fbPostId || "Unknown",
         };
 
       case "youtube":
@@ -608,8 +650,14 @@ async function postWithRealOAuth(
         };
 
       case "instagram":
-        // Add real Instagram posting logic here
-        throw new Error("Real Instagram posting not implemented yet");
+        // Post to Instagram using the backend API
+        const igResult = await postToInstagramFromServer(accessToken, post);
+        return {
+          success: true,
+          message: `Successfully posted to Instagram`,
+          postId: igResult.postId || igResult.data?.id,
+          username: igResult.username,
+        };
 
       case "twitter":
         // Add real Twitter posting logic here
@@ -860,12 +908,24 @@ async function savePublishedPostToHistory(
   publishResult: any
 ): Promise<void> {
   try {
-    console.log("post", post);
+    console.log("📊 Saving post to history", { 
+      platform: post.platform, 
+      publishResult,
+      postIdValue: publishResult.postId,
+      postIdType: typeof publishResult.postId,
+      postIdIsUnknown: publishResult.postId === "Unknown"
+    });
+    
     const postId = `${post.platform}-${Date.now()}-${Math.random()
       .toString(36)
       .substr(2, 9)}`;
     let platformUrl = "";
+    
+    // Debug: Log all properties of publishResult
+    console.log("🔍 Full publishResult object:", JSON.stringify(publishResult, null, 2));
+    
     if (publishResult.postId && publishResult.postId !== "Unknown") {
+      console.log(`🔗 Building ${post.platform} URL from postId: ${publishResult.postId}`);
       switch (post.platform) {
         case "linkedin":
           if (publishResult.postId.startsWith("urn:li:share:")) {
@@ -877,21 +937,34 @@ async function savePublishedPostToHistory(
           }
           break;
         case "facebook":
-          platformUrl = `https://www.facebook.com/${publishResult.postId}`;
+          console.log("🔵 Facebook postId details:", {
+            postId: publishResult.postId,
+            hasUnderscore: publishResult.postId?.includes("_"),
+            length: publishResult.postId?.length
+          });
+          
+          // Facebook post ID format: {page_id}_{post_id}
+          // URL format: https://www.facebook.com/{page_id}/posts/{post_id}
+          if (publishResult.postId?.includes("_")) {
+            const [pageId, postIdOnly] = publishResult.postId.split("_");
+            platformUrl = `https://www.facebook.com/${pageId}/posts/${postIdOnly}`;
+          } else {
+            // If no underscore, it might be just the post ID
+            platformUrl = `https://www.facebook.com/posts/${publishResult.postId}`;
+          }
+          console.log(`✅ Facebook URL constructed: ${platformUrl}`);
           break;
         case "youtube":
           platformUrl = `https://www.youtube.com/watch?v=${publishResult.postId}`;
           break;
         case "instagram":
-          platformUrl = `https://www.instagram.com/p/${publishResult.postId}/`;
+          platformUrl = `${publishResult.postId}`;
           break;
         case "twitter":
         case "x":
           platformUrl = `https://twitter.com/user/status/${publishResult.postId}`;
           break;
         case "tiktok":
-          let videoId = publishResult?.video_id;
-
           platformUrl = `https://www.tiktok.com/@${publishResult?.username}/video/${publishResult?.postId}`;
           break;
 
@@ -899,11 +972,26 @@ async function savePublishedPostToHistory(
           platformUrl = `https://${post.platform}.com/posts/${publishResult.postId}`;
           break;
       }
+    } else {
+      console.warn(`⚠️ No valid postId for ${post.platform}:`, {
+        postId: publishResult.postId,
+        isUnknown: publishResult.postId === "Unknown",
+        isEmpty: !publishResult.postId,
+        allKeys: Object.keys(publishResult)
+      });
+      
+      // Fallback: Use a generic Facebook profile link since we can't get the post ID
+      if (post.platform === "facebook") {
+        console.log("🔄 Using fallback Facebook URL (post not found in history)");
+        platformUrl = "https://www.facebook.com"; // Generic fallback
+      }
     }
 
     const publishedUrls = {
       [post.platform]: platformUrl,
     };
+
+    console.log(`💾 Saving published URL:`, { platform: post.platform, url: platformUrl, publishedUrls });
 
     const response = await API.savePublishedUrls({
       postId,
@@ -914,6 +1002,7 @@ async function savePublishedPostToHistory(
       imageUrl: post.imageUrl || post.mediaUrl,
     });
 
+    console.log(`✅ Successfully saved to history`);
     await response.data.data;
   } catch (error: any) {
     console.error(
