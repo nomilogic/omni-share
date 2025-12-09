@@ -59,8 +59,8 @@ export default function CookieBanner() {
       {/* Main Banner */}
       {!settingsOpen && (
         <div className="fixed inset-x-4 bottom-0 md:inset-x-auto md:left-1/2 md:-translate-x-1/2 w-full z-50">
-          <div className="bg-white shadow-md flex justify-between items-center p-4 md:p-6 animate-in fade-in slide-in-from-bottom duration-300">
-            <p className="text-sm text-purple-700 leading-relaxed">
+          <div className="bg-white shadow-md flex justify-between items-center px-4 md:px-6 py-3.5 animate-in fade-in slide-in-from-bottom duration-300">
+            <p className="text-sm text-black leading-relaxed">
               We use cookies to make{" "}
               <a href="https://OmniShare.ai" className="underline">
                 OmniShare.ai
@@ -71,14 +71,14 @@ export default function CookieBanner() {
             <div className="flex flex-row gap-3">
               <button
                 onClick={() => setSettingsOpen(true)}
-                className="px-4 py-2 border border-purple-600 rounded-md font-medium hover:bg-gray-50 transition text-purple-700"
+                className="px-4 py-2 border border-purple-600 hover:bg-purple-200 rounded-md font-medium  transition text-purple-600"
               >
                 Cookie Settings
               </button>
 
               <button
                 onClick={accept}
-                className="px-4 py-2 bg-purple-700 text-white rounded-md font-medium hover:bg-purple-800 transition"
+                className="px-4 py-2 bg-purple-600 text-white rounded-md font-medium  transition hover:bg-purple-200 border border-purple-600 hover:text-purple-600 "
               >
                 Accept Cookies
               </button>
@@ -104,7 +104,7 @@ export default function CookieBanner() {
             <div className="mb-6">
               <div className="flex justify-between items-center">
                 <h3 className="font-medium">Necessary Cookies</h3>
-                <span className="text-xs bg-purple-700 text-white px-2 py-1 rounded">
+                <span className="text-xs bg-purple-600 text-white px-2 py-1 rounded">
                   Always Active
                 </span>
               </div>
@@ -129,7 +129,7 @@ export default function CookieBanner() {
 
                   <div
                     className="w-12 h-6 bg-gray-300 rounded-full 
-                  peer-checked:bg-purple-700
+                  peer-checked:bg-purple-600
                   transition-all"
                   ></div>
 
@@ -151,20 +151,19 @@ export default function CookieBanner() {
             <div className="flex gap-3 mt-8">
               <button
                 onClick={declineAllSettings}
-                className="w-full px-5 py-2.5 text-purple-700 border border-purple-600 rounded-md font-medium hover:bg-gray-50 transition"
+                className="w-full px-5 py-2.5 text-purple-600 border border-purple-600 rounded-md font-medium hover:bg-purple-200 transition"
               >
                 Decline All
               </button>
 
               <button
                 onClick={acceptAllSettings}
-                className="w-full px-5 py-2.5 bg-purple-700 text-white rounded-md font-medium hover:bg-purple-800 transition"
+                className="w-full px-5 py-2.5 bg-purple-600 text-white rounded-md  hover:bg-purple-200  border-purple-600 border hover:text-purple-600  font-medium  transition"
               >
                 Accept All
               </button>
             </div>
 
-            {/* Close button */}
             <button
               onClick={() => setSettingsOpen(false)}
               className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
