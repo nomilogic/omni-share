@@ -60,6 +60,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
   const [selectedYoutubeChannel, setSelectedYoutubeChannel] =
     useState<string>("");
   const [publishedPlatforms, setPublishedPlatforms] = useState<Platform[]>([]);
+  const [loadingFacebookPages, setLoadingFacebookPages] = useState<boolean>(false);
  const { openModal } = useModal();
   
   const navigate = useNavigate();
@@ -125,36 +126,62 @@ export const PublishPosts: React.FC<PublishProps> = ({
   }, [t, confirmNavigationAction]);
 
   const fetchFacebookPages = async () => {
+    setLoadingFacebookPages(true);
     try {
       const token = localStorage.getItem("auth_token");
-      if (!token) return;
+      if (!token) {
+        console.warn("No auth token found");
+        return;
+      }
 
       const tokenResponse = await API.tokenForPlatform("facebook");
+      console.log("Token response:", tokenResponse);
 
-      if (tokenResponse.data) {
+      if (tokenResponse?.data) {
         const tokenData = await tokenResponse.data;
-        console.log(tokenData);
+        console.log("Token data:", tokenData);
+        
         if (tokenData.connected && tokenData.token?.access_token) {
+          console.log("Fetching Facebook pages with token:", tokenData.token.access_token.substring(0, 10) + "...");
+          
           const pagesResponse = await API.facebookPages(
             tokenData.token.access_token
           );
-          console.log(pagesResponse, "pages");
+          console.log("Pages response:", pagesResponse);
 
-          if (pagesResponse.status == "200") {
-            const pagesData = await pagesResponse.data.data;
-            setFacebookPages(pagesData || []);
-            if (
-              pagesData.pages &&
-              pagesData.pages.length > 0 &&
-              !selectedFacebookPage
-            ) {
-              setSelectedFacebookPage(pagesData.pages[0].id);
-            }
+          // Handle both possible response structures
+          let pagesData = [];
+          
+          // Check if response has status 200 and data.data
+          if (pagesResponse?.data?.data) {
+            pagesData = Array.isArray(pagesResponse.data.data) ? pagesResponse.data.data : [];
           }
+          // Check if response directly has pages array
+          else if (pagesResponse?.pages) {
+            pagesData = Array.isArray(pagesResponse.pages) ? pagesResponse.pages : [];
+          }
+          // Check if response.data has pages array
+          else if (pagesResponse?.data?.pages) {
+            pagesData = Array.isArray(pagesResponse.data.pages) ? pagesResponse.data.pages : [];
+          }
+          
+          console.log("Extracted pages data:", pagesData);
+          setFacebookPages(pagesData);
+          
+          if (pagesData && pagesData.length > 0 && !selectedFacebookPage) {
+            setSelectedFacebookPage(pagesData[0].id);
+            console.log("Set initial page:", pagesData[0].id);
+          }
+        } else {
+          console.warn("Facebook not connected or no access token");
         }
+      } else {
+        console.warn("No token response data");
       }
     } catch (error) {
       console.error("Failed to fetch Facebook pages:", error);
+    } finally {
+      setLoadingFacebookPages(false);
     }
   };
 
@@ -686,27 +713,36 @@ export const PublishPosts: React.FC<PublishProps> = ({
         </div>
         {/* Platform-specific options (if needed) */}
         {connectedPlatforms.includes("facebook") &&
-          selectedPlatforms.includes("facebook") &&
-          facebookPages.length > 0 && (
-            <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-md">
-              <h4 className="font-medium text-blue-900 mb-2">
-                {t("facebook_page_selection")}
-              </h4>
-              <p className="text-blue-700 text-sm mb-3">
-                {t("choose_facebook_page_to_post_to")}
-              </p>
-              <select
-                value={selectedFacebookPage}
-                onChange={(e) => setSelectedFacebookPage(e.target.value)}
-                className="w-full p-3 border border-blue-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                {facebookPages.map((page) => (
-                  <option key={page.id} value={page.id}>
-                    {page.name} ({page.category})
-                  </option>
-                ))}
-              </select>
-            </div>
+          selectedPlatforms.includes("facebook") && (
+            <>
+              {facebookPages.length > 0 ? (
+                <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-md">
+                  <h4 className="font-medium text-blue-900 mb-2">
+                    {t("facebook_page_selection")}
+                  </h4>
+                  <p className="text-blue-700 text-sm mb-3">
+                    {t("choose_facebook_page_to_post_to")}
+                  </p>
+                  <select
+                    value={selectedFacebookPage}
+                    onChange={(e) => setSelectedFacebookPage(e.target.value)}
+                    className="w-full p-3 border border-blue-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    {facebookPages.map((page) => (
+                      <option key={page.id} value={page.id}>
+                        {page.name} ({page.category})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ) : (
+                <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+                  <p className="text-yellow-700 text-sm">
+                    📝 Loading Facebook pages... If they don't appear, check your connection.
+                  </p>
+                </div>
+              )}
+            </>
           )}
 
         {connectedPlatforms.includes("youtube") &&
