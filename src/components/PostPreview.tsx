@@ -577,7 +577,6 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                 </div>
               </div>
               <div className="text-sm">
-                <span className="font-medium">yourcampaign</span>
                 <span
                   className={`${
                     editingMode
@@ -642,7 +641,6 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                       {getPlatformDisplayName("twitter")}
                     </h3>
                     <span className="text-gray-500 font-medium">
-                      @yourcampaign
                     </span>
                     <span className="text-gray-500 font-medium">·</span>
                     <span className="text-gray-500 font-medium">now</span>
