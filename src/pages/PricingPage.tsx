@@ -478,7 +478,13 @@ export const PricingPage: React.FC = () => {
                   {/* Upgrade Button */}
                   <button className="flex items-center justify-center w-full max-w-xs py-3 px-6 rounded-md bg-[#7650e3] hover:bg-[#633fdc] transition-colors shadow-lg">
                     {/* Gem/Diamond Icon */}
-                    <span className="mr-2 text-white">💎</span>
+                    <span className="">
+                      <Icon
+                                name="white-diamond"
+                                size={24}
+                                
+                              />
+                    </span>
 
                     <span className="text-lg font-semibold text-white px-2 py-0.5 rounded-sm">
                       Upgrade
