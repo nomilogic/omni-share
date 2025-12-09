@@ -443,7 +443,6 @@ export const useAppContext = () => {
     };
     fetchData();
   }, []);
-  // Memoized action creators for function stability
   const selectCampaign = useCallback(
     (campaign: null) => {
       context.dispatch({ type: "SET_SELECTED_CAMPAIGN", payload: campaign });

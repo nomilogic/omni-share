@@ -113,7 +113,8 @@ const SubscriptionPauseModal = ({
                             {pkg.name}
                           </h3>
                           <span className="text-xl font-bold text-[#7650e3]">
-                            ${pkg.amount} / <span className="text-xl font-bold text-[#7650e3]">
+                            ${pkg.amount} /{" "}
+                            <span className="text-xl font-bold text-[#7650e3]">
                               {pkg?.tier == "free" ? "Forever" : "Month"}
                             </span>
                           </span>
@@ -186,7 +187,8 @@ const SubscriptionPauseModal = ({
                           {pkg.name}
                         </h3>
                         <span className="text-xl font-bold text-[#7650e3]">
-                          ${pkg.amount} / <span className="text-xl font-bold text-[#7650e3]">
+                          ${pkg.amount} /{" "}
+                          <span className="text-xl font-bold text-[#7650e3]">
                             {pkg?.tier == "free" ? "Forever" : "Month"}
                           </span>
                         </span>
@@ -246,9 +248,12 @@ const SubscriptionPauseModal = ({
 
             <div className=" flex flex-col justify-center gap-3">
               <p className="text-sm  text-[#000000] ">
-                {t("by_canceling_now_youll_lose")} <span className="font-medium text-[#7650e3]">
+                {t("by_canceling_now_youll_lose")}{" "}
+                <span className="font-medium text-[#7650e3]">
                   {user.wallet.package.name}
-                </span> {t("access_on_due_date")} <span className="font-medium text-[#7650e3]">
+                </span>{" "}
+                {t("access_on_due_date")}{" "}
+                <span className="font-medium text-[#7650e3]">
                   {user.wallet.expiresAt
                     ? new Date(user.wallet.expiresAt).toLocaleDateString(
                         "en-GB",
@@ -258,13 +263,15 @@ const SubscriptionPauseModal = ({
                           year: "numeric",
                         }
                       )
-                    : "N/A"} </span>
+                    : "N/A"}{" "}
+                </span>
                 , {t("forfeit_all_rollover_tokens_in_your_bank_and_lose_these")}
                 <span className="font-medium text-[#7650e3]">
                   <span className="font-medium text-[#7650e3]">
                     {user.walle}
                     {user.wallet.package.name}
-                  </span> </span>
+                  </span>{" "}
+                </span>
                 features :
               </p>
 
@@ -324,13 +331,15 @@ const SubscriptionPauseModal = ({
                 <span>{t("continue_subscription")}</span>
                 <ArrowRightIcon className="w-5 h-5" />
               </button>
-              <button
-                onClick={openDowngradeModel}
-                className=" w-full hover:bg-[#d7d7fc] disabled:cursor-not-allowed hover:text-[#7650e3]  text-[#7650e3] font-semibold py-2.5  px-3  text-sm sm:text-base rounded-md transition disabled:opacity-50 flex justify-between items-center  border border-[#7F56D9]"
-              >
-                <span>Downgrade Subscription</span>
-                <ArrowRightIcon className="w-5 h-5" />
-              </button>
+              {user?.wallet?.package?.tier !== "standard" && (
+                <button
+                  onClick={openDowngradeModel}
+                  className=" w-full hover:bg-[#d7d7fc] disabled:cursor-not-allowed hover:text-[#7650e3]  text-[#7650e3] font-semibold py-2.5  px-3  text-sm sm:text-base rounded-md transition disabled:opacity-50 flex justify-between items-center  border border-[#7F56D9]"
+                >
+                  <span>Downgrade Subscription</span>
+                  <ArrowRightIcon className="w-5 h-5" />
+                </button>
+              )}
               {user?.wallet?.downgradeRequested == null && (
                 <button
                   disabled={isCanceled}

@@ -53,13 +53,10 @@ const PricingContext = createContext<PricingContextType | undefined>(undefined);
 export const PricingProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const { state, refreshUser } = useAppContext();
+  const { state, refreshUser, packages, addons } = useAppContext();
   const activePackage = state?.user?.wallet;
   const { t, i18n } = useTranslation();
-  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
 
-  const [packages, setPackages] = useState<any[]>([]);
-  const [addons, setAddons] = useState<any[]>([]);
   const [loadingPackage, setLoadingPackage] = useState(false);
   const [loadingAddon, setLoadingAddon] = useState(false);
   const [downgradeLoading, setDowngradeLoading] = useState(false);
@@ -72,21 +69,6 @@ export const PricingProvider: React.FC<{ children: React.ReactNode }> = ({
   const [cancelDowngradeOpen, setCancelDowngradeOpen] = useState(false);
   const [cancelPackageOpen, setCancelPackageOpen] = useState(false);
   const [reactivateOpen, setReactivateOpen] = useState(false);
-
-  // Fetch data
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        const [pkg, addon] = await Promise.all([
-          API.listPackages(),
-          API.listAddons(),
-        ]);
-        setPackages(pkg.data.data || []);
-        setAddons(addon.data.data || []);
-      } catch (err) {}
-    };
-    fetch();
-  }, []);
 
   const getTierById = useCallback(
     (id: string) => packages.find((p) => p.id === id),
@@ -148,7 +130,8 @@ export const PricingProvider: React.FC<{ children: React.ReactNode }> = ({
   const handleSubscribe = async (plan: any) => {
     setLoadingPackage(true);
     try {
-      const res = await API.buyPackage(plan.id);
+      const language = localStorage.getItem("siteLang") ?? "en";
+      const res = await API.buyPackage(plan.id, language);
       if (res?.data?.data?.url) window.location.href = res.data.data.url;
     } catch (err) {
       notify("error", t("failed"));
@@ -222,8 +205,10 @@ export const PricingProvider: React.FC<{ children: React.ReactNode }> = ({
   const handleBuyAddon = async (addon: any) => {
     setLoadingAddon(true);
     setSelectedAddon(addon);
+
+    const language = localStorage.getItem("siteLang") ?? "en";
     try {
-      const res = await API.buyAddons(addon.id);
+      const res = await API.buyAddons(addon.id, language);
       if (res?.data?.data?.checkoutUrl)
         window.location.href = res.data.data.checkoutUrl;
     } catch (err) {

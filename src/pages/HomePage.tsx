@@ -47,8 +47,7 @@ import LanguageDropdown from "../components/LanguageDropdown";
 import { Trans, useTranslation } from "react-i18next";
 
 function HomePage() {
-  const { t, i18n } = useTranslation();
-  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
+  const { t } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrollY, setScrollY] = useState(0);
   const [currentReviewIndex, setCurrentReviewIndex] = useState(0);
@@ -56,7 +55,6 @@ function HomePage() {
     null
   );
   const [showContactForm, setShowContactForm] = useState(false);
-  const [packages, setPackages] = useState<any[]>([]);
   const isInitialMount = useRef(true);
   const navigate = useNavigate();
 
@@ -84,18 +82,6 @@ function HomePage() {
 
   useEffect(() => {
     isInitialMount.current = false;
-  }, []);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const packagesRes = await API.listPackages();
-        setPackages(packagesRes.data.data || []);
-      } catch (error) {
-        console.error("Failed to load packages/addons:", error);
-      }
-    };
-    fetchData();
   }, []);
 
   // SEO Meta Tags
@@ -138,12 +124,8 @@ function HomePage() {
       document.head.appendChild(schemaScript);
     }
 
-    return () => {
-      // Cleanup if needed
-    };
+    return () => {};
   }, []);
-
-  console.log("packages", packages);
 
   const reviews = [
     {
@@ -1023,8 +1005,6 @@ function HomePage() {
         </motion.div>
       </section>
 
-      
-
       <section className="py-8 md:py-14 bg-gradient-to-br from-[#d7d7fc] to-white relative overflow-hidden">
         <div className="absolute inset-0 opacity-5">
           <motion.div
@@ -1183,7 +1163,9 @@ function HomePage() {
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 md:mb-5">
               {t("faq2")}
             </h2>
-            <p className="text-xl text-gray-500 mb-4 md:mb-5 ">{t("faq_message")}</p>
+            <p className="text-xl text-gray-500 mb-4 md:mb-5 ">
+              {t("faq_message")}
+            </p>
           </motion.div>
 
           {/* ---------------- FIXED FAQ LOOP ---------------- */}
