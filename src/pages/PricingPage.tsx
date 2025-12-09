@@ -455,18 +455,40 @@ export const PricingPage: React.FC = () => {
       )}
       {activeTab === "addons" && (
         <>
+
+       { user?.wallet?.package.tier === "free" ?
+              <div className="**w-full h-full** **flex items-center justify-center** ">
+                {/* The content card - added max-w-sm to control the inner card size */}
+                <div className="flex flex-col items-center justify-center p-8 text-center max-w-sm mx-auto">
+                  {/* Information Icon */}
+                  <div className="mb-6 p-4 rounded-full border-4 border-[#7650e3]">
+                    {/* Assuming you are using an 'i' or 'Info' icon component, replace with your actual icon */}
+                    <div className="text-[#7650e3] text-4xl font-bold flex items-center justify-center h-12 w-12">
+                      i
+                    </div>
+                  </div>
+
+                  {/* Message */}
+                  <p className="text-sm font-medium text-gray-800 mb-8">
+                    To buy Omni Coins,
+                    <br />
+                    you must have an active Standard or Pro plan.
+                  </p>
+
+                  {/* Upgrade Button */}
+                  <button className="flex items-center justify-center w-full max-w-xs py-3 px-6 rounded-md bg-[#7650e3] hover:bg-[#633fdc] transition-colors shadow-lg">
+                    {/* Gem/Diamond Icon */}
+                    <span className="mr-2 text-white">💎</span>
+
+                    <span className="text-lg font-semibold text-white px-2 py-0.5 rounded-sm">
+                      Upgrade
+                    </span>
+                  </button>
+                </div>
+              </div>:
+            
           <div className="grid xl:grid-cols-3 md:grid-cols-2 gap-5">
-            {user?.wallet?.package.tier === "free" ? (
-              <div className="col-span-3 text-center text-red-500 text-sm min-h-[40vh] flex flex-col justify-center items-center">
-                Purchase a Standard or Pro plan to get credits.
-                <button
-                  onClick={() => setActiveTab("")}
-                  className="text-[#7650e3] underline cursor-pointer"
-                >
-                  Click here to choose your package.
-                </button>
-              </div>
-            ) : addons?.length === 0 ? (
+            { addons?.length === 0 ? (
               <p className="col-span-3 text-center text-[#7650e3]">
                 No credits available
               </p>
@@ -550,6 +572,7 @@ export const PricingPage: React.FC = () => {
               })
             )}
           </div>
+}
         </>
       )}
     </div>
