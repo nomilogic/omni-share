@@ -24,7 +24,7 @@ import { useTranslation } from "react-i18next";
 import { Icon } from "@/components";
 import { useAppContext } from "@/context/AppContext";
 
-// Export interface for external access
+// Export inter  for external access
 export interface HistoryPageRef {
   refreshHistory: () => Promise<void>;
 }
