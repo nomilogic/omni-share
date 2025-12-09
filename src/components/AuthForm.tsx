@@ -85,6 +85,11 @@ export const AuthForm: React.FC<AuthFormProps> = ({
   const referralId: any = params.get("referralId");
   const isVerification = params.get("isVerification");
 
+  const isCookieAccepted = () => {
+    if (typeof window === "undefined") return false;
+    return localStorage.getItem("cookie-consent") === "accepted";
+  };
+
   // Login Form
   const loginForm = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema(t)),
@@ -119,6 +124,10 @@ export const AuthForm: React.FC<AuthFormProps> = ({
   }, [isVerification]);
 
   const onForgetPassword = async (email: string) => {
+    if (!isCookieAccepted()) {
+      return notify("error", "Please accept cookies first.");
+    }
+
     setLoading(true);
     try {
       const res = await API.generateForgetLink({ email });
@@ -141,6 +150,9 @@ export const AuthForm: React.FC<AuthFormProps> = ({
   };
 
   const handleLoginSubmit = async (data: LoginFormData) => {
+    if (!isCookieAccepted()) {
+      return notify("error", "Please accept cookies first.");
+    }
     setLoading(true);
     setError("");
     setSuccessMessage("");
@@ -199,6 +211,9 @@ export const AuthForm: React.FC<AuthFormProps> = ({
   };
 
   const handleSignupSubmit = async (data: SignupFormData) => {
+    if (!isCookieAccepted()) {
+      return notify("error", "Please accept cookies first.");
+    }
     setLoading(true);
     setError("");
     setSuccessMessage("");
@@ -232,6 +247,9 @@ export const AuthForm: React.FC<AuthFormProps> = ({
   };
 
   const handleGoogleOAuth = async () => {
+    if (!isCookieAccepted()) {
+      return notify("error", "Please accept cookies first.");
+    }
     setLoading(true);
     setError("");
 
@@ -254,6 +272,9 @@ export const AuthForm: React.FC<AuthFormProps> = ({
   };
 
   const handleFacebookOAuth = async () => {
+    if (!isCookieAccepted()) {
+      return notify("error", "Please accept cookies first.");
+    }
     setLoading(true);
     setError("");
 
@@ -290,6 +311,9 @@ export const AuthForm: React.FC<AuthFormProps> = ({
   };
 
   const handleLinkedInOAuth = async () => {
+    if (!isCookieAccepted()) {
+      return notify("error", "Please accept cookies first.");
+    }
     setLoading(true);
     setError("");
 
@@ -326,10 +350,16 @@ export const AuthForm: React.FC<AuthFormProps> = ({
   };
 
   const handleForgotPasswordSubmit = async (data: ForgotPasswordFormData) => {
+    if (!isCookieAccepted()) {
+      return notify("error", "Please accept cookies first.");
+    }
     await onForgetPassword(data.email);
   };
 
   const handleResetPasswordSubmit = async (data: ResetPasswordFormData) => {
+    if (!isCookieAccepted()) {
+      return notify("error", "Please accept cookies first.");
+    }
     setSuccessMessage("Password successfully reset.");
     resetPasswordForm.reset();
     setMode("login");

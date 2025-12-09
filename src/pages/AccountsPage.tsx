@@ -11,7 +11,6 @@ import {
 import API from "../services/api";
 import { useTranslation } from "react-i18next";
 
-// Define all available platforms
 const ALL_PLATFORMS: Platform[] = [
   "linkedin",
   "facebook",
@@ -21,12 +20,11 @@ const ALL_PLATFORMS: Platform[] = [
 ];
 
 export const AccountsPage: React.FC = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const [connectedPlatforms, setConnectedPlatforms] = useState<Platform[]>([]);
   const [connectingPlatforms, setConnectingPlatforms] = useState<Platform[]>(
     []
   );
-  const [error, setError] = useState<string | null>(null);
   const [facebookPages, setFacebookPages] = useState<any[]>([]);
   const [youtubeChannels, setYoutubeChannels] = useState<any[]>([]);
   const [selectedFacebookPage, setSelectedFacebookPage] = useState<string>("");
@@ -140,7 +138,6 @@ export const AccountsPage: React.FC = () => {
 
     try {
       setConnectingPlatforms((prev) => [...prev, platform]);
-      setError(null);
 
       // Use the OAuth client to start OAuth flow (uses JWT authentication)
       const result: any = await oauthManagerClient.startOAuthFlow(platform);
@@ -180,11 +177,7 @@ export const AccountsPage: React.FC = () => {
           } catch (error) {
             console.warn("Could not close popup from parent:", error);
           }
-          setError(
-            `Failed to connect ${platform}: ${
-              event.data.error || "OAuth failed"
-            }`
-          );
+
           window.removeEventListener("message", messageListener);
         }
       };
@@ -201,11 +194,6 @@ export const AccountsPage: React.FC = () => {
       }, 1000);
     } catch (error) {
       console.error("Error connecting to platform:", error);
-      setError(
-        `Failed to connect ${platform}: ${
-          error instanceof Error ? error.message : "Connection failed"
-        }`
-      );
     } finally {
       setConnectingPlatforms((prev) => prev.filter((p) => p !== platform));
     }
@@ -218,11 +206,6 @@ export const AccountsPage: React.FC = () => {
       checkConnectedPlatforms();
     } catch (error) {
       console.error("Failed to disconnect:", error);
-      setError(
-        `Failed to disconnect ${platform}: ${
-          error instanceof Error ? error.message : "Disconnection failed"
-        }`
-      );
     }
   };
 
@@ -253,7 +236,9 @@ export const AccountsPage: React.FC = () => {
 
         <div className=" p-2 bg-blue-50 border border-blue-200 rounded-md">
           <p className="text-sm text-blue-800">
-            <span className="font-medium">{connectedPlatforms.length}</span> of <span className="font-medium">{ALL_PLATFORMS.length}</span> {t("platforms_connected")}
+            <span className="font-medium">{connectedPlatforms.length}</span> of{" "}
+            <span className="font-medium">{ALL_PLATFORMS.length}</span>{" "}
+            {t("platforms_connected")}
           </p>
         </div>
 

@@ -25,8 +25,8 @@ import {
 import { useAppContext } from "@/context/AppContext";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useModal } from '../context2/ModalContext';
-import DiscardPostModal from '../components/modals/DiscardPostModal';
+import { useModal } from "../context2/ModalContext";
+import DiscardPostModal from "../components/modals/DiscardPostModal";
 
 interface PostPreviewProps {
   posts: any[];
@@ -74,32 +74,17 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
         (post.caption?.length || 0) + (post.hashtags?.join(" ")?.length || 0),
     }));
     setPosts(postsWithCharacterCount);
-
-    // Debug: Check if posts have generationPrompt
-    console.log(
-      "🔍 PostPreview received posts:",
-      generatedPosts.map((post) => ({
-        platform: post.platform,
-        hasGenerationPrompt: !!post.generationPrompt,
-        generationPrompt:
-          post.generationPrompt?.substring(0, 50) + "..." || "NONE",
-      }))
-    );
   }, [generatedPosts]);
 
   const handleDiscardAction = useCallback(() => {
-    // Yeh woh action hai jo Confirm par chalega (navigate)
-    navigate("/content"); 
-    // Agar onBack bhi karna hai toh: onBack(); navigate("/content");
+    navigate("/content");
   }, [navigate]);
 
   const handleDiscardClick = useCallback(() => {
-    // openModal function ko call karein
     openModal(DiscardPostModal, {
       onConfirm: handleDiscardAction, // Jo action perform karna hai
-      t: t,                         // Translation function pass karein
+      t: t, // Translation function pass karein
     });
-    // pendingDiscardAction aur state ki zaroorat khatam
   }, [handleDiscardAction, t]);
 
   const copyToClipboard = async (text: string) => {
@@ -112,7 +97,6 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
     }
   };
 
-  // Handle caption edit
   const handleCaptionEdit = useCallback(
     (newCaption: string) => {
       const currentPostIndex = posts.findIndex(
@@ -134,14 +118,12 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
     [posts, selectedPlatform]
   );
 
-  // Handle hashtags edit (single field with all hashtags)
   const handleHashtagsEdit = useCallback(
     (hashtagText: string) => {
       const currentPostIndex = posts.findIndex(
         (p) => p.platform === selectedPlatform
       );
       if (currentPostIndex !== -1) {
-        // Parse hashtags from text - split by spaces and ensure they start with #
         const hashtags = hashtagText
           .split(/\s+/)
           .map((tag) => tag.trim())
@@ -176,10 +158,8 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
     setEditingMode(false);
   }, [generatedPosts]);
 
-  // Handle regeneration mode toggle
   const handleRegenerateClick = useCallback(() => {
     setIsRegeneratingMode(true);
-    // Initialize with the platform-specific prompt stored in the post object
     const currentPost = posts.find(
       (post) => post.platform === selectedPlatform
     );
@@ -1176,7 +1156,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
             </button>
 
             <button
-                onClick={handleDiscardClick}
+              onClick={handleDiscardClick}
               className="w-full bg-transparent border-purple-600 border text-purple-600 flex items-center gap-2 justify-center hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
             >
               {/* <Edit className="w-5 h-5" /> */}
@@ -1256,7 +1236,6 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
           </div>
         )}
       </div>
-      
     </div>
   );
 };

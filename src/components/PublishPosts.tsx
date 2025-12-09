@@ -15,8 +15,8 @@ import {
 import API from "../services/api";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useModal } from '../context2/ModalContext';
-import DiscardWarningModal from '../components/modals/DiscardWarningModal';
+import { useModal } from "../context2/ModalContext";
+import DiscardWarningModal from "../components/modals/DiscardWarningModal";
 
 interface PublishProps {
   posts: GeneratedPost[];
@@ -40,7 +40,6 @@ export const PublishPosts: React.FC<PublishProps> = ({
   onReset,
 }) => {
   const { t, i18n } = useTranslation();
-  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
   const [selectedPlatforms, setSelectedPlatforms] = useState<Platform[]>(
     posts.map((p) => p.platform)
   );
@@ -60,8 +59,8 @@ export const PublishPosts: React.FC<PublishProps> = ({
   const [selectedYoutubeChannel, setSelectedYoutubeChannel] =
     useState<string>("");
   const [publishedPlatforms, setPublishedPlatforms] = useState<Platform[]>([]);
- const { openModal } = useModal();
-  
+  const { openModal } = useModal();
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -112,7 +111,6 @@ export const PublishPosts: React.FC<PublishProps> = ({
     // Puraane system mein yahan aap pendingDiscardAction(onBack) bhi chala sakte thay,
     // Lekin aapke code ke mutabiq, yahan sirf navigate chalta hai.
   }, [navigate]);
-
 
   // ✅ BUTTON CLICK HANDLER
   const handleDiscardClick = useCallback(() => {
@@ -383,103 +381,16 @@ export const PublishPosts: React.FC<PublishProps> = ({
         <h2 className="text-2xl font-bold theme-text-primary mb-2">
           {t("publish_posts")}
         </h2>
-        {/* <p className="text-sm text-gray-500 font-medium">
-          Connect your social media accounts and publish your AI-generated posts
-          directly.
-        </p> */}
-
-        {/* {posts.some((post) => !connectedPlatforms.includes(post.platform)) && (
-          <div className=" p-4 theme-bg-quaternary rounded-md border border-purple-600 my-3">
-            <div className="flex items-start gap-4">
-              <div>
-                <h3 className="font-semibold theme-text-secondary mb-1">
-                  No Accounts Connected
-                </h3>
-                <p className="text-sm theme-text-secondary leading-relaxed">
-                  Connect your social media accounts to start publishing content
-                  across multiple platforms.
-                </p>
-              </div>
-            </div>
-          </div>
-        )} */}
 
         <div className=" p-2 bg-blue-50 border border-blue-200 rounded-md">
           <p className="text-sm text-blue-800">
-            <span className="font-medium">{connectedPlatforms.length}</span> of <span className="font-medium">{posts.length}</span> {t("platforms_connected")}
+            <span className="font-medium">{connectedPlatforms.length}</span> of{" "}
+            <span className="font-medium">{posts.length}</span>{" "}
+            {t("platforms_connected")}
           </p>
         </div>
 
         <div className="mb-4 mt-4">
-          {/* <div className="flex items-center justify-between mb-4">
-            <div>
-              <h2 className="font-semibold text-slate-900 mb-1">
-                Select Platforms to Publish:
-              </h2>
-              <p className="text-sm text-gray-500 font-medium">
-                Connect your social media accounts to enable direct publishing
-                across all platforms.
-              </p>
-            </div>
-            {connectedPlatforms.filter((p) => !publishedPlatforms.includes(p))
-              .length > 0 && (
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() =>
-                    setSelectedPlatforms(
-                      connectedPlatforms.filter(
-                        (p) => !publishedPlatforms.includes(p)
-                      )
-                    )
-                  }
-                  className="text-xs px-3 py-1 rounded-md bg-purple-600 theme-bg-quaternary theme-text-secondary transition-colors"
-                >
-                  Select All
-                </button>
-                <button
-                  onClick={() => setSelectedPlatforms([])}
-                  className="text-xs px-3 py-1 rounded-md bg-purple-600 theme-bg-quaternary theme-text-secondary marker:transition-colors"
-                >
-                  Deselect All
-                </button>
-              </div>
-            )}
-          </div> */}
-
-          {/* Selection Summary */}
-          {/* {connectedPlatforms.length > 0 && (
-            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
-              <p className="text-sm text-blue-800">
-                <span className="font-medium">
-                  {
-                    selectedPlatforms.filter(
-                      (p) =>
-                        connectedPlatforms.includes(p) &&
-                        !publishedPlatforms.includes(p)
-                    ).length
-                  }
-                </span>
-                of
-                <span className="font-medium">
-                  {
-                    connectedPlatforms.filter(
-                      (p) => !publishedPlatforms.includes(p)
-                    ).length
-                  }
-                </span>
-                available platforms selected for publishing
-              </p>
-              {publishedPlatforms.length > 0 && (
-                <p className="text-sm text-green-800 mt-1">
-                  <span className="font-medium">
-                    {publishedPlatforms.length}
-                  </span>
-                  platforms already published: {publishedPlatforms.join(", ")}
-                </p>
-              )}
-            </div>
-          )} */}
-
           <div className="space-y-4">
             {posts.map((post) => {
               const isConnected = connectedPlatforms.includes(post.platform);
@@ -543,22 +454,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
                     </div>
                   </div>
 
-                  {/* Platform Selection Checkbox and Status */}
                   <div className="flex items-center gap-3">
-                    {/* Connection Status Icon */}
-                    {/* <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                      isConnected ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-400'
-                    }`}>
-                      {isConnected ? (
-                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                      ) : (
-                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8 9.414l-1.707 1.707a1 1 0 101.414 1.414L9 11.828l1.293 1.293a1 1 0 001.414-1.414L10.414 10.414l1.293-1.293a1 1 0 00-1.414-1.414L9 9.414 7.707 8.121a1 1 0 00-1.414 1.414L7.586 10.414 6.293 11.707a1 1 0 101.414 1.414L9 11.828l1.293 1.293z" clipRule="evenodd" />
-                        </svg>
-                      )}
-                    </div> */}
                     {isConnected ? (
                       <>
                         <button
@@ -582,10 +478,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
                       <> </>
                     )}
 
-                    {/* Platform Selection and Connect Controls */}
-
                     <div className="flex items-center gap-2">
-                      {/* Checkbox - Only show if connected and not published */}
                       {isConnected &&
                         !publishedPlatforms.includes(post.platform) && (
                           <label
@@ -633,7 +526,6 @@ export const PublishPosts: React.FC<PublishProps> = ({
                           </label>
                         )}
 
-                      {/* Published indicator - Show when platform is published */}
                       {isConnected &&
                         publishedPlatforms.includes(post.platform) && (
                           <div className="flex items-center gap-2 px-3 py-1 rounded-md bg-purple-200 bg-green-100 text-purple-600 text-sm font-medium">
@@ -652,7 +544,6 @@ export const PublishPosts: React.FC<PublishProps> = ({
                           </div>
                         )}
 
-                      {/* Connect Button - Only show when not connected */}
                       {!isConnected && (
                         <button
                           onClick={() => handleConnect(post.platform)}
@@ -677,14 +568,12 @@ export const PublishPosts: React.FC<PublishProps> = ({
           </div>
         </div>
 
-        {/* Hidden Social Media Manager */}
         <div className="hidden">
           <SocialMediaManager
             userId={userId || ""}
             onCredentialsUpdate={checkConnectedPlatforms}
           />
         </div>
-        {/* Platform-specific options (if needed) */}
         {connectedPlatforms.includes("facebook") &&
           selectedPlatforms.includes("facebook") &&
           facebookPages.length > 0 && (
@@ -732,12 +621,6 @@ export const PublishPosts: React.FC<PublishProps> = ({
               </select>
             </div>
           )}
-
-        {/* {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
-            <p className="text-red-800 text-sm">{error}</p>
-          </div>
-        )} */}
 
         <button
           onClick={handlePublish}
@@ -917,7 +800,6 @@ export const PublishPosts: React.FC<PublishProps> = ({
           </div>
         )}
       </div>
-      
     </div>
   );
 };

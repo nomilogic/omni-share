@@ -10,11 +10,10 @@ import { ContentInput } from "../components/ContentInput";
 import { AIGenerator } from "../components/AIGenerator";
 import { PostPreview } from "../components/PostPreview";
 import { PublishPosts } from "../components/PublishPosts";
-import { ProgressBar } from "../components/ProgressBar";
 import { useAppContext } from "../context/AppContext";
 import { savePost } from "../lib/database";
 import { generateSinglePlatformPost } from "../lib/gemini";
-import { Platform, GeneratedPost, CampaignInfo } from "../types";
+import { Platform, CampaignInfo } from "../types";
 
 export const ContentPage: React.FC = () => {
   const { state, dispatch } = useAppContext();
@@ -46,19 +45,13 @@ export const ContentPage: React.FC = () => {
       posts
     );
 
-    // Ensure posts have proper URLs for publishing (no blob URLs)
     const processedPosts = posts.map((post) => {
       const processedPost = { ...post };
 
-      // If we have content data with a server URL, use that instead of blob URLs
       if (
         state.contentData?.serverUrl &&
         (!processedPost.imageUrl || processedPost.imageUrl.startsWith("blob:"))
       ) {
-        console.log("Replacing blob URL with server URL for publishing:", {
-          original: processedPost.imageUrl,
-          serverUrl: state.contentData.serverUrl,
-        });
         processedPost.imageUrl = state.contentData.serverUrl;
         processedPost.mediaUrl = state.contentData.serverUrl;
       } else if (
@@ -77,9 +70,6 @@ export const ContentPage: React.FC = () => {
       return processedPost;
     });
 
-    console.log("Processed posts with proper URLs:", processedPosts);
-
-    // Save posts to database if we have campaign and user data
     if (state.user && state.selectedProfile && state.contentData) {
       try {
         await savePost(
@@ -90,7 +80,6 @@ export const ContentPage: React.FC = () => {
         );
       } catch (error) {
         console.error("Error saving post:", error);
-        // Continue anyway - we can still preview the posts
       }
     }
 
@@ -100,49 +89,14 @@ export const ContentPage: React.FC = () => {
 
   const handleGoToPublish = () => {
     setShowPublishModal(true);
-    // Prevent background scrolling when modal is open
-    // document.body.classList.add("modal-open");
-    // document.documentElement.classList.add("modal-open");
-    // document.documentElement.scrollTop = 0; // Scroll to top when modal opens
-    // document.body.scrollTop = 0;
-    // document.body.scrollTop = 0;
-    // const elemnt: HTMLElement = document.querySelector(".preview");
-
-    // // Adjust timeout as needed
-    // if (elemnt) {
-    //   // elemnt.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-    //   elemnt.style.display = "none";
-    //   setTimeout(() => {
-    //     elemnt.style.display = "block";
-    //   }, 100);
-    // }
   };
 
-  // Handle individual platform regeneration
   const handleRegeneratePlatform = async (
     platform: Platform,
     customPrompt?: string
   ) => {
-    console.log(
-      `🔄 Regenerating content for ${platform} with ${
-        customPrompt ? "custom prompt" : "original prompt"
-      }...`
-    );
-
-    // if (!state.selectedProfile) {
-    //   console.error('Missing profile for regeneration');
-    //   return;
-    // }
-
-    // Create or modify contentData with custom prompt
     let contentDataForRegeneration;
     if (!state.contentData) {
-      console.log(
-        "⚠️ No contentData found, creating fallback with custom prompt"
-      );
-
-      // Get existing post data to preserve media and other info
       const existingPost = state.generatedPosts?.find(
         (p) => p.platform === platform
       );
@@ -168,7 +122,6 @@ export const ContentPage: React.FC = () => {
         serverUrl: existingPost?.mediaUrl || existingPost?.imageUrl || null,
       };
     } else {
-      // Use existing contentData but update prompt if custom prompt provided
       contentDataForRegeneration = customPrompt
         ? {
             ...state.contentData,
@@ -178,7 +131,6 @@ export const ContentPage: React.FC = () => {
     }
 
     try {
-      // Create campaign info from the selected profile
       const campaignInfo = {
         name:
           state.selectedProfile?.campaignName ||
@@ -193,60 +145,34 @@ export const ContentPage: React.FC = () => {
           state.selectedProfile?.brandVoice ||
           "professional",
         goals: state.selectedProfile?.socialGoals || ["engagement"],
-        platforms: [platform], // Only regenerate for this platform
+        platforms: [platform],
       };
 
-      // Generate new post for the specific platform
       const regeneratedPost = await generateSinglePlatformPost(
         platform,
         campaignInfo as CampaignInfo,
         contentDataForRegeneration
       );
 
-      console.log(
-        `✅ Successfully regenerated ${platform} post:`,
-        regeneratedPost
-      );
-
-      // Update only the specific platform's post in the context
       dispatch({
         type: "UPDATE_SINGLE_PLATFORM_POST",
         payload: { platform, post: regeneratedPost },
       });
     } catch (error) {
       console.error(`❌ Error regenerating ${platform} post:`, error);
-      // You could show a toast notification here
     }
   };
 
-  // Handle reset after successful publishing
   const handlePublishReset = () => {
-    console.log(
-      "🔄 Resetting application state after successful publishing..."
-    );
-
-    // Clear all generated posts and content data
     dispatch({ type: "SET_GENERATED_POSTS", payload: [] });
     dispatch({ type: "SET_CONTENT_DATA", payload: null });
 
-    // Close the publish modal
     setShowPublishModal(false);
 
-    // Restore background scrolling
     document.body.classList.remove("modal-open");
     document.documentElement.classList.remove("modal-open");
 
-    // Navigate back to content creation
     navigate("/content");
-  };
-
-  const stepLabels = ["Content Input", "AI Generation", "Preview", "Publish"];
-  const getCurrentStep = () => {
-    const path = location.pathname;
-    if (path.includes("/generate")) return 1;
-    if (path.includes("/preview")) return 2;
-    if (path.includes("/publish")) return 3;
-    return 0;
   };
 
   return (
@@ -316,7 +242,6 @@ export const ContentPage: React.FC = () => {
                         posts={state.generatedPosts}
                         onBack={() => {
                           setShowPublishModal(false);
-                          // Restore background scrolling when modal is closed
                           document.body.classList.remove("modal-open");
                           document.documentElement.classList.remove(
                             "modal-open"
