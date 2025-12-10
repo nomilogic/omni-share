@@ -18,7 +18,7 @@ const TwoColumnSection2 = () => {
           <span className="text-purple-600 ">{t("line_06")}</span> {t("line_07")}
         </h2>
 
-        <p className="text-base sm:text-lg text-gray-500">
+        <p className="text-lg text-gray-500 leading-relaxed">
           {t("line_08")} <span className="text-xl font-medium"> {t("line_09")}</span>
         </p>
 
