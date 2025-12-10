@@ -43,11 +43,11 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
         const error = searchParams.get("error");
 
         if (error) {
-          throw new Error(t("oauth.errors.oauthError", { error }));
+          throw new Error(t("oauth_oauth_error", { error }));
         }
 
         if (!code || !state) {
-          throw new Error(t("oauth.errors.missingParams"));
+          throw new Error(t("oauth_missing_params"));
         }
 
         if (
@@ -56,16 +56,16 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
             provider !== "facebook" &&
             provider !== "linkedin")
         ) {
-          throw new Error(t("oauth.errors.invalidProvider"));
+          throw new Error(t("oauth_invalid_provider"));
         }
 
-        setMessage(t("oauth.messages.authenticating", { provider }));
+        setMessage(t("oauth_authenticating_with", { provider }));
 
         // Handle the OAuth callback
         const result = await handleOAuthCallback(provider, code, state);
         console.log("result", result);
         setStatus("success");
-        setMessage(t("oauth.messages.success", { provider }));
+        setMessage(t("oauth_success", { provider }));
 
         if (window.opener) {
           window.opener.postMessage(
@@ -83,7 +83,7 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
               window.close();
             } catch (error) {
               console.warn("Could not close popup window:", error);
-              setMessage(t("oauth.messages.successCloseWindow"));
+              setMessage(t("oauth_success_close_window"));
             }
           }, 400);
         } else {
@@ -98,7 +98,7 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
       } catch (error) {
         console.error("error", error);
         const errorMessage =
-          error instanceof Error ? error.message : t("oauth.errors.authenticationFailed");
+          error instanceof Error ? error.message : t("oauth_authentication_failed");
         setMessage(errorMessage);
 
         if (window.opener) {
@@ -117,7 +117,7 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
             } catch (error) {
               console.warn("Could not close popup window:", error);
               // Fallback: show user message to close manually
-              setMessage(t("oauth.messages.errorCloseWindow"));
+              setMessage(t("oauth_error_close_window"));
             }
           }, 2000);
         } else {
@@ -136,11 +136,11 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
   const getProviderDisplayName = (provider: string) => {
     switch (provider) {
       case "google":
-        return t("oauth.providers.google");
+        return t("oauth_provider_google");
       case "facebook":
-        return t("oauth.providers.facebook");
+        return t("oauth_provider_facebook");
       case "linkedin":
-        return t("oauth.providers.linkedin");
+        return t("oauth_provider_linkedin");
       default:
         return provider;
     }
@@ -169,16 +169,16 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
 
         <h2 className="text-xl font-semibold theme-text-primary mb-2">
           {status === "processing" &&
-            t("oauth.headings.connectingTo", { provider: getProviderDisplayName(provider || "") })}
-          {status === "success" && t("oauth.headings.authenticationSuccessful")}
-          {status === "error" && t("oauth.headings.authenticationFailed")}
+            t("oauth_connecting_to", { provider: getProviderDisplayName(provider || "") })}
+          {status === "success" && t("oauth_authentication_successful")}
+          {status === "error" && t("oauth_authentication_failed_heading")}
         </h2>
 
         <p className=" text-gray-500">{message}</p>
 
         {status === "success" && (
           <div className="mt-4 text-sm theme-text-secondary">
-            {t("oauth.messages.redirecting")}
+            {t("oauth_redirecting")}
           </div>
         )}
 
@@ -188,7 +188,7 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
               onClick={() => navigate("/auth")}
               className="theme-button-primary px-6 py-3 rounded-md hover:theme-button-hover transition-all duration-200"
             >
-              {t("oauth.buttons.backToLogin")}
+              {t("oauth_back_to_login")}
             </button>
           </div>
         )}
