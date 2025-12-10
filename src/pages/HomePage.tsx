@@ -1163,7 +1163,7 @@ function HomePage() {
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 md:mb-5">
               {t("faq2")}
             </h2>
-            <p className="text-xl text-gray-500 mb-4 md:mb-5 ">
+            <p className="text-xl text-gray-500 font-medium mb-4 md:mb-5 ">
               {t("faq_message")}
             </p>
           </motion.div>
