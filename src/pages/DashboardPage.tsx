@@ -61,7 +61,7 @@ export const DashboardPage: React.FC = () => {
   useEffect(() => {
     fetchPostHistory();
   }, []);
-
+  console.log("userPlan", userPlan);
   return (
     <>
       {!isEditing && !isPasswordEditing && (
@@ -86,7 +86,7 @@ export const DashboardPage: React.FC = () => {
                   title="Omni Coins"
                   stats={`${coinBalance.toLocaleString()}/${coinLimit.toLocaleString()}`}
                   subtitle={t("add_coins_message")}
-                  buttonText={t("add_coins")}
+                  buttonText={userPlan == "free" ? "" : t("add_coins")}
                   onButtonClick={() => navigate("/pricing?tab=addons")}
                 />
 
