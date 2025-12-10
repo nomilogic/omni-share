@@ -5,12 +5,13 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { Check } from "lucide-react";
 import { useAppContext } from "../context/AppContext";
 import API from "../services/api";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import Icon from "../components/Icon";
 import { useSubscriptionModal } from "../context/SubscriptionModalContext";
 import { usePricingModal } from "../context/PricingModalContext";
 import { notify } from "../utils/toast";
 import { useTranslation } from "react-i18next";
+import CustomCurrencySelector from "@/components/CustomCurrencySelector";
 
 export const PricingPage: React.FC = () => {
   const { state, refreshUser, setProcessing, packages, addons, loader, user } =
@@ -289,17 +290,10 @@ export const PricingPage: React.FC = () => {
           </button>
         </div>
         <div className="pb-1">
-          <select
-            value={selectedCurrency}
-            onChange={(e) => setSelectedCurrency(e.target.value)}
-            className="  rounded-md px-2.5 border-purple-600 border text-purple-600   py-0.5 text-sm"
-          >
-            <option value="USD">USD</option>
-            <option value="EUR">EUR</option>
-            <option value="GBP">GBP</option>
-            <option value="CNY">CNY</option>
-            <option value="AUD">AUD</option>
-          </select>
+          <CustomCurrencySelector
+            selectedCurrency={selectedCurrency}
+            setSelectedCurrency={setSelectedCurrency}
+          />
         </div>
       </div>
 
@@ -455,130 +449,125 @@ export const PricingPage: React.FC = () => {
       )}
       {activeTab === "addons" && (
         <>
-
-       { user?.wallet?.package.tier === "free" ?
-              <div className="**w-full h-full** **flex items-center justify-center** ">
-                {/* The content card - added max-w-sm to control the inner card size */}
-                <div className="flex flex-col items-center justify-center p-8 text-center max-w-sm mx-auto">
-                  {/* Information Icon */}
-                  <div className="mb-6 p-4 rounded-full border-4 border-[#7650e3]">
-                    {/* Assuming you are using an 'i' or 'Info' icon component, replace with your actual icon */}
-                    <div className="text-[#7650e3] text-4xl font-bold flex items-center justify-center h-12 w-12">
-                      i
-                    </div>
+          {user?.wallet?.package.tier === "free" ? (
+            <div className="**w-full h-full** **flex items-center justify-center** ">
+              {/* The content card - added max-w-sm to control the inner card size */}
+              <div className="flex flex-col items-center justify-center p-8 text-center max-w-sm mx-auto">
+                {/* Information Icon */}
+                <div className="mb-2 p-4 rounded-full border-4 border-[#7650e3]">
+                  {/* Assuming you are using an 'i' or 'Info' icon component, replace with your actual icon */}
+                  <div className="text-[#7650e3] text-4xl font-bold flex items-center justify-center h-12 w-12">
+                    i
                   </div>
-
-                  {/* Message */}
-                  <p className="text-sm font-medium text-gray-800 mb-8">
-                    To buy Omni Coins,
-                    <br />
-                    you must have an active Standard or Pro plan.
-                  </p>
-
-                  {/* Upgrade Button */}
-                  <button className="flex items-center justify-center w-full max-w-xs py-3 px-6 rounded-md bg-[#7650e3] hover:bg-[#633fdc] transition-colors shadow-lg">
-                    {/* Gem/Diamond Icon */}
-                    <span className="">
-                      <Icon
-                                name="white-diamond"
-                                size={24}
-                                
-                              />
-                    </span>
-
-                    <span className="text-lg font-semibold text-white px-2 py-0.5 rounded-sm">
-                      Upgrade
-                    </span>
-                  </button>
                 </div>
-              </div>:
-            
-          <div className="grid xl:grid-cols-3 md:grid-cols-2 gap-5">
-            { addons?.length === 0 ? (
-              <p className="col-span-3 text-center text-[#7650e3]">
-                No credits available
-              </p>
-            ) : loader ? (
-              <div className="flex flex-col justify-center items-center min-h-[40vh]">
-                <Icon name="spiral-logo" size={45} className="animate-spin" />
-                <p className="mt-1 text-base font-medium text-gray-500">
-                  Loading Omnicoins....
-                </p>
-              </div>
-            ) : (
-              addons?.map((addon) => {
-                const hasSale = addon.isSale;
-                const bonusAmount = addon.bonus || 0;
-                const totalCoins = addon.coins + bonusAmount;
 
-                return (
-                  <div
-                    key={addon.id}
-                    className="rounded-md border-3 border-gray-200 shadow-md bg-white transform transition-all relative w-full pt-3"
-                  >
-                    <div className="text-left font-medium text-3xl px-5 py-2.5 pb-[4rem]">
-                      <div className="flex items-center gap-1 mb-1">
-                        <div className="text-[22px] font-semibold text-slate-900">
-                          {totalCoins?.toLocaleString()}
+                {/* Message */}
+                <p className="text-sm font-medium text-gray-800 mb-2 mt-2">
+                  To buy Omni Coins,
+                  <br />
+                  you must have an active Standard or Pro plan.
+                </p>
+
+                {/* Upgrade Button */}
+                <Link
+                  to="/pricing"
+                  onClick={() => setShowPackage(false)}
+                  className="w-full mt-2 px-3 py-2.5 border text-md font-semibold rounded-md group flex items-center justify-center gap-2 text-white bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] border-[#7650e3]"
+                >
+                  <div className="group-hover:filter-omni h-full w-full text-center">
+                    <Icon name="white-diamond" size={20} className="mr-2" />
+                    {t("upgrade")}
+                  </div>
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <div className="grid xl:grid-cols-3 md:grid-cols-2 gap-5">
+              {addons?.length === 0 ? (
+                <p className="col-span-3 text-center text-[#7650e3]">
+                  No credits available
+                </p>
+              ) : loader ? (
+                <div className="flex flex-col justify-center items-center min-h-[40vh]">
+                  <Icon name="spiral-logo" size={45} className="animate-spin" />
+                  <p className="mt-1 text-base font-medium text-gray-500">
+                    Loading Omnicoins....
+                  </p>
+                </div>
+              ) : (
+                addons?.map((addon) => {
+                  const hasSale = addon.isSale;
+                  const bonusAmount = addon.bonus || 0;
+                  const totalCoins = addon.coins + bonusAmount;
+
+                  return (
+                    <div
+                      key={addon.id}
+                      className="rounded-md border-3 border-gray-200 shadow-md bg-white transform transition-all relative w-full pt-3"
+                    >
+                      <div className="text-left font-medium text-3xl px-5 py-2.5 pb-[4rem]">
+                        <div className="flex items-center gap-1 mb-1">
+                          <div className="text-[22px] font-semibold text-slate-900">
+                            {totalCoins?.toLocaleString()}
+                          </div>
+
+                          {addon.isSale && (
+                            <span className="bg-[#7650e3] text-white px-2 py-0.5 rounded text-xs font-semibold">
+                              {t("flash_sale")}
+                            </span>
+                          )}
                         </div>
 
-                        {addon.isSale && (
-                          <span className="bg-[#7650e3] text-white px-2 py-0.5 rounded text-xs font-semibold">
-                            {t("flash_sale")}
-                          </span>
-                        )}
+                        <div className="text-[0.8rem] text-slate-800 -mt-[18px] w-full">
+                          {hasSale ? (
+                            <>
+                              {t("total")}: {addon.coins.toLocaleString()}
+                              <span className="mx-1">+</span>
+                              <span className="text-[#7650e3] inline-block">
+                                {bonusAmount.toLocaleString()} {t("bonus")}
+                              </span>
+                            </>
+                          ) : (
+                            <>Total: {totalCoins.toLocaleString()}</>
+                          )}
+                        </div>
+
+                        <Icon
+                          name="spiral-grey"
+                          className="absolute -z-10 top-3 right-2"
+                          size={120}
+                        />
                       </div>
 
-                      <div className="text-[0.8rem] text-slate-800 -mt-[18px] w-full">
-                        {hasSale ? (
-                          <>
-                            {t("total")}: {addon.coins.toLocaleString()}
-                            <span className="mx-1">+</span>
-                            <span className="text-[#7650e3] inline-block">
-                              {bonusAmount.toLocaleString()} {t("bonus")}
-                            </span>
-                          </>
-                        ) : (
-                          <>Total: {totalCoins.toLocaleString()}</>
-                        )}
+                      <div className="flex justify-between bg-purple-100 items-center px-5 py-2.5 rounded-b-md">
+                        <p className="text-center text-2xl text-purple-600 font-semibold">
+                          {langToCurrencySymbol[selectedCurrency] || ""}
+                          {convertedAddonAmounts[addon.id] ?? addon.amount}
+                        </p>
+
+                        <button
+                          disabled={
+                            user?.wallet?.package.tier === "free" ||
+                            selectedAddon?.id === addon.id ||
+                            loadingAddon
+                          }
+                          onClick={() => {
+                            setSelectedAddon(addon);
+                            handleBuyAddon(addon);
+                          }}
+                          className="rounded-md theme-bg-light w-fit px-3 disabled:cursor-not-allowed font-bold text-base py-1 border border-[#7650e3] text-[#7650e3] hover:bg-[#d7d7fc] transition hover:text-purple-600"
+                        >
+                          {selectedAddon?.id === addon.id
+                            ? "Buying...."
+                            : t("buy_now")}
+                        </button>
                       </div>
-
-                      <Icon
-                        name="spiral-grey"
-                        className="absolute -z-10 top-3 right-2"
-                        size={120}
-                      />
                     </div>
-
-                    <div className="flex justify-between bg-purple-100 items-center px-5 py-2.5 rounded-b-md">
-                      <p className="text-center text-2xl text-purple-600 font-semibold">
-                        {langToCurrencySymbol[selectedCurrency] || ""}
-                        {convertedAddonAmounts[addon.id] ?? addon.amount}
-                      </p>
-
-                      <button
-                        disabled={
-                          user?.wallet?.package.tier === "free" ||
-                          selectedAddon?.id === addon.id ||
-                          loadingAddon
-                        }
-                        onClick={() => {
-                          setSelectedAddon(addon);
-                          handleBuyAddon(addon);
-                        }}
-                        className="rounded-md theme-bg-light w-fit px-3 disabled:cursor-not-allowed font-bold text-base py-1 border border-[#7650e3] text-[#7650e3] hover:bg-[#d7d7fc] transition hover:text-purple-600"
-                      >
-                        {selectedAddon?.id === addon.id
-                          ? "Buying...."
-                          : t("buy_now")}
-                      </button>
-                    </div>
-                  </div>
-                );
-              })
-            )}
-          </div>
-}
+                  );
+                })
+              )}
+            </div>
+          )}
         </>
       )}
     </div>

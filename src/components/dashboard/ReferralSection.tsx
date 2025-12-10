@@ -162,7 +162,7 @@ const ReferralSection: FC<Props> = ({ close }) => {
               </p>
             )}
           </div>
-          <button className="flex items-center rounded-md gap-2 transition-colors text-md font-semibold text-white border-2 border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] py-2 px-3 ">
+          <button className="flex w-28 items-center rounded-md gap-2 transition-colors text-md font-semibold text-[#7650e3] border-2 border-[#7650e3] bg-white hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] py-2 px-3 ">
             <Share2 className="w-[18px] h-[18px]" />
             {t("share")}
           </button>

@@ -90,7 +90,7 @@ export const PricingModals: React.FC = () => {
                 {selectedPlan.name || "Standard"}
               </p>
 
-              <div className="flex justify-center items-end gap-4">
+              <div className="flex justify-center items-end gap-4 mb-5">
                 <span className="text-[45px] text-purple-600 font-bold leading-none">
                   ${selectedPlan.amount + ".00" || "25.00"}
                 </span>
@@ -103,9 +103,7 @@ export const PricingModals: React.FC = () => {
                 </div>
               </div>
 
-              <p className="text-[12px] font-semibold text-black mt-2 mb-3">
-                Includes GST of $0.00.
-              </p>
+              
             </div>
 
             <div className="text-center text-[13px] text-gray-500 font-medium my-6">

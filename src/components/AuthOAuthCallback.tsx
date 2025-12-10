@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate, useParams } from "react-router-dom";
 import { handleOAuthCallback } from "../utils/authOAuth";
 import { CheckCircle, Loader, XCircle } from "lucide-react";
 import Icon from "./Icon";
+import { useTranslation } from "react-i18next"; // Added import
 
 interface AuthOAuthCallbackProps {
   onAuthSuccess: (user: any) => void;
@@ -19,6 +20,8 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
   );
   const [message, setMessage] = useState("Processing authentication...");
   const [isProcessing, setIsProcessing] = useState(false);
+  const { t, i18n } = useTranslation();
+  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
 
   const hasRunRef = useRef(false);
 
@@ -40,11 +43,11 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
         const error = searchParams.get("error");
 
         if (error) {
-          throw new Error(`OAuth error: ${error}`);
+          throw new Error(t("oauth.errors.oauthError", { error }));
         }
 
         if (!code || !state) {
-          throw new Error("Missing code or state parameter");
+          throw new Error(t("oauth.errors.missingParams"));
         }
 
         if (
@@ -53,16 +56,16 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
             provider !== "facebook" &&
             provider !== "linkedin")
         ) {
-          throw new Error("Invalid OAuth provider");
+          throw new Error(t("oauth.errors.invalidProvider"));
         }
 
-        setMessage(`Authenticating with ${provider}...`);
+        setMessage(t("oauth.messages.authenticating", { provider }));
 
         // Handle the OAuth callback
         const result = await handleOAuthCallback(provider, code, state);
         console.log("result", result);
         setStatus("success");
-        setMessage(`Successfully authenticated with ${provider}!`);
+        setMessage(t("oauth.messages.success", { provider }));
 
         if (window.opener) {
           window.opener.postMessage(
@@ -80,9 +83,7 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
               window.close();
             } catch (error) {
               console.warn("Could not close popup window:", error);
-              setMessage(
-                "Authentication successful! You can close this window."
-              );
+              setMessage(t("oauth.messages.successCloseWindow"));
             }
           }, 400);
         } else {
@@ -97,7 +98,7 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
       } catch (error) {
         console.error("error", error);
         const errorMessage =
-          error instanceof Error ? error.message : "Authentication failed";
+          error instanceof Error ? error.message : t("oauth.errors.authenticationFailed");
         setMessage(errorMessage);
 
         if (window.opener) {
@@ -116,7 +117,7 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
             } catch (error) {
               console.warn("Could not close popup window:", error);
               // Fallback: show user message to close manually
-              setMessage("Authentication failed. You can close this window.");
+              setMessage(t("oauth.messages.errorCloseWindow"));
             }
           }, 2000);
         } else {
@@ -130,16 +131,16 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
     };
 
     handleCallback();
-  }, [searchParams, navigate, provider, onAuthSuccess]);
+  }, [searchParams, navigate, provider, onAuthSuccess, t]); // Added t to dependencies
 
   const getProviderDisplayName = (provider: string) => {
     switch (provider) {
       case "google":
-        return "Google";
+        return t("oauth.providers.google");
       case "facebook":
-        return "Facebook";
+        return t("oauth.providers.facebook");
       case "linkedin":
-        return "LinkedIn";
+        return t("oauth.providers.linkedin");
       default:
         return provider;
     }
@@ -168,16 +169,16 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
 
         <h2 className="text-xl font-semibold theme-text-primary mb-2">
           {status === "processing" &&
-            `Connecting to ${getProviderDisplayName(provider || "")}`}
-          {status === "success" && "Authentication Successful"}
-          {status === "error" && "Authentication Failed"}
+            t("oauth.headings.connectingTo", { provider: getProviderDisplayName(provider || "") })}
+          {status === "success" && t("oauth.headings.authenticationSuccessful")}
+          {status === "error" && t("oauth.headings.authenticationFailed")}
         </h2>
 
         <p className=" text-gray-500">{message}</p>
 
         {status === "success" && (
           <div className="mt-4 text-sm theme-text-secondary">
-            Redirecting to create content...
+            {t("oauth.messages.redirecting")}
           </div>
         )}
 
@@ -187,7 +188,7 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
               onClick={() => navigate("/auth")}
               className="theme-button-primary px-6 py-3 rounded-md hover:theme-button-hover transition-all duration-200"
             >
-              Back to Login
+              {t("oauth.buttons.backToLogin")}
             </button>
           </div>
         )}

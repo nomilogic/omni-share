@@ -3,6 +3,7 @@ import { Navigate, useLocation } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
 import { Sparkles } from "lucide-react";
 import Icon from "./Icon";
+import { useTranslation } from "react-i18next";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -11,6 +12,8 @@ interface ProtectedRouteProps {
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { state } = useAppContext();
   const location = useLocation();
+  const { t, i18n } = useTranslation();
+  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
 
   if (state.loading) {
     return (
@@ -18,9 +21,9 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
         <div className="text-center">
           <Icon name="spiral-logo" size={50} className="animate-spin mb-2" />
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            Loading OmniShare
+            {t("loading_omnishare")}
           </h2>
-          <p className="text-gray-600">Setting up your workspace...</p>
+          <p className="text-gray-600">{t("setting_up_workspace")}</p>
         </div>
       </div>
     );

@@ -5,7 +5,7 @@ import axios, {
 } from "axios";
 
 const BASE_URL: string =
-  import.meta.env.VITE_API_URL || "https://4q2ddj89-3000.uks1.devtunnels.ms/api";
+  import.meta.env.VITE_API_URL || "https://omnishare.ai/server/api";
 
 interface LoginPayload {
   email: string;
