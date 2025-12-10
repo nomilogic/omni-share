@@ -25,6 +25,8 @@
   "oauth_success_close_window": "Authentication successful! You can close this window.",
   "oauth_error_close_window": "Authentication failed. You can close this window.",
   "oauth_authentication_failed": "Authentication failed",
+  "buy_omni_coins_line1": "To buy Omni Coins,",
+  "buy_omni_coins_line2": "you must have an active Standard or Pro plan.",
   "oauth_redirecting": "Redirecting to create content...",
   "oauth_provider_google": "Google",
   "oauth_provider_facebook": "Facebook",

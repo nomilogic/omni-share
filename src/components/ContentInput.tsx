@@ -34,7 +34,7 @@ import {
   is9x16Video,
 } from "../utils/videoUtils";
 import { useLoadingAPI } from "../hooks/useLoadingAPI";
-import VideoPoster from "../assets/omnishare-02 (5).jpg";
+import VideoPoster from "../assets/omnishare-02 (6).jpg";
 import API from "@/services/api";
 import { notify } from "@/utils/toast";
 import { useTranslation } from "react-i18next";
