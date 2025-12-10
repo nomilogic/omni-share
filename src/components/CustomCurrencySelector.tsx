@@ -59,7 +59,7 @@ const CustomCurrencySelector: React.FC<CustomCurrencySelectorProps> = ({
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         // Use the existing styles from your old <select> for consistency
-        className="rounded-md px-2.5 border-purple-600 border text-purple-600 py-0.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+        className="rounded-md px-2.5 border-purple-600 border text-purple-600 py-0.5 text-sm font-medium "
         aria-haspopup="true"
         aria-expanded={isOpen}
       >

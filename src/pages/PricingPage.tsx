@@ -463,9 +463,9 @@ export const PricingPage: React.FC = () => {
 
                 {/* Message */}
                 <p className="text-sm font-medium text-gray-800 mb-2 mt-2">
-                  To buy Omni Coins,
+                  {t("buy_omni_coins_line1")}
                   <br />
-                  you must have an active Standard or Pro plan.
+                  {t("buy_omni_coins_line2")}
                 </p>
 
                 {/* Upgrade Button */}

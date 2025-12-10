@@ -30,6 +30,8 @@
   "oauth_success_close_window": "¡Autenticación exitosa! Puedes cerrar esta ventana.",
   "oauth_error_close_window": "Error de autenticación. Puedes cerrar esta ventana.",
   "oauth_authentication_failed": "Error de autenticación",
+  "buy_omni_coins_line1": "Para comprar Omni Coins,",
+  "buy_omni_coins_line2": "debes tener un plan Estándar o Pro activo.",
   "oauth_redirecting": "Redirigiendo para crear contenido...",
   "oauth_provider_google": "Google",
   "oauth_provider_facebook": "Facebook",
