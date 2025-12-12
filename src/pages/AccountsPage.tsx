@@ -26,11 +26,13 @@ export const AccountsPage: React.FC = () => {
     []
   );
   const [facebookPages, setFacebookPages] = useState<any[]>([]);
+  const [linkedinPages, setlinkedinPages] = useState<any[]>([]);
   const [youtubeChannels, setYoutubeChannels] = useState<any[]>([]);
+  const [selectedlinkedinPage, setSelectedlinkedinPage] = useState<string>("");
   const [selectedFacebookPage, setSelectedFacebookPage] = useState<string>("");
   const [selectedYoutubeChannel, setSelectedYoutubeChannel] =
     useState<string>("");
-
+  console.log("linkedinPages", linkedinPages);
   useEffect(() => {
     checkConnectedPlatforms();
   }, []);
@@ -57,49 +59,108 @@ export const AccountsPage: React.FC = () => {
       }
       setConnectedPlatforms(connected);
 
-      // Fetch Facebook pages if Facebook is connected
-      if (connected.includes("facebook")) {
-        await fetchFacebookPages();
-      }
+      // if (connected.includes("facebook")) {
+      //   await fetchFacebookPages();
+      // }
+      // if (connected.includes("linkedin")) {
+      //   await fetchLinkedPages();
+      // }
 
-      // Fetch YouTube channels if YouTube is connected
-      if (connected.includes("youtube")) {
-        await fetchYouTubeChannels();
-      }
+      // if (connected.includes("youtube")) {
+      //   await fetchYouTubeChannels();
+      // }
     } catch (error) {
       console.error("Failed to check connected platforms:", error);
       setConnectedPlatforms([]);
     }
   };
 
-  const fetchFacebookPages = async () => {
+  const fetchLinkedPages = async () => {
     try {
       const token = localStorage.getItem("auth_token");
       if (!token) return;
 
-      const tokenResponse = await API.tokenForPlatform("facebook");
+      const tokenResponse = await API.tokenForPlatform("linkedin");
 
       if (tokenResponse?.data) {
         const tokenData = await tokenResponse?.data;
         if (tokenData.connected && tokenData.token?.access_token) {
-          const pagesResponse = await fetch(
-            `/api/facebook/pages?access_token=${tokenData.token.access_token}`
-          );
-          if (pagesResponse.ok) {
-            const pagesData = await pagesResponse.json();
-            setFacebookPages(pagesData.pages || []);
-            if (
-              pagesData.pages &&
-              pagesData.pages.length > 0 &&
-              !selectedFacebookPage
-            ) {
-              setSelectedFacebookPage(pagesData.pages[0].id);
-            }
+          const res = await API.linkedinPages(tokenData.token?.access_token);
+          if (res?.data) {
+            const pagesData = await res.data;
+            setlinkedinPages(pagesData.data || []);
+            setSelectedlinkedinPage(pagesData.data[0].urn);
           }
         }
       }
     } catch (error) {
       console.error("Failed to fetch Facebook pages:", error);
+    }
+  };
+  const fetchFacebookPages = async () => {
+    try {
+      const token = localStorage.getItem("auth_token");
+      if (!token) {
+        console.warn("No auth token found");
+        return;
+      }
+
+      const tokenResponse = await API.tokenForPlatform("facebook");
+      console.log("Token response:", tokenResponse);
+
+      if (tokenResponse?.data) {
+        const tokenData = await tokenResponse.data;
+        console.log("Token data:", tokenData);
+
+        if (tokenData.connected && tokenData.token?.access_token) {
+          console.log(
+            "Fetching Facebook pages with token:",
+            tokenData.token.access_token.substring(0, 10) + "..."
+          );
+
+          const pagesResponse = await API.facebookPages(
+            tokenData.token.access_token
+          );
+          console.log("Pages response:", pagesResponse);
+
+          // Handle both possible response structures
+          let pagesData = [];
+
+          // Check if response has status 200 and data.data
+          if (pagesResponse?.data?.data) {
+            pagesData = Array.isArray(pagesResponse.data.data)
+              ? pagesResponse.data.data
+              : [];
+          }
+          // Check if response directly has pages array
+          else if (pagesResponse?.pages) {
+            pagesData = Array.isArray(pagesResponse.pages)
+              ? pagesResponse.pages
+              : [];
+          }
+          // Check if response.data has pages array
+          else if (pagesResponse?.data?.pages) {
+            pagesData = Array.isArray(pagesResponse.data.pages)
+              ? pagesResponse.data.pages
+              : [];
+          }
+
+          console.log("Extracted pages data:", pagesData);
+          setFacebookPages(pagesData);
+
+          if (pagesData && pagesData.length > 0 && !selectedFacebookPage) {
+            setSelectedFacebookPage(pagesData[0].id);
+            console.log("Set initial page:", pagesData[0].id);
+          }
+        } else {
+          console.warn("Facebook not connected or no access token");
+        }
+      } else {
+        console.warn("No token response data");
+      }
+    } catch (error) {
+      console.error("Failed to fetch Facebook pages:", error);
+    } finally {
     }
   };
 
@@ -352,6 +413,28 @@ export const AccountsPage: React.FC = () => {
       </div>
 
       {/* Platform-specific options */}
+      {/* {connectedPlatforms.includes("linkedin") && linkedinPages.length > 0 && (
+        <div className="mb-6 p-2 bg-blue-50 border border-blue-200 rounded-md">
+          <h4 className="font-medium text-blue-900 mb-2">
+            Linkedin page Selection
+          </h4>
+          <p className="text-blue-700 text-sm mb-3">
+            Choose your default Linkedin page for publishing:
+          </p>
+          <select
+            value={selectedlinkedinPage}
+            onChange={(e) => setSelectedlinkedinPage(e.target.value)}
+            className="w-full p-3 border border-blue-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          >
+            {linkedinPages.map((page) => (
+              <option key={page.urn} value={page.urn}>
+                {page.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
       {connectedPlatforms.includes("facebook") && facebookPages.length > 0 && (
         <div className="mb-6 p-2 bg-blue-50 border border-blue-200 rounded-md">
           <h4 className="font-medium text-blue-900 mb-2">
@@ -394,7 +477,7 @@ export const AccountsPage: React.FC = () => {
             ))}
           </select>
         </div>
-      )}
+      )} */}
 
       {/* Error Messages */}
       {/* {error && (

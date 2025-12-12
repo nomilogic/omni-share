@@ -128,6 +128,7 @@ interface APIInstance extends AxiosInstance {
   getWallet: () => Promise<any>;
   facebookPost: (data: any) => Promise<any>;
   facebookPages: (token: any) => Promise<any>;
+  linkedinPages: (token: any) => Promise<any>;
   instagramPost: (data: any) => Promise<any>;
   linkedinPost: (data: any) => Promise<any>;
   twitterPost: (data: any) => Promise<any>;
@@ -271,6 +272,8 @@ API.getWallet = () => API.get("/client/wallet");
 API.facebookPost = (data) => API.post("/client/facebook/post", data);
 API.facebookPages = (token) =>
   API.get(`/client/facebook/pages?access_token=${token}`);
+API.linkedinPages = (token) =>
+  API.get(`/client/linkedin/pages?access_token=${token}`);
 API.instagramPost = (data) => API.post("/client/instagram/post", data);
 API.linkedinPost = (data) => API.post("/client/linkedin/post", data);
 API.twitterPost = (data) => API.post("/client/twitter/post", data);

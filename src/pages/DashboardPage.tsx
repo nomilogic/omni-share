@@ -61,7 +61,6 @@ export const DashboardPage: React.FC = () => {
   useEffect(() => {
     fetchPostHistory();
   }, []);
-  console.log("userPlan", userPlan);
   return (
     <>
       {!isEditing && !isPasswordEditing && (

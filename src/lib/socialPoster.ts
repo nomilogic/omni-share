@@ -69,10 +69,16 @@ export async function postToLinkedIn(
 
 export async function postToLinkedInFromServer(
   accessToken: string,
-  post: GeneratedPost
+  post: GeneratedPost,
+  pageId?: string
 ) {
   try {
-    const response = await API.linkedinPost({ accessToken, post });
+    console.log("pageId", pageId);
+    const response = await API.linkedinPost({
+      accessToken,
+      post,
+      ...(pageId && { pageId }),
+    });
 
     return response.data;
   } catch (error: any) {
@@ -93,11 +99,11 @@ export async function postToFacebookFromServer(
     });
 
     const response = await API.facebookPost({ accessToken, post, pageId });
-    
+
     console.log("📱 Facebook API response:", {
       status: response.status,
       data: response.data,
-      dataType: typeof response.data
+      dataType: typeof response.data,
     });
 
     return response.data;
@@ -436,6 +442,7 @@ export async function postToAllPlatforms(
     status: "pending" | "success" | "error"
   ) => void,
   context?: {
+    linkedinPageId?: string;
     facebookPageId?: string;
     youtubeChannelId?: string;
     thumbnailUrl?: string;
@@ -582,6 +589,7 @@ async function postWithRealOAuth(
   context?: {
     facebookPageId?: string;
     youtubeChannelId?: string;
+    linkedinPageId?: string;
     thumbnailUrl?: string;
   }
 ): Promise<{
@@ -594,7 +602,11 @@ async function postWithRealOAuth(
   try {
     switch (post.platform) {
       case "linkedin":
-        const result = await postToLinkedInFromServer(accessToken, post);
+        const result = await postToLinkedInFromServer(
+          accessToken,
+          post,
+          context?.linkedinPageId || post.pageId
+        );
         return {
           success: true,
           message: `Successfully posted to LinkedIn`,
@@ -608,17 +620,22 @@ async function postWithRealOAuth(
           context?.facebookPageId || post.pageId
         );
         console.log("Facebook posting result:", fbResult);
-        
+
         // Extract postId with multiple fallback paths
-        let fbPostId = fbResult?.postId || fbResult?.id || fbResult?.data?.id || fbResult?.post_id;
-        
+        let fbPostId =
+          fbResult?.postId ||
+          fbResult?.id ||
+          fbResult?.data?.id ||
+          fbResult?.post_id;
+
         // If still no ID, check for nested structures
         if (!fbPostId && fbResult?.data) {
-          fbPostId = fbResult.data.postId || fbResult.data.id || fbResult.data.post_id;
+          fbPostId =
+            fbResult.data.postId || fbResult.data.id || fbResult.data.post_id;
         }
-        
+
         console.log("🔵 Extracted Facebook postId:", fbPostId);
-        
+
         return {
           success: true,
           message: `Successfully posted to Facebook`,
@@ -908,24 +925,29 @@ async function savePublishedPostToHistory(
   publishResult: any
 ): Promise<void> {
   try {
-    console.log("📊 Saving post to history", { 
-      platform: post.platform, 
+    console.log("📊 Saving post to history", {
+      platform: post.platform,
       publishResult,
       postIdValue: publishResult.postId,
       postIdType: typeof publishResult.postId,
-      postIdIsUnknown: publishResult.postId === "Unknown"
+      postIdIsUnknown: publishResult.postId === "Unknown",
     });
-    
+
     const postId = `${post.platform}-${Date.now()}-${Math.random()
       .toString(36)
       .substr(2, 9)}`;
     let platformUrl = "";
-    
+
     // Debug: Log all properties of publishResult
-    console.log("🔍 Full publishResult object:", JSON.stringify(publishResult, null, 2));
-    
+    console.log(
+      "🔍 Full publishResult object:",
+      JSON.stringify(publishResult, null, 2)
+    );
+
     if (publishResult.postId && publishResult.postId !== "Unknown") {
-      console.log(`🔗 Building ${post.platform} URL from postId: ${publishResult.postId}`);
+      console.log(
+        `🔗 Building ${post.platform} URL from postId: ${publishResult.postId}`
+      );
       switch (post.platform) {
         case "linkedin":
           if (publishResult.postId.startsWith("urn:li:share:")) {
@@ -940,9 +962,9 @@ async function savePublishedPostToHistory(
           console.log("🔵 Facebook postId details:", {
             postId: publishResult.postId,
             hasUnderscore: publishResult.postId?.includes("_"),
-            length: publishResult.postId?.length
+            length: publishResult.postId?.length,
           });
-          
+
           // Facebook post ID format: {page_id}_{post_id}
           // URL format: https://www.facebook.com/{page_id}/posts/{post_id}
           if (publishResult.postId?.includes("_")) {
@@ -977,12 +999,14 @@ async function savePublishedPostToHistory(
         postId: publishResult.postId,
         isUnknown: publishResult.postId === "Unknown",
         isEmpty: !publishResult.postId,
-        allKeys: Object.keys(publishResult)
+        allKeys: Object.keys(publishResult),
       });
-      
+
       // Fallback: Use a generic Facebook profile link since we can't get the post ID
       if (post.platform === "facebook") {
-        console.log("🔄 Using fallback Facebook URL (post not found in history)");
+        console.log(
+          "🔄 Using fallback Facebook URL (post not found in history)"
+        );
         platformUrl = "https://www.facebook.com"; // Generic fallback
       }
     }
@@ -991,7 +1015,11 @@ async function savePublishedPostToHistory(
       [post.platform]: platformUrl,
     };
 
-    console.log(`💾 Saving published URL:`, { platform: post.platform, url: platformUrl, publishedUrls });
+    console.log(`💾 Saving published URL:`, {
+      platform: post.platform,
+      url: platformUrl,
+      publishedUrls,
+    });
 
     const response = await API.savePublishedUrls({
       postId,

@@ -54,6 +54,9 @@ export const PublishPosts: React.FC<PublishProps> = ({
   const [connectingPlatforms, setConnectingPlatforms] = useState<Platform[]>(
     []
   );
+  const [selectedlinkedinPage, setSelectedlinkedinPage] = useState<string>("");
+  const [linkedinPages, setlinkedinPages] = useState<any[]>([]);
+
   const [facebookPages, setFacebookPages] = useState<any[]>([]);
   const [youtubeChannels, setYoutubeChannels] = useState<any[]>([]);
   const [selectedFacebookPage, setSelectedFacebookPage] = useState<string>("");
@@ -99,6 +102,9 @@ export const PublishPosts: React.FC<PublishProps> = ({
       if (connected.includes("facebook")) {
         await fetchFacebookPages();
       }
+      if (connected.includes("linkedin")) {
+        await fetchLinkedPages();
+      }
 
       // Fetch YouTube channels if YouTube is connected
       if (connected.includes("youtube")) {
@@ -125,6 +131,28 @@ export const PublishPosts: React.FC<PublishProps> = ({
     // Ab na state badalni hai, na pending action save karna hai.
   }, [t, confirmNavigationAction]);
 
+  const fetchLinkedPages = async () => {
+    try {
+      const token = localStorage.getItem("auth_token");
+      if (!token) return;
+
+      const tokenResponse = await API.tokenForPlatform("linkedin");
+
+      if (tokenResponse?.data) {
+        const tokenData = await tokenResponse?.data;
+        if (tokenData.connected && tokenData.token?.access_token) {
+          const res = await API.linkedinPages(tokenData.token?.access_token);
+          if (res?.data) {
+            const pagesData = await res.data;
+            setlinkedinPages(pagesData.data || []);
+            setSelectedlinkedinPage(pagesData?.data[0]?.urn);
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Failed to fetch Facebook pages:", error);
+    }
+  };
   const fetchFacebookPages = async () => {
     setLoadingFacebookPages(true);
     try {
@@ -316,6 +344,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
       console.error("Failed to disconnect:", error);
     }
   };
+  console.log("selectedlinkedinPage", selectedlinkedinPage);
 
   const handlePublish = async () => {
     const availablePlatforms = selectedPlatforms.filter(
@@ -343,7 +372,6 @@ export const PublishPosts: React.FC<PublishProps> = ({
         (post) => post.platform === "youtube"
       );
       const thumbnailUrl = youtubePost?.thumbnailUrl;
-
       const publishResults = await postToAllPlatforms(
         selectedPosts,
         (platform, status) => {
@@ -355,6 +383,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
           }
         },
         {
+          linkedinPageId: selectedlinkedinPage || undefined,
           facebookPageId: selectedFacebookPage || undefined,
           youtubeChannelId: selectedYoutubeChannel || undefined,
           thumbnailUrl: thumbnailUrl || undefined,
@@ -656,6 +685,37 @@ export const PublishPosts: React.FC<PublishProps> = ({
                 {youtubeChannels.map((channel) => (
                   <option key={channel.id} value={channel.id}>
                     {channel.snippet.title}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+        {connectedPlatforms.includes("linkedin") &&
+          connectedPlatforms.includes("linkedin") &&
+          linkedinPages.length > 0 && (
+            <div className="mb-6 p-2 bg-blue-50 border border-blue-200 rounded-md">
+              <h4 className="font-medium text-blue-900 mb-2">
+                Linkedin page Selection
+              </h4>
+              <p className="text-blue-700 text-sm mb-3">
+                Choose your default Linkedin page for publishing:
+              </p>
+              <select
+                value={selectedlinkedinPage}
+                onChange={(e) => setSelectedlinkedinPage(e.target.value)}
+                className="w-full p-3 border border-blue-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option
+                  key={""}
+                  value={""}
+                  onClick={() => setSelectedlinkedinPage("")}
+                >
+                  {"Personal Account"}
+                </option>
+                {linkedinPages.map((page) => (
+                  <option key={page.urn} value={page.urn}>
+                    {page.name}
                   </option>
                 ))}
               </select>
