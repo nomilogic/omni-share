@@ -117,7 +117,6 @@ export const PublishPosts: React.FC<PublishProps> = ({
   };
 
   const confirmNavigationAction = useCallback(() => {
-    fetchUnreadCount();
     navigate("/content");
   }, [navigate]);
 
@@ -344,7 +343,6 @@ export const PublishPosts: React.FC<PublishProps> = ({
       console.error("Failed to disconnect:", error);
     }
   };
-  console.log("selectedlinkedinPage", selectedlinkedinPage);
 
   const handlePublish = async () => {
     const availablePlatforms = selectedPlatforms.filter(
@@ -431,6 +429,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
       setError(err.message || "Failed to publish posts.");
     } finally {
       setPublishing(false);
+      fetchUnreadCount();
     }
   };
 

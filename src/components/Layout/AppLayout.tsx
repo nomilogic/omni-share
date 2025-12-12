@@ -31,7 +31,15 @@ interface AppLayoutProps {
 }
 
 export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
-  const { user, logout, balance, refreshUser, unreadCount } = useAppContext();
+  const {
+    user,
+    logout,
+    balance,
+    refreshUser,
+    unreadCount,
+    setUnreadCount,
+    fetchUnreadCount,
+  } = useAppContext();
   const { t } = useTranslation();
   const { loadingState } = useLoading();
 
@@ -101,7 +109,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     e.stopPropagation();
 
     try {
-      await markAllUnreadAsRead();
+      await API.readAllHistory();
+      setUnreadCount(0);
+      fetchUnreadCount();
     } catch (error) {
       console.error("Error marking all posts as read:", error);
     }

@@ -413,10 +413,9 @@ export const useAppContext = () => {
 
   const fetchUnreadCount = async () => {
     try {
-      API.unreadHistory().then((res) => {
-        console.log("res.data.data.unreadCount ", res.data.data.unreadCount);
-        setUnreadCount(res.data.data.unreadCount || 0);
-      });
+      let response = await API.unreadHistory();
+
+      setUnreadCount(Number(response?.data?.data?.unreadCount) || 0);
     } catch (error) {
       console.error("Error fetching unread count:", error);
     }
@@ -488,10 +487,8 @@ export const useAppContext = () => {
     packages: packages,
     setUnreadCount: setUnreadCount,
     unreadCount: unreadCount,
-    // Global State Setters
     dispatch: context.dispatch,
     fetchUnreadCount: fetchUnreadCount,
-    // Processing/Loading State
     paymentProcessing: context.processing,
     setProcessing: context.setProcessing,
 
