@@ -214,8 +214,8 @@ const FeaturesPage: React.FC = () => {
 
   return (
     <div className="w-full">
-      <section className="relative py-8 md:pb-24 md:px-4 lg:pt-14 ">
-        <div className="relative w-full max-w-full mx-auto px-4 sm:px-6 lg:px-[10%]">
+      <section className="relative py-8 md:pb-0 lg:pb-24 lg:pt-14 ">
+        <div className="relative w-full max-w-full mx-auto px-4 md:px-5  lg:px-[10%]">
           <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4 text-center">
             <span className="font-bold">
               {t("suite_social_success")}

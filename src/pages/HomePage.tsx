@@ -893,7 +893,7 @@ function HomePage() {
       </motion.div>
       <section
         id="video"
-        className="pb-8 md:py-14 bg-white relative overflow-hidden"
+        className="pb-8 md:py-14 bg-white relative overflow-hidden "
       >
         <motion.div
           className="absolute inset-0 opacity-5"
@@ -986,7 +986,7 @@ function HomePage() {
         </div>
       </section> */}
 
-      <section className=" bg-gray-50 relative overflow-hidden">
+      <section className=" bg-gray-50 relative overflow-hidden ">
         <motion.div
           className="absolute inset-0 opacity-5"
           style={{ y: useTransform(smoothProgress, [0, 1], [0, -200]) }}
@@ -996,8 +996,8 @@ function HomePage() {
         </motion.div>
       </section>
 
-      <section className="py-8 md:py-14 bg-gradient-to-br from-[#d7d7fc] to-white relative overflow-hidden">
-        <div className="absolute inset-0 opacity-5">
+      <section className="py-8 md:py-14 bg-gradient-to-br from-[#d7d7fc] to-white relative overflow-hidden md:px-10">
+        <div className="absolute inset-0 opacity-5 m">
           <motion.div
             className="absolute top-20 left-20 w-96 h-96 bg-[#7650e3] rounded-full blur-3xl"
             animate={{ scale: [1, 1.2, 1], x: [0, 50, 0] }}
@@ -1010,7 +1010,7 @@ function HomePage() {
           />
         </div>
 
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 ">
           <motion.div
             className="text-center mb-4 md:mb-5"
             initial={{ opacity: 0, y: 30 }}
@@ -1026,7 +1026,7 @@ function HomePage() {
             </p>
           </motion.div>
 
-          <div className="relative pb-8">
+          <div className="relative pb-8 md:px-4">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentReviewIndex}
@@ -1110,7 +1110,7 @@ function HomePage() {
             </motion.button>
           </div>
 
-          <div className="flex justify-center mt-8 space-x-2">
+          <div className="flex justify-center mt-8 space-x-2 ">
             {reviews.map((_, index) => (
               <motion.button
                 key={index}
@@ -1141,7 +1141,7 @@ function HomePage() {
 
       <section
         id="Faq"
-        className=" scroll-mt-20 max-w-4xl mx-auto pt-8 md:py-14 "
+        className=" scroll-mt-20 max-w-4xl md:px-5 pt-8 md:pt-14 lg:mx-auto lg:px-0 "
       >
         <div className="max-w-4xl  md:mx-auto px-4 md:px-0 ">
           <motion.div
@@ -1245,7 +1245,7 @@ function HomePage() {
         </div>
       </section>
 
-      <section id="Contact" className="scroll-mt-20 py-8 md:py-14 bg-white">
+      <section id="Contact" className="scroll-mt-20 py-8 md:pb-0 md:px-5 lg:px-0 md:py-14 bg-white">
         <div className="max-w-4xl mx-4 md:mx-auto ">
           <motion.div
             className="text-center md:mb-5"
