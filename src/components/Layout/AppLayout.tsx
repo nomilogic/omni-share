@@ -565,11 +565,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                     {planMsgOpen && (
                                       <div className="absolute left-0 top-full mt-1 w-56 p-2 bg-gray-50 border rounded-md shadow-lg z-50 text-xs text-black">
                                         This is your current plan:{" "}
-                                        <span className="font-semibold">
+                                        <span className="font-semibold text-purple-600">
                                           {user.wallet?.package?.name || "FREE"}
                                         </span>{" "}
                                         with{" "}
-                                        <span className="font-semibold">
+                                        <span className="font-semibold text-purple-600">
                                           {user.wallet?.coins ?? 0}
                                         </span>{" "}
                                         coins. You can also view other plans and
@@ -624,12 +624,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                     {coinsMsgOpen && (
                                       <div className="absolute left-0 top-full mt-1 w-56 p-2 bg-gray-50 border rounded-md shadow-lg z-50 text-xs text-black">
                                         This package gives you{" "}
-                                        <span className="font-semibold">
+                                        <span className="font-semibold text-purple-600">
                                           {user.wallet?.coins?.toLocaleString() ??
                                             0}
                                         </span>{" "}
                                         coins. Your vault limit is{" "}
-                                        <span className="font-semibold">
+                                        <span className="font-semibold text-purple-600">
                                           {user.wallet?.package?.coinLimit?.toLocaleString() ??
                                             0}
                                         </span>{" "}
@@ -671,7 +671,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                       <div className="absolute left-0 top-full mt-1 w-56 p-2 bg-gray-50 border rounded-md shadow-lg z-50 text-xs text-black">
                                         Referral coins are always used first.
                                         You currently have{" "}
-                                        <span className="font-semibold">
+                                        <span className="font-semibold text-purple-600">
                                           {user?.wallet?.referralCoin?.toLocaleString() ??
                                             0}
                                         </span>{" "}
