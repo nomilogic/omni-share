@@ -58,34 +58,34 @@ export default function CookieBanner() {
 
       {/* Main Banner */}
       {!settingsOpen && (
-        <div className="fixed inset-x-4 bottom-0 md:inset-x-auto md:left-1/2 md:-translate-x-1/2 w-full z-50">
-          <div className="bg-white shadow-md flex justify-between items-center px-4 md:px-6 py-3.5 animate-in fade-in slide-in-from-bottom duration-300">
-            <p className="text-sm text-black leading-relaxed">
-              We use cookies to make{" "}
-              <a href="https://OmniShare.ai" className="underline">
-                OmniShare.ai
-              </a>{" "}
-              work smoothly and to help us understand how you use our platform.
-            </p>
+  <div className="fixed inset-x-4 bottom-0 md:inset-x-auto md:left-1/2 md:-translate-x-1/2 w-full z-50 max-sm:inset-x-0 max-sm:px-4">
+    <div className="bg-white shadow-md flex justify-between items-center px-4 md:px-6 py-3.5 animate-in fade-in slide-in-from-bottom duration-300 max-sm:flex-col max-sm:items-stretch max-sm:gap-3">
+      <p className="text-sm text-black leading-relaxed">
+        We use cookies to make{" "}
+        <a href="https://OmniShare.ai" className="underline">
+          OmniShare.ai
+        </a>{" "}
+        work smoothly and to help us understand how you use our platform.
+      </p>
 
-            <div className="flex flex-row gap-3">
-              <button
-                onClick={() => setSettingsOpen(true)}
-                className="px-4 py-2 border border-purple-600 hover:bg-purple-200 rounded-md font-medium  transition text-purple-600"
-              >
-                Cookie Settings
-              </button>
+      <div className="flex flex-row gap-3 max-sm:flex-col max-sm:w-full">
+        <button
+          onClick={() => setSettingsOpen(true)}
+          className="px-4 py-2 border border-purple-600 hover:bg-purple-200 rounded-md font-medium transition text-purple-600 max-sm:w-full"
+        >
+          Cookie Settings
+        </button>
 
-              <button
-                onClick={accept}
-                className="px-4 py-2 bg-purple-600 text-white rounded-md font-medium  transition hover:bg-purple-200 border border-purple-600 hover:text-purple-600 "
-              >
-                Accept Cookies
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+        <button
+          onClick={accept}
+          className="px-4 py-2 bg-purple-600 text-white rounded-md font-medium transition hover:bg-purple-200 border border-purple-600 hover:text-purple-600 max-sm:w-full"
+        >
+          Accept Cookies
+        </button>
+      </div>
+    </div>
+  </div>
+)}
 
       {/* SETTINGS MODAL */}
       {settingsOpen && (
