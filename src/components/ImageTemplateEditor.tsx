@@ -149,6 +149,8 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
   const [savedTemplates, setSavedTemplates] = useState<SavedTemplateV1[]>([]);
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>("");
   const [templatesOpen, setTemplatesOpen] = useState<boolean>(true);
+  const [elementsOpen, setElementsOpen] = useState<boolean>(true);
+  const [propertiesOpen, setPropertiesOpen] = useState<boolean>(true);
 
   const generateTemplateId = () => {
     const uuid = (globalThis as any)?.crypto?.randomUUID?.();
@@ -1851,84 +1853,119 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
 
             {/* Element Creation Toolbar */}
             <div className="border border-gray-200 rounded-md p-2 md:p-3 bg-gray-50">
-              <h4 className="text-xs md:text-sm font-semibold text-slate-700 mb-2 md:mb-3">
-                {t("add_elements")}
-              </h4>
-              <div className="grid grid-cols-4 md:grid-cols-2 gap-1.5 md:gap-2">
-                <button
-                  onClick={createNewTextElement}
-                  className="p-2 md:p-3 bg-blue-50 text-blue-700 rounded-md hover:bg-blue-100 flex flex-col items-center justify-center space-y-0.5 md:space-y-1 transition-colors min-h-12 md:min-h-16"
-                  title="Add Text"
-                >
-                  <Type className="w-4 h-4 md:w-5 md:h-5" />
-                  <span className="text-xs font-medium">{t("text")}</span>
-                </button>
-                <button
-                  onClick={createNewLogoElement}
-                  className="p-2 md:p-3 bg-green-50 text-green-700 rounded-md hover:bg-green-100 flex flex-col items-center justify-center space-y-0.5 md:space-y-1 transition-colors min-h-12 md:min-h-16"
-                  title="Add Logo"
-                >
-                  <Upload className="w-4 h-4 md:w-5 md:h-5" />
-                  <span className="text-xs font-medium">{t("image")}</span>
-                </button>
-                <button
-                  onClick={() => createNewShapeElement("rectangle")}
-                  className="p-2 md:p-3 bg-purple-50 text-purple-700 rounded-md hover:bg-purple-100 flex flex-col items-center justify-center space-y-0.5 md:space-y-1 transition-colors min-h-12 md:min-h-16"
-                  title="Add Rectangle"
-                >
-                  <Square className="w-4 h-4 md:w-5 md:h-5" />
-                  <span className="text-xs font-medium">{t("rectangle")}</span>
-                </button>
-                <button
-                  onClick={() => createNewShapeElement("circle")}
-                  className="p-2 md:p-3 bg-orange-50 text-orange-700 rounded-md hover:bg-orange-100 flex flex-col items-center justify-center space-y-0.5 md:space-y-1 transition-colors min-h-12 md:min-h-16"
-                  title="Add Circle"
-                >
-                  <Circle className="w-4 h-4 md:w-5 md:h-5" />
-                  <span className="text-xs font-medium">{t("circle")}</span>
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={() => setElementsOpen((prev) => !prev)}
+                className="w-full flex items-center justify-between"
+              >
+                <h4 className="text-xs md:text-sm font-semibold text-slate-700">
+                  {t("add_elements")}
+                </h4>
+                {elementsOpen ? (
+                  <ChevronUp className="w-4 h-4 text-slate-600" />
+                ) : (
+                  <ChevronDown className="w-4 h-4 text-slate-600" />
+                )}
+              </button>
+
+              {elementsOpen && (
+                <div className="mt-2 md:mt-3">
+                  <div className="grid grid-cols-4 md:grid-cols-2 gap-1.5 md:gap-2">
+                    <button
+                      onClick={createNewTextElement}
+                      className="p-2 md:p-3 bg-blue-50 text-blue-700 rounded-md hover:bg-blue-100 flex flex-col items-center justify-center space-y-0.5 md:space-y-1 transition-colors min-h-12 md:min-h-16"
+                      title="Add Text"
+                      type="button"
+                    >
+                      <Type className="w-4 h-4 md:w-5 md:h-5" />
+                      <span className="text-xs font-medium">{t("text")}</span>
+                    </button>
+                    <button
+                      onClick={createNewLogoElement}
+                      className="p-2 md:p-3 bg-green-50 text-green-700 rounded-md hover:bg-green-100 flex flex-col items-center justify-center space-y-0.5 md:space-y-1 transition-colors min-h-12 md:min-h-16"
+                      title="Add Logo"
+                      type="button"
+                    >
+                      <Upload className="w-4 h-4 md:w-5 md:h-5" />
+                      <span className="text-xs font-medium">{t("image")}</span>
+                    </button>
+                    <button
+                      onClick={() => createNewShapeElement("rectangle")}
+                      className="p-2 md:p-3 bg-purple-50 text-purple-700 rounded-md hover:bg-purple-100 flex flex-col items-center justify-center space-y-0.5 md:space-y-1 transition-colors min-h-12 md:min-h-16"
+                      title="Add Rectangle"
+                      type="button"
+                    >
+                      <Square className="w-4 h-4 md:w-5 md:h-5" />
+                      <span className="text-xs font-medium">{t("rectangle")}</span>
+                    </button>
+                    <button
+                      onClick={() => createNewShapeElement("circle")}
+                      className="p-2 md:p-3 bg-orange-50 text-orange-700 rounded-md hover:bg-orange-100 flex flex-col items-center justify-center space-y-0.5 md:space-y-1 transition-colors min-h-12 md:min-h-16"
+                      title="Add Circle"
+                      type="button"
+                    >
+                      <Circle className="w-4 h-4 md:w-5 md:h-5" />
+                      <span className="text-xs font-medium">{t("circle")}</span>
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Selected Element Properties */}
             {selectedElementData && (
               <div className="border border-gray-200 rounded-md p-3 md:p-4 bg-white">
-                <div className="flex items-center justify-between mb-3 md:mb-4">
+                <button
+                  type="button"
+                  onClick={() => setPropertiesOpen((prev) => !prev)}
+                  className="w-full flex items-center justify-between"
+                >
                   <h4 className="text-xs md:text-sm font-semibold text-slate-900">
                     {selectedElementData.type.charAt(0).toUpperCase() +
                       selectedElementData.type.slice(1)} Element
                   </h4>
+                  {propertiesOpen ? (
+                    <ChevronUp className="w-4 h-4 text-slate-600" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4 text-slate-600" />
+                  )}
+                </button>
 
-                  {/* Element Control Buttons */}
-                  <div className="flex items-center space-x-1">
-                    <button
-                      onClick={toggleElementLock}
-                      className={`p-2 rounded-md ${
-                        isElementLocked(selectedElement)
-                          ? "bg-red-100 text-red-600"
-                          : "bg-gray-100 text-gray-500 font-medium"
-                      } hover:bg-opacity-80 transition-colors`}
-                      title={
-                        isElementLocked(selectedElement)
-                          ? "Unlock Element"
-                          : "Lock Element"
-                      }
-                    >
-                      {isElementLocked(selectedElement) ? (
-                        <Lock className="w-4 h-4" />
-                      ) : (
-                        <Unlock className="w-4 h-4" />
-                      )}
-                    </button>
-                    <button
-                      onClick={deleteSelectedElement}
-                      className="p-2 rounded-md bg-red-100 text-red-600 hover:bg-red-200 transition-colors"
-                      title="Delete"
-                    >
-                      <Trash className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
+                {propertiesOpen && (
+                  <>
+                    <div className="flex items-center justify-end mb-3 md:mb-4 mt-3">
+                      {/* Element Control Buttons */}
+                      <div className="flex items-center space-x-1">
+                        <button
+                          onClick={toggleElementLock}
+                          className={`p-2 rounded-md ${
+                            isElementLocked(selectedElement)
+                              ? "bg-red-100 text-red-600"
+                              : "bg-gray-100 text-gray-500 font-medium"
+                          } hover:bg-opacity-80 transition-colors`}
+                          title={
+                            isElementLocked(selectedElement)
+                              ? "Unlock Element"
+                              : "Lock Element"
+                          }
+                          type="button"
+                        >
+                          {isElementLocked(selectedElement) ? (
+                            <Lock className="w-4 h-4" />
+                          ) : (
+                            <Unlock className="w-4 h-4" />
+                          )}
+                        </button>
+                        <button
+                          onClick={deleteSelectedElement}
+                          className="p-2 rounded-md bg-red-100 text-red-600 hover:bg-red-200 transition-colors"
+                          title="Delete"
+                          type="button"
+                        >
+                          <Trash className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
 
                 {/* Layer Controls */}
                 <div className="mb-2 md:mb-3">
@@ -2536,6 +2573,8 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                       </div>
                     )}
                   </div>
+                )}
+                  </>
                 )}
               </div>
             )}
