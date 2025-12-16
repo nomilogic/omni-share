@@ -2,6 +2,17 @@ import { useResize } from "../context/ResizeContext";
 import { useModal } from '../context2/ModalContext';
 import DiscardImageModal from '../components/modals/DiscardImageModal';
 import React, { useState, useRef, useEffect, useCallback } from "react";
+import Konva from "konva";
+import {
+  Stage,
+  Layer,
+  Rect,
+  Text as KonvaText,
+  Image as KonvaImage,
+  Group,
+  Transformer,
+  Ellipse,
+} from "react-konva";
 import {
   Template,
   TemplateElement,
@@ -57,7 +68,10 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
   isVideoThumbnail = false,
   aspectRatio = "16:9",
 }) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const stageRef = useRef<Konva.Stage>(null);
+  const transformerRef = useRef<Konva.Transformer>(null);
+  const selectedNodeRef = useRef<Konva.Node | null>(null);
+
   const { handleResizeMainToFullScreen } = useResize();
   const { t, i18n } = useTranslation();
   const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
@@ -229,10 +243,12 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
 
   const refreshSavedTemplates = async () => {
     // 1) Local templates (fallback/offline)
-    const localTemplates = readTemplatesFromLocalStorage().map((t) => ({
-      ...t,
-      source: "local" as const,
-    }));
+    const localTemplates: SavedTemplateV1[] = readTemplatesFromLocalStorage().map(
+      (t) => ({
+        ...t,
+        source: "local",
+      })
+    );
 
     // One-time legacy migration (from single-template key) if local list is empty
     if (localTemplates.length === 0) {
@@ -313,70 +329,28 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
 
   const createTemplateThumbnailDataUrl = () => {
     try {
-      if (!canvasDimensions?.width || !canvasDimensions?.height) return undefined;
-
-      // Keep thumbnail small to avoid localStorage limits
-      const THUMBNAIL_WIDTH = 320;
-      const scale = THUMBNAIL_WIDTH / canvasDimensions.width;
-      const thumbHeight = Math.max(1, Math.round(canvasDimensions.height * scale));
-
-      const offscreen = document.createElement("canvas");
-      offscreen.width = THUMBNAIL_WIDTH;
-      offscreen.height = thumbHeight;
-      const context = offscreen.getContext("2d");
-      if (!context) return undefined;
-
-      // Draw in "logical" (full) coordinates; scale down to thumbnail
-      context.scale(scale, scale);
-
-      const logicalWidth = canvasDimensions.width;
-      const logicalHeight = canvasDimensions.height;
-
-      // Background (cover crop like main canvas)
-      if (backgroundImage) {
-        const canvasAspect = logicalWidth / logicalHeight;
-        const imageAspect = backgroundImage.width / backgroundImage.height;
-
-        let sourceX = 0;
-        let sourceY = 0;
-        let sourceWidth = backgroundImage.width;
-        let sourceHeight = backgroundImage.height;
-
-        if (imageAspect > canvasAspect) {
-          sourceHeight = backgroundImage.height;
-          sourceWidth = backgroundImage.height * canvasAspect;
-          sourceX = (backgroundImage.width - sourceWidth) / 2;
-          sourceY = 0;
-        } else {
-          sourceWidth = backgroundImage.width;
-          sourceHeight = backgroundImage.width / canvasAspect;
-          sourceX = 0;
-          sourceY = (backgroundImage.height - sourceHeight) / 2;
-        }
-
-        context.drawImage(
-          backgroundImage,
-          sourceX,
-          sourceY,
-          sourceWidth,
-          sourceHeight,
-          0,
-          0,
-          logicalWidth,
-          logicalHeight
-        );
-      } else {
-        context.fillStyle = "#f3f4f6";
-        context.fillRect(0, 0, logicalWidth, logicalHeight);
+      const stage = stageRef.current;
+      if (!stage || !canvasDimensions?.width || !canvasDimensions?.height) {
+        return undefined;
       }
 
-      // Elements (no selection)
-      const sortedElements = [...elements].sort(
-        (a, b) => (a.zIndex || 0) - (b.zIndex || 0)
-      );
-      sortedElements.forEach((el) => drawElement(context, el, false));
+      const THUMBNAIL_WIDTH = 320;
+      const pixelRatio = Math.max(0.05, THUMBNAIL_WIDTH / canvasDimensions.width);
 
-      return offscreen.toDataURL("image/png");
+      // Hide transformer/selection UI from thumbnail
+      const tr = transformerRef.current;
+      const wasVisible = tr ? tr.visible() : false;
+      tr?.hide();
+      tr?.getLayer()?.batchDraw();
+
+      const url = stage.toDataURL({ mimeType: "image/png", pixelRatio });
+
+      if (wasVisible) {
+        tr?.show();
+        tr?.getLayer()?.batchDraw();
+      }
+
+      return url;
     } catch (error) {
       console.error("❌ Failed to generate template thumbnail", error);
       return undefined;
@@ -575,106 +549,132 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
     };
   };
 
-  useEffect(() => {
-    if (canvasRef.current) {
-      const canvasElement = canvasRef.current;
-      const context = canvasElement.getContext("2d");
+  type AnyElement = TextElement | LogoElement | ShapeElement;
 
-      if (context) {
-        setCanvas(canvasElement);
-        setCtx(context);
+  const updateElementById = useCallback(
+    (id: string, updates: Partial<AnyElement>) => {
+      setElements((prev) =>
+        prev.map((el) => (el.id === id ? ({ ...el, ...updates } as any) : el))
+      );
+    },
+    []
+  );
 
-        console.log("Canvas setup complete, image URL:", imageUrl);
-        console.log("Selected template:", selectedTemplate);
-        console.log("Elements:", elements);
+  const getCoverCrop = useCallback(
+    (img: HTMLImageElement, canvasW: number, canvasH: number) => {
+      const canvasAspect = canvasW / canvasH;
+      const imageAspect = img.width / img.height;
 
-        // Try to load background image to get its dimensions
-        if (imageUrl) {
-          setBackgroundImageLoading(true);
-          const img = new Image();
-          // Only set crossOrigin for external URLs, not for blob URLs or data URLs
-          if (!imageUrl.startsWith("blob:") && !imageUrl.startsWith("data:")) {
-            img.crossOrigin = "anonymous";
-          }
+      let cropX = 0;
+      let cropY = 0;
+      let cropWidth = img.width;
+      let cropHeight = img.height;
 
-          img.onload = () => {
-            console.log("Background image loaded successfully:", imageUrl);
-            console.log("Image dimensions:", img.width, "x", img.height);
-            console.log("Using aspect ratio:", aspectRatio);
-
-            // Store original image dimensions for reference
-            setImageDimensions({ width: img.width, height: img.height });
-
-            // Calculate canvas dimensions based on aspect ratio instead of image dimensions
-            const targetDimensions = calculateCanvasDimensions(aspectRatio);
-            console.log(
-              "Target canvas dimensions based on aspect ratio:",
-              targetDimensions
-            );
-
-            // Set canvas to aspect ratio dimensions
-            setCanvasDimensions(targetDimensions);
-            canvasElement.width = targetDimensions.width;
-            canvasElement.height = targetDimensions.height;
-
-            // Calculate zoom level to fit canvas in container
-            const { zoom, maxZoom: maxZoomLevel } = calculateZoomLevel(
-              targetDimensions.width,
-              targetDimensions.height
-            );
-            console.log(
-              "Calculated zoom level:",
-              zoom,
-              "Max zoom:",
-              maxZoomLevel
-            );
-            setZoomLevel(zoom);
-            setMaxZoom(maxZoomLevel);
-
-            setBackgroundImage(img);
-            setBackgroundImageLoading(false);
-            redrawCanvas(context, img, elements);
-          };
-
-          img.onerror = (error) => {
-            console.error("Background image failed to load:", imageUrl, error);
-            setBackgroundImageLoading(false);
-            // Use template dimensions or fallback to square
-          };
-
-          console.log("Attempting to load background image:", imageUrl);
-          img.src = imageUrl;
-        } else {
-          // No image URL, use template dimensions or fallback
-          const dimensions = selectedTemplate?.dimensions || {
-            width: 1080,
-            height: 1080,
-          };
-          setImageDimensions(dimensions);
-          setCanvasDimensions(dimensions);
-          canvasElement.width = dimensions.width;
-          canvasElement.height = dimensions.height;
-
-          // Calculate zoom for fallback dimensions
-          const { zoom, maxZoom: maxZoomLevel } = calculateZoomLevel(
-            dimensions.width,
-            dimensions.height
-          );
-          setZoomLevel(zoom);
-          setMaxZoom(maxZoomLevel);
-
-          // Initialize canvas with fallback background
-          context.fillStyle = "#f3f4f6";
-          context.fillRect(0, 0, canvasElement.width, canvasElement.height);
-
-          // Draw template elements immediately
-          elements.forEach((element) => {
-            drawElement(context, element);
-          });
-        }
+      if (imageAspect > canvasAspect) {
+        // wider -> crop left/right
+        cropHeight = img.height;
+        cropWidth = img.height * canvasAspect;
+        cropX = (img.width - cropWidth) / 2;
+        cropY = 0;
+      } else {
+        // taller -> crop top/bottom
+        cropWidth = img.width;
+        cropHeight = img.width / canvasAspect;
+        cropX = 0;
+        cropY = (img.height - cropHeight) / 2;
       }
+
+      return { cropX, cropY, cropWidth, cropHeight };
+    },
+    []
+  );
+
+  useEffect(() => {
+    const tr = transformerRef.current;
+    if (!tr) return;
+
+    if (selectedElement && lockedElements.has(selectedElement)) {
+      tr.nodes([]);
+      tr.getLayer()?.batchDraw();
+      return;
     }
-  }, [imageUrl, selectedTemplate]);
+
+    const node = selectedNodeRef.current;
+    tr.nodes(node ? [node] : []);
+    tr.getLayer()?.batchDraw();
+  }, [selectedElement, elements, lockedElements]);
+
+  useEffect(() => {
+    const targetDimensions = calculateCanvasDimensions(aspectRatio);
+    setCanvasDimensions(targetDimensions);
+
+    const { zoom, maxZoom: maxZoomLevel } = calculateZoomLevel(
+      targetDimensions.width,
+      targetDimensions.height
+    );
+    setZoomLevel(zoom);
+    setMaxZoom(maxZoomLevel);
+
+    if (!imageUrl) {
+      // No background image
+      setBackgroundImage(null);
+      setBackgroundImageLoading(false);
+      setImageDimensions(selectedTemplate?.dimensions || targetDimensions);
+      return;
+    }
+
+    setBackgroundImageLoading(true);
+    const img = new Image();
+
+    // Only set crossOrigin for external URLs, not for blob/data URLs
+    if (!imageUrl.startsWith("blob:") && !imageUrl.startsWith("data:")) {
+      img.crossOrigin = "anonymous";
+    }
+
+    img.onload = () => {
+      setImageDimensions({ width: img.width, height: img.height });
+      setBackgroundImage(img);
+      setBackgroundImageLoading(false);
+    };
+
+    img.onerror = () => {
+      setBackgroundImage(null);
+      setImageDimensions(null);
+      setBackgroundImageLoading(false);
+    };
+
+    img.src = imageUrl;
+
+    return () => {
+      img.onload = null;
+      img.onerror = null;
+    };
+  }, [imageUrl, aspectRatio, selectedTemplate]);
+
+  useEffect(() => {
+    // Preload logo images for Konva rendering
+    const logoSrcs = elements
+      .filter((el): el is LogoElement => el.type === "logo")
+      .map((el) => (el as LogoElement).src)
+      .filter((src) => typeof src === "string" && src.length > 0);
+
+    const uniqueSrcs = Array.from(new Set(logoSrcs));
+
+    uniqueSrcs.forEach((src) => {
+      if (logoImages[src]) return;
+
+      const img = new Image();
+      if (!src.startsWith("blob:") && !src.startsWith("data:")) {
+        img.crossOrigin = "anonymous";
+      }
+
+      img.onload = () => {
+        setLogoImages((prev) => (prev[src] ? prev : { ...prev, [src]: img }));
+      };
+
+      img.src = src;
+    });
+  }, [elements, logoImages]);
 
   useEffect(() => {
     if (ctx && !isLoading) {
@@ -1400,7 +1400,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
     document.body.classList.remove("drag-no-scroll");
   };
 
-  const updateSelectedElement = (updates: Partial<TemplateElement>) => {
+  const updateSelectedElement = (updates: Partial<AnyElement>) => {
     if (!selectedElement) {
       console.log("❌ No selected element to update");
       return;
@@ -1488,21 +1488,27 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
 
   // Element creation functions
   const createNewTextElement = () => {
-    if (!canvas) return;
+    const cw = canvasDimensions.width;
+    const ch = canvasDimensions.height;
+    if (!cw || !ch) return;
 
     // Use responsive sizing based on canvas dimensions
-    const fontSize = Math.max(0, Math.min(32, canvas.width / 30));
-    const width = Math.max(0, canvas.width * 0.5);
+    const fontSize = Math.max(12, Math.min(72, cw / 30));
+    const width = Math.max(50, cw * 0.5);
+
+    const nextZ = elements.length
+      ? Math.max(...elements.map((el) => el.zIndex || 0)) + 1
+      : 0;
 
     const newElement: TextElement = {
       id: `text-${Date.now()}`,
       type: "text",
-      x: canvas.width / 2,
-      y: canvas.height / 2,
-      width: width,
+      x: cw / 2,
+      y: ch / 2,
+      width,
       height: fontSize * 1.5,
       content: "New Text",
-      fontSize: fontSize,
+      fontSize,
       fontWeight: "normal",
       fontFamily: "Arial",
       color: "#ffeb3b",
@@ -1512,10 +1518,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
       textOpacity: 1,
       padding: 2,
       borderRadius: 0,
-      zIndex:
-        elements.length > 0
-          ? Math.max(...elements.map((el) => el.zIndex || 0)) + 1
-          : 0,
+      zIndex: nextZ,
     };
 
     setElements((prev) => [...prev, newElement]);
@@ -1523,22 +1526,28 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
   };
 
   const createNewShapeElement = (shape: "rectangle" | "circle") => {
-    if (!canvas) return;
+    const cw = canvasDimensions.width;
+    const ch = canvasDimensions.height;
+    if (!cw || !ch) return;
 
     // Use responsive sizing based on canvas dimensions
-    const size = Math.min(100, canvas.width * 0.15);
+    const size = Math.min(100, cw * 0.15);
+
+    const nextZ = elements.length
+      ? Math.max(...elements.map((el) => el.zIndex || 0)) + 1
+      : 0;
 
     const newElement: ShapeElement = {
       id: `shape-${Date.now()}`,
       type: "shape",
-      x: canvas.width / 2,
-      y: canvas.height / 2,
+      x: cw / 2,
+      y: ch / 2,
       width: size,
       height: shape === "circle" ? size : size * 0.6,
       shape,
       color: "#3b82f6",
       opacity: 1,
-      zIndex: Math.max(...elements.map((el) => el.zIndex || 0)) + 1,
+      zIndex: nextZ,
     };
 
     setElements((prev) => [...prev, newElement]);
@@ -1546,22 +1555,28 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
   };
 
   const createNewLogoElement = () => {
-    if (!canvas) return;
+    const cw = canvasDimensions.width;
+    const ch = canvasDimensions.height;
+    if (!cw || !ch) return;
 
     // Use responsive sizing based on canvas dimensions
-    const size = Math.min(80, canvas.width * 0.1);
+    const size = Math.min(80, cw * 0.1);
+
+    const nextZ = elements.length
+      ? Math.max(...elements.map((el) => el.zIndex || 0)) + 1
+      : 0;
 
     const newElement: LogoElement = {
       id: `logo-${Date.now()}`,
       type: "logo",
-      x: canvas.width / 2,
-      y: canvas.height / 2,
+      x: cw / 2,
+      y: ch / 2,
       width: size,
       height: size,
       src: "",
       opacity: 1,
       borderRadius: 0,
-      zIndex: Math.max(...elements.map((el) => el.zIndex || 0)) + 1,
+      zIndex: nextZ,
     };
 
     setElements((prev) => [...prev, newElement]);
@@ -1622,35 +1637,25 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
   };
 
   const exportImage = async () => {
-    if (!canvas || !ctx) return;
+    const stage = stageRef.current;
+    if (!stage) return;
 
     setIsSaving(true);
 
-    try {
-      // Create a clean canvas for export by drawing without selection borders
-      if (backgroundImage) {
-        redrawCanvas(ctx, backgroundImage, elements, false); // false = don't show selection
-      } else {
-        redrawCanvasWithoutBackground(ctx, elements, false); // false = don't show selection
-      }
+    // Hide transformer/selection UI from export
+    const tr = transformerRef.current;
+    const wasVisible = tr ? tr.visible() : false;
 
-      // Create blob from the clean canvas
-      const blob = await new Promise<Blob>((resolve) => {
-        canvas.toBlob((blob) => {
-          if (blob) resolve(blob);
-        }, "image/png");
+    try {
+      tr?.hide();
+      tr?.getLayer()?.batchDraw();
+
+      const exportCanvas = stage.toCanvas({ pixelRatio: 2 });
+      const blob = await new Promise<Blob | null>((resolve) => {
+        exportCanvas.toBlob((b) => resolve(b), "image/png");
       });
 
-      if (!blob) {
-        throw new Error("Failed to create image blob");
-      }
-
-      // Restore canvas with selection borders for continued editing
-      if (backgroundImage) {
-        redrawCanvas(ctx, backgroundImage, elements, true); // true = show selection
-      } else {
-        redrawCanvasWithoutBackground(ctx, elements, true); // true = show selection
-      }
+      if (!blob) throw new Error("Failed to create image blob");
 
       // Create local URL for immediate preview
       const localUrl = URL.createObjectURL(blob);
@@ -1659,34 +1664,30 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
       const user = await getCurrentUser();
       if (user?.user?.id) {
         try {
-          // Convert blob to File for upload
           const file = new File([blob], `template-${Date.now()}.png`, {
             type: "image/png",
             lastModified: Date.now(),
           });
 
-          console.log("Uploading template image to server...");
           const uploadedUrl = await uploadMedia(file, user.user.id);
-          console.log("Template image uploaded successfully:", uploadedUrl);
-
-          // Use the uploaded URL as the final image
           onSave(uploadedUrl);
         } catch (uploadError) {
           console.warn(
             "Failed to upload template image, using local URL:",
             uploadError
           );
-          // Fallback to local URL if upload fails
           onSave(localUrl);
         }
       } else {
-        console.warn("No user found, using local URL");
-        // Fallback to local URL if no user
         onSave(localUrl);
       }
     } catch (error) {
       console.error("Error exporting template image:", error);
     } finally {
+      if (wasVisible) {
+        tr?.show();
+        tr?.getLayer()?.batchDraw();
+      }
       setIsSaving(false);
     }
   };
@@ -2355,7 +2356,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                           }
                           onChange={(e) =>
                             updateSelectedElement({
-                              fontWeight: e.target.value,
+                              fontWeight: e.target.value as TextElement["fontWeight"],
                             })
                           }
                           className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
@@ -2376,7 +2377,9 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                             "left"
                           }
                           onChange={(e) =>
-                            updateSelectedElement({ textAlign: e.target.value })
+                            updateSelectedElement({
+                              textAlign: e.target.value as TextElement["textAlign"],
+                            })
                           }
                           className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
                         >
@@ -2654,22 +2657,220 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
               transformOrigin: "center center",
             }}
           >
-            <canvas
-              ref={canvasRef}
-              onClick={handleCanvasClick}
-              onMouseDown={handleCanvasMouseDown}
-              onMouseMove={handleCanvasMouseMove}
-              onMouseUp={handleCanvasMouseUp}
-              onMouseLeave={handleCanvasMouseUp}
-              onTouchStart={handleCanvasTouchStart}
-              onTouchMove={handleCanvasTouchMove}
-              onTouchEnd={handleCanvasTouchEnd}
-              className="border-2 border-gray-300 rounded-md shadow-md cursor-pointer bg-white transition-all duration-200"
-              style={{
-                width: `${canvasDimensions.width}px`,
-                height: `${canvasDimensions.height}px`,
+            <Stage
+              ref={stageRef}
+              width={canvasDimensions.width}
+              height={canvasDimensions.height}
+              onMouseDown={(e) => {
+                // Deselect when clicking on empty space
+                if (e.target === e.target.getStage()) setSelectedElement(null);
               }}
-            />
+              onTouchStart={(e) => {
+                if (e.target === e.target.getStage()) setSelectedElement(null);
+              }}
+              className="border-2 border-gray-300 rounded-md shadow-md bg-white transition-all duration-200"
+            >
+              <Layer>
+                {backgroundImage ? (
+                  (() => {
+                    const crop = getCoverCrop(
+                      backgroundImage,
+                      canvasDimensions.width,
+                      canvasDimensions.height
+                    );
+                    return (
+                      <KonvaImage
+                        image={backgroundImage}
+                        x={0}
+                        y={0}
+                        width={canvasDimensions.width}
+                        height={canvasDimensions.height}
+                        cropX={crop.cropX}
+                        cropY={crop.cropY}
+                        cropWidth={crop.cropWidth}
+                        cropHeight={crop.cropHeight}
+                        listening={false}
+                      />
+                    );
+                  })()
+                ) : (
+                  <Rect
+                    x={0}
+                    y={0}
+                    width={canvasDimensions.width}
+                    height={canvasDimensions.height}
+                    fill="#f3f4f6"
+                    listening={false}
+                  />
+                )}
+
+                {[...elements]
+                  .sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0))
+                  .map((el) => {
+                    const locked = isElementLocked(el.id);
+                    const isSelected = el.id === selectedElement;
+                    const commonGroupProps = {
+                      key: el.id,
+                      x: el.x,
+                      y: el.y,
+                      rotation: el.rotation || 0,
+                      draggable: !locked,
+                      onClick: () => setSelectedElement(el.id),
+                      onTap: () => setSelectedElement(el.id),
+                      onDragStart: () => {
+                        if (!locked) setIsDragging(true);
+                      },
+                      onDragEnd: (e: any) => {
+                        setIsDragging(false);
+                        updateElementById(el.id, { x: e.target.x(), y: e.target.y() });
+                      },
+                      ref: (node: any) => {
+                        if (isSelected && node) selectedNodeRef.current = node;
+                      },
+                    };
+
+                    if (el.type === "text") {
+                      const textEl = el as TextElement;
+                      const pad = textEl.padding || 0;
+                      const isBold =
+                        textEl.fontWeight === "bold" ||
+                        (typeof textEl.fontWeight === "string" &&
+                          !Number.isNaN(parseInt(textEl.fontWeight, 10)) &&
+                          parseInt(textEl.fontWeight, 10) >= 600);
+
+                      return (
+                        <Group {...commonGroupProps}>
+                          {textEl.backgroundColor ? (
+                            <Rect
+                              x={-textEl.width / 2 - pad}
+                              y={-textEl.height / 2 - pad}
+                              width={textEl.width + pad * 2}
+                              height={textEl.height + pad * 2}
+                              cornerRadius={textEl.borderRadius || 0}
+                              fill={textEl.backgroundColor}
+                              opacity={textEl.backgroundOpacity ?? 1}
+                            />
+                          ) : null}
+                          <KonvaText
+                            x={-textEl.width / 2}
+                            y={-textEl.height / 2}
+                            width={textEl.width}
+                            height={textEl.height}
+                            text={textEl.content || ""}
+                            fill={textEl.color || "#000000"}
+                            fontSize={textEl.fontSize || 16}
+                            fontFamily={textEl.fontFamily || "Arial"}
+                            fontStyle={isBold ? "bold" : "normal"}
+                            align={textEl.textAlign || "left"}
+                            verticalAlign="middle"
+                            opacity={textEl.textOpacity ?? 1}
+                          />
+                        </Group>
+                      );
+                    }
+
+                    if (el.type === "logo") {
+                      const logoEl = el as LogoElement;
+                      const img = logoEl.src ? logoImages[logoEl.src] : undefined;
+
+                      return (
+                        <Group {...commonGroupProps}>
+                          {img ? (
+                            <KonvaImage
+                              image={img}
+                              x={-logoEl.width / 2}
+                              y={-logoEl.height / 2}
+                              width={logoEl.width}
+                              height={logoEl.height}
+                              opacity={logoEl.opacity ?? 1}
+                            />
+                          ) : (
+                            <Rect
+                              x={-logoEl.width / 2}
+                              y={-logoEl.height / 2}
+                              width={logoEl.width}
+                              height={logoEl.height}
+                              fill="rgba(209, 213, 219, 0.3)"
+                              stroke="#9ca3af"
+                              strokeWidth={2}
+                              dash={[8, 4]}
+                            />
+                          )}
+                        </Group>
+                      );
+                    }
+
+                    if (el.type === "shape") {
+                      const shapeEl = el as ShapeElement;
+                      return (
+                        <Group {...commonGroupProps}>
+                          {shapeEl.shape === "circle" ? (
+                            <Ellipse
+                              x={0}
+                              y={0}
+                              radiusX={Math.max(1, shapeEl.width / 2)}
+                              radiusY={Math.max(1, shapeEl.height / 2)}
+                              fill={shapeEl.color || "#000000"}
+                              opacity={shapeEl.opacity ?? 1}
+                            />
+                          ) : (
+                            <Rect
+                              x={-shapeEl.width / 2}
+                              y={-shapeEl.height / 2}
+                              width={shapeEl.width}
+                              height={shapeEl.height}
+                              cornerRadius={shapeEl.borderRadius || 0}
+                              fill={shapeEl.color || "#000000"}
+                              opacity={shapeEl.opacity ?? 1}
+                            />
+                          )}
+                        </Group>
+                      );
+                    }
+
+                    return null;
+                  })}
+
+                <Transformer
+                  ref={transformerRef}
+                  rotateEnabled
+                  enabledAnchors={[
+                    "top-left",
+                    "top-right",
+                    "bottom-left",
+                    "bottom-right",
+                    "middle-left",
+                    "middle-right",
+                    "top-center",
+                    "bottom-center",
+                  ]}
+                  onTransformEnd={() => {
+                    const node = selectedNodeRef.current;
+                    if (!node || !selectedElement) return;
+
+                    // If locked, don't apply transforms
+                    if (lockedElements.has(selectedElement)) return;
+
+                    const base = elements.find((e) => e.id === selectedElement) as any;
+                    if (!base) return;
+
+                    const scaleX = node.scaleX();
+                    const scaleY = node.scaleY();
+
+                    updateElementById(selectedElement, {
+                      x: node.x(),
+                      y: node.y(),
+                      width: Math.max(1, (base.width || 1) * scaleX),
+                      height: Math.max(1, (base.height || 1) * scaleY),
+                      rotation: node.rotation(),
+                    });
+
+                    node.scaleX(1);
+                    node.scaleY(1);
+                  }}
+                />
+              </Layer>
+            </Stage>
           </div>
         </div>
       </div>
