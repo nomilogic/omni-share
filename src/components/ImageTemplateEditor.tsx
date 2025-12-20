@@ -1,6 +1,6 @@
 import { useResize } from "../context/ResizeContext";
-import { useModal } from '../context2/ModalContext';
-import DiscardImageModal from '../components/modals/DiscardImageModal';
+import { useModal } from "../context2/ModalContext";
+import DiscardImageModal from "../components/modals/DiscardImageModal";
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import {
   Template,
@@ -107,7 +107,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
   }>({ width: 800, height: 800 });
   const [zoomLevel, setZoomLevel] = useState<number>(1);
   const [maxZoom, setMaxZoom] = useState<number>(1);
-  
+
   const navigate = useNavigate();
 
   // Utility function to convert hex color to rgba with opacity
@@ -1365,7 +1365,8 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                 <div className="flex items-center justify-between mb-3 md:mb-4">
                   <h4 className="text-xs md:text-sm font-semibold text-slate-900">
                     {selectedElementData.type.charAt(0).toUpperCase() +
-                      selectedElementData.type.slice(1)} Element
+                      selectedElementData.type.slice(1)}{" "}
+                    Element
                   </h4>
 
                   {/* Element Control Buttons */}
@@ -2062,7 +2063,8 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
               {canvasDimensions && (
                 <>
                   <span className="hidden sm:inline">
-                    {canvasDimensions.width} × {canvasDimensions.height} | {Math.round(zoomLevel * 100)}%
+                    {canvasDimensions.width} × {canvasDimensions.height} |{" "}
+                    {Math.round(zoomLevel * 100)}%
                   </span>
                   <span className="sm:hidden">
                     {Math.round(zoomLevel * 100)}%
@@ -2145,7 +2147,6 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
           </div>
         </div>
       </div>
-      
     </div>
   );
 };
