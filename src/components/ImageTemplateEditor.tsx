@@ -34,6 +34,7 @@ import {
   Twitter,
 } from "lucide-react";
 import { uploadMedia, getCurrentUser } from "../lib/database";
+import { templateService } from "../services/templateService";
 import "../styles/drag-prevention.css";
 import "../styles/template-editor.css";
 import { useNavigate } from "react-router-dom";
@@ -107,6 +108,430 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
   }>({ width: 800, height: 800 });
   const [zoomLevel, setZoomLevel] = useState<number>(1);
   const [maxZoom, setMaxZoom] = useState<number>(1);
+
+  const TEMPLATES_STORAGE_KEY = "image-template-editor.templates.v1";
+  const LEGACY_TEMPLATE_STORAGE_KEY = "image-template-editor.template.v1";
+
+  type SavedTemplateV1 = {
+    version: 1;
+    id: string;
+    name: string;
+    savedAt: string;
+    aspectRatio: string;
+    canvasDimensions: { width: number; height: number };
+    elements: TemplateElement[];
+    lockedElementIds: string[];
+    thumbnailDataUrl?: string;
+    source?: "local" | "user" | "global";
+  };
+
+  type SavedTemplateListV1 = {
+    version: 1;
+    templates: SavedTemplateV1[];
+  };
+
+  const [templateName, setTemplateName] = useState<string>("");
+  const [saveAsGlobal, setSaveAsGlobal] = useState<boolean>(false);
+  const [savedTemplates, setSavedTemplates] = useState<SavedTemplateV1[]>([]);
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string>("");
+  const [templatesOpen, setTemplatesOpen] = useState<boolean>(true);
+
+  const generateTemplateId = () => {
+    const uuid = (globalThis as any)?.crypto?.randomUUID?.();
+    if (uuid) return uuid as string;
+    return `${Date.now().toString(36)}-${Math.random()
+      .toString(36)
+      .slice(2, 10)}`;
+  };
+
+  const readTemplatesFromLocalStorage = (): SavedTemplateV1[] => {
+    try {
+      const raw = localStorage.getItem(TEMPLATES_STORAGE_KEY);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw) as Partial<SavedTemplateListV1>;
+      if (!parsed || !Array.isArray(parsed.templates)) return [];
+      return parsed.templates as SavedTemplateV1[];
+    } catch (error) {
+      console.error("❌ Failed to read templates from localStorage", error);
+      return [];
+    }
+  };
+
+  const writeTemplatesToLocalStorage = (templates: SavedTemplateV1[]) => {
+    const payload: SavedTemplateListV1 = {
+      version: 1,
+      templates,
+    };
+    localStorage.setItem(TEMPLATES_STORAGE_KEY, JSON.stringify(payload));
+  };
+
+  const parseTemplateJson = (value: unknown): any => {
+    if (value === null || value === undefined) return undefined;
+    if (typeof value === "string") {
+      try {
+        return JSON.parse(value);
+      } catch {
+        return undefined;
+      }
+    }
+    return value;
+  };
+
+  const normalizeSavedTemplate = (
+    raw: any,
+    opts: {
+      fallbackName?: string;
+      fallbackId?: string;
+      source: SavedTemplateV1["source"];
+    }
+  ): SavedTemplateV1 | null => {
+    try {
+      const parsed = parseTemplateJson(raw?.json ?? raw);
+
+      // If parsed is already our structure
+      const base =
+        parsed && typeof parsed === "object" && !Array.isArray(parsed)
+          ? parsed
+          : {};
+
+      // If parsed is an array, treat as elements
+      const elementsFromParsed = Array.isArray(parsed) ? parsed : base.elements;
+
+      const id =
+        (raw?.id as string) ||
+        (base.id as string) ||
+        opts.fallbackId ||
+        generateTemplateId();
+
+      const name =
+        (raw?.name as string) ||
+        (base.name as string) ||
+        opts.fallbackName ||
+        "Untitled Template";
+
+      const savedAt =
+        (raw?.created_at as string) ||
+        (raw?.createdAt as string) ||
+        (base.savedAt as string) ||
+        new Date().toISOString();
+
+      return {
+        version: 1,
+        id,
+        name,
+        savedAt,
+        aspectRatio: (base.aspectRatio as string) || aspectRatio,
+        canvasDimensions: (base.canvasDimensions as any) || canvasDimensions,
+        elements: Array.isArray(elementsFromParsed)
+          ? (elementsFromParsed as any)
+          : [],
+        lockedElementIds: Array.isArray(base.lockedElementIds)
+          ? (base.lockedElementIds as any)
+          : [],
+        thumbnailDataUrl: base.thumbnailDataUrl as any,
+        source: opts.source,
+      };
+    } catch (error) {
+      console.error("❌ Failed to normalize template", error);
+      return null;
+    }
+  };
+
+  const refreshSavedTemplates = async () => {
+    // 1) Local templates (fallback/offline)
+    const localTemplates = readTemplatesFromLocalStorage().map((t) => ({
+      ...t,
+      source: "local" as const,
+    }));
+
+    // One-time legacy migration (from single-template key) if local list is empty
+    if (localTemplates.length === 0) {
+      try {
+        const legacyRaw = localStorage.getItem(LEGACY_TEMPLATE_STORAGE_KEY);
+        if (legacyRaw) {
+          const legacyParsed = JSON.parse(legacyRaw) as any;
+          if (legacyParsed && Array.isArray(legacyParsed.elements)) {
+            const migrated: SavedTemplateV1 = {
+              version: 1,
+              id: generateTemplateId(),
+              name: "Legacy Template",
+              savedAt: legacyParsed.savedAt || new Date().toISOString(),
+              aspectRatio: legacyParsed.aspectRatio || aspectRatio,
+              canvasDimensions:
+                legacyParsed.canvasDimensions || canvasDimensions,
+              elements: legacyParsed.elements,
+              lockedElementIds: legacyParsed.lockedElementIds || [],
+              thumbnailDataUrl: legacyParsed.thumbnailDataUrl,
+              source: "local",
+            };
+            const migratedList = [migrated];
+            writeTemplatesToLocalStorage(migratedList);
+            localTemplates.push(...migratedList);
+          }
+        }
+      } catch (e) {
+        // ignore legacy parse errors
+      }
+    }
+
+    // 2) Remote templates
+    let remoteUser: SavedTemplateV1[] = [];
+    let remoteGlobal: SavedTemplateV1[] = [];
+
+    try {
+      const [userRaw, globalRaw] = await Promise.all([
+        templateService.getTemplates(),
+        templateService.getGlobalTemplates(),
+      ]);
+
+      remoteUser = userRaw
+        .map((item: any) =>
+          normalizeSavedTemplate(item, {
+            fallbackName: (item?.name as string) || "My Template",
+            fallbackId: item?.id as string,
+            source: "user",
+          })
+        )
+        .filter(Boolean) as SavedTemplateV1[];
+
+      remoteGlobal = globalRaw
+        .map((item: any) =>
+          normalizeSavedTemplate(item, {
+            fallbackName: (item?.name as string) || "Global Template",
+            fallbackId: item?.id as string,
+            source: "global",
+          })
+        )
+        .filter(Boolean) as SavedTemplateV1[];
+    } catch (error) {
+      console.warn(
+        "⚠️ Failed to fetch templates from server, using local only",
+        error
+      );
+    }
+
+    const merged = [...remoteUser, ...remoteGlobal, ...localTemplates];
+
+    setSavedTemplates(merged);
+    setSelectedTemplateId((prev) => {
+      if (merged.length === 0) return "";
+      if (prev && merged.some((t) => t.id === prev)) return prev;
+      return merged[0].id;
+    });
+  };
+
+  useEffect(() => {
+    refreshSavedTemplates();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const createTemplateThumbnailDataUrl = () => {
+    try {
+      if (!canvasDimensions?.width || !canvasDimensions?.height)
+        return undefined;
+
+      // Keep thumbnail small to avoid localStorage limits
+      const THUMBNAIL_WIDTH = 320;
+      const scale = THUMBNAIL_WIDTH / canvasDimensions.width;
+      const thumbHeight = Math.max(
+        1,
+        Math.round(canvasDimensions.height * scale)
+      );
+
+      const offscreen = document.createElement("canvas");
+      offscreen.width = THUMBNAIL_WIDTH;
+      offscreen.height = thumbHeight;
+      const context = offscreen.getContext("2d");
+      if (!context) return undefined;
+
+      // Draw in "logical" (full) coordinates; scale down to thumbnail
+      context.scale(scale, scale);
+
+      const logicalWidth = canvasDimensions.width;
+      const logicalHeight = canvasDimensions.height;
+
+      // Background (cover crop like main canvas)
+      if (backgroundImage) {
+        const canvasAspect = logicalWidth / logicalHeight;
+        const imageAspect = backgroundImage.width / backgroundImage.height;
+
+        let sourceX = 0;
+        let sourceY = 0;
+        let sourceWidth = backgroundImage.width;
+        let sourceHeight = backgroundImage.height;
+
+        if (imageAspect > canvasAspect) {
+          sourceHeight = backgroundImage.height;
+          sourceWidth = backgroundImage.height * canvasAspect;
+          sourceX = (backgroundImage.width - sourceWidth) / 2;
+          sourceY = 0;
+        } else {
+          sourceWidth = backgroundImage.width;
+          sourceHeight = backgroundImage.width / canvasAspect;
+          sourceX = 0;
+          sourceY = (backgroundImage.height - sourceHeight) / 2;
+        }
+
+        context.drawImage(
+          backgroundImage,
+          sourceX,
+          sourceY,
+          sourceWidth,
+          sourceHeight,
+          0,
+          0,
+          logicalWidth,
+          logicalHeight
+        );
+      } else {
+        context.fillStyle = "#f3f4f6";
+        context.fillRect(0, 0, logicalWidth, logicalHeight);
+      }
+
+      // Elements (no selection)
+      const sortedElements = [...elements].sort(
+        (a, b) => (a.zIndex || 0) - (b.zIndex || 0)
+      );
+      sortedElements.forEach((el) => drawElement(context, el, false));
+
+      return offscreen.toDataURL("image/png");
+    } catch (error) {
+      console.error("❌ Failed to generate template thumbnail", error);
+      return undefined;
+    }
+  };
+
+  const saveCurrentTemplate = async () => {
+    const name = templateName.trim() || `Template ${new Date().toISOString()}`;
+
+    const templates = readTemplatesFromLocalStorage();
+    const existing = templates.find(
+      (t) => t.name.toLowerCase() === name.toLowerCase()
+    );
+
+    const payload: SavedTemplateV1 = {
+      version: 1,
+      id: existing?.id || generateTemplateId(),
+      name,
+      savedAt: new Date().toISOString(),
+      aspectRatio,
+      canvasDimensions,
+      elements,
+      lockedElementIds: Array.from(lockedElements),
+      thumbnailDataUrl: createTemplateThumbnailDataUrl(),
+      source: "local",
+    };
+
+    // Try saving to server first
+    try {
+      await templateService.saveTemplate({
+        name,
+        json: payload,
+        isPublic: saveAsGlobal ? true : undefined,
+      });
+      console.log("✅ Template saved to server", name);
+      await refreshSavedTemplates();
+      return;
+    } catch (error) {
+      console.warn(
+        "⚠️ Failed to save template to server, saving locally",
+        error
+      );
+    }
+
+    // Fallback: save locally
+    try {
+      const next = existing
+        ? templates.map((t) => (t.id === existing.id ? payload : t))
+        : [payload, ...templates];
+
+      writeTemplatesToLocalStorage(next);
+      setTemplateName(name);
+      setSavedTemplates((prev) => {
+        // keep any remote templates already loaded
+        const remote = prev.filter(
+          (t) => t.source === "user" || t.source === "global"
+        );
+        return [
+          ...remote,
+          ...next.map((t) => ({ ...t, source: "local" as const })),
+        ];
+      });
+      setSelectedTemplateId(payload.id);
+
+      console.log("✅ Template saved to localStorage", payload);
+    } catch (error) {
+      console.error("❌ Failed to save template to localStorage", error);
+    }
+  };
+
+  const selectTemplateById = (id: string) => {
+    setSelectedTemplateId(id);
+    const tpl = savedTemplates.find((t) => t.id === id);
+    if (tpl) setTemplateName(tpl.name);
+  };
+
+  const loadTemplateById = (id: string) => {
+    try {
+      const tpl = savedTemplates.find((t) => t.id === id);
+      if (!tpl) {
+        console.warn("⚠️ Template not found", id);
+        return;
+      }
+
+      const normalizedElements = tpl.elements.map((el, index) => ({
+        ...el,
+        zIndex: el.zIndex !== undefined ? el.zIndex : index,
+      }));
+
+      setElements(normalizedElements);
+      setLockedElements(new Set(tpl.lockedElementIds || []));
+      setSelectedElement(null);
+      setSelectedTemplateId(tpl.id);
+      setTemplateName(tpl.name);
+
+      console.log("✅ Template loaded", tpl);
+    } catch (error) {
+      console.error("❌ Failed to load template from localStorage", error);
+    }
+  };
+
+  const deleteTemplateById = (id: string) => {
+    try {
+      const tpl = savedTemplates.find((t) => t.id === id);
+      if (tpl?.source && tpl.source !== "local") {
+        console.warn("⚠️ Delete not supported for server templates yet");
+        return;
+      }
+
+      const templates = readTemplatesFromLocalStorage();
+      const next = templates.filter((t) => t.id !== id);
+      writeTemplatesToLocalStorage(next);
+
+      setSavedTemplates((prev) => {
+        const remote = prev.filter(
+          (t) => t.source === "user" || t.source === "global"
+        );
+        const locals = next.map((t) => ({ ...t, source: "local" as const }));
+        return [...remote, ...locals];
+      });
+
+      setSelectedTemplateId((prev) => {
+        if (prev !== id) return prev;
+        const stillSelected = next[0]?.id;
+        // if no local remains, keep any remote selected
+        if (stillSelected) return stillSelected;
+        const firstRemote = savedTemplates.find(
+          (t) => t.source === "user" || t.source === "global"
+        )?.id;
+        return firstRemote || "";
+      });
+
+      console.log("🗑️ Template deleted", id);
+    } catch (error) {
+      console.error("❌ Failed to delete template", error);
+    }
+  };
 
   const navigate = useNavigate();
 
@@ -1318,6 +1743,150 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
       >
         <div className="flex w-full overflow-y-auto p-3 md:p-4 min-h-0">
           <div className="space-y-3 md:space-y-4 w-full">
+            {/* Templates Section */}
+            <div className="border border-gray-200 rounded-md p-2 md:p-3 bg-white">
+              <button
+                type="button"
+                onClick={() => setTemplatesOpen((prev) => !prev)}
+                className="w-full flex items-center justify-between"
+              >
+                <h4 className="text-xs md:text-sm font-semibold text-slate-700">
+                  Templates
+                </h4>
+                {templatesOpen ? (
+                  <ChevronUp className="w-4 h-4 text-slate-600" />
+                ) : (
+                  <ChevronDown className="w-4 h-4 text-slate-600" />
+                )}
+              </button>
+
+              {templatesOpen && (
+                <div className="mt-2 space-y-2">
+                  <div className="grid grid-cols-[1fr_auto] items-center gap-2">
+                    <input
+                      value={templateName}
+                      onChange={(e) => setTemplateName(e.target.value)}
+                      placeholder="Template name"
+                      className="w-full min-w-0 px-3 h-10 border border-gray-300 rounded-md text-sm"
+                    />
+                    <button
+                      onClick={() => void saveCurrentTemplate()}
+                      className="h-10 bg-purple-600 text-white font-medium flex items-center gap-2 justify-center px-3 rounded-md border border-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3] whitespace-nowrap"
+                      title={
+                        saveAsGlobal
+                          ? "Save as global template"
+                          : "Save as my template"
+                      }
+                      type="button"
+                    >
+                      <Download className="w-4 h-4" />
+                      <span className="text-sm">Save</span>
+                    </button>
+                  </div>
+
+                  <label className="flex items-center gap-2 text-xs text-slate-700 select-none">
+                    <input
+                      type="checkbox"
+                      checked={saveAsGlobal}
+                      onChange={(e) => setSaveAsGlobal(e.target.checked)}
+                      className="h-4 w-4"
+                    />
+                    Save as global (isPublic)
+                  </label>
+
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs text-gray-600 font-medium">
+                      Saved templates
+                    </p>
+                    <button
+                      onClick={() => void refreshSavedTemplates()}
+                      className="text-xs text-purple-600 font-medium hover:underline"
+                      type="button"
+                    >
+                      Refresh
+                    </button>
+                  </div>
+
+                  {savedTemplates.length === 0 ? (
+                    <p className="text-xs text-gray-400">
+                      No templates saved yet.
+                    </p>
+                  ) : (
+                    <div className="space-y-2">
+                      <div className="grid grid-cols-[1fr_auto_auto] items-center gap-2">
+                        <select
+                          value={selectedTemplateId}
+                          onChange={(e) => selectTemplateById(e.target.value)}
+                          className="w-full min-w-0 px-3 h-10 border border-gray-300 rounded-md text-sm"
+                        >
+                          {[...savedTemplates]
+                            .sort((a, b) =>
+                              (b.savedAt || "").localeCompare(a.savedAt || "")
+                            )
+                            .map((tpl) => (
+                              <option key={tpl.id} value={tpl.id}>
+                                {tpl.source === "global"
+                                  ? `Global - ${tpl.name}`
+                                  : tpl.source === "user"
+                                  ? `My - ${tpl.name}`
+                                  : `Local - ${tpl.name}`}
+                              </option>
+                            ))}
+                        </select>
+
+                        <button
+                          onClick={() =>
+                            selectedTemplateId &&
+                            loadTemplateById(selectedTemplateId)
+                          }
+                          disabled={!selectedTemplateId}
+                          className="h-10 w-10 flex items-center justify-center rounded-md bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
+                          title="Load"
+                          type="button"
+                        >
+                          <Upload className="w-4 h-4 text-gray-700" />
+                        </button>
+
+                        <button
+                          onClick={() =>
+                            selectedTemplateId &&
+                            deleteTemplateById(selectedTemplateId)
+                          }
+                          disabled={
+                            !selectedTemplateId ||
+                            savedTemplates.find(
+                              (t) => t.id === selectedTemplateId
+                            )?.source !== "local"
+                          }
+                          className="h-10 w-10 flex items-center justify-center rounded-md bg-red-100 hover:bg-red-200 disabled:opacity-50"
+                          title="Delete (local templates only)"
+                          type="button"
+                        >
+                          <Trash className="w-4 h-4 text-red-700" />
+                        </button>
+                      </div>
+
+                      {(() => {
+                        const selected = savedTemplates.find(
+                          (t) => t.id === selectedTemplateId
+                        );
+                        if (!selected?.thumbnailDataUrl) return null;
+                        return (
+                          <div className="border border-gray-200 rounded-md overflow-hidden bg-gray-50">
+                            <img
+                              src={selected.thumbnailDataUrl}
+                              alt={selected.name}
+                              className="w-full h-auto block"
+                            />
+                          </div>
+                        );
+                      })()}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
             {/* Element Creation Toolbar */}
             <div className="border border-gray-200 rounded-md p-2 md:p-3 bg-gray-50">
               <h4 className="text-xs md:text-sm font-semibold text-slate-700 mb-2 md:mb-3">

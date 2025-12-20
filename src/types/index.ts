@@ -1,5 +1,4 @@
 export interface ProfileInfo {
-import { mediaApi } from './../lib/api';
   type: 'individual' | 'business';
   name: string;
   website: string;
@@ -34,9 +33,6 @@ export interface CampaignInfo {
   publishedPosts?: number;
   scheduledPosts?: number;
 }
-
-// Keep CampaignInfo as alias for backward compatibility during migration
-export type CampaignInfo = CampaignInfo;
 
 export interface PostContent {
   prompt: string;

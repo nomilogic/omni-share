@@ -64,6 +64,12 @@ interface NewPasswordPayload {
   new_password: string;
 }
 
+interface TemplatePayload {
+  name: string;
+  json: any;
+  isPublic?: boolean;
+}
+
 // OAUTH Exchange code payload
 interface ExchangeCodePayload {
   code: string;
@@ -160,6 +166,10 @@ interface APIInstance extends AxiosInstance {
   updatePassword: (data: any) => Promise<any>;
   OauthExchangeCode: (data: ExchangeCodePayload) => Promise<any>;
   subscribe: (data: ExchangeCodePayload) => Promise<any>;
+
+  saveTemplate: (data: TemplatePayload) => Promise<any>;
+  listTemplates: () => Promise<any>;
+  listGlobalTemplates: () => Promise<any>;
 }
 
 export const API = axios.create({
@@ -324,5 +334,10 @@ API.updatePassword = (data: any) => API.post("/auth/update-password", data);
 API.OauthExchangeCode = (data: any) =>
   API.post("/client/oauth/exchange-code", data);
 API.subscribe = (data: any) => API.post("/client/subscribe", { email: data });
+
+// Templates
+API.saveTemplate = (data) => API.post("/client/template", data);
+API.listTemplates = () => API.get("/client/template");
+API.listGlobalTemplates = () => API.get("/client/template/global");
 
 export default API;
