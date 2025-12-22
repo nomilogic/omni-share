@@ -179,7 +179,7 @@ export const initiateFacebookOAuth = (): Promise<{
         client_id: oauthConfig.facebook.appId,
         redirect_uri: oauthConfig.facebook.redirectUri,
         response_type: "code",
-        scope: "email,public_profile",
+        scope: "email,public_profile, business_messaging",
         state: state,
       });
 
