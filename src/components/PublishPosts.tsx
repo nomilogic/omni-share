@@ -485,14 +485,15 @@ export const PublishPosts: React.FC<PublishProps> = ({
       }
 
       // Enforce max video duration if both creatorInfo and post provide it
+      // Allow 30 second buffer for encoding/processing differences
       if (
         tikTokPost?.tiktokVideoDurationSec &&
         tiktokCreatorInfo?.max_video_post_duration_sec &&
         tikTokPost.tiktokVideoDurationSec >
-          tiktokCreatorInfo.max_video_post_duration_sec
+          (tiktokCreatorInfo.max_video_post_duration_sec + 30)
       ) {
         setError(
-          `Your TikTok video is too long. Maximum allowed duration is ${tiktokCreatorInfo.max_video_post_duration_sec} seconds.`
+          `Your TikTok video duration (${Math.round(tikTokPost.tiktokVideoDurationSec)}s) exceeds your account limit (${tiktokCreatorInfo.max_video_post_duration_sec}s). Please use a shorter video.`
         );
         return;
       }
@@ -854,11 +855,14 @@ export const PublishPosts: React.FC<PublishProps> = ({
                 post.platform === "tiktok"
                   ? tiktokCreatorInfo?.max_video_post_duration_sec
                   : undefined;
+              
+              // Only disable if we have a duration AND a limit AND duration is significantly over
+              // Allow some buffer (30 seconds grace period) for encoding/processing differences
               const disableByDuration =
                 post.platform === "tiktok" &&
                 !!durationSec &&
                 !!tiktokDurationLimit &&
-                durationSec > tiktokDurationLimit;
+                durationSec > (tiktokDurationLimit + 30);
 
               return (
                 <div
