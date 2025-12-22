@@ -29,7 +29,6 @@ export default function CookieBanner() {
 
   const accept = () => {
     localStorage.setItem("cookie-consent", "accepted");
-    loadAnalytics();
     setShow(false);
     setSettingsOpen(false);
   };
