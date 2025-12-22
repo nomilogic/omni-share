@@ -22,6 +22,7 @@ import {
   getPlatformColors,
   getPlatformDisplayName,
 } from "../utils/platformIcons";
+import { getPlatformVideoLimits } from "../utils/videoUtils";
 import { useAppContext } from "@/context/AppContext";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -1135,7 +1136,74 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                         {selectedPost.hashtags.length}
                       </span>
                     </div>
+                    {(() => {
+                      // Show video limits only for video posts
+                      const mediaUrl = selectedPost.mediaUrl || selectedPost.imageUrl;
+                      const hasVideo = mediaUrl ? isVideoMedia(selectedPost as any, mediaUrl) : false;
+                      if (!hasVideo) return null;
+
+                      const videoAspectRatio = (selectedPost as any).videoAspectRatio;
+                      const isShorts = videoAspectRatio && videoAspectRatio >= 0.5 && videoAspectRatio <= 0.65;
+                      
+                      const videoLimits = getPlatformVideoLimits(selectedPost.platform, isShorts);
+                      if (!videoLimits) return null;
+
+                      return (
+                        <div className="flex justify-between md:flex-col md:items-start">
+                          <span className="text-gray-500 font-medium">
+                            {isShorts ? "Shorts" : "Video"} Limits
+                          </span>
+                          <span className="text-xs text-gray-600 font-medium">
+                            {videoLimits.aspectRatio} • {videoLimits.maxDuration}
+                          </span>
+                        </div>
+                      );
+                    })()}
                   </div>
+
+                  {(() => {
+                    // Show detailed video limits when this post has video media
+                    const mediaUrl = selectedPost.mediaUrl || selectedPost.imageUrl;
+                    const hasVideo = mediaUrl ? isVideoMedia(selectedPost as any, mediaUrl) : false;
+                    if (!hasVideo) return null;
+
+                    const videoAspectRatio = (selectedPost as any).videoAspectRatio;
+                    const isShorts = videoAspectRatio && videoAspectRatio >= 0.5 && videoAspectRatio <= 0.65;
+                    
+                    const videoLimits = getPlatformVideoLimits(selectedPost.platform, isShorts);
+                    if (!videoLimits) return null;
+
+                    return (
+                      <div className="mt-4 pt-4 border-t border-gray-200">
+                        <span className="text-gray-500 font-medium block mb-2">
+                          {isShorts ? "Shorts" : "Video"} Requirements for {getPlatformDisplayName(selectedPost.platform)}
+                        </span>
+                        <div className="space-y-2 text-xs text-gray-700">
+                          <div className="flex justify-between">
+                            <span className="font-medium">Aspect Ratio:</span>
+                            <span>{videoLimits.aspectRatio}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="font-medium">Resolution:</span>
+                            <span>{videoLimits.resolution}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="font-medium">Max Duration:</span>
+                            <span>{videoLimits.maxDuration}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="font-medium">Max File Size:</span>
+                            <span>{videoLimits.maxFileSize}</span>
+                          </div>
+                          {videoLimits.notes && (
+                            <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-yellow-800">
+                              ⚠️ {videoLimits.notes}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })()}
                 </div>
               </div>
             </div>

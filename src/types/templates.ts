@@ -46,7 +46,7 @@ export interface Template {
   id: string;
   name: string;
   description: string;
-  category: 'social' | 'youtube' | 'business' | 'custom';
+  category: 'social' | 'youtube' | 'business' | 'custom' | 'blank';
   platforms: string[];
   dimensions: {
     width: number;
@@ -66,7 +66,7 @@ export interface TemplateConfig {
   elements: (TextElement | LogoElement | ShapeElement)[];
 }
 
-export type TemplateCategory = 'all' | 'social' | 'youtube' | 'business' | 'custom';
+export type TemplateCategory = 'all' | 'social' | 'youtube' | 'business' | 'custom' | 'blank';
 
 export interface TemplateEditorState {
   selectedTemplate: Template | null;
