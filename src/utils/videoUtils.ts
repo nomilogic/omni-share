@@ -169,3 +169,116 @@ export const createVideoThumbnailUrl = async (
     reader.readAsDataURL(thumbnailBlob);
   });
 };
+
+/**
+ * Video limits for different platforms and formats
+ */
+export interface VideoLimits {
+  shortForm?: {
+    aspectRatio: string;
+    resolution: string;
+    maxDuration: string;
+    maxFileSize: string;
+    notes?: string;
+  };
+  horizontal?: {
+    aspectRatio: string;
+    resolution: string;
+    maxDuration: string;
+    maxFileSize: string;
+    notes?: string;
+  };
+}
+
+export const PLATFORM_VIDEO_LIMITS: Record<string, VideoLimits> = {
+  tiktok: {
+    shortForm: {
+      aspectRatio: "9:16",
+      resolution: "1080 x 1920",
+      maxDuration: "60 minutes (uploaded) / 10 min (in-app)",
+      maxFileSize: "500 MB (Web) / 287 MB (iOS) / 72 MB (Android)",
+      notes: "Algorithm favors content under 60 seconds"
+    },
+    horizontal: {
+      aspectRatio: "16:9",
+      resolution: "1920 x 1080",
+      maxDuration: "60 minutes (horizontal support varies)",
+      maxFileSize: "500 MB"
+    }
+  },
+  youtube: {
+    shortForm: {
+      aspectRatio: "9:16",
+      resolution: "1080 x 1920",
+      maxDuration: "3 minutes (for square or taller videos)",
+      maxFileSize: "10 MB (approximate)",
+      notes: "Videos longer than 60 seconds must be square or vertical"
+    },
+    horizontal: {
+      aspectRatio: "16:9",
+      resolution: "1920 x 1080",
+      maxDuration: "12 hours",
+      maxFileSize: "256 GB"
+    }
+  },
+  instagram: {
+    shortForm: {
+      aspectRatio: "9:16",
+      resolution: "1080 x 1920",
+      maxDuration: "3 minutes",
+      maxFileSize: "4 GB"
+    },
+    horizontal: {
+      aspectRatio: "16:9",
+      resolution: "1920 x 1080",
+      maxDuration: "60 minutes",
+      maxFileSize: "4 GB"
+    }
+  },
+  facebook: {
+    shortForm: {
+      aspectRatio: "9:16",
+      resolution: "1080 x 1920",
+      maxDuration: "90 seconds",
+      maxFileSize: "4 GB"
+    },
+    horizontal: {
+      aspectRatio: "16:9",
+      resolution: "1920 x 1080",
+      maxDuration: "4 hours (240 minutes)",
+      maxFileSize: "10 GB"
+    }
+  },
+  linkedin: {
+    shortForm: {
+      aspectRatio: "9:16",
+      resolution: "1080 x 1920",
+      maxDuration: "10 minutes (Mobile) / 15 min (Desktop)",
+      maxFileSize: "5 GB"
+    },
+    horizontal: {
+      aspectRatio: "16:9",
+      resolution: "1920 x 1080",
+      maxDuration: "15 minutes (Desktop) / 10 min (Mobile)",
+      maxFileSize: "5 GB"
+    }
+  }
+};
+
+/**
+ * Gets video limits for a specific platform
+ * @param platform - Platform name (tiktok, youtube, instagram, facebook, linkedin)
+ * @param isVertical - Whether the video is vertical/short-form (default: true)
+ * @returns Video limits for the platform or null if not found
+ */
+export const getPlatformVideoLimits = (
+  platform: string,
+  isVertical: boolean = true
+): Partial<VideoLimits[keyof VideoLimits]> | null => {
+  const platformLower = platform.toLowerCase();
+  const limits = PLATFORM_VIDEO_LIMITS[platformLower];
+  
+  if (!limits) return null;
+  
+  return isVertical ? limits.shortForm : limits.horizontal;
+};

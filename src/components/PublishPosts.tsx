@@ -12,12 +12,35 @@ import {
   getPlatformIconBackgroundColors,
   getPlatformDisplayName,
 } from "../utils/platformIcons";
+import { getPlatformVideoLimits } from "../utils/videoUtils";
 import API from "../services/api";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useModal } from "../context2/ModalContext";
 import DiscardWarningModal from "../components/modals/DiscardWarningModal";
 import { useAppContext } from "@/context/AppContext";
+
+type TikTokPrivacyLevel = string; // e.g. "SELF_ONLY", "FRIENDS", "PUBLIC" – comes from creator_info
+
+interface TikTokCreatorInfo {
+  nickname?: string;
+  max_video_post_duration_sec?: number;
+  privacy_level_options?: TikTokPrivacyLevel[];
+  // Optional flags – we use them defensively if backend exposes them
+  can_post?: boolean;
+  blocked_reason?: string;
+}
+
+interface TikTokSettingsState {
+  title: string;
+  privacyLevel: TikTokPrivacyLevel | "";
+  allowComment: boolean;
+  allowDuet: boolean;
+  allowStitch: boolean;
+  isCommercial: boolean;
+  isYourBrand: boolean;
+  isBrandedContent: boolean;
+}
 
 interface PublishProps {
   posts: GeneratedPost[];
@@ -68,13 +91,76 @@ export const PublishPosts: React.FC<PublishProps> = ({
   const { openModal } = useModal();
   const { fetchUnreadCount } = useAppContext();
 
+  const [tiktokCreatorInfo, setTiktokCreatorInfo] =
+    useState<TikTokCreatorInfo | null>(null);
+  const [tiktokSettings, setTiktokSettings] = useState<TikTokSettingsState>({
+    title: "",
+    privacyLevel: "",
+    allowComment: false,
+    allowDuet: false,
+    allowStitch: false,
+    isCommercial: false,
+    isYourBrand: false,
+    isBrandedContent: false,
+  });
+  const [tiktokPostingBlockedReason, setTiktokPostingBlockedReason] =
+    useState<string | null>(null);
+
   const navigate = useNavigate();
 
+  // On mount, mirror AccountsPage behaviour: immediately check which platforms
+  // are already connected, regardless of current posts.
   useEffect(() => {
-    console.log("Publishing posts for user:", userId);
-    //notify("error",'Publishing posts for user: ' + userId);
+    console.log("[PublishPosts] Checking initially connected platforms for user:", userId);
     checkConnectedPlatforms();
-  }, [userId, posts]);
+  }, []);
+
+  // Fetch latest TikTok creator info whenever TikTok is connected & present in posts
+  useEffect(() => {
+    const hasTikTokPost = posts.some((p) => p.platform === "tiktok");
+    if (!hasTikTokPost) {
+      setTiktokCreatorInfo(null);
+      setTiktokPostingBlockedReason(null);
+      return;
+    }
+
+    const fetchCreatorInfo = async () => {
+      try {
+        const res = await API.tiktokGetMe();
+        const data = res?.data || {};
+        const creatorInfo: TikTokCreatorInfo = {
+          nickname: data.nickname || data.display_name,
+          max_video_post_duration_sec:
+            data.creator_info?.max_video_post_duration_sec ||
+            data.max_video_post_duration_sec,
+          privacy_level_options:
+            data.creator_info?.privacy_level_options ||
+            data.privacy_level_options,
+          can_post:
+            data.creator_info?.can_post ??
+            data.can_post ??
+            data.creator_info?.can_post_video,
+          blocked_reason:
+            data.creator_info?.blocked_reason || data.blocked_reason,
+        };
+        setTiktokCreatorInfo(creatorInfo);
+
+        if (creatorInfo.can_post === false) {
+          setTiktokPostingBlockedReason(
+            creatorInfo.blocked_reason ||
+              "TikTok posting is temporarily unavailable for this account. Please try again later."
+          );
+        } else {
+          setTiktokPostingBlockedReason(null);
+        }
+      } catch (e: any) {
+        console.error("Failed to fetch TikTok creator info:", e);
+        // Do not hard-block publish if creator_info fails; backend will enforce caps.
+      }
+    };
+
+    fetchCreatorInfo();
+  }, [posts]);
 
   const checkConnectedPlatforms = async () => {
     try {
@@ -91,9 +177,11 @@ export const PublishPosts: React.FC<PublishProps> = ({
       const statusData = response.data;
 
       const connected: Platform[] = [];
-      for (const post of posts) {
-        if (statusData[post.platform]?.connected) {
-          connected.push(post.platform);
+      // Align behaviour with AccountsPage: check all known platforms,
+      // not just those present in the current posts array.
+      for (const platform of ALL_PLATFORMS) {
+        if (statusData[platform]?.connected) {
+          connected.push(platform);
         }
       }
       setConnectedPlatforms(connected);
@@ -258,15 +346,16 @@ export const PublishPosts: React.FC<PublishProps> = ({
     try {
       setConnectingPlatforms((prev) => [...prev, platform]);
 
+      // Start OAuth flow (JWT-authenticated)
       const result: any = await oauthManagerClient.startOAuthFlow(platform);
       const { authUrl } = result.data.data;
+      console.log("Opening OAuth popup with URL:", authUrl);
 
       const authWindow = window.open(
         authUrl,
         `${platform}_oauth`,
         "width=600,height=700,scrollbars=yes,resizable=yes"
       );
-
       if (!authWindow) {
         throw new Error("OAuth popup blocked");
       }
@@ -278,20 +367,23 @@ export const PublishPosts: React.FC<PublishProps> = ({
           event.data.platform === platform
         ) {
           console.log("OAuth success for", platform);
-          // Close popup immediately
-          if (authWindow && !authWindow.closed) {
-            authWindow.close();
+          // Close popup from parent window for better browser compatibility
+          try {
+            authWindow?.close();
+          } catch (error) {
+            console.warn("Could not close popup from parent:", error);
           }
-          clearInterval(checkClosed);
+          setTimeout(checkConnectedPlatforms, 1000);
           window.removeEventListener("message", messageListener);
-          setTimeout(checkConnectedPlatforms, 500);
         } else if (event.data.type === "oauth_error") {
           console.error("OAuth error:", event.data.error);
-          // Close popup immediately
-          if (authWindow && !authWindow.closed) {
-            authWindow.close();
+          // Close popup from parent window for better browser compatibility
+          try {
+            authWindow?.close();
+          } catch (error) {
+            console.warn("Could not close popup from parent:", error);
           }
-          clearInterval(checkClosed);
+
           window.removeEventListener("message", messageListener);
           setError(
             `Failed to connect ${platform}: ${
@@ -303,14 +395,14 @@ export const PublishPosts: React.FC<PublishProps> = ({
 
       window.addEventListener("message", messageListener);
 
-      // Monitor window closure as fallback
+      // Monitor window closure as fallback (same as AccountsPage)
       const checkClosed = setInterval(() => {
         if (authWindow?.closed) {
           clearInterval(checkClosed);
           window.removeEventListener("message", messageListener);
-          setTimeout(checkConnectedPlatforms, 500);
+          setTimeout(checkConnectedPlatforms, 1000);
         }
-      }, 500);
+      }, 1000);
     } catch (error) {
       console.error("Error connecting to platform:", error);
       setError(
@@ -320,7 +412,6 @@ export const PublishPosts: React.FC<PublishProps> = ({
       );
     } finally {
       setConnectingPlatforms((prev) => prev.filter((p) => p !== platform));
-      // checkConnectedPlatforms();
     }
   };
 
@@ -344,7 +435,69 @@ export const PublishPosts: React.FC<PublishProps> = ({
     }
   };
 
+  const isTikTokSelectedAndConnected = () => {
+    return (
+      selectedPlatforms.includes("tiktok") &&
+      connectedPlatforms.includes("tiktok") &&
+      posts.some((p) => p.platform === "tiktok")
+    );
+  };
+
   const handlePublish = async () => {
+    // TikTok-specific validation before building availablePlatforms
+    if (isTikTokSelectedAndConnected()) {
+      const tikTokPost = posts.find((p) => p.platform === "tiktok");
+
+      if (tiktokPostingBlockedReason) {
+        setError(tiktokPostingBlockedReason);
+        return;
+      }
+
+      if (!tiktokSettings.title.trim()) {
+        setError("Please enter a TikTok title before publishing.");
+        return;
+      }
+
+      if (!tiktokSettings.privacyLevel) {
+        setError("Please select a TikTok privacy status before publishing.");
+        return;
+      }
+
+      if (tiktokSettings.isCommercial) {
+        if (!tiktokSettings.isYourBrand && !tiktokSettings.isBrandedContent) {
+          setError(
+            "For TikTok commercial content, please indicate if it promotes yourself, a third party, or both."
+          );
+          return;
+        }
+      }
+
+      // If branded content is selected, disallow private / only-me visibility
+      const privacyIsPrivate =
+        tiktokSettings.privacyLevel.toUpperCase() === "SELF_ONLY" ||
+        tiktokSettings.privacyLevel.toUpperCase() === "PRIVATE";
+
+      if (tiktokSettings.isBrandedContent && privacyIsPrivate) {
+        setError(
+          "TikTok branded content cannot be set to private. Please choose a more public visibility option."
+        );
+        return;
+      }
+
+      // Enforce max video duration if both creatorInfo and post provide it
+      if (
+        tikTokPost?.tiktokVideoDurationSec &&
+        tiktokCreatorInfo?.max_video_post_duration_sec &&
+        tikTokPost.tiktokVideoDurationSec >
+          tiktokCreatorInfo.max_video_post_duration_sec
+      ) {
+        setError(
+          `Your TikTok video is too long. Maximum allowed duration is ${tiktokCreatorInfo.max_video_post_duration_sec} seconds.`
+        );
+        return;
+      }
+    }
+
     const availablePlatforms = selectedPlatforms.filter(
       (p) => connectedPlatforms.includes(p) && !publishedPlatforms.includes(p)
     );
@@ -362,9 +515,24 @@ export const PublishPosts: React.FC<PublishProps> = ({
 
     try {
       // Only process posts for available platforms (connected and not published)
-      const selectedPosts = posts.filter((post) =>
-        availablePlatforms.includes(post.platform)
-      );
+      // Enrich TikTok post with settings before publishing
+      const selectedPosts = posts
+        .filter((post) => availablePlatforms.includes(post.platform))
+        .map((post) => {
+          if (post.platform !== "tiktok") return post;
+
+          return {
+            ...post,
+            tiktokTitle: tiktokSettings.title.trim(),
+            tiktokPrivacyLevel: tiktokSettings.privacyLevel,
+            tiktokAllowComment: tiktokSettings.allowComment,
+            tiktokAllowDuet: tiktokSettings.allowDuet,
+            tiktokAllowStitch: tiktokSettings.allowStitch,
+            tiktokIsCommercial: tiktokSettings.isCommercial,
+            tiktokIsYourBrand: tiktokSettings.isYourBrand,
+            tiktokIsBrandedContent: tiktokSettings.isBrandedContent,
+          };
+        });
 
       const youtubePost = selectedPosts.find(
         (post) => post.platform === "youtube"
@@ -448,12 +616,249 @@ export const PublishPosts: React.FC<PublishProps> = ({
           </p>
         </div>
 
+        {/* TikTok-specific settings (shown only when TikTok post exists) */}
+        {posts.some((p) => p.platform === "tiktok") && (
+          <div className="mt-4 p-4 bg-purple-50 border border-purple-200 rounded-md space-y-3">
+            <h3 className="font-semibold text-purple-900 text-sm">
+              TikTok Settings (required for Direct Post compliance)
+            </h3>
+
+            {tiktokCreatorInfo?.nickname && (
+              <p className="text-xs text-purple-800">
+                Posting to TikTok account: <strong>{tiktokCreatorInfo.nickname}</strong>
+              </p>
+            )}
+
+            {tiktokPostingBlockedReason && (
+              <p className="text-xs text-red-600">
+                {tiktokPostingBlockedReason}
+              </p>
+            )}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs md:text-sm">
+              <div className="flex flex-col gap-1">
+                <label className="font-medium text-purple-900">
+                  TikTok Title
+                  <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={tiktokSettings.title}
+                  onChange={(e) =>
+                    setTiktokSettings((prev) => ({
+                      ...prev,
+                      title: e.target.value,
+                    }))
+                  }
+                  className="border border-purple-200 rounded-md px-2 py-1 text-sm focus:ring-1 focus:ring-purple-500 focus:border-purple-500"
+                  placeholder="Enter a title for your TikTok post"
+                />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="font-medium text-purple-900">
+                  TikTok Privacy Status
+                  <span className="text-red-500">*</span>
+                </label>
+                <select
+                  value={tiktokSettings.privacyLevel}
+                  onChange={(e) =>
+                    setTiktokSettings((prev) => ({
+                      ...prev,
+                      privacyLevel: e.target.value as TikTokPrivacyLevel,
+                    }))
+                  }
+                  className="border border-purple-200 rounded-md px-2 py-1 text-sm focus:ring-1 focus:ring-purple-500 focus:border-purple-500 bg-white"
+                >
+                  <option value="" disabled>
+                    Select privacy level
+                  </option>
+                  {(tiktokCreatorInfo?.privacy_level_options || [
+                    "SELF_ONLY",
+                    "FRIENDS",
+                    "EVERYONE",
+                  ]).map((opt) => {
+                    const isPrivateOption =
+                      opt.toUpperCase() === "SELF_ONLY" ||
+                      opt.toUpperCase() === "PRIVATE";
+                    const disabled =
+                      tiktokSettings.isBrandedContent && isPrivateOption;
+                    return (
+                      <option
+                        key={opt}
+                        value={opt}
+                        disabled={disabled}
+                        title={
+                          disabled
+                            ? "Branded content visibility cannot be set to private."
+                            : undefined
+                        }
+                      >
+                        {opt}
+                      </option>
+                    );
+                  })}
+                </select>
+                {tiktokSettings.isBrandedContent && (
+                  <p className="text-[11px] text-purple-700">
+                    Branded content cannot be posted with "only me" visibility.
+                  </p>
+                )}
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <span className="font-medium text-purple-900">
+                  Interaction Options
+                </span>
+                <div className="flex flex-col gap-1">
+                  <label className="inline-flex items-center gap-2 text-xs">
+                    <input
+                      type="checkbox"
+                      checked={tiktokSettings.allowComment}
+                      onChange={(e) =>
+                        setTiktokSettings((prev) => ({
+                          ...prev,
+                          allowComment: e.target.checked,
+                        }))
+                      }
+                    />
+                    <span>Allow comments</span>
+                  </label>
+                  <label className="inline-flex items-center gap-2 text-xs">
+                    <input
+                      type="checkbox"
+                      checked={tiktokSettings.allowDuet}
+                      onChange={(e) =>
+                        setTiktokSettings((prev) => ({
+                          ...prev,
+                          allowDuet: e.target.checked,
+                        }))
+                      }
+                    />
+                    <span>Allow Duet</span>
+                  </label>
+                  <label className="inline-flex items-center gap-2 text-xs">
+                    <input
+                      type="checkbox"
+                      checked={tiktokSettings.allowStitch}
+                      onChange={(e) =>
+                        setTiktokSettings((prev) => ({
+                          ...prev,
+                          allowStitch: e.target.checked,
+                        }))
+                      }
+                    />
+                    <span>Allow Stitch</span>
+                  </label>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="inline-flex items-center gap-2 text-xs font-medium text-purple-900">
+                  <input
+                    type="checkbox"
+                    checked={tiktokSettings.isCommercial}
+                    onChange={(e) =>
+                      setTiktokSettings((prev) => ({
+                        ...prev,
+                        isCommercial: e.target.checked,
+                        // Reset options if turning off
+                        ...(e.target.checked
+                          ? {}
+                          : {
+                              isYourBrand: false,
+                              isBrandedContent: false,
+                            }),
+                      }))
+                    }
+                  />
+                  <span>
+                    This TikTok post promotes yourself, a brand, product or
+                    service
+                  </span>
+                </label>
+
+                {tiktokSettings.isCommercial && (
+                  <div className="ml-5 mt-1 space-y-1">
+                    <label className="inline-flex items-center gap-2 text-xs">
+                      <input
+                        type="checkbox"
+                        checked={tiktokSettings.isYourBrand}
+                        onChange={(e) =>
+                          setTiktokSettings((prev) => ({
+                            ...prev,
+                            isYourBrand: e.target.checked,
+                          }))
+                        }
+                      />
+                      <span>Your brand</span>
+                    </label>
+                    <label className="inline-flex items-center gap-2 text-xs ml-4 ">
+                      <input
+                        type="checkbox"
+                        checked={tiktokSettings.isBrandedContent}
+                        onChange={(e) =>
+                          setTiktokSettings((prev) => ({
+                            ...prev,
+                            isBrandedContent: e.target.checked,
+                          }))
+                        }
+                      />
+                      <span>Branded content (third party)</span>
+                    </label>
+                    {!tiktokSettings.isYourBrand &&
+                      !tiktokSettings.isBrandedContent && (
+                        <p className="text-[11px] text-purple-700">
+                          You need to indicate if your content promotes yourself,
+                          a third party, or both.
+                        </p>
+                      )}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* TikTok legal declaration text */}
+            <p className="mt-2 text-[11px] text-purple-900">
+              {(() => {
+                const { isCommercial, isYourBrand, isBrandedContent } =
+                  tiktokSettings;
+                if (!isCommercial || (isYourBrand && !isBrandedContent)) {
+                  return "By posting, you agree to TikTok's Music Usage Confirmation.";
+                }
+                if (isBrandedContent) {
+                  return "By posting, you agree to TikTok's Branded Content Policy and Music Usage Confirmation.";
+                }
+                return "By posting, you agree to TikTok's Music Usage Confirmation.";
+              })()}
+            </p>
+
+            {/* Processing note per TikTok guidelines */}
+            <p className="mt-1 text-[11px] text-purple-700">
+              After you publish, TikTok may take a few minutes to process your
+              video before it appears on your profile.
+            </p>
+          </div>
+        )}
+
         <div className="mb-4 mt-4">
           <div className="space-y-4">
             {posts.map((post) => {
               const isConnected = connectedPlatforms.includes(post.platform);
               const isConnecting = connectingPlatforms.includes(post.platform);
               const progress = publishProgress[post.platform];
+
+              // Duration-based disablement for TikTok (uses creator_info limit)
+              const durationSec = (post as any).tiktokVideoDurationSec as number | undefined;
+              const tiktokDurationLimit =
+                post.platform === "tiktok"
+                  ? tiktokCreatorInfo?.max_video_post_duration_sec
+                  : undefined;
+              const disableByDuration =
+                post.platform === "tiktok" &&
+                !!durationSec &&
+                !!tiktokDurationLimit &&
+                durationSec > tiktokDurationLimit;
 
               return (
                 <div
@@ -492,6 +897,32 @@ export const PublishPosts: React.FC<PublishProps> = ({
                       >
                         {isConnected ? t("connected") : t("not_connected")}
                       </p>
+                      
+                      {/* Video Limits Display */}
+                      {(() => {
+                        const videoLimits = getPlatformVideoLimits(post.platform, true);
+                        if (videoLimits) {
+                          return (
+                            <div className="mt-2 text-xs text-gray-600 space-y-1">
+                              <p className="font-medium text-gray-700">Video Limits:</p>
+                              <p>Aspect Ratio: <span className="font-semibold">{videoLimits.aspectRatio}</span></p>
+                              <p>Max Duration: <span className="font-semibold">{videoLimits.maxDuration}</span></p>
+                              <p>Max File Size: <span className="font-semibold">{videoLimits.maxFileSize}</span></p>
+                              {videoLimits.notes && (
+                                <p className="text-yellow-700 italic mt-1">⚠️ {videoLimits.notes}</p>
+                              )}
+                            </div>
+                          );
+                        }
+                        return null;
+                      })()}
+                      
+                      {disableByDuration && (
+                        <p className="text-xs text-red-600 mt-1">
+                          This video is longer than your TikTok account's allowed
+                          duration; TikTok is disabled for this post.
+                        </p>
+                      )}
                       {progress && (
                         <p
                           className={`text-xs mt-1 ${
@@ -538,7 +969,8 @@ export const PublishPosts: React.FC<PublishProps> = ({
 
                     <div className="flex items-center gap-2">
                       {isConnected &&
-                        !publishedPlatforms.includes(post.platform) && (
+                        !publishedPlatforms.includes(post.platform) &&
+                        !disableByDuration && (
                           <label
                             className="flex items-center cursor-pointer"
                             htmlFor={`platform-${post.platform}`}
