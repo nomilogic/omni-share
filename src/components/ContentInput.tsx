@@ -142,6 +142,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   const [videoAspectRatio, setVideoAspectRatio] = useState<number | null>(null);
   const [videoAspectRatioWarning, setVideoAspectRatioWarning] =
     useState<string>("");
+  const [videoDurationSec, setVideoDurationSec] = useState<number | null>(null);
   const [warningTimeoutId, setWarningTimeoutId] =
     useState<NodeJS.Timeout | null>(null);
 
@@ -375,6 +376,31 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         const aspectRatio = await getVideoAspectRatio(file);
         setVideoAspectRatio(aspectRatio);
         console.log("📐 Video aspect ratio:", aspectRatio);
+
+        // Also capture video duration (in seconds) for TikTok Direct Post checks
+        try {
+          const tempVideo = document.createElement("video");
+          tempVideo.preload = "metadata";
+          tempVideo.src = URL.createObjectURL(file);
+          await new Promise<void>((resolve, reject) => {
+            tempVideo.onloadedmetadata = () => {
+              URL.revokeObjectURL(tempVideo.src);
+              const duration = tempVideo.duration;
+              console.log("⏱️ Video duration (sec):", duration);
+              if (!isNaN(duration)) {
+                setVideoDurationSec(duration);
+              }
+              resolve();
+            };
+            tempVideo.onerror = () => {
+              console.warn("Failed to read video duration for TikTok checks");
+              URL.revokeObjectURL(tempVideo.src);
+              resolve();
+            };
+          });
+        } catch (e) {
+          console.warn("Error while determining video duration", e);
+        }
         console.log(
           "📝 Video thumbnail will be generated when Generate Post is clicked"
         );
@@ -445,6 +471,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           // Clear video-related state but keep the warning
           setOriginalVideoFile(null);
           setVideoAspectRatio(null);
+          setVideoDurationSec(null);
           setVideoThumbnailUrl("");
 
           // Stop the upload process by returning early
@@ -974,6 +1001,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         (currentFormData.media && isVideoFile(currentFormData.media))
       );
 
+      // Carry through measured video duration for TikTok compliance where available
+      const effectiveVideoDurationSec = isVideoContent ? videoDurationSec : null;
+
       console.log("🔍 Media URL determination debug:", {
         isVideoContent,
         hasServerUrl: !!currentFormData.serverUrl,
@@ -1052,6 +1082,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         // Include thumbnailUrl for video posts
         thumbnailUrl:
           templatedImageUrl || videoThumbnailUrl || finalPostData.thumbnailUrl,
+        // TikTok-specific: carry video duration for Direct Post validation
+        tiktokVideoDurationSec: effectiveVideoDurationSec ?? undefined,
         // Additional campaign fields if available
         website: currentCampaignInfo.website,
         objective: currentCampaignInfo.objective,
@@ -1594,6 +1626,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     setVideoThumbnailUrl("");
     setOriginalVideoFile(null);
     setVideoAspectRatio(null);
+    setVideoDurationSec(null);
 
     if (pendingPostGeneration) {
       console.log("❌ Template editor cancelled, aborting post generation");

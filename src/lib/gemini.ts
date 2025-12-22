@@ -319,6 +319,8 @@ export async function generateSinglePlatformPost(
         mediaUrl: serverMediaUrl || null,
         thumbnailUrl: (contentData as any).thumbnailUrl || null,
         generationPrompt: contentData.prompt,
+        // Propagate TikTok video duration if provided by content step
+        tiktokVideoDurationSec: (contentData as any).tiktokVideoDurationSec,
         success: true,
       } as any;
     } else {
@@ -349,6 +351,7 @@ export async function generateSinglePlatformPost(
       mediaUrl: serverMediaUrl || null,
       thumbnailUrl: (contentData as any).thumbnailUrl || null,
       generationPrompt: contentData.prompt,
+      tiktokVideoDurationSec: (contentData as any).tiktokVideoDurationSec,
       success: false,
       error: error instanceof Error ? error.message : "Generation failed",
     } as any;
@@ -447,7 +450,7 @@ export async function generateAllPosts(
             mediaUrl: serverMediaUrl || null,
             thumbnailUrl: (contentData as any).thumbnailUrl || null,
             generationPrompt: contentData.prompt,
-            success: true,
+            tiktokVideoDurationSec: (contentData as any).tiktokVideoDurationSec,
           } as any);
         } else {
           throw new Error("No content generated");
@@ -465,20 +468,19 @@ export async function generateAllPosts(
           caption: contentData.prompt || "Check out our latest updates!",
           hashtags: [
             `#${
-              campaignInfo.name?.replace(/\s+/g, "")?.toLowerCase() ||
-              "business"
+              campaignInfo.name?.replace(/\s+/g, "")?.toLowerCase() || "business"
             }`,
             "#update",
           ],
           emojis: "✨ 🚀 💫",
           characterCount:
-            (contentData.prompt || "Check out our latest updates!").length + 20,
+            (contentData.prompt || "Check out our latest updates!").length + 20, // rough estimate
           engagement: "medium" as const,
           imageUrl: serverMediaUrl || null,
           mediaUrl: serverMediaUrl || null,
           thumbnailUrl: (contentData as any).thumbnailUrl || null,
           generationPrompt: contentData.prompt,
-          success: false,
+          tiktokVideoDurationSec: (contentData as any).tiktokVideoDurationSec,
           error:
             platformError instanceof Error
               ? platformError.message

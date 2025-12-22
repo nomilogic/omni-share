@@ -43,6 +43,8 @@ export interface PostContent {
   selectedPlatforms?: Platform[];
   imageAnalysis?: string;
   thumbnailUrl?: string; // For video thumbnails
+  // Optional TikTok-specific fields carried forward into generation/publish pipeline
+  tiktokVideoDurationSec?: number;
 }
 
 export interface GeneratedPost {
@@ -57,6 +59,16 @@ export interface GeneratedPost {
   mediaUrl?: string; // URL of uploaded media
   generationPrompt?: string; // Individual prompt for each platform
   thumbnailUrl?: string; // For video thumbnails
+  // TikTok Direct Post specific (optional for other platforms)
+  tiktokTitle?: string;
+  tiktokPrivacyLevel?: string;
+  tiktokAllowComment?: boolean;
+  tiktokAllowDuet?: boolean;
+  tiktokAllowStitch?: boolean;
+  tiktokIsCommercial?: boolean;
+  tiktokIsYourBrand?: boolean;
+  tiktokIsBrandedContent?: boolean;
+  tiktokVideoDurationSec?: number;
 }
 
 export type Platform = 'facebook' | 'instagram' | 'twitter' | 'linkedin' | 'tiktok' | 'youtube';
