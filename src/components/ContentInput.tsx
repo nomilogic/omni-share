@@ -314,6 +314,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       handleFileUpload(files[0]);
     }
   };
+  console.log("formData.mediaUrl", formData.mediaUrl);
 
   const handleFileUpload = async (file: File) => {
     currentFileRef.current = file;
@@ -702,8 +703,10 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     //   navigate("/pricing");
     //   return;
     // }
-
-    if (formData.prompt.trim()) {
+    console.log("formData.generateImageWithPost", formData.mediaUrl);
+    console.log("generateImageWithPost", selectedImageMode);
+    console.log("generateImageWithPost", generateImageWithPost);
+    if (formData?.prompt?.trim()) {
       if (
         selectedImageMode === "textToImage" &&
         generateImageWithPost &&
@@ -1101,19 +1104,44 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
   const [modelImage, setModelImage] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
-
   const [selectedFile, setSelectedFile] = useState<File | null>(null); // For actual upload
+  const [allGeneration, setAllGeneration] = useState<any>([]);
+  const MAX_IMAGES = 3;
 
-  const handleAIImageGenerated = async (
-    imageUrl: string,
-    shouldAutoOpenTemplate: boolean = true
-  ) => {
+  const saveGeneratedImage = (imageUrl: string) => {
+    let images: string[] = [];
+
+    try {
+      images = JSON.parse(localStorage.getItem("ai-generated-image") || "[]");
+    } catch {
+      images = [];
+    }
+
+    // Add new image at start
+    images.unshift(imageUrl);
+
+    // Keep only last N images
+    images = images.slice(0, MAX_IMAGES);
+
+    try {
+      localStorage.setItem("ai-generated-image", JSON.stringify(images));
+    } catch (err) {
+      console.error("Storage full, clearing old images");
+      localStorage.removeItem("ai-generated-image");
+      localStorage.setItem("ai-generated-image", JSON.stringify([imageUrl]));
+    }
+
+    return images;
+  };
+
+  const handleAIImageGenerated = async (imageUrl: string) => {
     try {
       const response = await fetch(imageUrl);
       const blob = await response.blob();
       const file = new File([blob], "ai-generated-image.png", {
         type: "image/png",
       });
+      setAllGeneration([...allGeneration, imageUrl]);
 
       if (selectedFile) {
         return;
@@ -1129,34 +1157,35 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         return newData;
       });
     } catch (error) {
+      console.log("error", error);
       setFormData((prev) => {
         const newData = { ...prev, mediaUrl: imageUrl };
 
         return newData;
       });
 
-      // Auto-open template editor with blank template only if requested
-      if (shouldAutoOpenTemplate) {
-        console.log(
-          "🎨 Auto-opening template editor with blank template for fallback image"
-        );
-        // Get blank template
-        const blankTemplate = getTemplateById("blank-template");
-        if (blankTemplate) {
-          console.log(
-            "📋 Setting blank template and opening editor for fallback image"
-          );
-          setTimeout(() => {
-            setSelectedTemplate(blankTemplate);
-            setShowTemplateEditor(true);
-          }, 500); // Small delay to ensure state is updated
-        } else {
-          console.error(
-            "❌ Blank template not found for fallback image - this should not happen!"
-          );
-          // Don't open anything if blank template is missing - this is a critical error
-        }
-      }
+      // // Auto-open template editor with blank template only if requested
+      // if (shouldAutoOpenTemplate) {
+      //   console.log(
+      //     "🎨 Auto-opening template editor with blank template for fallback image"
+      //   );
+      //   // Get blank template
+      //   const blankTemplate = getTemplateById("blank-template");
+      //   if (blankTemplate) {
+      //     console.log(
+      //       "📋 Setting blank template and opening editor for fallback image"
+      //     );
+      //     setTimeout(() => {
+      //       setSelectedTemplate(blankTemplate);
+      //       setShowTemplateEditor(true);
+      //     }, 500); // Small delay to ensure state is updated
+      //   } else {
+      //     console.error(
+      //       "❌ Blank template not found for fallback image - this should not happen!"
+      //     );
+      //     // Don't open anything if blank template is missing - this is a critical error
+      //   }
+      // }
     }
   };
 
@@ -1332,7 +1361,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         "🎯 Standalone template applied. Checking if user has content to proceed..."
       );
 
-      if (formData.prompt && formData.prompt.trim()) {
+      if (formData?.prompt && formData?.prompt?.trim()) {
         console.log(
           "✅ User has content, proceeding to post generation after template application"
         );
@@ -1683,7 +1712,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       setIsGeneratingImage(false);
     }
   };
-
+  const [modifyMode, setModify] = useState(false);
   // Combined generation function - generates both post and image from main prompt
   const handleCombinedGeneration = async (
     prompt: string,
@@ -1693,9 +1722,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       const response = await API.generateImage({
         prompt: `${prompt.trim()}. Do not include any text, words, letters, numbers, captions, watermarks, logos, or typography. Pure imagery only.`,
         style: "professional",
-        ...(image && { imageUrl: image }),
+        ...(image && modifyMode === true && { imageUrl: image }),
         aspectRatio: aspectRatio,
-        ...(image && { modifyMode: true }),
+        ...(image && modifyMode === true && { modifyMode: true }),
       });
 
       const result = response.data;
@@ -1729,55 +1758,76 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       reader.readAsDataURL(blob);
     });
   };
-  const handleRegenerate = async (newPrompt: string) => {
+  const handleRegenerate = async (newPrompt: string, Url?: string) => {
     try {
       setIsGeneratingBoth(true);
       setGeneratedImage(null);
       setPendingPostGeneration({});
       setModelImage(false);
-      if (selectedFile) {
-        let imageBase64 = generatedImage;
 
-        if (imageBase64 && isUrl(imageBase64)) {
-          imageBase64 = await urlToBase64(imageBase64);
+      if (Url !== null) {
+        if (Url && isUrl(Url)) {
+          Url = await urlToBase64(Url);
         }
-        const imageUrl: any = await handleCombinedGeneration(
-          newPrompt,
-          imageBase64
-        );
+        const imageUrl: any = await handleCombinedGeneration(newPrompt, Url);
         setGeneratedImage(imageUrl.imageUrl);
         setModelImage(true);
         setIsGeneratingImageUpload(imageUrl.imageUrl);
         setIsGeneratingBoth(false);
       } else {
-        const imageUrl: any = await handleCombinedGeneration(
-          newPrompt,
-          formData.mediaUrl
-        );
+        if (selectedFile) {
+          let imageBase64 = generatedImage;
 
-        const currentCampaignInfo = campaignInfo || {
-          name: "Default Campaign",
-          industry: "General",
-          brand_tone: "professional",
-          target_audience: "General",
-          description:
-            "General content generation without specific campaign context",
-        };
+          if (imageBase64 && isUrl(imageBase64)) {
+            imageBase64 = await urlToBase64(imageBase64);
+          }
+          const imageUrl: any = await handleCombinedGeneration(
+            newPrompt,
+            imageBase64
+          );
+          setGeneratedImage(imageUrl.imageUrl);
+          setModelImage(true);
+          setIsGeneratingImageUpload(imageUrl.imageUrl);
+          setIsGeneratingBoth(false);
+        } else {
+          const imageUrl: any = await handleCombinedGeneration(
+            newPrompt,
+            formData.mediaUrl
+          );
 
-        const postGenerationData = {
-          prompt: newPrompt,
-          originalImageUrl: imageUrl,
-          campaignInfo: currentCampaignInfo,
-          selectedPlatforms: formData.selectedPlatforms,
-          imageAnalysis,
-          formData,
-        };
-        setPendingPostGeneration(postGenerationData);
-        setModelImage(true);
-        setGeneratedImage(imageUrl.imageUrl);
-        setIsGeneratingBoth(false);
+          const currentCampaignInfo = campaignInfo || {
+            name: "Default Campaign",
+            industry: "General",
+            brand_tone: "professional",
+            target_audience: "General",
+            description:
+              "General content generation without specific campaign context",
+          };
+
+          const postGenerationData = {
+            prompt: newPrompt,
+            originalImageUrl: imageUrl,
+            campaignInfo: currentCampaignInfo,
+            selectedPlatforms: formData.selectedPlatforms,
+            imageAnalysis,
+            formData,
+          };
+          setPendingPostGeneration(postGenerationData);
+          setModelImage(true);
+          setGeneratedImage(imageUrl.imageUrl);
+          setIsGeneratingBoth(false);
+        }
       }
     } catch (error) {
+      setFormData((prev) => {
+        const newData = {
+          ...prev,
+          mediaUrl: undefined,
+          serverUrl: undefined,
+        };
+
+        return newData;
+      });
       setIsGeneratingBoth(true);
       setGeneratedImage(null);
       setPendingPostGeneration({});
@@ -1811,20 +1861,19 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     // if (files && files[0]) {
     //   handleFileUpload(files[0]);
     // }
-    setFormData((prev) => ({
-      ...prev,
-      media: undefined,
-      mediaUrl: undefined,
-    }));
+
     setTemplatedImageUrl("");
     setSelectedTemplate(undefined);
     setImageAnalysis("");
-    console.log("run");
+    setVideoThumbnailUrl("");
+    setOriginalVideoFile(null);
+    setVideoAspectRatio(null);
+
     const file = e.target.files?.[0];
-    console.log("file", file);
     if (!file) return;
     setGeneratedImage(null);
     setSelectedFile(file);
+    setIsGeneratingImageUpload("");
     setModelImage(true);
     if (file.type.startsWith("image/")) {
       const reader = new FileReader();
@@ -1837,6 +1886,15 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   };
 
   const onFileSave = () => {
+    setFormData((prev) => {
+      const newData = {
+        ...prev,
+        mediaUrl: undefined,
+        serverUrl: undefined,
+      };
+
+      return newData;
+    });
     if (isGeneratingImageUpload) {
       setFormData((prev) => {
         const newData = {
@@ -1844,13 +1902,11 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           mediaUrl: isGeneratingImageUpload,
           serverUrl: isGeneratingImageUpload,
         };
-
         return newData;
       });
       setModelImage(false);
     } else if (selectedFile) {
       handleFileUpload(selectedFile);
-
       setModelImage(false);
     }
   };
@@ -1861,7 +1917,27 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         <ImageRegenerationModal
           imageUrl={generatedImage}
           isLoading={isGeneratingBoth}
-          onClose={() => setModelImage(false)}
+          allGeneration={allGeneration}
+          setAllGeneration={setAllGeneration}
+          setModify={setModify}
+          modifyMode={modifyMode}
+          generationAmounts={generationAmounts["image"]}
+          onClose={() => {
+            setModelImage(false);
+            setSelectedFile(null);
+            setGeneratedImage(null);
+            setIsGeneratingImageUpload("");
+            setAllGeneration([]);
+            setFormData((prev) => {
+              const newData = {
+                ...prev,
+                mediaUrl: undefined,
+                serverUrl: undefined,
+              };
+
+              return newData;
+            });
+          }}
           onRegenerate={handleRegenerate}
           confirmImage={confirmImage}
           onFileSave={onFileSave}
@@ -1937,9 +2013,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                   <button
                     type="button"
                     onClick={() => {
-                      // Allow switching to image post - clear media if switching from other types
                       if (selectedPostType !== "image") {
-                        // If switching from video/text, clear existing media
                         setSelectedFile(null);
                         setShowImageMenu(true);
                       } else {
