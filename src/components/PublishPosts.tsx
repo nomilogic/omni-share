@@ -898,13 +898,27 @@ export const PublishPosts: React.FC<PublishProps> = ({
                         {isConnected ? t("connected") : t("not_connected")}
                       </p>
                       
-                      {/* Video Limits Display */}
+                      {/* Video Limits Display - Only show when there's video content */}
                       {(() => {
-                        const videoLimits = getPlatformVideoLimits(post.platform, true);
+                        const mediaUrl = post.mediaUrl || post.imageUrl;
+                        const isVideo = mediaUrl && (
+                          /\.(mp4|webm|ogg|mov|avi|mkv|flv|wmv|3gp)(\?.*)?$/i.test(mediaUrl) ||
+                          (post as any).isVideoContent ||
+                          (post as any).mediaType === "video"
+                        );
+                        
+                        if (!isVideo) return null;
+
+                        const videoAspectRatio = (post as any).videoAspectRatio;
+                        const isShorts = videoAspectRatio && videoAspectRatio >= 0.5 && videoAspectRatio <= 0.65;
+                        
+                        const videoLimits = getPlatformVideoLimits(post.platform, isShorts);
                         if (videoLimits) {
                           return (
                             <div className="mt-2 text-xs text-gray-600 space-y-1">
-                              <p className="font-medium text-gray-700">Video Limits:</p>
+                              <p className="font-medium text-gray-700">
+                                {isShorts ? "Shorts" : "Video"} Limits:
+                              </p>
                               <p>Aspect Ratio: <span className="font-semibold">{videoLimits.aspectRatio}</span></p>
                               <p>Max Duration: <span className="font-semibold">{videoLimits.maxDuration}</span></p>
                               <p>Max File Size: <span className="font-semibold">{videoLimits.maxFileSize}</span></p>

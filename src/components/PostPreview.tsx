@@ -1137,14 +1137,21 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                       </span>
                     </div>
                     {(() => {
-                      // Show video limits for this platform
-                      const videoLimits = getPlatformVideoLimits(selectedPost.platform, true);
+                      // Show video limits only for video posts
+                      const mediaUrl = selectedPost.mediaUrl || selectedPost.imageUrl;
+                      const hasVideo = mediaUrl ? isVideoMedia(selectedPost as any, mediaUrl) : false;
+                      if (!hasVideo) return null;
+
+                      const videoAspectRatio = (selectedPost as any).videoAspectRatio;
+                      const isShorts = videoAspectRatio && videoAspectRatio >= 0.5 && videoAspectRatio <= 0.65;
+                      
+                      const videoLimits = getPlatformVideoLimits(selectedPost.platform, isShorts);
                       if (!videoLimits) return null;
 
                       return (
                         <div className="flex justify-between md:flex-col md:items-start">
                           <span className="text-gray-500 font-medium">
-                            Video Limits
+                            {isShorts ? "Shorts" : "Video"} Limits
                           </span>
                           <span className="text-xs text-gray-600 font-medium">
                             {videoLimits.aspectRatio} • {videoLimits.maxDuration}
@@ -1160,13 +1167,16 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                     const hasVideo = mediaUrl ? isVideoMedia(selectedPost as any, mediaUrl) : false;
                     if (!hasVideo) return null;
 
-                    const videoLimits = getPlatformVideoLimits(selectedPost.platform, true);
+                    const videoAspectRatio = (selectedPost as any).videoAspectRatio;
+                    const isShorts = videoAspectRatio && videoAspectRatio >= 0.5 && videoAspectRatio <= 0.65;
+                    
+                    const videoLimits = getPlatformVideoLimits(selectedPost.platform, isShorts);
                     if (!videoLimits) return null;
 
                     return (
                       <div className="mt-4 pt-4 border-t border-gray-200">
                         <span className="text-gray-500 font-medium block mb-2">
-                          Platform Video Requirements
+                          {isShorts ? "Shorts" : "Video"} Requirements for {getPlatformDisplayName(selectedPost.platform)}
                         </span>
                         <div className="space-y-2 text-xs text-gray-700">
                           <div className="flex justify-between">
