@@ -2200,7 +2200,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                     </label>
                     <input
                       type="number"
-                      value={selectedElementData.y ?? ""}}
+                      value={selectedElementData.y ?? ""}
                       onChange={(e) =>
                         updateSelectedElement({
                           y:
@@ -2503,11 +2503,14 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                         <input
                           type="number"
                           value={
-                            (selectedElementData as TextElement).fontSize || ""
+                            (selectedElementData as TextElement).fontSize ?? ""
                           }
                           onChange={(e) =>
                             updateSelectedElement({
-                              fontSize: parseInt(e.target.value),
+                              fontSize:
+                                e.target.value === ""
+                                  ? 0
+                                  : parseInt(e.target.value),
                             })
                           }
                           className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
@@ -2565,11 +2568,14 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                         <input
                           type="number"
                           value={
-                            (selectedElementData as TextElement).padding || ""
+                            (selectedElementData as TextElement).padding ?? ""
                           }
                           onChange={(e) =>
                             updateSelectedElement({
-                              padding: parseInt(e.target.value),
+                              padding:
+                                e.target.value === ""
+                                  ? 0
+                                  : parseInt(e.target.value),
                             })
                           }
                           className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
@@ -2691,7 +2697,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                           type="number"
                           value={
                             (selectedElementData as ShapeElement)
-                              .borderRadius || 0
+                              .borderRadius ?? 0
                           }
                           onChange={(e) =>
                             updateSelectedElement({
