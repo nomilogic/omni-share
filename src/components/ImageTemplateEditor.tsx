@@ -157,7 +157,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
   const [showGrid, setShowGrid] = useState<boolean>(true);
   const [gridSize, setGridSize] = useState<number>(50);
   const [snapToGrid, setSnapToGrid] = useState<boolean>(true);
-  const [keyboardStep, setKeyboardStep] = useState<number>(5); // pixels to move with arrow keys
+  const [gridSettingsOpen, setGridSettingsOpen] = useState<boolean>(true);
 
   const generateTemplateId = () => {
     const uuid = (globalThis as any)?.crypto?.randomUUID?.();
@@ -1229,19 +1229,19 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
 
       switch (e.key) {
         case "ArrowUp":
-          dy = -keyboardStep;
+          dy = -gridSize;
           e.preventDefault();
           break;
         case "ArrowDown":
-          dy = keyboardStep;
+          dy = gridSize;
           e.preventDefault();
           break;
         case "ArrowLeft":
-          dx = -keyboardStep;
+          dx = -gridSize;
           e.preventDefault();
           break;
         case "ArrowRight":
-          dx = keyboardStep;
+          dx = gridSize;
           e.preventDefault();
           break;
         default:
@@ -1257,7 +1257,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
     return () => {
       window.removeEventListener("keydown", handleKeyboardMove);
     };
-  }, [selectedElement, elements, keyboardStep, snapToGridValue, updateElementById, isElementLocked]);
+  }, [selectedElement, elements, gridSize, snapToGridValue, updateElementById, isElementLocked]);
 
   // Generic function to get coordinates from mouse or touch events (accounting for zoom)
   const getEventCoordinates = (
@@ -2640,10 +2640,22 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
 
             {/* Grid Settings */}
             <div className="border border-gray-200 rounded-md p-3 md:p-4 bg-white mt-3 md:mt-4">
-              <h4 className="text-xs md:text-sm font-semibold text-slate-900 mb-3">
-                Grid Settings
-              </h4>
-              <div className="space-y-2.5 md:space-y-3">
+              <button
+                type="button"
+                onClick={() => setGridSettingsOpen((prev) => !prev)}
+                className="w-full flex items-center justify-between"
+              >
+                <h4 className="text-xs md:text-sm font-semibold text-slate-900">
+                  Grid Settings
+                </h4>
+                {gridSettingsOpen ? (
+                  <ChevronUp className="w-4 h-4 text-slate-600" />
+                ) : (
+                  <ChevronDown className="w-4 h-4 text-slate-600" />
+                )}
+              </button>
+              {gridSettingsOpen && (
+              <div className="space-y-2.5 md:space-y-3 mt-3">
                 {/* Show Grid Toggle */}
                 <div className="flex items-center justify-between">
                   <label className="text-xs md:text-sm font-medium text-slate-700">
@@ -2700,31 +2712,16 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                   />
                 </div>
 
-                {/* Keyboard Step Slider */}
-                <div>
-                  <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5">
-                    Keyboard Step: {keyboardStep}px
-                  </label>
-                  <input
-                    type="range"
-                    min="1"
-                    max="50"
-                    step="1"
-                    value={keyboardStep}
-                    onChange={(e) => setKeyboardStep(parseInt(e.target.value))}
-                    className="w-full template-range"
-                  />
-                </div>
-
                 {/* Info Text */}
                 <p className="text-xs text-gray-500 mt-2">
                   Use <kbd className="px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs">↑</kbd>{" "}
                   <kbd className="px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs">↓</kbd>{" "}
                   <kbd className="px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs">←</kbd>{" "}
                   <kbd className="px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs">→</kbd>{" "}
-                  arrow keys to move selected element.
+                  arrow keys to move selected element by grid size.
                 </p>
               </div>
+              )}
             </div>
 
             {!selectedElementData && (
