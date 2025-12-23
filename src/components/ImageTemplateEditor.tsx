@@ -1817,9 +1817,9 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 bg-white z-50 flex flex-col-reverse md:flex-row w-[100vh]">
+    <div className="fixed inset-0 bg-white z-50 flex flex-col-reverse md:flex-row md:w-[99vw]">
       <div
-        className={`w-full md:w-[40vh] md:min-w-[40vh] md:max-w-[40vh] ${
+        className={`w-full md:w-[25vw] md:min-w-[25vw] md:max-w-[25vw] ${
           aspectRatio === "1:1" ? "h-[50vh]" : ""
         } ${aspectRatio === "16:9" ? "h-[60vh]" : ""} ${
           aspectRatio === "9:16" ? "h-[50vh]" : ""
@@ -1856,7 +1856,11 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                     <button
                       onClick={() => void saveCurrentTemplate()}
                       className="h-10 bg-purple-600 text-white font-medium flex items-center gap-2 justify-center px-3 rounded-md border border-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3] whitespace-nowrap"
-                      title={saveAsGlobal ? "Save as global template" : "Save as my template"}
+                      title={
+                        saveAsGlobal
+                          ? "Save as global template"
+                          : "Save as my template"
+                      }
                       type="button"
                     >
                       <Download className="w-4 h-4" />
@@ -1875,7 +1879,9 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                   </label>
 
                   <div className="flex items-center justify-between">
-                    <p className="text-xs text-gray-600 font-medium">Saved templates</p>
+                    <p className="text-xs text-gray-600 font-medium">
+                      Saved templates
+                    </p>
                     <button
                       onClick={() => void refreshSavedTemplates()}
                       className="text-xs text-purple-600 font-medium hover:underline"
@@ -1885,8 +1891,10 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                     </button>
                   </div>
 
-                    {savedTemplates.length === 0 ? (
-                    <p className="text-xs text-gray-400">No templates saved yet.</p>
+                  {savedTemplates.length === 0 ? (
+                    <p className="text-xs text-gray-400">
+                      No templates saved yet.
+                    </p>
                   ) : (
                     <div className="space-y-2">
                       <div className="grid grid-cols-[1fr_auto_auto] items-center gap-2">
@@ -1895,24 +1903,25 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                           onChange={(e) => selectTemplateById(e.target.value)}
                           className="w-full min-w-0 px-3 h-10 border border-gray-300 rounded-md text-sm"
                         >
-                        {[...savedTemplates]
-                          .sort((a, b) =>
-                            (b.savedAt || "").localeCompare(a.savedAt || "")
-                          )
-                          .map((tpl) => (
-                            <option key={tpl.id} value={tpl.id}>
-                              {tpl.source === "global"
-                                ? `Global - ${tpl.name}`
-                                : tpl.source === "user"
+                          {[...savedTemplates]
+                            .sort((a, b) =>
+                              (b.savedAt || "").localeCompare(a.savedAt || "")
+                            )
+                            .map((tpl) => (
+                              <option key={tpl.id} value={tpl.id}>
+                                {tpl.source === "global"
+                                  ? `Global - ${tpl.name}`
+                                  : tpl.source === "user"
                                   ? `My - ${tpl.name}`
                                   : `Local - ${tpl.name}`}
-                            </option>
-                          ))}
+                              </option>
+                            ))}
                         </select>
 
                         <button
                           onClick={() =>
-                            selectedTemplateId && loadTemplateById(selectedTemplateId)
+                            selectedTemplateId &&
+                            loadTemplateById(selectedTemplateId)
                           }
                           disabled={!selectedTemplateId}
                           className="h-10 w-10 flex items-center justify-center rounded-md bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
@@ -1924,12 +1933,14 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
 
                         <button
                           onClick={() =>
-                            selectedTemplateId && deleteTemplateById(selectedTemplateId)
+                            selectedTemplateId &&
+                            deleteTemplateById(selectedTemplateId)
                           }
                           disabled={
                             !selectedTemplateId ||
-                            savedTemplates.find((t) => t.id === selectedTemplateId)?.source !==
-                              "local"
+                            savedTemplates.find(
+                              (t) => t.id === selectedTemplateId
+                            )?.source !== "local"
                           }
                           className="h-10 w-10 flex items-center justify-center rounded-md bg-red-100 hover:bg-red-200 disabled:opacity-50"
                           title="Delete (local templates only)"
@@ -1979,7 +1990,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
 
               {elementsOpen && (
                 <div className="mt-2 md:mt-3">
-                  <div className="grid grid-cols-4 md:grid-cols-2 gap-1.5 md:gap-2">
+                  <div className="grid grid-cols-4 md:grid-cols-4 gap-1.5 md:gap-2">
                     <button
                       onClick={createNewTextElement}
                       className="p-2 md:p-3 bg-blue-50 text-blue-700 rounded-md hover:bg-blue-100 flex flex-col items-center justify-center space-y-0.5 md:space-y-1 transition-colors min-h-12 md:min-h-16"
@@ -1992,7 +2003,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                     <button
                       onClick={createNewLogoElement}
                       className="p-2 md:p-3 bg-green-50 text-green-700 rounded-md hover:bg-green-100 flex flex-col items-center justify-center space-y-0.5 md:space-y-1 transition-colors min-h-12 md:min-h-16"
-                      title="Add Logo"
+                      title="Add Image"
                       type="button"
                     >
                       <Upload className="w-4 h-4 md:w-5 md:h-5" />
@@ -2005,7 +2016,9 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                       type="button"
                     >
                       <Square className="w-4 h-4 md:w-5 md:h-5" />
-                      <span className="text-xs font-medium">{t("rectangle")}</span>
+                      <span className="text-xs font-medium">
+                        {t("rectangle")}
+                      </span>
                     </button>
                     <button
                       onClick={() => createNewShapeElement("circle")}
@@ -2097,482 +2110,54 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                       </div>
                     </div>
 
-                {/* Layer Controls */}
-                <div className="mb-2 md:mb-3">
-                  <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5 md:mb-2">
-                    Layer Order
-                  </label>
-                  <div className="grid grid-cols-4 gap-1 md:gap-1.5">
-                    <button
-                      onClick={bringToFront}
-                      className="p-2 bg-gray-100 text-gray-500 font-medium rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors text-xs"
-                      title="Bring to Front"
-                    >
-                      <ChevronUp className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      onClick={moveUp}
-                      className="p-2 bg-gray-100 text-gray-500 font-medium rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors text-xs"
-                      title="Move Up"
-                    >
-                      <ArrowUp className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      onClick={moveDown}
-                      className="p-2 bg-gray-100 text-gray-500 font-medium rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors text-xs"
-                      title="Move Down"
-                    >
-                      <ArrowDown className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      onClick={sendToBack}
-                      className="p-2 bg-gray-100 text-gray-500 font-medium rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors text-xs"
-                      title="Send to Back"
-                    >
-                      <ChevronDown className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </div>
-                {/* W H X Y Controls in one row */}
-                <div className="grid grid-cols-4 gap-1.5 md:gap-2 mb-2 md:mb-3 text-center">
-                  <div>
-                    <label className="block text-xs font-medium text-slate-700 mb-1 text-center">
-                      W
-                    </label>
-                    <input
-                      type="number"
-                      value={selectedElementData.width ?? ""}
-                      onChange={(e) =>
-                        updateSelectedElement({
-                          width:
-                            e.target.value === ""
-                              ? 0
-                              : parseInt(e.target.value),
-                        })
-                      }
-                      className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
-                      min="0"
-                      disabled={isElementLocked(selectedElement)}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-slate-700 mb-1 text-center">
-                      H
-                    </label>
-                    <input
-                      type="number"
-                      value={selectedElementData.height ?? ""}
-                      onChange={(e) =>
-                        updateSelectedElement({
-                          height:
-                            e.target.value === ""
-                              ? 0
-                              : parseInt(e.target.value),
-                        })
-                      }
-                      className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
-                      min="0"
-                      disabled={isElementLocked(selectedElement)}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-slate-700 mb-1 text-center">
-                      X
-                    </label>
-                    <input
-                      type="number"
-                      value={selectedElementData.x ?? ""}
-                      onChange={(e) =>
-                        updateSelectedElement({
-                          x:
-                            e.target.value === ""
-                              ? 0
-                              : parseInt(e.target.value),
-                        })
-                      }
-                      className="w-full px-2 py-1 border border-gray-300 rounded text-xs text-center"
-                      disabled={isElementLocked(selectedElement)}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-slate-700 mb-1 text-center">
-                      Y
-                    </label>
-                    <input
-                      type="number"
-                      value={selectedElementData.y ?? ""}
-                      onChange={(e) =>
-                        updateSelectedElement({
-                          y:
-                            e.target.value === ""
-                              ? 0
-                              : parseInt(e.target.value),
-                        })
-                      }
-                      className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
-                      disabled={isElementLocked(selectedElement)}
-                    />
-                  </div>
-                </div>
-
-                {/* Rotation Control - Shown here for non-text elements */}
-                {selectedElementData.type !== "text" && (
-                  <div className="mb-2 md:mb-3">
-                    <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1">
-                      Rotation
-                    </label>
-                    <input
-                      type="range"
-                      min="0"
-                      max="360"
-                      value={selectedElementData.rotation ?? 0}
-                      onChange={(e) =>
-                        updateSelectedElement({
-                          rotation:
-                            e.target.value === ""
-                              ? 0
-                              : parseInt(e.target.value),
-                        })
-                      }
-                      className="w-full template-range"
-                      disabled={isElementLocked(selectedElement)}
-                    />
-                    <div className="flex justify-between text-xs text-gray-500 font-medium mt-1">
-                      <span>0°</span>
-                      <span className="font-medium">
-                        {selectedElementData.rotation || 0}°
-                      </span>
-                      <span>360°</span>
-                    </div>
-                  </div>
-                )}
-
-                {selectedElementData.type === "logo" && (
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-2">
-                        Image Upload
+                    {/* Layer Controls */}
+                    <div className="mb-2 md:mb-3">
+                      <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5 md:mb-2">
+                        Layer Order
                       </label>
-                      <input
-                        ref={logoInputRef}
-                        type="file"
-                        accept="image/*"
-                        onChange={handleLogoFileChange}
-                        className="hidden"
-                      />
-                      <button
-                        onClick={() => logoInputRef.current?.click()}
-                        disabled={logoUploading}
-                        className="w-full bg-blue-600 text-white px-4 py-3 rounded-md text-sm flex items-center justify-center space-x-2 hover:bg-blue-700 disabled:opacity-50 transition-colors"
-                      >
-                        {logoUploading ? (
-                          <>
-                            <Loader className="w-4 h-4 animate-spin" />
-                            <span>Uploading...</span>
-                          </>
-                        ) : (
-                          <>
-                            <Upload className="w-4 h-4" />
-                            <span>Upload Image</span>
-                          </>
-                        )}
-                      </button>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2.5">
-                      <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                          Opacity
-                        </label>
-                        <input
-                          type="range"
-                          min="0"
-                          max="1"
-                          step="0.01"
-                          value={
-                            (selectedElementData as LogoElement).opacity ?? 1
-                          }
-                          onChange={(e) =>
-                            updateSelectedElement({
-                              opacity: parseFloat(e.target.value),
-                            })
-                          }
-                          className="w-full template-range"
-                        />
-                        <span className="text-sm text-gray-500 font-medium text-center block mt-1">
-                          {Math.round(
-                            ((selectedElementData as LogoElement).opacity ??
-                              1) * 100
-                          )}
-                          %
-                        </span>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-2">
-                          Border Radius
-                        </label>
-                        <input
-                          type="number"
-                          value={
-                            (selectedElementData as LogoElement).borderRadius ??
-                            0
-                          }
-                          onChange={(e) =>
-                            updateSelectedElement({
-                              borderRadius:
-                                e.target.value === ""
-                                  ? 0
-                                  : parseInt(e.target.value),
-                            })
-                          }
-                          className="w-full px-3 py-2.5 border border-gray-300 rounded-md text-sm"
-                          placeholder="0"
-                          min="0"
-                          max="50"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {selectedElementData.type === "text" && (
-                  <div className="space-y-3">
-                    {/* Colors first */}
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                          Text
-                        </label>
-                        <input
-                          type="color"
-                          value={
-                            (selectedElementData as TextElement).color ||
-                            "#ffeb3b"
-                          }
-                          onChange={(e) =>
-                            updateSelectedElement({ color: e.target.value })
-                          }
-                          className="w-full h-9 border border-gray-300 rounded-md cursor-pointer"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                          Background
-                        </label>
-                        <input
-                          type="color"
-                          value={
-                            (selectedElementData as TextElement)
-                              .backgroundColor || "#ffffff"
-                          }
-                          onChange={(e) =>
-                            updateSelectedElement({
-                              backgroundColor: e.target.value,
-                            })
-                          }
-                          className="w-full h-9 border border-gray-300 rounded-md cursor-pointer"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Opacity second */}
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <label className="block text-xs font-medium text-slate-700 mb-1">
-                          Text Opacity
-                        </label>
-                        <input
-                          type="range"
-                          min="0"
-                          max="1"
-                          step="0.01"
-                          value={
-                            (selectedElementData as TextElement).textOpacity ??
-                            1
-                          }
-                          onChange={(e) =>
-                            updateSelectedElement({
-                              textOpacity: parseFloat(e.target.value),
-                            })
-                          }
-                          className="w-full template-range"
-                        />
-                        <span className="text-xs text-gray-500 font-medium text-center block mt-1">
-                          {Math.round(
-                            ((selectedElementData as TextElement).textOpacity ??
-                              1) * 100
-                          )}
-                          %
-                        </span>
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium text-slate-700 mb-1">
-                          Background Opacity
-                        </label>
-                        <input
-                          type="range"
-                          min="0"
-                          max="1"
-                          step="0.01"
-                          value={
-                            (selectedElementData as TextElement)
-                              .backgroundOpacity ?? 1
-                          }
-                          onChange={(e) =>
-                            updateSelectedElement({
-                              backgroundOpacity: parseFloat(e.target.value),
-                            })
-                          }
-                          className="w-full template-range"
-                        />
-                        <span className="text-xs text-gray-500 font-medium text-center block mt-1">
-                          {Math.round(
-                            ((selectedElementData as TextElement)
-                              .backgroundOpacity ?? 1) * 100
-                          )}
-                          %
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Text Content last */}
-                    <div>
-                      <label className="block text-sm font-medium text-yellow-500-700 mb-1.5">
-                        Text Content
-                      </label>
-                      <textarea
-                        value={
-                          (selectedElementData as TextElement).content ?? ""
-                        }
-                        onChange={(e) =>
-                          updateSelectedElement({
-                            content:
-                              e.target.value === undefined
-                                ? ""
-                                : e.target.value,
-                          })
-                        }
-                        className="w-full px-3 py-2.5 border border-gray-300 rounded-md text-sm"
-                        rows={3}
-                        placeholder="Enter your text..."
-                      />
-                    </div>
-                    {/* Font Family */}
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                        Font Family
-                      </label>
-                      <select
-                        value={
-                          (selectedElementData as TextElement).fontFamily ?? ""
-                        }
-                        onChange={(e) =>
-                          updateSelectedElement({
-                            fontFamily:
-                              e.target.value === undefined
-                                ? ""
-                                : e.target.value,
-                          })
-                        }
-                        className="w-full px-3 py-2.5 border border-gray-300 rounded-md text-sm"
-                      >
-                        <option value="Arial">Arial</option>
-                        <option value="Helvetica">Helvetica</option>
-                        <option value="Times New Roman">Times New Roman</option>
-                        <option value="Georgia">Georgia</option>
-                        <option value="Roboto">Roboto</option>
-                        <option value="Open Sans">Open Sans</option>
-                        <option value="Lato">Lato</option>
-                        <option value="Montserrat">Montserrat</option>
-                        <option value="Source Sans Pro">Source Sans Pro</option>
-                        <option value="Poppins">Poppins</option>
-                        <option value="Inter">Inter</option>
-                        <option value="Playfair Display">
-                          Playfair Display
-                        </option>
-                        <option value="Oswald">Oswald</option>
-                        <option value="Merriweather">Merriweather</option>
-                      </select>
-                    </div>
-
-                    {/* Size, Weight, Align, Padding */}
-                    <div className="grid grid-cols-4 gap-2 mb-3">
-                      <div>
-                        <label className="block text-xs font-medium text-slate-700 mb-1">
-                          Size
-                        </label>
-                        <input
-                          type="number"
-                          value={
-                            (selectedElementData as TextElement).fontSize ?? ""
-                          }
-                          onChange={(e) =>
-                            updateSelectedElement({
-                              fontSize:
-                                e.target.value === ""
-                                  ? 0
-                                  : parseInt(e.target.value),
-                            })
-                          }
-                          className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
-                          min="8"
-                          max="72"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium text-slate-700 mb-1">
-                          Weigt
-                        </label>
-                        <select
-                          value={
-                            (selectedElementData as TextElement).fontWeight ||
-                            "normal"
-                          }
-                          onChange={(e) =>
-                            updateSelectedElement({
-                              fontWeight: e.target.value as TextElement["fontWeight"],
-                            })
-                          }
-                          className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+                      <div className="grid grid-cols-4 gap-1 md:gap-1.5">
+                        <button
+                          onClick={bringToFront}
+                          className="p-2 bg-gray-100 text-gray-500 font-medium rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors text-xs"
+                          title="Bring to Front"
                         >
-                          <option value="300">Light</option>
-                          <option value="normal">Normal</option>
-                          <option value="600">Semi</option>
-                          <option value="bold">Bold</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium text-slate-700 mb-1">
-                          Align
-                        </label>
-                        <select
-                          value={
-                            (selectedElementData as TextElement).textAlign ||
-                            "left"
-                          }
-                          onChange={(e) =>
-                            updateSelectedElement({
-                              textAlign: e.target.value as TextElement["textAlign"],
-                            })
-                          }
-                          className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+                          <ChevronUp className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={moveUp}
+                          className="p-2 bg-gray-100 text-gray-500 font-medium rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors text-xs"
+                          title="Move Up"
                         >
-                          <option value="left">Left</option>
-                          <option value="center">Center</option>
-                          <option value="right">Right</option>
-                        </select>
+                          <ArrowUp className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={moveDown}
+                          className="p-2 bg-gray-100 text-gray-500 font-medium rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors text-xs"
+                          title="Move Down"
+                        >
+                          <ArrowDown className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={sendToBack}
+                          className="p-2 bg-gray-100 text-gray-500 font-medium rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors text-xs"
+                          title="Send to Back"
+                        >
+                          <ChevronDown className="w-3.5 h-3.5" />
+                        </button>
                       </div>
+                    </div>
+                    {/* W H X Y Controls in one row */}
+                    <div className="grid grid-cols-4 gap-1.5 md:gap-2 mb-2 md:mb-3 text-center">
                       <div>
-                        <label className="block text-xs font-medium text-slate-700 mb-1">
-                          Pad
+                        <label className="block text-xs font-medium text-slate-700 mb-1 text-center">
+                          W
                         </label>
                         <input
                           type="number"
-                          value={
-                            (selectedElementData as TextElement).padding ?? ""
-                          }
+                          value={selectedElementData.width ?? ""}
                           onChange={(e) =>
                             updateSelectedElement({
-                              padding:
+                              width:
                                 e.target.value === ""
                                   ? 0
                                   : parseInt(e.target.value),
@@ -2580,139 +2165,579 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                           }
                           className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
                           min="0"
-                          max="50"
+                          disabled={isElementLocked(selectedElement)}
                         />
                       </div>
-                    </div>
-
-                    {/* Rotation below fonts for text */}
-                    <div className="mb-2">
-                      <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1">
-                        Rotation
-                      </label>
-                      <input
-                        type="range"
-                        min="0"
-                        max="360"
-                        value={selectedElementData.rotation || 0}
-                        onChange={(e) =>
-                          updateSelectedElement({
-                            rotation: parseInt(e.target.value),
-                          })
-                        }
-                        className="w-full template-range"
-                        disabled={isElementLocked(selectedElement)}
-                      />
-                      <div className="flex justify-between text-xs text-gray-500 font-medium mt-1">
-                        <span>0°</span>
-                        <span className="font-medium">
-                          {selectedElementData.rotation || 0}°
-                        </span>
-                        <span>360°</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {selectedElementData.type === "shape" && (
-                  <div className="space-y-3">
-                    <div className="grid grid-cols-2 gap-2">
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                          Shape Type
-                        </label>
-                        <select
-                          value={
-                            (selectedElementData as ShapeElement).shape ||
-                            "rectangle"
-                          }
-                          onChange={(e) =>
-                            updateSelectedElement({
-                              shape: e.target.value as "rectangle" | "circle",
-                            })
-                          }
-                          className="w-full px-3 py-2.5 border border-gray-300 rounded-md text-sm"
-                        >
-                          <option value="rectangle">Rectangle</option>
-                          <option value="circle">Circle</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                          Color
-                        </label>
-                        <input
-                          type="color"
-                          value={
-                            (selectedElementData as ShapeElement).color ||
-                            "#3b82f6"
-                          }
-                          onChange={(e) =>
-                            updateSelectedElement({ color: e.target.value })
-                          }
-                          className="w-full h-10 border border-gray-300 rounded-md cursor-pointer"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-2">
-                        Opacity
-                      </label>
-                      <input
-                        type="range"
-                        min="0"
-                        max="1"
-                        step="0.01"
-                        value={
-                          (selectedElementData as ShapeElement).opacity ?? 1
-                        }
-                        onChange={(e) =>
-                          updateSelectedElement({
-                            opacity: parseFloat(e.target.value),
-                          })
-                        }
-                        className="w-full template-range"
-                      />
-                      <div className="flex justify-between text-sm text-gray-500 font-medium mt-1">
-                        <span>0%</span>
-                        <span className="font-medium">
-                          {Math.round(
-                            ((selectedElementData as ShapeElement).opacity ??
-                              1) * 100
-                          )}
-                          %
-                        </span>
-                        <span>100%</span>
-                      </div>
-                    </div>
-
-                    {(selectedElementData as ShapeElement).shape ===
-                      "rectangle" && (
-                      <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                          Corner Radius
+                        <label className="block text-xs font-medium text-slate-700 mb-1 text-center">
+                          H
                         </label>
                         <input
                           type="number"
-                          value={
-                            (selectedElementData as ShapeElement)
-                              .borderRadius ?? 0
-                          }
+                          value={selectedElementData.height ?? ""}
                           onChange={(e) =>
                             updateSelectedElement({
-                              borderRadius: parseInt(e.target.value),
+                              height:
+                                e.target.value === ""
+                                  ? 0
+                                  : parseInt(e.target.value),
                             })
                           }
-                          className="w-full px-3 py-2.5 border border-gray-300 rounded-md text-sm"
+                          className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
                           min="0"
-                          max="50"
-                          placeholder="0"
+                          disabled={isElementLocked(selectedElement)}
                         />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-slate-700 mb-1 text-center">
+                          X
+                        </label>
+                        <input
+                          type="number"
+                          value={selectedElementData.x ?? ""}
+                          onChange={(e) =>
+                            updateSelectedElement({
+                              x:
+                                e.target.value === ""
+                                  ? 0
+                                  : parseInt(e.target.value),
+                            })
+                          }
+                          className="w-full px-2 py-1 border border-gray-300 rounded text-xs text-center"
+                          disabled={isElementLocked(selectedElement)}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-slate-700 mb-1 text-center">
+                          Y
+                        </label>
+                        <input
+                          type="number"
+                          value={selectedElementData.y ?? ""}
+                          onChange={(e) =>
+                            updateSelectedElement({
+                              y:
+                                e.target.value === ""
+                                  ? 0
+                                  : parseInt(e.target.value),
+                            })
+                          }
+                          className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+                          disabled={isElementLocked(selectedElement)}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Rotation Control - Shown here for non-text elements */}
+                    {selectedElementData.type !== "text" && (
+                      <div className="mb-2 md:mb-3">
+                        <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1">
+                          Rotation
+                        </label>
+                        <input
+                          type="range"
+                          min="0"
+                          max="360"
+                          value={selectedElementData.rotation ?? 0}
+                          onChange={(e) =>
+                            updateSelectedElement({
+                              rotation:
+                                e.target.value === ""
+                                  ? 0
+                                  : parseInt(e.target.value),
+                            })
+                          }
+                          className="w-full template-range"
+                          disabled={isElementLocked(selectedElement)}
+                        />
+                        <div className="flex justify-between text-xs text-gray-500 font-medium mt-1">
+                          <span>0°</span>
+                          <span className="font-medium">
+                            {selectedElementData.rotation || 0}°
+                          </span>
+                          <span>360°</span>
+                        </div>
                       </div>
                     )}
-                  </div>
-                )}
+
+                    {selectedElementData.type === "logo" && (
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-2">
+                            Image Upload
+                          </label>
+                          <input
+                            ref={logoInputRef}
+                            type="file"
+                            accept="image/*"
+                            onChange={handleLogoFileChange}
+                            className="hidden"
+                          />
+                          <button
+                            onClick={() => logoInputRef.current?.click()}
+                            disabled={logoUploading}
+                            className="w-full bg-blue-600 text-white px-4 py-3 rounded-md text-sm flex items-center justify-center space-x-2 hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                          >
+                            {logoUploading ? (
+                              <>
+                                <Loader className="w-4 h-4 animate-spin" />
+                                <span>Uploading...</span>
+                              </>
+                            ) : (
+                              <>
+                                <Upload className="w-4 h-4" />
+                                <span>Upload Image</span>
+                              </>
+                            )}
+                          </button>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2.5">
+                          <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                              Opacity
+                            </label>
+                            <input
+                              type="range"
+                              min="0"
+                              max="1"
+                              step="0.01"
+                              value={
+                                (selectedElementData as LogoElement).opacity ??
+                                1
+                              }
+                              onChange={(e) =>
+                                updateSelectedElement({
+                                  opacity: parseFloat(e.target.value),
+                                })
+                              }
+                              className="w-full template-range"
+                            />
+                            <span className="text-sm text-gray-500 font-medium text-center block mt-1">
+                              {Math.round(
+                                ((selectedElementData as LogoElement).opacity ??
+                                  1) * 100
+                              )}
+                              %
+                            </span>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-2">
+                              Border Radius
+                            </label>
+                            <input
+                              type="number"
+                              value={
+                                (selectedElementData as LogoElement)
+                                  .borderRadius ?? 0
+                              }
+                              onChange={(e) =>
+                                updateSelectedElement({
+                                  borderRadius:
+                                    e.target.value === ""
+                                      ? 0
+                                      : parseInt(e.target.value),
+                                })
+                              }
+                              className="w-full px-3 py-2.5 border border-gray-300 rounded-md text-sm"
+                              placeholder="0"
+                              min="0"
+                              max="50"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {selectedElementData.type === "text" && (
+                      <div className="space-y-3">
+                        {/* Colors first */}
+                        <div className="grid grid-cols-2 gap-2">
+                          <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                              Text
+                            </label>
+                            <input
+                              type="color"
+                              value={
+                                (selectedElementData as TextElement).color ||
+                                "#ffeb3b"
+                              }
+                              onChange={(e) =>
+                                updateSelectedElement({ color: e.target.value })
+                              }
+                              className="w-full h-9 border border-gray-300 rounded-md cursor-pointer"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                              Background
+                            </label>
+                            <input
+                              type="color"
+                              value={
+                                (selectedElementData as TextElement)
+                                  .backgroundColor || "#ffffff"
+                              }
+                              onChange={(e) =>
+                                updateSelectedElement({
+                                  backgroundColor: e.target.value,
+                                })
+                              }
+                              className="w-full h-9 border border-gray-300 rounded-md cursor-pointer"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Opacity second */}
+                        <div className="grid grid-cols-2 gap-2">
+                          <div>
+                            <label className="block text-xs font-medium text-slate-700 mb-1">
+                              Text Opacity
+                            </label>
+                            <input
+                              type="range"
+                              min="0"
+                              max="1"
+                              step="0.01"
+                              value={
+                                (selectedElementData as TextElement)
+                                  .textOpacity ?? 1
+                              }
+                              onChange={(e) =>
+                                updateSelectedElement({
+                                  textOpacity: parseFloat(e.target.value),
+                                })
+                              }
+                              className="w-full template-range"
+                            />
+                            <span className="text-xs text-gray-500 font-medium text-center block mt-1">
+                              {Math.round(
+                                ((selectedElementData as TextElement)
+                                  .textOpacity ?? 1) * 100
+                              )}
+                              %
+                            </span>
+                          </div>
+                          <div>
+                            <label className="block text-xs font-medium text-slate-700 mb-1">
+                              Background Opacity
+                            </label>
+                            <input
+                              type="range"
+                              min="0"
+                              max="1"
+                              step="0.01"
+                              value={
+                                (selectedElementData as TextElement)
+                                  .backgroundOpacity ?? 1
+                              }
+                              onChange={(e) =>
+                                updateSelectedElement({
+                                  backgroundOpacity: parseFloat(e.target.value),
+                                })
+                              }
+                              className="w-full template-range"
+                            />
+                            <span className="text-xs text-gray-500 font-medium text-center block mt-1">
+                              {Math.round(
+                                ((selectedElementData as TextElement)
+                                  .backgroundOpacity ?? 1) * 100
+                              )}
+                              %
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Text Content last */}
+                        <div>
+                          <label className="block text-sm font-medium text-yellow-500-700 mb-1.5">
+                            Text Content
+                          </label>
+                          <textarea
+                            value={
+                              (selectedElementData as TextElement).content ?? ""
+                            }
+                            onChange={(e) =>
+                              updateSelectedElement({
+                                content:
+                                  e.target.value === undefined
+                                    ? ""
+                                    : e.target.value,
+                              })
+                            }
+                            className="w-full px-3 py-2.5 border border-gray-300 rounded-md text-sm"
+                            rows={3}
+                            placeholder="Enter your text..."
+                          />
+                        </div>
+                        {/* Font Family */}
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                            Font Family
+                          </label>
+                          <select
+                            value={
+                              (selectedElementData as TextElement).fontFamily ??
+                              ""
+                            }
+                            onChange={(e) =>
+                              updateSelectedElement({
+                                fontFamily:
+                                  e.target.value === undefined
+                                    ? ""
+                                    : e.target.value,
+                              })
+                            }
+                            className="w-full px-3 py-2.5 border border-gray-300 rounded-md text-sm"
+                          >
+                            <option value="Arial">Arial</option>
+                            <option value="Helvetica">Helvetica</option>
+                            <option value="Times New Roman">
+                              Times New Roman
+                            </option>
+                            <option value="Georgia">Georgia</option>
+                            <option value="Roboto">Roboto</option>
+                            <option value="Open Sans">Open Sans</option>
+                            <option value="Lato">Lato</option>
+                            <option value="Montserrat">Montserrat</option>
+                            <option value="Source Sans Pro">
+                              Source Sans Pro
+                            </option>
+                            <option value="Poppins">Poppins</option>
+                            <option value="Inter">Inter</option>
+                            <option value="Playfair Display">
+                              Playfair Display
+                            </option>
+                            <option value="Oswald">Oswald</option>
+                            <option value="Merriweather">Merriweather</option>
+                          </select>
+                        </div>
+
+                        {/* Size, Weight, Align, Padding */}
+                        <div className="grid grid-cols-4 gap-2 mb-3">
+                          <div>
+                            <label className="block text-xs font-medium text-slate-700 mb-1">
+                              Size
+                            </label>
+                            <input
+                              type="number"
+                              value={
+                                (selectedElementData as TextElement).fontSize ??
+                                ""
+                              }
+                              onChange={(e) =>
+                                updateSelectedElement({
+                                  fontSize:
+                                    e.target.value === ""
+                                      ? 0
+                                      : parseInt(e.target.value),
+                                })
+                              }
+                              className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+                              min="8"
+                              max="72"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-medium text-slate-700 mb-1">
+                              Weigt
+                            </label>
+                            <select
+                              value={
+                                (selectedElementData as TextElement)
+                                  .fontWeight || "normal"
+                              }
+                              onChange={(e) =>
+                                updateSelectedElement({
+                                  fontWeight: e.target
+                                    .value as TextElement["fontWeight"],
+                                })
+                              }
+                              className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+                            >
+                              <option value="300">Light</option>
+                              <option value="normal">Normal</option>
+                              <option value="600">Semi</option>
+                              <option value="bold">Bold</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label className="block text-xs font-medium text-slate-700 mb-1">
+                              Align
+                            </label>
+                            <select
+                              value={
+                                (selectedElementData as TextElement)
+                                  .textAlign || "left"
+                              }
+                              onChange={(e) =>
+                                updateSelectedElement({
+                                  textAlign: e.target
+                                    .value as TextElement["textAlign"],
+                                })
+                              }
+                              className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+                            >
+                              <option value="left">Left</option>
+                              <option value="center">Center</option>
+                              <option value="right">Right</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label className="block text-xs font-medium text-slate-700 mb-1">
+                              Pad
+                            </label>
+                            <input
+                              type="number"
+                              value={
+                                (selectedElementData as TextElement).padding ??
+                                ""
+                              }
+                              onChange={(e) =>
+                                updateSelectedElement({
+                                  padding:
+                                    e.target.value === ""
+                                      ? 0
+                                      : parseInt(e.target.value),
+                                })
+                              }
+                              className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+                              min="0"
+                              max="50"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Rotation below fonts for text */}
+                        <div className="mb-2">
+                          <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1">
+                            Rotation
+                          </label>
+                          <input
+                            type="range"
+                            min="0"
+                            max="360"
+                            value={selectedElementData.rotation || 0}
+                            onChange={(e) =>
+                              updateSelectedElement({
+                                rotation: parseInt(e.target.value),
+                              })
+                            }
+                            className="w-full template-range"
+                            disabled={isElementLocked(selectedElement)}
+                          />
+                          <div className="flex justify-between text-xs text-gray-500 font-medium mt-1">
+                            <span>0°</span>
+                            <span className="font-medium">
+                              {selectedElementData.rotation || 0}°
+                            </span>
+                            <span>360°</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {selectedElementData.type === "shape" && (
+                      <div className="space-y-3">
+                        <div className="grid grid-cols-2 gap-2">
+                          <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                              Shape Type
+                            </label>
+                            <select
+                              value={
+                                (selectedElementData as ShapeElement).shape ||
+                                "rectangle"
+                              }
+                              onChange={(e) =>
+                                updateSelectedElement({
+                                  shape: e.target.value as
+                                    | "rectangle"
+                                    | "circle",
+                                })
+                              }
+                              className="w-full px-3 py-2.5 border border-gray-300 rounded-md text-sm"
+                            >
+                              <option value="rectangle">Rectangle</option>
+                              <option value="circle">Circle</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                              Color
+                            </label>
+                            <input
+                              type="color"
+                              value={
+                                (selectedElementData as ShapeElement).color ||
+                                "#3b82f6"
+                              }
+                              onChange={(e) =>
+                                updateSelectedElement({ color: e.target.value })
+                              }
+                              className="w-full h-10 border border-gray-300 rounded-md cursor-pointer"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-2">
+                            Opacity
+                          </label>
+                          <input
+                            type="range"
+                            min="0"
+                            max="1"
+                            step="0.01"
+                            value={
+                              (selectedElementData as ShapeElement).opacity ?? 1
+                            }
+                            onChange={(e) =>
+                              updateSelectedElement({
+                                opacity: parseFloat(e.target.value),
+                              })
+                            }
+                            className="w-full template-range"
+                          />
+                          <div className="flex justify-between text-sm text-gray-500 font-medium mt-1">
+                            <span>0%</span>
+                            <span className="font-medium">
+                              {Math.round(
+                                ((selectedElementData as ShapeElement)
+                                  .opacity ?? 1) * 100
+                              )}
+                              %
+                            </span>
+                            <span>100%</span>
+                          </div>
+                        </div>
+
+                        {(selectedElementData as ShapeElement).shape ===
+                          "rectangle" && (
+                          <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                              Corner Radius
+                            </label>
+                            <input
+                              type="number"
+                              value={
+                                (selectedElementData as ShapeElement)
+                                  .borderRadius ?? 0
+                              }
+                              onChange={(e) =>
+                                updateSelectedElement({
+                                  borderRadius: parseInt(e.target.value),
+                                })
+                              }
+                              className="w-full px-3 py-2.5 border border-gray-300 rounded-md text-sm"
+                              min="0"
+                              max="50"
+                              placeholder="0"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </>
                 )}
               </div>
@@ -2735,36 +2760,40 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                 )}
               </button>
               {gridSettingsOpen && (
-              <div className="space-y-2.5 md:space-y-3 mt-3">
-                {/* Grid Toggle and Size Slider */}
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    id="gridToggle"
-                    checked={showGrid}
-                    onChange={(e) => {
-                      setShowGrid(e.target.checked);
-                      setSnapToGrid(e.target.checked);
-                    }}
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded cursor-pointer"
-                  />
-                  
-                  {showGrid && (
-                    <div className="flex-1 flex items-center gap-2">
-                      <input
-                        type="range"
-                        min="5"
-                        max="100"
-                        step="5"
-                        value={gridSize}
-                        onChange={(e) => setGridSize(parseInt(e.target.value))}
-                        className="flex-1 template-range"
-                      />
-                      <span className="text-xs text-gray-600 font-medium min-w-10">{gridSize}px</span>
-                    </div>
-                  )}
+                <div className="space-y-2.5 md:space-y-3 mt-3">
+                  {/* Grid Toggle and Size Slider */}
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="gridToggle"
+                      checked={showGrid}
+                      onChange={(e) => {
+                        setShowGrid(e.target.checked);
+                        setSnapToGrid(e.target.checked);
+                      }}
+                      className="w-4 h-4 text-blue-600 border-gray-300 rounded cursor-pointer"
+                    />
+
+                    {showGrid && (
+                      <div className="flex-1 flex items-center gap-2">
+                        <input
+                          type="range"
+                          min="5"
+                          max="100"
+                          step="5"
+                          value={gridSize}
+                          onChange={(e) =>
+                            setGridSize(parseInt(e.target.value))
+                          }
+                          className="flex-1 template-range"
+                        />
+                        <span className="text-xs text-gray-600 font-medium min-w-10">
+                          {gridSize}px
+                        </span>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
               )}
             </div>
 
@@ -2794,7 +2823,9 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
               {isSaving ? (
                 <>
                   <Loader className="w-3 h-3 md:w-4 md:h-4 animate-spin " />
-                  <span className="hidden sm:inline text-sm">{t("saving")}</span>
+                  <span className="hidden sm:inline text-sm">
+                    {t("saving")}
+                  </span>
                   <span className="sm:hidden text-sm">{t("saving")}</span>
                 </>
               ) : (
@@ -2814,14 +2845,15 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
         </div>
       </div>
 
-      <div className="flex-1 bg-gray-50 flex flex-col min-h-0">
+      <div className="flex-1 bg-gray-50 flex flex-col min-h-0 w-[100vw] md:w-[69vw]">
         <div className="sticky top-0 z-10 flex-shrink-0 px-3 py-1 md:py-2.5 bg-white border-b border-gray-200">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between  md:w-[69vw]">
             <div className="text-xs text-gray-500 font-medium font-mono">
               {canvasDimensions && (
                 <>
                   <span className="hidden sm:inline">
-                    {canvasDimensions.width} × {canvasDimensions.height} | {Math.round(zoomLevel * 100)}%
+                    {canvasDimensions.width} × {canvasDimensions.height} |{" "}
+                    {Math.round(zoomLevel * 100)}%
                   </span>
                   <span className="sm:hidden">
                     {Math.round(zoomLevel * 100)}%
@@ -2849,15 +2881,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                 +
               </button>
               <button
-                onClick={() => {
-                  if (imageDimensions) {
-                    const { zoom } = calculateZoomLevel(
-                      imageDimensions.width,
-                      imageDimensions.height
-                    );
-                    setZoomLevel(zoom);
-                  }
-                }}
+                onClick={() => setZoomLevel(0.8)}
                 className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs hover:bg-blue-200 transition-colors ml-1 md:ml-2"
               >
                 Fit
@@ -2879,7 +2903,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
           }  bg-gray-100 flex items-start justify-center p-2 md:p-4 min-h-0`}
         >
           <div
-            className="flex items-center justify-center"
+            className="flex items-start justify-around"
             style={{
               zoom: zoomLevel,
             }}
@@ -2951,13 +2975,13 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                         setIsDragging(false);
                         let newX = e.target.x();
                         let newY = e.target.y();
-                        
+
                         // Apply grid snapping if enabled - snap to grid lines (not centers)
                         if (snapToGrid && gridSize > 0) {
                           newX = Math.floor(newX / gridSize) * gridSize;
                           newY = Math.floor(newY / gridSize) * gridSize;
                         }
-                        
+
                         updateElementById(el.id, { x: newX, y: newY });
                       },
                       ref: (node: any) => {
@@ -3007,7 +3031,9 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
 
                     if (el.type === "logo") {
                       const logoEl = el as LogoElement;
-                      const img = logoEl.src ? logoImages[logoEl.src] : undefined;
+                      const img = logoEl.src
+                        ? logoImages[logoEl.src]
+                        : undefined;
 
                       return (
                         <Group {...commonGroupProps}>
@@ -3087,7 +3113,9 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                     // If locked, don't apply transforms
                     if (lockedElements.has(selectedElement)) return;
 
-                    const base = elements.find((e) => e.id === selectedElement) as any;
+                    const base = elements.find(
+                      (e) => e.id === selectedElement
+                    ) as any;
                     if (!base) return;
 
                     const scaleX = node.scaleX();
@@ -3112,14 +3140,17 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                     {/* Vertical grid lines */}
                     {Array.from(
                       {
-                        length: Math.ceil(
-                          canvasDimensions.width / gridSize
-                        ),
+                        length: Math.ceil(canvasDimensions.width / gridSize),
                       },
                       (_, i) => (
                         <Line
                           key={`v-${i}`}
-                          points={[i * gridSize, 0, i * gridSize, canvasDimensions.height]}
+                          points={[
+                            i * gridSize,
+                            0,
+                            i * gridSize,
+                            canvasDimensions.height,
+                          ]}
                           stroke="#6b7280"
                           strokeWidth={0.5}
                           listening={false}
@@ -3130,14 +3161,17 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                     {/* Horizontal grid lines */}
                     {Array.from(
                       {
-                        length: Math.ceil(
-                          canvasDimensions.height / gridSize
-                        ),
+                        length: Math.ceil(canvasDimensions.height / gridSize),
                       },
                       (_, i) => (
                         <Line
                           key={`h-${i}`}
-                          points={[0, i * gridSize, canvasDimensions.width, i * gridSize]}
+                          points={[
+                            0,
+                            i * gridSize,
+                            canvasDimensions.width,
+                            i * gridSize,
+                          ]}
                           stroke="#6b7280"
                           strokeWidth={0.5}
                           listening={false}
@@ -3152,7 +3186,6 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
           </div>
         </div>
       </div>
-      
     </div>
   );
 };
