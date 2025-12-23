@@ -1817,9 +1817,9 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 bg-white z-50 flex flex-col-reverse md:flex-row">
+    <div className="fixed inset-0 bg-white z-50 flex flex-col-reverse md:flex-row w-[100vh]">
       <div
-        className={`w-full md:w-80 md:min-w-80 md:max-w-80 ${
+        className={`w-full md:w-[40vh] md:min-w-[40vh] md:max-w-[40vh] ${
           aspectRatio === "1:1" ? "h-[50vh]" : ""
         } ${aspectRatio === "16:9" ? "h-[60vh]" : ""} ${
           aspectRatio === "9:16" ? "h-[50vh]" : ""
@@ -2881,8 +2881,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
           <div
             className="flex items-center justify-center"
             style={{
-              transform: `scale(${zoomLevel})`,
-              transformOrigin: "top center",
+              zoom: zoomLevel,
             }}
           >
             <Stage
