@@ -1616,32 +1616,8 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
   };
 
   const createNewLogoElement = () => {
-    const cw = canvasDimensions.width;
-    const ch = canvasDimensions.height;
-    if (!cw || !ch) return;
-
-    // Use responsive sizing based on canvas dimensions
-    const size = Math.min(80, cw * 0.1);
-
-    const nextZ = elements.length
-      ? Math.max(...elements.map((el) => el.zIndex || 0)) + 1
-      : 0;
-
-    const newElement: LogoElement = {
-      id: `logo-${Date.now()}`,
-      type: "logo",
-      x: cw / 2,
-      y: ch / 2,
-      width: size,
-      height: size,
-      src: "",
-      opacity: 1,
-      borderRadius: 0,
-      zIndex: nextZ,
-    };
-
-    setElements((prev) => [...prev, newElement]);
-    setSelectedElement(newElement.id);
+    // Directly trigger file input instead of creating empty element
+    logoInputRef.current?.click();
   };
 
   // Logo upload function
@@ -1693,8 +1669,39 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
   const handleLogoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && file.type.startsWith("image/")) {
-      handleLogoUpload(file);
+      // Create the element first
+      const cw = canvasDimensions.width;
+      const ch = canvasDimensions.height;
+      if (!cw || !ch) return;
+
+      // Use responsive sizing based on canvas dimensions
+      const size = Math.min(80, cw * 0.1);
+
+      const nextZ = elements.length
+        ? Math.max(...elements.map((el) => el.zIndex || 0)) + 1
+        : 0;
+
+      const newElement: LogoElement = {
+        id: `logo-${Date.now()}`,
+        type: "logo",
+        x: cw / 2,
+        y: ch / 2,
+        width: size,
+        height: size,
+        src: "",
+        opacity: 1,
+        borderRadius: 0,
+        zIndex: nextZ,
+      };
+
+      setElements((prev) => [...prev, newElement]);
+      setSelectedElement(newElement.id);
+
+      // Then upload the image
+      setTimeout(() => handleLogoUpload(file), 0);
     }
+    // Reset file input
+    if (e.target) e.target.value = "";
   };
 
   const exportImage = async () => {
@@ -1980,8 +1987,11 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                   className="w-full flex items-center justify-between"
                 >
                   <h4 className="text-xs md:text-sm font-semibold text-slate-900">
-                    {selectedElementData.type.charAt(0).toUpperCase() +
-                      selectedElementData.type.slice(1)} Element
+                    {selectedElementData.type === "logo"
+                      ? "Image"
+                      : selectedElementData.type.charAt(0).toUpperCase() +
+                        selectedElementData.type.slice(1)}{" "}
+                    Element
                   </h4>
                   {propertiesOpen ? (
                     <ChevronUp className="w-4 h-4 text-slate-600" />
@@ -2646,7 +2656,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                 className="w-full flex items-center justify-between"
               >
                 <h4 className="text-xs md:text-sm font-semibold text-slate-900">
-                  Grid Settings
+                  Show Grid
                 </h4>
                 {gridSettingsOpen ? (
                   <ChevronUp className="w-4 h-4 text-slate-600" />
@@ -2656,70 +2666,34 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
               </button>
               {gridSettingsOpen && (
               <div className="space-y-2.5 md:space-y-3 mt-3">
-                {/* Show Grid Toggle */}
-                <div className="flex items-center justify-between">
-                  <label className="text-xs md:text-sm font-medium text-slate-700">
-                    Show Grid
-                  </label>
-                  <button
-                    onClick={() => setShowGrid(!showGrid)}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                      showGrid ? "bg-blue-600" : "bg-gray-300"
-                    }`}
-                    type="button"
-                  >
-                    <span
-                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                        showGrid ? "translate-x-6" : "translate-x-1"
-                      }`}
-                    />
-                  </button>
-                </div>
-
-                {/* Snap to Grid Toggle */}
-                <div className="flex items-center justify-between">
-                  <label className="text-xs md:text-sm font-medium text-slate-700">
-                    Snap to Grid
-                  </label>
-                  <button
-                    onClick={() => setSnapToGrid(!snapToGrid)}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                      snapToGrid ? "bg-blue-600" : "bg-gray-300"
-                    }`}
-                    type="button"
-                  >
-                    <span
-                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                        snapToGrid ? "translate-x-6" : "translate-x-1"
-                      }`}
-                    />
-                  </button>
-                </div>
-
-                {/* Grid Size Slider */}
-                <div>
-                  <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5">
-                    Grid Size: {gridSize}px
-                  </label>
+                {/* Grid Toggle and Size Slider */}
+                <div className="flex items-center gap-2">
                   <input
-                    type="range"
-                    min="5"
-                    max="100"
-                    step="5"
-                    value={gridSize}
-                    onChange={(e) => setGridSize(parseInt(e.target.value))}
-                    className="w-full template-range"
+                    type="checkbox"
+                    id="gridToggle"
+                    checked={showGrid}
+                    onChange={(e) => {
+                      setShowGrid(e.target.checked);
+                      setSnapToGrid(e.target.checked);
+                    }}
+                    className="w-4 h-4 text-blue-600 border-gray-300 rounded cursor-pointer"
                   />
+                  
+                  {showGrid && (
+                    <div className="flex-1 flex items-center gap-2">
+                      <input
+                        type="range"
+                        min="5"
+                        max="100"
+                        step="5"
+                        value={gridSize}
+                        onChange={(e) => setGridSize(parseInt(e.target.value))}
+                        className="flex-1 template-range"
+                      />
+                      <span className="text-xs text-gray-600 font-medium min-w-10">{gridSize}px</span>
+                    </div>
+                  )}
                 </div>
-
-                {/* Info Text */}
-                <p className="text-xs text-gray-500 mt-2">
-                  Use <kbd className="px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs">↑</kbd>{" "}
-                  <kbd className="px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs">↓</kbd>{" "}
-                  <kbd className="px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs">←</kbd>{" "}
-                  <kbd className="px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs">→</kbd>{" "}
-                  arrow keys to move selected element by grid size.
-                </p>
               </div>
               )}
             </div>
