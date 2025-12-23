@@ -2908,10 +2908,10 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
         <div
           className={`flex-1 ${
             isDragging ? "overflow-hidden" : "overflow-auto"
-          }  bg-gray-100 flex items-start justify-center p-2 md:p-4 min-h-0`}
+          }  bg-gray-100 flex items-center justify-center p-2 md:p-4 min-h-0`}
         >
           <div
-            className="flex items-start justify-around"
+            className="flex items-center justify-center"
             style={{
               zoom: zoomLevel,
             }}
