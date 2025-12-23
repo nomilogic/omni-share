@@ -2950,8 +2950,15 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                       },
                       onDragEnd: (e: any) => {
                         setIsDragging(false);
-                        const newX = snapToGridValue(e.target.x());
-                        const newY = snapToGridValue(e.target.y());
+                        let newX = e.target.x();
+                        let newY = e.target.y();
+                        
+                        // Apply grid snapping if enabled
+                        if (snapToGrid && gridSize > 0) {
+                          newX = Math.round(newX / gridSize) * gridSize;
+                          newY = Math.round(newY / gridSize) * gridSize;
+                        }
+                        
                         updateElementById(el.id, { x: newX, y: newY });
                       },
                       ref: (node: any) => {
