@@ -12,6 +12,7 @@ import {
   Group,
   Transformer,
   Ellipse,
+  Line,
 } from "react-konva";
 import {
   Template,
@@ -151,6 +152,12 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
   const [templatesOpen, setTemplatesOpen] = useState<boolean>(true);
   const [elementsOpen, setElementsOpen] = useState<boolean>(true);
   const [propertiesOpen, setPropertiesOpen] = useState<boolean>(true);
+
+  // Grid and snapping settings
+  const [showGrid, setShowGrid] = useState<boolean>(true);
+  const [gridSize, setGridSize] = useState<number>(20);
+  const [snapToGrid, setSnapToGrid] = useState<boolean>(true);
+  const [keyboardStep, setKeyboardStep] = useState<number>(5); // pixels to move with arrow keys
 
   const generateTemplateId = () => {
     const uuid = (globalThis as any)?.crypto?.randomUUID?.();
@@ -589,6 +596,15 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
       return { cropX, cropY, cropWidth, cropHeight };
     },
     []
+  );
+
+  // Snap value to grid
+  const snapToGridValue = useCallback(
+    (value: number): number => {
+      if (!snapToGrid || gridSize <= 0) return value;
+      return Math.round(value / gridSize) * gridSize;
+    },
+    [snapToGrid, gridSize]
   );
 
   useEffect(() => {
@@ -1199,6 +1215,49 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
       return newSet;
     });
   };
+
+  // Keyboard movement for selected element
+  useEffect(() => {
+    if (!selectedElement) return;
+
+    const handleKeyboardMove = (e: KeyboardEvent) => {
+      const element = elements.find((el) => el.id === selectedElement);
+      if (!element || isElementLocked(element.id)) return;
+
+      let dx = 0;
+      let dy = 0;
+
+      switch (e.key) {
+        case "ArrowUp":
+          dy = -keyboardStep;
+          e.preventDefault();
+          break;
+        case "ArrowDown":
+          dy = keyboardStep;
+          e.preventDefault();
+          break;
+        case "ArrowLeft":
+          dx = -keyboardStep;
+          e.preventDefault();
+          break;
+        case "ArrowRight":
+          dx = keyboardStep;
+          e.preventDefault();
+          break;
+        default:
+          return;
+      }
+
+      const newX = snapToGridValue(element.x + dx);
+      const newY = snapToGridValue(element.y + dy);
+      updateElementById(element.id, { x: newX, y: newY });
+    };
+
+    window.addEventListener("keydown", handleKeyboardMove);
+    return () => {
+      window.removeEventListener("keydown", handleKeyboardMove);
+    };
+  }, [selectedElement, elements, keyboardStep, snapToGridValue, updateElementById, isElementLocked]);
 
   // Generic function to get coordinates from mouse or touch events (accounting for zoom)
   const getEventCoordinates = (
@@ -2579,6 +2638,95 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
               </div>
             )}
 
+            {/* Grid Settings */}
+            <div className="border border-gray-200 rounded-md p-3 md:p-4 bg-white mt-3 md:mt-4">
+              <h4 className="text-xs md:text-sm font-semibold text-slate-900 mb-3">
+                Grid Settings
+              </h4>
+              <div className="space-y-2.5 md:space-y-3">
+                {/* Show Grid Toggle */}
+                <div className="flex items-center justify-between">
+                  <label className="text-xs md:text-sm font-medium text-slate-700">
+                    Show Grid
+                  </label>
+                  <button
+                    onClick={() => setShowGrid(!showGrid)}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                      showGrid ? "bg-blue-600" : "bg-gray-300"
+                    }`}
+                    type="button"
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                        showGrid ? "translate-x-6" : "translate-x-1"
+                      }`}
+                    />
+                  </button>
+                </div>
+
+                {/* Snap to Grid Toggle */}
+                <div className="flex items-center justify-between">
+                  <label className="text-xs md:text-sm font-medium text-slate-700">
+                    Snap to Grid
+                  </label>
+                  <button
+                    onClick={() => setSnapToGrid(!snapToGrid)}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                      snapToGrid ? "bg-blue-600" : "bg-gray-300"
+                    }`}
+                    type="button"
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                        snapToGrid ? "translate-x-6" : "translate-x-1"
+                      }`}
+                    />
+                  </button>
+                </div>
+
+                {/* Grid Size Slider */}
+                <div>
+                  <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5">
+                    Grid Size: {gridSize}px
+                  </label>
+                  <input
+                    type="range"
+                    min="5"
+                    max="100"
+                    step="5"
+                    value={gridSize}
+                    onChange={(e) => setGridSize(parseInt(e.target.value))}
+                    className="w-full template-range"
+                  />
+                </div>
+
+                {/* Keyboard Step Slider */}
+                <div>
+                  <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5">
+                    Keyboard Step: {keyboardStep}px
+                  </label>
+                  <input
+                    type="range"
+                    min="1"
+                    max="50"
+                    step="1"
+                    value={keyboardStep}
+                    onChange={(e) => setKeyboardStep(parseInt(e.target.value))}
+                    className="w-full template-range"
+                  />
+                </div>
+
+                {/* Info Text */}
+                <p className="text-xs text-gray-500 mt-2">
+                  Use <kbd className="px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs">↑</kbd>{" "}
+                  <kbd className="px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs">↓</kbd>{" "}
+                  <kbd className="px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs">←</kbd>{" "}
+                  <kbd className="px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs">→</kbd>{" "}
+                  arrow keys to move selected element.
+                </p>
+              </div>
+            </div>
+
             {!selectedElementData && (
               <div className="text-center py-6 md:py-12 text-gray-500 font-medium">
                 <div className="bg-gray-50 rounded-md p-4 md:p-6">
@@ -2743,6 +2891,47 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                   />
                 )}
 
+                {showGrid && gridSize > 0 && (
+                  <>
+                    {/* Vertical grid lines */}
+                    {Array.from(
+                      {
+                        length: Math.ceil(
+                          canvasDimensions.width / gridSize
+                        ),
+                      },
+                      (_, i) => (
+                        <Line
+                          key={`v-${i}`}
+                          points={[i * gridSize, 0, i * gridSize, canvasDimensions.height]}
+                          stroke="#d1d5db"
+                          strokeWidth={0.5}
+                          listening={false}
+                          opacity={0.5}
+                        />
+                      )
+                    )}
+                    {/* Horizontal grid lines */}
+                    {Array.from(
+                      {
+                        length: Math.ceil(
+                          canvasDimensions.height / gridSize
+                        ),
+                      },
+                      (_, i) => (
+                        <Line
+                          key={`h-${i}`}
+                          points={[0, i * gridSize, canvasDimensions.width, i * gridSize]}
+                          stroke="#d1d5db"
+                          strokeWidth={0.5}
+                          listening={false}
+                          opacity={0.5}
+                        />
+                      )
+                    )}
+                  </>
+                )}
+
                 {[...elements]
                   .sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0))
                   .map((el) => {
@@ -2761,7 +2950,9 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                       },
                       onDragEnd: (e: any) => {
                         setIsDragging(false);
-                        updateElementById(el.id, { x: e.target.x(), y: e.target.y() });
+                        const newX = snapToGridValue(e.target.x());
+                        const newY = snapToGridValue(e.target.y());
+                        updateElementById(el.id, { x: newX, y: newY });
                       },
                       ref: (node: any) => {
                         if (isSelected && node) selectedNodeRef.current = node;
