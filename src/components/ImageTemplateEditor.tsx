@@ -2141,14 +2141,17 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                     </label>
                     <input
                       type="number"
-                      value={selectedElementData.width || ""}
+                      value={selectedElementData.width ?? ""}
                       onChange={(e) =>
                         updateSelectedElement({
-                          width: parseInt(e.target.value),
+                          width:
+                            e.target.value === ""
+                              ? 0
+                              : parseInt(e.target.value),
                         })
                       }
                       className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
-                      min="1"
+                      min="0"
                       disabled={isElementLocked(selectedElement)}
                     />
                   </div>
@@ -2158,7 +2161,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                     </label>
                     <input
                       type="number"
-                      value={selectedElementData.height || ""}
+                      value={selectedElementData.height ?? ""}
                       onChange={(e) =>
                         updateSelectedElement({
                           height:
@@ -2168,7 +2171,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                         })
                       }
                       className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
-                      min="1"
+                      min="0"
                       disabled={isElementLocked(selectedElement)}
                     />
                   </div>
@@ -2178,7 +2181,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                     </label>
                     <input
                       type="number"
-                      value={selectedElementData.x || ""}
+                      value={selectedElementData.x ?? ""}
                       onChange={(e) =>
                         updateSelectedElement({
                           x:
@@ -2197,7 +2200,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                     </label>
                     <input
                       type="number"
-                      value={selectedElementData.y || ""}
+                      value={selectedElementData.y ?? ""}}
                       onChange={(e) =>
                         updateSelectedElement({
                           y:
@@ -2282,11 +2285,11 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                         </label>
                         <input
                           type="range"
-                          min="0.01"
+                          min="0"
                           max="1"
                           step="0.01"
                           value={
-                            (selectedElementData as LogoElement).opacity || 1
+                            (selectedElementData as LogoElement).opacity ?? 1
                           }
                           onChange={(e) =>
                             updateSelectedElement({
@@ -2297,7 +2300,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                         />
                         <span className="text-sm text-gray-500 font-medium text-center block mt-1">
                           {Math.round(
-                            ((selectedElementData as LogoElement).opacity ||
+                            ((selectedElementData as LogoElement).opacity ??
                               1) * 100
                           )}
                           %
@@ -2379,11 +2382,11 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                         </label>
                         <input
                           type="range"
-                          min="0.01"
+                          min="0"
                           max="1"
                           step="0.01"
                           value={
-                            (selectedElementData as TextElement).textOpacity ||
+                            (selectedElementData as TextElement).textOpacity ??
                             1
                           }
                           onChange={(e) =>
@@ -2395,7 +2398,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                         />
                         <span className="text-xs text-gray-500 font-medium text-center block mt-1">
                           {Math.round(
-                            ((selectedElementData as TextElement).textOpacity ||
+                            ((selectedElementData as TextElement).textOpacity ??
                               1) * 100
                           )}
                           %
@@ -2407,12 +2410,12 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                         </label>
                         <input
                           type="range"
-                          min="0.01"
+                          min="0"
                           max="1"
                           step="0.01"
                           value={
                             (selectedElementData as TextElement)
-                              .backgroundOpacity || 1
+                              .backgroundOpacity ?? 1
                           }
                           onChange={(e) =>
                             updateSelectedElement({
@@ -2424,7 +2427,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                         <span className="text-xs text-gray-500 font-medium text-center block mt-1">
                           {Math.round(
                             ((selectedElementData as TextElement)
-                              .backgroundOpacity || 1) * 100
+                              .backgroundOpacity ?? 1) * 100
                           )}
                           %
                         </span>
@@ -2652,11 +2655,11 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                       </label>
                       <input
                         type="range"
-                        min="0.01"
+                        min="0"
                         max="1"
                         step="0.01"
                         value={
-                          (selectedElementData as ShapeElement).opacity || 1
+                          (selectedElementData as ShapeElement).opacity ?? 1
                         }
                         onChange={(e) =>
                           updateSelectedElement({
@@ -2666,10 +2669,10 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                         className="w-full template-range"
                       />
                       <div className="flex justify-between text-sm text-gray-500 font-medium mt-1">
-                        <span>1%</span>
+                        <span>0%</span>
                         <span className="font-medium">
                           {Math.round(
-                            ((selectedElementData as ShapeElement).opacity ||
+                            ((selectedElementData as ShapeElement).opacity ??
                               1) * 100
                           )}
                           %
