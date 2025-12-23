@@ -1828,7 +1828,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
         <div className="flex w-full overflow-y-auto p-3 md:p-4 min-h-0">
           <div className="space-y-3 md:space-y-4 w-full">
             {/* Templates Section */}
-            <div className="border border-gray-200 rounded-md p-2 md:p-3 bg-white">
+            <div className="border border-gray-200 rounded-md p-2 md:p-3 bg-white max-h-[30vh] overflow-y-auto">
               <button
                 type="button"
                 onClick={() => setTemplatesOpen((prev) => !prev)}
