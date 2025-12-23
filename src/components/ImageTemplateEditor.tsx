@@ -1828,11 +1828,11 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
         <div className="flex w-full overflow-y-auto p-3 md:p-4 min-h-0">
           <div className="space-y-3 md:space-y-4 w-full">
             {/* Templates Section */}
-            <div className="border border-gray-200 rounded-md p-2 md:p-3 bg-white max-h-[30vh] overflow-y-auto">
+            <div className="border border-gray-200 rounded-md p-2 md:p-3 bg-white flex flex-col max-h-[30vh]">
               <button
                 type="button"
                 onClick={() => setTemplatesOpen((prev) => !prev)}
-                className="w-full flex items-center justify-between"
+                className="w-full flex items-center justify-between flex-shrink-0"
               >
                 <h4 className="text-xs md:text-sm font-semibold text-slate-700">
                   Templates
@@ -1845,8 +1845,8 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
               </button>
 
               {templatesOpen && (
-                <div className="mt-2 space-y-2">
-                  <div className="grid grid-cols-[1fr_auto] items-center gap-2">
+                <div className="mt-2 space-y-2 flex flex-col min-h-0 flex-1">
+                  <div className="grid grid-cols-[1fr_auto] items-center gap-2 flex-shrink-0">
                     <input
                       value={templateName}
                       onChange={(e) => setTemplateName(e.target.value)}
@@ -1868,7 +1868,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                     </button>
                   </div>
 
-                  <label className="flex items-center gap-2 text-xs text-slate-700 select-none">
+                  <label className="flex items-center gap-2 text-xs text-slate-700 select-none flex-shrink-0">
                     <input
                       type="checkbox"
                       checked={saveAsGlobal}
@@ -1878,7 +1878,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                     Save as global (isPublic)
                   </label>
 
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between flex-shrink-0">
                     <p className="text-xs text-gray-600 font-medium">
                       Saved templates
                     </p>
@@ -1896,7 +1896,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                       No templates saved yet.
                     </p>
                   ) : (
-                    <div className="space-y-2">
+                    <div className="space-y-2 overflow-y-auto min-h-0 flex-1">
                       <div className="flex items-center justify-between mb-2">
                         <p className="text-xs text-gray-500 font-medium">
                           {savedTemplates.length} template{savedTemplates.length !== 1 ? "s" : ""}
