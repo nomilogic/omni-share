@@ -539,8 +539,8 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
       maxHeight = viewportHeight * 0.6;
     } else {
       // Desktop (accounting for 320px tools panel)
-      maxWidth = (viewportWidth - 320) * 0.85;
-      maxHeight = viewportHeight * 0.8;
+      maxWidth = (viewportWidth - 320) * 0.8;
+      maxHeight = viewportHeight * 0.7;
     }
 
     // Calculate zoom to fit image in available space
@@ -553,7 +553,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
     const maxZoomLevel = Math.max(fitZoom * 2, 2);
 
     return {
-      zoom: Math.max(minZoom, fitZoom), // Use calculated fit zoom, allow it to be larger than 100%
+      zoom: Math.max(minZoom, Math.min(fitZoom, 1)), // Start at fit zoom or 100% if smaller
       maxZoom: maxZoomLevel,
     };
   };
@@ -1897,40 +1897,10 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                     </p>
                   ) : (
                     <div className="space-y-2">
-                      <div className="grid grid-cols-[1fr_auto_auto] items-center gap-2">
-                        <select
-                          value={selectedTemplateId}
-                          onChange={(e) => selectTemplateById(e.target.value)}
-                          className="w-full min-w-0 px-3 h-10 border border-gray-300 rounded-md text-sm"
-                        >
-                          {[...savedTemplates]
-                            .sort((a, b) =>
-                              (b.savedAt || "").localeCompare(a.savedAt || "")
-                            )
-                            .map((tpl) => (
-                              <option key={tpl.id} value={tpl.id}>
-                                {tpl.source === "global"
-                                  ? `Global - ${tpl.name}`
-                                  : tpl.source === "user"
-                                  ? `My - ${tpl.name}`
-                                  : `Local - ${tpl.name}`}
-                              </option>
-                            ))}
-                        </select>
-
-                        <button
-                          onClick={() =>
-                            selectedTemplateId &&
-                            loadTemplateById(selectedTemplateId)
-                          }
-                          disabled={!selectedTemplateId}
-                          className="h-10 w-10 flex items-center justify-center rounded-md bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
-                          title="Load"
-                          type="button"
-                        >
-                          <Upload className="w-4 h-4 text-gray-700" />
-                        </button>
-
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-xs text-gray-500 font-medium">
+                          {savedTemplates.length} template{savedTemplates.length !== 1 ? "s" : ""}
+                        </p>
                         <button
                           onClick={() =>
                             selectedTemplateId &&
@@ -1942,29 +1912,55 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                               (t) => t.id === selectedTemplateId
                             )?.source !== "local"
                           }
-                          className="h-10 w-10 flex items-center justify-center rounded-md bg-red-100 hover:bg-red-200 disabled:opacity-50"
+                          className="h-8 px-2 flex items-center justify-center rounded-md bg-red-100 hover:bg-red-200 disabled:opacity-50 text-xs text-red-700"
                           title="Delete (local templates only)"
                           type="button"
                         >
-                          <Trash className="w-4 h-4 text-red-700" />
+                          <Trash className="w-3 h-3" />
                         </button>
                       </div>
 
-                      {(() => {
-                        const selected = savedTemplates.find(
-                          (t) => t.id === selectedTemplateId
-                        );
-                        if (!selected?.thumbnailDataUrl) return null;
-                        return (
-                          <div className="border border-gray-200 rounded-md overflow-hidden bg-gray-50">
-                            <img
-                              src={selected.thumbnailDataUrl}
-                              alt={selected.name}
-                              className="w-full h-auto block"
-                            />
-                          </div>
-                        );
-                      })()}
+                      <div className="grid grid-cols-3 gap-2">
+                        {[...savedTemplates]
+                          .sort((a, b) =>
+                            (b.savedAt || "").localeCompare(a.savedAt || "")
+                          )
+                          .map((tpl) => (
+                            <div
+                              key={tpl.id}
+                              onClick={() => loadTemplateById(tpl.id)}
+                              className={`relative cursor-pointer rounded-md overflow-hidden border-2 transition-all ${
+                                selectedTemplateId === tpl.id
+                                  ? "border-purple-600 bg-purple-50"
+                                  : "border-gray-200 bg-gray-50 hover:border-gray-300"
+                              }`}
+                              title={`${
+                                tpl.source === "global"
+                                  ? "Global - "
+                                  : tpl.source === "user"
+                                  ? "My - "
+                                  : ""
+                              }${tpl.name}`}
+                            >
+                              {tpl.thumbnailDataUrl ? (
+                                <img
+                                  src={tpl.thumbnailDataUrl}
+                                  alt={tpl.name}
+                                  className="w-full h-20 object-cover"
+                                />
+                              ) : (
+                                <div className="w-full h-20 bg-gray-200 flex items-center justify-center text-xs text-gray-400">
+                                  No preview
+                                </div>
+                              )}
+                              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-1.5">
+                                <p className="text-xs text-white font-medium truncate">
+                                  {tpl.name}
+                                </p>
+                              </div>
+                            </div>
+                          ))}
+                      </div>
                     </div>
                   )}
                 </div>
@@ -2908,10 +2904,10 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
         <div
           className={`flex-1 ${
             isDragging ? "overflow-hidden" : "overflow-auto"
-          }  bg-gray-100 flex items-center justify-center p-2 md:p-4 min-h-0`}
+          }  bg-gray-100 flex items-start justify-around p-2 md:p-4 min-h-0`}
         >
           <div
-            className="flex items-center justify-center"
+            className="flex "
             style={{
               zoom: zoomLevel,
             }}
