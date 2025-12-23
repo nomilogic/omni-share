@@ -155,7 +155,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
 
   // Grid and snapping settings
   const [showGrid, setShowGrid] = useState<boolean>(true);
-  const [gridSize, setGridSize] = useState<number>(20);
+  const [gridSize, setGridSize] = useState<number>(50);
   const [snapToGrid, setSnapToGrid] = useState<boolean>(true);
   const [keyboardStep, setKeyboardStep] = useState<number>(5); // pixels to move with arrow keys
 
@@ -602,7 +602,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
   const snapToGridValue = useCallback(
     (value: number): number => {
       if (!snapToGrid || gridSize <= 0) return value;
-      return Math.round(value / gridSize) * gridSize;
+      return Math.floor(value / gridSize) * gridSize;
     },
     [snapToGrid, gridSize]
   );
@@ -2891,47 +2891,6 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                   />
                 )}
 
-                {showGrid && gridSize > 0 && (
-                  <>
-                    {/* Vertical grid lines */}
-                    {Array.from(
-                      {
-                        length: Math.ceil(
-                          canvasDimensions.width / gridSize
-                        ),
-                      },
-                      (_, i) => (
-                        <Line
-                          key={`v-${i}`}
-                          points={[i * gridSize, 0, i * gridSize, canvasDimensions.height]}
-                          stroke="#d1d5db"
-                          strokeWidth={0.5}
-                          listening={false}
-                          opacity={0.5}
-                        />
-                      )
-                    )}
-                    {/* Horizontal grid lines */}
-                    {Array.from(
-                      {
-                        length: Math.ceil(
-                          canvasDimensions.height / gridSize
-                        ),
-                      },
-                      (_, i) => (
-                        <Line
-                          key={`h-${i}`}
-                          points={[0, i * gridSize, canvasDimensions.width, i * gridSize]}
-                          stroke="#d1d5db"
-                          strokeWidth={0.5}
-                          listening={false}
-                          opacity={0.5}
-                        />
-                      )
-                    )}
-                  </>
-                )}
-
                 {[...elements]
                   .sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0))
                   .map((el) => {
@@ -2953,10 +2912,10 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                         let newX = e.target.x();
                         let newY = e.target.y();
                         
-                        // Apply grid snapping if enabled
+                        // Apply grid snapping if enabled - snap to grid lines (not centers)
                         if (snapToGrid && gridSize > 0) {
-                          newX = Math.round(newX / gridSize) * gridSize;
-                          newY = Math.round(newY / gridSize) * gridSize;
+                          newX = Math.floor(newX / gridSize) * gridSize;
+                          newY = Math.floor(newY / gridSize) * gridSize;
                         }
                         
                         updateElementById(el.id, { x: newX, y: newY });
@@ -3106,6 +3065,48 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                     node.scaleY(1);
                   }}
                 />
+
+                {/* Grid overlay - rendered on top for reference only */}
+                {showGrid && gridSize > 0 && (
+                  <>
+                    {/* Vertical grid lines */}
+                    {Array.from(
+                      {
+                        length: Math.ceil(
+                          canvasDimensions.width / gridSize
+                        ),
+                      },
+                      (_, i) => (
+                        <Line
+                          key={`v-${i}`}
+                          points={[i * gridSize, 0, i * gridSize, canvasDimensions.height]}
+                          stroke="#6b7280"
+                          strokeWidth={0.5}
+                          listening={false}
+                          opacity={0.7}
+                        />
+                      )
+                    )}
+                    {/* Horizontal grid lines */}
+                    {Array.from(
+                      {
+                        length: Math.ceil(
+                          canvasDimensions.height / gridSize
+                        ),
+                      },
+                      (_, i) => (
+                        <Line
+                          key={`h-${i}`}
+                          points={[0, i * gridSize, canvasDimensions.width, i * gridSize]}
+                          stroke="#6b7280"
+                          strokeWidth={0.5}
+                          listening={false}
+                          opacity={0.7}
+                        />
+                      )
+                    )}
+                  </>
+                )}
               </Layer>
             </Stage>
           </div>
