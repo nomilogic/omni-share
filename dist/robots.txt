@@ -1,0 +1,26 @@
+User-agent: *
+Allow: /
+Allow: /auth
+Allow: /dashboard
+Allow: /privacy
+Allow: /terms
+Allow: /support
+Disallow: /admin/
+Disallow: /api/
+Disallow: /*.json$
+Disallow: /?*sort=
+
+# Sitemaps
+Sitemap: https://omnishare.ai/sitemap.xml
+
+# Crawl delay
+Crawl-delay: 0.5
+
+# Specific search engines
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
