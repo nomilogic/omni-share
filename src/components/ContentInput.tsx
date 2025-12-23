@@ -3066,7 +3066,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         !formData.selectedPlatforms?.length ||
                         isGeneratingBoth
                       }
-                      className="rounded-md flex-1 flex items-center justify-between theme-bg-trinary theme-text-light border border-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] transition-colors duration-200 py-2.5 px-3 font-medium disabled:opacity-50 disabled:cursor-not-allowed text-sm
+                      className=" group rounded-md flex-1 flex items-center justify-between theme-bg-trinary theme-text-light border border-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] transition-colors duration-200 py-2.5 px-3 font-medium disabled:opacity-50 disabled:cursor-not-allowed text-sm
 "
                     >
                       {isGeneratingBoth ? (
@@ -3086,12 +3086,12 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         </div>
                       )}
 
-                      <div className="sm:inline-block rounded-md theme-bg-quaternary theme-text-secondary px-2 py-1">
-                        <Icon
-                          name="spiral-logo"
-                          size={20}
-                          className="inline mr-1 mt-[-1px]"
-                        />
+                      <div className="px-2.5 py-1.5 flex items-center gap-2">
+                      <Icon
+                        name="spiral-logo"
+                        size={20}
+                        className="brightness-[1000%] transition group-hover:brightness-100"
+                      />
                         {getCost()}
                       </div>
                     </button>
