@@ -2021,6 +2021,24 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
               )}
             </div>
 
+            {/* Clear All Elements */}
+            {elements.length > 0 && (
+              <div className="border border-gray-200 rounded-md p-3 md:p-4 bg-white">
+                <button
+                  onClick={() => {
+                    setElements([]);
+                    setSelectedElement(null);
+                  }}
+                  className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-red-50 text-red-700 rounded-md hover:bg-red-100 transition-colors text-xs md:text-sm font-medium"
+                  title="Delete all elements"
+                  type="button"
+                >
+                  <Trash className="w-4 h-4" />
+                  <span>Clear All Elements</span>
+                </button>
+              </div>
+            )}
+
             {/* Selected Element Properties */}
             {selectedElementData && (
               <div className="border border-gray-200 rounded-md p-3 md:p-4 bg-white">
