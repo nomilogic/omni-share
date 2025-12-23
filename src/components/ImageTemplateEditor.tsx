@@ -78,6 +78,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
   const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
 
   const logoInputRef = useRef<HTMLInputElement>(null);
+  const addElementLogoInputRef = useRef<HTMLInputElement>(null);
   const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null);
   const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>(null);
   const [elements, setElements] = useState<TemplateElement[]>(
@@ -1643,7 +1644,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
 
   const createNewLogoElement = () => {
     // Directly trigger file input instead of creating empty element
-    logoInputRef.current?.click();
+    addElementLogoInputRef.current?.click();
   };
 
   // Logo upload function
@@ -1695,37 +1696,45 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
   const handleLogoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && file.type.startsWith("image/")) {
-      // Create the element first
-      const cw = canvasDimensions.width;
-      const ch = canvasDimensions.height;
-      if (!cw || !ch) return;
+      // Check if there's a selected logo element - if so, update it instead of creating new
+      const selectedLogoElement = selectedElement && elements.find((el) => el.id === selectedElement && el.type === "logo");
+      
+      if (selectedLogoElement) {
+        // Update existing selected logo element
+        handleLogoUploadWithId(file, selectedElement);
+      } else {
+        // Create new logo element
+        const cw = canvasDimensions.width;
+        const ch = canvasDimensions.height;
+        if (!cw || !ch) return;
 
-      // Use responsive sizing based on canvas dimensions
-      const size = Math.min(80, cw * 0.1);
+        // Use responsive sizing based on canvas dimensions
+        const size = Math.min(80, cw * 0.1);
 
-      const nextZ = elements.length
-        ? Math.max(...elements.map((el) => el.zIndex || 0)) + 1
-        : 0;
+        const nextZ = elements.length
+          ? Math.max(...elements.map((el) => el.zIndex || 0)) + 1
+          : 0;
 
-      const newElementId = `logo-${Date.now()}`;
-      const newElement: LogoElement = {
-        id: newElementId,
-        type: "logo",
-        x: cw / 2,
-        y: ch / 2,
-        width: size,
-        height: size,
-        src: "",
-        opacity: 1,
-        borderRadius: 0,
-        zIndex: nextZ,
-      };
+        const newElementId = `logo-${Date.now()}`;
+        const newElement: LogoElement = {
+          id: newElementId,
+          type: "logo",
+          x: cw / 2,
+          y: ch / 2,
+          width: size,
+          height: size,
+          src: "",
+          opacity: 1,
+          borderRadius: 0,
+          zIndex: nextZ,
+        };
 
-      setElements((prev) => [...prev, newElement]);
-      setSelectedElement(newElementId);
+        setElements((prev) => [...prev, newElement]);
+        setSelectedElement(newElementId);
 
-      // Upload the image with the new element ID
-      handleLogoUploadWithId(file, newElementId);
+        // Upload the image with the new element ID
+        handleLogoUploadWithId(file, newElementId);
+      }
     }
     // Reset file input
     if (e.target) e.target.value = "";
@@ -2035,6 +2044,13 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
 
             {/* Element Creation Toolbar */}
             <div className="border border-gray-200 rounded-md p-2 md:p-3 bg-gray-50">
+              <input
+                ref={addElementLogoInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleLogoFileChange}
+                className="hidden"
+              />
               <button
                 type="button"
                 onClick={() => setElementsOpen((prev) => !prev)}
