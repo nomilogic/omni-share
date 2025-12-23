@@ -539,8 +539,8 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
       maxHeight = viewportHeight * 0.6;
     } else {
       // Desktop (accounting for 320px tools panel)
-      maxWidth = (viewportWidth - 320) * 0.8;
-      maxHeight = viewportHeight * 0.7;
+      maxWidth = (viewportWidth - 320) * 0.85;
+      maxHeight = viewportHeight * 0.8;
     }
 
     // Calculate zoom to fit image in available space
@@ -553,7 +553,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
     const maxZoomLevel = Math.max(fitZoom * 2, 2);
 
     return {
-      zoom: Math.max(minZoom, Math.min(fitZoom, 1)), // Start at fit zoom or 100% if smaller
+      zoom: Math.max(minZoom, fitZoom), // Use calculated fit zoom, allow it to be larger than 100%
       maxZoom: maxZoomLevel,
     };
   };
@@ -2881,7 +2881,15 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                 +
               </button>
               <button
-                onClick={() => setZoomLevel(0.8)}
+                onClick={() => {
+                  if (imageDimensions) {
+                    const { zoom } = calculateZoomLevel(
+                      imageDimensions.width,
+                      imageDimensions.height
+                    );
+                    setZoomLevel(zoom);
+                  }
+                }}
                 className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs hover:bg-blue-200 transition-colors ml-1 md:ml-2"
               >
                 Fit
