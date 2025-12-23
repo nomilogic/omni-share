@@ -2837,7 +2837,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
           <div
             className="flex items-center justify-center"
             style={{
-              zoom: `${zoomLevel}`,
+              transform: `scale(${zoomLevel})`,
               transformOrigin: "center center",
             }}
           >
