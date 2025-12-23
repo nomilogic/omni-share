@@ -446,6 +446,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
       setSelectedElement(null);
       setSelectedTemplateId(tpl.id);
       setTemplateName(tpl.name);
+      setTemplatesOpen(false);
 
       console.log("✅ Template loaded", tpl);
     } catch (error) {
@@ -611,12 +612,34 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
     const tr = transformerRef.current;
     if (!tr) return;
 
-    if (selectedElement && lockedElements.has(selectedElement)) {
+    if (!selectedElement) {
       tr.nodes([]);
       tr.getLayer()?.batchDraw();
       return;
     }
 
+    if (lockedElements.has(selectedElement)) {
+      tr.nodes([]);
+      tr.getLayer()?.batchDraw();
+      return;
+    }
+
+    // Try to find the node from the stage
+    const stage = stageRef.current;
+    if (stage) {
+      const layer = stage.children?.[0];
+      if (layer) {
+        const node = layer.children?.find((child: any) => child.id() === selectedElement);
+        if (node) {
+          selectedNodeRef.current = node;
+          tr.nodes([node]);
+          tr.getLayer()?.batchDraw();
+          return;
+        }
+      }
+    }
+
+    // Fallback to ref if direct lookup fails
     const node = selectedNodeRef.current;
     tr.nodes(node ? [node] : []);
     tr.getLayer()?.batchDraw();
@@ -1345,6 +1368,9 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
       );
 
       setSelectedElement(clickedElement.id);
+      setPropertiesOpen(true);
+      setTemplatesOpen(false);
+      setElementsOpen(false);
       setDragOffset({
         x: x - clickedElement.x,
         y: y - clickedElement.y,
@@ -1827,8 +1853,51 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
       >
         <div className="flex w-full overflow-y-auto p-3 md:p-4 min-h-0">
           <div className="space-y-3 md:space-y-4 w-full">
+            {/* Clear All Elements */}
+            {elements.length > 0 && (
+              <div className="flex items-center justify-between gap-1">
+                <label className="flex items-center gap-1 text-xs text-slate-700 select-none">
+                  <input
+                    type="checkbox"
+                    checked={showGrid}
+                    onChange={(e) => setShowGrid(e.target.checked)}
+                    className="h-4 w-4"
+                  />
+                  Show Grid
+                </label>
+                {showGrid && (
+                  <div className="flex items-center gap-1 flex-1">
+                    <input
+                      type="range"
+                      min="5"
+                      max="100"
+                      step="5"
+                      value={gridSize}
+                      onChange={(e) => setGridSize(parseInt(e.target.value))}
+                      className="flex-1 template-range"
+                    />
+                    <span className="text-xs text-gray-600 font-medium min-w-10">
+                      {gridSize}px
+                    </span>
+                  </div>
+                )}
+                <button
+                  onClick={() => {
+                    setElements([]);
+                    setSelectedElement(null);
+                  }}
+                  className="inline-flex items-center justify-center gap-1 px-1.5 py-1 bg-red-50 text-red-700 rounded-md hover:bg-red-100 transition-colors text-xs font-medium"
+                  title="Delete all elements"
+                  type="button"
+                >
+                  <Trash className="w-3 h-3" />
+                  <span>Clear All</span>
+                </button>
+              </div>
+            )}
+
             {/* Templates Section */}
-            <div className="border border-gray-200 rounded-md p-2 md:p-3 bg-white flex flex-col max-h-[30vh]">
+            <div className="border border-gray-200 rounded-md p-2 md:p-3 bg-white flex flex-col max-h-[40vh]">
               <button
                 type="button"
                 onClick={() => setTemplatesOpen((prev) => !prev)}
@@ -1851,11 +1920,11 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                       value={templateName}
                       onChange={(e) => setTemplateName(e.target.value)}
                       placeholder="Template name"
-                      className="w-full min-w-0 px-3 h-10 border border-gray-300 rounded-md text-sm"
+                      className="w-full min-w-0 px-3 h-8 border border-gray-300 rounded-md text-sm"
                     />
                     <button
                       onClick={() => void saveCurrentTemplate()}
-                      className="h-10 bg-purple-600 text-white font-medium flex items-center gap-2 justify-center px-3 rounded-md border border-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3] whitespace-nowrap"
+                      className="h-8 bg-purple-600 text-white font-medium flex items-center gap-2 justify-center px-3 rounded-md border border-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3] whitespace-nowrap"
                       title={
                         saveAsGlobal
                           ? "Save as global template"
@@ -1882,13 +1951,32 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                     <p className="text-xs text-gray-600 font-medium">
                       Saved templates
                     </p>
-                    <button
-                      onClick={() => void refreshSavedTemplates()}
-                      className="text-xs text-purple-600 font-medium hover:underline"
-                      type="button"
-                    >
-                      Refresh
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => void refreshSavedTemplates()}
+                        className="text-xs text-purple-600 font-medium hover:underline"
+                        type="button"
+                      >
+                        Refresh
+                      </button>
+                      <button
+                        onClick={() =>
+                          selectedTemplateId &&
+                          deleteTemplateById(selectedTemplateId)
+                        }
+                        disabled={
+                          !selectedTemplateId ||
+                          savedTemplates.find(
+                            (t) => t.id === selectedTemplateId
+                          )?.source !== "local"
+                        }
+                        className="h-8 px-2 flex items-center justify-center rounded-md bg-red-100 hover:bg-red-200 disabled:opacity-50 text-xs text-red-700"
+                        title="Delete (local templates only)"
+                        type="button"
+                      >
+                        <Trash className="w-3 h-3" />
+                      </button>
+                    </div>
                   </div>
 
                   {savedTemplates.length === 0 ? (
@@ -1897,30 +1985,8 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                     </p>
                   ) : (
                     <div className="space-y-2 overflow-y-auto min-h-0 flex-1">
-                      <div className="flex items-center justify-between mb-2">
-                        <p className="text-xs text-gray-500 font-medium">
-                          {savedTemplates.length} template{savedTemplates.length !== 1 ? "s" : ""}
-                        </p>
-                        <button
-                          onClick={() =>
-                            selectedTemplateId &&
-                            deleteTemplateById(selectedTemplateId)
-                          }
-                          disabled={
-                            !selectedTemplateId ||
-                            savedTemplates.find(
-                              (t) => t.id === selectedTemplateId
-                            )?.source !== "local"
-                          }
-                          className="h-8 px-2 flex items-center justify-center rounded-md bg-red-100 hover:bg-red-200 disabled:opacity-50 text-xs text-red-700"
-                          title="Delete (local templates only)"
-                          type="button"
-                        >
-                          <Trash className="w-3 h-3" />
-                        </button>
-                      </div>
 
-                      <div className="grid grid-cols-3 gap-2">
+                      <div className="grid grid-cols-2 gap-2">
                         {[...savedTemplates]
                           .sort((a, b) =>
                             (b.savedAt || "").localeCompare(a.savedAt || "")
@@ -1953,8 +2019,8 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                                   No preview
                                 </div>
                               )}
-                              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-1.5">
-                                <p className="text-xs text-white font-medium truncate">
+                              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-1.5">
+                                <p className="text-xs text-white font-semibold truncate drop-shadow-lg">
                                   {tpl.name}
                                 </p>
                               </div>
@@ -2029,24 +2095,6 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                 </div>
               )}
             </div>
-
-            {/* Clear All Elements */}
-            {elements.length > 0 && (
-              <div className="border border-gray-200 rounded-md p-3 md:p-4 bg-white">
-                <button
-                  onClick={() => {
-                    setElements([]);
-                    setSelectedElement(null);
-                  }}
-                  className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-red-50 text-red-700 rounded-md hover:bg-red-100 transition-colors text-xs md:text-sm font-medium"
-                  title="Delete all elements"
-                  type="button"
-                >
-                  <Trash className="w-4 h-4" />
-                  <span>Clear All Elements</span>
-                </button>
-              </div>
-            )}
 
             {/* Selected Element Properties */}
             {selectedElementData && (
@@ -2739,60 +2787,6 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
               </div>
             )}
 
-            {/* Grid Settings */}
-            <div className="border border-gray-200 rounded-md p-3 md:p-4 bg-white mt-3 md:mt-4">
-              <button
-                type="button"
-                onClick={() => setGridSettingsOpen((prev) => !prev)}
-                className="w-full flex items-center justify-between"
-              >
-                <h4 className="text-xs md:text-sm font-semibold text-slate-900">
-                  Show Grid
-                </h4>
-                {gridSettingsOpen ? (
-                  <ChevronUp className="w-4 h-4 text-slate-600" />
-                ) : (
-                  <ChevronDown className="w-4 h-4 text-slate-600" />
-                )}
-              </button>
-              {gridSettingsOpen && (
-                <div className="space-y-2.5 md:space-y-3 mt-3">
-                  {/* Grid Toggle and Size Slider */}
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      id="gridToggle"
-                      checked={showGrid}
-                      onChange={(e) => {
-                        setShowGrid(e.target.checked);
-                        setSnapToGrid(e.target.checked);
-                      }}
-                      className="w-4 h-4 text-blue-600 border-gray-300 rounded cursor-pointer"
-                    />
-
-                    {showGrid && (
-                      <div className="flex-1 flex items-center gap-2">
-                        <input
-                          type="range"
-                          min="5"
-                          max="100"
-                          step="5"
-                          value={gridSize}
-                          onChange={(e) =>
-                            setGridSize(parseInt(e.target.value))
-                          }
-                          className="flex-1 template-range"
-                        />
-                        <span className="text-xs text-gray-600 font-medium min-w-10">
-                          {gridSize}px
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-
             {!selectedElementData && (
               <div className="text-center py-6 md:py-12 text-gray-500 font-medium">
                 <div className="bg-gray-50 rounded-md p-4 md:p-6">
@@ -2883,7 +2877,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                       imageDimensions.width,
                       imageDimensions.height
                     );
-                    setZoomLevel(zoom);
+                    setZoomLevel(zoom * 0.82);
                   }
                 }}
                 className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs hover:bg-blue-200 transition-colors ml-1 md:ml-2"
@@ -2918,10 +2912,18 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
               height={canvasDimensions.height}
               onMouseDown={(e) => {
                 // Deselect when clicking on empty space
-                if (e.target === e.target.getStage()) setSelectedElement(null);
+                if (e.target === e.target.getStage()) {
+                  setSelectedElement(null);
+                  setPropertiesOpen(false);
+                  setElementsOpen(true);
+                }
               }}
               onTouchStart={(e) => {
-                if (e.target === e.target.getStage()) setSelectedElement(null);
+                if (e.target === e.target.getStage()) {
+                  setSelectedElement(null);
+                  setPropertiesOpen(false);
+                  setElementsOpen(true);
+                }
               }}
               className="border-2 border-gray-300 rounded-md shadow-md bg-white transition-all duration-200"
             >
@@ -2966,12 +2968,23 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                     const isSelected = el.id === selectedElement;
                     const commonGroupProps = {
                       key: el.id,
+                      id: el.id,
                       x: el.x,
                       y: el.y,
                       rotation: el.rotation || 0,
                       draggable: !locked,
-                      onClick: () => setSelectedElement(el.id),
-                      onTap: () => setSelectedElement(el.id),
+                      onMouseDown: () => {
+                        setSelectedElement(el.id);
+                        setPropertiesOpen(true);
+                        setTemplatesOpen(false);
+                        setElementsOpen(false);
+                      },
+                      onTouchStart: () => {
+                        setSelectedElement(el.id);
+                        setPropertiesOpen(true);
+                        setTemplatesOpen(false);
+                        setElementsOpen(false);
+                      },
                       onDragStart: () => {
                         if (!locked) setIsDragging(true);
                       },
@@ -3110,6 +3123,8 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                     "top-center",
                     "bottom-center",
                   ]}
+                  anchorSize={Math.max(6, 12 / zoomLevel)}
+                  borderStrokeWidth={2 / zoomLevel}
                   onTransformEnd={() => {
                     const node = selectedNodeRef.current;
                     if (!node || !selectedElement) return;
@@ -3155,10 +3170,10 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                             i * gridSize,
                             canvasDimensions.height,
                           ]}
-                          stroke="#6b7280"
-                          strokeWidth={0.5}
+                          stroke="#4b5563"
+                          strokeWidth={1}
                           listening={false}
-                          opacity={0.7}
+                          opacity={0.85}
                         />
                       )
                     )}
@@ -3176,10 +3191,10 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                             canvasDimensions.width,
                             i * gridSize,
                           ]}
-                          stroke="#6b7280"
-                          strokeWidth={0.5}
+                          stroke="#4b5563"
+                          strokeWidth={1}
                           listening={false}
-                          opacity={0.7}
+                          opacity={0.85}
                         />
                       )
                     )}
