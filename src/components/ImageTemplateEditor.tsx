@@ -1681,8 +1681,9 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
         ? Math.max(...elements.map((el) => el.zIndex || 0)) + 1
         : 0;
 
+      const newElementId = `logo-${Date.now()}`;
       const newElement: LogoElement = {
-        id: `logo-${Date.now()}`,
+        id: newElementId,
         type: "logo",
         x: cw / 2,
         y: ch / 2,
@@ -1695,13 +1696,55 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
       };
 
       setElements((prev) => [...prev, newElement]);
-      setSelectedElement(newElement.id);
+      setSelectedElement(newElementId);
 
-      // Then upload the image
-      setTimeout(() => handleLogoUpload(file), 0);
+      // Upload the image with the new element ID
+      handleLogoUploadWithId(file, newElementId);
     }
     // Reset file input
     if (e.target) e.target.value = "";
+  };
+
+  const handleLogoUploadWithId = async (file: File, elementId: string) => {
+    console.log("🚀 Starting logo upload for element:", elementId, "File:", file.name);
+    setLogoUploading(true);
+    try {
+      const user = await getCurrentUser();
+      if (user?.user?.id) {
+        console.log("📤 Uploading logo to server...");
+        const logoUrl = await uploadMedia(file, user.user.id);
+        console.log("✅ Logo uploaded successfully:", logoUrl);
+        setElements((prev) =>
+          prev.map((el) =>
+            el.id === elementId ? { ...el, src: logoUrl } : el
+          )
+        );
+      } else {
+        // Fallback to local URL
+        console.log("🔄 No user found, using local URL fallback");
+        const localUrl = URL.createObjectURL(file);
+        console.log("📎 Created local URL:", localUrl);
+        setElements((prev) =>
+          prev.map((el) =>
+            el.id === elementId ? { ...el, src: localUrl } : el
+          )
+        );
+      }
+    } catch (error) {
+      console.error("❌ Error uploading logo:", error);
+      // Fallback to local URL
+      console.log("🔄 Using local URL fallback due to upload error");
+      const localUrl = URL.createObjectURL(file);
+      console.log("📎 Created fallback local URL:", localUrl);
+      setElements((prev) =>
+        prev.map((el) =>
+          el.id === elementId ? { ...el, src: localUrl } : el
+        )
+      );
+    } finally {
+      setLogoUploading(false);
+      console.log("🏁 Logo upload process completed");
+    }
   };
 
   const exportImage = async () => {
