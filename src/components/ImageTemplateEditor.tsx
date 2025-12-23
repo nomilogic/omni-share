@@ -2771,7 +2771,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
       </div>
 
       <div className="flex-1 bg-gray-50 flex flex-col min-h-0">
-        <div className="flex-shrink-0 px-3 py-1 md:py-2.5 bg-white border-b border-gray-200">
+        <div className="sticky top-0 z-10 flex-shrink-0 px-3 py-1 md:py-2.5 bg-white border-b border-gray-200">
           <div className="flex items-center justify-between">
             <div className="text-xs text-gray-500 font-medium font-mono">
               {canvasDimensions && (
@@ -2832,13 +2832,13 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
         <div
           className={`flex-1 ${
             isDragging ? "overflow-hidden" : "overflow-auto"
-          }  bg-gray-100 flex items-center justify-center p-2 md:p-4 min-h-0`}
+          }  bg-gray-100 flex items-start justify-center p-2 md:p-4 min-h-0`}
         >
           <div
             className="flex items-center justify-center"
             style={{
               transform: `scale(${zoomLevel})`,
-              transformOrigin: "center center",
+              transformOrigin: "top center",
             }}
           >
             <Stage
