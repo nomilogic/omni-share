@@ -1199,7 +1199,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         tone: currentCampaignInfo?.brand_tone || currentCampaignInfo?.brandTone,
         targetAudience:
           currentCampaignInfo?.target_audience ||
-          currentCampaignInfo?.targetAudience ||  "General",
+          currentCampaignInfo?.targetAudience ||
+          "General",
         description: currentCampaignInfo?.description || "something nice",
         imageAnalysis: imageAnalysis,
         website: currentCampaignInfo?.website || "",
@@ -1672,7 +1673,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         setGeneratedImage(imageUrl.imageUrl);
         setModelImage(true);
         setIsGeneratingImageUpload(imageUrl.imageUrl);
-        
+
         // Store post generation data for template editor
         const postGenerationData = {
           prompt: newPrompt,
@@ -1698,7 +1699,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           setGeneratedImage(imageUrl.imageUrl);
           setModelImage(true);
           setIsGeneratingImageUpload(imageUrl.imageUrl);
-          
+
           // Store post generation data for template editor
           const postGenerationData = {
             prompt: newPrompt,
@@ -1811,7 +1812,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
   const confirmImage = async () => {
     try {
-      setModelImage(false);
       const blankTemplate = getTemplateById("blank-template");
       if (blankTemplate) {
         setTimeout(() => {
