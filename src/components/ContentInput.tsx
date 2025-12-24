@@ -155,6 +155,13 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
   const [generateVideoThumbnailAI, setGenerateVideoThumbnailAI] =
     useState(true);
+  const [showVideoThumbnailModal, setShowVideoThumbnailModal] = useState(false);
+  const [videoThumbnailForRegeneration, setVideoThumbnailForRegeneration] =
+    useState<string>("");
+  const [videoThumbnailGenerations, setVideoThumbnailGenerations] = useState<
+    string[]
+  >([]);
+  const [videoModifyMode, setVideoModify] = useState(false);
   const thumbnailInputRef = useRef<HTMLInputElement>(null);
   const [customThumbnailUploading, setCustomThumbnailUploading] =
     useState(false);
@@ -343,85 +350,11 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
         const aspectRatio = await getVideoAspectRatio(file);
         setVideoAspectRatio(aspectRatio);
-
-        let warningMessage = "";
-        let shouldRejectVideo = false;
-
-        if (selectedVideoMode === "upload" && !is16x9Video(aspectRatio)) {
-          shouldRejectVideo = true;
-          if (is9x16Video(aspectRatio)) {
-            warningMessage =
-              'Aspect ratio mismatch: Please switch to "Upload Short (9:16)" mode or upload a 16:9 horizontal video.';
-          } else {
-            warningMessage = `Aspect ratio mismatch: Please switch to "Upload Short (9:16)" mode or upload a 16:9 horizontal video.`;
-          }
-        } else if (
-          selectedVideoMode === "uploadShorts" &&
-          !is9x16Video(aspectRatio)
-        ) {
-          // User selected shorts upload (9:16) but uploaded non-9:16 video
-          shouldRejectVideo = true;
-          if (is16x9Video(aspectRatio)) {
-            warningMessage =
-              'Aspect ratio mismatch: Please switch to "Upload Video (16:9)" mode or upload a 9:16 verical video.';
-          } else {
-            warningMessage = `Aspect ratio mismatch: Please switch to "Upload Video (16:9)" mode or upload a 9:16 verical video.`;
-          }
-        }
-
-        if (shouldRejectVideo) {
-          console.log(
-            "🚫 Video rejected due to aspect ratio mismatch:",
-            warningMessage
-          );
-          setVideoAspectRatioWarning(warningMessage);
-
-          // Clear any existing timeout
-          if (warningTimeoutId) {
-            clearTimeout(warningTimeoutId);
-          }
-
-          // Set timeout to auto-dismiss warning after 4 seconds
-          const timeoutId = setTimeout(() => {
-            console.log("⏰ Auto-dismissing video warning after 4 seconds");
-            setVideoAspectRatioWarning("");
-            setWarningTimeoutId(null);
-          }, 4000);
-
-          setWarningTimeoutId(timeoutId);
-
-          // Remove the video from formData immediately
-          setFormData((prev) => {
-            // Clean up the blob URL
-            if (prev.mediaUrl && prev.mediaUrl.startsWith("blob:")) {
-              URL.revokeObjectURL(prev.mediaUrl);
-              console.log("🗑️ Cleaned up blob URL for rejected video");
-            }
-            return {
-              ...prev,
-              media: undefined,
-              mediaUrl: undefined,
-              serverUrl: undefined,
-            };
-          });
-
-          // Clear video-related state but keep the warning
-          setOriginalVideoFile(null);
-          setVideoAspectRatio(null);
-          setVideoThumbnailUrl("");
-
-          // Stop the upload process by returning early
-          return;
-        } else {
-          // Clear any previous warning and timeout if video is acceptable
-          if (warningTimeoutId) {
-            clearTimeout(warningTimeoutId);
-            setWarningTimeoutId(null);
-          }
-          setVideoAspectRatioWarning("");
-          console.log("✅ Video aspect ratio matches selected mode");
-        }
-      } catch (error) {}
+        
+        console.log("✅ Video aspect ratio detected:", aspectRatio);
+      } catch (error) {
+        console.log("⚠️ Could not detect aspect ratio:", error);
+      }
     }
 
     showLoading(`Uploading ${file.name}...`, { canCancel: true });
@@ -531,14 +464,14 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           showPreview: !!(formData.media || formData.mediaUrl),
         });
 
-        // Note: Template editor will open when user clicks Generate Post
+        // Upload complete - no further actions until user clicks Generate Post
         if (file.type.startsWith("image/")) {
           console.log(
-            "🖼️ Image uploaded successfully, template editor will open on Generate Post"
+            "✅ Image uploaded successfully"
           );
         } else if (isVideoFile(file)) {
           console.log(
-            "🎥 Video uploaded successfully, thumbnail generated, template editor will open on Generate Post"
+            "✅ Video uploaded successfully"
           );
         }
       } catch (error) {
@@ -805,52 +738,13 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
           if (generatedThumbnailUrl) {
             console.log(
-              "✅ Video thumbnail generated successfully, opening template editor"
+              "✅ Video thumbnail generated successfully, opening regeneration modal for editing"
             );
 
-            // Get blank template
-            const blankTemplate = getTemplateById("blank-template");
-            if (blankTemplate) {
-              console.log(
-                "📋 Setting blank template and opening editor for generated video thumbnail"
-              );
-              setSelectedTemplate(blankTemplate);
-              setShowTemplateEditor(true);
-
-              // Store post generation data for later use, including original video file
-              const currentCampaignInfo = campaignInfo || {
-                name: "Default Campaign",
-                industry: "General",
-                brand_tone: "professional",
-                target_audience: "General",
-                description:
-                  "General content generation without specific campaign context",
-              };
-
-              const postGenerationData = {
-                prompt: formData.prompt,
-                originalImageUrl: generatedThumbnailUrl, // Use generated thumbnail for template editor
-                originalVideoUrl: formData.mediaUrl, // Store original video URL
-                originalVideoFile: originalVideoFile, // Store original video file
-                videoAspectRatio: videoAspectRatio,
-                isVideoContent: true, // Flag to indicate this is video content
-                campaignInfo: currentCampaignInfo,
-                selectedPlatforms: formData.selectedPlatforms,
-                imageAnalysis: `Video thumbnail generated from content description for ${
-                  is16x9Video(videoAspectRatio || 0)
-                    ? "16:9 horizontal"
-                    : "custom aspect ratio"
-                } video`,
-                formData,
-              };
-
-              setPendingPostGeneration(postGenerationData);
-              return; // Exit here to wait for template editor completion
-            } else {
-              console.error(
-                "❌ Blank template not found for video, proceeding with normal flow"
-              );
-            }
+            // Show regeneration modal for user to edit/regenerate the video thumbnail
+            setVideoThumbnailForRegeneration(generatedThumbnailUrl);
+            setShowVideoThumbnailModal(true);
+            return; // Exit here to wait for user confirmation in regeneration modal
           } else {
             console.error(
               "❌ Failed to generate video thumbnail, proceeding with normal flow without thumbnail"
@@ -1837,6 +1731,31 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     }
   };
 
+  const handleVideoThumbnailRegenerate = async (newPrompt: string) => {
+    try {
+      console.log("🎥 Regenerating video thumbnail with new prompt:", newPrompt);
+      if (videoAspectRatio) {
+        const newThumbnail = await generateThumbnailForPost(
+          newPrompt,
+          videoAspectRatio
+        );
+        if (newThumbnail) {
+          console.log("✅ Video thumbnail regenerated successfully");
+          setVideoThumbnailForRegeneration(newThumbnail);
+          setVideoThumbnailGenerations([
+            ...videoThumbnailGenerations,
+            newThumbnail,
+          ]);
+        }
+      }
+    } catch (error) {
+      console.error("❌ Error regenerating video thumbnail:", error);
+      if (error instanceof Error) {
+        notify("error", `Failed to regenerate thumbnail: ${error.message}`);
+      }
+    }
+  };
+
   const confirmImage = async () => {
     try {
       setModelImage(false);
@@ -1856,12 +1775,54 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // const files = e.target.files;
-    // if (files && files[0]) {
-    //   handleFileUpload(files[0]);
-    // }
+  const confirmVideoThumbnail = async () => {
+    try {
+      console.log("✅ Video thumbnail confirmed, opening template editor");
+      setShowVideoThumbnailModal(false);
+      const blankTemplate = getTemplateById("blank-template");
+      if (blankTemplate) {
+        setTimeout(() => {
+          setSelectedTemplate(blankTemplate);
+          setShowTemplateEditor(true);
 
+          // Store post generation data for template editor
+          const currentCampaignInfo = campaignInfo || {
+            name: "Default Campaign",
+            industry: "General",
+            brand_tone: "professional",
+            target_audience: "General",
+            description:
+              "General content generation without specific campaign context",
+          };
+
+          const postGenerationData = {
+            prompt: formData.prompt,
+            originalImageUrl: videoThumbnailForRegeneration, // Use confirmed video thumbnail
+            originalVideoUrl: formData.mediaUrl,
+            originalVideoFile: originalVideoFile,
+            videoAspectRatio: videoAspectRatio,
+            isVideoContent: true,
+            campaignInfo: currentCampaignInfo,
+            selectedPlatforms: formData.selectedPlatforms,
+            imageAnalysis: `Video thumbnail for ${
+              is16x9Video(videoAspectRatio || 0)
+                ? "16:9 horizontal"
+                : "custom aspect ratio"
+            } video`,
+            formData,
+          };
+
+          setPendingPostGeneration(postGenerationData);
+        }, 500);
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        notify("error", `Failed to proceed: ${error.message}`);
+      }
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTemplatedImageUrl("");
     setSelectedTemplate(undefined);
     setImageAnalysis("");
@@ -1871,6 +1832,15 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
     const file = e.target.files?.[0];
     if (!file) return;
+    
+    // For videos, upload directly without modal
+    if (file.type.startsWith("video/")) {
+      console.log("🎥 Video file selected, uploading directly");
+      handleFileUpload(file);
+      return;
+    }
+    
+    // For images, open the regeneration modal
     setGeneratedImage(null);
     setSelectedFile(file);
     setIsGeneratingImageUpload("");
@@ -1942,6 +1912,27 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           confirmImage={confirmImage}
           onFileSave={onFileSave}
           selectedFile={selectedFile}
+        />
+      )}
+      {showVideoThumbnailModal && videoThumbnailForRegeneration && (
+        <ImageRegenerationModal
+          imageUrl={videoThumbnailForRegeneration}
+          isLoading={false}
+          allGeneration={videoThumbnailGenerations}
+          setAllGeneration={setVideoThumbnailGenerations}
+          setModify={setVideoModify}
+          modifyMode={videoModifyMode}
+          generationAmounts={generationAmounts["image"]}
+          onClose={() => {
+            setShowVideoThumbnailModal(false);
+            setVideoThumbnailForRegeneration("");
+            setVideoThumbnailGenerations([]);
+            setVideoModify(false);
+          }}
+          onRegenerate={handleVideoThumbnailRegenerate}
+          confirmImage={confirmVideoThumbnail}
+          onFileSave={() => {}}
+          selectedFile={null}
         />
       )}
       {!showTemplateEditor && (
@@ -2347,7 +2338,11 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                           <input
                             ref={fileInputRef}
                             type="file"
-                            accept="image/*"
+                            accept={
+                              selectedVideoMode === "uploadShorts" || selectedVideoMode === "upload"
+                                ? "video/*"
+                                : "image/*,video/*"
+                            }
                             onChange={handleFileChange}
                             className="hidden"
                           />
