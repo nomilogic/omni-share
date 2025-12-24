@@ -158,9 +158,11 @@ export async function postToYouTubeFromServer(
 
     const response = await API.youtubePost({
       accessToken,
-      post,
+      post: {
+        ...post,
+        thumbnailUrl: thumbnailUrl,
+      },
       videoUrl: videoUrlToUse,
-      thumbnailUrl: thumbnailUrl, // Include thumbnail in the initial request
     });
 
     const videoId = response.data?.data?.videoId;
