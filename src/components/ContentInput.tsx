@@ -743,6 +743,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
             // Show regeneration modal for user to edit/regenerate the video thumbnail
             setVideoThumbnailForRegeneration(generatedThumbnailUrl);
+            setVideoThumbnailGenerations([generatedThumbnailUrl]); // Initialize with the first generated image
             setShowVideoThumbnailModal(true);
             return; // Exit here to wait for user confirmation in regeneration modal
           } else {
@@ -1617,7 +1618,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         prompt: `${prompt.trim()}. Do not include any text, words, letters, numbers, captions, watermarks, logos, or typography. Pure imagery only.`,
         style: "professional",
         ...(image && modifyMode === true && { imageUrl: image }),
-        aspectRatio: aspectRatio,
+        aspectRatio: String(aspectRatio),
         ...(image && modifyMode === true && { modifyMode: true }),
       });
 
@@ -1731,23 +1732,52 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     }
   };
 
-  const handleVideoThumbnailRegenerate = async (newPrompt: string) => {
+  const handleVideoThumbnailRegenerate = async (newPrompt: string, Url?: string) => {
     try {
       console.log("🎥 Regenerating video thumbnail with new prompt:", newPrompt);
-      if (videoAspectRatio) {
-        const newThumbnail = await generateThumbnailForPost(
-          newPrompt,
-          videoAspectRatio
-        );
-        if (newThumbnail) {
+      
+      let isModifyMode = Url !== null && Url !== undefined;
+      let imageToProcess = isModifyMode ? Url : videoThumbnailForRegeneration;
+      
+      // Convert URL to Base64 if needed
+      if (imageToProcess && isUrl(imageToProcess)) {
+        imageToProcess = await urlToBase64(imageToProcess);
+      }
+      
+      // Build payload matching the structure
+      const payload = {
+        prompt: newPrompt,
+        style: "professional",
+        imageUrl: imageToProcess || undefined,
+        aspectRatio: String(videoAspectRatio || "16:9"),
+        modifyMode: isModifyMode,
+      };
+      
+      console.log("📤 Video thumbnail regeneration payload:", payload);
+      
+      // Call API with the payload structure
+      return await executeImageGeneration(async () => {
+        const response = await API.generateImage({
+          prompt: `${newPrompt.trim()}. Do not include any text, words, letters, numbers, captions, watermarks, logos, or typography. Pure imagery only.`,
+          style: "professional",
+          ...(imageToProcess && { imageUrl: imageToProcess }),
+          aspectRatio: String(videoAspectRatio || "16:9"),
+          ...(isModifyMode && { modifyMode: true }),
+        });
+
+        const result = response.data;
+        if (result.success && result.imageUrl) {
           console.log("✅ Video thumbnail regenerated successfully");
-          setVideoThumbnailForRegeneration(newThumbnail);
+          setVideoThumbnailForRegeneration(result.imageUrl);
           setVideoThumbnailGenerations([
             ...videoThumbnailGenerations,
-            newThumbnail,
+            result.imageUrl,
           ]);
+          return result;
+        } else {
+          throw new Error(result.error || "Video thumbnail generation failed");
         }
-      }
+      }, "Regenerating video thumbnail");
     } catch (error) {
       console.error("❌ Error regenerating video thumbnail:", error);
       if (error instanceof Error) {

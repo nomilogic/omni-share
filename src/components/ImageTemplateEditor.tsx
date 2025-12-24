@@ -155,7 +155,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
   const [propertiesOpen, setPropertiesOpen] = useState<boolean>(true);
 
   // Grid and snapping settings
-  const [showGrid, setShowGrid] = useState<boolean>(true);
+  const [showGrid, setShowGrid] = useState<boolean>(false);
   const [gridSize, setGridSize] = useState<number>(50);
   const [snapToGrid, setSnapToGrid] = useState<boolean>(true);
   const [gridSettingsOpen, setGridSettingsOpen] = useState<boolean>(true);
@@ -1791,11 +1791,18 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
     // Hide transformer/selection UI from export
     const tr = transformerRef.current;
     const wasVisible = tr ? tr.visible() : false;
+    const gridWasVisible = showGrid;
 
     try {
+      // Clear selection and hide transformer and grid
+      setSelectedElement(null);
+      selectedNodeRef.current = null;
+      setShowGrid(false);
       tr?.hide();
-      tr?.getLayer()?.batchDraw();
-
+      
+      // Force a render cycle to ensure grid is hidden and transformer is gone
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
       const exportCanvas = stage.toCanvas({ pixelRatio: 2 });
       const blob = await new Promise<Blob | null>((resolve) => {
         exportCanvas.toBlob((b) => resolve(b), "image/png");
@@ -1832,7 +1839,9 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
     } finally {
       if (wasVisible) {
         tr?.show();
-        tr?.getLayer()?.batchDraw();
+      }
+      if (gridWasVisible) {
+        setShowGrid(true);
       }
       setIsSaving(false);
     }
