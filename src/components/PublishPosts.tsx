@@ -1242,7 +1242,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
 
         <button
           onClick={onBack}
-          className="rounded-md mt-5 theme-bg-light px-4 py-2.5 w-full text-center font-semibold text-base border border-[#7650e3] text-[#7650e3] transition-colors hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] disabled:cursor-not-allowed"
+          className="rounded-md mt-4 theme-bg-light px-4 py-2.5 w-full text-center font-semibold text-base border border-[#7650e3] text-[#7650e3] transition-colors hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] disabled:cursor-not-allowed"
         >
           {t("back")}
         </button>

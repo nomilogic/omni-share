@@ -226,6 +226,7 @@ export default function ImageRegenerationModal({
                 {/* Desktop actions */}
                 <div className="hidden sm:flex gap-3 pt-1">
                   <button
+                  
                     onClick={handleSubmit}
                     disabled={isLoading || !prompt.trim()}
                     className="group w-full rounded-xl flex items-center justify-between border border-[#7650e3] theme-bg-trinary theme-text-light hover:bg-[#d7d7fc] hover:text-[#7650e3] transition-colors duration-200 py-3 px-4 font-medium disabled:opacity-50 disabled:cursor-not-allowed text-sm"
@@ -254,18 +255,6 @@ export default function ImageRegenerationModal({
                     Continue
                   </button>
                 </div>
-
-                {/* Helpful status
-                <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
-                  <p className="text-sm font-medium text-gray-900">Status</p>
-                  <p className="text-xs text-gray-600 mt-1">
-                    {isLoading
-                      ? "Working on it…"
-                      : activeImage
-                      ? "Ready."
-                      : "Generate an image to begin."}
-                  </p>
-                </div> */}
               </div>
             </div>
           </div>
@@ -275,6 +264,7 @@ export default function ImageRegenerationModal({
         <div className="sm:hidden sticky bottom-0 z-10 border-t border-gray-200 bg-white/90 backdrop-blur px-4 py-3">
           <div className="flex gap-3">
             <button
+             
               onClick={handleSubmit}
               disabled={isLoading || !prompt.trim()}
               className=" group w-full rounded-xl flex items-center justify-between border border-[#7650e3] theme-bg-trinary theme-text-light hover:bg-[#d7d7fc] hover:text-[#7650e3] transition-colors duration-200 py-3 px-4 font-medium disabled:opacity-50 disabled:cursor-not-allowed text-sm"
