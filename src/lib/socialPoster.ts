@@ -160,12 +160,13 @@ export async function postToYouTubeFromServer(
       accessToken,
       post,
       videoUrl: videoUrlToUse,
+      thumbnailUrl: thumbnailUrl, // Include thumbnail in the initial request
     });
 
     const videoId = response.data?.data?.videoId;
     console.log("✅ YouTube video uploaded successfully, videoId:", videoId);
 
-    // Step 2: Upload custom thumbnail if available
+    // Step 2: Upload custom thumbnail if available and not already set
     if (thumbnailUrl && videoId) {
       console.log("🎨 Uploading custom thumbnail for YouTube video:", videoId);
       try {
