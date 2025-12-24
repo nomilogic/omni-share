@@ -61,7 +61,7 @@
   "tone_analysis": "Tone Analysis",
   "matching_brand_voice": "Matching your brand voice perfectly",
   "processing": "Processing",
-  
+
   "profile_intro": "Tell us about yourself to personalize your experience",
   "profile_basics": "Let's start with the basics — tell us a bit about yourself so we can personalize your experience.",
   "phone_number_optional": "Phone Number (optional)",
@@ -646,5 +646,27 @@
   "join_now": "Join Now",
   "joining": "Joining",
   "omnishare_auto_resizes_description": "Absolutely. OmniShare automatically resizes your images and videos, creates YouTube thumbnails, and ensures every post meets the exact platform specifications.",
-  "does_omnishare_optimize_media_for_each_platform": "Does OmniShare optimize media for each platform?"
+  "does_omnishare_optimize_media_for_each_platform": "Does OmniShare optimize media for each platform?",
+
+  "two_factor_authentication": "Two-Factor Authentication",
+  "setup_two_factor_authentication": "Set up Two-Factor Authentication",
+  "scan_qr_with_auth_app": "Scan this QR code with your authenticator app",
+  "or_enter_manually": "Or enter this code manually",
+  "enter_code_from_app": "Enter the 6-digit code from the app",
+  "enable_2fa": "Enable 2FA",
+  "verifying": "Verifying...",
+  "loading_qr_code": "Generating secure QR code...",
+  "invalid_otp_code": "Invalid authentication code",
+  "failed_to_load_setup": "Failed to load 2FA setup",
+  "verify_your_identity": "Verify your identity",
+  "enter_code_from_authenticator_app": "Enter the 6-digit code from your authenticator app",
+  "enter_valid_6_digit_code": "Please enter a valid 6-digit code",
+  "invalid_or_expired_code": "Invalid or expired code",
+
+  "code_refreshes_every_30_seconds": "The code refreshes every 30 seconds",
+
+  "enter_code_from_auth_app": "Open your authenticator app and enter the 6-digit code",
+  "verify_and_login": "Verify & Login",
+  "please_enter_valid_6_digit_code": "Please enter a valid 6-digit code",
+  "cannot_resend_2fa_code": "Cannot resend code during login"
 }
