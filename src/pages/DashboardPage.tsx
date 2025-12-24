@@ -12,24 +12,20 @@ import UpdatePasswordForm from "@/components/UpdatePasswordForm";
 import { useTranslation } from "react-i18next";
 import API from "@/services/api";
 import { useModal } from "../context2/ModalContext";
+import { TwoFASetupModal } from "@/components/TwoFASetupModal";
 
 export const DashboardPage: React.FC = () => {
-  const { user } = useAppContext();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { state, dispatch, setProfileEditing } = useAppContext();
+  const { state, user } = useAppContext();
   const profileParam = searchParams.get("profile") === "true";
   const isEditing = profileParam || state?.isProfileEditing || false;
   const isPasswordEditing = state?.isPasswordEditing || false;
-  const { t, i18n } = useTranslation();
-  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
+  const { t } = useTranslation();
 
-  const { openModal, closeModal } = useModal();
+  const { openModal } = useModal();
   const handleReferralClick = () => {
-    // openModal ko call karein aur ReferralSection component ko pass karein
-    // closeModal function automatic 'close' prop ke zariye ReferralSection ko milega.
     openModal(ReferralSection, {});
-    // Agar ReferralSection mein koi aur prop zaroori hai toh woh yahan pass karein.
   };
 
   // Get user plan and tier info
@@ -61,13 +57,24 @@ export const DashboardPage: React.FC = () => {
   useEffect(() => {
     fetchPostHistory();
   }, []);
+  const [isTwoFactor, setTwoFactor] = useState(false);
   return (
     <>
+      {user && !user?.twoFactorEnabled && (
+        <TwoFASetupModal
+          open={isTwoFactor}
+          onClose={() => setTwoFactor(false)}
+          onSuccess={() => setTwoFactor(false)}
+        />
+      )}
       {!isEditing && !isPasswordEditing && (
         <div className="min-h-screen my-10">
           <main className="max-w-8xl mx-auto  flex flex-col gap-y-8 ">
             <div className="bg-gray-100  lg:px-4 px-3 py-4 rounded-md flex flex-col gap-4">
-              <ProfileCard />
+              <ProfileCard
+                setTwoFactor={setTwoFactor}
+                isTwoFactor={isTwoFactor}
+              />
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <StatsCard

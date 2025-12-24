@@ -1,9 +1,9 @@
-import { Settings, Edit, User, PenLine, Lock } from "lucide-react";
+import { Settings, Edit, User, PenLine, Lock, Barcode } from "lucide-react";
 import { useAppContext } from "../../context/AppContext";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
-function ProfileCard() {
+function ProfileCard({ setTwoFactor, isTwoFactor }: any) {
   const { state, setProfileEditing, setPasswordEditing } = useAppContext();
   const { t, i18n } = useTranslation();
   const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
@@ -57,6 +57,18 @@ function ProfileCard() {
         </div>
       </div>
       <div className="flex  items-center  lg:gap-5 gap-2 md:justify-center justify-end ">
+        {!state.user?.twoFactorEnabled && (
+          <button
+            className="flex items-center rounded-md gap-2 transition-colors text-sm font-semibold "
+            style={{
+              color: "#7650e3",
+            }}
+            onClick={() => setTwoFactor(!isTwoFactor)}
+          >
+            <Barcode className="w-[14px] h-[14px]" />
+            <span className="hover:underline text-decoration-line">2FA</span>
+          </button>
+        )}
         <button
           className="flex items-center rounded-md gap-2 transition-colors text-sm font-semibold "
           style={{

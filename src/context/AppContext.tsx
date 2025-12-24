@@ -276,7 +276,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
         }
 
         const authResult: any = await getCurrentUser();
-        const user: User | null = authResult?.user || null;
+        const user: any | null = authResult?.user || null;
 
         if (!user) {
           dispatch({ type: "SET_LOADING", payload: false });
