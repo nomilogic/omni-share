@@ -1138,14 +1138,24 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                     </div>
                     {(() => {
                       // Show video limits only for video posts
-                      const mediaUrl = selectedPost.mediaUrl || selectedPost.imageUrl;
-                      const hasVideo = mediaUrl ? isVideoMedia(selectedPost as any, mediaUrl) : false;
+                      const mediaUrl =
+                        selectedPost.mediaUrl || selectedPost.imageUrl;
+                      const hasVideo = mediaUrl
+                        ? isVideoMedia(selectedPost as any, mediaUrl)
+                        : false;
                       if (!hasVideo) return null;
 
-                      const videoAspectRatio = (selectedPost as any).videoAspectRatio;
-                      const isShorts = videoAspectRatio && videoAspectRatio >= 0.5 && videoAspectRatio <= 0.65;
-                      
-                      const videoLimits = getPlatformVideoLimits(selectedPost.platform, isShorts);
+                      const videoAspectRatio = (selectedPost as any)
+                        .videoAspectRatio;
+                      const isShorts =
+                        videoAspectRatio &&
+                        videoAspectRatio >= 0.5 &&
+                        videoAspectRatio <= 0.65;
+
+                      const videoLimits = getPlatformVideoLimits(
+                        selectedPost.platform,
+                        isShorts
+                      );
                       if (!videoLimits) return null;
 
                       return (
@@ -1154,7 +1164,8 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                             {isShorts ? "Shorts" : "Video"} Limits
                           </span>
                           <span className="text-xs text-gray-600 font-medium">
-                            {videoLimits.aspectRatio} • {videoLimits.maxDuration}
+                            {videoLimits.aspectRatio} •{" "}
+                            {videoLimits.maxDuration}
                           </span>
                         </div>
                       );
@@ -1163,20 +1174,31 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
 
                   {(() => {
                     // Show detailed video limits when this post has video media
-                    const mediaUrl = selectedPost.mediaUrl || selectedPost.imageUrl;
-                    const hasVideo = mediaUrl ? isVideoMedia(selectedPost as any, mediaUrl) : false;
+                    const mediaUrl =
+                      selectedPost.mediaUrl || selectedPost.imageUrl;
+                    const hasVideo = mediaUrl
+                      ? isVideoMedia(selectedPost as any, mediaUrl)
+                      : false;
                     if (!hasVideo) return null;
 
-                    const videoAspectRatio = (selectedPost as any).videoAspectRatio;
-                    const isShorts = videoAspectRatio && videoAspectRatio >= 0.5 && videoAspectRatio <= 0.65;
-                    
-                    const videoLimits = getPlatformVideoLimits(selectedPost.platform, isShorts);
+                    const videoAspectRatio = (selectedPost as any)
+                      .videoAspectRatio;
+                    const isShorts =
+                      videoAspectRatio &&
+                      videoAspectRatio >= 0.5 &&
+                      videoAspectRatio <= 0.65;
+
+                    const videoLimits = getPlatformVideoLimits(
+                      selectedPost.platform,
+                      isShorts
+                    );
                     if (!videoLimits) return null;
 
                     return (
                       <div className="mt-4 pt-4 border-t border-gray-200">
                         <span className="text-gray-500 font-medium block mb-2">
-                          {isShorts ? "Shorts" : "Video"} Requirements for {getPlatformDisplayName(selectedPost.platform)}
+                          {isShorts ? "Shorts" : "Video"} Requirements for{" "}
+                          {getPlatformDisplayName(selectedPost.platform)}
                         </span>
                         <div className="space-y-2 text-xs text-gray-700">
                           <div className="flex justify-between">
@@ -1266,7 +1288,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
             <button
               onClick={handleRegenerateSubmit}
               disabled={isRegenerating}
-              className={`rounded-md w-full flex items-center justify-between theme-bg-trinary theme-text-light py-2.5  px-3 font-medium transition-all duration-200 text-sm ${
+              className={`group rounded-md w-full flex-1 flex items-center justify-between theme-bg-trinary theme-text-light border border-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] transition-colors duration-200 py-2.5 px-3 font-medium text-sm ${
                 isRegenerating
                   ? "opacity-70 cursor-not-allowed"
                   : "hover:opacity-90"
@@ -1280,11 +1302,11 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                 )}
                 {isRegenerating ? "REGENERATING..." : t("generate_post_text")}
               </div>
-              <div className="sm:inline-block rounded-md theme-bg-quaternary theme-text-secondary px-2 py-1">
+              <div className="sm:inline-block px-2 py-1 flex items-center">
                 <Icon
                   name="spiral-logo"
                   size={20}
-                  className="inline mr-1 mt-[-1px]"
+                  className="inline mr-1 mt-[-1px] brightness-[1000%] transition group-hover:brightness-100"
                 />
                 {generationAmounts?.text}
               </div>
