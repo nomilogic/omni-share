@@ -1195,22 +1195,22 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         prompt: prompt,
         selectedPlatforms: selectedPlatforms,
         platforms: selectedPlatforms,
-        campaignName: currentCampaignInfo.name,
+        campaignName: currentCampaignInfo?.name || "",
         campaignInfo: currentCampaignInfo,
         mediaAssets,
         analysisResults: imageAnalysis,
-        industry: currentCampaignInfo.industry,
-        tone: currentCampaignInfo.brand_tone || currentCampaignInfo.brandTone,
+        industry: currentCampaignInfo?.industry || "",
+        tone: currentCampaignInfo?.brand_tone || currentCampaignInfo?.brandTone,
         targetAudience:
-          currentCampaignInfo.target_audience ||
-          currentCampaignInfo.targetAudience,
-        description: currentCampaignInfo.description,
+          currentCampaignInfo?.target_audience ||
+          currentCampaignInfo?.targetAudience ||  "General",
+        description: currentCampaignInfo?.description || "something nice",
         imageAnalysis: imageAnalysis,
-        website: currentCampaignInfo.website,
-        objective: currentCampaignInfo.objective,
-        goals: currentCampaignInfo.goals,
-        keywords: currentCampaignInfo.keywords,
-        hashtags: currentCampaignInfo.hashtags,
+        website: currentCampaignInfo?.website || "",
+        objective: currentCampaignInfo?.objective || "",
+        goals: currentCampaignInfo?.goals || "",
+        keywords: currentCampaignInfo?.keywords || "interesting , modern",
+        hashtags: currentCampaignInfo?.hashtags,
         // Add video-specific metadata if applicable
         ...(isVideoContent && {
           isVideoContent: true,
@@ -1657,8 +1657,16 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     try {
       setIsGeneratingBoth(true);
       setGeneratedImage(null);
-      setPendingPostGeneration({});
       setModelImage(false);
+
+      const currentCampaignInfo = campaignInfo || {
+        name: "Default Campaign",
+        industry: "General",
+        brand_tone: "professional",
+        target_audience: "General",
+        description:
+          "General content generation without specific campaign context",
+      };
 
       if (Url !== null) {
         if (Url && isUrl(Url)) {
@@ -1668,6 +1676,17 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         setGeneratedImage(imageUrl.imageUrl);
         setModelImage(true);
         setIsGeneratingImageUpload(imageUrl.imageUrl);
+        
+        // Store post generation data for template editor
+        const postGenerationData = {
+          prompt: newPrompt,
+          originalImageUrl: imageUrl.imageUrl,
+          campaignInfo: currentCampaignInfo,
+          selectedPlatforms: formData.selectedPlatforms,
+          imageAnalysis,
+          formData,
+        };
+        setPendingPostGeneration(postGenerationData);
         setIsGeneratingBoth(false);
       } else {
         if (selectedFile) {
@@ -1683,21 +1702,23 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           setGeneratedImage(imageUrl.imageUrl);
           setModelImage(true);
           setIsGeneratingImageUpload(imageUrl.imageUrl);
+          
+          // Store post generation data for template editor
+          const postGenerationData = {
+            prompt: newPrompt,
+            originalImageUrl: imageUrl.imageUrl,
+            campaignInfo: currentCampaignInfo,
+            selectedPlatforms: formData.selectedPlatforms,
+            imageAnalysis,
+            formData,
+          };
+          setPendingPostGeneration(postGenerationData);
           setIsGeneratingBoth(false);
         } else {
           const imageUrl: any = await handleCombinedGeneration(
             newPrompt,
             formData.mediaUrl
           );
-
-          const currentCampaignInfo = campaignInfo || {
-            name: "Default Campaign",
-            industry: "General",
-            brand_tone: "professional",
-            target_audience: "General",
-            description:
-              "General content generation without specific campaign context",
-          };
 
           const postGenerationData = {
             prompt: newPrompt,
