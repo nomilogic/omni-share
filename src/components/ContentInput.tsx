@@ -1692,7 +1692,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         prompt: `${prompt.trim()}. Do not include any text, words, letters, numbers, captions, watermarks, logos, or typography. Pure imagery only.`,
         style: "professional",
         ...(image && modifyMode === true && { imageUrl: image }),
-        aspectRatio: aspectRatio,
+        aspectRatio: String(aspectRatio),
         ...(image && modifyMode === true && { modifyMode: true }),
       });
 
