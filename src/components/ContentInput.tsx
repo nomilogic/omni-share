@@ -39,6 +39,7 @@ import API from "@/services/api";
 import { notify } from "@/utils/toast";
 import { useTranslation } from "react-i18next";
 import ImageRegenerationModal from "./ImageRegenerationModal";
+import { useNavigate } from "react-router-dom";
 
 const fileToBase64 = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -700,15 +701,16 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     }
   };
 
+  const navigate = useNavigate();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // const cost = getCost();
+    const cost = getCost();
 
-    // if (balance < cost) {
-    //   navigate("/pricing");
-    //   return;
-    // }
+    if (state?.user?.wallet?.balance < cost) {
+      navigate("/pricing");
+      return;
+    }
     console.log("formData.generateImageWithPost", formData.mediaUrl);
     console.log("generateImageWithPost", selectedImageMode);
     console.log("generateImageWithPost", generateImageWithPost);
@@ -1806,7 +1808,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
   const confirmImage = async () => {
     try {
-      setModelImage(false);
       const blankTemplate = getTemplateById("blank-template");
       if (blankTemplate) {
         setTimeout(() => {

@@ -617,230 +617,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
           </p>
         </div>
 
-        {/* TikTok-specific settings (shown only when TikTok post exists) */}
-        {posts.some((p) => p.platform === "tiktok") && (
-          <div className="mt-4 p-4 bg-purple-50 border border-purple-200 rounded-md space-y-3">
-            <h3 className="font-semibold text-purple-900 text-sm">
-              TikTok Settings (required for Direct Post compliance)
-            </h3>
-
-            {tiktokCreatorInfo?.nickname && (
-              <p className="text-xs text-purple-800">
-                Posting to TikTok account: <strong>{tiktokCreatorInfo.nickname}</strong>
-              </p>
-            )}
-
-            {tiktokPostingBlockedReason && (
-              <p className="text-xs text-red-600">
-                {tiktokPostingBlockedReason}
-              </p>
-            )}
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs md:text-sm">
-              <div className="flex flex-col gap-1">
-                <label className="font-medium text-purple-900">
-                  TikTok Title
-                  <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  value={tiktokSettings.title}
-                  onChange={(e) =>
-                    setTiktokSettings((prev) => ({
-                      ...prev,
-                      title: e.target.value,
-                    }))
-                  }
-                  className="border border-purple-200 rounded-md px-2 py-1 text-sm focus:ring-1 focus:ring-purple-500 focus:border-purple-500"
-                  placeholder="Enter a title for your TikTok post"
-                />
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <label className="font-medium text-purple-900">
-                  TikTok Privacy Status
-                  <span className="text-red-500">*</span>
-                </label>
-                <select
-                  value={tiktokSettings.privacyLevel}
-                  onChange={(e) =>
-                    setTiktokSettings((prev) => ({
-                      ...prev,
-                      privacyLevel: e.target.value as TikTokPrivacyLevel,
-                    }))
-                  }
-                  className="border border-purple-200 rounded-md px-2 py-1 text-sm focus:ring-1 focus:ring-purple-500 focus:border-purple-500 bg-white"
-                >
-                  <option value="" disabled>
-                    Select privacy level
-                  </option>
-                  {(tiktokCreatorInfo?.privacy_level_options || [
-                    "SELF_ONLY",
-                    "FRIENDS",
-                    "EVERYONE",
-                  ]).map((opt) => {
-                    const isPrivateOption =
-                      opt.toUpperCase() === "SELF_ONLY" ||
-                      opt.toUpperCase() === "PRIVATE";
-                    const disabled =
-                      tiktokSettings.isBrandedContent && isPrivateOption;
-                    return (
-                      <option
-                        key={opt}
-                        value={opt}
-                        disabled={disabled}
-                        title={
-                          disabled
-                            ? "Branded content visibility cannot be set to private."
-                            : undefined
-                        }
-                      >
-                        {opt}
-                      </option>
-                    );
-                  })}
-                </select>
-                {tiktokSettings.isBrandedContent && (
-                  <p className="text-[11px] text-purple-700">
-                    Branded content cannot be posted with "only me" visibility.
-                  </p>
-                )}
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <span className="font-medium text-purple-900">
-                  Interaction Options
-                </span>
-                <div className="flex flex-col gap-1">
-                  <label className="inline-flex items-center gap-2 text-xs">
-                    <input
-                      type="checkbox"
-                      checked={tiktokSettings.allowComment}
-                      onChange={(e) =>
-                        setTiktokSettings((prev) => ({
-                          ...prev,
-                          allowComment: e.target.checked,
-                        }))
-                      }
-                    />
-                    <span>Allow comments</span>
-                  </label>
-                  <label className="inline-flex items-center gap-2 text-xs">
-                    <input
-                      type="checkbox"
-                      checked={tiktokSettings.allowDuet}
-                      onChange={(e) =>
-                        setTiktokSettings((prev) => ({
-                          ...prev,
-                          allowDuet: e.target.checked,
-                        }))
-                      }
-                    />
-                    <span>Allow Duet</span>
-                  </label>
-                  <label className="inline-flex items-center gap-2 text-xs">
-                    <input
-                      type="checkbox"
-                      checked={tiktokSettings.allowStitch}
-                      onChange={(e) =>
-                        setTiktokSettings((prev) => ({
-                          ...prev,
-                          allowStitch: e.target.checked,
-                        }))
-                      }
-                    />
-                    <span>Allow Stitch</span>
-                  </label>
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <label className="inline-flex items-center gap-2 text-xs font-medium text-purple-900">
-                  <input
-                    type="checkbox"
-                    checked={tiktokSettings.isCommercial}
-                    onChange={(e) =>
-                      setTiktokSettings((prev) => ({
-                        ...prev,
-                        isCommercial: e.target.checked,
-                        // Reset options if turning off
-                        ...(e.target.checked
-                          ? {}
-                          : {
-                              isYourBrand: false,
-                              isBrandedContent: false,
-                            }),
-                      }))
-                    }
-                  />
-                  <span>
-                    This TikTok post promotes yourself, a brand, product or
-                    service
-                  </span>
-                </label>
-
-                {tiktokSettings.isCommercial && (
-                  <div className="ml-5 mt-1 space-y-1">
-                    <label className="inline-flex items-center gap-2 text-xs">
-                      <input
-                        type="checkbox"
-                        checked={tiktokSettings.isYourBrand}
-                        onChange={(e) =>
-                          setTiktokSettings((prev) => ({
-                            ...prev,
-                            isYourBrand: e.target.checked,
-                          }))
-                        }
-                      />
-                      <span>Your brand</span>
-                    </label>
-                    <label className="inline-flex items-center gap-2 text-xs ml-4 ">
-                      <input
-                        type="checkbox"
-                        checked={tiktokSettings.isBrandedContent}
-                        onChange={(e) =>
-                          setTiktokSettings((prev) => ({
-                            ...prev,
-                            isBrandedContent: e.target.checked,
-                          }))
-                        }
-                      />
-                      <span>Branded content (third party)</span>
-                    </label>
-                    {!tiktokSettings.isYourBrand &&
-                      !tiktokSettings.isBrandedContent && (
-                        <p className="text-[11px] text-purple-700">
-                          You need to indicate if your content promotes yourself,
-                          a third party, or both.
-                        </p>
-                      )}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* TikTok legal declaration text */}
-            <p className="mt-2 text-[11px] text-purple-900">
-              {(() => {
-                const { isCommercial, isYourBrand, isBrandedContent } =
-                  tiktokSettings;
-                if (!isCommercial || (isYourBrand && !isBrandedContent)) {
-                  return "By posting, you agree to TikTok's Music Usage Confirmation.";
-                }
-                if (isBrandedContent) {
-                  return "By posting, you agree to TikTok's Branded Content Policy and Music Usage Confirmation.";
-                }
-                return "By posting, you agree to TikTok's Music Usage Confirmation.";
-              })()}
-            </p>
-
-            {/* Processing note per TikTok guidelines */}
-            <p className="mt-1 text-[11px] text-purple-700">
-              After you publish, TikTok may take a few minutes to process your
-              video before it appears on your profile.
-            </p>
-          </div>
-        )}
+        {/* TikTok-specific settings will be shown inside the TikTok platform card */}
 
         <div className="mb-4 mt-4">
           <div className="space-y-4">
@@ -865,6 +642,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
                 durationSec > (tiktokDurationLimit + 30);
 
               return (
+                <>
                 <div
                   key={post.platform}
                   className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-md hover:bg-gray-50 transition-colors"
@@ -1071,6 +849,239 @@ export const PublishPosts: React.FC<PublishProps> = ({
                     </div>
                   </div>
                 </div>
+
+                {/* TikTok Settings Box - shown below TikTok card */}
+                {post.platform === "tiktok" && (
+                  <div className="mt-2 p-4 bg-purple-50 border border-purple-200 rounded-md space-y-3">
+                    <h3 className="font-semibold text-purple-900 text-sm">
+                      TikTok Settings (required for Direct Post compliance)
+                    </h3>
+
+                    {tiktokCreatorInfo?.nickname && (
+                      <p className="text-xs text-purple-800">
+                        Posting to TikTok account: <strong>{tiktokCreatorInfo.nickname}</strong>
+                      </p>
+                    )}
+
+                    {tiktokPostingBlockedReason && (
+                      <p className="text-xs text-red-600">
+                        {tiktokPostingBlockedReason}
+                      </p>
+                    )}
+
+                    {/* TikTok Information Box */}
+                    <div className="p-3 bg-blue-50 border border-blue-200 rounded-md">
+                      <p className="text-xs text-blue-800">
+                        <span className="font-semibold">ℹ️ TikTok Direct Post:</span> Required settings must be configured before publishing. Ensure your title and privacy settings are appropriate for your content.
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs md:text-sm">
+                      <div className="flex flex-col gap-1">
+                        <label className="font-medium text-purple-900">
+                          TikTok Title
+                          <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={tiktokSettings.title}
+                          onChange={(e) =>
+                            setTiktokSettings((prev) => ({
+                              ...prev,
+                              title: e.target.value,
+                            }))
+                          }
+                          className="border border-purple-200 rounded-md px-2 py-1 text-sm focus:ring-1 focus:ring-purple-500 focus:border-purple-500"
+                          placeholder="Enter a title for your TikTok post"
+                        />
+                      </div>
+
+                      <div className="flex flex-col gap-1">
+                        <label className="font-medium text-purple-900">
+                          TikTok Privacy Status
+                          <span className="text-red-500">*</span>
+                        </label>
+                        <select
+                          value={tiktokSettings.privacyLevel}
+                          onChange={(e) =>
+                            setTiktokSettings((prev) => ({
+                              ...prev,
+                              privacyLevel: e.target.value as TikTokPrivacyLevel,
+                            }))
+                          }
+                          className="border border-purple-200 rounded-md px-2 py-1 text-sm focus:ring-1 focus:ring-purple-500 focus:border-purple-500 bg-white"
+                        >
+                          <option value="" disabled>
+                            Select privacy level
+                          </option>
+                          {(tiktokCreatorInfo?.privacy_level_options || [
+                            "SELF_ONLY",
+                            "FRIENDS",
+                            "EVERYONE",
+                          ]).map((opt) => {
+                            const isPrivateOption =
+                              opt.toUpperCase() === "SELF_ONLY" ||
+                              opt.toUpperCase() === "PRIVATE";
+                            const disabled =
+                              tiktokSettings.isBrandedContent && isPrivateOption;
+                            return (
+                              <option
+                                key={opt}
+                                value={opt}
+                                disabled={disabled}
+                                title={
+                                  disabled
+                                    ? "Branded content visibility cannot be set to private."
+                                    : undefined
+                                }
+                              >
+                                {opt}
+                              </option>
+                            );
+                          })}
+                        </select>
+                        {tiktokSettings.isBrandedContent && (
+                          <p className="text-[11px] text-purple-700">
+                            Branded content cannot be posted with "only me" visibility.
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="flex flex-col gap-1">
+                        <span className="font-medium text-purple-900">
+                          Interaction Options
+                        </span>
+                        <div className="flex flex-col gap-1">
+                          <label className="inline-flex items-center gap-2 text-xs">
+                            <input
+                              type="checkbox"
+                              checked={tiktokSettings.allowComment}
+                              onChange={(e) =>
+                                setTiktokSettings((prev) => ({
+                                  ...prev,
+                                  allowComment: e.target.checked,
+                                }))
+                              }
+                            />
+                            <span>Allow comments</span>
+                          </label>
+                          <label className="inline-flex items-center gap-2 text-xs">
+                            <input
+                              type="checkbox"
+                              checked={tiktokSettings.allowDuet}
+                              onChange={(e) =>
+                                setTiktokSettings((prev) => ({
+                                  ...prev,
+                                  allowDuet: e.target.checked,
+                                }))
+                              }
+                            />
+                            <span>Allow Duet</span>
+                          </label>
+                          <label className="inline-flex items-center gap-2 text-xs">
+                            <input
+                              type="checkbox"
+                              checked={tiktokSettings.allowStitch}
+                              onChange={(e) =>
+                                setTiktokSettings((prev) => ({
+                                  ...prev,
+                                  allowStitch: e.target.checked,
+                                }))
+                              }
+                            />
+                            <span>Allow Stitch</span>
+                          </label>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col gap-1">
+                        <label className="inline-flex items-center gap-2 text-xs font-medium text-purple-900">
+                          <input
+                            type="checkbox"
+                            checked={tiktokSettings.isCommercial}
+                            onChange={(e) =>
+                              setTiktokSettings((prev) => ({
+                                ...prev,
+                                isCommercial: e.target.checked,
+                                // Reset options if turning off
+                                ...(e.target.checked
+                                  ? {}
+                                  : {
+                                      isYourBrand: false,
+                                      isBrandedContent: false,
+                                    }),
+                              }))
+                            }
+                          />
+                          <span>
+                            This TikTok post promotes yourself, a brand, product or
+                            service
+                          </span>
+                        </label>
+
+                        {tiktokSettings.isCommercial && (
+                          <div className="ml-5 mt-1 space-y-1">
+                            <label className="inline-flex items-center gap-2 text-xs">
+                              <input
+                                type="checkbox"
+                                checked={tiktokSettings.isYourBrand}
+                                onChange={(e) =>
+                                  setTiktokSettings((prev) => ({
+                                    ...prev,
+                                    isYourBrand: e.target.checked,
+                                  }))
+                                }
+                              />
+                              <span>Your brand</span>
+                            </label>
+                            <label className="inline-flex items-center gap-2 text-xs ml-4 ">
+                              <input
+                                type="checkbox"
+                                checked={tiktokSettings.isBrandedContent}
+                                onChange={(e) =>
+                                  setTiktokSettings((prev) => ({
+                                    ...prev,
+                                    isBrandedContent: e.target.checked,
+                                  }))
+                                }
+                              />
+                              <span>Branded content (third party)</span>
+                            </label>
+                            {!tiktokSettings.isYourBrand &&
+                              !tiktokSettings.isBrandedContent && (
+                                <p className="text-[11px] text-purple-700">
+                                  You need to indicate if your content promotes yourself,
+                                  a third party, or both.
+                                </p>
+                              )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* TikTok legal declaration text */}
+                    <p className="mt-2 text-[11px] text-purple-900">
+                      {(() => {
+                        const { isCommercial, isYourBrand, isBrandedContent } =
+                          tiktokSettings;
+                        if (!isCommercial || (isYourBrand && !isBrandedContent)) {
+                          return "By posting, you agree to TikTok's Music Usage Confirmation.";
+                        }
+                        if (isBrandedContent) {
+                          return "By posting, you agree to TikTok's Branded Content Policy and Music Usage Confirmation.";
+                        }
+                        return "By posting, you agree to TikTok's Music Usage Confirmation.";
+                      })()}
+                    </p>
+
+                    {/* Processing note per TikTok guidelines */}
+                    <p className="mt-1 text-[11px] text-purple-700">
+                      After you publish, TikTok may take a few minutes to process your
+                      video before it appears on your profile.
+                    </p>
+                  </div>
+                )}
+                </>
               );
             })}
           </div>

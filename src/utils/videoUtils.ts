@@ -195,14 +195,14 @@ export const PLATFORM_VIDEO_LIMITS: Record<string, VideoLimits> = {
     shortForm: {
       aspectRatio: "9:16",
       resolution: "1080 x 1920",
-      maxDuration: "3 minutes (Shorts) / 60 minutes (uploaded)",
+      maxDuration: "Unlimited",
       maxFileSize: "500 MB (Web) / 287 MB (iOS) / 72 MB (Android)",
       notes: "Account limits may vary - check your creator dashboard"
     },
     horizontal: {
       aspectRatio: "16:9",
       resolution: "1920 x 1080",
-      maxDuration: "60 minutes (horizontal support varies)",
+      maxDuration: "Unlimited",
       maxFileSize: "500 MB"
     }
   },
