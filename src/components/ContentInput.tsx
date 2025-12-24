@@ -115,7 +115,13 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
   const [generatedResults, setGeneratedResults] = useState<any[]>([]);
   const [showPreview, setShowPreview] = useState(false);
-  const [campaignInfo, setCampaignInfo] = useState<any>(null);
+  const [campaignInfo, setCampaignInfo] = useState<any>({
+    name: "Default Campaign",
+    industry: "General",
+    brand_tone: "professional",
+    target_audience: "General",
+    description: "General content generation without specific campaign context",
+  });
   const [loadingCampaign, setLoadingCampaign] = useState(false);
 
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
@@ -985,7 +991,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         prompt: formData.prompt,
         selectedPlatforms: formData.selectedPlatforms,
         platforms: formData.selectedPlatforms,
-        campaignName: currentCampaignInfo.name,
+        campaignName: "",
         campaignInfo: currentCampaignInfo,
         mediaAssets,
         analysisResults: imageAnalysis,
@@ -1300,23 +1306,10 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         prompt: prompt,
         selectedPlatforms: selectedPlatforms,
         platforms: selectedPlatforms,
-        campaignName: currentCampaignInfo.name,
         campaignInfo: currentCampaignInfo,
         mediaAssets,
         analysisResults: imageAnalysis,
-        industry: currentCampaignInfo.industry,
-        tone: currentCampaignInfo.brand_tone || currentCampaignInfo.brandTone,
-        targetAudience:
-          currentCampaignInfo.target_audience ||
-          currentCampaignInfo.targetAudience,
-        description: currentCampaignInfo.description,
-        imageAnalysis: imageAnalysis,
-        website: currentCampaignInfo.website,
-        objective: currentCampaignInfo.objective,
-        goals: currentCampaignInfo.goals,
-        keywords: currentCampaignInfo.keywords,
-        hashtags: currentCampaignInfo.hashtags,
-        // Add video-specific metadata if applicable
+
         ...(isVideoContent && {
           isVideoContent: true,
           videoAspectRatio: videoAspectRatio,
@@ -1389,7 +1382,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
             videoFile: originalVideoFile,
             videoAspectRatio: videoAspectRatio,
             isVideoContent: true,
-            campaignName: currentCampaignInfo.name,
+            campaignName: "",
             campaignInfo: currentCampaignInfo,
             mediaAssets: [
               {
@@ -1399,19 +1392,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                 aspectRatio: videoAspectRatio,
               },
             ],
-            industry: currentCampaignInfo.industry,
-            tone:
-              currentCampaignInfo.brand_tone || currentCampaignInfo.brandTone,
-            targetAudience:
-              currentCampaignInfo.target_audience ||
-              currentCampaignInfo.targetAudience,
-            description: currentCampaignInfo.description,
-            imageAnalysis: imageAnalysis,
-            website: currentCampaignInfo.website,
-            objective: currentCampaignInfo.objective,
-            goals: currentCampaignInfo.goals,
-            keywords: currentCampaignInfo.keywords,
-            hashtags: currentCampaignInfo.hashtags,
           };
         } else {
           // For image content, use templated image
@@ -1420,22 +1400,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
             mediaUrl: finalTemplatedUrl, // Use the templated image server URL
             imageUrl: finalTemplatedUrl,
             serverUrl: finalTemplatedUrl,
-            campaignName: currentCampaignInfo.name,
+            campaignName: "",
             campaignInfo: currentCampaignInfo,
             mediaAssets: [{ url: finalTemplatedUrl, type: "image" }],
-            industry: currentCampaignInfo.industry,
-            tone:
-              currentCampaignInfo.brand_tone || currentCampaignInfo.brandTone,
-            targetAudience:
-              currentCampaignInfo.target_audience ||
-              currentCampaignInfo.targetAudience,
-            description: currentCampaignInfo.description,
-            imageAnalysis: imageAnalysis,
-            website: currentCampaignInfo.website,
-            objective: currentCampaignInfo.objective,
-            goals: currentCampaignInfo.goals,
-            keywords: currentCampaignInfo.keywords,
-            hashtags: currentCampaignInfo.hashtags,
           };
         }
 
@@ -1856,6 +1823,12 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     }
   };
 
+  const handleFileChangeVideo = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files[0]) {
+      handleFileUpload(files[0]);
+    }
+  };
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // const files = e.target.files;
     // if (files && files[0]) {
@@ -2653,7 +2626,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             ? "video/*"
                             : "image/*,video/*"
                         }
-                        onChange={handleFileChange}
+                        onChange={handleFileChangeVideo}
                         className="hidden"
                       />
                     </div>
@@ -3087,11 +3060,11 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                       )}
 
                       <div className="px-2.5 py-1.5 flex items-center gap-2">
-                      <Icon
-                        name="spiral-logo"
-                        size={20}
-                        className="brightness-[1000%] transition group-hover:brightness-100"
-                      />
+                        <Icon
+                          name="spiral-logo"
+                          size={20}
+                          className="brightness-[1000%] transition group-hover:brightness-100"
+                        />
                         {getCost()}
                       </div>
                     </button>
