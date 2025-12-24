@@ -1140,6 +1140,12 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       imageUrl: finalTemplatedUrl,
       serverUrl: finalTemplatedUrl,
     }));
+    
+    // Update videoThumbnailUrl if this is video content
+    if (pendingPostGeneration?.isVideoContent) {
+      setVideoThumbnailUrl(finalTemplatedUrl);
+    }
+    
     setShowTemplateEditor(false);
 
     if (pendingPostGeneration) {
