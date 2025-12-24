@@ -166,10 +166,12 @@ interface APIInstance extends AxiosInstance {
   updatePassword: (data: any) => Promise<any>;
   OauthExchangeCode: (data: ExchangeCodePayload) => Promise<any>;
   subscribe: (data: ExchangeCodePayload) => Promise<any>;
-
   saveTemplate: (data: TemplatePayload) => Promise<any>;
   listTemplates: () => Promise<any>;
   listGlobalTemplates: () => Promise<any>;
+  verifyLogin2FA: (data: any) => Promise<any>;
+  verify2FASetup: (data: any) => Promise<any>;
+  enable2FA: () => Promise<any>;
 }
 
 export const API = axios.create({
@@ -195,7 +197,6 @@ API.login = (data) => API.post("/auth/login", data);
 API.registerUser = (data) => API.post("/auth/register", data);
 API.contactUs = (data) => API.post("/auth/contact-us", data);
 API.resendOtp = () => {
-  ``;
   const emailToken: any = JSON.parse(
     JSON.stringify(localStorage.getItem("email_token"))
   );
@@ -216,6 +217,14 @@ API.logout = () => {
   const token: any = localStorage.getItem("auth_token");
   return API.get("/auth/logout", { headers: { authorization: token } });
 };
+
+API.verifyLogin2FA = (data) => API.post("/auth/verifyLogin2FA", data);
+API.enable2FA = () => {
+  const token: any = localStorage.getItem("auth_token");
+  return API.get("/auth/enable2FA", { headers: { authorization: token } });
+};
+API.verify2FASetup = (data) => API.post("/auth/verify2FASetup", data);
+
 API.getUser = () => {
   const token: any = localStorage.getItem("auth_token");
   return API.get("/auth", { headers: { authorization: token } });

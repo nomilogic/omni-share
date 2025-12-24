@@ -350,7 +350,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
         const aspectRatio = await getVideoAspectRatio(file);
         setVideoAspectRatio(aspectRatio);
-        
+
         console.log("✅ Video aspect ratio detected:", aspectRatio);
       } catch (error) {
         console.log("⚠️ Could not detect aspect ratio:", error);
@@ -466,13 +466,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
         // Upload complete - no further actions until user clicks Generate Post
         if (file.type.startsWith("image/")) {
-          console.log(
-            "✅ Image uploaded successfully"
-          );
+          console.log("✅ Image uploaded successfully");
         } else if (isVideoFile(file)) {
-          console.log(
-            "✅ Video uploaded successfully"
-          );
+          console.log("✅ Video uploaded successfully");
         }
       } catch (error) {
         console.error("❌ Error uploading file:", error);
@@ -1203,7 +1199,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         tone: currentCampaignInfo?.brand_tone || currentCampaignInfo?.brandTone,
         targetAudience:
           currentCampaignInfo?.target_audience ||
-          currentCampaignInfo?.targetAudience ||  "General",
+          currentCampaignInfo?.targetAudience ||
+          "General",
         description: currentCampaignInfo?.description || "something nice",
         imageAnalysis: imageAnalysis,
         website: currentCampaignInfo?.website || "",
@@ -1676,7 +1673,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         setGeneratedImage(imageUrl.imageUrl);
         setModelImage(true);
         setIsGeneratingImageUpload(imageUrl.imageUrl);
-        
+
         // Store post generation data for template editor
         const postGenerationData = {
           prompt: newPrompt,
@@ -1702,7 +1699,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           setGeneratedImage(imageUrl.imageUrl);
           setModelImage(true);
           setIsGeneratingImageUpload(imageUrl.imageUrl);
-          
+
           // Store post generation data for template editor
           const postGenerationData = {
             prompt: newPrompt,
@@ -1753,18 +1750,24 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     }
   };
 
-  const handleVideoThumbnailRegenerate = async (newPrompt: string, Url?: string) => {
+  const handleVideoThumbnailRegenerate = async (
+    newPrompt: string,
+    Url?: string
+  ) => {
     try {
-      console.log("🎥 Regenerating video thumbnail with new prompt:", newPrompt);
-      
+      console.log(
+        "🎥 Regenerating video thumbnail with new prompt:",
+        newPrompt
+      );
+
       let isModifyMode = Url !== null && Url !== undefined;
       let imageToProcess = isModifyMode ? Url : videoThumbnailForRegeneration;
-      
+
       // Convert URL to Base64 if needed
       if (imageToProcess && isUrl(imageToProcess)) {
         imageToProcess = await urlToBase64(imageToProcess);
       }
-      
+
       // Build payload matching the structure
       const payload = {
         prompt: newPrompt,
@@ -1773,9 +1776,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         aspectRatio: String(videoAspectRatio || "16:9"),
         modifyMode: isModifyMode,
       };
-      
+
       console.log("📤 Video thumbnail regeneration payload:", payload);
-      
+
       // Call API with the payload structure
       return await executeImageGeneration(async () => {
         const response = await API.generateImage({
@@ -1809,7 +1812,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
   const confirmImage = async () => {
     try {
-      setModelImage(false);
       const blankTemplate = getTemplateById("blank-template");
       if (blankTemplate) {
         setTimeout(() => {
@@ -1883,14 +1885,14 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
     const file = e.target.files?.[0];
     if (!file) return;
-    
+
     // For videos, upload directly without modal
     if (file.type.startsWith("video/")) {
       console.log("🎥 Video file selected, uploading directly");
       handleFileUpload(file);
       return;
     }
-    
+
     // For images, open the regeneration modal
     setGeneratedImage(null);
     setSelectedFile(file);
@@ -2390,7 +2392,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             ref={fileInputRef}
                             type="file"
                             accept={
-                              selectedVideoMode === "uploadShorts" || selectedVideoMode === "upload"
+                              selectedVideoMode === "uploadShorts" ||
+                              selectedVideoMode === "upload"
                                 ? "video/*"
                                 : "image/*,video/*"
                             }
@@ -3133,11 +3136,11 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                       )}
 
                       <div className="px-2.5 py-1.5 flex items-center gap-2">
-                      <Icon
-                        name="spiral-logo"
-                        size={20}
-                        className="brightness-[1000%] transition group-hover:brightness-100"
-                      />
+                        <Icon
+                          name="spiral-logo"
+                          size={20}
+                          className="brightness-[1000%] transition group-hover:brightness-100"
+                        />
                         {getCost()}
                       </div>
                     </button>
