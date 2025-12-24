@@ -947,7 +947,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
             imageUrl: finalMediaUrl,
             videoUrl: isVideoContent ? finalMediaUrl : undefined, // Add explicit videoUrl for video content
             thumbnailUrl:
-              templatedImageUrl || (currentFormData as any).thumbnailUrl, // Use templated image as poster for videos
+              templatedImageUrl || videoThumbnailUrl || (currentFormData as any).thumbnailUrl, // Use templated image or videoThumbnailUrl as poster for videos
             isVideoContent: isVideoContent,
             videoAspectRatio: videoAspectRatio,
             engagement: Math.floor(Math.random() * 1000),
