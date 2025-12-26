@@ -150,23 +150,32 @@ export async function postToYouTubeFromServer(
 
     const videoUrlToUse = videoUrl || post.imageUrl;
 
+    // Optimize thumbnail: resize to 1280x720 and compress to < 2 MiB
+    let optimizedThumbnailUrl = thumbnailUrl;
+    if (thumbnailUrl) {
+      optimizedThumbnailUrl = await optimizeThumbnail(thumbnailUrl);
+    }
+
     console.log("📹 YouTube posting with:", {
       videoUrl: videoUrlToUse?.substring(0, 50) + "...",
-      hasThumbnail: !!thumbnailUrl,
-      thumbnailUrl: thumbnailUrl?.substring(0, 50) + "...",
+      hasThumbnail: !!optimizedThumbnailUrl,
+      thumbnailUrl: optimizedThumbnailUrl?.substring(0, 50) + "...",
     });
 
     const response = await API.youtubePost({
       accessToken,
-      post,
+      post: {
+        ...post,
+        thumbnailUrl: optimizedThumbnailUrl,
+      },
       videoUrl: videoUrlToUse,
     });
 
     const videoId = response.data?.data?.videoId;
     console.log("✅ YouTube video uploaded successfully, videoId:", videoId);
 
-    // Step 2: Upload custom thumbnail if available
-    if (thumbnailUrl && videoId) {
+    // Step 2: Upload custom thumbnail if available and not already set
+    if (optimizedThumbnailUrl && videoId) {
       console.log("🎨 Uploading custom thumbnail for YouTube video:", videoId);
       try {
         const thumbnailResponse = await axios.post(
@@ -174,7 +183,7 @@ export async function postToYouTubeFromServer(
           {
             accessToken,
             videoId,
-            thumbnailUrl,
+            thumbnailUrl: optimizedThumbnailUrl,
           }
         );
 
@@ -202,7 +211,7 @@ export async function postToYouTubeFromServer(
         response.data.thumbnailError =
           thumbnailError.response?.data?.error || thumbnailError.message;
       }
-    } else if (!thumbnailUrl) {
+    } else if (!optimizedThumbnailUrl) {
       console.log("🎨 No thumbnail URL provided, skipping thumbnail upload");
     } else if (!videoId) {
       console.warn("⚠️ No video ID available for thumbnail upload");
@@ -224,6 +233,168 @@ export async function postToYouTubeFromServer(
 
     throw new Error(errorMessage);
   }
+}
+
+/**
+ * Optimize thumbnail: resize to 1280x720 and compress to < 2 MiB
+ */
+async function optimizeThumbnail(thumbnailUrl: string): Promise<string> {
+  try {
+    const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 MiB
+    const TARGET_WIDTH = 1280;
+    const TARGET_HEIGHT = 720;
+
+    const response = await fetch(thumbnailUrl);
+    const blob = await response.blob();
+
+    // Check if already optimized
+    if (blob.size < MAX_FILE_SIZE) {
+      console.log(
+        `📊 Thumbnail size ${(blob.size / 1024 / 1024).toFixed(2)} MiB is already within limit`
+      );
+      // Still resize to target dimensions
+      return await resizeImage(thumbnailUrl, TARGET_WIDTH, TARGET_HEIGHT);
+    }
+
+    // Resize and compress
+    return await compressImage(
+      thumbnailUrl,
+      TARGET_WIDTH,
+      TARGET_HEIGHT,
+      MAX_FILE_SIZE
+    );
+  } catch (error) {
+    console.warn("⚠️ Failed to optimize thumbnail, using original:", error);
+    return thumbnailUrl;
+  }
+}
+
+/**
+ * Resize image to target dimensions
+ */
+async function resizeImage(
+  imageUrl: string,
+  targetWidth: number,
+  targetHeight: number
+): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = targetWidth;
+      canvas.height = targetHeight;
+      const ctx = canvas.getContext("2d");
+
+      if (!ctx) {
+        reject(new Error("Failed to get canvas context"));
+        return;
+      }
+
+      // Draw image to fit canvas (maintain aspect ratio with letterboxing)
+      const scale = Math.min(targetWidth / img.width, targetHeight / img.height);
+      const x = (targetWidth - img.width * scale) / 2;
+      const y = (targetHeight - img.height * scale) / 2;
+
+      ctx.fillStyle = "#000000";
+      ctx.fillRect(0, 0, targetWidth, targetHeight);
+      ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            const url = URL.createObjectURL(blob);
+            console.log(
+              `✅ Thumbnail resized to ${targetWidth}x${targetHeight}, size: ${(blob.size / 1024 / 1024).toFixed(2)} MiB`
+            );
+            resolve(url);
+          } else {
+            reject(new Error("Failed to create blob"));
+          }
+        },
+        "image/jpeg",
+        0.9
+      );
+    };
+
+    img.onerror = () => reject(new Error("Failed to load image"));
+    img.src = imageUrl;
+  });
+}
+
+/**
+ * Compress image to fit file size and resolution requirements
+ */
+async function compressImage(
+  imageUrl: string,
+  targetWidth: number,
+  targetHeight: number,
+  maxFileSize: number,
+  quality: number = 0.85
+): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = targetWidth;
+      canvas.height = targetHeight;
+      const ctx = canvas.getContext("2d");
+
+      if (!ctx) {
+        reject(new Error("Failed to get canvas context"));
+        return;
+      }
+
+      // Draw image to fit canvas
+      const scale = Math.min(targetWidth / img.width, targetHeight / img.height);
+      const x = (targetWidth - img.width * scale) / 2;
+      const y = (targetHeight - img.height * scale) / 2;
+
+      ctx.fillStyle = "#000000";
+      ctx.fillRect(0, 0, targetWidth, targetHeight);
+      ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+
+      let currentQuality = quality;
+      const tryCompress = () => {
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) {
+              reject(new Error("Failed to create blob"));
+              return;
+            }
+
+            if (blob.size <= maxFileSize) {
+              const url = URL.createObjectURL(blob);
+              console.log(
+                `✅ Thumbnail compressed to ${targetWidth}x${targetHeight}, quality: ${(currentQuality * 100).toFixed(0)}%, size: ${(blob.size / 1024 / 1024).toFixed(2)} MiB`
+              );
+              resolve(url);
+            } else if (currentQuality > 0.3) {
+              // Reduce quality and try again
+              currentQuality -= 0.1;
+              tryCompress();
+            } else {
+              reject(
+                new Error(
+                  `Could not compress thumbnail below ${(maxFileSize / 1024 / 1024).toFixed(1)} MiB`
+                )
+              );
+            }
+          },
+          "image/jpeg",
+          currentQuality
+        );
+      };
+
+      tryCompress();
+    };
+
+    img.onerror = () => reject(new Error("Failed to load image"));
+    img.src = imageUrl;
+  });
 }
 export async function postToLinkedInPersonal(
   accessToken: string,
