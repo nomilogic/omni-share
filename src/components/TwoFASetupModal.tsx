@@ -146,7 +146,7 @@ export const TwoFASetupModal: React.FC<TwoFASetupModalProps> = ({
                   onChange={(e) =>
                     setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
                   }
-                  className="w-full rounded-md border px-4 py-3 text-center text-lg font-mono tracking-widest focus:border-purple-500 focus:outline-none"
+                  className="w-full rounded-md border px-4 py-2 text-center text-lg font-mono tracking-widest focus:border-purple-600 focus:outline-none"
                   placeholder="••••••"
                   autoFocus
                 />
