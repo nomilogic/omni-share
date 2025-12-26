@@ -162,7 +162,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
       });
 
       const result = response.data.data;
-
+      console.log("response", response);
       if (
         response?.data?.challengeName === "SOFTWARE_TOKEN_MFA" &&
         response?.data?.session
@@ -254,7 +254,13 @@ export const AuthForm: React.FC<AuthFormProps> = ({
     setError("");
 
     try {
-      const result = await initiateGoogleOAuth(referralId);
+      const result: any = await initiateGoogleOAuth(referralId);
+      if (result?.challengeName === "SOFTWARE_TOKEN_MFA" && result?.session) {
+        setShowAuth(true);
+        localStorage.setItem("mfa_session_token", result?.session);
+        setLoading(false);
+        return;
+      }
 
       if (result?.token) {
         localStorage.setItem("auth_token", result.token);
@@ -279,7 +285,15 @@ export const AuthForm: React.FC<AuthFormProps> = ({
     setError("");
 
     try {
-      const result = await initiateFacebookOAuth();
+      const result: any = await initiateFacebookOAuth();
+
+      if (result?.challengeName === "SOFTWARE_TOKEN_MFA" && result?.session) {
+        setShowAuth(true);
+        localStorage.setItem("mfa_session_token", result?.session);
+        setLoading(false);
+        return;
+      }
+
       localStorage.setItem("auth_token", result.token);
       onAuthSuccess(result.user);
       try {
@@ -318,7 +332,15 @@ export const AuthForm: React.FC<AuthFormProps> = ({
     setError("");
 
     try {
-      const result = await initiateLinkedInOAuth(referralId);
+      const result: any = await initiateLinkedInOAuth(referralId);
+
+      if (result?.challengeName === "SOFTWARE_TOKEN_MFA" && result?.session) {
+        setShowAuth(true);
+        localStorage.setItem("mfa_session_token", result?.session);
+        setLoading(false);
+        return;
+      }
+
       if (result?.token) {
         localStorage.setItem("auth_token", result.token);
         onAuthSuccess(result.user);

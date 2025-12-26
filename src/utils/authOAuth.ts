@@ -356,7 +356,8 @@ export const initiateInstagramOAuth = (
       const params = new URLSearchParams({
         client_id: oauthConfig.instagram.appId,
         redirect_uri: oauthConfig.instagram.redirectUri,
-        scope: "instagram_business_basic,instagram_business_content_publish,instagram_business_manage_messages,instagram_business_manage_comments",
+        scope:
+          "instagram_business_basic,instagram_business_content_publish,instagram_business_manage_messages,instagram_business_manage_comments",
         response_type: "code",
         state: state,
       });
@@ -477,13 +478,6 @@ export const handleOAuthCallback = async (
 
     const result = await response.json();
 
-    if (!result.token || !result.user) {
-      throw new Error(
-        "Invalid response from OAuth server: missing token or user"
-      );
-    }
-
-    console.log(`✅ ${provider} OAuth response:`, result);
     return result;
   } catch (error) {
     console.error(`❌ ${provider} OAuth error:`, error);
