@@ -641,8 +641,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                     <h3 className="font-bold text-slate-900">
                       {getPlatformDisplayName("twitter")}
                     </h3>
-                    <span className="text-gray-500 font-medium">
-                    </span>
+                    <span className="text-gray-500 font-medium"></span>
                     <span className="text-gray-500 font-medium">·</span>
                     <span className="text-gray-500 font-medium">now</span>
                   </div>
@@ -980,7 +979,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
   const selectedPost = posts.find((post) => post.platform === selectedPlatform);
 
   return (
-    <div className="preview w-full mx-auto bg-transparent  md:rounded-md p-4 md:shadow-md md:px-8  md:py-6 my-5 bg-white ">
+    <div className="preview w-full mx-auto bg-transparent  md:rounded-md p-4 md:shadow-md md:px-8  md:py-6 md:my-5 bg-white ">
       <h2 className="text-3xl font-semibold theme-text-primary mb-1">
         {t("ai_generated_posts")}
       </h2>

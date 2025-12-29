@@ -13,11 +13,12 @@ import { useTranslation } from "react-i18next";
 import API from "@/services/api";
 import { useModal } from "../context2/ModalContext";
 import { TwoFASetupModal } from "@/components/TwoFASetupModal";
+import { notify } from "@/utils/toast";
 
 export const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { state, user } = useAppContext();
+  const { state, user }: any = useAppContext();
   const profileParam = searchParams.get("profile") === "true";
   const isEditing = profileParam || state?.isProfileEditing || false;
   const isPasswordEditing = state?.isPasswordEditing || false;
@@ -28,7 +29,6 @@ export const DashboardPage: React.FC = () => {
     openModal(ReferralSection, {});
   };
 
-  // Get user plan and tier info
   const userPlan = user?.wallet?.package?.tier || "free";
   const planRenewalDate = user?.wallet?.expiresAt
     ? new Date(user.wallet.expiresAt).toLocaleDateString("en-US", {
@@ -58,6 +58,30 @@ export const DashboardPage: React.FC = () => {
     fetchPostHistory();
   }, []);
   const [isTwoFactor, setTwoFactor] = useState(false);
+
+  const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
+  const [manualCode, setManualCode] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const startSetup = async () => {
+    setLoading(true);
+
+    try {
+      const res = await API.enable2FA();
+      setQrCodeUrl(res.data.qrCode);
+      setManualCode(res.data.manualCode);
+    } catch (err: any) {
+      console.log("err", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    if (!qrCodeUrl && !user?.twoFactorEnabled) {
+      startSetup();
+    }
+  }, [qrCodeUrl, user?.twoFactorEnabled]);
+
   return (
     <>
       {user && !user?.twoFactorEnabled && (
@@ -65,6 +89,11 @@ export const DashboardPage: React.FC = () => {
           open={isTwoFactor}
           onClose={() => setTwoFactor(false)}
           onSuccess={() => setTwoFactor(false)}
+          qrCodeUrl={qrCodeUrl}
+          manualCode={manualCode}
+          loading={loading}
+          setQrCodeUrl={setQrCodeUrl}
+          setManualCode={setManualCode}
         />
       )}
       {!isEditing && !isPasswordEditing && (

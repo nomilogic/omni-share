@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import API from "@/services/api";
 import { notify } from "@/utils/toast";
 import { useTranslation } from "react-i18next";
+import { useAppContext } from "@/context/AppContext";
 
 interface TwoFASetupModalProps {
   open: boolean;
@@ -11,40 +12,22 @@ interface TwoFASetupModalProps {
   onSuccess?: () => void;
 }
 
-export const TwoFASetupModal: React.FC<TwoFASetupModalProps> = ({
+export const TwoFASetupModal = ({
   open,
   onClose,
   onSuccess,
-}) => {
+  qrCodeUrl,
+  manualCode,
+  loading,
+  setQrCodeUrl,
+  setManualCode,
+}: any) => {
   const { t } = useTranslation();
-
-  const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
-  const [manualCode, setManualCode] = useState<string | null>(null);
+  const { refreshUser } = useAppContext();
   const [otp, setOtp] = useState("");
-  const [loading, setLoading] = useState(false);
   const [verifying, setVerifying] = useState(false);
   const [error, setError] = useState("");
 
-  // 🔹 Generate QR only once per session
-  const startSetup = async () => {
-    setLoading(true);
-    setError("");
-
-    try {
-      const res = await API.enable2FA();
-      setQrCodeUrl(res.data.qrCode);
-      setManualCode(res.data.manualCode);
-    } catch (err: any) {
-      const msg =
-        err.response?.data?.message || t("failed_to_initiate_2fa_setup");
-      setError(msg);
-      notify("error", msg);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // 🔹 Verify OTP
   const verifySetup = async () => {
     if (!/^\d{6}$/.test(otp)) {
       setError(t("please_enter_valid_6_digit_code"));
@@ -57,14 +40,12 @@ export const TwoFASetupModal: React.FC<TwoFASetupModalProps> = ({
     try {
       await API.verify2FASetup({ token: otp });
 
-      notify("success", t("2fa_enabled_successfully"));
-
-      // reset after successful setup
+      refreshUser();
       setQrCodeUrl(null);
       setManualCode(null);
+      notify("success", t("2FA enabled successfully"));
       setOtp("");
       setError("");
-
       onSuccess?.();
       onClose();
     } catch (err: any) {
@@ -76,19 +57,11 @@ export const TwoFASetupModal: React.FC<TwoFASetupModalProps> = ({
     }
   };
 
-  // 🔹 Close modal WITHOUT regenerating QR
   const handleClose = () => {
     setOtp("");
     setError("");
     onClose();
   };
-
-  // 🔹 Generate QR when modal opens (only once)
-  useEffect(() => {
-    if (open && !qrCodeUrl) {
-      startSetup();
-    }
-  }, [open, qrCodeUrl]);
 
   if (!open) return null;
 

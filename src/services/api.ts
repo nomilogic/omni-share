@@ -172,6 +172,7 @@ interface APIInstance extends AxiosInstance {
   verifyLogin2FA: (data: any) => Promise<any>;
   verify2FASetup: (data: any) => Promise<any>;
   enable2FA: () => Promise<any>;
+  facebookAnalytics: () => Promise<any>;
 }
 
 export const API = axios.create({
@@ -192,6 +193,8 @@ API.interceptors.request.use(
   },
   (error: AxiosError) => Promise.reject(error)
 );
+
+API.facebookAnalytics = () => API.get("/client/facebook/analytics");
 
 API.login = (data) => API.post("/auth/login", data);
 API.registerUser = (data) => API.post("/auth/register", data);
@@ -279,7 +282,6 @@ API.connectionForPlatform = (platform) =>
   API.get(`/client/oauth/connections/${platform}`);
 API.tokenForPlatform = (platform) =>
   API.get(`/client/oauth/tokens/${platform}`);
-
 API.configuredPlatforms = () => API.get("/client/oauth/config/platforms");
 API.health = () => API.get("/client/oauth/health");
 API.statusByUser = (userId) => API.get(`/client/oauth/status/${userId}`);

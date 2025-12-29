@@ -46,7 +46,7 @@ export const AuthenticatorModal: React.FC<AuthenticatorModalProps> = ({
       const message =
         err.response?.data?.message ||
         err.message ||
-        t("invalid_or_expired_code");
+        t("2fa verification failed");
       setError(message);
       notify("error", message);
     } finally {
