@@ -667,48 +667,20 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         return;
       }
 
-      // NEW: For uploaded images, open template editor directly with blank template
+      // For uploaded images, open regeneration modal
       if (
         selectedImageMode === "upload" &&
         (formData.media || formData.mediaUrl)
       ) {
-        console.log(
-          "🎨 Opening template editor for uploaded image with blank template..."
-        );
-
-        // Get blank template
-        const blankTemplate = getTemplateById("blank-template");
-        if (blankTemplate) {
-          console.log("📋 Setting blank template and opening editor");
-          setSelectedTemplate(blankTemplate);
-          setShowTemplateEditor(true);
-
-          // Store post generation data for later use (similar to combined generation)
-          const currentCampaignInfo = campaignInfo || {
-            name: "Default Campaign",
-            industry: "General",
-            brand_tone: "professional",
-            target_audience: "General",
-            description:
-              "General content generation without specific campaign context",
-          };
-
-          const postGenerationData = {
-            prompt: formData.prompt,
-            originalImageUrl: formData.mediaUrl,
-            campaignInfo: currentCampaignInfo,
-            selectedPlatforms: formData.selectedPlatforms,
-            imageAnalysis,
-            formData,
-          };
-
-          setPendingPostGeneration(postGenerationData);
-          return; // Exit here to wait for template editor completion
-        } else {
-          console.error(
-            "❌ Blank template not found, proceeding with normal flow"
-          );
-        }
+        console.log("📷 Upload mode: Opening regeneration modal with uploaded image");
+        
+        const imageUrl = formData.mediaUrl || (formData.media ? URL.createObjectURL(formData.media) : "");
+        
+        // Clear selectedFile so onFileSave won't upload it when Continue is clicked
+        setSelectedFile(null);
+        
+        await handleRegenerate(formData.prompt, imageUrl);
+        return;
       }
 
       // NEW: For uploaded videos, either generate thumbnail with AI or
@@ -1659,8 +1631,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   const handleRegenerate = async (newPrompt: string, Url?: string) => {
     try {
       setIsGeneratingBoth(true);
-      setGeneratedImage(null);
-      setModelImage(false);
 
       const currentCampaignInfo = campaignInfo || {
         name: "Default Campaign",
@@ -1671,72 +1641,47 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           "General content generation without specific campaign context",
       };
 
-      if (Url !== null) {
-        if (Url && isUrl(Url)) {
-          Url = await urlToBase64(Url);
-        }
-        const imageUrl: any = await handleCombinedGeneration(newPrompt, Url);
-        setGeneratedImage(imageUrl.imageUrl);
-        setModelImage(true);
-        setIsGeneratingImageUpload(imageUrl.imageUrl);
+      let finalImageUrl: string | null = null;
 
-        // Store post generation data for template editor
-        const postGenerationData = {
-          prompt: newPrompt,
-          originalImageUrl: imageUrl.imageUrl,
-          campaignInfo: currentCampaignInfo,
-          selectedPlatforms: formData.selectedPlatforms,
-          imageAnalysis,
-          formData,
-        };
-        setPendingPostGeneration(postGenerationData);
-        setIsGeneratingBoth(false);
+      // Determine which image to use: provided URL (upload), or generatedImage (modify mode), or none (textToImage)
+      const imageToModify = Url || generatedImage;
+
+      if (modifyMode && imageToModify) {
+        // Modify mode: Regenerate with existing image as base
+        console.log("🔄 Modify mode: Regenerating with existing image as base");
+        const result: any = await handleCombinedGeneration(newPrompt, imageToModify);
+        finalImageUrl = result.imageUrl;
+        setGeneratedImage(finalImageUrl);
+        setAllGeneration([...allGeneration, finalImageUrl]);
+      } else if (Url && !modifyMode) {
+        // Upload mode without modify: Use uploaded image directly, no generation
+        finalImageUrl = Url;
+        console.log("📷 Upload mode: Using selected image directly, no AI generation");
+        setGeneratedImage(finalImageUrl);
+        setAllGeneration([finalImageUrl]);
       } else {
-        if (selectedFile) {
-          let imageBase64 = generatedImage;
-
-          if (imageBase64 && isUrl(imageBase64)) {
-            imageBase64 = await urlToBase64(imageBase64);
-          }
-          const imageUrl: any = await handleCombinedGeneration(
-            newPrompt,
-            imageBase64
-          );
-          setGeneratedImage(imageUrl.imageUrl);
-          setModelImage(true);
-          setIsGeneratingImageUpload(imageUrl.imageUrl);
-
-          // Store post generation data for template editor
-          const postGenerationData = {
-            prompt: newPrompt,
-            originalImageUrl: imageUrl.imageUrl,
-            campaignInfo: currentCampaignInfo,
-            selectedPlatforms: formData.selectedPlatforms,
-            imageAnalysis,
-            formData,
-          };
-          setPendingPostGeneration(postGenerationData);
-          setIsGeneratingBoth(false);
-        } else {
-          const imageUrl: any = await handleCombinedGeneration(
-            newPrompt,
-            formData.mediaUrl
-          );
-
-          const postGenerationData = {
-            prompt: newPrompt,
-            originalImageUrl: imageUrl,
-            campaignInfo: currentCampaignInfo,
-            selectedPlatforms: formData.selectedPlatforms,
-            imageAnalysis,
-            formData,
-          };
-          setPendingPostGeneration(postGenerationData);
-          setModelImage(true);
-          setGeneratedImage(imageUrl.imageUrl);
-          setIsGeneratingBoth(false);
-        }
+        // TextToImage mode: Generate image from prompt
+        console.log("🎨 TextToImage mode: Generating image from prompt");
+        const result: any = await handleCombinedGeneration(newPrompt);
+        finalImageUrl = result.imageUrl;
+        setGeneratedImage(finalImageUrl);
+        setAllGeneration([finalImageUrl]);
       }
+
+      // Open the modal with the image (generated or selected)
+      setModelImage(true);
+
+      // Store post generation data for template editor
+      const postGenerationData = {
+        prompt: newPrompt,
+        originalImageUrl: finalImageUrl,
+        campaignInfo: currentCampaignInfo,
+        selectedPlatforms: formData.selectedPlatforms,
+        imageAnalysis,
+        formData,
+      };
+      setPendingPostGeneration(postGenerationData);
+      setIsGeneratingBoth(false);
     } catch (error) {
       setFormData((prev) => {
         const newData = {
@@ -1818,18 +1763,20 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
   const confirmImage = async () => {
     try {
-      const blankTemplate = getTemplateById("blank-template");
-      if (blankTemplate) {
-        setTimeout(() => {
+      // Close the modal first
+      setModelImage(false);
+      
+      // Small delay to ensure modal closes before opening template editor
+      setTimeout(() => {
+        const blankTemplate = getTemplateById("blank-template");
+        if (blankTemplate) {
           setSelectedTemplate(blankTemplate);
           setShowTemplateEditor(true);
-        }, 500);
-      } else {
-        setIsGeneratingBoth(false);
-      }
+        }
+      }, 200);
     } catch (error) {
       if (error instanceof Error) {
-        notify("error", `Failed to generate image: ${error.message}`);
+        notify("error", `Failed to confirm image: ${error.message}`);
       }
     }
   };
