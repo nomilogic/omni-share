@@ -930,7 +930,8 @@ const ProfileSetupSinglePage: React.FC = () => {
                                   <input
                                     type="text"
                                     placeholder={
-                                      field.placeholder || t("add_tag_hint")
+                                      !formData[fieldName].length &&
+                                      field.placeholder
                                     }
                                     className="flex-grow border-none focus:ring-0 text-sm outline-none min-w-[120px] bg-transparent"
                                     onKeyDown={(e) => {
