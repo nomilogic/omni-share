@@ -304,7 +304,7 @@ const ProfileSetupSinglePage: React.FC = () => {
         phoneNumber: profile.phoneNumber || "",
         publicUrl: profile.publicUrl || "",
         brandName: profile.brandName || "",
-        brandLogo: profile.brandLogo || null,
+        brandLogo: profile.brandLogo || "",
         brandTone: profile.brandTone || "",
         audienceGender: profile.audienceGender || "",
         audienceAgeRange: profile.audienceAgeRange || [],
@@ -828,7 +828,7 @@ const ProfileSetupSinglePage: React.FC = () => {
                                       const file = e.target.files?.[0];
                                       if (!file) return;
 
-                                      setSelectedFileName(file.name);
+                                      setSelectedFileName(file.name || "");
 
                                       const reader = new FileReader();
                                       reader.onloadend = () => {
