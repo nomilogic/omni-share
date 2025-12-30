@@ -641,8 +641,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                     <h3 className="font-bold text-slate-900">
                       {getPlatformDisplayName("twitter")}
                     </h3>
-                    <span className="text-gray-500 font-medium">
-                    </span>
+                    <span className="text-gray-500 font-medium"></span>
                     <span className="text-gray-500 font-medium">·</span>
                     <span className="text-gray-500 font-medium">now</span>
                   </div>
@@ -980,7 +979,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
   const selectedPost = posts.find((post) => post.platform === selectedPlatform);
 
   return (
-    <div className="preview w-full mx-auto bg-transparent  md:rounded-md p-4 md:shadow-md md:px-8  md:py-6 my-5 bg-white ">
+    <div className="preview w-full mx-auto bg-transparent  md:rounded-md p-4 md:shadow-md md:px-8  md:py-6 md:my-5 bg-white ">
       <h2 className="text-3xl font-semibold theme-text-primary mb-1">
         {t("ai_generated_posts")}
       </h2>
@@ -1138,14 +1137,24 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                     </div>
                     {(() => {
                       // Show video limits only for video posts
-                      const mediaUrl = selectedPost.mediaUrl || selectedPost.imageUrl;
-                      const hasVideo = mediaUrl ? isVideoMedia(selectedPost as any, mediaUrl) : false;
+                      const mediaUrl =
+                        selectedPost.mediaUrl || selectedPost.imageUrl;
+                      const hasVideo = mediaUrl
+                        ? isVideoMedia(selectedPost as any, mediaUrl)
+                        : false;
                       if (!hasVideo) return null;
 
-                      const videoAspectRatio = (selectedPost as any).videoAspectRatio;
-                      const isShorts = videoAspectRatio && videoAspectRatio >= 0.5 && videoAspectRatio <= 0.65;
-                      
-                      const videoLimits = getPlatformVideoLimits(selectedPost.platform, isShorts);
+                      const videoAspectRatio = (selectedPost as any)
+                        .videoAspectRatio;
+                      const isShorts =
+                        videoAspectRatio &&
+                        videoAspectRatio >= 0.5 &&
+                        videoAspectRatio <= 0.65;
+
+                      const videoLimits = getPlatformVideoLimits(
+                        selectedPost.platform,
+                        isShorts
+                      );
                       if (!videoLimits) return null;
 
                       return (
@@ -1154,7 +1163,8 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                             {isShorts ? "Shorts" : "Video"} Limits
                           </span>
                           <span className="text-xs text-gray-600 font-medium">
-                            {videoLimits.aspectRatio} • {videoLimits.maxDuration}
+                            {videoLimits.aspectRatio} •{" "}
+                            {videoLimits.maxDuration}
                           </span>
                         </div>
                       );
@@ -1163,20 +1173,31 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
 
                   {(() => {
                     // Show detailed video limits when this post has video media
-                    const mediaUrl = selectedPost.mediaUrl || selectedPost.imageUrl;
-                    const hasVideo = mediaUrl ? isVideoMedia(selectedPost as any, mediaUrl) : false;
+                    const mediaUrl =
+                      selectedPost.mediaUrl || selectedPost.imageUrl;
+                    const hasVideo = mediaUrl
+                      ? isVideoMedia(selectedPost as any, mediaUrl)
+                      : false;
                     if (!hasVideo) return null;
 
-                    const videoAspectRatio = (selectedPost as any).videoAspectRatio;
-                    const isShorts = videoAspectRatio && videoAspectRatio >= 0.5 && videoAspectRatio <= 0.65;
-                    
-                    const videoLimits = getPlatformVideoLimits(selectedPost.platform, isShorts);
+                    const videoAspectRatio = (selectedPost as any)
+                      .videoAspectRatio;
+                    const isShorts =
+                      videoAspectRatio &&
+                      videoAspectRatio >= 0.5 &&
+                      videoAspectRatio <= 0.65;
+
+                    const videoLimits = getPlatformVideoLimits(
+                      selectedPost.platform,
+                      isShorts
+                    );
                     if (!videoLimits) return null;
 
                     return (
                       <div className="mt-4 pt-4 border-t border-gray-200">
                         <span className="text-gray-500 font-medium block mb-2">
-                          {isShorts ? "Shorts" : "Video"} Requirements for {getPlatformDisplayName(selectedPost.platform)}
+                          {isShorts ? "Shorts" : "Video"} Requirements for{" "}
+                          {getPlatformDisplayName(selectedPost.platform)}
                         </span>
                         <div className="space-y-2 text-xs text-gray-700">
                           <div className="flex justify-between">
@@ -1280,7 +1301,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                 )}
                 {isRegenerating ? "REGENERATING..." : t("generate_post_text")}
               </div>
-              <div className="sm:inline-block px-2 py-1 flex items-center ">
+              <div className="sm:inline-block px-2 py-1 flex items-center">
                 <Icon
                   name="spiral-logo"
                   size={20}

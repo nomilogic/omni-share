@@ -21,6 +21,7 @@ import backArrow from "../assets/back-arrow.png";
 import { notify } from "@/utils/toast";
 import Icon from "./Icon";
 import { useTranslation } from "react-i18next";
+import { AuthenticatorModal } from "./AuthenticatorModal";
 
 interface AuthFormProps {
   onAuthSuccess: (user: any) => void;
@@ -77,6 +78,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
   const [showOtpPopup, setShowOtpPopup] = useState<boolean>(false);
+  const [showAuth, setShowAuth] = useState<boolean>(false);
   const [successMessage, setSuccessMessage] = useState("");
   const { t, i18n } = useTranslation();
   const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
@@ -135,11 +137,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
       localStorage.setItem("forgot_token", res.data.data.token);
       localStorage.setItem("forgot_token_time", Date.now().toString());
       notify("success", t("email_sent_lowercase"));
-      // setSuccessMessage("If that email exists, a reset link has been sent.");
-      // setError("");
     } catch (err: any) {
-      // console.error("generateForgetLink failed", err);
-      // setError(err?.response?.data?.message || "Failed to send reset link");
       notify(
         "error",
         err.response?.data?.message || t("failed_send_reset_link")
@@ -164,24 +162,29 @@ export const AuthForm: React.FC<AuthFormProps> = ({
       });
 
       const result = response.data.data;
+      console.log("response", response);
+      if (
+        response?.data?.challengeName === "SOFTWARE_TOKEN_MFA" &&
+        response?.data?.session
+      ) {
+        setShowAuth(true);
+        localStorage.setItem("mfa_session_token", response.data.session);
+        setLoading(false);
+        return;
+      }
 
       if (!result.token || !result.user) {
         return notify("error", t("invalid_response_server"));
       }
 
       notify("success", t("login_successful"));
-      if (rememberMe) {
-        const expirationDate = new Date();
-        expirationDate.setDate(expirationDate.getDate() + 30);
-        localStorage.setItem("auth_token", result.token);
-        localStorage.setItem("auth_token_expiry", expirationDate.toISOString());
-        localStorage.setItem("auth_remember", "true");
-      } else {
-        localStorage.setItem("auth_token", result.token);
-        localStorage.removeItem("auth_token_expiry");
-        localStorage.removeItem("auth_remember");
-      }
+
+      localStorage.setItem("auth_token", result.token);
+      localStorage.removeItem("auth_token_expiry");
+      localStorage.removeItem("auth_remember");
+
       onAuthSuccess(result.user);
+
       try {
         const profile = result.user?.profile;
         if (profile && (profile as any).isOnboarding === false) {
@@ -197,14 +200,12 @@ export const AuthForm: React.FC<AuthFormProps> = ({
             });
           return;
         }
-      } catch (e) {
-        return notify("error", t("authentication_failed"));
-      }
+      } catch (e) {}
     } catch (error: any) {
-      notify(
-        "error",
-        error.response?.data?.message || t("authentication_failed")
-      );
+      const message =
+        error.response?.data?.message || t("authentication_failed");
+      notify("error", message);
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -240,7 +241,6 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         "error",
         error.response?.data?.message || t("authentication_failed")
       );
-      // notify("error", error.response?.data?.message || "Authentication failed");
     } finally {
       setLoading(false);
     }
@@ -254,7 +254,13 @@ export const AuthForm: React.FC<AuthFormProps> = ({
     setError("");
 
     try {
-      const result = await initiateGoogleOAuth(referralId);
+      const result: any = await initiateGoogleOAuth(referralId);
+      if (result?.challengeName === "SOFTWARE_TOKEN_MFA" && result?.session) {
+        setShowAuth(true);
+        localStorage.setItem("mfa_session_token", result?.session);
+        setLoading(false);
+        return;
+      }
 
       if (result?.token) {
         localStorage.setItem("auth_token", result.token);
@@ -279,7 +285,15 @@ export const AuthForm: React.FC<AuthFormProps> = ({
     setError("");
 
     try {
-      const result = await initiateFacebookOAuth();
+      const result: any = await initiateFacebookOAuth();
+
+      if (result?.challengeName === "SOFTWARE_TOKEN_MFA" && result?.session) {
+        setShowAuth(true);
+        localStorage.setItem("mfa_session_token", result?.session);
+        setLoading(false);
+        return;
+      }
+
       localStorage.setItem("auth_token", result.token);
       onAuthSuccess(result.user);
       try {
@@ -318,7 +332,15 @@ export const AuthForm: React.FC<AuthFormProps> = ({
     setError("");
 
     try {
-      const result = await initiateLinkedInOAuth(referralId);
+      const result: any = await initiateLinkedInOAuth(referralId);
+
+      if (result?.challengeName === "SOFTWARE_TOKEN_MFA" && result?.session) {
+        setShowAuth(true);
+        localStorage.setItem("mfa_session_token", result?.session);
+        setLoading(false);
+        return;
+      }
+
       if (result?.token) {
         localStorage.setItem("auth_token", result.token);
         onAuthSuccess(result.user);
@@ -761,16 +783,66 @@ export const AuthForm: React.FC<AuthFormProps> = ({
       )}
 
       {showOtpPopup && (
-        <OtpModal
-          open={showOtpPopup}
-          onClose={() => setShowOtpPopup(false)}
-          emailHint="user@example.com"
-          onSuccess={(data: any) => onAuthSuccess(data)}
-          verifyOtp={async (otp) => {
-            const res = await API.otpVerification({ otp });
-            return res.data.data;
+        <>
+          {localStorage.getItem("email_token") &&
+            !localStorage.getItem("mfa_session_token") && (
+              <OtpModal
+                open={showOtpPopup}
+                onClose={() => {
+                  setShowOtpPopup(false);
+                  localStorage.removeItem("email_token");
+                }}
+                emailHint={loginForm.getValues("email") || "user@example.com"}
+                onSuccess={(data: any) => onAuthSuccess(data)}
+                verifyOtp={async (otp) => {
+                  const res = await API.otpVerification({ otp });
+                  return res.data.data;
+                }}
+                resendOtp={API.resendOtp}
+              />
+            )}
+        </>
+      )}
+
+      {showAuth && localStorage.getItem("mfa_session_token") && (
+        <AuthenticatorModal
+          open={showAuth}
+          onClose={() => {
+            setShowAuth(false);
+            localStorage.removeItem("mfa_session_token");
           }}
-          resendOtp={API.resendOtp}
+          onSuccess={(data) => {
+            notify("success", t("login_successful"));
+
+            localStorage.setItem("auth_token", data.token);
+            localStorage.removeItem("auth_token_expiry");
+            localStorage.removeItem("auth_remember");
+
+            onAuthSuccess(data.user);
+
+            try {
+              const profile = data.user?.profile;
+              if (profile && (profile as any).isOnboarding === false) {
+                import("../lib/navigation")
+                  .then(({ navigateOnce }) => {
+                    navigateOnce(navigate, "/dashboard?profile=true", {
+                      replace: true,
+                    });
+                  })
+                  .catch((err) => {
+                    console.error("failed to load navigation helper", err);
+                    navigate("/dashboard?profile=true", { replace: true });
+                  });
+                return;
+              }
+            } catch (e) {}
+          }}
+          verifyOtp={async (otp) => {
+            const session = localStorage.getItem("mfa_session_token");
+            if (!session) throw new Error("Session expired");
+            const res = await API.verifyLogin2FA({ session, otp });
+            return res.data;
+          }}
         />
       )}
     </div>

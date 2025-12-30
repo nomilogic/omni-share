@@ -25,9 +25,41 @@ export default function ImageRegenerationModal({
     setModify(e.target.checked);
   };
 
-  const handleSubmit = () => {
+  // Convert blob URL to base64
+  const blobUrlToBase64 = async (blobUrl: string): Promise<string> => {
+    try {
+      const response = await fetch(blobUrl);
+      const blob = await response.blob();
+
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    } catch (error) {
+      console.error("Error converting blob URL to base64:", error);
+      return blobUrl;
+    }
+  };
+
+  const isBlobUrl = (url: string): boolean => {
+    return url?.startsWith("blob:");
+  };
+
+  const handleSubmit = async () => {
     if (!prompt?.trim()) return;
-    let payload = modifyMode ? activeImage : null;
+    
+    let payload = null;
+    if (modifyMode && activeImage) {
+      // Convert blob URL to base64 if needed
+      if (isBlobUrl(activeImage)) {
+        payload = await blobUrlToBase64(activeImage);
+      } else {
+        payload = activeImage;
+      }
+    }
+    
     onRegenerate(prompt, payload);
   };
 

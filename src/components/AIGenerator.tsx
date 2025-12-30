@@ -69,11 +69,11 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
         name:
           contentData?.campaignName ||
           contentData?.campaignInfo?.name ||
-          "Default Campaign",
+          "",
         website:
           contentData?.website ||
           contentData?.campaignInfo?.website ||
-          "https://example.com",
+          "",
         industry:
           contentData?.industry ||
           contentData?.campaignInfo?.industry ||

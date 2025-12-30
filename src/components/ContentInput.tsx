@@ -107,6 +107,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       selectedPlatforms || ["linkedin"],
     media: initialData?.media || undefined,
     mediaUrl: initialData?.mediaUrl || undefined,
+    
   });
   const [dragActive, setDragActive] = useState(false);
 
@@ -350,7 +351,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
         const aspectRatio = await getVideoAspectRatio(file);
         setVideoAspectRatio(aspectRatio);
-        
+
         console.log("✅ Video aspect ratio detected:", aspectRatio);
       } catch (error) {
         console.log("⚠️ Could not detect aspect ratio:", error);
@@ -466,13 +467,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
         // Upload complete - no further actions until user clicks Generate Post
         if (file.type.startsWith("image/")) {
-          console.log(
-            "✅ Image uploaded successfully"
-          );
+          console.log("✅ Image uploaded successfully");
         } else if (isVideoFile(file)) {
-          console.log(
-            "✅ Video uploaded successfully"
-          );
+          console.log("✅ Video uploaded successfully");
         }
       } catch (error) {
         console.error("❌ Error uploading file:", error);
@@ -671,48 +668,52 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         return;
       }
 
-      // NEW: For uploaded images, open template editor directly with blank template
+      // For uploaded images - open regeneration modal AFTER clicking Generate
+      // This makes it uniform with text-to-image flow
       if (
         selectedImageMode === "upload" &&
         (formData.media || formData.mediaUrl)
       ) {
         console.log(
-          "🎨 Opening template editor for uploaded image with blank template..."
+          "📷 Opening regeneration modal for uploaded image - uniform with text-to-image"
         );
 
-        // Get blank template
-        const blankTemplate = getTemplateById("blank-template");
-        if (blankTemplate) {
-          console.log("📋 Setting blank template and opening editor");
-          setSelectedTemplate(blankTemplate);
-          setShowTemplateEditor(true);
+        // Set up the regeneration modal with the uploaded image as first generation
+        // const imageUrlOrBase64 = generatedImage || formData.mediaUrl || "";
+        // setGeneratedImage(imageUrlOrBase64);
+        // setAllGeneration([imageUrlOrBase64]);
+        // setModelImage(true);
+        // setIsGeneratingImageUpload(imageUrlOrBase64);
+        
+        // // Store post generation data for template editor
+        // const currentCampaignInfo = campaignInfo || {
+        //   name: "Default Campaign",
+        //   industry: "General",
+        //   brand_tone: "professional",
+        //   target_audience: "General",
+        //   description:
+        //     "General content generation without specific campaign context",
+        // };
 
-          // Store post generation data for later use (similar to combined generation)
-          const currentCampaignInfo = campaignInfo || {
-            name: "Default Campaign",
-            industry: "General",
-            brand_tone: "professional",
-            target_audience: "General",
-            description:
-              "General content generation without specific campaign context",
-          };
+        // const postGenerationData = {
+        //   prompt: formData.prompt,
+        //   originalImageUrl: formData.mediaUrl || generatedImage,
+        //   campaignInfo: currentCampaignInfo,
+        //   selectedPlatforms: formData.selectedPlatforms,
+        //   imageAnalysis,
+        //   formData,
+        // };
 
-          const postGenerationData = {
-            prompt: formData.prompt,
-            originalImageUrl: formData.mediaUrl,
-            campaignInfo: currentCampaignInfo,
-            selectedPlatforms: formData.selectedPlatforms,
-            imageAnalysis,
-            formData,
-          };
+        // setPendingPostGeneration(postGenerationData);
 
-          setPendingPostGeneration(postGenerationData);
-          return; // Exit here to wait for template editor completion
-        } else {
-          console.error(
-            "❌ Blank template not found, proceeding with normal flow"
-          );
-        }
+        // create the blob url from selectedImage
+        const imageUrl = formData.mediaUrl || (formData.media ? URL.createObjectURL(formData.media) : "");
+        
+        // Clear selectedFile so onFileSave won't upload it when Continue is clicked
+        setSelectedFile(null);
+        
+        await handleRegenerate(formData.prompt, imageUrl);
+        return; // Wait for user to confirm in regeneration modal
       }
 
       // NEW: For uploaded videos, either generate thumbnail with AI or
@@ -743,6 +744,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
             // Show regeneration modal for user to edit/regenerate the video thumbnail
             setVideoThumbnailForRegeneration(generatedThumbnailUrl);
+            setVideoThumbnailGenerations([generatedThumbnailUrl]); // Initialize with the first generated image
             setShowVideoThumbnailModal(true);
             return; // Exit here to wait for user confirmation in regeneration modal
           } else {
@@ -1194,22 +1196,23 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         prompt: prompt,
         selectedPlatforms: selectedPlatforms,
         platforms: selectedPlatforms,
-        campaignName: currentCampaignInfo.name,
+        campaignName: currentCampaignInfo?.name || "",
         campaignInfo: currentCampaignInfo,
         mediaAssets,
         analysisResults: imageAnalysis,
-        industry: currentCampaignInfo.industry,
-        tone: currentCampaignInfo.brand_tone || currentCampaignInfo.brandTone,
+        industry: currentCampaignInfo?.industry || "",
+        tone: currentCampaignInfo?.brand_tone || currentCampaignInfo?.brandTone,
         targetAudience:
-          currentCampaignInfo.target_audience ||
-          currentCampaignInfo.targetAudience,
-        description: currentCampaignInfo.description,
+          currentCampaignInfo?.target_audience ||
+          currentCampaignInfo?.targetAudience ||
+          "General",
+        description: currentCampaignInfo?.description || "something nice",
         imageAnalysis: imageAnalysis,
-        website: currentCampaignInfo.website,
-        objective: currentCampaignInfo.objective,
-        goals: currentCampaignInfo.goals,
-        keywords: currentCampaignInfo.keywords,
-        hashtags: currentCampaignInfo.hashtags,
+        website: currentCampaignInfo?.website || "",
+        objective: currentCampaignInfo?.objective || "",
+        goals: currentCampaignInfo?.goals || "",
+        keywords: currentCampaignInfo?.keywords || "interesting , modern",
+        hashtags: currentCampaignInfo?.hashtags,
         // Add video-specific metadata if applicable
         ...(isVideoContent && {
           isVideoContent: true,
@@ -1347,11 +1350,13 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     }
   };
   const handleTemplateEditorCancel = () => {
+    console.log("🔴 TEMPLATE EDITOR CANCEL CALLED - This should close without saving");
     setShowTemplateEditor(false);
     setSelectedTemplate(undefined);
 
     // Clear all media when canceling from template editor
     console.log("🗑️ Clearing all media when canceling from template editor");
+    console.log("Pending post generation before clear:", pendingPostGeneration ? "EXISTS" : "null");
 
     // Clean up blob URLs if they exist
     if (formData.mediaUrl && formData.mediaUrl.startsWith("blob:")) {
@@ -1374,12 +1379,14 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     setVideoThumbnailUrl("");
     setOriginalVideoFile(null);
     setVideoAspectRatio(null);
+    setShowPreview(false);
 
     if (pendingPostGeneration) {
       console.log("❌ Template editor cancelled, aborting post generation");
       setPendingPostGeneration(null);
       setIsGeneratingBoth(false);
     }
+    console.log("🔴 TEMPLATE EDITOR CANCEL COMPLETED");
   };
 
   const handleTemplateSelectorCancel = () => {
@@ -1617,7 +1624,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         prompt: `${prompt.trim()}. Do not include any text, words, letters, numbers, captions, watermarks, logos, or typography. Pure imagery only.`,
         style: "professional",
         ...(image && modifyMode === true && { imageUrl: image }),
-        aspectRatio: aspectRatio,
+        aspectRatio: String(aspectRatio),
         ...(image && modifyMode === true && { modifyMode: true }),
       });
 
@@ -1655,63 +1662,57 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   const handleRegenerate = async (newPrompt: string, Url?: string) => {
     try {
       setIsGeneratingBoth(true);
-      setGeneratedImage(null);
-      setPendingPostGeneration({});
-      setModelImage(false);
 
-      if (Url !== null) {
-        if (Url && isUrl(Url)) {
-          Url = await urlToBase64(Url);
-        }
-        const imageUrl: any = await handleCombinedGeneration(newPrompt, Url);
-        setGeneratedImage(imageUrl.imageUrl);
-        setModelImage(true);
-        setIsGeneratingImageUpload(imageUrl.imageUrl);
-        setIsGeneratingBoth(false);
+      const currentCampaignInfo = campaignInfo || {
+        name: "Default Campaign",
+        industry: "General",
+        brand_tone: "professional",
+        target_audience: "General",
+        description:
+          "General content generation without specific campaign context",
+      };
+
+      let finalImageUrl: string | null = null;
+
+      // Determine which image to use: provided URL (upload), or generatedImage (modify mode), or none (textToImage)
+      const imageToModify = Url || generatedImage;
+
+      if (modifyMode && imageToModify) {
+        // Modify mode: Regenerate with existing image as base
+        console.log("🔄 Modify mode: Regenerating with existing image as base");
+        const result: any = await handleCombinedGeneration(newPrompt, imageToModify);
+        finalImageUrl = result.imageUrl;
+        setGeneratedImage(finalImageUrl);
+        setAllGeneration([...allGeneration, finalImageUrl]);
+      } else if (Url && !modifyMode) {
+        // Upload mode without modify: Use uploaded image directly, no generation
+        finalImageUrl = Url;
+        console.log("📷 Upload mode: Using selected image directly, no AI generation");
+        setGeneratedImage(finalImageUrl);
+        setAllGeneration([finalImageUrl]);
       } else {
-        if (selectedFile) {
-          let imageBase64 = generatedImage;
-
-          if (imageBase64 && isUrl(imageBase64)) {
-            imageBase64 = await urlToBase64(imageBase64);
-          }
-          const imageUrl: any = await handleCombinedGeneration(
-            newPrompt,
-            imageBase64
-          );
-          setGeneratedImage(imageUrl.imageUrl);
-          setModelImage(true);
-          setIsGeneratingImageUpload(imageUrl.imageUrl);
-          setIsGeneratingBoth(false);
-        } else {
-          const imageUrl: any = await handleCombinedGeneration(
-            newPrompt,
-            formData.mediaUrl
-          );
-
-          const currentCampaignInfo = campaignInfo || {
-            name: "Default Campaign",
-            industry: "General",
-            brand_tone: "professional",
-            target_audience: "General",
-            description:
-              "General content generation without specific campaign context",
-          };
-
-          const postGenerationData = {
-            prompt: newPrompt,
-            originalImageUrl: imageUrl,
-            campaignInfo: currentCampaignInfo,
-            selectedPlatforms: formData.selectedPlatforms,
-            imageAnalysis,
-            formData,
-          };
-          setPendingPostGeneration(postGenerationData);
-          setModelImage(true);
-          setGeneratedImage(imageUrl.imageUrl);
-          setIsGeneratingBoth(false);
-        }
+        // TextToImage mode: Generate image from prompt
+        console.log("🎨 TextToImage mode: Generating image from prompt");
+        const result: any = await handleCombinedGeneration(newPrompt);
+        finalImageUrl = result.imageUrl;
+        setGeneratedImage(finalImageUrl);
+        setAllGeneration([finalImageUrl]);
       }
+
+      // Open the modal with the image (generated or selected)
+      setModelImage(true);
+
+      // Store post generation data for template editor
+      const postGenerationData = {
+        prompt: newPrompt,
+        originalImageUrl: finalImageUrl,
+        campaignInfo: currentCampaignInfo,
+        selectedPlatforms: formData.selectedPlatforms,
+        imageAnalysis,
+        formData,
+      };
+      setPendingPostGeneration(postGenerationData);
+      setIsGeneratingBoth(false);
     } catch (error) {
       setFormData((prev) => {
         const newData = {
@@ -1731,23 +1732,58 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     }
   };
 
-  const handleVideoThumbnailRegenerate = async (newPrompt: string) => {
+  const handleVideoThumbnailRegenerate = async (
+    newPrompt: string,
+    Url?: string
+  ) => {
     try {
-      console.log("🎥 Regenerating video thumbnail with new prompt:", newPrompt);
-      if (videoAspectRatio) {
-        const newThumbnail = await generateThumbnailForPost(
-          newPrompt,
-          videoAspectRatio
-        );
-        if (newThumbnail) {
+      console.log(
+        "🎥 Regenerating video thumbnail with new prompt:",
+        newPrompt
+      );
+
+      let isModifyMode = Url !== null && Url !== undefined;
+      let imageToProcess = isModifyMode ? Url : videoThumbnailForRegeneration;
+
+      // Convert URL to Base64 if needed
+      if (imageToProcess && isUrl(imageToProcess)) {
+        imageToProcess = await urlToBase64(imageToProcess);
+      }
+
+      // Build payload matching the structure
+      const payload = {
+        prompt: newPrompt,
+        style: "professional",
+        imageUrl: imageToProcess || undefined,
+        aspectRatio: String(videoAspectRatio || "16:9"),
+        modifyMode: isModifyMode,
+      };
+
+      console.log("📤 Video thumbnail regeneration payload:", payload);
+
+      // Call API with the payload structure
+      return await executeImageGeneration(async () => {
+        const response = await API.generateImage({
+          prompt: `${newPrompt.trim()}. Do not include any text, words, letters, numbers, captions, watermarks, logos, or typography. Pure imagery only.`,
+          style: "professional",
+          ...(imageToProcess && { imageUrl: imageToProcess }),
+          aspectRatio: String(videoAspectRatio || "16:9"),
+          ...(isModifyMode && { modifyMode: true }),
+        });
+
+        const result = response.data;
+        if (result.success && result.imageUrl) {
           console.log("✅ Video thumbnail regenerated successfully");
-          setVideoThumbnailForRegeneration(newThumbnail);
+          setVideoThumbnailForRegeneration(result.imageUrl);
           setVideoThumbnailGenerations([
             ...videoThumbnailGenerations,
-            newThumbnail,
+            result.imageUrl,
           ]);
+          return result;
+        } else {
+          throw new Error(result.error || "Video thumbnail generation failed");
         }
-      }
+      }, "Regenerating video thumbnail");
     } catch (error) {
       console.error("❌ Error regenerating video thumbnail:", error);
       if (error instanceof Error) {
@@ -1758,19 +1794,20 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
   const confirmImage = async () => {
     try {
+      // Close the modal first
       setModelImage(false);
-      const blankTemplate = getTemplateById("blank-template");
-      if (blankTemplate) {
-        setTimeout(() => {
+      
+      // Small delay to ensure modal closes before opening template editor
+      setTimeout(() => {
+        const blankTemplate = getTemplateById("blank-template");
+        if (blankTemplate) {
           setSelectedTemplate(blankTemplate);
           setShowTemplateEditor(true);
-        }, 500);
-      } else {
-        setIsGeneratingBoth(false);
-      }
+        }
+      }, 200);
     } catch (error) {
       if (error instanceof Error) {
-        notify("error", `Failed to generate image: ${error.message}`);
+        notify("error", `Failed to open template editor: ${error.message}`);
       }
     }
   };
@@ -1778,6 +1815,11 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   const confirmVideoThumbnail = async () => {
     try {
       console.log("✅ Video thumbnail confirmed, opening template editor");
+      console.log("🎬 Selected thumbnail:", videoThumbnailForRegeneration?.substring(0, 80) + "...");
+      
+      // Set the selected thumbnail to videoThumbnailUrl so template editor can use it
+      setVideoThumbnailUrl(videoThumbnailForRegeneration);
+      
       setShowVideoThumbnailModal(false);
       const blankTemplate = getTemplateById("blank-template");
       if (blankTemplate) {
@@ -1822,36 +1864,47 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.currentTarget.files;
+    if (!files || files.length === 0) return;
+    const file = files[0];
+
+    // Reset image-related state
     setTemplatedImageUrl("");
     setSelectedTemplate(undefined);
     setImageAnalysis("");
-    setVideoThumbnailUrl("");
-    setOriginalVideoFile(null);
-    setVideoAspectRatio(null);
 
-    const file = e.target.files?.[0];
-    if (!file) return;
-    
-    // For videos, upload directly without modal
-    if (file.type.startsWith("video/")) {
+    if (isVideoFile(file)) {
       console.log("🎥 Video file selected, uploading directly");
       handleFileUpload(file);
       return;
     }
-    
-    // For images, open the regeneration modal
-    setGeneratedImage(null);
+
+    // For images: Store in formData for preview, and set selectedFile for regeneration flow
+    // This makes it uniform with text-to-image flow - user adds prompt, then can regenerate
     setSelectedFile(file);
-    setIsGeneratingImageUpload("");
-    setModelImage(true);
+    setAllGeneration([]); // Reset previous generations
+    setIsGeneratingImageUpload(""); // Clear any previous generation URL
+    setModelImage(false); // Don't open modal yet
+    
+    // Also update formData so the preview shows immediately
+    const previewUrl = URL.createObjectURL(file);
+    setFormData((prev) => ({
+      ...prev,
+      media: file,
+      mediaUrl: previewUrl,
+    }));
+    
     if (file.type.startsWith("image/")) {
       const reader = new FileReader();
       reader.onloadend = () => {
         const base64String = reader.result as string;
         setGeneratedImage(base64String);
+        // Add the uploaded image as the first "generation" in the array
+        setAllGeneration([base64String]);
       };
       reader.readAsDataURL(file);
+      console.log("📷 Image selected and displayed - user can add prompt and click generate to regenerate");
     }
   };
 
@@ -2339,7 +2392,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             ref={fileInputRef}
                             type="file"
                             accept={
-                              selectedVideoMode === "uploadShorts" || selectedVideoMode === "upload"
+                              selectedVideoMode === "uploadShorts" ||
+                              selectedVideoMode === "upload"
                                 ? "video/*"
                                 : "image/*,video/*"
                             }
@@ -2347,7 +2401,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             className="hidden"
                           />
 
-                          {formData.media || formData.mediaUrl ? (
+                          {formData.media || formData.mediaUrl || selectedFile || generatedImage ? (
                             <div className="space-y-4">
                               <div className="relative">
                                 {/* Debug info for upload preview */}
@@ -2355,8 +2409,11 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                   const imageSrc =
                                     templatedImageUrl ||
                                     formData.mediaUrl ||
+                                    generatedImage ||
                                     (formData.media
                                       ? URL.createObjectURL(formData.media)
+                                      : selectedFile
+                                      ? URL.createObjectURL(selectedFile)
                                       : "");
 
                                   return (
@@ -2383,7 +2440,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               </div>
                               <div className="flex items-center justify-center flex-col space-y-1">
                                 <p className="text-xs theme-text-secondary">
-                                  {formData.media?.name || "Uploaded Image"}
+                                  {formData.media?.name || selectedFile?.name || "Uploaded Image"}
                                 </p>
                                 <button
                                   type="button"
@@ -2395,6 +2452,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                       media: undefined,
                                       mediaUrl: undefined,
                                     }));
+                                    setSelectedFile(null);
+                                    setGeneratedImage(null);
+                                    setAllGeneration([]);
                                     setTemplatedImageUrl("");
                                     setSelectedTemplate(undefined);
                                     setImageAnalysis("");
@@ -3082,11 +3142,11 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                       )}
 
                       <div className="px-2.5 py-1.5 flex items-center gap-2">
-                      <Icon
-                        name="spiral-logo"
-                        size={20}
-                        className="brightness-[1000%] transition group-hover:brightness-100"
-                      />
+                        <Icon
+                          name="spiral-logo"
+                          size={20}
+                          className="brightness-[1000%] transition group-hover:brightness-100"
+                        />
                         {getCost()}
                       </div>
                     </button>
