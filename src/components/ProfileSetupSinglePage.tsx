@@ -933,13 +933,13 @@ const ProfileSetupSinglePage: React.FC = () => {
                                       !formData[fieldName].length &&
                                       field.placeholder
                                     }
+                                    enterKeyHint="done"
                                     className="flex-grow border-none focus:ring-0 text-sm outline-none min-w-[120px] bg-transparent"
                                     onKeyDown={(e) => {
                                       const input =
                                         e.target as HTMLInputElement;
                                       const value = input.value.trim();
 
-                                      // Enter adds tag (works on desktop & mobile)
                                       if (e.key === "Enter" && value) {
                                         e.preventDefault();
                                         const existing =
@@ -960,47 +960,34 @@ const ProfileSetupSinglePage: React.FC = () => {
                                         }
                                         input.value = "";
                                       }
-
-                                      // Backspace removes last tag if input is empty
-                                      if (
-                                        e.key === "Backspace" &&
-                                        !input.value &&
-                                        Array.isArray(formData[fieldName]) &&
-                                        (formData[fieldName] as string[]).length
-                                      ) {
-                                        e.preventDefault();
-                                        const current = formData[
-                                          fieldName
-                                        ] as string[];
-                                        setValue(
-                                          fieldName,
-                                          current.slice(0, -1) as any
-                                        );
-                                      }
                                     }}
-                                    onInput={(e) => {
+                                    onPaste={(e) => {
+                                      // Optional: handle paste to split tags by space/comma
                                       const input =
                                         e.target as HTMLInputElement;
-                                      const value = input.value;
-
-                                      // Detect space on mobile
-                                      if (value.includes(" ")) {
-                                        const tagValue = value
-                                          .trim()
-                                          .replace(/[^\w\s&,-]/g, "");
+                                      const pasted = e.clipboardData
+                                        .getData("text")
+                                        .trim();
+                                      if (pasted) {
+                                        e.preventDefault();
                                         const existing =
                                           (formData[fieldName] as string[]) ||
                                           [];
-                                        if (
-                                          tagValue &&
-                                          !existing.includes(tagValue)
-                                        ) {
+                                        const newTags = pasted
+                                          .split(/\s|,/)
+                                          .map((v) =>
+                                            v.replace(/[^\w\s&,-]/g, "")
+                                          )
+                                          .filter(
+                                            (v) => v && !existing.includes(v)
+                                          );
+                                        if (newTags.length) {
                                           setValue(fieldName, [
                                             ...existing,
-                                            tagValue,
+                                            ...newTags,
                                           ] as any);
                                         }
-                                        input.value = ""; // remove the space so no gap appears
+                                        input.value = "";
                                       }
                                     }}
                                   />
