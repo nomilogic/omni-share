@@ -779,7 +779,7 @@ const ProfileSetupSinglePage: React.FC = () => {
                                       <button
                                         type="button"
                                         onClick={() => {
-                                          setValue(fieldName, null as any);
+                                          setValue(fieldName, "" as any);
                                           setSelectedFileName("");
                                         }}
                                         className="text-xs text-red-500 hover:underline"
