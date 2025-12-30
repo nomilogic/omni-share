@@ -102,7 +102,7 @@ const getProfileFormConfig = (t: (key: string) => string) => {
         {
           name: "publicUrl",
           label: t("public_url"),
-          type: "url",
+          type: "text",
           placeholder: t("audience_type_example1"),
           required: false,
           helperText: t("brand_setup_hint"),
@@ -268,7 +268,13 @@ const getProfileFormConfig = (t: (key: string) => string) => {
     },
   ];
 
-  return { profileFormConfig, businessAdjectives, businessNouns, platforms, categories };
+  return {
+    profileFormConfig,
+    businessAdjectives,
+    businessNouns,
+    platforms,
+    categories,
+  };
 };
 
 const ProfileSetupSinglePage: React.FC = () => {
@@ -281,9 +287,7 @@ const ProfileSetupSinglePage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [selectedFileName, setSelectedFileName] = useState("");
   const { t, i18n } = useTranslation();
-  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
   const schema = useProfileFormSchema();
-
 
   // Generate translated configuration
   const { profileFormConfig } = useMemo(() => getProfileFormConfig(t), [t]);
@@ -437,8 +441,8 @@ const ProfileSetupSinglePage: React.FC = () => {
           fullName: profile.fullName?.trim() || formData.fullName,
           phoneNumber: formData.phoneNumber,
           publicUrl: url,
-          brandName: formData.brandName,
-          brandLogo: formData.brandLogo,
+          brandName: profile.brandName || formData.brandName,
+          brandLogo: profile.brandLogo || formData.brandLogo,
           brandTone: profile.brandTone || formData.brandTone,
           audienceGender: profile.audienceGender || formData.audienceGender,
           audienceAgeRange:
@@ -467,9 +471,7 @@ const ProfileSetupSinglePage: React.FC = () => {
       }
     } catch (err: any) {
       console.error("URL analysis failed:", err);
-      setUrlAnalysisError(
-        err?.response?.data?.message || t("url_failed")
-      );
+      setUrlAnalysisError(err?.response?.data?.message || t("url_failed"));
     } finally {
       setUrlAnalysisLoading(false);
     }
@@ -479,9 +481,9 @@ const ProfileSetupSinglePage: React.FC = () => {
     setLoading(true);
     try {
       const submitData = { ...data };
-      const form = document.querySelector("form");
-      const formD = new FormData(form as HTMLFormElement);
-      const fileBase64 = await convertFileToBase64(formD.get("brandLogo"));
+
+      const fileBase64 = await convertFileToBase64(submitData.brandLogo);
+      console.log("submitData.brandLogo ", fileBase64);
       if (fileBase64) {
         submitData.brandLogo = fileBase64 as any;
       }
@@ -504,18 +506,38 @@ const ProfileSetupSinglePage: React.FC = () => {
     }
   };
 
-  const convertFileToBase64 = async (file: any) => {
+  const convertFileToBase64 = async (input: any): Promise<string | null> => {
+    if (!input) return null;
+
+    // 1️⃣ Already Base64
+    if (typeof input === "string" && input.startsWith("data:image")) {
+      return input;
+    }
+
+    // 2️⃣ URL → fetch & convert
+    if (typeof input === "string" && input.startsWith("http")) {
+      const response = await fetch(input);
+      const blob = await response.blob();
+      return await blobToBase64(blob);
+    }
+
+    // 3️⃣ File / Blob → convert
+    if (input instanceof File || input instanceof Blob) {
+      return await blobToBase64(input);
+    }
+
+    return null;
+  };
+
+  const blobToBase64 = (blob: any): Promise<string> => {
     return new Promise((resolve, reject) => {
-      if (!file) {
-        resolve(null);
-        return;
-      }
       const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
+      reader.onloadend = () => resolve(reader.result as string);
       reader.onerror = reject;
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(blob);
     });
   };
+
   return (
     <div className="bg-transparent">
       <div className=" flex flex-col md:flex-row-reverse jusitify-between items-between w-full md:p-4 p-3">
@@ -532,9 +554,7 @@ const ProfileSetupSinglePage: React.FC = () => {
               {t("back_to_dashboard")}
             </button>
           </div>
-          <p className="text-gray-500">
-            {t("profile_intro")}
-          </p>
+          <p className="text-gray-500">{t("profile_intro")}</p>
         </div>
       </div>
       <div className="w-full max-w-5xl  mx-auto">
@@ -788,10 +808,10 @@ const ProfileSetupSinglePage: React.FC = () => {
                                         />
                                       </svg>
                                       <span className="mt-2 text-sm theme-text-secondary">
-                                        {t('click_to_upload')}
+                                        {t("click_to_upload")}
                                       </span>
                                       <p className="text-xs text-gray-500 font-medium">
-                                        {t('file_formats')}
+                                        {t("file_formats")}
                                       </p>
                                     </label>
                                   )}
@@ -910,19 +930,17 @@ const ProfileSetupSinglePage: React.FC = () => {
                                   <input
                                     type="text"
                                     placeholder={
-                                      field.placeholder ||
-                                      t("add_tag_hint")
+                                      !formData[fieldName].length &&
+                                      field.placeholder
                                     }
-                                    className="flex-grow border-none focus:ring-0 text-sm outline-none min-w-[120px]"
+                                    className="flex-grow border-none focus:ring-0 text-sm outline-none min-w-[120px] bg-transparent"
                                     onKeyDown={(e) => {
                                       const input =
                                         e.target as HTMLInputElement;
                                       const value = input.value.trim();
 
-                                      if (
-                                        (e.key === "Enter" || e.key === " ") &&
-                                        value
-                                      ) {
+                                      // Enter adds tag (works on desktop & mobile)
+                                      if (e.key === "Enter" && value) {
                                         e.preventDefault();
                                         const existing =
                                           (formData[fieldName] as string[]) ||
@@ -943,6 +961,7 @@ const ProfileSetupSinglePage: React.FC = () => {
                                         input.value = "";
                                       }
 
+                                      // Backspace removes last tag if input is empty
                                       if (
                                         e.key === "Backspace" &&
                                         !input.value &&
@@ -953,8 +972,35 @@ const ProfileSetupSinglePage: React.FC = () => {
                                         const current = formData[
                                           fieldName
                                         ] as string[];
-                                        const updated = current.slice(0, -1);
-                                        setValue(fieldName, updated as any);
+                                        setValue(
+                                          fieldName,
+                                          current.slice(0, -1) as any
+                                        );
+                                      }
+                                    }}
+                                    onInput={(e) => {
+                                      const input =
+                                        e.target as HTMLInputElement;
+                                      const value = input.value;
+
+                                      // Detect space on mobile
+                                      if (value.includes(" ")) {
+                                        const tagValue = value
+                                          .trim()
+                                          .replace(/[^\w\s&,-]/g, "");
+                                        const existing =
+                                          (formData[fieldName] as string[]) ||
+                                          [];
+                                        if (
+                                          tagValue &&
+                                          !existing.includes(tagValue)
+                                        ) {
+                                          setValue(fieldName, [
+                                            ...existing,
+                                            tagValue,
+                                          ] as any);
+                                        }
+                                        input.value = ""; // remove the space so no gap appears
                                       }
                                     }}
                                   />

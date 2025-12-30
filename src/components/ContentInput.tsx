@@ -930,9 +930,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       if (onNext && typeof onNext === "function") {
         onNext(postData);
       } else {
-        // Otherwise, simulate generation for preview
-        // For videos, ensure we use the server URL if available, not blob URLs
-        // For template-edited content, prioritize the templated image URL
+        setShowPreview(true);
+
         const isVideoContent = !!(
           originalVideoFile ||
           (formData.media && isVideoFile(formData.media))
@@ -962,7 +961,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           },
         ];
         setGeneratedResults(simulatedGeneratedPosts);
-        setShowPreview(true);
       }
     }
   };
@@ -1097,9 +1095,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   };
 
   const handleTemplateEditorSave = async (imageUrl: string) => {
-    console.log("Template editor saved with image URL:", imageUrl);
-
-    // Ensure templated image has a stable, publishable server URL
     let finalTemplatedUrl = imageUrl;
     try {
       const needsUpload =
@@ -1107,12 +1102,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         imageUrl.startsWith("data:") ||
         imageUrl.startsWith("blob:");
       if (needsUpload) {
-        console.log(
-          "🆙 Templated image appears to be a local/data URL, uploading to storage..."
-        );
         const user = await getCurrentUser();
         if (user?.user?.id) {
-          // Fetch the image data and create a File for upload
           const resp = await fetch(imageUrl);
           const blob = await resp.blob();
           const ext =
@@ -1128,16 +1119,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           );
           const uploadedUrl = await uploadMedia(file, user.user.id);
           if (uploadedUrl) {
-            console.log(
-              "✅ Templated image uploaded. Server URL:",
-              uploadedUrl
-            );
             finalTemplatedUrl = uploadedUrl;
-          } else {
           }
-        } else {
         }
-      } else {
       }
     } catch (uploadErr) {}
 
@@ -1148,6 +1132,10 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       imageUrl: finalTemplatedUrl,
       serverUrl: finalTemplatedUrl,
     }));
+
+    if (pendingPostGeneration?.isVideoContent) {
+      setVideoThumbnailUrl(finalTemplatedUrl);
+    }
     setShowTemplateEditor(false);
 
     if (pendingPostGeneration) {
@@ -1186,7 +1174,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       } else {
         currentFormData = {
           ...originalFormData,
-          mediaUrl: finalTemplatedUrl, // Use the templated image server URL
+          mediaUrl: finalTemplatedUrl,
           imageUrl: finalTemplatedUrl,
           serverUrl: finalTemplatedUrl,
         };
@@ -1216,7 +1204,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         goals: currentCampaignInfo?.goals || "",
         keywords: currentCampaignInfo?.keywords || "interesting , modern",
         hashtags: currentCampaignInfo?.hashtags,
-        // Add video-specific metadata if applicable
         ...(isVideoContent && {
           isVideoContent: true,
           videoAspectRatio: videoAspectRatio,
@@ -1224,25 +1211,14 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         }),
       };
 
-      console.log("📤 Final post data:", {
-        hasMediaAssets: mediaAssets.length > 0,
-        mediaAssetsCount: mediaAssets.length,
-        isVideo: isVideoContent,
-        prompt: postData.prompt?.substring(0, 50) + "...",
-      });
-
-      // Clear pending post generation
       setPendingPostGeneration(null);
       setIsGeneratingBoth(false);
-
-      // Proceed with post generation
+      setAllGeneration([]);
       if (onNext && typeof onNext === "function") {
-        console.log("✅ Final step: Calling onNext with final post data...");
         onNext(postData);
-        console.log("✅ Template editing completed!");
       } else {
-        console.log("⚠️ No onNext function provided, showing preview instead");
-        // Fallback: simulate generation for preview
+        setShowPreview(true);
+
         const simulatedGeneratedPosts = [
           {
             platform: (selectedPlatforms && selectedPlatforms[0]) || "linkedin",
@@ -1253,20 +1229,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           },
         ];
         setGeneratedResults(simulatedGeneratedPosts);
-        setShowPreview(true);
       }
     } else {
-      // Standalone template application - navigate to generation screen if user has content
-      console.log(
-        "🎯 Standalone template applied. Checking if user has content to proceed..."
-      );
-
       if (formData?.prompt && formData?.prompt?.trim()) {
-        console.log(
-          "✅ User has content, proceeding to post generation after template application"
-        );
-
-        // Prepare the post data with the templated image
         const currentCampaignInfo = campaignInfo || {
           name: "Default Campaign",
           industry: "General",
@@ -1276,12 +1241,10 @@ export const ContentInput: React.FC<ContentInputProps> = ({
             "General content generation without specific campaign context",
         };
 
-        // Check if this is video content (based on current video state)
         const isCurrentVideoContent = originalVideoFile && videoThumbnailUrl;
 
         let postData;
         if (isCurrentVideoContent) {
-          // For video content, use original video URL but edited thumbnail
           postData = {
             ...formData,
             mediaUrl: formData.mediaUrl, // Keep original video URL
@@ -1314,7 +1277,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
             hashtags: currentCampaignInfo.hashtags,
           };
         } else {
-          // For image content, use templated image
           postData = {
             ...formData,
             mediaUrl: finalTemplatedUrl, // Use the templated image server URL
@@ -1339,18 +1301,15 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           };
         }
 
-        console.log("🚀 Navigating to post generation with templated content");
-
-        // Navigate to the generation screen
         if (onNext && typeof onNext === "function") {
           onNext(postData);
         }
       } else {
-        console.log(
-          "⚠️ No content provided - template applied but staying on current screen"
-        );
       }
     }
+    setTimeout(() => {
+      setShowTemplateEditor(false);
+    }, 500);
   };
   const handleTemplateEditorCancel = () => {
     console.log(
@@ -1358,15 +1317,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     );
     setShowTemplateEditor(false);
     setSelectedTemplate(undefined);
+    setModelImage(false);
+    setAllGeneration([]);
 
-    // Clear all media when canceling from template editor
-    console.log("🗑️ Clearing all media when canceling from template editor");
-    console.log(
-      "Pending post generation before clear:",
-      pendingPostGeneration ? "EXISTS" : "null"
-    );
-
-    // Clean up blob URLs if they exist
     if (formData.mediaUrl && formData.mediaUrl.startsWith("blob:")) {
       URL.revokeObjectURL(formData.mediaUrl);
       console.log("🗑️ Cleaned up blob URL during template editor cancel");
@@ -1670,6 +1623,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   const handleRegenerate = async (newPrompt: string, Url?: string) => {
     try {
       setIsGeneratingBoth(true);
+      setGeneratedImage(null);
 
       const currentCampaignInfo = campaignInfo || {
         name: "Default Campaign",
@@ -1807,17 +1761,13 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
   const confirmImage = async () => {
     try {
-      // Close the modal first
-      setModelImage(false);
-
-      // Small delay to ensure modal closes before opening template editor
-      setTimeout(() => {
-        const blankTemplate = getTemplateById("blank-template");
-        if (blankTemplate) {
-          setSelectedTemplate(blankTemplate);
+      const blankTemplate = getTemplateById("blank-template");
+      if (blankTemplate) {
+        setSelectedTemplate(blankTemplate);
+        setTimeout(() => {
           setShowTemplateEditor(true);
-        }
-      }, 200);
+        }, 200);
+      }
     } catch (error) {
       if (error instanceof Error) {
         notify("error", `Failed to open template editor: ${error.message}`);
@@ -1947,10 +1897,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         };
         return newData;
       });
-      setModelImage(false);
     } else if (selectedFile) {
       handleFileUpload(selectedFile);
-      setModelImage(false);
     }
   };
 
@@ -1970,6 +1918,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           onClose={() => {
             setModelImage(false);
             setSelectedFile(null);
+
             setGeneratedImage(null);
             setIsGeneratingImageUpload("");
             setAllGeneration([]);
