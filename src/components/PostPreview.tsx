@@ -443,7 +443,28 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
               >
                 {post.caption}
               </p>
-              {renderMedia({ ...post, mediaUrl })}
+
+              <div className="w-full mt-3">
+                {mediaUrl && (
+                  <div className="w-full overflow-hidden rounded-md">
+                    {/* image or video */}
+                    {isVideoUrl(mediaUrl) ? (
+                      <video
+                        src={mediaUrl}
+                        controls
+                        className="w-full h-auto object-cover block"
+                      />
+                    ) : (
+                      <img
+                        src={mediaUrl}
+                        alt="post media"
+                        className="w-full h-auto object-cover block"
+                      />
+                    )}
+                  </div>
+                )}
+              </div>
+
               <div className="mt-3">
                 <div
                   className={`text-blue-600 text-sm ${
@@ -763,7 +784,26 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                   {post.hashtags.join(" ")}
                 </div>
               </div>
-              {renderMedia({ ...post, mediaUrl })}
+              <div className="w-full mt-3">
+                {mediaUrl && (
+                  <div className="w-full overflow-hidden rounded-md">
+                    {/* image or video */}
+                    {isVideoUrl(mediaUrl) ? (
+                      <video
+                        src={mediaUrl}
+                        controls
+                        className="w-full h-auto object-cover block"
+                      />
+                    ) : (
+                      <img
+                        src={mediaUrl}
+                        alt="post media"
+                        className="w-full h-auto object-cover block"
+                      />
+                    )}
+                  </div>
+                )}
+              </div>
               <div className="flex items-center justify-between pt-3 border-t border-gray-100">
                 <button className="flex items-center space-x-2 text-gray-500 font-medium hover:text-blue-600">
                   <ThumbsUp className="w-4 h-4" />

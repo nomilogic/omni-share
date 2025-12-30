@@ -26,6 +26,7 @@ import { ImageTemplateEditor } from "./ImageTemplateEditor";
 import { Template } from "../types/templates";
 import { getTemplateById } from "../utils/templates";
 import IntroVideo from "../assets/Omnishare Tutorial.Final.00.mp4";
+
 import { motion } from "framer-motion";
 import {
   isVideoFile,
@@ -39,6 +40,7 @@ import API from "@/services/api";
 import { notify } from "@/utils/toast";
 import { useTranslation } from "react-i18next";
 import ImageRegenerationModal from "./ImageRegenerationModal";
+import { Link } from "react-router-dom";
 
 const fileToBase64 = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -107,7 +109,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       selectedPlatforms || ["linkedin"],
     media: initialData?.media || undefined,
     mediaUrl: initialData?.mediaUrl || undefined,
-    
   });
   const [dragActive, setDragActive] = useState(false);
 
@@ -684,7 +685,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         // setAllGeneration([imageUrlOrBase64]);
         // setModelImage(true);
         // setIsGeneratingImageUpload(imageUrlOrBase64);
-        
+
         // // Store post generation data for template editor
         // const currentCampaignInfo = campaignInfo || {
         //   name: "Default Campaign",
@@ -707,11 +708,13 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         // setPendingPostGeneration(postGenerationData);
 
         // create the blob url from selectedImage
-        const imageUrl = formData.mediaUrl || (formData.media ? URL.createObjectURL(formData.media) : "");
-        
+        const imageUrl =
+          formData.mediaUrl ||
+          (formData.media ? URL.createObjectURL(formData.media) : "");
+
         // Clear selectedFile so onFileSave won't upload it when Continue is clicked
         setSelectedFile(null);
-        
+
         await handleRegenerate(formData.prompt, imageUrl);
         return; // Wait for user to confirm in regeneration modal
       }
@@ -1350,13 +1353,18 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     }
   };
   const handleTemplateEditorCancel = () => {
-    console.log("🔴 TEMPLATE EDITOR CANCEL CALLED - This should close without saving");
+    console.log(
+      "🔴 TEMPLATE EDITOR CANCEL CALLED - This should close without saving"
+    );
     setShowTemplateEditor(false);
     setSelectedTemplate(undefined);
 
     // Clear all media when canceling from template editor
     console.log("🗑️ Clearing all media when canceling from template editor");
-    console.log("Pending post generation before clear:", pendingPostGeneration ? "EXISTS" : "null");
+    console.log(
+      "Pending post generation before clear:",
+      pendingPostGeneration ? "EXISTS" : "null"
+    );
 
     // Clean up blob URLs if they exist
     if (formData.mediaUrl && formData.mediaUrl.startsWith("blob:")) {
@@ -1680,14 +1688,19 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       if (modifyMode && imageToModify) {
         // Modify mode: Regenerate with existing image as base
         console.log("🔄 Modify mode: Regenerating with existing image as base");
-        const result: any = await handleCombinedGeneration(newPrompt, imageToModify);
+        const result: any = await handleCombinedGeneration(
+          newPrompt,
+          imageToModify
+        );
         finalImageUrl = result.imageUrl;
         setGeneratedImage(finalImageUrl);
         setAllGeneration([...allGeneration, finalImageUrl]);
       } else if (Url && !modifyMode) {
         // Upload mode without modify: Use uploaded image directly, no generation
         finalImageUrl = Url;
-        console.log("📷 Upload mode: Using selected image directly, no AI generation");
+        console.log(
+          "📷 Upload mode: Using selected image directly, no AI generation"
+        );
         setGeneratedImage(finalImageUrl);
         setAllGeneration([finalImageUrl]);
       } else {
@@ -1796,7 +1809,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     try {
       // Close the modal first
       setModelImage(false);
-      
+
       // Small delay to ensure modal closes before opening template editor
       setTimeout(() => {
         const blankTemplate = getTemplateById("blank-template");
@@ -1815,11 +1828,14 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   const confirmVideoThumbnail = async () => {
     try {
       console.log("✅ Video thumbnail confirmed, opening template editor");
-      console.log("🎬 Selected thumbnail:", videoThumbnailForRegeneration?.substring(0, 80) + "...");
-      
+      console.log(
+        "🎬 Selected thumbnail:",
+        videoThumbnailForRegeneration?.substring(0, 80) + "..."
+      );
+
       // Set the selected thumbnail to videoThumbnailUrl so template editor can use it
       setVideoThumbnailUrl(videoThumbnailForRegeneration);
-      
+
       setShowVideoThumbnailModal(false);
       const blankTemplate = getTemplateById("blank-template");
       if (blankTemplate) {
@@ -1864,7 +1880,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     }
   };
 
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const files = event.currentTarget.files;
     if (!files || files.length === 0) return;
     const file = files[0];
@@ -1886,7 +1904,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     setAllGeneration([]); // Reset previous generations
     setIsGeneratingImageUpload(""); // Clear any previous generation URL
     setModelImage(false); // Don't open modal yet
-    
+
     // Also update formData so the preview shows immediately
     const previewUrl = URL.createObjectURL(file);
     setFormData((prev) => ({
@@ -1894,7 +1912,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       media: file,
       mediaUrl: previewUrl,
     }));
-    
+
     if (file.type.startsWith("image/")) {
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -1904,7 +1922,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         setAllGeneration([base64String]);
       };
       reader.readAsDataURL(file);
-      console.log("📷 Image selected and displayed - user can add prompt and click generate to regenerate");
+      console.log(
+        "📷 Image selected and displayed - user can add prompt and click generate to regenerate"
+      );
     }
   };
 
@@ -1933,6 +1953,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       setModelImage(false);
     }
   };
+
+  const { user } = useAppContext();
 
   return (
     <div className="w-full mx-auto rounded-md border border-white/10  md:p-5 p-3 ">
@@ -2401,7 +2423,10 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             className="hidden"
                           />
 
-                          {formData.media || formData.mediaUrl || selectedFile || generatedImage ? (
+                          {formData.media ||
+                          formData.mediaUrl ||
+                          selectedFile ||
+                          generatedImage ? (
                             <div className="space-y-4">
                               <div className="relative">
                                 {/* Debug info for upload preview */}
@@ -2440,7 +2465,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               </div>
                               <div className="flex items-center justify-center flex-col space-y-1">
                                 <p className="text-xs theme-text-secondary">
-                                  {formData.media?.name || selectedFile?.name || "Uploaded Image"}
+                                  {formData.media?.name ||
+                                    selectedFile?.name ||
+                                    "Uploaded Image"}
                                 </p>
                                 <button
                                   type="button"
@@ -3113,43 +3140,65 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                     >
                       {t("back")}
                     </button>
-                    <button
-                      type="submit"
-                      disabled={
-                        getCost() === 0 ||
-                        !formData.prompt.trim() ||
-                        !formData.selectedPlatforms?.length ||
-                        isGeneratingBoth
-                      }
-                      className=" group rounded-md flex-1 flex items-center justify-between theme-bg-trinary theme-text-light border border-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] transition-colors duration-200 py-2.5 px-3 font-medium disabled:opacity-50 disabled:cursor-not-allowed text-sm
-"
-                    >
-                      {isGeneratingBoth ? (
-                        <div className="flex items-center">
-                          <Loader className="w-5 h-5 mr-2 animate-spin" />
-                          {t("generating_post_and_image")}
-                        </div>
-                      ) : isGeneratingThumbnail ? (
-                        <div className="flex items-center">
-                          <Loader className="w-5 h-5 mr-2 animate-spin" />
-                          {t("generating_thumbnail")}
-                        </div>
+                    <div className="flex w-full">
+                      {user.wallet?.coins < 6 ? (
+                        // Upgrade link shown when coins < 6
+                        <Link
+                          to="/pricing"
+                          onClick={() => setShowPackage(false)}
+                          className="group flex-1 min-w-0 rounded-md px-3 py-2.5 font-semibold text-md flex items-center justify-center gap-2 text-white bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] border border-[#7650e3]"
+                        >
+                          <div className="flex items-center">
+                            <Icon
+                              name="white-diamond"
+                              size={20}
+                              className="mr-2"
+                            />
+                            {t("upgrade")}
+                          </div>
+                        </Link>
                       ) : (
-                        <div className="flex items-center">
-                          <Wand2 className="w-[23px] h-[23px] mr-1" />
-                          {t("generate_post")}
-                        </div>
-                      )}
+                        // Generate button shown when coins >= 6
+                        <button
+                          type="submit"
+                          disabled={
+                            getCost() === 0 ||
+                            !formData.prompt.trim() ||
+                            !formData.selectedPlatforms?.length ||
+                            isGeneratingBoth
+                          }
+                          className="group flex-1 min-w-0 rounded-md flex items-center justify-between theme-bg-trinary theme-text-light border border-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] transition-colors duration-200 py-2.5 px-3 font-medium disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                        >
+                          <div className="flex items-center">
+                            {isGeneratingBoth ? (
+                              <div className="flex items-center">
+                                <Loader className="w-5 h-5 mr-2 animate-spin" />
+                                {t("generating_post_and_image")}
+                              </div>
+                            ) : isGeneratingThumbnail ? (
+                              <div className="flex items-center">
+                                <Loader className="w-5 h-5 mr-2 animate-spin" />
+                                {t("generating_thumbnail")}
+                              </div>
+                            ) : (
+                              <div className="flex items-center">
+                                <Wand2 className="w-[23px] h-[23px] mr-1" />
+                                {t("generate_post")}
+                              </div>
+                            )}
+                          </div>
 
-                      <div className="px-2.5 py-1.5 flex items-center gap-2">
-                        <Icon
-                          name="spiral-logo"
-                          size={20}
-                          className="brightness-[1000%] transition group-hover:brightness-100"
-                        />
-                        {getCost()}
-                      </div>
-                    </button>
+                          <div className="px-2.5 py-1.5 flex items-center gap-2">
+                            <Icon
+                              name="spiral-logo"
+                              size={20}
+                              className="brightness-[1000%] transition group-hover:brightness-100"
+                            />
+                            {getCost()}
+                          </div>
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </>
               ) : (

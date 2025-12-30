@@ -81,6 +81,9 @@ export const DashboardPage: React.FC = () => {
       startSetup();
     }
   }, [qrCodeUrl, user?.twoFactorEnabled]);
+  const isFreePlan = userPlan?.toLowerCase() === "free";
+  const hasLowCoins = (user.wallet?.coins ?? 0) < 6;
+  const shouldShowUpgrade = isFreePlan || hasLowCoins;
 
   return (
     <>
@@ -111,9 +114,15 @@ export const DashboardPage: React.FC = () => {
                   title={t("my_plan")}
                   badge={userPlan}
                   subtitle={`Renewing on: ${planRenewalDate}`}
-                  buttonText={t("upgrade")}
-                  onButtonClick={() => navigate("/pricing")}
                   showicon2={true}
+                  // pass buttonText and onButtonClick only when condition is true,
+                  // otherwise pass an empty string so StatsCard won't render the button
+                  {...(shouldShowUpgrade
+                    ? {
+                        buttonText: t("upgrade"),
+                        onButtonClick: () => navigate("/pricing"),
+                      }
+                    : { buttonText: "" })}
                 />
 
                 <StatsCard
