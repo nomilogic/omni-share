@@ -27,6 +27,7 @@
   "oauth_invalid_provider": "Proveedor de OAuth inválido",
   "oauth_authenticating_with": "Autenticando con {{provider}}...",
   "oauth_success": "¡Autenticación exitosa con {{provider}}!",
+  "upload_video_first": "Por favor, sube el video primero",
   "oauth_success_close_window": "¡Autenticación exitosa! Puedes cerrar esta ventana.",
   "oauth_error_close_window": "Error de autenticación. Puedes cerrar esta ventana.",
   "oauth_authentication_failed": "Error de autenticación",

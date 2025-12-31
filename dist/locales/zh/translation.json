@@ -32,6 +32,7 @@
   "oauth_error_close_window": "身份验证失败。您可以关闭此窗口。",
   "oauth_authentication_failed": "身份验证失败",
   "oauth_redirecting": "正在重定向以创建内容...",
+  "upload_video_first": "请先上传视频",
   "oauth_provider_google": "Google",
   "oauth_provider_facebook": "Facebook",
   "oauth_provider_linkedin": "LinkedIn",
