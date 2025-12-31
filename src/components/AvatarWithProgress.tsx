@@ -119,7 +119,7 @@ export function AvatarWithProgress({
       </div>
 
       <div
-        className="absolute -bottom-[18px] px-2 py-[2px] text-[10px] font-semibold text-white rounded-full shadow"
+        className="absolute -bottom-[17px] px-2 py-[2px] text-[10px] font-semibold text-white rounded-full shadow"
         style={{ backgroundColor: color }}
       >
         {progress}%

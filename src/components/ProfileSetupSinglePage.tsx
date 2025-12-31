@@ -15,12 +15,11 @@ import {
   X,
   ArrowLeft,
 } from "lucide-react";
-import { FieldName, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import API from "../services/api";
 import { useProfileFormSchema, ProfileFormData } from "./profileFormSchema";
 import { useAppContext } from "../context/AppContext";
-import { input } from "framer-motion/client";
 import { useTranslation } from "react-i18next";
 
 const STORAGE_KEY = "profile_form_data";
@@ -391,32 +390,6 @@ const ProfileSetupSinglePage: React.FC = () => {
     setValue(fieldName as keyof ProfileFormData, newArray as any);
   };
 
-  const resetForm = () => {
-    localStorage.removeItem(STORAGE_KEY);
-    const emptyForm: ProfileFormData = {
-      fullName: "",
-      email: "",
-      phoneNumber: "",
-      publicUrl: "",
-      brandName: "",
-      brandLogo: "",
-      brandTone: "",
-      audienceGender: "",
-      audienceAgeRange: [],
-      audienceRegions: [],
-      audienceInterests: [],
-      audienceSegments: [],
-      preferredPlatforms: [],
-      primaryPurpose: [],
-      keyOutcomes: [],
-      contentCategories: [],
-      postingStyle: "",
-    };
-    Object.keys(emptyForm).forEach((key) => {
-      setValue(key as keyof ProfileFormData, (emptyForm as any)[key]);
-    });
-  };
-
   const handleUrlAnalysis = async (url: string) => {
     if (!url) {
       setUrlAnalysisError(t("valid_url"));
@@ -634,7 +607,7 @@ const ProfileSetupSinglePage: React.FC = () => {
             className="h-full rounded-full transition-all duration-700 ease-out shadow-inner"
             style={{
               width: `${progress}%`,
-              backgroundColor: "#7650e3",
+              backgroundColor: getProgressColor(progress),
             }}
           />
         </div>

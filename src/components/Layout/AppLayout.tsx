@@ -233,7 +233,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 onClick={() => setShowUserMenu(!showUserMenu)}
                 className="flex items-center gap-x-3 mb-0 w-full hover:theme-bg-secondary rounded-md p-2  transition-colors"
               >
-                <div className=" mx-2 py-3">
+                <div className=" mx-2 py-4">
                   <AvatarWithProgress
                     state={user}
                     className=" w-10 h-10"

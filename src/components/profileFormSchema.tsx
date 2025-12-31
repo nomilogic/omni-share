@@ -10,13 +10,18 @@ export const useProfileFormSchema = () => {
       fullName: z
         .string()
         .trim()
-        .min(2, { message: t("error_full_name") }),
+        .min(4, { message: t("error_full_name") }),
       email: z.string(),
 
       phoneNumber: z
         .string()
-
-        .optional(),
+        .regex(/^(?:\+|00)[0-9]{7,15}$/, {
+          message:
+            "Phone number must start with + or 00 and contain 7–15 digits",
+        })
+        .optional()
+        .nullable()
+        .default(""),
 
       publicUrl: z.string().optional(),
 
