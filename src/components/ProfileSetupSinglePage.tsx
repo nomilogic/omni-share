@@ -395,12 +395,38 @@ const ProfileSetupSinglePage: React.FC = () => {
     const urlPattern = /^(https?:\/\/)?(www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}.*$/;
     return urlPattern.test(url);
   };
+  const checkUrlExists = async (url: string): Promise<boolean> => {
+    if (!url || url.trim() === "") return true;
+
+    try {
+      const normalized = url.startsWith("http") ? url : `https://${url}`;
+
+      const res = await fetch(normalized, {
+        method: "HEAD",
+        mode: "no-cors", // avoids CORS crash
+      });
+
+      // If fetch doesn't throw, URL likely exists
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
   const handleUrlAnalysis = async (url: string) => {
+    setUrlAnalysisError(null);
+    setUrlAnalysisLoading(true);
     if (!isValidUrl(url)) {
       return;
     }
-    setUrlAnalysisError(null);
-    setUrlAnalysisLoading(true);
+
+    const exists = await checkUrlExists(url);
+
+    if (!exists) {
+      setUrlAnalysisLoading(false);
+      return setUrlAnalysisError("Invalid URL");
+    }
+
     try {
       console.log("Starting URL analysis for:", url);
       const response = await API.scrapeProfileData({ url });
