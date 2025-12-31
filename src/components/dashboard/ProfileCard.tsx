@@ -1,14 +1,12 @@
-import { Settings, Edit, User, PenLine, Lock, Barcode } from "lucide-react";
+import { PenLine, Lock, Barcode } from "lucide-react";
 import { useAppContext } from "../../context/AppContext";
-import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { AvatarWithProgress } from "../AvatarWithProgress";
 
 function ProfileCard({ setTwoFactor, isTwoFactor }: any) {
   const { state, setProfileEditing, setPasswordEditing } = useAppContext();
-  const { t, i18n } = useTranslation();
-  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
+  const { t } = useTranslation();
 
-  // Extract user information
   const fullName =
     state?.user?.profile?.fullName ||
     state?.user?.user_metadata?.name ||
@@ -25,29 +23,11 @@ function ProfileCard({ setTwoFactor, isTwoFactor }: any) {
       .slice(0, 2);
   };
 
-  const initials = getInitials(fullName);
-
   return (
     <div className="flex md:flex-row flex-col-reverse md:items-center gap-5  md:justify-between   ">
       <div className="flex items-center gap-2">
-        <div className="lg:w-14 lg:h-14 w-12 h-12 bg-gray-900 rounded-full flex items-center justify-center text-white text-lg font-bold flex-shrink-0">
-          <img
-            className=" rounded-full object-cover theme-bg-trinary"
-            src={
-              state?.user?.avatarUrl
-                ? state?.user?.avatarUrl
-                : `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                    state?.user?.profile?.fullName || state?.user?.email || "U"
-                  )}&background=00000000&color=fff`
-            }
-            alt={state?.user?.profile?.fullName}
-            onError={(e) => {
-              const target = e.currentTarget;
-              target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                state?.user?.profile?.fullName || state?.user?.email || "U"
-              )}&background=00000000&color=fff`;
-            }}
-          />
+        <div className="mr-2 py-2">
+          <AvatarWithProgress state={state.user} />
         </div>
         <div>
           <div className="text-lg font-semibold  text-gray-900 ">

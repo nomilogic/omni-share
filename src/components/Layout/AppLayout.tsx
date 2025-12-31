@@ -25,6 +25,7 @@ import logoText from "../../assets/logo-text.svg";
 import LogoWhiteText from "../../assets/logo-white-text.svg";
 import { useTranslation } from "react-i18next";
 import LanguageDropdown from "../LanguageDropdown";
+import { AvatarWithProgress } from "../AvatarWithProgress";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -230,25 +231,15 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             >
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                className="flex items-center space-x-3 mb-0 w-full hover:theme-bg-secondary rounded-md p-2  transition-colors"
+                className="flex items-center gap-x-3 mb-0 w-full hover:theme-bg-secondary rounded-md p-2  transition-colors"
               >
-                <img
-                  className="h-10 w-10 ml-2 rounded-full object-cover border-2 border-white/30 theme-bg-trinary"
-                  src={
-                    user?.avatarUrl
-                      ? user?.avatarUrl
-                      : `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                          user?.profile?.fullName || user?.email || "U"
-                        )}&background=00000000&color=fff`
-                  }
-                  alt={user?.profile?.fullName}
-                  onError={(e) => {
-                    const target = e.currentTarget;
-                    target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                      user?.profile?.fullName || user?.email || "U"
-                    )}&background=00000000&color=fff`;
-                  }}
-                />
+                <div className=" mx-2 py-3">
+                  <AvatarWithProgress
+                    state={user}
+                    className=" w-10 h-10"
+                    size={55}
+                  />
+                </div>
                 <div className="flex-1 min-w-0 text-left">
                   <div className="text-md font-medium theme-text-light truncate">
                     {user?.profile?.fullName || user?.email || "User"}
