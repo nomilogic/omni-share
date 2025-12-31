@@ -15,7 +15,7 @@ export const useProfileFormSchema = () => {
 
       phoneNumber: z
         .string()
-        .regex(/^(?:\+|00)[0-9]{7,15}$/, {
+        .regex(/^(?:$|\+[0-9]{7,15})$/, {
           message:
             "Phone number must start with + or 00 and contain 7–15 digits",
         })
