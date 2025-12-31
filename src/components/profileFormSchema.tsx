@@ -7,67 +7,66 @@ export const useProfileFormSchema = () => {
 
   const profileFormSchema = useMemo(() => {
     return z.object({
-      fullName: z.string().min(2, { message: t("error_full_name") }).trim(),
+      fullName: z
+        .string()
+        .trim()
+        .min(2, { message: t("error_full_name") }),
       email: z.string(),
+
       phoneNumber: z
         .string()
-        .regex(/^[+\d\s-()]{10,}$/, { message: t("error_phone_number") }),
 
-      publicUrl: z
+        .optional(),
+
+      publicUrl: z.string().optional(),
+
+      brandName: z
         .string()
-        .regex(/^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/, {
-          message: t("error_valid_url"),
-        }),
 
-      brandName: z.string().min(2, { message: t("error_brand_name") }),
-      brandLogo: z.string().min(1, { message: t("error_brand_logo") }),
-      brandTone: z.string().min(1, { message: t("error_brand_tone") }),
+        .optional(),
 
-      audienceAgeRange: z.array(z.string().min(1)).min(1, {
-        message: t("error_audience_age"),
-      }),
+      brandLogo: z
+        .string()
+
+        .optional(),
+
+      brandTone: z
+        .string()
+
+        .optional(),
+
+      audienceAgeRange: z
+        .array(z.string().min(1))
+
+        .optional(),
 
       audienceGender: z
         .string()
-        .min(1, { message: t("error_audience_gender") }),
 
-      audienceRegions: z.array(z.string().min(1)).min(1, {
-        message: t("error_audience_region"),
-      }),
+        .optional(),
 
-      audienceInterests: z.array(z.string().min(1)).min(1, {
-        message: t("error_audience_interest"),
-      }),
+      audienceRegions: z
+        .array(z.string().min(1))
 
-      audienceSegments: z.array(z.string().min(1)).min(1, {
-        message: t("error_audience_segment"),
-      }),
+        .optional(),
 
-      contentCategories: z.array(z.string().min(1)).min(1, {
-        message: t("error_content_category"),
-      }),
+      audienceInterests: z.array(z.string().min(1)).optional(),
 
-      preferredPlatforms: z.array(z.string().min(1)).min(1, {
-        message: t("error_platform"),
-      }),
+      audienceSegments: z.array(z.string().min(1)).optional(),
 
-      primaryPurpose: z.array(z.string().min(1)).min(1, {
-        message: t("error_primary_purpose"),
-      }),
+      contentCategories: z.array(z.string().min(1)).optional(),
 
-      keyOutcomes: z.array(z.string().min(1)).min(1, {
-        message: t("error_key_outcome"),
-      }),
+      preferredPlatforms: z.array(z.string().min(1)).optional(),
 
-      postingStyle: z
-        .string()
-        .min(1, { message: t("error_posting_style") }),
+      primaryPurpose: z.array(z.string().min(1)).optional(),
+
+      keyOutcomes: z.array(z.string().min(1)).optional(),
+
+      postingStyle: z.string().optional(),
     });
-  }, [t]); // <-- VERY IMPORTANT
+  }, [t]);
 
   return profileFormSchema;
 };
 
-export type ProfileFormData = z.infer<
-  ReturnType<typeof useProfileFormSchema>
->;
+export type ProfileFormData = z.infer<ReturnType<typeof useProfileFormSchema>>;

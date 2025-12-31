@@ -289,10 +289,8 @@ const ProfileSetupSinglePage: React.FC = () => {
   const { t, i18n } = useTranslation();
   const schema = useProfileFormSchema();
 
-  // Generate translated configuration
   const { profileFormConfig } = useMemo(() => getProfileFormConfig(t), [t]);
 
-  console.log("updateProfile", user);
   const getDefaultValues = (): ProfileFormData => {
     // Prefer live user profile first
     if (user?.profile) {
@@ -304,7 +302,7 @@ const ProfileSetupSinglePage: React.FC = () => {
         phoneNumber: profile.phoneNumber || "",
         publicUrl: profile.publicUrl || "",
         brandName: profile.brandName || "",
-        brandLogo: profile.brandLogo || null,
+        brandLogo: profile.brandLogo || "",
         brandTone: profile.brandTone || "",
         audienceGender: profile.audienceGender || "",
         audienceAgeRange: profile.audienceAgeRange || [],
@@ -538,9 +536,73 @@ const ProfileSetupSinglePage: React.FC = () => {
     });
   };
 
+  const PROFILE_PROGRESS_FIELDS: (keyof ProfileFormData)[] = [
+    "fullName",
+    "phoneNumber",
+    "publicUrl",
+    "brandName",
+    "brandLogo",
+    "brandTone",
+    "audienceGender",
+    "audienceAgeRange",
+    "audienceRegions",
+    "audienceInterests",
+    "audienceSegments",
+    "preferredPlatforms",
+    "primaryPurpose",
+    "keyOutcomes",
+    "contentCategories",
+    "postingStyle",
+  ];
+
+  const calculateFormProgress = (data: ProfileFormData) => {
+    const total = PROFILE_PROGRESS_FIELDS.length;
+    let filled = 0;
+
+    PROFILE_PROGRESS_FIELDS.forEach((key) => {
+      const value = data[key];
+
+      if (Array.isArray(value)) {
+        if (value.length > 0) filled++;
+      } else if (typeof value === "string") {
+        if (value.trim() !== "") filled++;
+      }
+    });
+
+    return Math.round((filled / total) * 100);
+  };
+
+  const getProgressTitle = (progress: number) => {
+    if (progress < 30) return "Let's get started on your profile";
+    if (progress < 60) return "Great progress so far";
+    if (progress < 90) return "You're almost there";
+    if (progress < 100) return "Just a few final details";
+    return "Profile complete";
+  };
+  const progress = useMemo(() => calculateFormProgress(formData), [formData]);
+  const getProgressColor = (progress: number) => {
+    if (progress < 50) {
+      const ratio = progress / 50;
+
+      const red = 255;
+      const green = Math.floor(80 + ratio * 120); // 80 → 200
+      const blue = 0;
+
+      return `rgb(${red}, ${green}, ${blue})`;
+    } else {
+      // Orange → Dark Green
+      const ratio = (progress - 50) / 50;
+
+      const red = Math.floor(255 - ratio * 200); // 255 → 55
+      const green = Math.floor(200 - ratio * 40); // 200 → 160
+      const blue = 0;
+
+      return `rgb(${red}, ${green}, ${blue})`;
+    }
+  };
   return (
-    <div className="bg-transparent">
-      <div className=" flex flex-col md:flex-row-reverse jusitify-between items-between w-full md:p-4 p-3">
+    <div className="bg-transparent md:px-0 px-3">
+      <div className=" flex flex-col md:flex-row-reverse justify-between items-between w- md:py-4 py-3 ">
         <div className="w-full">
           <div className="flex md:justify-between md:flex-row flex-col-reverse items-center gap-2 mb-2">
             <h1 className="text-3xl font-bold text-black  w-full">
@@ -557,11 +619,51 @@ const ProfileSetupSinglePage: React.FC = () => {
           <p className="text-gray-500">{t("profile_intro")}</p>
         </div>
       </div>
+      <div className="bg-transparent border  border-gray-200 rounded-2xl px-4 py-4 shadow-sm hover:shadow-md transition-shadow duration-300">
+        <div className="flex justify-between items-center mb-3">
+          <h3 className="text-base font-semibold text-gray-900">
+            {getProgressTitle(progress)}
+          </h3>
+          <span className="text-base font-semibold text-gray-700">
+            {progress}%
+          </span>
+        </div>
+
+        <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
+          <div
+            className="h-full rounded-full transition-all duration-700 ease-out shadow-inner"
+            style={{
+              width: `${progress}%`,
+              backgroundColor: "#7650e3",
+            }}
+          />
+        </div>
+
+        {progress < 100 && (
+          <p className="mt-4 text-sm text-gray-600 leading-relaxed">
+            Completing your profile allows us to deliver personalized content,
+            insights, and recommendations tailored to you.
+          </p>
+        )}
+
+        {progress === 100 && (
+          <p className="mt-4 text-sm font-medium text-purple-700 flex items-center gap-2">
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clipRule="evenodd"
+              />
+            </svg>
+            Profile completed — thank you!
+          </p>
+        )}
+      </div>
       <div className="w-full max-w-5xl  mx-auto">
         <div className="bg-transparent  overflow-hidden relative">
           {/* Header */}
 
-          <div className="md:p-4 p-3">
+          <div className="md:py-4 py-3">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
               {profileFormConfig.map((section) => {
                 return (
@@ -762,7 +864,7 @@ const ProfileSetupSinglePage: React.FC = () => {
 
                           case "file":
                             return (
-                              <div key={field.name}>
+                              <div key={field.name} className="">
                                 <label className="block text-sm font-medium theme-text-primary mb-2">
                                   {field.label} {field.required && "*"}
                                 </label>
@@ -774,12 +876,12 @@ const ProfileSetupSinglePage: React.FC = () => {
                                       <img
                                         src={formData[fieldName]} // URL or base64 preview
                                         alt="Uploaded logo preview"
-                                        className="w-full h-full object-cover rounded-md shadow-md border border-gray-200"
+                                        className="w-full  object-cover rounded-md shadow-md border h-[150px] border-gray-200"
                                       />
                                       <button
                                         type="button"
                                         onClick={() => {
-                                          setValue(fieldName, null as any);
+                                          setValue(fieldName, "" as any);
                                           setSelectedFileName("");
                                         }}
                                         className="text-xs text-red-500 hover:underline"
@@ -828,7 +930,7 @@ const ProfileSetupSinglePage: React.FC = () => {
                                       const file = e.target.files?.[0];
                                       if (!file) return;
 
-                                      setSelectedFileName(file.name);
+                                      setSelectedFileName(file.name || "");
 
                                       const reader = new FileReader();
                                       reader.onloadend = () => {
@@ -933,13 +1035,13 @@ const ProfileSetupSinglePage: React.FC = () => {
                                       !formData[fieldName].length &&
                                       field.placeholder
                                     }
+                                    enterKeyHint="done"
                                     className="flex-grow border-none focus:ring-0 text-sm outline-none min-w-[120px] bg-transparent"
                                     onKeyDown={(e) => {
                                       const input =
                                         e.target as HTMLInputElement;
                                       const value = input.value.trim();
 
-                                      // Enter adds tag (works on desktop & mobile)
                                       if (e.key === "Enter" && value) {
                                         e.preventDefault();
                                         const existing =
@@ -960,47 +1062,34 @@ const ProfileSetupSinglePage: React.FC = () => {
                                         }
                                         input.value = "";
                                       }
-
-                                      // Backspace removes last tag if input is empty
-                                      if (
-                                        e.key === "Backspace" &&
-                                        !input.value &&
-                                        Array.isArray(formData[fieldName]) &&
-                                        (formData[fieldName] as string[]).length
-                                      ) {
-                                        e.preventDefault();
-                                        const current = formData[
-                                          fieldName
-                                        ] as string[];
-                                        setValue(
-                                          fieldName,
-                                          current.slice(0, -1) as any
-                                        );
-                                      }
                                     }}
-                                    onInput={(e) => {
+                                    onPaste={(e) => {
+                                      // Optional: handle paste to split tags by space/comma
                                       const input =
                                         e.target as HTMLInputElement;
-                                      const value = input.value;
-
-                                      // Detect space on mobile
-                                      if (value.includes(" ")) {
-                                        const tagValue = value
-                                          .trim()
-                                          .replace(/[^\w\s&,-]/g, "");
+                                      const pasted = e.clipboardData
+                                        .getData("text")
+                                        .trim();
+                                      if (pasted) {
+                                        e.preventDefault();
                                         const existing =
                                           (formData[fieldName] as string[]) ||
                                           [];
-                                        if (
-                                          tagValue &&
-                                          !existing.includes(tagValue)
-                                        ) {
+                                        const newTags = pasted
+                                          .split(/\s|,/)
+                                          .map((v) =>
+                                            v.replace(/[^\w\s&,-]/g, "")
+                                          )
+                                          .filter(
+                                            (v) => v && !existing.includes(v)
+                                          );
+                                        if (newTags.length) {
                                           setValue(fieldName, [
                                             ...existing,
-                                            tagValue,
+                                            ...newTags,
                                           ] as any);
                                         }
-                                        input.value = ""; // remove the space so no gap appears
+                                        input.value = "";
                                       }
                                     }}
                                   />

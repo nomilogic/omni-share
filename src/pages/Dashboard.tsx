@@ -10,8 +10,7 @@ import { useTranslation } from "react-i18next";
 
 function Dashboard() {
   const { state } = useAppContext();
-  const { t, i18n } = useTranslation();
-  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
+  const { t } = useTranslation();
 
   return (
     <div className="min-h-screen bg-stone-100">
