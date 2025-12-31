@@ -15,6 +15,7 @@
   "upload": "Upload",
   "to_image": "to Image",
   "oauth_processing": "Processing authentication...",
+  "upload_video_first": "Please upload the video first",
   "oauth_oauth_error": "OAuth error: {{error}}",
   "oauth_missing_params": "Missing code or state parameter",
   "oauth_invalid_provider": "Invalid OAuth provider",

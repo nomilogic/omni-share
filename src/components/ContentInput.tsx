@@ -723,40 +723,46 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       // allow using an uploaded custom thumbnail. This only runs for
       // aspect ratios that support thumbnails (not 9:16 stories).
       if (
-        (selectedVideoMode === "upload" ||
-          selectedVideoMode === "uploadShorts") &&
-        originalVideoFile &&
-        !is9x16Video(videoAspectRatio || 0)
-      ) {
-        // If user opted to generate thumbnail via AI, use existing flow
-        if (generateVideoThumbnailAI) {
-          console.log(
-            "🎥 Generating video thumbnail from content description, then opening template editor..."
-          );
+  (selectedVideoMode === "upload" || selectedVideoMode === "uploadShorts") &&
+  !formData.mediaUrl &&
+  !formData.media
+) {
+  console.log("🎯 Video upload required");
+  notify("error", t("upload_video_first"));
+  return;
+}
 
-          // Generate thumbnail using content description and aspect ratio
-          const generatedThumbnailUrl = await generateThumbnailForPost(
-            formData.prompt,
-            videoAspectRatio
-          );
+// Proceed only if we have a video (either uploaded file or URL)
+if (
+  (selectedVideoMode === "upload" || selectedVideoMode === "uploadShorts") &&
+  (originalVideoFile || formData.mediaUrl) &&
+  !is9x16Video(videoAspectRatio || 0)
+) {
+  if (generateVideoThumbnailAI) {
+    console.log(
+      "🎥 Generating video thumbnail from content description, then opening template editor..."
+    );
 
-          if (generatedThumbnailUrl) {
-            console.log(
-              "✅ Video thumbnail generated successfully, opening regeneration modal for editing"
-            );
+    try {
+      const generatedThumbnailUrl = await generateThumbnailForPost(
+        formData.prompt,
+        videoAspectRatio
+      );
 
-            // Show regeneration modal for user to edit/regenerate the video thumbnail
-            setVideoThumbnailForRegeneration(generatedThumbnailUrl);
-            setVideoThumbnailGenerations([generatedThumbnailUrl]); // Initialize with the first generated image
-            setShowVideoThumbnailModal(true);
-            return; // Exit here to wait for user confirmation in regeneration modal
-          } else {
-            console.error(
-              "❌ Failed to generate video thumbnail, proceeding with normal flow without thumbnail"
-            );
-            // Continue with normal flow - video posts can work without thumbnails
-          }
-        } else {
+      if (generatedThumbnailUrl) {
+        setVideoThumbnailForRegeneration(generatedThumbnailUrl);
+        setVideoThumbnailGenerations([generatedThumbnailUrl]);
+        setShowVideoThumbnailModal(true);
+        return;
+      } else {
+        console.error("❌ Failed to generate video thumbnail, continuing without thumbnail");
+      }
+    } catch (err) {
+      console.error("❌ Thumbnail generation error", err);
+      // continue with normal flow
+    }
+  } else {
+
           // User chose to upload a custom thumbnail instead of AI generation.
           // If a custom thumbnail URL already exists, open the template editor
           // immediately using that image.
