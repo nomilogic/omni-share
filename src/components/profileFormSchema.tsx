@@ -23,7 +23,19 @@ export const useProfileFormSchema = () => {
         .nullable()
         .default(""),
 
-      publicUrl: z.string().optional(),
+      publicUrl: z
+        .string()
+        .optional()
+        .refine(
+          (val) => {
+            if (!val) return true; // allow undefined or empty string
+            if (val.trim() === "") return true; // allow empty string
+            const urlPattern =
+              /^(https?:\/\/)?(www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}.*$/;
+            return urlPattern.test(val);
+          },
+          { message: "Invalid URL format" }
+        ),
 
       brandName: z
         .string()

@@ -389,10 +389,14 @@ const ProfileSetupSinglePage: React.FC = () => {
       : [...currentArray, option];
     setValue(fieldName as keyof ProfileFormData, newArray as any);
   };
-
+  const isValidUrl = (url: string) => {
+    if (!url) return true; // allow empty string
+    if (url.trim() === "") return true; // allow empty string
+    const urlPattern = /^(https?:\/\/)?(www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}.*$/;
+    return urlPattern.test(url);
+  };
   const handleUrlAnalysis = async (url: string) => {
-    if (!url) {
-      setUrlAnalysisError(t("valid_url"));
+    if (!isValidUrl(url)) {
       return;
     }
     setUrlAnalysisError(null);
@@ -441,8 +445,7 @@ const ProfileSetupSinglePage: React.FC = () => {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedData));
       }
     } catch (err: any) {
-      console.error("URL analysis failed:", err);
-      setUrlAnalysisError(err?.response?.data?.message || t("url_failed"));
+      // setUrlAnalysisError(err?.response?.data?.message || t("url_failed"));
     } finally {
       setUrlAnalysisLoading(false);
     }
