@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 const PROFILE_FIELDS = [
   "fullName",
   "phoneNumber",
@@ -69,8 +69,22 @@ export function AvatarWithProgress({
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (progress / 100) * circumference;
+
+  const [isHovered, setIsHovered] = useState(false);
+
   return (
-    <div className="relative  flex items-center justify-center">
+    <div
+      className="relative flex items-center justify-center cursor-pointer"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      {/* Tooltip */}
+      {isHovered && (
+        <div className="absolute -top-5 left-6 z-10 px-2 py-1 text-xs font-medium text-purple-700 bg-slate-50 border rounded shadow-lg whitespace-nowrap">
+          Profile completion: {progress}%
+        </div>
+      )}
+
       <svg width={size} height={size} className="-rotate-90 absolute">
         {/* Background circle */}
         <circle
@@ -98,7 +112,7 @@ export function AvatarWithProgress({
       </svg>
 
       <div
-        className={` rounded-full overflow-hidden bg-purple-700 flex items-center justify-center ${className}`}
+        className={`rounded-full overflow-hidden bg-purple-700 flex items-center justify-center ${className}`}
       >
         <img
           className="w-full h-full object-cover rounded-full"
