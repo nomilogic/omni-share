@@ -616,9 +616,8 @@ const ProfileSetupSinglePage: React.FC = () => {
         </div>
 
         {progress < 100 && (
-          <p className="mt-4 text-sm text-gray-600 leading-relaxed">
-            Completing your profile allows us to deliver personalized content,
-            insights, and recommendations tailored to you.
+          <p className="mt-4 text-sm text-gray-500 leading-relaxed">
+            Complete your profile for better, personalized recommendations.
           </p>
         )}
 
