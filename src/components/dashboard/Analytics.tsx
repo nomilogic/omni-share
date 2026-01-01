@@ -1,7 +1,8 @@
+// Analytics.tsx
+
 "use client";
 
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
   getPlatformIcon,
@@ -9,6 +10,20 @@ import {
 } from "../../utils/platformIcons";
 import { Platform } from "../../types";
 import API from "../../services/api";
+import { useModal } from "../../context2/ModalContext"; // 👈 ADD THIS
+import AnalyticsModal from "./AnalyticsModal"; // 👈 ADD THIS
+
+interface TopPost {
+  id: string;
+  title: string;
+  fullMessage?: string;
+  permalink?: string;
+  engagement: number;
+  likes: number;
+  comments: number;
+  shares: number;
+  created_time: string;
+}
 
 interface AnalyticsData {
   platform: Platform;
@@ -19,45 +34,36 @@ interface AnalyticsData {
     followers: number;
   };
   summary: {
-    period: string;
-    views: number;
-    impressions_ctr: string;
-    average_view_duration: number;
+    likes: number;
+    comments: number;
+    shares: number;
   };
+  insights: Array<{
+    name: string;
+    period: "day" | "week" | "days_28";
+    values: Array<{ value: number; end_time: string }>;
+    title: string;
+  }>;
   top_posts: {
-    period: string;
-    posts: string[];
+    posts: TopPost[];
   };
 }
 
 function Analytics() {
-  const navigate = useNavigate();
   const { t } = useTranslation();
+  const { openModal } = useModal(); // 👈 ADD THIS
 
-  const [activePlatform, setActivePlatform] = useState<Platform>("facebook");
-  const [analyticsMap, setAnalyticsMap] = useState<
-    Record<Platform, AnalyticsData | null>
-  >({} as any);
+  const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(false);
-
-  const socialPlatforms: Platform[] = [
-    "facebook",
-    "linkedin",
-    "instagram",
-    "youtube",
-    "tiktok",
-  ];
+  // ❌ REMOVE THESE - no longer needed
+  // const [selectedPost, setSelectedPost] = useState<TopPost | null>(null);
+  // const [showAnalytics, setShowAnalytics] = useState(false);
 
   const fetchAnalytics = async () => {
     try {
       setLoading(true);
-
       const res = await API.facebookAnalytics();
-      // assuming API returns single platform
-      setAnalyticsMap((prev) => ({
-        ...prev,
-        facebook: res.data || res,
-      }));
+      setAnalytics(res?.data || null);
     } catch (err) {
       console.error("Analytics Error:", err);
     } finally {
@@ -69,106 +75,125 @@ function Analytics() {
     fetchAnalytics();
   }, []);
 
-  const analytics = analyticsMap[activePlatform];
-  const summary = analytics?.summary;
-  const topPosts = analytics?.top_posts?.posts?.slice(0, 3) || [];
+  const topPosts = analytics?.top_posts.posts || [];
+
+  const getReachByPeriod = (period: "day" | "week" | "days_28") => {
+    const insight = analytics?.insights?.find((i) => i?.period === period);
+    return insight?.values?.[0]?.value || 0;
+  };
+
+  const dailyReach = getReachByPeriod("day");
+  const weeklyReach = getReachByPeriod("week");
+  const monthlyReach = getReachByPeriod("days_28");
+
+  // ❌ REMOVE THIS - no longer needed
+  // const closeModal = () => {
+  //   setSelectedPost(null);
+  //   setShowAnalytics(false);
+  // };
+
+  // 👈 ADD THIS - new handler using ModalContext
+  const handleViewDetails = () => {
+    openModal(AnalyticsModal, {
+      analytics,
+      topPosts,
+      dailyReach,
+      weeklyReach,
+      monthlyReach,
+    });
+  };
 
   return (
-    <div className="bg-gray-100 rounded-md h-[450px] p-5 flex flex-col justify-between w-full">
-      <div>
-        {/* Platform Selector */}
-        <div className="flex gap-3 mb-4">
-          {socialPlatforms.map((platform) => {
-            const Icon = getPlatformIcon(platform);
-            const bg = getPlatformIconBackgroundColors(platform);
-
-            const isActive = platform === activePlatform;
-
-            return (
-              <button
-                key={platform}
-                onClick={() => setActivePlatform(platform)}
-                className={`w-10 h-10 rounded-full flex items-center justify-center text-white transition
-                  ${bg}
-                  ${
-                    isActive ? "ring-2 ring-purple-600 scale-105" : "opacity-60"
-                  }
-                `}
-              >
-                <Icon className="w-5 h-5" />
-              </button>
-            );
-          })}
+    // ❌ REMOVE the fragment <> </> wrapper - no longer needed
+    <div className="bg-gray-100 rounded-md p-5 h-[450px] flex flex-col">
+      <div className="flex gap-3 mb-2">
+        <div className="w-10 h-10 rounded-full flex items-center justify-center text-white bg-blue-600 ring-4 ring-blue-100">
+          {getPlatformIcon("facebook")({ className: "w-5 h-5" })}
         </div>
-
-        {/* Summary */}
-        <h4 className="font-medium text-black">{t("summary")}</h4>
-        <p className="text-xs mb-3">{summary?.period || t("last_28_days")}</p>
-
-        <div className="space-y-1">
-          <Metric label={t("views")} value={summary?.views} loading={loading} />
-          <Metric
-            label={t("impressions_ctr")}
-            value={summary?.impressions_ctr}
-            loading={loading}
-          />
-          <Metric
-            label={t("avg_view_duration")}
-            value={summary?.average_view_duration}
-            loading={loading}
-          />
-        </div>
-
-        <hr className="h-[2px] bg-purple-600 my-3" />
-
-        {/* Top Posts */}
-        <h4 className="font-medium text-black text-sm">{t("top_post")}</h4>
-        <p className="text-xs mb-2">
-          {analytics?.top_posts?.period || t("last_48_hours")}
-        </p>
-
-        {topPosts.length > 0 ? (
-          topPosts.map((post, i) => (
-            <p
-              key={i}
-              className="text-xs text-[#7650e3] underline cursor-pointer hover:text-[#8a68d9] line-clamp-1"
-            >
-              {post}
-            </p>
-          ))
-        ) : (
-          <p className="text-xs text-gray-500">
-            No data available for this platform
-          </p>
-        )}
+        {["linkedin", "instagram", "youtube", "tiktok"].map((p: any) => (
+          <div
+            key={p}
+            className={`w-10 h-10 rounded-full flex items-center justify-center text-white ${getPlatformIconBackgroundColors(
+              p
+            )} opacity-30`}
+          >
+            {getPlatformIcon(p)({ className: "w-4 h-4" })}
+          </div>
+        ))}
       </div>
 
+      {analytics && (
+        <div className="mb-3">
+          <h3 className="text-lg font-bold text-gray-900 truncate">
+            {analytics?.page?.name}
+          </h3>
+          <p className="text-sm text-gray-600">
+            {analytics?.page?.followers.toLocaleString()} {t("followers")}
+          </p>
+        </div>
+      )}
+
+      <div className="flex-1 overflow-y-auto pr-2 -mr-2">
+        <div className="mb-4">
+          <div className="flex justify-between mb-2">
+            <h4 className="font-semibold">{t("summary")}</h4>
+          </div>
+
+          <div className="space-y-2">
+            <Metric label={t("reach")} value={monthlyReach} loading={loading} />
+            <Metric label={t("likes")} value={analytics?.summary.likes} loading={loading} />
+            <Metric label={t("comments")} value={analytics?.summary.comments} loading={loading} />
+            <Metric label={t("shares")} value={analytics?.summary.shares} loading={loading} />
+          </div>
+        </div>
+
+        <hr className="my-2" />
+
+        <div>
+          <h4 className="font-semibold text-sm mb-3">{t("top_posts")}</h4>
+
+          {loading ? (
+            <div className="space-y-1">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-4 bg-gray-200 animate-pulse rounded" />
+              ))}
+            </div>
+          ) : topPosts.length ? (
+            <div className="space-y-1">
+              {topPosts.slice(0, 3).map((post) => (
+                <div
+                  key={post?.id}
+                  className="w-full text-left text-sm text-blue-600 rounded truncate"
+                >
+                  {post?.title}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-xs text-gray-500 italic">{t("no_posts_available")}</p>
+          )}
+        </div>
+      </div>
+
+      {/* View Details Button - 👈 CHANGED onClick */}
       <button
-        onClick={() => navigate("/dashboard")}
-        className="w-full py-2.5 rounded-md font-semibold border-2 border-[#7650e3] bg-[#7650e3] text-white hover:bg-[#d7d7fc] hover:text-[#7650e3]"
+        onClick={handleViewDetails}
+        className="mt-4 w-full py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700"
       >
-        {t("view_analytics")}
+        {t("view_details")}
       </button>
     </div>
+    // ❌ REMOVE the entire modal JSX that was here
   );
 }
 
 export default Analytics;
 
-/* Small helper */
-const Metric = ({
-  label,
-  value,
-  loading,
-}: {
-  label: string;
-  value?: string | number;
-  loading: boolean;
-}) => (
-  <div className="flex justify-between text-xs">
-    <span className="font-medium">{label}</span>
-    <span className="font-semibold text-purple-600">
-      {loading ? "—" : value ?? 0}
+const Metric = ({ label, value, loading }: any) => (
+  <div className="flex justify-between text-sm">
+    <span>{label}</span>
+    <span className="font-bold text-blue-600">
+      {loading ? "—" : value?.toLocaleString?.() ?? 0}
     </span>
   </div>
 );
