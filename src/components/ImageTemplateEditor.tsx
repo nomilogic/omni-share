@@ -83,14 +83,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
   const addElementLogoInputRef = useRef<HTMLInputElement>(null);
   const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null);
   const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>(null);
-  const [elements, setElements] = useState<TemplateElement[]>(
-    selectedTemplate?.elements
-      ? selectedTemplate.elements.map((el, index) => ({
-          ...el,
-          zIndex: el.zIndex !== undefined ? el.zIndex : index,
-        }))
-      : []
-  );
+  const [elements, setElements] = useState<TemplateElement[]>([]);
   const { openModal } = useModal();
   const [selectedElement, setSelectedElement] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -131,7 +124,21 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
   // Load profile data on mount if not provided
   useEffect(() => {
     const loadProfileData = async () => {
-      if (!externalProfileData) {
+      if (externalProfileData) {
+        // Use profile data from props/context
+        const profile = externalProfileData.profile || externalProfileData;
+        setProfileBindingData({
+          email: profile.email || externalProfileData.email || '',
+          website: profile.publicUrl || profile.website || '',
+          companyName: profile.companyName || profile.name || '',
+          brandName: profile.brandName || '',
+          fullName: profile.fullName || profile.name || '',
+          phoneNumber: profile.phoneNumber || '',
+          logo: profile.brandLogo || profile.logo || profile.profileImage || '',
+        });
+        console.log('✅ Profile data from context:', profile);
+      } else {
+        // Fallback: fetch from database
         try {
           const result = await getCurrentUser();
           if (result?.user?.profile) {
@@ -145,9 +152,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
               phoneNumber: profile.phoneNumber || '',
               logo: profile.brandLogo || profile.logo || profile.profileImage || '',
             });
-            console.log('✅ Profile data loaded:', profile);
-          } else if (result?.user) {
-            console.warn('⚠️ No profile data found on user object');
+            console.log('✅ Profile data loaded from DB:', profile);
           }
         } catch (error) {
           console.warn('Failed to load profile data:', error);
@@ -156,6 +161,54 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
     };
     loadProfileData();
   }, [externalProfileData]);
+
+  // Update bound elements when profile data loads or changes
+  useEffect(() => {
+    if (Object.keys(profileBindingData).length > 0) {
+      console.log("🔄 Profile data updated, re-applying bindings");
+      setElements((prevElements) => applyProfileBindings(prevElements));
+    }
+  }, [profileBindingData]);
+
+  // Initialize elements with background image and template elements
+  useEffect(() => {
+    const initializeElements = () => {
+      let initialElements: TemplateElement[] = [];
+
+      // Add background image as an interactive element if imageUrl exists
+      if (imageUrl) {
+        const backgroundElement: LogoElement = {
+          id: "background-image",
+          type: "logo",
+          name: "background",
+          x: canvasDimensions.width / 2,
+          y: canvasDimensions.height / 2,
+          width: canvasDimensions.width,
+          height: canvasDimensions.height,
+          rotation: 0,
+          scaleX: 1,
+          scaleY: 1,
+          src: imageUrl,
+          opacity: 1,
+          zIndex: -1, // Background should be behind other elements
+        };
+        initialElements.push(backgroundElement);
+      }
+
+      // Add template elements if they exist
+      if (selectedTemplate?.elements) {
+        const templateElements = selectedTemplate.elements.map((el, index) => ({
+          ...el,
+          zIndex: el.zIndex !== undefined ? el.zIndex : index + 1, // Start from 1 to be above background
+        }));
+        initialElements = [...initialElements, ...templateElements];
+      }
+
+      setElements(initialElements);
+    };
+
+    initializeElements();
+  }, [imageUrl, canvasDimensions, selectedTemplate]);
 
   const TEMPLATES_STORAGE_KEY = "image-template-editor.templates.v1";
   const LEGACY_TEMPLATE_STORAGE_KEY = "image-template-editor.template.v1";
@@ -461,6 +514,33 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
     if (tpl) setTemplateName(tpl.name);
   };
 
+  // Helper function to apply profile bindings to elements
+  const applyProfileBindings = (elementsToUpdate: TemplateElement[]) => {
+    console.log("🔄 applyProfileBindings called");
+    console.log("📊 Profile data:", profileBindingData);
+    console.log("📌 Elements to update:", elementsToUpdate);
+
+    return elementsToUpdate.map((el) => {
+      const updated = { ...el };
+
+      if (el.name) {
+        console.log(`Processing binding: name="${el.name}", type="${el.type}"`);
+        
+        if (el.name === "logo" && el.type === "logo") {
+          if (profileBindingData.logo) {
+            (updated as any).src = profileBindingData.logo;
+            console.log("✅ Applied logo binding:", profileBindingData.logo);
+          }
+        } else if (el.type === "text" && profileBindingData[el.name]) {
+          updated.content = profileBindingData[el.name];
+          console.log(`✅ Applied text binding for ${el.name}:`, profileBindingData[el.name]);
+        }
+      }
+
+      return updated;
+    });
+  };
+
   const loadTemplateById = (id: string) => {
     try {
       const tpl = savedTemplates.find((t) => t.id === id);
@@ -469,21 +549,31 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
         return;
       }
 
+      // Normalize elements
       const normalizedElements = tpl.elements.map((el, index) => ({
         ...el,
         zIndex: el.zIndex !== undefined ? el.zIndex : index,
       }));
 
-      setElements(normalizedElements);
+      // Apply profile bindings immediately
+      const elementsWithBindings = applyProfileBindings(normalizedElements);
+
+      // Preserve background image if it exists
+      setElements(prevElements => {
+        const backgroundElement = prevElements.find(el => el.id === "background-image");
+        const newElements = backgroundElement ? [backgroundElement, ...elementsWithBindings] : elementsWithBindings;
+        return newElements;
+      });
+
       setLockedElements(new Set(tpl.lockedElementIds || []));
       setSelectedElement(null);
       setSelectedTemplateId(tpl.id);
       setTemplateName(tpl.name);
       setTemplatesOpen(false);
 
-      console.log("✅ Template loaded", tpl);
+      console.log("✅ Template loaded:", elementsWithBindings);
     } catch (error) {
-      console.error("❌ Failed to load template from localStorage", error);
+      console.error("❌ Failed to load template:", error);
     }
   };
 
@@ -1623,6 +1713,13 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
   // Delete element function
   const deleteSelectedElement = () => {
     if (!selectedElement) return;
+
+    // Prevent deletion of background image
+    if (selectedElement === "background-image") {
+      console.log("⚠️ Cannot delete background image");
+      return;
+    }
+
     setElements((prev) => prev.filter((el) => el.id !== selectedElement));
     setSelectedElement(null);
   };
@@ -1965,7 +2062,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                 )}
                 <button
                   onClick={() => {
-                    setElements([]);
+                    setElements(prevElements => prevElements.filter(el => el.id === "background-image"));
                     setSelectedElement(null);
                   }}
                   className="inline-flex items-center justify-center gap-1 px-1.5 py-1 bg-red-50 text-red-700 rounded-md hover:bg-red-100 transition-colors text-xs font-medium"
@@ -2231,14 +2328,16 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                             <Unlock className="w-4 h-4" />
                           )}
                         </button>
-                        <button
-                          onClick={deleteSelectedElement}
-                          className="p-2 rounded-md bg-red-100 text-red-600 hover:bg-red-200 transition-colors"
-                          title="Delete"
-                          type="button"
-                        >
-                          <Trash className="w-4 h-4" />
-                        </button>
+                        {selectedElement !== "background-image" && (
+                          <button
+                            onClick={deleteSelectedElement}
+                            className="p-2 rounded-md bg-red-100 text-red-600 hover:bg-red-200 transition-colors"
+                            title="Delete"
+                            type="button"
+                          >
+                            <Trash className="w-4 h-4" />
+                          </button>
+                        )}
                       </div>
 
                       {/* Layer Order Buttons - Spread across remaining space */}
@@ -3131,38 +3230,14 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
               className="border-2 border-gray-300 rounded-md shadow-md bg-white transition-all duration-200"
             >
               <Layer>
-                {backgroundImage ? (
-                  (() => {
-                    const crop = getCoverCrop(
-                      backgroundImage,
-                      canvasDimensions.width,
-                      canvasDimensions.height
-                    );
-                    return (
-                      <KonvaImage
-                        image={backgroundImage}
-                        x={0}
-                        y={0}
-                        width={canvasDimensions.width}
-                        height={canvasDimensions.height}
-                        cropX={crop.cropX}
-                        cropY={crop.cropY}
-                        cropWidth={crop.cropWidth}
-                        cropHeight={crop.cropHeight}
-                        listening={false}
-                      />
-                    );
-                  })()
-                ) : (
-                  <Rect
-                    x={0}
-                    y={0}
-                    width={canvasDimensions.width}
-                    height={canvasDimensions.height}
-                    fill="#f3f4f6"
-                    listening={false}
-                  />
-                )}
+                <Rect
+                  x={0}
+                  y={0}
+                  width={canvasDimensions.width}
+                  height={canvasDimensions.height}
+                  fill="#f3f4f6"
+                  listening={false}
+                />
 
                 {[...elements]
                   .sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0))
