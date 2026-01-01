@@ -621,7 +621,7 @@ const ProfileSetupSinglePage: React.FC = () => {
           <p className="text-gray-500">{t("profile_intro")}</p>
         </div>
       </div>
-      <div className="bg-transparent border  border-gray-200 rounded-2xl px-4 py-4 shadow-sm hover:shadow-md transition-shadow duration-300">
+      <div className=" w-full max-w-5xl  mx-auto bg-white rounded-2xl px-4 py-4   transition-shadow duration-300">
         <div className="flex justify-between items-center mb-3">
           <h3 className="text-base font-semibold text-gray-900">
             {getProgressTitle(progress)}
@@ -662,8 +662,6 @@ const ProfileSetupSinglePage: React.FC = () => {
       </div>
       <div className="w-full max-w-5xl  mx-auto">
         <div className="bg-transparent  overflow-hidden relative">
-          {/* Header */}
-
           <div className="md:py-4 py-3">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
               {profileFormConfig.map((section) => {
