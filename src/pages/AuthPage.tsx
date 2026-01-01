@@ -12,16 +12,13 @@ export const AuthPage: React.FC = () => {
   const location = useLocation();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { t, i18n } = useTranslation();
-    const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
+  const { t } = useTranslation();
 
-  // Check if user is already authenticated
   useEffect(() => {
-    if (state.user) {
-      const from = (location.state as any)?.from?.pathname || "/content";
-      navigate(from, { replace: true });
+    if (localStorage.getItem("auth_token")) {
+      navigate("/content", { replace: true });
     }
-  }, [state.user, navigate, location]);
+  }, [localStorage.getItem("auth_token")]);
 
   const handleAuthSuccess = (user: any) => {
     dispatch({ type: "SET_USER", payload: user });

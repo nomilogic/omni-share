@@ -669,5 +669,22 @@
   "enter_code_from_auth_app": "Open your authenticator app and enter the 6-digit code",
   "verify_and_login": "Verify & Login",
   "please_enter_valid_6_digit_code": "Please enter a valid 6-digit code",
-  "cannot_resend_2fa_code": "Cannot resend code during login"
+  "cannot_resend_2fa_code": "Cannot resend code during login",
+  "analytics_details": "Performance Analytics",
+  "view_details": "View Analytics",
+
+  "followers": "Followers",
+
+  "reach": "Reach",
+  "likes": "Likes",
+  "comments": "Comments",
+  "shares": "Shares",
+  "top_posts": "Top Posts",
+
+  "post_details": "Post Details",
+
+  "week": "This Week",
+  "month": "This Month",
+  "engagement": "Engagement",
+  "close": "Close"
 }

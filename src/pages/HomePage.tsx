@@ -45,6 +45,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import OmniVideo from "../assets/video/omnishare.mp4";
 import LanguageDropdown from "../components/LanguageDropdown";
 import { Trans, useTranslation } from "react-i18next";
+import { div } from "framer-motion/client";
 
 function HomePage() {
   const { t } = useTranslation();
@@ -398,8 +399,12 @@ function HomePage() {
             <div className="px-3 py-4">
               <motion.button
                 onClick={() => {
-                  navigate("/auth");
                   setIsMenuOpen(false);
+                  if (localStorage.getItem("auth_token")) {
+                    navigate("/content");
+                  } else {
+                    navigate("/auth");
+                  }
                 }}
                 className="w-full bg-white text-[#7650e3] px-6 py-3 rounded-full font-semibold shadow-lg transition-all"
                 initial={{ x: -50, opacity: 0 }}
@@ -706,7 +711,13 @@ function HomePage() {
 
               <div className="flex items-center gap-2 w-auto">
                 <motion.button
-                  onClick={() => navigate("/auth")}
+                  onClick={() => {
+                    if (localStorage.getItem("auth_token")) {
+                      navigate("/content");
+                    } else {
+                      navigate("/auth");
+                    }
+                  }}
                   className="bg-white text-[#7650e3] px-6 py-2.5 text-base rounded-full font-semibold shadow-lg"
                 >
                   {t("get_started_free")}
@@ -858,7 +869,13 @@ function HomePage() {
               type: "spring",
               stiffness: 100,
             }}
-            onClick={() => navigate("/auth")}
+            onClick={() => {
+              if (localStorage.getItem("auth_token")) {
+                navigate("/content");
+              } else {
+                navigate("/auth");
+              }
+            }}
             className="bg-white text-[#7650e3] px-6 py-3 rounded-full text-lg font-semibold shadow-2xl inline-flex items-center space-x-2"
             whileHover={{
               scale: 1.08,
@@ -1245,7 +1262,10 @@ function HomePage() {
         </div>
       </section>
 
-      <section id="Contact" className="scroll-mt-20 py-8 md:pb-0 md:px-5 lg:px-0 md:py-14 bg-white">
+      <section
+        id="Contact"
+        className="scroll-mt-20 py-8 md:pb-0 md:px-5 lg:px-0 md:py-14 bg-white"
+      >
         <div className="max-w-4xl mx-4 md:mx-auto ">
           <motion.div
             className="text-center md:mb-5"
