@@ -57,7 +57,7 @@ function Analytics() {
     try {
       setLoading(true);
       const res = await API.facebookAnalytics();
-      setAnalytics(res.data || res);
+      setAnalytics(res?.data || null);
     } catch (err) {
       console.error("Analytics Error:", err);
     } finally {
@@ -72,7 +72,7 @@ function Analytics() {
   const topPosts = analytics?.top_posts.posts || [];
 
   const getReachByPeriod = (period: "day" | "week" | "days_28") => {
-    const insight = analytics?.insights.find((i) => i.period === period);
+    const insight = analytics?.insights?.find((i) => i?.period === period);
     return insight?.values?.[0]?.value || 0;
   };
 
@@ -107,10 +107,10 @@ function Analytics() {
         {analytics && (
           <div className="mb-3">
             <h3 className="text-lg font-bold text-gray-900 truncate">
-              {analytics.page.name}
+              {analytics?.page?.name}
             </h3>
             <p className="text-sm text-gray-600">
-              {analytics.page.followers.toLocaleString()} {t("followers")}
+              {analytics?.page?.followers.toLocaleString()} {t("followers")}
             </p>
           </div>
         )}
@@ -163,11 +163,11 @@ function Analytics() {
               <div className="space-y-1">
                 {topPosts.slice(0, 3).map((post) => (
                   <button
-                    key={post.id}
+                    key={post?.id}
                     onClick={() => setSelectedPost(post)}
                     className="w-full text-left  text-sm text-blue-600  rounded truncate"
                   >
-                    {post.title}
+                    {post?.title}
                   </button>
                 ))}
               </div>
@@ -209,23 +209,23 @@ function Analytics() {
                 /* POST DETAILS (UNCHANGED) */
                 <div className="space-y-4">
                   <div className="bg-gray-50 p-4 rounded-lg">
-                    {selectedPost.fullMessage || selectedPost.title}
+                    {selectedPost?.fullMessage || selectedPost?.title}
                   </div>
 
                   <div className="grid grid-cols-3 gap-3">
                     <StatCard
                       title={t("likes")}
-                      value={String(selectedPost.likes)}
+                      value={String(selectedPost?.likes)}
                       color="bg-red-50 text-red-600"
                     />
                     <StatCard
                       title={t("comments")}
-                      value={String(selectedPost.comments)}
+                      value={String(selectedPost?.comments)}
                       color="bg-blue-50 text-blue-600"
                     />
                     <StatCard
                       title={t("shares")}
-                      value={String(selectedPost.shares)}
+                      value={String(selectedPost?.shares)}
                       color="bg-green-50 text-green-600"
                     />
                   </div>
@@ -234,10 +234,10 @@ function Analytics() {
                 analytics && (
                   <>
                     <div className="text-center mb-6">
-                      <h4 className="font-bold">{analytics.page.name}</h4>
+                      <h4 className="font-bold">{analytics?.page?.name}</h4>
                       <p className="text-sm text-gray-600">
-                        {analytics.page.category} •{" "}
-                        {analytics.page.followers.toLocaleString()}{" "}
+                        {analytics?.page?.category} •{" "}
+                        {analytics?.page?.followers.toLocaleString()}{" "}
                         {t("followers")}
                       </p>
                     </div>
@@ -245,17 +245,17 @@ function Analytics() {
                     <div className="grid grid-cols-3 gap-3">
                       <StatCard
                         title={t("likes")}
-                        value={analytics.summary.likes.toLocaleString()}
+                        value={analytics?.summary?.likes.toLocaleString()}
                         color="bg-red-50 text-red-600"
                       />
                       <StatCard
                         title={t("comments")}
-                        value={analytics.summary.comments.toLocaleString()}
+                        value={analytics?.summary?.comments.toLocaleString()}
                         color="bg-blue-50 text-blue-600"
                       />
                       <StatCard
                         title={t("shares")}
-                        value={analytics.summary.shares.toLocaleString()}
+                        value={analytics?.summary?.shares.toLocaleString()}
                         color="bg-green-50 text-green-600"
                       />
                     </div>
@@ -287,22 +287,24 @@ function Analytics() {
                   {topPosts.length > 0 ? (
                     topPosts.map((post, index) => (
                       <button
-                        key={post.id}
+                        key={post?.id}
                         onClick={() => setSelectedPost(post)}
                         className="w-full text-left py-3 px-2 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors"
                       >
                         <div className="flex justify-between items-center">
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium text-gray-900 truncate">
-                              {post.title}
+                              {post?.title}
                             </p>
                             <p className="text-xs text-gray-600 mt-1">
-                              {new Date(post.created_time).toLocaleDateString()}
+                              {new Date(
+                                post?.created_time
+                              ).toLocaleDateString()}
                             </p>
                           </div>
                           <div className="text-right ml-3">
                             <p className="text-lg font-bold text-blue-600">
-                              {post.engagement}
+                              {post?.engagement}
                             </p>
                             <p className="text-xs text-gray-500">
                               {t("engagement")}
