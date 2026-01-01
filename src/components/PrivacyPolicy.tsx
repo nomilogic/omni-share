@@ -1,6 +1,6 @@
 import React from "react";
-import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { ArrowLeft, Twitter, Linkedin, Instagram, Facebook, Mail, Globe, MapPin } from "lucide-react";
 
 const PrivacyPolicy: React.FC = () => {
   const navigate = useNavigate();
@@ -171,12 +171,41 @@ const PrivacyPolicy: React.FC = () => {
             </section>
             <hr className="my-4" />
             <section>
-              <h2 className="text-xl font-bold mb-2 text-[#7650e3]">11. Contact Us</h2>
-              <p>If you have questions, concerns, or requests, contact us:</p>
-              <p>📧 support@omnishare.ai</p>
-              <p>🌐 www.omnishare.ai</p>
-              <p>📍 United Arab Emirates</p>
-            </section>
+  <h2 className="text-xl font-bold mb-2 text-[#7650e3]">11. Contact Us</h2>
+  <p>If you have questions, concerns, or requests, contact us:</p>
+  
+  <ul className="mt-3 space-y-2">
+    <li>
+      <a 
+        href="mailto:support@omnishare.ai" 
+        className="text-[#7650e3] hover:underline"
+      >
+        <Mail className="w-4 h-4 inline mr-2" /> support@omnishare.ai
+      </a>
+    </li>
+    <li>
+      <a 
+        href="https://www.omnishare.ai" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="text-[#7650e3] hover:underline"
+      >
+        <Globe className="w-4 h-4 inline mr-2" /> www.omnishare.ai
+      </a>
+    </li>
+    <li>
+  <a 
+    href="https://maps.google.com/?q=United+Arab+Emirates" 
+    target="_blank" 
+    rel="noopener noreferrer"
+    className="text-[#7650e3] hover:underline"
+  >
+    <MapPin className="w-4 h-4 inline mr-2" />
+    <> </>United Arab Emirates
+  </a>
+</li>
+  </ul>
+</section>
        
 
         {/* Footer */}

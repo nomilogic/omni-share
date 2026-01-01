@@ -1,5 +1,5 @@
 import React from "react";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Mail, Globe, MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Terms: React.FC = () => {
@@ -151,17 +151,56 @@ const Terms: React.FC = () => {
             </section>
             <hr className="my-4" />
             <section>
-              <h2 className="text-xl font-bold mb-2 text-[#7650e3]">13. Contact Us</h2>
-              <p className="mb-2">If you have questions or concerns about these Terms, please contact us:</p>
-              <p>📧 support@omnishare.ai</p>
-              <p>🌐 www.omnishare.ai</p>
-              <p>📍 United Arab Emirates</p>
-            </section>
+  <h2 className="text-xl font-bold mb-2 text-[#7650e3]">13. Contact Us</h2>
+  <p className="mb-2">If you have questions or concerns about these Terms, please contact us:</p>
+  <ul className="space-y-2">
+    <li>
+      <a 
+        href="mailto:support@omnishare.ai" 
+        className="text-[#7650e3] hover:underline"
+      >
+        <Mail className="w-4 h-4 inline mr-2" />
+        support@omnishare.ai
+      </a>
+    </li>
+    <li>
+      <a 
+        href="https://www.omnishare.ai" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="text-[#7650e3] hover:underline"
+      >
+        <Globe className="w-4 h-4 inline mr-2" />
+        www.omnishare.ai
+      </a>
+    </li>
+    <li>
+      <a 
+        href="https://maps.google.com/?q=United+Arab+Emirates" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="text-[#7650e3] hover:underline"
+      >
+        <MapPin className="w-4 h-4 inline mr-2" />
+        United Arab Emirates
+      </a>
+    </li>
+  </ul>
+</section>
             <hr className="my-4" />
             <section>
-              <h2 className="text-xl font-bold mb-2 text-[#7650e3]">14. Entire Agreement</h2>
-              <p>These Terms of Service, along with our Privacy Policy, constitute the entire agreement between you and OmniShare. Any other agreements or representations are void.</p>
-            </section>
+  <h2 className="text-xl font-bold mb-2 text-[#7650e3]">14. Entire Agreement</h2>
+  <p>
+    These Terms of Service, along with our{" "}
+    <a 
+      href="/privacy" 
+      className="text-[#7650e3] hover:underline"
+    >
+      Privacy Policy
+    </a>
+    , constitute the entire agreement between you and OmniShare. Any other agreements or representations are void.
+  </p>
+</section>
       
 
         {/* Footer */}

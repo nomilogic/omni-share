@@ -113,10 +113,16 @@ const ReferralSection: FC<Props> = ({ close }) => {
               )}
             </div>
 
-            <button className="flex items-center rounded-md gap-2 transition-colors text-sm font-semibold text-white border-2 border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] py-2 px-3 ">
-              <Share2 className="w-[16px] h-[16px]" />
-              {t("share")}
-            </button>
+            <button 
+  onClick={() => {
+    navigator.clipboard.writeText(window.location.href);
+    alert("Link copied!"); // ya toast notification use karein
+  }}
+  className="flex w-fit items-center rounded-md gap-2 transition-colors text-md font-semibold text-[#7650e3] border-2 border-[#7650e3] bg-white hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] py-2 px-3"
+>
+  <Share2 className="w-[18px] h-[18px]" />
+  {t("share")}
+</button>
           </div>
         </div>
       </div>
@@ -162,10 +168,16 @@ const ReferralSection: FC<Props> = ({ close }) => {
               </p>
             )}
           </div>
-          <button className="flex w-fit items-center rounded-md gap-2 transition-colors text-md font-semibold text-[#7650e3] border-2 border-[#7650e3] bg-white hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] py-2 px-3 ">
-            <Share2 className="w-[18px] h-[18px]" />
-            {t("share")}
-          </button>
+          <button 
+  onClick={() => {
+    navigator.clipboard.writeText(window.location.href);
+    alert("Link copied!"); // ya toast notification use karein
+  }}
+  className="flex w-fit items-center rounded-md gap-2 transition-colors text-md font-semibold text-[#7650e3] border-2 border-[#7650e3] bg-white hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] py-2 px-3"
+>
+  <Share2 className="w-[18px] h-[18px]" />
+  {t("share")}
+</button>
         </div>
         {/* Image section */}
         <img
