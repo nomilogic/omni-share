@@ -59,6 +59,7 @@ interface ImageTemplateEditorProps {
   onCancel: () => void;
   isVideoThumbnail?: boolean;
   aspectRatio?: string; // Aspect ratio from ContentInput (e.g., '1:1', '16:9', '9:16')
+  profileData?: any; // Profile info for data binding
 }
 
 export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
@@ -68,6 +69,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
   onCancel,
   isVideoThumbnail = false,
   aspectRatio = "16:9",
+  profileData: externalProfileData,
 }) => {
   const stageRef = useRef<Konva.Stage>(null);
   const transformerRef = useRef<Konva.Transformer>(null);
@@ -124,6 +126,36 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
   }>({ width: 800, height: 800 });
   const [zoomLevel, setZoomLevel] = useState<number>(1);
   const [maxZoom, setMaxZoom] = useState<number>(1);
+  const [profileBindingData, setProfileBindingData] = useState<any>(externalProfileData || {});
+
+  // Load profile data on mount if not provided
+  useEffect(() => {
+    const loadProfileData = async () => {
+      if (!externalProfileData) {
+        try {
+          const result = await getCurrentUser();
+          if (result?.user?.profile) {
+            const profile = result.user.profile as any;
+            setProfileBindingData({
+              email: profile.email || result.user?.email || '',
+              website: profile.publicUrl || profile.website || '',
+              companyName: profile.companyName || profile.name || '',
+              brandName: profile.brandName || '',
+              fullName: profile.fullName || profile.name || '',
+              phoneNumber: profile.phoneNumber || '',
+              logo: profile.brandLogo || profile.logo || profile.profileImage || '',
+            });
+            console.log('✅ Profile data loaded:', profile);
+          } else if (result?.user) {
+            console.warn('⚠️ No profile data found on user object');
+          }
+        } catch (error) {
+          console.warn('Failed to load profile data:', error);
+        }
+      }
+    };
+    loadProfileData();
+  }, [externalProfileData]);
 
   const TEMPLATES_STORAGE_KEY = "image-template-editor.templates.v1";
   const LEGACY_TEMPLATE_STORAGE_KEY = "image-template-editor.template.v1";
@@ -156,7 +188,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
 
   // Grid and snapping settings
   const [showGrid, setShowGrid] = useState<boolean>(false);
-  const [gridSize, setGridSize] = useState<number>(50);
+  const [gridSize, setGridSize] = useState<number>(1);
   const [snapToGrid, setSnapToGrid] = useState<boolean>(true);
   const [gridSettingsOpen, setGridSettingsOpen] = useState<boolean>(true);
 
@@ -1499,7 +1531,28 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
     setElements((prev) =>
       prev.map((element) => {
         if (element.id === selectedElement) {
-          const updatedElement = { ...element, ...updates };
+          let updatedElement = { ...element, ...updates };
+          
+          // If name/binding was changed, auto-populate with profile data
+          if (updates.name && element.type === 'text') {
+            const fieldValue = profileBindingData[updates.name];
+            if (fieldValue) {
+              updatedElement = { ...updatedElement, content: fieldValue };
+              console.log(`✅ Auto-populated text with profile field '${updates.name}': ${fieldValue}`);
+            }
+          }
+          
+          // If binding logo element to logo field, set the src to the image URL
+          if (updates.name === 'logo' && element.type === 'logo') {
+            const logoUrl = profileBindingData.logo;
+            if (logoUrl) {
+              updatedElement = { ...updatedElement, src: logoUrl };
+              console.log(`✅ Auto-populated logo element with brandLogo URL: ${logoUrl}`);
+            } else {
+              console.warn('⚠️ No logo URL found in profile data');
+            }
+          }
+          
           console.log("✅ Element updated:", updatedElement);
           return updatedElement;
         }
@@ -1872,13 +1925,24 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
         <div className="flex w-full overflow-y-auto p-3 md:p-4 min-h-0">
           <div className="space-y-3 md:space-y-4 w-full">
             {/* Clear All Elements */}
-            {elements.length > 0 && (
+            {
               <div className="flex items-center justify-between gap-1">
                 <label className="flex items-center gap-1 text-xs text-slate-700 select-none">
                   <input
                     type="checkbox"
                     checked={showGrid}
-                    onChange={(e) => setShowGrid(e.target.checked)}
+                    onChange={(e) => {
+                      setShowGrid(e.target.checked);
+                      setSnapToGrid(true);
+                      // When grid is on, ensure minimum 5px; when off, snap to 1 pixel
+                      if (e.target.checked) {
+                        if (gridSize < 5) {
+                          setGridSize(5);
+                        }
+                      } else {
+                        setGridSize(1);
+                      }
+                    }}
                     className="h-4 w-4"
                   />
                   Show Grid
@@ -1887,9 +1951,9 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                   <div className="flex items-center gap-1 flex-1">
                     <input
                       type="range"
-                      min="5"
+                      min="1"
                       max="100"
-                      step="5"
+                      step="1"
                       value={gridSize}
                       onChange={(e) => setGridSize(parseInt(e.target.value))}
                       className="flex-1 template-range"
@@ -1912,7 +1976,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                   <span>Clear All</span>
                 </button>
               </div>
-            )}
+            }
 
             {/* Templates Section */}
             <div className="border border-gray-200 rounded-md p-2 md:p-3 bg-white flex flex-col max-h-[40vh]">
@@ -2003,7 +2067,6 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                     </p>
                   ) : (
                     <div className="space-y-2 overflow-y-auto min-h-0 flex-1">
-
                       <div className="grid grid-cols-2 gap-2">
                         {[...savedTemplates]
                           .sort((a, b) =>
@@ -2123,7 +2186,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
 
             {/* Selected Element Properties */}
             {selectedElementData && (
-              <div className="border border-gray-200 rounded-md p-3 md:p-4 bg-white">
+              <div className="border border-gray-200 rounded-md p-2 md:p-3 bg-gray-50">
                 <button
                   type="button"
                   onClick={() => setPropertiesOpen((prev) => !prev)}
@@ -2145,7 +2208,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
 
                 {propertiesOpen && (
                   <>
-                    <div className="flex items-center justify-end mb-3 md:mb-4 mt-3">
+                    <div className="flex items-center gap-1 mb-2 md:mb-3 mt-2 md:mt-3">
                       {/* Element Control Buttons */}
                       <div className="flex items-center space-x-1">
                         <button
@@ -2177,44 +2240,155 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                           <Trash className="w-4 h-4" />
                         </button>
                       </div>
-                    </div>
 
-                    {/* Layer Controls */}
-                    <div className="mb-2 md:mb-3">
-                      <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5 md:mb-2">
-                        Layer Order
-                      </label>
-                      <div className="grid grid-cols-4 gap-1 md:gap-1.5">
+                      {/* Layer Order Buttons - Spread across remaining space */}
+                      <div className="flex items-center gap-1 flex-1 justify-between">
                         <button
                           onClick={bringToFront}
-                          className="p-2 bg-gray-100 text-gray-500 font-medium rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors text-xs"
+                          className="w-full p-2 bg-gray-100 text-gray-500 font-medium rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors text-xs"
                           title="Bring to Front"
                         >
                           <ChevronUp className="w-3.5 h-3.5" />
                         </button>
                         <button
                           onClick={moveUp}
-                          className="p-2 bg-gray-100 text-gray-500 font-medium rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors text-xs"
+                          className="w-full p-2 bg-gray-100 text-gray-500 font-medium rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors text-xs"
                           title="Move Up"
                         >
                           <ArrowUp className="w-3.5 h-3.5" />
                         </button>
                         <button
                           onClick={moveDown}
-                          className="p-2 bg-gray-100 text-gray-500 font-medium rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors text-xs"
+                          className="w-full p-2 bg-gray-100 text-gray-500 font-medium rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors text-xs"
                           title="Move Down"
                         >
                           <ArrowDown className="w-3.5 h-3.5" />
                         </button>
                         <button
                           onClick={sendToBack}
-                          className="p-2 bg-gray-100 text-gray-500 font-medium rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors text-xs"
+                          className="w-full p-2 bg-gray-100 text-gray-500 font-medium rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors text-xs"
                           title="Send to Back"
                         >
                           <ChevronDown className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     </div>
+
+                    {/* Profile Field Binding - Logo elements only */}
+                    {selectedElementData.type === "logo" && (
+                      <div className="mb-2 md:mb-3">
+                        <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5 md:mb-2">
+                          Bind to Profile Field
+                        </label>
+                        <select
+                          value={selectedElementData.name || ""}
+                          onChange={(e) =>
+                            updateSelectedElement({
+                              name: e.target.value || undefined,
+                            })
+                          }
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md text-xs md:text-sm"
+                        >
+                          <option value="">No binding</option>
+                          <option value="logo">Logo</option>
+                        </select>
+
+                        {/* Show preview of bound data */}
+                        {selectedElementData.name && (
+                          <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded text-xs">
+                            <p className="font-medium text-blue-900 mb-1">
+                              Preview:
+                            </p>
+                            {selectedElementData.type === "logo" && (
+                              <div>
+                                {profileBindingData.logo ? (
+                                  <>
+                                    <p className="text-blue-700 mb-1">
+                                      Logo URL:
+                                    </p>
+                                    <p className="text-blue-600 break-all text-xs font-mono max-h-12 overflow-y-auto">
+                                      {profileBindingData.logo}
+                                    </p>
+                                  </>
+                                ) : (
+                                  <p className="text-blue-700">
+                                    (no logo in profile)
+                                  </p>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        <p className="text-xs text-gray-500 mt-1">
+                          Logo will auto-populate from profile
+                        </p>
+                      </div>
+                    )}
+                    {/* Text Content last */}
+                    <div>
+                      <label className="block text-sm font-medium text-yellow-500-700 mb-1.5">
+                        Text Content
+                      </label>
+                      <textarea
+                        value={
+                          (selectedElementData as TextElement).content ?? ""
+                        }
+                        onChange={(e) =>
+                          updateSelectedElement({
+                            content:
+                              e.target.value === undefined
+                                ? ""
+                                : e.target.value,
+                          })
+                        }
+                        className="w-full px-3 py-2.5 border border-gray-300 rounded-md text-sm"
+                        rows={2}
+                        placeholder="Enter your text..."
+                      />
+                    </div>
+                    {/* Profile Field Binding - Text elements */}
+                    {selectedElementData.type === "text" && (
+                      <div className="mb-2 md:mb-3">
+                        <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5 md:mb-2">
+                          Bind to Profile Field
+                        </label>
+                        <select
+                          value={selectedElementData.name || ""}
+                          onChange={(e) =>
+                            updateSelectedElement({
+                              name: e.target.value || undefined,
+                            })
+                          }
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md text-xs md:text-sm"
+                        >
+                          <option value="">No binding</option>
+                          <option value="email">Email</option>
+                          <option value="website">Website</option>
+                          <option value="brandName">Brand Name</option>
+                          <option value="fullName">Full Name</option>
+                          <option value="phoneNumber">Phone Number</option>
+                        </select>
+
+                        {/* Show preview of bound data */}
+                        {selectedElementData.name && (
+                          <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded text-xs">
+                            <p className="font-medium text-blue-900 mb-1">
+                              Preview:
+                            </p>
+                            <p className="text-blue-700 break-words truncate max-w-xs">
+                              {profileBindingData[selectedElementData.name] ||
+                                "(empty)"}
+                            </p>
+                          </div>
+                        )}
+
+                        <p className="text-xs text-gray-500 mt-1">
+                          Element will auto-populate with profile data
+                        </p>
+                      </div>
+                    )}
+
                     {/* W H X Y Controls in one row */}
                     <div className="grid grid-cols-4 gap-1.5 md:gap-2 mb-2 md:mb-3 text-center">
                       <div>
@@ -2223,13 +2397,13 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                         </label>
                         <input
                           type="number"
-                          value={selectedElementData.width ?? ""}
+                          value={Math.round(selectedElementData.width ?? 0)}
                           onChange={(e) =>
                             updateSelectedElement({
                               width:
                                 e.target.value === ""
                                   ? 0
-                                  : parseInt(e.target.value),
+                                  : Math.round(parseInt(e.target.value)),
                             })
                           }
                           className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
@@ -2243,13 +2417,13 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                         </label>
                         <input
                           type="number"
-                          value={selectedElementData.height ?? ""}
+                          value={Math.round(selectedElementData.height ?? 0)}
                           onChange={(e) =>
                             updateSelectedElement({
                               height:
                                 e.target.value === ""
                                   ? 0
-                                  : parseInt(e.target.value),
+                                  : Math.round(parseInt(e.target.value)),
                             })
                           }
                           className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
@@ -2263,13 +2437,13 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                         </label>
                         <input
                           type="number"
-                          value={selectedElementData.x ?? ""}
+                          value={Math.round(selectedElementData.x ?? 0)}
                           onChange={(e) =>
                             updateSelectedElement({
                               x:
                                 e.target.value === ""
                                   ? 0
-                                  : parseInt(e.target.value),
+                                  : Math.round(parseInt(e.target.value)),
                             })
                           }
                           className="w-full px-2 py-1 border border-gray-300 rounded text-xs text-center"
@@ -2282,13 +2456,13 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                         </label>
                         <input
                           type="number"
-                          value={selectedElementData.y ?? ""}
+                          value={Math.round(selectedElementData.y ?? 0)}
                           onChange={(e) =>
                             updateSelectedElement({
                               y:
                                 e.target.value === ""
                                   ? 0
-                                  : parseInt(e.target.value),
+                                  : Math.round(parseInt(e.target.value)),
                             })
                           }
                           className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
@@ -2296,38 +2470,6 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                         />
                       </div>
                     </div>
-
-                    {/* Rotation Control - Shown here for non-text elements */}
-                    {selectedElementData.type !== "text" && (
-                      <div className="mb-2 md:mb-3">
-                        <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1">
-                          Rotation
-                        </label>
-                        <input
-                          type="range"
-                          min="0"
-                          max="360"
-                          value={selectedElementData.rotation ?? 0}
-                          onChange={(e) =>
-                            updateSelectedElement({
-                              rotation:
-                                e.target.value === ""
-                                  ? 0
-                                  : parseInt(e.target.value),
-                            })
-                          }
-                          className="w-full template-range"
-                          disabled={isElementLocked(selectedElement)}
-                        />
-                        <div className="flex justify-between text-xs text-gray-500 font-medium mt-1">
-                          <span>0°</span>
-                          <span className="font-medium">
-                            {selectedElementData.rotation || 0}°
-                          </span>
-                          <span>360°</span>
-                        </div>
-                      </div>
-                    )}
 
                     {selectedElementData.type === "logo" && (
                       <div className="space-y-4">
@@ -2362,7 +2504,28 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                         </div>
                         <div className="grid grid-cols-2 gap-2.5">
                           <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                            <label className="block text-sm font-medium text-slate-700">
+                              Rotation
+                            </label>
+                            <input
+                              type="range"
+                              min="0"
+                              max="360"
+                              value={selectedElementData.rotation ?? 0}
+                              onChange={(e) =>
+                                updateSelectedElement({
+                                  rotation: parseInt(e.target.value),
+                                })
+                              }
+                              className="w-full template-range"
+                              disabled={isElementLocked(selectedElement)}
+                            />
+                            <span className="text-sm text-gray-500 font-medium text-center block">
+                              {selectedElementData.rotation || 0}°
+                            </span>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-slate-700">
                               Opacity
                             </label>
                             <input
@@ -2381,37 +2544,13 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                               }
                               className="w-full template-range"
                             />
-                            <span className="text-sm text-gray-500 font-medium text-center block mt-1">
+                            <span className="text-sm text-gray-500 font-medium text-center block">
                               {Math.round(
                                 ((selectedElementData as LogoElement).opacity ??
                                   1) * 100
                               )}
                               %
                             </span>
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-2">
-                              Border Radius
-                            </label>
-                            <input
-                              type="number"
-                              value={
-                                (selectedElementData as LogoElement)
-                                  .borderRadius ?? 0
-                              }
-                              onChange={(e) =>
-                                updateSelectedElement({
-                                  borderRadius:
-                                    e.target.value === ""
-                                      ? 0
-                                      : parseInt(e.target.value),
-                                })
-                              }
-                              className="w-full px-3 py-2.5 border border-gray-300 rounded-md text-sm"
-                              placeholder="0"
-                              min="0"
-                              max="50"
-                            />
                           </div>
                         </div>
                       </div>
@@ -2460,7 +2599,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                         {/* Opacity second */}
                         <div className="grid grid-cols-2 gap-2">
                           <div>
-                            <label className="block text-xs font-medium text-slate-700 mb-1">
+                            <label className="block text-xs font-medium text-slate-700">
                               Text Opacity
                             </label>
                             <input
@@ -2479,7 +2618,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                               }
                               className="w-full template-range"
                             />
-                            <span className="text-xs text-gray-500 font-medium text-center block mt-1">
+                            <span className="text-xs text-gray-500 font-medium text-center block">
                               {Math.round(
                                 ((selectedElementData as TextElement)
                                   .textOpacity ?? 1) * 100
@@ -2488,7 +2627,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                             </span>
                           </div>
                           <div>
-                            <label className="block text-xs font-medium text-slate-700 mb-1">
+                            <label className="block text-xs font-medium text-slate-700">
                               Background Opacity
                             </label>
                             <input
@@ -2507,7 +2646,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                               }
                               className="w-full template-range"
                             />
-                            <span className="text-xs text-gray-500 font-medium text-center block mt-1">
+                            <span className="text-xs text-gray-500 font-medium text-center block">
                               {Math.round(
                                 ((selectedElementData as TextElement)
                                   .backgroundOpacity ?? 1) * 100
@@ -2517,28 +2656,6 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                           </div>
                         </div>
 
-                        {/* Text Content last */}
-                        <div>
-                          <label className="block text-sm font-medium text-yellow-500-700 mb-1.5">
-                            Text Content
-                          </label>
-                          <textarea
-                            value={
-                              (selectedElementData as TextElement).content ?? ""
-                            }
-                            onChange={(e) =>
-                              updateSelectedElement({
-                                content:
-                                  e.target.value === undefined
-                                    ? ""
-                                    : e.target.value,
-                              })
-                            }
-                            className="w-full px-3 py-2.5 border border-gray-300 rounded-md text-sm"
-                            rows={3}
-                            placeholder="Enter your text..."
-                          />
-                        </div>
                         {/* Font Family */}
                         <div>
                           <label className="block text-sm font-medium text-slate-700 mb-1.5">
@@ -2586,13 +2703,15 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                         <div className="grid grid-cols-4 gap-2 mb-3">
                           <div>
                             <label className="block text-xs font-medium text-slate-700 mb-1">
-                              Size
+                              Size (px)
                             </label>
                             <input
                               type="number"
                               value={
-                                (selectedElementData as TextElement).fontSize ??
-                                ""
+                                Math.round(
+                                  (selectedElementData as TextElement).fontSize ??
+                                    0
+                                )
                               }
                               onChange={(e) =>
                                 updateSelectedElement({
@@ -2604,7 +2723,8 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                               }
                               className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
                               min="8"
-                              max="72"
+                              max="999"
+                              step="1"
                             />
                           </div>
                           <div>
@@ -2749,43 +2869,83 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                           </div>
                         </div>
 
-                        <div>
-                          <label className="block text-sm font-medium text-slate-700 mb-2">
-                            Opacity
-                          </label>
-                          <input
-                            type="range"
-                            min="0"
-                            max="1"
-                            step="0.01"
-                            value={
-                              (selectedElementData as ShapeElement).opacity ?? 1
-                            }
-                            onChange={(e) =>
-                              updateSelectedElement({
-                                opacity: parseFloat(e.target.value),
-                              })
-                            }
-                            className="w-full template-range"
-                          />
-                          <div className="flex justify-between text-sm text-gray-500 font-medium mt-1">
-                            <span>0%</span>
-                            <span className="font-medium">
+                        <div className="grid grid-cols-2 gap-2">
+                          <div>
+                            <label className="block text-sm font-medium text-slate-700">
+                              Rotation
+                            </label>
+                            <input
+                              type="range"
+                              min="0"
+                              max="360"
+                              value={selectedElementData.rotation ?? 0}
+                              onChange={(e) =>
+                                updateSelectedElement({
+                                  rotation: parseInt(e.target.value),
+                                })
+                              }
+                              className="w-full template-range"
+                              disabled={isElementLocked(selectedElement)}
+                            />
+                            <span className="text-sm text-gray-500 font-medium text-center block">
+                              {selectedElementData.rotation || 0}°
+                            </span>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-slate-700">
+                              Opacity
+                            </label>
+                            <input
+                              type="range"
+                              min="0"
+                              max="1"
+                              step="0.01"
+                              value={
+                                (selectedElementData as ShapeElement).opacity ??
+                                1
+                              }
+                              onChange={(e) =>
+                                updateSelectedElement({
+                                  opacity: parseFloat(e.target.value),
+                                })
+                              }
+                              className="w-full template-range"
+                            />
+                            <span className="text-sm text-gray-500 font-medium text-center block">
                               {Math.round(
                                 ((selectedElementData as ShapeElement)
                                   .opacity ?? 1) * 100
                               )}
                               %
                             </span>
-                            <span>100%</span>
                           </div>
                         </div>
 
-                        {(selectedElementData as ShapeElement).shape ===
-                          "rectangle" && (
+                        <div className="grid grid-cols-3 gap-2">
                           <div>
                             <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                              Corner Radius
+                              Border
+                            </label>
+                            <input
+                              type="number"
+                              value={
+                                (selectedElementData as ShapeElement)
+                                  .borderWidth ?? 0
+                              }
+                              onChange={(e) =>
+                                updateSelectedElement({
+                                  borderWidth: parseInt(e.target.value) || 0,
+                                })
+                              }
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                              min="0"
+                              max="10"
+                              placeholder="0"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                              B-Radius
                             </label>
                             <input
                               type="number"
@@ -2795,16 +2955,34 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                               }
                               onChange={(e) =>
                                 updateSelectedElement({
-                                  borderRadius: parseInt(e.target.value),
+                                  borderRadius: parseInt(e.target.value) || 0,
                                 })
                               }
-                              className="w-full px-3 py-2.5 border border-gray-300 rounded-md text-sm"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
                               min="0"
                               max="50"
                               placeholder="0"
                             />
                           </div>
-                        )}
+                          <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                              B-Color
+                            </label>
+                            <input
+                              type="color"
+                              value={
+                                (selectedElementData as ShapeElement)
+                                  .borderColor ?? "#000000"
+                              }
+                              onChange={(e) =>
+                                updateSelectedElement({
+                                  borderColor: e.target.value,
+                                })
+                              }
+                              className="w-full h-10 border border-gray-300 rounded-md cursor-pointer"
+                            />
+                          </div>
+                        </div>
                       </div>
                     )}
                   </>
@@ -3041,7 +3219,10 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                           parseInt(textEl.fontWeight, 10) >= 600);
 
                       return (
-                        <Group {...commonGroupProps}>
+                        <Group
+                          {...commonGroupProps}
+                          name={textEl.name || el.id}
+                        >
                           {textEl.backgroundColor ? (
                             <Rect
                               x={-textEl.width / 2 - pad}
@@ -3066,6 +3247,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                             align={textEl.textAlign || "left"}
                             verticalAlign="middle"
                             opacity={textEl.textOpacity ?? 1}
+                            name={`text-${el.id}`}
                           />
                         </Group>
                       );
@@ -3078,7 +3260,11 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                         : undefined;
 
                       return (
-                        <Group {...commonGroupProps}>
+                        <Group
+                          {...commonGroupProps}
+                          name={logoEl.name || "logo"}
+                          data-field="logo"
+                        >
                           {img ? (
                             <KonvaImage
                               image={img}
@@ -3087,6 +3273,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                               width={logoEl.width}
                               height={logoEl.height}
                               opacity={logoEl.opacity ?? 1}
+                              name="logo-image"
                             />
                           ) : (
                             <Rect
@@ -3098,6 +3285,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                               stroke="#9ca3af"
                               strokeWidth={2}
                               dash={[8, 4]}
+                              name="logo-placeholder"
                             />
                           )}
                         </Group>
@@ -3107,7 +3295,10 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                     if (el.type === "shape") {
                       const shapeEl = el as ShapeElement;
                       return (
-                        <Group {...commonGroupProps}>
+                        <Group
+                          {...commonGroupProps}
+                          name={shapeEl.name || el.id}
+                        >
                           {shapeEl.shape === "circle" ? (
                             <Ellipse
                               x={0}
@@ -3115,7 +3306,10 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                               radiusX={Math.max(1, shapeEl.width / 2)}
                               radiusY={Math.max(1, shapeEl.height / 2)}
                               fill={shapeEl.color || "#000000"}
+                              stroke={shapeEl.borderColor || "#000000"}
+                              strokeWidth={shapeEl.borderWidth || 0}
                               opacity={shapeEl.opacity ?? 1}
+                              name={`shape-circle-${el.id}`}
                             />
                           ) : (
                             <Rect
@@ -3125,7 +3319,10 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                               height={shapeEl.height}
                               cornerRadius={shapeEl.borderRadius || 0}
                               fill={shapeEl.color || "#000000"}
+                              stroke={shapeEl.borderColor || "#000000"}
+                              strokeWidth={shapeEl.borderWidth || 0}
                               opacity={shapeEl.opacity ?? 1}
+                              name={`shape-rect-${el.id}`}
                             />
                           )}
                         </Group>

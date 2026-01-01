@@ -7,6 +7,7 @@ export interface TemplateElement {
   height: number;
   rotation?: number;
   zIndex: number;
+  name?: string; // Optional name for binding to profile fields (e.g., 'email', 'website', 'company', 'logo')
 }
 
 export interface TextElement extends TemplateElement {
