@@ -53,7 +53,7 @@ const ReferralSection: FC<Props> = ({ close }) => {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Inner Content Box (Jo pehle apka root div tha) */}
-        <div className="bg-white rounded-md relative w-[60.666667%] mx-auto flex flex-col py-4 overflow-hidden border border-black/50 shadow-md">
+        <div className=" w-full bg-white rounded-md relative md:w-[60.666667%] mx-auto flex flex-col py-4 overflow-hidden border border-black/50 shadow-md">
           {/* Close button top-right - Keep it absolute relative to the new container */}
           {close && (
             <button
