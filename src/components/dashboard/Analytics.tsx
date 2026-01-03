@@ -105,7 +105,7 @@ function Analytics() {
 
   return (
     // ❌ REMOVE the fragment <> </> wrapper - no longer needed
-    <div className="bg-gray-100 rounded-md p-5 h-[450px] flex flex-col">
+    <div className="bg-gray-100 rounded-md p-5 h-[450px] flex flex-col overflow-hidden">
       <div className="flex gap-3 mb-2">
         <div className="w-10 h-10 rounded-full flex items-center justify-center text-white bg-blue-600 ring-4 ring-blue-100">
           {getPlatformIcon("facebook")({ className: "w-5 h-5" })}
@@ -133,7 +133,7 @@ function Analytics() {
         </div>
       )}
 
-      <div className="flex-1 overflow-y-auto pr-2 -mr-2">
+      <div className="flex-1">
         <div className="mb-4">
           <div className="flex justify-between mb-2">
             <h4 className="font-semibold">{t("summary")}</h4>
@@ -143,7 +143,6 @@ function Analytics() {
             <Metric label={t("reach")} value={monthlyReach} loading={loading} />
             <Metric label={t("likes")} value={analytics?.summary.likes} loading={loading} />
             <Metric label={t("comments")} value={analytics?.summary.comments} loading={loading} />
-            <Metric label={t("shares")} value={analytics?.summary.shares} loading={loading} />
           </div>
         </div>
 
@@ -160,7 +159,7 @@ function Analytics() {
             </div>
           ) : topPosts.length ? (
             <div className="space-y-1">
-              {topPosts.slice(0, 3).map((post) => (
+              {topPosts.slice(0, 2).map((post) => (
                 <div
                   key={post?.id}
                   className="w-full text-left text-sm text-blue-600 rounded truncate"
@@ -178,7 +177,7 @@ function Analytics() {
       {/* View Details Button - 👈 CHANGED onClick */}
       <button
         onClick={handleViewDetails}
-        className="mt-4 w-full py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700"
+        className="w-full text-white py-2.5 px-4 rounded-md font-semibold text-md transition-all border-2 border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
       >
         {t("view_details")}
       </button>

@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useAppContext } from "../context/AppContext";
 const PROFILE_FIELDS = [
   "fullName",
   "phoneNumber",
@@ -17,6 +18,9 @@ const PROFILE_FIELDS = [
   "keyOutcomes",
   "postingStyle",
 ];
+
+
+
 
 const getProgressColor = (progress: number) => {
   if (progress < 50) {
@@ -71,12 +75,14 @@ export function AvatarWithProgress({
   const strokeDashoffset = circumference - (progress / 100) * circumference;
 
   const [isHovered, setIsHovered] = useState(false);
+  const {  setProfileEditing } = useAppContext();
 
   return (
     <div
       className="relative flex items-center justify-center cursor-pointer"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={() => setProfileEditing(true)}
     >
       {/* Tooltip */}
       {isHovered && (
