@@ -94,7 +94,7 @@ function RecentPosts({ post }: any) {
 
       <button
         onClick={() => navigate("/content")}
-        className="w-full text-white py-2.5 px-4 rounded-md font-semibold text-md transition-all border-2 border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] mt-4"
+        className="w-full text-white py-2.5 px-4 rounded-md font-semibold text-md transition-all   bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] mt-4"
       >
         {t("create_post")}
       </button>

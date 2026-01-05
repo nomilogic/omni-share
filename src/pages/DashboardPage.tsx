@@ -229,8 +229,6 @@ export const DashboardPage: React.FC = () => {
                   badge={userPlan}
                   subtitle={`Renewing on: ${planRenewalDate}`}
                   showicon2={true}
-                  // pass buttonText and onButtonClick only when condition is true,
-                  // otherwise pass an empty string so StatsCard won't render the button
                   {...(shouldShowUpgrade
                     ? {
                         buttonText: t("upgrade"),
@@ -254,7 +252,6 @@ export const DashboardPage: React.FC = () => {
                   stats={referralCoin.toLocaleString()}
                   subtitle={t("referral_earn_message")}
                   buttonText={t("refer_earn")}
-                  // open referral modal when button clicked
                   onButtonClick={handleReferralClick}
                 />
               </div>
