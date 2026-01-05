@@ -13,7 +13,6 @@ import { useTranslation } from "react-i18next";
 import API from "@/services/api";
 import { useModal } from "../context2/ModalContext";
 import { TwoFASetupModal } from "@/components/TwoFASetupModal";
-import { notify } from "@/utils/toast";
 import { ProfileFormData } from "@/components/profileFormSchema";
 
 export const DashboardPage: React.FC = () => {
@@ -172,56 +171,55 @@ export const DashboardPage: React.FC = () => {
       {!isEditing && !isPasswordEditing && (
         <div className="min-h-screen my-10">
           <main className="max-w-8xl mx-auto  flex flex-col gap-y-8 ">
-            <div className=" w-full max-w-5xl  mx-auto bg-white rounded-2xl px-4 py-4   transition-shadow duration-300">
-              <div className="flex justify-between items-center mb-3">
-                <h3 className="text-base font-semibold text-gray-900">
-                  {getProgressTitle(progress)}
-                </h3>
-                <span className="text-base font-semibold text-gray-700">
-                  {progress}%
-                </span>
-              </div>
-
-              <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
-                <div
-                  className="h-full rounded-full transition-all duration-700 ease-out shadow-inner"
-                  style={{
-                    width: `${progress}%`,
-                    backgroundColor: getProgressColor(progress),
-                  }}
-                />
-              </div>
-
-              {progress < 100 && (
-                <p className="mt-4 text-sm text-gray-500 leading-relaxed">
-                  Complete your profile for better, personalized
-                  recommendations.
-                </p>
-              )}
-
-              {progress === 100 && (
-                <p className="mt-4 text-sm font-medium text-purple-700 flex items-center gap-2">
-                  <svg
-                    className="w-5 h-5"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  Profile completed — thank you!
-                </p>
-              )}
-            </div>
             <div className="bg-gray-100  lg:px-4 px-3 py-4 rounded-md flex flex-col gap-4">
               <ProfileCard
                 setTwoFactor={setTwoFactor}
                 isTwoFactor={isTwoFactor}
               />
+              <div className=" w-full max-w-5xl  mx-auto bg-white rounded-2xl px-4 py-4   transition-shadow duration-300">
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="text-base font-semibold text-gray-900">
+                    {getProgressTitle(progress)}
+                  </h3>
+                  <span className="text-base font-semibold text-gray-700">
+                    {progress}%
+                  </span>
+                </div>
 
+                <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
+                  <div
+                    className="h-full rounded-full transition-all duration-700 ease-out shadow-inner"
+                    style={{
+                      width: `${progress}%`,
+                      backgroundColor: getProgressColor(progress),
+                    }}
+                  />
+                </div>
+
+                {progress < 100 && (
+                  <p className="mt-4 text-sm text-gray-500 leading-relaxed">
+                    Complete your profile for better, personalized
+                    recommendations.
+                  </p>
+                )}
+
+                {progress === 100 && (
+                  <p className="mt-4 text-sm font-medium text-purple-700 flex items-center gap-2">
+                    <svg
+                      className="w-5 h-5"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    Profile completed — thank you!
+                  </p>
+                )}
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <StatsCard
                   iconName="crown"
@@ -261,7 +259,7 @@ export const DashboardPage: React.FC = () => {
               <Analytics />
               <NewsUpdates />
             </div>
-            <div>
+            <div className="hidden md:block">
               <ReferralSection />
             </div>
           </main>

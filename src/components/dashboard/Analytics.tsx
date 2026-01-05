@@ -133,9 +133,11 @@ function Analytics() {
           <h3 className="text-lg font-bold text-gray-900 truncate">
             {analytics.page.name}
           </h3>
-          <p className="text-sm text-gray-600">
-            {analytics.page.followers.toLocaleString()} {t("followers")}
-          </p>
+          {analytics.page.followers !== 0 && (
+            <p className="text-sm text-gray-600">
+              {analytics.page.followers.toLocaleString()} {t("followers")}
+            </p>
+          )}
         </div>
       ) : (
         <p className="text-sm text-gray-500 mb-3">
@@ -169,7 +171,7 @@ function Analytics() {
         <div>
           <h4 className="font-semibold text-sm mb-2">{t("top_posts")}</h4>
           {loading ? (
-            <div className="space-y-1">
+            <div className="space-y-2">
               {[1, 2, 3].map((i) => (
                 <div
                   key={i}
@@ -178,7 +180,7 @@ function Analytics() {
               ))}
             </div>
           ) : topPosts.length ? (
-            <div className="space-y-1">
+            <div className="space-y-2">
               {topPosts.slice(0, 3).map((post) => (
                 <div
                   key={post.id}

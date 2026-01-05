@@ -115,10 +115,12 @@ const AnalyticsModal: FC<AnalyticsModalProps> = ({
               <>
                 <div className="text-center mb-3">
                   <h4 className="font-bold">{analytics.page.name}</h4>
-                  <p className="text-sm text-gray-600">
-                    {analytics.page.category} • {analytics.page.followers}{" "}
-                    {t("followers")}
-                  </p>
+                  {analytics.platform === "facebook" && (
+                    <p className="text-sm text-gray-600">
+                      {analytics.page.category} • {analytics.page.followers}{" "}
+                      {t("followers")}
+                    </p>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-3 gap-3">
@@ -139,11 +141,13 @@ const AnalyticsModal: FC<AnalyticsModalProps> = ({
                   />
                 </div>
 
-                <div className="grid grid-cols-3 gap-3 mt-3">
-                  <ReachCard period={t("today")} value={dailyReach} />
-                  <ReachCard period={t("week")} value={weeklyReach} />
-                  <ReachCard period={t("month")} value={monthlyReach} />
-                </div>
+                {analytics.platform === "facebook" && (
+                  <div className="grid grid-cols-3 gap-3 mt-3">
+                    <ReachCard period={t("today")} value={dailyReach} />
+                    <ReachCard period={t("week")} value={weeklyReach} />
+                    <ReachCard period={t("month")} value={monthlyReach} />
+                  </div>
+                )}
               </>
             )
           )}
