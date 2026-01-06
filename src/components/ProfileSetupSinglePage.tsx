@@ -604,7 +604,7 @@ const ProfileSetupSinglePage: React.FC = () => {
   };
   return (
     <div className="bg-transparent md:px-0 px-3">
-      <div className=" flex flex-col md:flex-row-reverse justify-between items-between w- md:py-4 py-3 ">
+      <div className=" flex flex-col md:flex-row-reverse justify-between items-between  md:pb-4 pb-3 ">
         <div className="w-full">
           <div className="flex md:justify-between md:flex-row flex-col-reverse items-center gap-2 mb-2">
             <h1 className="text-3xl font-bold text-black  w-full">

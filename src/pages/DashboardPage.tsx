@@ -242,8 +242,8 @@ export const DashboardPage: React.FC = () => {
       )}
 
       {isEditing && (
-        <div className="relative w-full">
-          <div className="p-0 w-full">
+        <div className="relative w-full my-10">
+          <div className="p-0 w-full bg-gray-100  lg:px-4 px-3 py-4 rounded-md">
             <ProfileSetupSinglePage />
           </div>
         </div>

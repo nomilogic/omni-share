@@ -22,18 +22,17 @@ function RecentPosts({ post }: any) {
     "tiktok",
   ];
 
-  const [selectedPlatform, setSelectedPlatform] = useState<Platform | "all">(
-    allPosts[0]?.platform || "facebook"
+  const [selectedPlatform, setSelectedPlatform] = useState<Platform | "">(
+    allPosts[0]?.platform || ""
   );
 
   useEffect(() => {
-    setSelectedPlatform(allPosts[0]?.platform || "facebook");
+    setSelectedPlatform(allPosts[0]?.platform || "");
   }, [allPosts]);
 
   const topPost = allPosts
     .filter(
-      (p: any) =>
-        selectedPlatform === "facebook" || p.platform === selectedPlatform
+      (p: any) => selectedPlatform === "" || p.platform === selectedPlatform
     )
     .sort(
       (a: any, b: any) =>
@@ -42,10 +41,9 @@ function RecentPosts({ post }: any) {
 
   const {
     content = "",
-    postUrl = "",
     metadata: { title = "", description = "", image } = {},
   } = topPost || {};
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   console.log("topPost", topPost);
   return (
     <div className="bg-gray-100 rounded-md p-5 flex flex-col h-[450px] w-full">

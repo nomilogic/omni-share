@@ -24,13 +24,12 @@ function NewsUpdates() {
 
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  // Auto-scroll effect
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 5000); // change slide every 3 seconds
+    }, 5000);
 
-    return () => clearInterval(interval); // cleanup on unmount
+    return () => clearInterval(interval);
   }, [slides.length]);
 
   return (
