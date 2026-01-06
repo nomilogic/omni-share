@@ -11,7 +11,9 @@ function ProfileCard() {
   const { openModal } = useModal();
 
   const fullName =
-    state?.user?.profile?.fullName || state?.user?.user_metadata?.name || "User";
+    state?.user?.profile?.fullName ||
+    state?.user?.user_metadata?.name ||
+    "User";
   const email = state?.user?.email || "user@example.com";
 
   return (
