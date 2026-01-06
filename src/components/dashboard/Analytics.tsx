@@ -49,26 +49,20 @@ function Analytics() {
   const { t } = useTranslation();
   const { openModal } = useModal();
 
-<<<<<<< HEAD
   const [analytics, setAnalytics] = useState<any>([]);
-=======
   const [analyticsList, setAnalyticsList] = useState<AnalyticsData[]>([]);
   const [selectedPlatform, setSelectedPlatform] =
     useState<Platform>("facebook");
->>>>>>> 38816905e32c2c6740212a8d34d0f658ac148b98
   const [loading, setLoading] = useState(false);
 
   // Fetch analytics for all platforms
   const fetchAnalytics = async () => {
     try {
       setLoading(true);
-<<<<<<< HEAD
       const res = await API.facebookAnalytics();
       setAnalytics(res?.data || []);
-=======
       const res = await API.facebookAnalytics(); // API should return array of analytics per platform
       setAnalyticsList(res?.data?.data || []);
->>>>>>> 38816905e32c2c6740212a8d34d0f658ac148b98
     } catch (err) {
       console.error("Analytics Error:", err);
     } finally {
@@ -80,11 +74,8 @@ function Analytics() {
     fetchAnalytics();
   }, []);
 
-<<<<<<< HEAD
-=======
   // Get analytics for selected platform
   const analytics = analyticsList.find((a) => a.platform === selectedPlatform);
->>>>>>> 38816905e32c2c6740212a8d34d0f658ac148b98
   const topPosts = analytics?.top_posts?.posts || [];
 
   const getReachByPeriod = (period: "day" | "week" | "days_28") => {
@@ -165,10 +156,8 @@ function Analytics() {
 
           <div className="space-y-1">
             <Metric label={t("reach")} value={monthlyReach} loading={loading} />
-<<<<<<< HEAD
             <Metric label={t("likes")} value={analytics?.summary?.likes} loading={loading} />
             <Metric label={t("comments")} value={analytics?.summary?.comments} loading={loading} />
-=======
             <Metric
               label={t("likes")}
               value={analytics?.summary.likes}
@@ -179,7 +168,6 @@ function Analytics() {
               value={analytics?.summary.comments}
               loading={loading}
             />
->>>>>>> 38816905e32c2c6740212a8d34d0f658ac148b98
           </div>
         </div>
 
