@@ -53,7 +53,7 @@ function Analytics() {
   const { t } = useTranslation();
   const { openModal } = useModal(); // 👈 ADD THIS
 
-  const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
+  const [analytics, setAnalytics] = useState<any>([]);
   const [loading, setLoading] = useState(false);
   // ❌ REMOVE THESE - no longer needed
   // const [selectedPost, setSelectedPost] = useState<TopPost | null>(null);
@@ -63,7 +63,7 @@ function Analytics() {
     try {
       setLoading(true);
       const res = await API.facebookAnalytics();
-      setAnalytics(res?.data || null);
+      setAnalytics(res?.data || []);
     } catch (err) {
       console.error("Analytics Error:", err);
     } finally {
@@ -75,7 +75,7 @@ function Analytics() {
     fetchAnalytics();
   }, []);
 
-  const topPosts = analytics?.top_posts.posts || [];
+  const topPosts = analytics?.top_posts?.posts || [];
 
   const getReachByPeriod = (period: "day" | "week" | "days_28") => {
     const insight = analytics?.insights?.find((i) => i?.period === period);
@@ -141,8 +141,8 @@ function Analytics() {
 
           <div className="space-y-2">
             <Metric label={t("reach")} value={monthlyReach} loading={loading} />
-            <Metric label={t("likes")} value={analytics?.summary.likes} loading={loading} />
-            <Metric label={t("comments")} value={analytics?.summary.comments} loading={loading} />
+            <Metric label={t("likes")} value={analytics?.summary?.likes} loading={loading} />
+            <Metric label={t("comments")} value={analytics?.summary?.comments} loading={loading} />
           </div>
         </div>
 
