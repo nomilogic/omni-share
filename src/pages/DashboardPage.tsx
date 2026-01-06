@@ -13,7 +13,6 @@ import { useTranslation } from "react-i18next";
 import API from "@/services/api";
 import { useModal } from "../context2/ModalContext";
 import { TwoFASetupModal } from "@/components/TwoFASetupModal";
-import { notify } from "@/utils/toast";
 import { ProfileFormData } from "@/components/profileFormSchema";
 
 export const DashboardPage: React.FC = () => {
@@ -245,20 +244,14 @@ export const DashboardPage: React.FC = () => {
                   onButtonClick={() => navigate("/pricing?tab=addons")}
                 />
 
-                {/* ✅ Hide 3rd card on mobile */}
-                <div className="hidden md:block">
-                  <StatsCard
-                    iconName="share"
-                    title={t("referral_coins")}
-                    stats={referralCoin.toLocaleString()}
-                    subtitle={t("referral_earn_message")}
-                    buttonText={t("refer_earn")}
-                    onButtonClick={handleReferralClick}
-                  />
-                </div>
-              </div>
-              <div className="h-[480px] block md:hidden">
-                <ReferralSection className="h-full" />
+                <StatsCard
+                  iconName="share"
+                  title={t("referral_coins")}
+                  stats={referralCoin.toLocaleString()}
+                  subtitle={t("referral_earn_message")}
+                  buttonText={t("refer_earn")}
+                  onButtonClick={handleReferralClick}
+                />
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

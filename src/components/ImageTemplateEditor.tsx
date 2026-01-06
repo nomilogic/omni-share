@@ -37,6 +37,7 @@ import {
   Trash,
   Lock,
   Unlock,
+  RotateCcw,
   Circle,
   Plus,
   Monitor,
@@ -682,6 +683,29 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
     };
   };
 
+  // Calculate scaled dimensions to fit image inside canvas while maintaining aspect ratio
+  const getScaledDimensions = (imgWidth: number, imgHeight: number, canvasWidth: number, canvasHeight: number) => {
+    // If image is smaller than canvas in both dimensions, keep original size
+    if (imgWidth <= canvasWidth && imgHeight <= canvasHeight) {
+      return { width: imgWidth, height: imgHeight };
+    }
+
+    const imgAspect = imgWidth / imgHeight;
+    const canvasAspect = canvasWidth / canvasHeight;
+
+    if (imgAspect > canvasAspect) {
+      // Image is wider, scale by width
+      const scaledWidth = canvasWidth;
+      const scaledHeight = canvasWidth / imgAspect;
+      return { width: scaledWidth, height: scaledHeight };
+    } else {
+      // Image is taller, scale by height
+      const scaledHeight = canvasHeight;
+      const scaledWidth = canvasHeight * imgAspect;
+      return { width: scaledWidth, height: scaledHeight };
+    }
+  };
+
   type AnyElement = TextElement | LogoElement | ShapeElement;
 
   const updateElementById = useCallback(
@@ -814,6 +838,15 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
       img.onerror = null;
     };
   }, [imageUrl, aspectRatio, selectedTemplate]);
+
+  // Update background image dimensions when image loads
+  useEffect(() => {
+    if (!imageDimensions) return;
+
+    const { width, height } = getScaledDimensions(imageDimensions.width, imageDimensions.height, canvasDimensions.width, canvasDimensions.height);
+
+    setElements(prev => prev.map(el => el.id === "background-image" ? { ...el, width, height } : el));
+  }, [imageDimensions, canvasDimensions]);
 
   useEffect(() => {
     // Preload logo images for Konva rendering
@@ -1362,6 +1395,28 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
     });
   };
 
+  // Reset element dimensions to original size
+  const resetElementDimensions = () => {
+    if (!selectedElement) return;
+
+    const element = elements.find(el => el.id === selectedElement);
+    if (!element || element.type !== "logo" || element.id === "background-image") return;
+
+    const logoElement = element as LogoElement;
+    if (!logoElement.src) return;
+
+    const img = logoImages[logoElement.src];
+    if (!img) return;
+
+    // Use scaled dimensions to fit inside canvas while maintaining aspect ratio
+    const { width: newWidth, height: newHeight } = getScaledDimensions(img.width, img.height, canvasDimensions.width, canvasDimensions.height);
+
+    updateSelectedElement({
+      width: newWidth,
+      height: newHeight,
+    });
+  };
+
   // Keyboard movement for selected element
   useEffect(() => {
     if (!selectedElement) return;
@@ -1751,8 +1806,6 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
       fontFamily: "Arial",
       color: "#ffeb3b",
       textAlign: "center",
-      backgroundColor: "#000",
-      backgroundOpacity: 0.8,
       textOpacity: 1,
       padding: 2,
       borderRadius: 0,
@@ -1850,10 +1903,10 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
       const selectedLogoElement = selectedElement && elements.find((el) => el.id === selectedElement && el.type === "logo");
       
       if (selectedLogoElement) {
-        // Update existing selected logo element
-        handleLogoUploadWithId(file, selectedElement);
+        // Update existing selected logo element - do not scale
+        handleLogoUploadWithId(file, selectedElement, false);
       } else {
-        // Create new logo element
+        // Create new logo element - scale to fit
         const cw = canvasDimensions.width;
         const ch = canvasDimensions.height;
         if (!cw || !ch) return;
@@ -1882,54 +1935,95 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
         setElements((prev) => [...prev, newElement]);
         setSelectedElement(newElementId);
 
-        // Upload the image with the new element ID
-        handleLogoUploadWithId(file, newElementId);
+        // Upload the image with the new element ID - scale it
+        handleLogoUploadWithId(file, newElementId, true);
       }
     }
     // Reset file input
     if (e.target) e.target.value = "";
   };
 
-  const handleLogoUploadWithId = async (file: File, elementId: string) => {
-    console.log("🚀 Starting logo upload for element:", elementId, "File:", file.name);
+  const handleLogoUploadWithId = async (file: File, elementId: string, isNewElement: boolean = true) => {
+    console.log("🚀 Starting logo upload for element:", elementId, "File:", file.name, "Is new element:", isNewElement);
     setLogoUploading(true);
-    try {
-      const user = await getCurrentUser();
-      if (user?.user?.id) {
-        console.log("📤 Uploading logo to server...");
-        const logoUrl = await uploadMedia(file, user.user.id);
-        console.log("✅ Logo uploaded successfully:", logoUrl);
-        setElements((prev) =>
-          prev.map((el) =>
-            el.id === elementId ? { ...el, src: logoUrl } : el
-          )
-        );
+
+    // First, load the image to get its dimensions
+    const img = new Image();
+    img.onload = async () => {
+      console.log("📏 Image loaded, dimensions:", img.width, "x", img.height);
+
+      // Calculate dimensions based on whether it's a new element or update
+      let finalWidth: number;
+      let finalHeight: number;
+
+      if (isNewElement) {
+        // For new elements (from toolbar), scale to fit within canvas
+        const { width: scaledWidth, height: scaledHeight } = getScaledDimensions(img.width, img.height, canvasDimensions.width, canvasDimensions.height);
+        finalWidth = scaledWidth;
+        finalHeight = scaledHeight;
+        console.log("📐 Scaled dimensions for new element:", finalWidth, "x", finalHeight);
       } else {
+        // For existing elements (from properties panel), retain current scale/dimensions
+        const currentElement = elements.find(el => el.id === elementId);
+        if (currentElement) {
+          finalWidth = currentElement.width;
+          finalHeight = currentElement.height;
+          console.log("📐 Retained current dimensions for existing element:", finalWidth, "x", finalHeight);
+        } else {
+          // Fallback to original dimensions if element not found
+          finalWidth = img.width;
+          finalHeight = img.height;
+          console.log("📐 Fallback to original dimensions:", finalWidth, "x", finalHeight);
+        }
+      }
+
+      try {
+        const user = await getCurrentUser();
+        if (user?.user?.id) {
+          console.log("📤 Uploading logo to server...");
+          const logoUrl = await uploadMedia(file, user.user.id);
+          console.log("✅ Logo uploaded successfully:", logoUrl);
+          setElements((prev) =>
+            prev.map((el) =>
+              el.id === elementId ? { ...el, src: logoUrl, width: finalWidth, height: finalHeight } : el
+            )
+          );
+        } else {
+          // Fallback to local URL
+          console.log("🔄 No user found, using local URL fallback");
+          const localUrl = URL.createObjectURL(file);
+          console.log("📎 Created local URL:", localUrl);
+          setElements((prev) =>
+            prev.map((el) =>
+              el.id === elementId ? { ...el, src: localUrl, width: finalWidth, height: finalHeight } : el
+            )
+          );
+        }
+      } catch (error) {
+        console.error("❌ Error uploading logo:", error);
         // Fallback to local URL
-        console.log("🔄 No user found, using local URL fallback");
+        console.log("🔄 Using local URL fallback due to upload error");
         const localUrl = URL.createObjectURL(file);
-        console.log("📎 Created local URL:", localUrl);
+        console.log("📎 Created fallback local URL:", localUrl);
         setElements((prev) =>
           prev.map((el) =>
-            el.id === elementId ? { ...el, src: localUrl } : el
+            el.id === elementId ? { ...el, src: localUrl, width: finalWidth, height: finalHeight } : el
           )
         );
+      } finally {
+        setLogoUploading(false);
+        console.log("🏁 Logo upload process completed");
       }
-    } catch (error) {
-      console.error("❌ Error uploading logo:", error);
-      // Fallback to local URL
-      console.log("🔄 Using local URL fallback due to upload error");
-      const localUrl = URL.createObjectURL(file);
-      console.log("📎 Created fallback local URL:", localUrl);
-      setElements((prev) =>
-        prev.map((el) =>
-          el.id === elementId ? { ...el, src: localUrl } : el
-        )
-      );
-    } finally {
+    };
+
+    img.onerror = () => {
+      console.error("❌ Failed to load image for dimension calculation");
       setLogoUploading(false);
-      console.log("🏁 Logo upload process completed");
-    }
+    };
+
+    // Start loading the image
+    const localUrl = URL.createObjectURL(file);
+    img.src = localUrl;
   };
 
   const exportImage = async () => {
@@ -2290,7 +2384,9 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                   className="w-full flex items-center justify-between"
                 >
                   <h4 className="text-xs md:text-sm font-semibold text-slate-900">
-                    {selectedElementData.type === "logo"
+                    {selectedElement === "background-image"
+                      ? "Background "
+                      : selectedElementData.type === "logo"
                       ? "Image"
                       : selectedElementData.type.charAt(0).toUpperCase() +
                         selectedElementData.type.slice(1)}{" "}
@@ -2328,6 +2424,16 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                             <Unlock className="w-4 h-4" />
                           )}
                         </button>
+                        {selectedElementData.type === "logo" && (
+                          <button
+                            onClick={resetElementDimensions}
+                            className="p-2 rounded-md bg-blue-100 text-blue-600 hover:bg-blue-200 transition-colors"
+                            title="Reset to Original Size"
+                            type="button"
+                          >
+                            <RotateCcw className="w-4 h-4" />
+                          </button>
+                        )}
                         {selectedElement !== "background-image" && (
                           <button
                             onClick={deleteSelectedElement}
@@ -2373,8 +2479,8 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                       </div>
                     </div>
 
-                    {/* Profile Field Binding - Logo elements only */}
-                    {selectedElementData.type === "logo" && (
+                    {/* Profile Field Binding - Logo elements only (excluding background) */}
+                    {selectedElementData.type === "logo" && selectedElement !== "background-image" && (
                       <div className="mb-2 md:mb-3">
                         <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5 md:mb-2">
                           Bind to Profile Field
@@ -2425,7 +2531,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                       </div>
                     )}
                     {/* Text Content last */}
-                    <div>
+                   {selectedElementData.type === "text" && <div>
                       <label className="block text-sm font-medium text-yellow-500-700 mb-1.5">
                         Text Content
                       </label>
@@ -2445,7 +2551,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                         rows={2}
                         placeholder="Enter your text..."
                       />
-                    </div>
+                    </div>}
                     {/* Profile Field Binding - Text elements */}
                     {selectedElementData.type === "text" && (
                       <div className="mb-2 md:mb-3">
@@ -2570,7 +2676,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                       </div>
                     </div>
 
-                    {selectedElementData.type === "logo" && (
+                    {selectedElementData.type === "logo" && selectedElement !== "background-image" && (
                       <div className="space-y-4">
                         <div>
                           <label className="block text-sm font-medium text-slate-700 mb-2">
@@ -2655,13 +2761,111 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                       </div>
                     )}
 
+                    {/* Background Image Controls - Rotation and Opacity only */}
+                    {selectedElement === "background-image" && (
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-2 gap-2.5">
+                          <div>
+                            <label className="block text-sm font-medium text-slate-700">
+                              Rotation
+                            </label>
+                            <input
+                              type="range"
+                              min="0"
+                              max="360"
+                              value={selectedElementData.rotation ?? 0}
+                              onChange={(e) =>
+                                updateSelectedElement({
+                                  rotation: parseInt(e.target.value),
+                                })
+                              }
+                              className="w-full template-range"
+                              disabled={isElementLocked(selectedElement)}
+                            />
+                            <span className="text-sm text-gray-500 font-medium text-center block">
+                              {selectedElementData.rotation || 0}°
+                            </span>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-slate-700">
+                              Opacity
+                            </label>
+                            <input
+                              type="range"
+                              min="0"
+                              max="1"
+                              step="0.01"
+                              value={
+                                (selectedElementData as LogoElement).opacity ??
+                                1
+                              }
+                              onChange={(e) =>
+                                updateSelectedElement({
+                                  opacity: parseFloat(e.target.value),
+                                })
+                              }
+                              className="w-full template-range"
+                            />
+                            <span className="text-sm text-gray-500 font-medium text-center block">
+                              {Math.round(
+                                ((selectedElementData as LogoElement).opacity ??
+                                  1) * 100
+                              )}
+                              %
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
                     {selectedElementData.type === "text" && (
                       <div className="space-y-3">
-                        {/* Colors first */}
+                        {/* Font Family and Text Color in same row */}
                         <div className="grid grid-cols-2 gap-2">
                           <div>
                             <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                              Text
+                              Font Family
+                            </label>
+                            <select
+                              value={
+                                (selectedElementData as TextElement).fontFamily ??
+                                ""
+                              }
+                              onChange={(e) =>
+                                updateSelectedElement({
+                                  fontFamily:
+                                    e.target.value === undefined
+                                      ? ""
+                                      : e.target.value,
+                                })
+                              }
+                              className="w-full px-3 py-2.5 border border-gray-300 rounded-md text-sm"
+                            >
+                              <option value="Arial">Arial</option>
+                              <option value="Helvetica">Helvetica</option>
+                              <option value="Times New Roman">
+                                Times New Roman
+                              </option>
+                              <option value="Georgia">Georgia</option>
+                              <option value="Roboto">Roboto</option>
+                              <option value="Open Sans">Open Sans</option>
+                              <option value="Lato">Lato</option>
+                              <option value="Montserrat">Montserrat</option>
+                              <option value="Source Sans Pro">
+                                Source Sans Pro
+                              </option>
+                              <option value="Poppins">Poppins</option>
+                              <option value="Inter">Inter</option>
+                              <option value="Playfair Display">
+                                Playfair Display
+                              </option>
+                              <option value="Oswald">Oswald</option>
+                              <option value="Merriweather">Merriweather</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                              Text Color
                             </label>
                             <input
                               type="color"
@@ -2672,130 +2876,9 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                               onChange={(e) =>
                                 updateSelectedElement({ color: e.target.value })
                               }
-                              className="w-full h-9 border border-gray-300 rounded-md cursor-pointer"
+                              className="w-full h-10 border border-gray-300 rounded-md cursor-pointer"
                             />
                           </div>
-                          <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                              Background
-                            </label>
-                            <input
-                              type="color"
-                              value={
-                                (selectedElementData as TextElement)
-                                  .backgroundColor || "#ffffff"
-                              }
-                              onChange={(e) =>
-                                updateSelectedElement({
-                                  backgroundColor: e.target.value,
-                                })
-                              }
-                              className="w-full h-9 border border-gray-300 rounded-md cursor-pointer"
-                            />
-                          </div>
-                        </div>
-
-                        {/* Opacity second */}
-                        <div className="grid grid-cols-2 gap-2">
-                          <div>
-                            <label className="block text-xs font-medium text-slate-700">
-                              Text Opacity
-                            </label>
-                            <input
-                              type="range"
-                              min="0"
-                              max="1"
-                              step="0.01"
-                              value={
-                                (selectedElementData as TextElement)
-                                  .textOpacity ?? 1
-                              }
-                              onChange={(e) =>
-                                updateSelectedElement({
-                                  textOpacity: parseFloat(e.target.value),
-                                })
-                              }
-                              className="w-full template-range"
-                            />
-                            <span className="text-xs text-gray-500 font-medium text-center block">
-                              {Math.round(
-                                ((selectedElementData as TextElement)
-                                  .textOpacity ?? 1) * 100
-                              )}
-                              %
-                            </span>
-                          </div>
-                          <div>
-                            <label className="block text-xs font-medium text-slate-700">
-                              Background Opacity
-                            </label>
-                            <input
-                              type="range"
-                              min="0"
-                              max="1"
-                              step="0.01"
-                              value={
-                                (selectedElementData as TextElement)
-                                  .backgroundOpacity ?? 1
-                              }
-                              onChange={(e) =>
-                                updateSelectedElement({
-                                  backgroundOpacity: parseFloat(e.target.value),
-                                })
-                              }
-                              className="w-full template-range"
-                            />
-                            <span className="text-xs text-gray-500 font-medium text-center block">
-                              {Math.round(
-                                ((selectedElementData as TextElement)
-                                  .backgroundOpacity ?? 1) * 100
-                              )}
-                              %
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Font Family */}
-                        <div>
-                          <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                            Font Family
-                          </label>
-                          <select
-                            value={
-                              (selectedElementData as TextElement).fontFamily ??
-                              ""
-                            }
-                            onChange={(e) =>
-                              updateSelectedElement({
-                                fontFamily:
-                                  e.target.value === undefined
-                                    ? ""
-                                    : e.target.value,
-                              })
-                            }
-                            className="w-full px-3 py-2.5 border border-gray-300 rounded-md text-sm"
-                          >
-                            <option value="Arial">Arial</option>
-                            <option value="Helvetica">Helvetica</option>
-                            <option value="Times New Roman">
-                              Times New Roman
-                            </option>
-                            <option value="Georgia">Georgia</option>
-                            <option value="Roboto">Roboto</option>
-                            <option value="Open Sans">Open Sans</option>
-                            <option value="Lato">Lato</option>
-                            <option value="Montserrat">Montserrat</option>
-                            <option value="Source Sans Pro">
-                              Source Sans Pro
-                            </option>
-                            <option value="Poppins">Poppins</option>
-                            <option value="Inter">Inter</option>
-                            <option value="Playfair Display">
-                              Playfair Display
-                            </option>
-                            <option value="Oswald">Oswald</option>
-                            <option value="Merriweather">Merriweather</option>
-                          </select>
                         </div>
 
                         {/* Size, Weight, Align, Padding */}
@@ -2896,30 +2979,56 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
                           </div>
                         </div>
 
-                        {/* Rotation below fonts for text */}
-                        <div className="mb-2">
-                          <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1">
-                            Rotation
-                          </label>
-                          <input
-                            type="range"
-                            min="0"
-                            max="360"
-                            value={selectedElementData.rotation || 0}
-                            onChange={(e) =>
-                              updateSelectedElement({
-                                rotation: parseInt(e.target.value),
-                              })
-                            }
-                            className="w-full template-range"
-                            disabled={isElementLocked(selectedElement)}
-                          />
-                          <div className="flex justify-between text-xs text-gray-500 font-medium mt-1">
-                            <span>0°</span>
-                            <span className="font-medium">
+                        {/* Text Opacity and Rotation in same row - at the end */}
+                        <div className="grid grid-cols-2 gap-2">
+                          <div>
+                            <label className="block text-xs font-medium text-slate-700">
+                              Text Opacity
+                            </label>
+                            <input
+                              type="range"
+                              min="0"
+                              max="1"
+                              step="0.01"
+                              value={
+                                (selectedElementData as TextElement)
+                                  .textOpacity ?? 1
+                              }
+                              onChange={(e) =>
+                                updateSelectedElement({
+                                  textOpacity: parseFloat(e.target.value),
+                                })
+                              }
+                              className="w-full template-range"
+                            />
+                            <span className="text-xs text-gray-500 font-medium text-center block">
+                              {Math.round(
+                                ((selectedElementData as TextElement)
+                                  .textOpacity ?? 1) * 100
+                              )}
+                              %
+                            </span>
+                          </div>
+                          <div>
+                            <label className="block text-xs font-medium text-slate-700">
+                              Rotation
+                            </label>
+                            <input
+                              type="range"
+                              min="0"
+                              max="360"
+                              value={selectedElementData.rotation || 0}
+                              onChange={(e) =>
+                                updateSelectedElement({
+                                  rotation: parseInt(e.target.value),
+                                })
+                              }
+                              className="w-full template-range"
+                              disabled={isElementLocked(selectedElement)}
+                            />
+                            <span className="text-xs text-gray-500 font-medium text-center block">
                               {selectedElementData.rotation || 0}°
                             </span>
-                            <span>360°</span>
                           </div>
                         </div>
                       </div>
@@ -3201,6 +3310,14 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
           className={`flex-1 ${
             isDragging ? "overflow-hidden" : "overflow-auto"
           }  bg-gray-100 flex items-start justify-around p-2 md:p-4 min-h-0`}
+          onClick={(e) => {
+            // Only deselect if clicking directly on the container background, not on child elements
+            if (e.target === e.currentTarget) {
+              setSelectedElement(null);
+              setPropertiesOpen(false);
+              setElementsOpen(true);
+            }
+          }}
         >
           <div
             className="flex "
