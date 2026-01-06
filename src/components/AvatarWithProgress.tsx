@@ -90,7 +90,7 @@ export function AvatarWithProgress({
           Profile completion: {progress}%
         </div>
       )}
-
+{progress < 100 && (
       <svg width={size} height={size} className="-rotate-90 absolute">
         {/* Background circle */}
         <circle
@@ -116,7 +116,7 @@ export function AvatarWithProgress({
           className="transition-all duration-700 ease-out"
         />
       </svg>
-
+)}
       <div
         className={`rounded-full overflow-hidden bg-purple-700 flex items-center justify-center ${className}`}
       >
@@ -137,13 +137,14 @@ export function AvatarWithProgress({
           }}
         />
       </div>
-
+{progress < 100 && (
       <div
         className="absolute -bottom-[17px] px-2 py-[2px] text-[10px] font-semibold text-white rounded-full shadow"
         style={{ backgroundColor: color }}
       >
         {progress}%
       </div>
+       )}
     </div>
   );
 }

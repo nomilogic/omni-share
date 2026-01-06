@@ -57,30 +57,13 @@ export const DashboardPage: React.FC = () => {
   useEffect(() => {
     fetchPostHistory();
   }, []);
-  const [isTwoFactor, setTwoFactor] = useState(false);
 
-  const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
-  const [manualCode, setManualCode] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
 
-  const startSetup = async () => {
-    setLoading(true);
 
-    try {
-      const res = await API.enable2FA();
-      setQrCodeUrl(res.data.qrCode);
-      setManualCode(res.data.manualCode);
-    } catch (err: any) {
-    } finally {
-      setLoading(false);
-    }
-  };
-  console.log("qrCodeUrl", qrCodeUrl);
-  useEffect(() => {
-    if (!qrCodeUrl) {
-      startSetup();
-    }
-  }, [qrCodeUrl]);
+ 
+
+ 
+  
   const isFreePlan = userPlan?.toLowerCase() === "free";
   const hasLowCoins = (user.wallet?.coins ?? 0) < 6;
   const shouldShowUpgrade = isFreePlan || hasLowCoins;
@@ -155,27 +138,15 @@ export const DashboardPage: React.FC = () => {
 
   return (
     <>
-      {user && (
-        <TwoFASetupModal
-          open={isTwoFactor}
-          onClose={() => setTwoFactor(false)}
-          onSuccess={() => setTwoFactor(false)}
-          qrCodeUrl={qrCodeUrl}
-          manualCode={manualCode}
-          loading={loading}
-          setQrCodeUrl={setQrCodeUrl}
-          setManualCode={setManualCode}
-        />
-      )}
+      
 
       {!isEditing && !isPasswordEditing && (
         <div className="min-h-screen my-10">
           <main className="max-w-8xl mx-auto  flex flex-col gap-y-8 ">
             <div className="bg-gray-100  lg:px-4 px-3 py-4 rounded-md flex flex-col gap-4">
-              <ProfileCard
-                setTwoFactor={setTwoFactor}
-                isTwoFactor={isTwoFactor}
-              />
+              <ProfileCard />
+              {progress !== 100 && (
+
               <div className=" w-full max-w-5xl  mx-auto bg-white rounded-2xl px-4 py-4   transition-shadow duration-300">
                 <div className="flex justify-between items-center mb-3">
                   <h3 className="text-base font-semibold text-gray-900">
@@ -220,6 +191,8 @@ export const DashboardPage: React.FC = () => {
                   </p>
                 )}
               </div>
+              )}
+
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <StatsCard
                   iconName="crown"

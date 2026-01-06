@@ -66,7 +66,7 @@ export const TwoFASetupModal = ({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start py-10 justify-center bg-black/40 px-4">
+    <div className="fixed inset-0 z-[9999] flex items-start py-10 justify-center bg-black/40 px-4">
       <div className="w-full max-w-md rounded-xl bg-white shadow-xl">
         {/* Header */}
         <div className="border-b px-6 py-4">
