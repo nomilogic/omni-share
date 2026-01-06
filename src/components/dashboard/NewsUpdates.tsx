@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 
 function NewsUpdates() {
   const { t, i18n } = useTranslation();
-    const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
+  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
   const slides = [
     {
       image: mobile,
@@ -28,7 +28,7 @@ function NewsUpdates() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 3000); // change slide every 3 seconds
+    }, 5000); // change slide every 3 seconds
 
     return () => clearInterval(interval); // cleanup on unmount
   }, [slides.length]);
