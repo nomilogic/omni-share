@@ -104,7 +104,6 @@ function Analytics() {
 
   return (
     <div className="bg-gray-100 rounded-md p-5 h-[450px] flex flex-col">
-      {/* Platform Selector */}
       <div className="flex gap-3 mb-2">
         {platforms.map((p) => {
           const isActive = selectedPlatform === p;
@@ -127,7 +126,6 @@ function Analytics() {
         })}
       </div>
 
-      {/* Platform Info */}
       {analytics ? (
         <div className="mb-2">
           <h3 className="text-lg font-bold text-gray-900 truncate">
@@ -140,9 +138,7 @@ function Analytics() {
           )}
         </div>
       ) : (
-        <p className="text-sm text-gray-500 mb-3">
-          {loading ? t("loading") : t("no_data")}
-        </p>
+        <p className="text-sm text-gray-500 mb-3"></p>
       )}
 
       <div className="flex-1 overflow-y-auto pr-2 -mr-2">
@@ -198,11 +194,9 @@ function Analytics() {
         </div>
       </div>
 
-      {/* View Details Button */}
       <button
         onClick={handleViewDetails}
-        className="mt-4 w-full py-2.5 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-700"
-        disabled={!analytics}
+        className="w-full text-white py-2 px-4 rounded-md font-semibold text-md transition-all border-2 border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] mt-4"
       >
         {t("view_details")}
       </button>

@@ -37,18 +37,16 @@ function ProfileCard({ setTwoFactor, isTwoFactor }: any) {
         </div>
       </div>
       <div className="flex  items-center  lg:gap-5 gap-2 md:justify-center justify-end ">
-        {!state.user?.twoFactorEnabled && (
-          <button
-            className="flex items-center rounded-md gap-2 transition-colors text-sm font-semibold "
-            style={{
-              color: "#7650e3",
-            }}
-            onClick={() => setTwoFactor(!isTwoFactor)}
-          >
-            <Barcode className="w-[14px] h-[14px]" />
-            <span className="hover:underline text-decoration-line">2FA</span>
-          </button>
-        )}
+        <button
+          className="flex items-center rounded-md gap-2 transition-colors text-sm font-semibold "
+          style={{
+            color: "#7650e3",
+          }}
+          onClick={() => setTwoFactor(!isTwoFactor)}
+        >
+          <Barcode className="w-[14px] h-[14px]" />
+          <span className="hover:underline text-decoration-line">2FA</span>
+        </button>
         <button
           className="flex items-center rounded-md gap-2 transition-colors text-sm font-semibold "
           style={{

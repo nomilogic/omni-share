@@ -71,16 +71,16 @@ export const DashboardPage: React.FC = () => {
       setQrCodeUrl(res.data.qrCode);
       setManualCode(res.data.manualCode);
     } catch (err: any) {
-      console.log("err", err);
     } finally {
       setLoading(false);
     }
   };
+  console.log("qrCodeUrl", qrCodeUrl);
   useEffect(() => {
-    if (!qrCodeUrl && !user?.twoFactorEnabled) {
+    if (!qrCodeUrl) {
       startSetup();
     }
-  }, [qrCodeUrl, user?.twoFactorEnabled]);
+  }, [qrCodeUrl]);
   const isFreePlan = userPlan?.toLowerCase() === "free";
   const hasLowCoins = (user.wallet?.coins ?? 0) < 6;
   const shouldShowUpgrade = isFreePlan || hasLowCoins;
@@ -155,7 +155,7 @@ export const DashboardPage: React.FC = () => {
 
   return (
     <>
-      {user && !user?.twoFactorEnabled && (
+      {user && (
         <TwoFASetupModal
           open={isTwoFactor}
           onClose={() => setTwoFactor(false)}
