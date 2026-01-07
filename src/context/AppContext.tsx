@@ -86,6 +86,7 @@ export interface AppState {
 }
 
 // Actions
+
 type AppAction =
   | { type: "SET_LOADING"; payload: boolean }
   | { type: "SET_USER"; payload: User | null }
