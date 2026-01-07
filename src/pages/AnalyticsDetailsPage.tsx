@@ -77,7 +77,7 @@ const AnalyticsDetailsPage: FC<Props> = ({
           subtitle={t("no_data") || "No analytics data available."}
           onClose={onClose}
         >
-          <div className="bg-white rounded-2xl p-6 border">
+          <div className="bg-gray-100 rounded-md p-6 border">
             <p className="text-sm text-gray-600">
               {t("no_data") || "No analytics data available."}
             </p>
@@ -112,7 +112,7 @@ const AnalyticsDetailsPage: FC<Props> = ({
         }
       >
         {/* Tabs */}
-        <div className="bg-white rounded-2xl border p-2 flex items-center gap-2 mb-4">
+        <div className="bg-gray-100 rounded-md border p-2 flex items-center gap-2 mb-4">
           <TabButton
             active={tab === "overview"}
             onClick={() => setTab("overview")}
@@ -137,7 +137,7 @@ const AnalyticsDetailsPage: FC<Props> = ({
             ) : (
               <>
                 {/* Page summary card */}
-                <div className="bg-white rounded-2xl border p-5">
+                <div className="bg-gray-100 rounded-md border p-5">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <h2 className="text-xl font-bold text-gray-900 truncate">
@@ -154,7 +154,7 @@ const AnalyticsDetailsPage: FC<Props> = ({
                     </div>
 
                     <div className="hidden sm:flex items-center gap-2">
-                      <span className="px-3 py-1 rounded-full text-xs font-semibold bg-purple-100 text-purple-700">
+                      <span className="px-3 py-1 rounded-md text-xs font-semibold bg-purple-100 text-purple-700">
                         {platformLabel}
                       </span>
                     </div>
@@ -188,7 +188,7 @@ const AnalyticsDetailsPage: FC<Props> = ({
                 </div>
 
                 {/* Quick insight */}
-                {/* <div className="bg-white rounded-2xl border p-5">
+                {/* <div className="bg-gray-100 rounded-md border p-5">
                   <h3 className="font-semibold text-gray-900 mb-2">
                     {t("highlights") || "Highlights"}
                   </h3>
@@ -213,7 +213,7 @@ const AnalyticsDetailsPage: FC<Props> = ({
 
           {/* Right sidebar */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl border p-4 h-full">
+            <div className="bg-gray-100 rounded-md border p-4 h-full">
               <div className="flex items-center justify-between mb-2">
                 <h4 className="font-semibold text-gray-900 text-sm">
                   {t("top_posts") || "Top Posts"}
@@ -230,7 +230,7 @@ const AnalyticsDetailsPage: FC<Props> = ({
                   {t("no_posts_available") || "No posts available."}
                 </p>
               ) : (
-                <div className="space-y-2 max-h-[520px] overflow-y-auto pr-1">
+                <div className="space-y-2 max-h-[520px] overflow-y-auto ">
                   {topPosts.map((post) => (
                     <button
                       key={post.id}
@@ -238,7 +238,7 @@ const AnalyticsDetailsPage: FC<Props> = ({
                         setSelectedPost(post);
                         setTab("overview");
                       }}
-                      className="w-full text-left p-3 rounded-xl border bg-purple-50 hover:bg-purple-100 transition-colors"
+                      className="w-full text-left p-3 rounded-md border bg-white hover:bg-purple-100 transition-colors"
                     >
                       <div className="flex justify-between items-center gap-3">
                         <div className="min-w-0 flex-1">
@@ -278,7 +278,7 @@ const AnalyticsDetailsPage: FC<Props> = ({
 
         {/* Mobile top posts view */}
         {tab === "posts" && (
-          <div className="lg:hidden mt-4 bg-white rounded-2xl border p-4">
+          <div className="lg:hidden mt-4 bg-gray-100 rounded-md border p-4">
             {!topPosts?.length ? (
               <p className="text-xs text-gray-500 italic">
                 {t("no_posts_available") || "No posts available."}
@@ -289,7 +289,7 @@ const AnalyticsDetailsPage: FC<Props> = ({
                   <button
                     key={post.id}
                     onClick={() => setSelectedPost(post)}
-                    className="w-full text-left p-3 rounded-xl border bg-purple-50 hover:bg-purple-100 transition-colors"
+                    className="w-full text-left p-3 rounded-md border bg-purple-50 hover:bg-purple-100 transition-colors"
                   >
                     <div className="flex justify-between items-center gap-3">
                       <div className="min-w-0 flex-1">
@@ -352,7 +352,7 @@ function PageShell({
                 Analytics
               </h1>
               {badge ? (
-                <span className="hidden sm:inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-purple-100 text-purple-700">
+                <span className="hidden sm:inline-flex px-3 py-1 rounded-md text-xs font-semibold bg-purple-100 text-purple-700">
                   {badge}
                 </span>
               ) : null}
@@ -395,16 +395,16 @@ function TabButton({
   return (
     <button
       onClick={onClick}
-      className={`flex-1 sm:flex-none px-4 py-2 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition
-        ${active ? "bg-purple-600 text-white" : "bg-gray-100 text-gray-800 hover:bg-gray-200"}
+      className={`flex-1 sm:flex-none px-4 py-2 rounded-md text-sm font-semibold flex items-center justify-center gap-2 transition
+        ${active ? "text-white   transition-all border-2 border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]" : "bg-gray-100 text-gray-800 hover:bg-gray-200"}
       `}
     >
       {icon}
       <span>{label}</span>
       {rightPill ? (
         <span
-          className={`ml-1 px-2 py-0.5 rounded-full text-xs font-bold
-            ${active ? "bg-white/20 text-white" : "bg-white text-gray-800"}
+          className={`ml-1 px-2 py-0.5 rounded-md text-xs font-bold
+            ${active ? "bg-gray-100/20 text-white" : "bg-gray-100 text-gray-800"}
           `}
         >
           {rightPill}
@@ -419,7 +419,7 @@ function PostDetailsCard({ post }: { post: TopPost }) {
   const message = post.fullMessage || post.title;
 
   return (
-    <div className="bg-white rounded-2xl border p-5">
+    <div className="bg-gray-100 rounded-md border p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h3 className="text-lg font-bold text-gray-900">
@@ -442,7 +442,7 @@ function PostDetailsCard({ post }: { post: TopPost }) {
         ) : null}
       </div>
 
-      <div className="mt-4 bg-gray-50 p-4 rounded-xl text-sm text-gray-800 leading-relaxed">
+      <div className="mt-4 bg-gray-50 p-4 rounded-md text-sm text-gray-800 leading-relaxed">
         {message}
       </div>
 
@@ -474,13 +474,13 @@ function StatCard({
 }) {
   const styles =
     tone === "red"
-      ? "bg-red-50 text-red-700"
+      ? "bg-white text-red-700"
       : tone === "blue"
-      ? "bg-blue-50 text-blue-700"
-      : "bg-green-50 text-green-700";
+      ? "bg-white text-blue-700"
+      : "bg-white text-green-700";
 
   return (
-    <div className={`rounded-xl p-3 text-center ${styles}`}>
+    <div className={`rounded-md p-3 text-center ${styles}`}>
       <p className="text-lg font-bold">{value || 0}</p>
       <p className="text-xs text-gray-600">{title}</p>
     </div>
@@ -489,7 +489,7 @@ function StatCard({
 
 function ReachCard({ period, value }: { period: string; value: any }) {
   return (
-    <div className="bg-blue-50 rounded-xl p-3 text-center">
+    <div className="bg-white rounded-md p-3 text-center">
       <p className="text-sm font-semibold text-gray-800">{period}</p>
       <p className="text-lg font-bold text-gray-900">{value || 0}</p>
     </div>
