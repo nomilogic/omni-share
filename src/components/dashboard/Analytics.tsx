@@ -9,7 +9,7 @@ import {
 import { Platform } from "../../types";
 import API from "../../services/api";
 import { useModal } from "../../context2/ModalContext";
-import AnalyticsModal from "./AnalyticsModal";
+
 
 // ✅ import referral modal + image + icon
 import ReferralSection from "./ReferralSection";
@@ -17,6 +17,7 @@ import Referal from "../../assets/referal.png";
 import { Share2 } from "lucide-react";
 import { useAppContext } from "@/context/AppContext";
 import { useNavigate } from "react-router-dom";
+import Icon from "../Icon";
 
 interface TopPost {
   id: string;
@@ -58,22 +59,32 @@ type Props = {
 
 function Analytics({ onHasAnalyticsChange }: Props) {
   const { t } = useTranslation();
-  const { openModal } = useModal();
-
+  const navigate = useNavigate();
+  
   const [analyticsList, setAnalyticsList] = useState<AnalyticsData[]>([]);
   const [selectedPlatform, setSelectedPlatform] =
-    useState<Platform>("facebook");
+  useState<Platform>("facebook");
   
+  const platforms: Platform[] = [
+    "facebook",
+    "linkedin",
+    "instagram",
+    "youtube",
+    "tiktok",
+  ];
+  
+  
+  const hasPlatformData = (a?: AnalyticsData) => {
+    const followers = a?.page?.followers ?? 0;
+    const likes = a?.summary?.likes ?? 0;
+    const comments = a?.summary?.comments ?? 0;
+    const shares = a?.summary?.shares ?? 0;
+    const postsLen = a?.top_posts?.posts?.length ?? 0;
+    return followers > 0 || likes > 0 || comments > 0 || shares > 0 || postsLen > 0;
+  };
 
   const computeHasAnalytics = (list: AnalyticsData[]) => {
-    return list.some((a) => {
-      const followers = a?.page?.followers ?? 0;
-      const likes = a?.summary?.likes ?? 0;
-      const comments = a?.summary?.comments ?? 0;
-      const shares = a?.summary?.shares ?? 0;
-      const postsLen = a?.top_posts?.posts?.length ?? 0;
-      return followers > 0 || likes > 0 || comments > 0 || shares > 0 || postsLen > 0;
-    });
+    return list.some((a) => hasPlatformData(a));
   };
 
   const hasAnalytics = useMemo(
@@ -82,59 +93,45 @@ function Analytics({ onHasAnalyticsChange }: Props) {
   );
 
   useEffect(() => {
-  const ok = computeHasAnalytics(analyticsList);
-  onHasAnalyticsChange?.(ok);
-}, [analyticsList, onHasAnalyticsChange]);
+    onHasAnalyticsChange?.(computeHasAnalytics(analyticsList));
+  }, [analyticsList, onHasAnalyticsChange]);
 
-const navigate = useNavigate();
-const platformsWithData = useMemo(() => {
-  const hasPlatformData = (a: AnalyticsData) => {
-    const followers = a?.page?.followers ?? 0;
-    const likes = a?.summary?.likes ?? 0;
-    const comments = a?.summary?.comments ?? 0;
-    const shares = a?.summary?.shares ?? 0;
-    const postsLen = a?.top_posts?.posts?.length ?? 0;
+  // ✅ platforms which have usable data
+  const platformsWithData = useMemo(() => {
+    const set = new Set<Platform>();
+    for (const a of analyticsList) {
+      if (a?.platform && hasPlatformData(a)) set.add(a.platform);
+    }
+    return platforms.filter((p) => set.has(p));
+  }, [analyticsList]);
 
-    return followers > 0 || likes > 0 || comments > 0 || shares > 0 || postsLen > 0;
-  };
+  const platformsWithDataSet = useMemo(() => {
+    return new Set<Platform>(platformsWithData);
+  }, [platformsWithData]);
 
-  const order: Platform[] = ["facebook", "linkedin", "instagram", "youtube", "tiktok"];
+  // ✅ keep selected platform valid (prefer facebook)
+  useEffect(() => {
+    if (!platformsWithData.length) return;
 
-  const available = analyticsList
-    .filter(hasPlatformData)
-    .map((a) => a.platform);
-
-    const set = new Set<Platform>(available as Platform[]);
-  return order.filter((p) => set.has(p));
-}, [analyticsList]);
-
-useEffect(() => {
-  if (!platformsWithData.length) return;
-
-  setSelectedPlatform((prev) => {
-    // prev platform data available hai -> keep it
-    if (platformsWithData.includes(prev)) return prev;
-    // else -> first available
-    return platformsWithData[0];
-  });
-}, [platformsWithData]);
+    setSelectedPlatform((prev) => {
+      if (platformsWithDataSet.has(prev)) return prev;
+      if (platformsWithDataSet.has("facebook")) return "facebook";
+      return platformsWithData[0];
+    });
+  }, [platformsWithData, platformsWithDataSet]);
 
   // Fetch analytics for all platforms
   const fetchAnalytics = async () => {
     try {
-      
       const res = await API.facebookAnalytics();
       const list = res?.data?.data || [];
       setAnalyticsList(list);
 
-      const ok = computeHasAnalytics(list);
-      onHasAnalyticsChange?.(ok);
+      onHasAnalyticsChange?.(computeHasAnalytics(list));
     } catch (err) {
       console.error("Analytics Error:", err);
       setAnalyticsList([]);
       onHasAnalyticsChange?.(false);
-    } finally {
-    
     }
   };
 
@@ -143,7 +140,7 @@ useEffect(() => {
   }, []);
 
   // ✅ If analytics is NOT available -> show referral promo card in analytics place
-  if (  !hasAnalytics) {
+  if (!hasAnalytics) {
     return <ReferralPromoCard />;
   }
 
@@ -160,45 +157,60 @@ useEffect(() => {
   const weeklyReach = getReachByPeriod("week");
   const monthlyReach = getReachByPeriod("days_28");
 
- const handleViewDetails = () => {
-  navigate("/analytics/details", {
-    state: {
-      analytics,
-      topPosts,
-      dailyReach,
-      weeklyReach,
-      monthlyReach,
-    },
-  });
-};
-  const platforms: Platform[] = [
-    "facebook",
-    "linkedin",
-    "instagram",
-    "youtube",
-    "tiktok",
-  ];
-
   return (
     <div className="bg-gray-100 rounded-md p-5 h-[450px] flex flex-col">
-      <div className="flex gap-3 mb-2">
-        {platformsWithData.map((p) => {
+      {/* ✅ Show ALL icons, disable those without data */}
+      <div className="flex flex-wrap gap-3 mb-3">
+        {platforms.map((p) => {
+          const IconComponent = getPlatformIcon(p);
           const isActive = selectedPlatform === p;
+          const hasData = platformsWithDataSet.has(p);
+
           return (
-            <div
+            <button
               key={p}
-              onClick={() => setSelectedPlatform(p)}
-              className={`
-                w-10 h-10 rounded-full flex items-center justify-center text-white
-                ${getPlatformIconBackgroundColors(p)}
-                ${isActive ? "opacity-100 ring-4 ring-blue-100" : "opacity-30"}
-                cursor-pointer
+              type="button"
+              disabled={!hasData}
+              onClick={() => {
+                if (!hasData) return;
+                setSelectedPlatform(p);
+              }}
+              className={`relative p-1 rounded-full transition-all duration-200 transform h-fit
+                ${hasData ? "hover:scale-105" : ""}
+                ${isActive && hasData ? "ring-4 ring-blue-200 shadow-md" : hasData ? "hover:shadow-md" : ""}
+                ${hasData ? "" : "opacity-30 cursor-not-allowed"}
               `}
+              title={hasData ? p : `${p} (no data)`}
             >
-              {getPlatformIcon(p)({
-                className: isActive ? "w-5 h-5" : "w-4 h-4",
-              })}
-            </div>
+              <div
+                className={`w-8 md:w-10 h-8 md:h-10 rounded-full flex items-center justify-center text-white shadow-md
+                  ${getPlatformIconBackgroundColors(p)}
+                  ${hasData ? "" : "grayscale"}
+                `}
+              >
+                {IconComponent ? (
+                  <IconComponent className="w-4 md:w-5 h-4 md:h-5" />
+                ) : (
+                  <span className="text-white font-bold text-sm">
+                    {p === "facebook"
+                      ? "FB"
+                      : p === "instagram"
+                      ? "IG"
+                      : p === "linkedin"
+                      ? "IN"
+                      : p === "youtube"
+                      ? "YT"
+                      : p === "tiktok"
+                      ? "TT"
+                      : "P"}
+                  </span>
+                )}
+              </div>
+
+              {isActive && hasData && (
+                <div className="absolute inset-0 rounded-full border-2 border-blue-500 animate-pulse" />
+              )}
+            </button>
           );
         })}
       </div>
@@ -223,17 +235,9 @@ useEffect(() => {
           </div>
 
           <div className="space-y-1">
-            <Metric label={t("reach")} value={monthlyReach}  />
-            <Metric
-              label={t("likes")}
-              value={analytics?.summary.likes}
-              
-            />
-            <Metric
-              label={t("comments")}
-              value={analytics?.summary.comments}
-           
-            />
+            <Metric label={t("reach")} value={monthlyReach} />
+            <Metric label={t("likes")} value={analytics?.summary.likes} />
+            <Metric label={t("comments")} value={analytics?.summary.comments} />
           </div>
         </div>
 
@@ -241,7 +245,7 @@ useEffect(() => {
 
         <div>
           <h4 className="font-semibold text-sm mb-2">{t("top_posts")}</h4>
-          { topPosts.length ? (
+          {topPosts.length ? (
             <div className="space-y-2">
               {topPosts.slice(0, 3).map((post) => (
                 <div
@@ -261,7 +265,7 @@ useEffect(() => {
       </div>
 
       <button
-        onClick={handleViewDetails}
+        onClick={() => navigate(`/analytics?platform=${selectedPlatform}`)}
         className="w-full text-white py-2 px-4 rounded-md font-semibold text-md transition-all border-2 border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] mt-4"
       >
         {t("view_details")}
@@ -273,16 +277,16 @@ useEffect(() => {
 export default Analytics;
 
 // Metric Component
-const Metric = ({ label, value,  }: any) => (
+const Metric = ({ label, value }: any) => (
   <div className="flex justify-between text-sm">
     <span>{label}</span>
     <span className="font-bold text-blue-600">
-      { value?.toLocaleString?.() ?? 0}
+      {value?.toLocaleString?.() ?? 0}
     </span>
   </div>
 );
 
-// ✅ Referral promo card (Analytics replacement) - like your screenshot
+// ✅ Referral promo card (Analytics replacement)
 function ReferralPromoCard() {
   const { t } = useTranslation();
   const { user } = useAppContext();
@@ -313,43 +317,57 @@ function ReferralPromoCard() {
       await copyToClipboard(referralLink);
     }
   };
-
+const { openModal } = useModal();
+  const handleShareClick = () => {
+  openModal(ReferralSection as any, {});
+};
   return (
-    <div className="bg-gray-100 rounded-md p-5 h-[450px] w-full flex flex-col">
-  <div className="p-2 flex-1 flex flex-col justify-between">
-    <div className="flex justify-center items-center h-[240px]">
-      <img
-        src={Referal}
-        alt="Referral"
-        className="h-full w-full object-contain "
-      />
+    <div className="hidden md:flex bg-gray-100 rounded-md p-5 h-[450px] w-full flex-col">
+      <div className="p-2 flex-1 flex flex-col ">
+        <div className="flex justify-center items-center h-[220px]">
+          <img
+            src={Referal}
+            alt="Referral"
+            className="h-full w-full object-contain"
+          />
+        </div>
+
+        <div className="mt-2 text-left">
+          <h3 className="text-lg font-semibold text-gray-900">
+            {t("refer_earn") || "Refer & Earn!"}
+          </h3>
+
+          <p className="text-black text-xs font-medium leading-relaxed flex gap-2 items-start ">
+              <Share2 className="w-[18px] h-[18px] text-[#7650e3]" />
+              Share your invite link with friends.
+            </p>
+            <p className="text-black text-xs font-medium leading-relaxed flex gap-2 items-start ">
+              <Icon name="manage-subs" size={18}  />
+              They sign up and receive 10 Omni Coins.
+            </p>
+            <p className="text-black text-xs font-medium leading-relaxed flex gap-2 items-start ">
+              <Icon
+                name="crown" size={18}
+              />
+              When they purchase a package using your referral link, you both
+              earn 100 Omni Coins.
+            </p>
+        </div>
+      </div>
+
+      <button
+  onClick={handleShareClick}
+  className=" w-full rounded-md hover:opacity-95 text-white font-semibold py-2 flex items-center justify-center gap-2 text-md transition-all border-2 border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
+>
+  <Share2 className="w-4 h-4" />
+  {t("share") || "Share"}
+</button>
+
+      {copied && (
+        <p className="text-xs text-green-600 mt-2 text-center">
+          {t("copied_to_clipboard") || "Copied!"}
+        </p>
+      )}
     </div>
-
-    <div className="mt-2 text-left">
-      <h3 className="text-lg font-semibold text-gray-900">
-        {t("refer_earn") || "Refer & Earn!"}
-      </h3>
-
-      <p className="text-sm text-black mt-2 leading-relaxed">
-        {t("referral_bonus_message") ||
-          "When someone buys a package using your referral link, you both earn coins!"}
-      </p>
-    </div>
-  </div>
-
-  <button
-    onClick={handleNativeShare}
-    className="mt-5 w-full rounded-md hover:opacity-95 text-white font-semibold py-2 flex items-center justify-center gap-2 text-md transition-all border-2 border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
-  >
-    <Share2 className="w-4 h-4" />
-    {t("share") || "Share"}
-  </button>
-
-  {copied && (
-    <p className="text-xs text-green-600 mt-2 text-center">
-      {t("copied_to_clipboard") || "Copied!"}
-    </p>
-  )}
-</div>
   );
 }

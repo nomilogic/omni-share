@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 function RecentPosts({ post }: any) {
   const { state } = useAppContext();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const allPosts = post || state?.generatedPosts || [];
 
@@ -23,7 +24,7 @@ function RecentPosts({ post }: any) {
     "tiktok",
   ];
 
-  // ✅ Only show platforms that actually have posts
+  // ✅ platforms which actually have posts
   const platformsWithData = useMemo(() => {
     const set = new Set<Platform>();
     for (const p of allPosts) {
@@ -32,21 +33,30 @@ function RecentPosts({ post }: any) {
     return socialPlatforms.filter((pl) => set.has(pl));
   }, [allPosts]);
 
-  const [selectedPlatform, setSelectedPlatform] = useState<Platform | "">("");
-
-  // ✅ keep selected platform valid (fallback to first available)
-  useEffect(() => {
-    const first = platformsWithData[0] || "";
-    setSelectedPlatform((prev) => {
-      if (prev && platformsWithData.includes(prev as Platform)) return prev;
-      return first;
-    });
+  const platformsWithDataSet = useMemo(() => {
+    return new Set<Platform>(platformsWithData);
   }, [platformsWithData]);
 
+  const [selectedPlatform, setSelectedPlatform] = useState<Platform>("facebook");
+
+  // ✅ keep selected platform valid
+  useEffect(() => {
+    // if selected has data => keep
+    if (platformsWithDataSet.has(selectedPlatform)) return;
+
+    // else: if facebook has data => facebook
+    if (platformsWithDataSet.has("facebook")) {
+      setSelectedPlatform("facebook");
+      return;
+    }
+
+    // else: first available
+    const first = platformsWithData[0];
+    if (first) setSelectedPlatform(first);
+  }, [platformsWithData, platformsWithDataSet, selectedPlatform]);
+
   const topPost = allPosts
-    .filter(
-      (p: any) => selectedPlatform === "" || p.platform === selectedPlatform
-    )
+    .filter((p: any) => p?.platform === selectedPlatform)
     .sort(
       (a: any, b: any) =>
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
@@ -57,57 +67,87 @@ function RecentPosts({ post }: any) {
     metadata: { title = "", description = "", image } = {},
   } = topPost || {};
 
-  const { t } = useTranslation();
-
   return (
     <div className="bg-gray-100 rounded-md p-5 flex flex-col h-[450px] w-full">
-      {/* ✅ Icons ONLY when a post exists, and ONLY for platforms with data */}
-      {!!topPost && platformsWithData.length > 0 && (
-        <div className="flex gap-3 mb-3">
-          {platformsWithData.map((platform) => {
+      {/* ✅ Show ALL icons when user has any post; disable those without data */}
+      {!!allPosts?.length && (
+        <div className="flex flex-wrap gap-3 mb-3">
+          {socialPlatforms.map((platform) => {
+            const IconComponent = getPlatformIcon(platform);
             const isActive = selectedPlatform === platform;
+            const hasData = platformsWithDataSet.has(platform);
 
             return (
-              <div
+              <button
                 key={platform}
-                onClick={() => setSelectedPlatform(platform)}
-                className={`
-                  w-10 h-10 rounded-full flex items-center justify-center text-white
-                  ${getPlatformIconBackgroundColors(platform)}
-                  ${isActive ? "opacity-100 ring-4 ring-blue-100" : "opacity-30"}
-                  cursor-pointer
+                type="button"
+                disabled={!hasData}
+                onClick={() => {
+                  if (!hasData) return;
+                  setSelectedPlatform(platform);
+                }}
+                className={`relative p-1 rounded-full transition-all duration-200 transform h-fit
+                  ${hasData ? "hover:scale-105" : ""}
+                  ${isActive && hasData ? "ring-4 ring-blue-200 shadow-md" : hasData ? "hover:shadow-md" : ""}
+                  ${hasData ? "" : "opacity-30 cursor-not-allowed"}
                 `}
+                title={hasData ? platform : `${platform} (no data)`}
               >
-                {getPlatformIcon(platform)({
-                  className: isActive ? "w-5 h-5" : "w-4 h-4",
-                })}
-              </div>
+                <div
+                  className={`w-8 md:w-10 h-8 md:h-10 rounded-full flex items-center justify-center text-white shadow-md
+                    ${getPlatformIconBackgroundColors(platform)}
+                    ${hasData ? "" : "grayscale"}
+                  `}
+                >
+                  {IconComponent ? (
+                    <IconComponent className="w-4 md:w-5 h-4 md:h-5" />
+                  ) : (
+                    <span className="text-white font-bold text-sm">
+                      {platform === "facebook"
+                        ? "FB"
+                        : platform === "instagram"
+                        ? "IG"
+                        : platform === "linkedin"
+                        ? "IN"
+                        : platform === "youtube"
+                        ? "YT"
+                        : platform === "tiktok"
+                        ? "TT"
+                        : "P"}
+                    </span>
+                  )}
+                </div>
+
+                {isActive && hasData && (
+                  <div className="absolute inset-0 rounded-full border-2 border-blue-500 animate-pulse" />
+                )}
+              </button>
             );
           })}
         </div>
       )}
 
       {!topPost ? (
-        <div className="p-2 flex-1 flex flex-col justify-between">
-    <div className="flex justify-center items-center h-[240px]">
-      <img
-        src={Published}
-        alt="No posts"
-        className="h-full w-auto object-contain"
-      />
-    </div>
+        <div className="p-2 flex-1 flex flex-col ">
+          <div className="flex justify-center items-center h-[220px]">
+            <img
+              src={Published}
+              alt="No posts"
+              className="h-full w-auto object-contain"
+            />
+          </div>
 
-    <div className="mt-2 text-left">
-      <h3 className="text-lg font-semibold text-black">
-        You haven’t published any posts.
-      </h3>
+          <div className="mt-2 text-left">
+            <h3 className="text-lg font-semibold text-black">
+              You haven’t published any posts.
+            </h3>
 
-      <p className="text-sm text-black mt-2 leading-relaxed">
-        Click the button below to create your first post and start sharing
-        content.
-      </p>
-    </div>
-  </div>
+            <p className="text-sm text-black mt-2 leading-relaxed">
+              Click the button below to create your first post and start sharing
+              content.
+            </p>
+          </div>
+        </div>
       ) : (
         <div
           className={`flex-1 h-full shadow-md rounded-md px-3 py-2 flex flex-col ${

@@ -35,7 +35,7 @@ import "./i18n";
 import i18n from "./i18n";
 import { useTranslation } from "react-i18next";
 import CookieBanner from "./components/CookieBanner";
-import AnalyticsDetailsPageRoute from "./pages/AnalyticsDetailsPageRoute";
+import AnalyticsPage from "./pages/AnalyticsPage";
 const OAuthCallbackWrapper = () => {
   const { dispatch } = useAppContext();
 
@@ -126,8 +126,14 @@ function App() {
                   <Route path="/faq" element={<FAQ />} />
 
                   <Route
-                    path="/analytics/details"
-                    element={<AnalyticsDetailsPageRoute />}
+                    path="/analytics"
+                    element={
+                      <ProtectedRoute>
+                        <AppLayout>
+                          <AnalyticsPage />
+                        </AppLayout>
+                      </ProtectedRoute>
+                    }
                   />
                   <Route
                     path="/oauth/:platform/callback"
