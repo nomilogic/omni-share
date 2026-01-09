@@ -353,7 +353,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 className="text-white"
               />
             </div>
-            <div className="px-3 mt-24 md:mt-48">
+            <div className="px-3">
               <button
                 type="button"
                 onClick={handleReferShareClick}
