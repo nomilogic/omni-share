@@ -122,7 +122,7 @@ export default function ImageRegenerationModal({
                       <div className="block sm:hidden absolute left-0 right-0 bottom-0 border-t border-gray-200 bg-white/85 backdrop-blur px-3 py-2">
                         <div className="flex items-center justify-between mb-1">
                           <p className="text-xs font-semibold text-gray-900">
-                            Previous
+                            Images
                           </p>
                         </div>
 
@@ -178,7 +178,7 @@ export default function ImageRegenerationModal({
                 <div className=" hidden sm:block rounded-xl border border-gray-200 p-4">
                   <div className="flex items-center justify-between mb-3">
                     <p className="text-sm font-semibold text-gray-900">
-                      Previous Generations
+                      Images
                     </p>
                     <p className="text-xs text-gray-500">Tap to preview</p>
                   </div>

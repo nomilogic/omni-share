@@ -261,11 +261,10 @@ export default function AnalyticsPage() {
           {!loading && (!analytics || platformsWithData.length === 0) && (
             <div className="bg-white rounded-md p-6 border">
               <p className="text-sm text-gray-700 font-medium">
-                {t("no_data") || "No analytics data available yet."}
+                No analytics data available yet.
               </p>
               <p className="text-sm text-gray-600 mt-1">
-                {t("connect_accounts_first") ||
-                  "Connect your accounts and publish content to start seeing analytics."}
+                  Connect your accounts and publish content to start seeing analytics.
               </p>
             </div>
           )}
@@ -302,7 +301,7 @@ export default function AnalyticsPage() {
                       <StatCard
                         title={t("likes") || "Likes"}
                         value={analytics.summary.likes}
-                        tone="red"
+                        tone="blue"
                       />
                       <StatCard
                         title={t("comments") || "Comments"}
@@ -312,7 +311,7 @@ export default function AnalyticsPage() {
                       <StatCard
                         title={t("shares") || "Shares"}
                         value={analytics.summary.shares}
-                        tone="green"
+                        tone="blue"
                       />
                     </div>
 
@@ -467,9 +466,9 @@ function PostDetailsCard({
       </div>
 
       <div className="grid grid-cols-3 gap-3 mt-4">
-        <StatCard title={t("likes") || "Likes"} value={post.likesCount} tone="red" />
+        <StatCard title={t("likes") || "Likes"} value={post.likesCount} tone="blue" />
         <StatCard title={t("comments") || "Comments"} value={post.commentsCount} tone="blue" />
-        <StatCard title={t("shares") || "Shares"} value={post.sharesCount} tone="green" />
+        <StatCard title={t("shares") || "Shares"} value={post.sharesCount} tone="blue" />
       </div>
     </div>
   );
@@ -478,32 +477,24 @@ function PostDetailsCard({
 function StatCard({
   title,
   value,
-  tone,
 }: {
   title: string;
   value: any;
-  tone: "red" | "blue" | "green";
 }) {
-  const styles =
-    tone === "red"
-      ? "bg-red-50 text-red-700"
-      : tone === "blue"
-      ? "bg-blue-50 text-blue-700"
-      : "bg-green-50 text-green-700";
 
   return (
-    <div className={`rounded-md p-3 text-center ${styles}`}>
-      <p className="text-lg font-bold">{value || 0}</p>
-      <p className="text-xs text-gray-600">{title}</p>
+    <div className={`rounded-md p-3 text-center bg-[#7650e3]`}>
+      <p className="text-lg font-bold text-theme-text-light">{value || 0}</p>
+      <p className="text-xs text-theme-text-light">{title}</p>
     </div>
   );
 }
 
 function ReachCard({ period, value }: { period: string; value: any }) {
   return (
-    <div className="bg-blue-50 rounded-md p-3 text-center">
-      <p className="text-sm font-semibold text-gray-800">{period}</p>
-      <p className="text-lg font-bold text-gray-900">{value || 0}</p>
+    <div className="bg-[#7650e3] rounded-md p-3 text-center">
+      <p className="text-sm font-semibold text-theme-text-light">{period}</p>
+      <p className="text-lg font-bold text-theme-text-light">{value || 0}</p>
     </div>
   );
 }

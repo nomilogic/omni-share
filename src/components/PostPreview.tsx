@@ -1044,11 +1044,11 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                 >
                   {IconComponent && (
                     <div
-                      className={`w-12 h-12 rounded-full flex items-center justify-center text-white ${getPlatformColors(
+                      className={`w-8 md:w-10 h-8 md:h-10 rounded-full flex items-center justify-center text-white ${getPlatformColors(
                         post.platform
                       )} shadow-md`}
                     >
-                      <IconComponent className="w-6 h-6" />
+                      <IconComponent className="w-4 md:w-5 h-4 md:h-5" />
                     </div>
                   )}
 
