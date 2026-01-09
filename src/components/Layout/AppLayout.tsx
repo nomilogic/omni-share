@@ -61,6 +61,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const userMenuRef = useRef<HTMLDivElement>(null);
   const mainContentRef = useRef<HTMLElement>(null);
   const { openModal } = useModal();
+    const [zoom, setZoom] = useState(1);
 
   const referralLink = `http://omnishare.ai/auth?referralId=${user?.id}`;
   const shareText = "Join me on OmniShare! Use my referral link:";
@@ -183,6 +184,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const [showPackage, setShowPackage] = useState(false);
   const [isCanceled, setIsCanceled] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   useEffect(() => {
     const handleClickOutside = () => setShowPackage(false);
     document.addEventListener("click", handleClickOutside);
@@ -240,10 +242,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     <ResizeContext.Provider value={{ handleResizeMainToFullScreen }}>
       <>
         <div className="">
-          <div
+          <div style={{zoom:zoom}} 
             className={`fixed inset-y-0 left-0 z-50 w-full xl:w-[20%] sm:w-[40%] theme-bg-trinary border-r border-white/10 transform ${
               isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
             } transition-transform duration-300 ease-in-out`}
+             
           >
             <div className="flex items-center justify-between border-b border-white/20 p-2 py-3 ">
               <Link
