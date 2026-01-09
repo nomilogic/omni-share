@@ -598,7 +598,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                   />
 
                   {showPackage && (
-                    <div className="w-[320px]  right-0  md:mr-10   md:right-6  absolute bg-gray-50 z-20 md:left-auto top-5  mt-6 rounded-md shadow-md md:px-6 px-4 py-6 border md:w-[370px]">
+                    <div className="w-[320px]  right-0 mr-5 md:mr-10   md:right-6  absolute bg-gray-50 z-20 md:left-auto top-5  mt-6 rounded-md shadow-md md:px-6 px-4 py-6 border md:w-[370px]">
                       {user?.wallet?.package ? (
                         <>
                           {/* Plan Section */}
