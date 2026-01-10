@@ -52,9 +52,7 @@ interface SecurityQuestion {
   id: string;
   question: string;
 }
-// =========================
-// Main Component
-// =========================
+
 function AccountSecurityTabs() {
   const { setPasswordEditing, refreshUser, user }: any = useAppContext();
 
@@ -88,7 +86,6 @@ function AccountSecurityTabs() {
     fetchData();
   }, []);
 
-  // Forms
   const passwordForm = useForm<PasswordFormType>({
     resolver: zodResolver(passwordSchema),
     defaultValues: {
@@ -153,7 +150,7 @@ function AccountSecurityTabs() {
       };
 
       await API.securityAnswers(payload);
-      notify("success", "Security questions saved successfully");
+      notify("success", "Security Enable Successfully");
       refreshUser?.();
       setEditingQuestions(false);
     } catch (err: any) {
@@ -189,9 +186,32 @@ function AccountSecurityTabs() {
 
   const tabs = [
     { id: "password", label: "Update Password", icon: Lock },
-    { id: "2fa", label: "Two-Factor Authentication", icon: Smartphone },
     { id: "questions", label: "Security Questions", icon: Key },
+    { id: "2fa", label: "Two-Factor Authentication", icon: Smartphone },
   ];
+
+  const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
+  const [manualCode, setManualCode] = useState<string | null>(null);
+  const [loadingQr, setLoadingQr] = useState(false);
+  const [error, setError] = useState("");
+
+  const startSetup = async () => {
+    setLoadingQr(true);
+    setError("");
+    try {
+      const res = await API.enable2FA();
+      setQrCodeUrl(res.data.qrCode);
+      setManualCode(res.data.manualCode);
+    } catch (err: any) {
+      setError(err?.response?.data?.message || "Failed to load setup");
+    } finally {
+      setLoadingQr(false);
+    }
+  };
+
+  useEffect(() => {
+    startSetup();
+  }, []);
 
   return (
     <>
@@ -328,7 +348,17 @@ function AccountSecurityTabs() {
           )}
 
           {activeTab === "2fa" && (
-            <div className="space-y-6">
+            <div className="space-y-6 relative">
+              {!user?.isSecurityQuestions && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/70 rounded-md">
+                  <Lock className="w-10 h-10 text-gray-600" />
+                  <p className="text-center text-gray-600 px-4">
+                    Please add a{" "}
+                    <span className="font-medium">security code</span> first to
+                    enable Two-Factor Authentication.
+                  </p>
+                </div>
+              )}
               <div className="bg-gray-100 p-6 rounded-md">
                 <h3 className="text-lg font-semibold mb-3">
                   Two-Factor Authentication (2FA)
@@ -384,14 +414,14 @@ function AccountSecurityTabs() {
           {activeTab === "questions" && (
             <form
               onSubmit={questionsForm.handleSubmit(onSecurityQuestionsSubmit)}
-              className="space-y-5"
+              className="space-y-4"
             >
               <p className="text-gray-600">
                 Set up security questions to help recover your account if
                 needed.
               </p>
 
-              <div className="flex items-center justify-between bg-gray-100 p-5 rounded-md border">
+              <div className="flex items-center justify-between bg-gray-100  p-5 rounded-md ">
                 <div>
                   <p className="font-medium">
                     Status:{" "}
@@ -410,7 +440,7 @@ function AccountSecurityTabs() {
                   </p>
                 </div>
 
-                {user?.isSecurityQuestions && !editingQuestions ? (
+                {!editingQuestions ? (
                   <button
                     type="button"
                     onClick={() => setEditingQuestions(true)}
@@ -429,7 +459,7 @@ function AccountSecurityTabs() {
                 )}
               </div>
 
-              {user?.isSecurityQuestions && editingQuestions && (
+              {editingQuestions && (
                 <div className="space-y-8">
                   {fields.map((field, index) => {
                     const questionError =
@@ -549,11 +579,16 @@ function AccountSecurityTabs() {
         </div>
       </div>
 
-      {twoFAModalOpen && (
+      {user.isSecurityQuestions && twoFAModalOpen && (
         <div className="fixed inset-0 z-[9999] flex items-start justify-center bg-black/40 px-4 py-10">
           <TwoFAModal
             close={() => setTwoFAModalOpen(false)}
             onSuccess={handle2FASuccess}
+            qrCodeUrl={qrCodeUrl}
+            manualCode={manualCode}
+            loadingQr={loadingQr}
+            setError={setError}
+            error={error}
           />
         </div>
       )}
@@ -561,39 +596,19 @@ function AccountSecurityTabs() {
   );
 }
 
-// =========================
-// TwoFAModal Component
-// =========================
-const TwoFAModal: React.FC<{
-  close: () => void;
-  onSuccess?: () => void;
-}> = ({ close, onSuccess }) => {
+const TwoFAModal = ({
+  close,
+  onSuccess,
+  qrCodeUrl,
+  manualCode,
+  loadingQr,
+  setError,
+  error,
+}: any) => {
   const { refreshUser } = useAppContext();
 
-  const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
-  const [manualCode, setManualCode] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
   const [otp, setOtp] = useState("");
   const [verifying, setVerifying] = useState(false);
-  const [error, setError] = useState("");
-
-  const startSetup = async () => {
-    setLoading(true);
-    setError("");
-    try {
-      const res = await API.enable2FA();
-      setQrCodeUrl(res.data.qrCode);
-      setManualCode(res.data.manualCode);
-    } catch (err: any) {
-      setError(err?.response?.data?.message || "Failed to load setup");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    startSetup();
-  }, []);
 
   const verifySetup = async () => {
     if (!/^\d{6}$/.test(otp)) {
@@ -642,7 +657,7 @@ const TwoFAModal: React.FC<{
       </div>
 
       <div className="px-6 py-6">
-        {loading && !qrCodeUrl ? (
+        {loadingQr && !qrCodeUrl ? (
           <p className="text-center text-sm text-gray-500">
             Loading QR code...
           </p>
