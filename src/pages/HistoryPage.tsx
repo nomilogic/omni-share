@@ -228,7 +228,6 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
           alt="Post thumbnail"
           className="w-full h-full object-cover"
           onError={(e) => {
-            // Replace with fallback icon on error
             const target = e.currentTarget;
             const parent = target.parentElement;
             if (parent) {
@@ -247,7 +246,6 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
             }
           }}
         />
-        {/* Video play indicator */}
         {mediaType === "video" && (
           <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center">
             <div className="w-10 h-10 bg-white bg-opacity-90 rounded-full flex items-center justify-center">
