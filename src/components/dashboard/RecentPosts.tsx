@@ -37,7 +37,8 @@ function RecentPosts({ post }: any) {
     return new Set<Platform>(platformsWithData);
   }, [platformsWithData]);
 
-  const [selectedPlatform, setSelectedPlatform] = useState<Platform>("facebook");
+  const [selectedPlatform, setSelectedPlatform] =
+    useState<Platform>("facebook");
 
   // ✅ keep selected platform valid
   useEffect(() => {
@@ -67,6 +68,10 @@ function RecentPosts({ post }: any) {
     metadata: { title = "", description = "", image } = {},
   } = topPost || {};
 
+  const ext = image?.split(".")?.pop()?.toLowerCase();
+
+  const isImage = ["jpg", "jpeg", "png", "gif", "webp"].includes(ext);
+  const isVideo = ["mp4", "mov", "avi", "webm", "mkv"].includes(ext);
   return (
     <div className="bg-gray-100 rounded-md p-5 flex flex-col h-[450px] w-full">
       {/* ✅ Show ALL icons when user has any post; disable those without data */}
@@ -88,7 +93,13 @@ function RecentPosts({ post }: any) {
                 }}
                 className={`relative p-1 rounded-full transition-all duration-200 transform h-fit
                   ${hasData ? "hover:scale-105" : ""}
-                  ${isActive && hasData ? "ring-4 ring-blue-200 shadow-md" : hasData ? "hover:shadow-md" : ""}
+                  ${
+                    isActive && hasData
+                      ? "ring-4 ring-blue-200 shadow-md"
+                      : hasData
+                      ? "hover:shadow-md"
+                      : ""
+                  }
                   ${hasData ? "" : "opacity-30 cursor-not-allowed"}
                 `}
                 title={hasData ? platform : `${platform} (no data)`}
@@ -151,16 +162,16 @@ function RecentPosts({ post }: any) {
       ) : (
         <div
           className={`flex-1 h-full shadow-md rounded-md px-3 py-2 flex flex-col ${
-            image ? "bg-cover bg-center text-white" : "bg-white"
+            isImage ? "bg-cover bg-center text-white" : "bg-white text-black"
           }`}
-          style={image ? { backgroundImage: `url(${image})` } : {}}
+          style={isImage ? { backgroundImage: `url(${image})` } : {}}
         >
           <h3 className="font-bold text-lg mb-2">{title || "No Title"}</h3>
 
           <p
             title={description}
             className={`text-sm mb-3 line-clamp-5 ${
-              image ? "bg-black/40 p-2 rounded" : "text-gray-700"
+              isImage ? "bg-black/40 p-2 rounded" : "text-gray-700"
             }`}
           >
             {description || content || "No content available"}
