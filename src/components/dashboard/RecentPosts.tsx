@@ -160,23 +160,47 @@ function RecentPosts({ post }: any) {
           </div>
         </div>
       ) : (
-        <div
-          className={`flex-1 h-full shadow-md rounded-md px-3 py-2 flex flex-col ${
-            isImage ? "bg-cover bg-center text-white" : "bg-white text-black"
-          }`}
-          style={isImage ? { backgroundImage: `url(${image})` } : {}}
-        >
-          <h3 className="font-bold text-lg mb-2">{title || "No Title"}</h3>
+<div
+  className={`
+    relative flex-1 h-full shadow-md rounded-md 
+    overflow-hidden flex flex-col
+    ${isImage 
+      ? "bg-gray-900 text-white" 
+      : "bg-white text-black"
+    }
+  `}
+>
 
-          <p
-            title={description}
-            className={`text-sm mb-3 line-clamp-5 ${
-              isImage ? "bg-black/40 p-2 rounded" : "text-gray-700"
-            }`}
-          >
-            {description || content || "No content available"}
-          </p>
-        </div>
+  {isImage && (
+    <>
+      <div 
+        className="absolute inset-0 bg-cover bg-top"
+        style={{
+          backgroundImage: `url(${image})`,
+        }}
+      />
+      
+      <div className="absolute inset-0 bg-gradient-to-t " />
+    </>
+  )}
+
+    <div className="relative z-10 flex flex-col h-full p-3">
+    <h3 className={`font-bold text-lg mb-2 ${isImage && "drop-shadow-[0_1.5px_1.5px_rgba(0,0,0,0.8)]"} `}>
+      {title || "No Title"}
+    </h3>
+
+    <p
+      title={description || content}
+      className={`
+        text-sm mt-auto mb-1 leading-relaxed ${isImage && "drop-shadow-[0_1.5px_1.5px_rgba(0,0,0,0.8)]"}
+        ${isImage ? "" : "text-gray-700"}
+      `}
+    >
+      {description || content || "No content available"}
+    </p>
+  </div>
+</div>
+
       )}
 
       <button
