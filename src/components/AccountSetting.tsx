@@ -152,6 +152,7 @@ function AccountSecurityTabs() {
       await API.securityAnswers(payload);
       notify("success", "Security Enable Successfully");
       refreshUser?.();
+      startSetup();
       setEditingQuestions(false);
     } catch (err: any) {
       notify(
