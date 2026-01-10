@@ -646,30 +646,5 @@
   "join_now": "Únete",
   "joining": "Uniéndose",
   "omnishare_auto_resizes_description": "Absolutamente. OmniShare redimensiona automáticamente tus imágenes y videos, crea miniaturas para YouTube y garantiza que cada publicación cumpla con las especificaciones exactas de la plataforma.",
-  "does_omnishare_optimize_media_for_each_platform": "¿OmniShare optimiza los medios para cada plataforma?",
-  "account_security": "Account Security",
-  "two_factor_auth": "Two-Factor Authentication",
-  "security_questions": "Security Questions",
-  "reset_password": "Reset Password",
-
-  "manage_account_security": "Manage your account security settings",
-
-  "two_factor_auth_description": "Add an extra layer of security by requiring a code from your phone in addition to your password.",
-  "2fa_status": "Status",
-  "2fa_enabled": "Enabled",
-  "2fa_disabled": "Disabled",
-  "2fa_method": "Authenticator app (TOTP)",
-  "disable_2fa": "Disable 2FA",
-  "2fa_processing": "Processing...",
-
-  "security_questions_description": "Set up security questions to help recover your account if needed.",
-  "question_1": "Question 1",
-  "question_1_placeholder": "e.g., What was your first pet's name?",
-  "answer_1": "Answer 1",
-  "question_2": "Question 2",
-  "question_2_placeholder": "e.g., What city were you born in?",
-  "answer_2": "Answer 2",
-  "save_security_questions": "Save Security Questions",
-  "security_questions_updated": "Security questions updated successfully!",
-  "failed_update_security_questions": "Failed to update security questions"
+  "does_omnishare_optimize_media_for_each_platform": "¿OmniShare optimiza los medios para cada plataforma?"
 }
