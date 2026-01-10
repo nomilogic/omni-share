@@ -650,7 +650,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
                   <div className="flex items-center gap-3">
                     {/* Platform Icon */}
                     <div
-                      className={`w-12 h-12 rounded-full flex items-center justify-center text-white ${getPlatformIconBackgroundColors(
+                      className={`w-8 h-8 md:w-12 md:h-12 rounded-full flex items-center  justify-center text-white ${getPlatformIconBackgroundColors(
                         post.platform
                       )}`}
                     >
@@ -658,12 +658,12 @@ export const PublishPosts: React.FC<PublishProps> = ({
                         const IconComponent = getPlatformIcon(post.platform);
                         if (!IconComponent) {
                           return (
-                            <span className="text-lg font-bold ">
+                            <span className="text-lg font-bold">
                               {post.platform.substring(0, 2)}
                             </span>
                           );
                         }
-                        return <IconComponent className="w-6 h-6" />;
+                        return <IconComponent className="w-8 h-4 md:w-6 md:h-6" />;
                       })()}
                     </div>
 
@@ -995,9 +995,10 @@ export const PublishPosts: React.FC<PublishProps> = ({
                       </div>
 
                       <div className="flex flex-col gap-1">
-                        <label className="inline-flex items-center gap-2 text-xs font-medium text-purple-900">
+                        <label className=" flex items-center gap-1 text-xs font-medium text-purple-900">
                           <input
                             type="checkbox"
+                            className="mr-1 aspect-[1/1]" 
                             checked={tiktokSettings.isCommercial}
                             onChange={(e) =>
                               setTiktokSettings((prev) => ({

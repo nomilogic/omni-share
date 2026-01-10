@@ -10,12 +10,15 @@ import {
   History,
   CreditCard,
   Plus,
+  Share2,
 } from "lucide-react";
 import { useAppContext } from "../../context/AppContext";
 import { useLoading } from "../../context/LoadingContext";
 import { useSubscriptionModal } from "../../context/SubscriptionModalContext";
 import { PricingModals } from "../PricingModals";
-
+import { Gift } from "lucide-react";
+import { useModal } from "../../context2/ModalContext";
+import ReferralSection from "../../components/dashboard/ReferralSection";
 import Icon from "../Icon";
 import { WalletBalance } from "../WalletBalance";
 import PreloaderOverlay from "../PreloaderOverlay";
@@ -25,6 +28,7 @@ import logoText from "../../assets/logo-text.svg";
 import LogoWhiteText from "../../assets/logo-white-text.svg";
 import { useTranslation } from "react-i18next";
 import LanguageDropdown from "../LanguageDropdown";
+import { BarChart3 } from "lucide-react";
 import { AvatarWithProgress } from "../AvatarWithProgress";
 
 interface AppLayoutProps {
@@ -56,6 +60,41 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const notificationRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const mainContentRef = useRef<HTMLElement>(null);
+  const { openModal } = useModal();
+    const [zoom, setZoom] = useState(1);
+
+  const referralLink = `http://omnishare.ai/auth?referralId=${user?.id}`;
+  const shareText = "Join me on OmniShare! Use my referral link:";
+
+  // const isProbablyMobile = () => {
+  //   // screen + touch based (safe-ish)
+  //   return (
+  //     window.matchMedia("(max-width: 768px)").matches ||
+  //     ("ontouchstart" in window) ||
+  //     navigator.maxTouchPoints > 0
+  //   );
+  // };
+  const isMobileScreen = () => window.matchMedia("(max-width: 768px)").matches;
+  const handleReferShareClick = async () => {
+    // ✅ ONLY mobile screen => native share
+    if (isMobileScreen() && navigator.share) {
+      try {
+        await navigator.share({
+          title: "OmniShare",
+          text: shareText,
+          url: referralLink,
+        });
+      } catch (err: any) {
+      } finally {
+        setIsMobileMenuOpen(false);
+      }
+      return;
+    }
+
+    // ✅ desktop => always modal
+    openModal(ReferralSection as any, {});
+    setIsMobileMenuOpen(false);
+  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -134,15 +173,43 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       path: "/pricing",
       icon: CreditCard,
     },
+    {
+      key: "Analytics",
+      name: "Analytics",
+      path: "/analytics",
+      icon: BarChart3,
+    },
   ];
 
   const [showPackage, setShowPackage] = useState(false);
   const [isCanceled, setIsCanceled] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   useEffect(() => {
     const handleClickOutside = () => setShowPackage(false);
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
+  }, []);
+  useEffect(() => {
+    const handleWindowResize = () => {
+      //handleResizeMainToFullScreen(window.matchMedia("(max-width: 768px)").matches);
+     // alert(window.innerHeight/800);
+      const portrait=window.innerHeight/window.innerWidth > 1;
+     
+        if(window.innerHeight < 800)
+        { setZoom(window.innerHeight/800)
+
+        }
+      
+     
+    };
+    handleWindowResize();
+    window.addEventListener("resize", handleWindowResize);
+    window.addEventListener("load", handleWindowResize);
+    return () => {
+      window.removeEventListener("resize", handleWindowResize);
+     // window.removeEventListener("load", handleWindowResize);
+    };
   }, []);
 
   const cancelSubscription = async () => {
@@ -196,10 +263,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     <ResizeContext.Provider value={{ handleResizeMainToFullScreen }}>
       <>
         <div className="">
-          <div
+          <div style={{zoom:zoom}} 
             className={`fixed inset-y-0 left-0 z-50 w-full xl:w-[20%] sm:w-[40%] theme-bg-trinary border-r border-white/10 transform ${
               isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
             } transition-transform duration-300 ease-in-out`}
+             
           >
             <div className="flex items-center justify-between border-b border-white/20 p-2 py-3 ">
               <Link
@@ -284,6 +352,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 );
               })}
             </nav>
+
             <div className="flex-1 px-1 hover:text-purple-600 flex flex-col rounded-md text-white mx-2 gap-y-2">
               <button
                 onClick={() => {
@@ -307,6 +376,29 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 alignRight={true}
                 className="text-white"
               />
+            </div>
+            <div className="px-3">
+              <button
+                type="button"
+                onClick={handleReferShareClick}
+                className="w-full rounded-xl bg-transparent"
+                title="Refer & Earn"
+              >
+                <div className="w-full  flex items-center justify-between bg-white rounded-md px-4 py-3 border border-black/10 shadow-sm">
+                  <div className="text-left">
+                    <p className="text-lg font-semibold text-[#7650e3] leading-tight">
+                      Refer & Earn!
+                    </p>
+                    <p className="text-sm text-gray-500 leading-tight mt-1">
+                      Refer & earn 100 omni coins!
+                    </p>
+                  </div>
+
+                  <div className="ml-3 shrink-0 w-12 h-12 rounded-full bg-[#7650e3] flex items-center justify-center">
+                    <Gift className="w-6 h-6 text-white" />
+                  </div>
+                </div>
+              </button>
             </div>
 
             <div className="absolute bottom-0 left-0 right-0 ">

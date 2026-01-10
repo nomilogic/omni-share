@@ -22,7 +22,6 @@ import { AccountsPage } from "./pages/AccountsPage";
 import { HistoryPage } from "./pages/HistoryPage";
 import PrivacyPolicy from "./components/PrivacyPolicy";
 import AddonSuccessPage from "./pages/PackageAddonSuccess";
-import PackageSuccessPage from "./pages/PackagePaymentSuccess";
 import TransactionHistory from "./pages/TransectionHistory";
 import GenerationAmountPage from "./pages/GenerationAmountPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
@@ -34,7 +33,7 @@ import PackageErrorPage from "./pages/PackageErrorPage";
 import "./i18n";
 import { useTranslation } from "react-i18next";
 import CookieBanner from "./components/CookieBanner";
-import API from "./services/api";
+import AnalyticsPage from "./pages/AnalyticsPage";
 const OAuthCallbackWrapper = () => {
   const { dispatch } = useAppContext();
 
@@ -131,6 +130,16 @@ function App() {
                   <Route path="/support" element={<Support />} />
                   <Route path="/faq" element={<FAQ />} />
 
+                  <Route
+                    path="/analytics"
+                    element={
+                      <ProtectedRoute>
+                        <AppLayout>
+                          <AnalyticsPage />
+                        </AppLayout>
+                      </ProtectedRoute>
+                    }
+                  />
                   <Route
                     path="/oauth/:platform/callback"
                     element={<OAuthCallback />}

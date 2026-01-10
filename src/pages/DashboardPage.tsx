@@ -23,7 +23,7 @@ export const DashboardPage: React.FC = () => {
   const isEditing = profileParam || state?.isProfileEditing || false;
   const isPasswordEditing = state?.isPasswordEditing || false;
   const { t } = useTranslation();
-
+  const [hasAnalytics, setHasAnalytics] = useState<boolean | null>(null);
   const { openModal } = useModal();
 
   useLayoutEffect(() => {
@@ -139,7 +139,7 @@ export const DashboardPage: React.FC = () => {
   return (
     <>
       {!isEditing && !isPasswordEditing && (
-        <div className="min-h-screen my-10">
+        <div className=" my-10">
           <main className="max-w-8xl mx-auto  flex flex-col gap-y-8 ">
             <div className="bg-gray-100  lg:px-4 px-3 py-4 rounded-md flex flex-col gap-4">
               <ProfileCard />
@@ -231,12 +231,14 @@ export const DashboardPage: React.FC = () => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <RecentPosts post={post} />
-              <Analytics />
+              <Analytics onHasAnalyticsChange={setHasAnalytics} />
               <NewsUpdates />
             </div>
-            <div className="hidden md:block">
-              <ReferralSection />
-            </div>
+            {hasAnalytics !== false && (
+              <div className="hidden md:block">
+                <ReferralSection />
+              </div>
+            )}
           </main>
         </div>
       )}

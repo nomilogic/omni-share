@@ -113,8 +113,8 @@ export const PreloaderOverlay: React.FC<PreloaderOverlayProps> = ({
         </div>
 
         {/* Loading message with typing effect */}
-        <div className="text-center mb-6 min-h-[3.5rem]">
-          <p className="text-white text-lg font-medium leading-tight">
+        <div className="text-center mb-6 min-h-[3.5rem] text-wrap">
+          <p className="text-white text-lg font-medium leading-tight text-wrap">
             {displayMessage}
             <span className="animate-pulse">|</span>
           </p>

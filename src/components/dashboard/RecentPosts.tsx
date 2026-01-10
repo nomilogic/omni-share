@@ -1,6 +1,7 @@
 import { useAppContext } from "../../context/AppContext";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Published from "../../assets/Published-Post.png";
 import {
   getPlatformIcon,
   getPlatformIconBackgroundColors,
@@ -11,6 +12,7 @@ import { useTranslation } from "react-i18next";
 function RecentPosts({ post }: any) {
   const { state } = useAppContext();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const allPosts = post || state?.generatedPosts || [];
 
@@ -22,18 +24,39 @@ function RecentPosts({ post }: any) {
     "tiktok",
   ];
 
-  const [selectedPlatform, setSelectedPlatform] = useState<Platform | "">(
-    allPosts[0]?.platform || ""
-  );
-
-  useEffect(() => {
-    setSelectedPlatform(allPosts[0]?.platform || "");
+  // ✅ platforms which actually have posts
+  const platformsWithData = useMemo(() => {
+    const set = new Set<Platform>();
+    for (const p of allPosts) {
+      if (p?.platform) set.add(p.platform as Platform);
+    }
+    return socialPlatforms.filter((pl) => set.has(pl));
   }, [allPosts]);
 
+  const platformsWithDataSet = useMemo(() => {
+    return new Set<Platform>(platformsWithData);
+  }, [platformsWithData]);
+
+  const [selectedPlatform, setSelectedPlatform] = useState<Platform>("facebook");
+
+  // ✅ keep selected platform valid
+  useEffect(() => {
+    // if selected has data => keep
+    if (platformsWithDataSet.has(selectedPlatform)) return;
+
+    // else: if facebook has data => facebook
+    if (platformsWithDataSet.has("facebook")) {
+      setSelectedPlatform("facebook");
+      return;
+    }
+
+    // else: first available
+    const first = platformsWithData[0];
+    if (first) setSelectedPlatform(first);
+  }, [platformsWithData, platformsWithDataSet, selectedPlatform]);
+
   const topPost = allPosts
-    .filter(
-      (p: any) => selectedPlatform === "" || p.platform === selectedPlatform
-    )
+    .filter((p: any) => p?.platform === selectedPlatform)
     .sort(
       (a: any, b: any) =>
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
@@ -43,36 +66,87 @@ function RecentPosts({ post }: any) {
     content = "",
     metadata: { title = "", description = "", image } = {},
   } = topPost || {};
-  const { t } = useTranslation();
-  console.log("topPost", topPost);
+
   return (
     <div className="bg-gray-100 rounded-md p-5 flex flex-col h-[450px] w-full">
-      <div className="flex gap-3 mb-3">
-        {socialPlatforms.map((platform) => {
-          const isActive = selectedPlatform === platform;
+      {/* ✅ Show ALL icons when user has any post; disable those without data */}
+      {!!allPosts?.length && (
+        <div className="flex flex-wrap gap-3 mb-3">
+          {socialPlatforms.map((platform) => {
+            const IconComponent = getPlatformIcon(platform);
+            const isActive = selectedPlatform === platform;
+            const hasData = platformsWithDataSet.has(platform);
 
-          return (
-            <div
-              key={platform}
-              onClick={() => setSelectedPlatform(platform)}
-              className={`
-          w-10 h-10 rounded-full flex items-center justify-center text-white
-          ${getPlatformIconBackgroundColors(platform)}
-          ${isActive ? "opacity-100 ring-4 ring-blue-100" : "opacity-30"}
-          cursor-pointer
-        `}
-            >
-              {getPlatformIcon(platform)({
-                className: isActive ? "w-5 h-5" : "w-4 h-4",
-              })}
-            </div>
-          );
-        })}
-      </div>
+            return (
+              <button
+                key={platform}
+                type="button"
+                disabled={!hasData}
+                onClick={() => {
+                  if (!hasData) return;
+                  setSelectedPlatform(platform);
+                }}
+                className={`relative p-1 rounded-full transition-all duration-200 transform h-fit
+                  ${hasData ? "hover:scale-105" : ""}
+                  ${isActive && hasData ? "ring-4 ring-blue-200 shadow-md" : hasData ? "hover:shadow-md" : ""}
+                  ${hasData ? "" : "opacity-30 cursor-not-allowed"}
+                `}
+                title={hasData ? platform : `${platform} (no data)`}
+              >
+                <div
+                  className={`w-8 md:w-10 h-8 md:h-10 rounded-full flex items-center justify-center text-white shadow-md
+                    ${getPlatformIconBackgroundColors(platform)}
+                    ${hasData ? "" : "grayscale"}
+                  `}
+                >
+                  {IconComponent ? (
+                    <IconComponent className="w-4 md:w-5 h-4 md:h-5" />
+                  ) : (
+                    <span className="text-white font-bold text-sm">
+                      {platform === "facebook"
+                        ? "FB"
+                        : platform === "instagram"
+                        ? "IG"
+                        : platform === "linkedin"
+                        ? "IN"
+                        : platform === "youtube"
+                        ? "YT"
+                        : platform === "tiktok"
+                        ? "TT"
+                        : "P"}
+                    </span>
+                  )}
+                </div>
+
+                {isActive && hasData && (
+                  <div className="absolute inset-0 rounded-full border-2 border-blue-500 animate-pulse" />
+                )}
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       {!topPost ? (
-        <div className="bg-gray-100 rounded-md p-5 flex items-center justify-center h-full w-full text-gray-500">
-          No recent posts available{" "}
+        <div className="p-2 flex-1 flex flex-col ">
+          <div className="flex justify-center items-center h-[220px]">
+            <img
+              src={Published}
+              alt="No posts"
+              className="h-full w-auto object-contain"
+            />
+          </div>
+
+          <div className="mt-2 text-left">
+            <h3 className="text-lg font-semibold text-black">
+              You haven’t published any posts.
+            </h3>
+
+            <p className="text-sm text-black mt-2 leading-relaxed">
+              Click the button below to create your first post and start sharing
+              content.
+            </p>
+          </div>
         </div>
       ) : (
         <div
