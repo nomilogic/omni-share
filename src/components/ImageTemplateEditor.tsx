@@ -79,7 +79,7 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
   const { handleResizeMainToFullScreen } = useResize();
   const { t, i18n } = useTranslation();
   const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
-
+const [isTemplatesLoading, setIsTemplatesLoading] = useState(false);
   const logoInputRef = useRef<HTMLInputElement>(null);
   const addElementLogoInputRef = useRef<HTMLInputElement>(null);
   const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null);
@@ -338,6 +338,8 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
   };
 
   const refreshSavedTemplates = async () => {
+  setIsTemplatesLoading(true);
+  try {
     // 1) Local templates (fallback/offline)
     const localTemplates: SavedTemplateV1[] = readTemplatesFromLocalStorage().map(
       (t) => ({
@@ -416,7 +418,11 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
       if (prev && merged.some((t) => t.id === prev)) return prev;
       return merged[0].id;
     });
-  };
+  } finally {
+    setIsTemplatesLoading(false);
+  }
+};
+
 
   useEffect(() => {
     refreshSavedTemplates();
@@ -2187,122 +2193,125 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
               </button>
 
               {templatesOpen && (
-                <div className="mt-2 space-y-2 flex flex-col min-h-0 flex-1">
-                  <div className="grid grid-cols-[1fr_auto] items-center gap-2 flex-shrink-0">
-                    <input
-                      value={templateName}
-                      onChange={(e) => setTemplateName(e.target.value)}
-                      placeholder="Template name"
-                      className="w-full min-w-0 px-3 h-8 border border-gray-300 rounded-md text-sm"
-                    />
-                    <button
-                      onClick={() => void saveCurrentTemplate()}
-                      className="h-8 bg-purple-600 text-white font-medium flex items-center gap-2 justify-center px-3 rounded-md border border-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3] whitespace-nowrap"
-                      title={
-                        saveAsGlobal
-                          ? "Save as global template"
-                          : "Save as my template"
-                      }
-                      type="button"
-                    >
-                      <Download className="w-4 h-4" />
-                      <span className="text-sm">Save</span>
-                    </button>
+  <div className="mt-2 space-y-2 flex flex-col min-h-0 flex-1 relative">
+    {/* Loader overlay */}
+    {isTemplatesLoading && (
+      <div className="absolute inset-0 z-10 bg-white/70 backdrop-blur-[1px] rounded-md flex items-center justify-center">
+        <div className="flex items-center gap-2 text-sm text-slate-700">
+          <span className="h-4 w-4 rounded-full border-2 border-slate-300 border-t-purple-600 animate-spin" />
+          Loading templates...
+        </div>
+      </div>
+    )}
+
+    <div className="grid grid-cols-[1fr_auto] items-center gap-2 flex-shrink-0">
+      <input
+        value={templateName}
+        onChange={(e) => setTemplateName(e.target.value)}
+        placeholder="Template name"
+        className="w-full min-w-0 px-3 h-8 border border-gray-300 rounded-md text-sm"
+        disabled={isTemplatesLoading}
+      />
+      <button
+        onClick={() => void saveCurrentTemplate()}
+        className="h-8 bg-purple-600 text-white font-medium flex items-center gap-2 justify-center px-3 rounded-md border border-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3] whitespace-nowrap disabled:opacity-60"
+        title={saveAsGlobal ? "Save as global template" : "Save as my template"}
+        type="button"
+        disabled={isTemplatesLoading}
+      >
+        <Download className="w-4 h-4" />
+        <span className="text-sm">Save</span>
+      </button>
+    </div>
+
+    <label className="flex items-center gap-2 text-xs text-slate-700 select-none flex-shrink-0">
+      <input
+        type="checkbox"
+        checked={saveAsGlobal}
+        onChange={(e) => setSaveAsGlobal(e.target.checked)}
+        className="h-4 w-4"
+        disabled={isTemplatesLoading}
+      />
+      Save as global (isPublic)
+    </label>
+
+    <div className="flex items-center justify-between flex-shrink-0">
+      <p className="text-xs text-gray-600 font-medium">Saved templates</p>
+      <div className="flex items-center gap-2">
+        <button
+          onClick={() => void refreshSavedTemplates()}
+          className="text-xs text-purple-600 font-medium hover:underline disabled:opacity-60"
+          type="button"
+          disabled={isTemplatesLoading}
+        >
+          Refresh
+        </button>
+        <button
+          onClick={() =>
+            selectedTemplateId && deleteTemplateById(selectedTemplateId)
+          }
+          disabled={
+            isTemplatesLoading ||
+            !selectedTemplateId ||
+            savedTemplates.find((t) => t.id === selectedTemplateId)?.source !==
+              "local"
+          }
+          className="h-8 px-2 flex items-center justify-center rounded-md bg-red-100 hover:bg-red-200 disabled:opacity-50 text-xs text-red-700"
+          title="Delete (local templates only)"
+          type="button"
+        >
+          <Trash className="w-3 h-3" />
+        </button>
+      </div>
+    </div>
+
+    {savedTemplates.length === 0 ? (
+      <p className="text-xs text-gray-400">No templates saved yet.</p>
+    ) : (
+      <div className="space-y-2 overflow-y-auto min-h-0 flex-1">
+        <div className="grid grid-cols-2 gap-2">
+          {[...savedTemplates]
+            .sort((a, b) => (b.savedAt || "").localeCompare(a.savedAt || ""))
+            .map((tpl) => (
+              <div
+                key={tpl.id}
+                onClick={() => !isTemplatesLoading && loadTemplateById(tpl.id)}
+                className={`relative cursor-pointer rounded-md overflow-hidden border-2 transition-all ${
+                  selectedTemplateId === tpl.id
+                    ? "border-purple-600 bg-purple-50"
+                    : "border-gray-200 bg-gray-50 hover:border-gray-300"
+                } ${isTemplatesLoading ? "pointer-events-none opacity-60" : ""}`}
+                title={`${
+                  tpl.source === "global"
+                    ? "Global - "
+                    : tpl.source === "user"
+                    ? "My - "
+                    : ""
+                }${tpl.name}`}
+              >
+                {tpl.thumbnailDataUrl ? (
+                  <img
+                    src={tpl.thumbnailDataUrl}
+                    alt={tpl.name}
+                    className="w-full h-20 object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-20 bg-gray-200 flex items-center justify-center text-xs text-gray-400">
+                    No preview
                   </div>
-
-                  <label className="flex items-center gap-2 text-xs text-slate-700 select-none flex-shrink-0">
-                    <input
-                      type="checkbox"
-                      checked={saveAsGlobal}
-                      onChange={(e) => setSaveAsGlobal(e.target.checked)}
-                      className="h-4 w-4"
-                    />
-                    Save as global (isPublic)
-                  </label>
-
-                  <div className="flex items-center justify-between flex-shrink-0">
-                    <p className="text-xs text-gray-600 font-medium">
-                      Saved templates
-                    </p>
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => void refreshSavedTemplates()}
-                        className="text-xs text-purple-600 font-medium hover:underline"
-                        type="button"
-                      >
-                        Refresh
-                      </button>
-                      <button
-                        onClick={() =>
-                          selectedTemplateId &&
-                          deleteTemplateById(selectedTemplateId)
-                        }
-                        disabled={
-                          !selectedTemplateId ||
-                          savedTemplates.find(
-                            (t) => t.id === selectedTemplateId
-                          )?.source !== "local"
-                        }
-                        className="h-8 px-2 flex items-center justify-center rounded-md bg-red-100 hover:bg-red-200 disabled:opacity-50 text-xs text-red-700"
-                        title="Delete (local templates only)"
-                        type="button"
-                      >
-                        <Trash className="w-3 h-3" />
-                      </button>
-                    </div>
-                  </div>
-
-                  {savedTemplates.length === 0 ? (
-                    <p className="text-xs text-gray-400">
-                      No templates saved yet.
-                    </p>
-                  ) : (
-                    <div className="space-y-2 overflow-y-auto min-h-0 flex-1">
-                      <div className="grid grid-cols-2 gap-2">
-                        {[...savedTemplates]
-                          .sort((a, b) =>
-                            (b.savedAt || "").localeCompare(a.savedAt || "")
-                          )
-                          .map((tpl) => (
-                            <div
-                              key={tpl.id}
-                              onClick={() => loadTemplateById(tpl.id)}
-                              className={`relative cursor-pointer rounded-md overflow-hidden border-2 transition-all ${
-                                selectedTemplateId === tpl.id
-                                  ? "border-purple-600 bg-purple-50"
-                                  : "border-gray-200 bg-gray-50 hover:border-gray-300"
-                              }`}
-                              title={`${
-                                tpl.source === "global"
-                                  ? "Global - "
-                                  : tpl.source === "user"
-                                  ? "My - "
-                                  : ""
-                              }${tpl.name}`}
-                            >
-                              {tpl.thumbnailDataUrl ? (
-                                <img
-                                  src={tpl.thumbnailDataUrl}
-                                  alt={tpl.name}
-                                  className="w-full h-20 object-cover"
-                                />
-                              ) : (
-                                <div className="w-full h-20 bg-gray-200 flex items-center justify-center text-xs text-gray-400">
-                                  No preview
-                                </div>
-                              )}
-                              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-1.5">
-                                <p className="text-xs text-white font-semibold truncate drop-shadow-lg">
-                                  {tpl.name}
-                                </p>
-                              </div>
-                            </div>
-                          ))}
-                      </div>
-                    </div>
-                  )}
+                )}
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-1.5">
+                  <p className="text-xs text-white font-semibold truncate drop-shadow-lg">
+                    {tpl.name}
+                  </p>
                 </div>
-              )}
+              </div>
+            ))}
+        </div>
+      </div>
+    )}
+  </div>
+)}
             </div>
 
             {/* Element Creation Toolbar */}
