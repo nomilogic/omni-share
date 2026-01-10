@@ -92,8 +92,8 @@ export function OtpModal({
       const fn = verifyOtp || (async () => ({ token: undefined }));
       const result: any = await fn(otp);
 
-      if (result?.token) {
-        localStorage.setItem("auth_token", result.token!);
+      if (result.accessToken) {
+        localStorage.setItem("auth_token", result.accessToken!);
         localStorage.removeItem("email_token");
 
         onSuccess(result?.user);

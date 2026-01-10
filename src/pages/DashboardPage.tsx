@@ -8,7 +8,7 @@ import Analytics from "../components/dashboard/Analytics";
 import NewsUpdates from "../components/dashboard/NewsUpdates";
 import ReferralSection from "../components/dashboard/ReferralSection";
 import ProfileSetupSinglePage from "@/components/ProfileSetupSinglePage";
-import UpdatePasswordForm from "@/components/UpdatePasswordForm";
+import AccountSetting from "@/components/AccountSetting";
 import { useTranslation } from "react-i18next";
 import API from "@/services/api";
 import { useModal } from "../context2/ModalContext";
@@ -251,7 +251,7 @@ export const DashboardPage: React.FC = () => {
       {isPasswordEditing && (
         <div className="relative w-full">
           <div className="p-0 w-full">
-            <UpdatePasswordForm />
+            <AccountSetting />
           </div>
         </div>
       )}

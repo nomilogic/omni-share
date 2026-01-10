@@ -170,9 +170,14 @@ interface APIInstance extends AxiosInstance {
   listTemplates: () => Promise<any>;
   listGlobalTemplates: () => Promise<any>;
   verifyLogin2FA: (data: any) => Promise<any>;
+  verifySecretLogin: (data: any) => Promise<any>;
   verify2FASetup: (data: any) => Promise<any>;
+  securityAnswers: (data: any) => Promise<any>;
   enable2FA: () => Promise<any>;
+  disable2FA: () => Promise<any>;
   facebookAnalytics: () => Promise<any>;
+  securityQuestion: () => Promise<any>;
+  refreshToken: (token: any) => Promise<any>;
 }
 
 export const API = axios.create({
@@ -194,8 +199,19 @@ API.interceptors.request.use(
   (error: AxiosError) => Promise.reject(error)
 );
 
-API.facebookAnalytics = () => API.get("/client/facebook/analytics");
+API.refreshToken = (token) => {
+  const refresh_token = token || localStorage.getItem("refresh_token");
 
+  return API.post("/auth/refresh-token", { refreshToken: refresh_token });
+};
+
+API.securityAnswers = (data: any) =>
+  API.post("/auth/security/add-security", data);
+API.verifySecretLogin = (data: any) =>
+  API.post("/auth/verifySecretLogin", data);
+
+API.facebookAnalytics = () => API.get("/client/facebook/analytics");
+API.securityQuestion = () => API.get("/auth/security/question");
 API.login = (data) => API.post("/auth/login", data);
 API.registerUser = (data) => API.post("/auth/register", data);
 API.contactUs = (data) => API.post("/auth/contact-us", data);
@@ -222,6 +238,10 @@ API.logout = () => {
 };
 
 API.verifyLogin2FA = (data) => API.post("/auth/verifyLogin2FA", data);
+API.disable2FA = () => {
+  const token: any = localStorage.getItem("auth_token");
+  return API.get("/auth/disable2FA", { headers: { authorization: token } });
+};
 API.enable2FA = () => {
   const token: any = localStorage.getItem("auth_token");
   return API.get("/auth/enable2FA", { headers: { authorization: token } });

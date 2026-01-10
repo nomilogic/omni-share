@@ -32,9 +32,9 @@ import { themeManager } from "./lib/theme";
 import { FAQ, Support, Terms } from "./components";
 import PackageErrorPage from "./pages/PackageErrorPage";
 import "./i18n";
-import i18n from "./i18n";
 import { useTranslation } from "react-i18next";
 import CookieBanner from "./components/CookieBanner";
+import API from "./services/api";
 const OAuthCallbackWrapper = () => {
   const { dispatch } = useAppContext();
 
@@ -52,6 +52,13 @@ const OAuthCallbackWrapper = () => {
 };
 
 function App() {
+  const logout = () => {
+    localStorage.removeItem("auth_token");
+    localStorage.removeItem("refresh_token");
+    localStorage.removeItem("pusherTransportTLS");
+    window.location.href = "/auth";
+  };
+
   useEffect(() => {
     themeManager.initialize();
     localStorage.getItem("hasLanded");

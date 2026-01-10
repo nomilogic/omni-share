@@ -667,7 +667,7 @@
   "code_refreshes_every_30_seconds": "The code refreshes every 30 seconds",
 
   "enter_code_from_auth_app": "Open your authenticator app and enter the 6-digit code",
-  "verify_and_login": "Verify & Login",
+  "verify_and_login": "Verify",
   "please_enter_valid_6_digit_code": "Please enter a valid 6-digit code",
   "cannot_resend_2fa_code": "Cannot resend code during login",
   "analytics_details": "Performance Analytics",

@@ -7,15 +7,14 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-import { getCurrentUser } from "../lib/database"; // Assuming getCurrentUser is stable
+import { getCurrentUser } from "../lib/database";
 import { LoadingProvider } from "./LoadingContext";
-import { Platform } from "../types"; // Assuming Platform is correctly typed
+import { Platform } from "../types";
 import Pusher from "pusher-js";
-import API from "../services/api"; // Assuming API client is imported
+import API from "../services/api";
 
-// --- 1. Types and Interfaces ---
+// --- Types ---
 
-// Extended User interface for better type safety
 export interface User {
   id: string;
   email: string;
@@ -23,10 +22,7 @@ export interface User {
   profile_type?: "business" | "individual";
   plan?: "free" | "ipro" | "business";
   created_at?: string;
-  user_metadata?: {
-    name?: string;
-    [key: string]: any;
-  };
+  user_metadata?: { name?: string; [key: string]: any };
   wallet: any;
   profile: Profile | null;
 }
@@ -61,7 +57,6 @@ export interface Profile {
   customIntegrations?: string[];
   monthlyBudget?: string;
   contentVolume?: string;
-  // Ensure consistency for completion checks
   campaign_type?: string;
   content_niche?: string;
   business_name?: string;
@@ -85,7 +80,6 @@ export interface AppState {
   isPasswordEditing?: boolean;
 }
 
-// Actions
 type AppAction =
   | { type: "SET_LOADING"; payload: boolean }
   | { type: "SET_USER"; payload: User | null }
@@ -106,47 +100,18 @@ type AppAction =
   | { type: "SET_PASSWORD_EDITING"; payload: boolean }
   | { type: "RESET_STATE" }
   | { type: "SET_BUSINESS_ACCOUNT"; payload: boolean }
-  | { type: "SET_BALANCE"; payload: number };
+  | { type: "SET_BALANCE"; payload: number }
+  | { type: "SET_PACKAGES"; payload: any[] }
+  | { type: "SET_ADDONS"; payload: any[] }
+  | { type: "SET_LOADER"; payload: boolean }
+  | { type: "SET_UNREAD_COUNT"; payload: number };
 
-// --- 2. Utility Functions ---
-
-const checkProfileCompletion = (profile: any): boolean => {
-  if (!profile || !profile.plan) {
-    return false;
-  }
-
-  const hasBasicInfo = !!(profile.name && profile.plan);
-
-  if (profile.plan === "free") {
-    return hasBasicInfo;
-  }
-
-  // Use properties that align with profile structure for consistency
-  if (profile.plan === "ipro") {
-    const hasPostsInfo = !!(profile.campaignType || profile.contentNiche);
-    return hasBasicInfo && hasPostsInfo;
-  }
-
-  if (profile.plan === "business") {
-    const hasBusinessInfo = !!(profile.businessName || profile.industry);
-    const hasPostsInfo = !!(profile.campaignType || profile.contentNiche);
-    return hasBasicInfo && hasBusinessInfo && hasPostsInfo;
-  }
-
-  return hasBasicInfo;
-};
-
-const setStoredContentData = (data: any) => {
-  try {
-    // Implement or remove localStorage logic as needed
-  } catch (error) {
-    console.warn("Failed to store content data:", error);
-  }
-};
-
-// --- 3. Reducer and Initial State ---
-
-const initialState: AppState = {
+const initialState: AppState & {
+  packages: any[];
+  addons: any[];
+  loader: boolean;
+  unreadCount: number;
+} = {
   user: null,
   userPlan: null,
   selectedProfile: null,
@@ -160,9 +125,16 @@ const initialState: AppState = {
   hasTierSelected: false,
   hasProfileSetup: false,
   balance: 0,
+  packages: [],
+  addons: [],
+  loader: false,
+  unreadCount: 0,
 };
 
-function appReducer(state: AppState, action: AppAction): AppState {
+function appReducer(
+  state: typeof initialState,
+  action: AppAction
+): typeof initialState {
   switch (action.type) {
     case "SET_LOADING":
       return { ...state, loading: action.payload };
@@ -187,12 +159,13 @@ function appReducer(state: AppState, action: AppAction): AppState {
       return { ...state, generatedPosts: action.payload };
     case "UPDATE_SINGLE_PLATFORM_POST":
       const { platform, post } = action.payload;
-      const updatedPosts = state.generatedPosts.map((existingPost) =>
-        existingPost.platform === platform ? post : existingPost
-      );
-      return { ...state, generatedPosts: updatedPosts };
+      return {
+        ...state,
+        generatedPosts: state.generatedPosts.map((p) =>
+          p.platform === platform ? post : p
+        ),
+      };
     case "SET_CONTENT_DATA":
-      setStoredContentData(action.payload);
       return { ...state, contentData: action.payload };
     case "SET_ONBOARDING_COMPLETE":
       return { ...state, hasCompletedOnboarding: action.payload };
@@ -205,79 +178,139 @@ function appReducer(state: AppState, action: AppAction): AppState {
     case "SET_PASSWORD_EDITING":
       return { ...state, isPasswordEditing: action.payload };
     case "RESET_STATE":
-      setStoredContentData(null);
-      return { ...initialState, loading: false, contentData: null };
+      return { ...initialState, loading: false };
     case "SET_BUSINESS_ACCOUNT":
       return { ...state, isBusinessAccount: action.payload };
+    case "SET_PACKAGES":
+      return { ...state, packages: action.payload };
+    case "SET_ADDONS":
+      return { ...state, addons: action.payload };
+    case "SET_LOADER":
+      return { ...state, loader: action.payload };
+    case "SET_UNREAD_COUNT":
+      return { ...state, unreadCount: action.payload };
     default:
       return state;
   }
 }
 
-// --- 4. Context Definition ---
-
-export interface AppContextType {
-  state: AppState;
+interface AppContextType {
+  state: typeof initialState;
   dispatch: React.Dispatch<AppAction>;
-  processing: any;
-  setProcessing: any;
+  processing: boolean;
+  setProcessing: React.Dispatch<React.SetStateAction<boolean>>;
   generationAmounts: any;
   setGenerationAmounts: React.Dispatch<React.SetStateAction<any>>;
   fetchBalance: () => Promise<void>;
+  refreshUser: () => Promise<void>;
+  selectCampaign: (campaign: null) => void;
+  logout: () => void;
+  setProfileEditing: (v: boolean) => void;
+  setPasswordEditing: (v: boolean) => void;
+  fetchUnreadCount: () => Promise<void>;
+  refreshBalance: () => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
-
-// --- 5. App Provider Component ---
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
-  const [processing, setProcessing] = useState<boolean>(false);
+  const [processing, setProcessing] = useState(false);
   const [generationAmounts, setGenerationAmounts] = useState<any>({});
 
   const pusher = useMemo(
     () =>
-      new Pusher("5a8f542f7e4c1f452d53", {
-        cluster: "ap2",
-        forceTLS: true,
-      }),
+      new Pusher("5a8f542f7e4c1f452d53", { cluster: "ap2", forceTLS: true }),
     []
   );
 
+  const logout = useCallback(() => {
+    localStorage.removeItem("auth_token");
+    localStorage.removeItem("refresh_token");
+    localStorage.removeItem("pusherTransportTLS");
+    localStorage.removeItem("forgot_token");
+    localStorage.removeItem("forgot_token_time");
+    dispatch({ type: "RESET_STATE" });
+  }, []);
+
+  const refreshToken = useCallback(async () => {
+    const refToken = localStorage.getItem("refresh_token");
+    if (!refToken) return logout();
+    try {
+      const res = await API.refreshToken(refToken);
+      localStorage.setItem("auth_token", res.data.data.accessToken);
+      localStorage.setItem("refresh_token", res.data.data.refreshToken);
+    } catch (error) {
+      logout();
+    }
+  }, [logout]);
+
   const fetchBalance = useCallback(async () => {
     try {
-      const [balanceResponse, authResult] = await Promise.all([
+      const [balanceRes, userRes] = await Promise.all([
         API.userBalance(),
         getCurrentUser(),
       ]);
-
-      const balance = balanceResponse.data?.data ?? 0;
-      const updatedUser: User = (authResult as any).user;
-
-      if (updatedUser) {
-        dispatch({ type: "SET_USER", payload: updatedUser });
-      }
+      const balance = balanceRes.data?.data ?? 0;
+      const user = (userRes as any)?.user;
+      if (user) dispatch({ type: "SET_USER", payload: user });
       dispatch({ type: "SET_BALANCE", payload: balance });
     } catch (error) {
-      console.error("Error fetching wallet balance:", error);
+      console.error("Balance fetch failed:", error);
     }
   }, []);
 
+  const refreshUser = useCallback(async () => {
+    try {
+      const res: any = await getCurrentUser();
+      if (res?.user) dispatch({ type: "SET_USER", payload: res.user });
+    } catch (error) {
+      console.error("User refresh failed:", error);
+    }
+  }, []);
+
+  const fetchUnreadCount = useCallback(async () => {
+    try {
+      const res = await API.unreadHistory();
+      dispatch({
+        type: "SET_UNREAD_COUNT",
+        payload: Number(res?.data?.data?.unreadCount) || 0,
+      });
+    } catch (error) {
+      console.error("Unread count failed:", error);
+    }
+  }, []);
+
+  const checkProfileCompletion = (profile: Profile | null): boolean => {
+    if (!profile?.plan) return false;
+    const basic = !!(profile.name && profile.plan);
+    if (profile.plan === "free") return basic;
+    if (profile.plan === "ipro")
+      return basic && !!(profile.campaignType || profile.contentNiche);
+    if (profile.plan === "business") {
+      return (
+        basic &&
+        !!(profile.businessName || profile.industry) &&
+        !!(profile.campaignType || profile.contentNiche)
+      );
+    }
+    return basic;
+  };
+
+  // Initial Auth Load
   useEffect(() => {
-    const initializeAuth = async () => {
+    const init = async () => {
+      const token = localStorage.getItem("auth_token");
+      if (!token) {
+        dispatch({ type: "SET_LOADING", payload: false });
+        return;
+      }
+
       try {
-        const persistentToken = localStorage.getItem("auth_token");
-
-        if (!persistentToken) {
-          dispatch({ type: "SET_LOADING", payload: false });
-          return;
-        }
-
-        const authResult: any = await getCurrentUser();
-        const user: any | null = authResult?.user || null;
-
+        const res: any = await getCurrentUser();
+        const user = res?.user || null;
         if (!user) {
           dispatch({ type: "SET_LOADING", payload: false });
           return;
@@ -289,88 +322,95 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
           payload: user.wallet.coins + user.wallet.referralCoin,
         });
 
-        const profile = user.profile;
+        const profile = user.profile as Profile | null;
         if (profile) {
-          dispatch({
-            type: "SET_SELECTED_PROFILE",
-            payload: profile as Profile,
-          });
+          dispatch({ type: "SET_SELECTED_PROFILE", payload: profile });
           dispatch({ type: "SET_USER_PLAN", payload: profile.plan || "free" });
-          if (profile.type === "business") {
-            dispatch({ type: "SET_BUSINESS_ACCOUNT", payload: true });
-          }
-
-          const isProfileComplete = checkProfileCompletion(profile);
-          dispatch({ type: "SET_TIER_SELECTED", payload: true });
-          dispatch({ type: "SET_PROFILE_SETUP", payload: isProfileComplete });
           dispatch({
-            type: "SET_ONBOARDING_COMPLETE",
-            payload: isProfileComplete,
+            type: "SET_BUSINESS_ACCOUNT",
+            payload: profile.type === "business",
           });
+          const complete = checkProfileCompletion(profile);
+          dispatch({ type: "SET_TIER_SELECTED", payload: true });
+          dispatch({ type: "SET_PROFILE_SETUP", payload: complete });
+          dispatch({ type: "SET_ONBOARDING_COMPLETE", payload: complete });
         }
       } catch (error) {
-        console.error("Failed to initialize authentication:", error);
-        dispatch({
-          type: "SET_ERROR",
-          payload: "Failed to initialize authentication",
-        });
+        console.error("Auth init failed:", error);
       } finally {
         dispatch({ type: "SET_LOADING", payload: false });
       }
     };
 
-    initializeAuth();
+    init();
   }, []);
 
+  // Packages & Addons
+  useEffect(() => {
+    const loadExtras = async () => {
+      dispatch({ type: "SET_LOADER", payload: true });
+      try {
+        const [pkgRes, addRes] = await Promise.all([
+          API.listPackages(),
+          API.listAddons(),
+        ]);
+        dispatch({ type: "SET_PACKAGES", payload: pkgRes.data.data || [] });
+        dispatch({ type: "SET_ADDONS", payload: addRes.data.data || [] });
+      } catch (error) {
+        console.error("Load packages/addons failed:", error);
+      } finally {
+        dispatch({ type: "SET_LOADER", payload: false });
+      }
+    };
+
+    if (state.user?.id) {
+      loadExtras();
+    }
+  }, [state.user?.id]);
+
+  // Pusher & Real-time
   useEffect(() => {
     const userId = state.user?.id;
     if (!userId) return;
 
     const userChannel = pusher.subscribe(`user-${userId}`);
-    const handleSubscriptionSuccess = () => {
-      fetchBalance();
-    };
-
-    userChannel.bind("subscription-success", handleSubscriptionSuccess);
+    userChannel.bind("subscription-success", fetchBalance);
 
     const walletChannel = pusher.subscribe(`wallet-${userId}`);
-    const handleCoinsUpdate = (data: { coins: number }) => {
+    walletChannel.bind("coins-update", (data: { coins: number }) => {
       dispatch({ type: "SET_BALANCE", payload: data.coins });
       fetchBalance();
-    };
+    });
 
-    walletChannel.bind("coins-update", handleCoinsUpdate);
-
-    const fetchGenerationAmounts = async () => {
+    const loadGenAmounts = async () => {
       try {
         const res = await API.getGenerateAmount();
-        const data = await res.data;
-
-        const formattedData = (data.data || []).reduce(
+        const formatted = (res.data.data || []).reduce(
           (acc: any, item: any) => {
             acc[item.type] = item.amount;
             return acc;
           },
           {}
         );
-
-        setGenerationAmounts(formattedData);
+        setGenerationAmounts(formatted);
       } catch (err) {
-        console.error("Error fetching generation amounts:", err);
+        console.error("Gen amounts failed:", err);
       }
     };
+    loadGenAmounts();
 
-    fetchGenerationAmounts();
+    fetchUnreadCount();
 
-    // Cleanup function
     return () => {
-      userChannel.unbind("subscription-success", handleSubscriptionSuccess);
       pusher.unsubscribe(`user-${userId}`);
-
-      walletChannel.unbind("coins-update", handleCoinsUpdate);
       pusher.unsubscribe(`wallet-${userId}`);
     };
-  }, [state.user?.id, pusher, fetchBalance]);
+  }, [state.user?.id, pusher, fetchBalance, fetchUnreadCount]);
+
+  // Refresh token on /content
+  useEffect(() => {
+    if (window.location.pathname === "/content") refreshToken();
+  }, [refreshToken]);
 
   const contextValue = useMemo(
     () => ({
@@ -381,14 +421,28 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       generationAmounts,
       setGenerationAmounts,
       fetchBalance,
+      refreshUser,
+      selectCampaign: (campaign: null) =>
+        dispatch({ type: "SET_SELECTED_CAMPAIGN", payload: campaign }),
+      logout,
+      setProfileEditing: (v: boolean) =>
+        dispatch({ type: "SET_PROFILE_EDITING", payload: v }),
+      setPasswordEditing: (v: boolean) =>
+        dispatch({ type: "SET_PASSWORD_EDITING", payload: v }),
+      fetchUnreadCount,
+      refreshBalance: fetchBalance,
     }),
     [
       state,
+      dispatch,
       processing,
-      generationAmounts,
-      fetchBalance,
       setProcessing,
+      generationAmounts,
       setGenerationAmounts,
+      fetchBalance,
+      refreshUser,
+      logout,
+      fetchUnreadCount,
     ]
   );
 
@@ -399,105 +453,55 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 };
 
-// --- 6. Use Context Hook ---
-
 export const useAppContext = () => {
   const context = useContext(AppContext);
   if (!context) {
-    throw new Error("useAppContext must be used within an AppProvider");
+    throw new Error("useAppContext must be used within AppProvider");
   }
-  const [packages, setPackages] = useState<any[]>([]);
-  const [addons, setAddons] = useState<any[]>([]);
-  const [loader, setLoader] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(0);
 
-  const fetchUnreadCount = async () => {
-    try {
-      let response = await API.unreadHistory();
+  const {
+    state,
+    dispatch,
+    processing,
+    setProcessing,
+    generationAmounts,
+    fetchBalance,
+    refreshUser,
+    logout,
+    fetchUnreadCount,
+    selectCampaign,
+    setProfileEditing,
+    setPasswordEditing,
+  } = context;
 
-      setUnreadCount(Number(response?.data?.data?.unreadCount) || 0);
-    } catch (error) {
-      console.error("Error fetching unread count:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchUnreadCount();
-  }, []);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoader(true);
-        const packagesRes = await API.listPackages();
-        setPackages(packagesRes.data.data || []);
-
-        const addonsRes = await API.listAddons();
-        setAddons(addonsRes.data.data || []);
-        setLoader(false);
-      } catch (error) {
-        setLoader(false);
-        console.error("Failed to load packages/addons:", error);
-      }
-    };
-    fetchData();
-  }, []);
-  const selectCampaign = useCallback(
-    (campaign: null) => {
-      context.dispatch({ type: "SET_SELECTED_CAMPAIGN", payload: campaign });
+  const setUnreadCount = useCallback(
+    (count: number) => {
+      dispatch({ type: "SET_UNREAD_COUNT", payload: count });
     },
-    [context.dispatch]
-  );
-
-  const refreshUser = useCallback(async () => {
-    const authResult: any = await getCurrentUser();
-
-    if (authResult && authResult.user) {
-      context.dispatch({ type: "SET_USER", payload: authResult.user });
-    }
-  }, [context.dispatch]);
-
-  const logout = async () => {
-    localStorage.removeItem("auth_token");
-    localStorage.removeItem("pusherTransportTLS");
-    context.dispatch({ type: "RESET_STATE" });
-  };
-
-  const setProfileEditing = useCallback(
-    (v: boolean) =>
-      context.dispatch({ type: "SET_PROFILE_EDITING", payload: v }),
-    [context.dispatch]
-  );
-
-  const setPasswordEditing = useCallback(
-    (v: boolean) =>
-      context.dispatch({ type: "SET_PASSWORD_EDITING", payload: v }),
-    [context.dispatch]
+    [dispatch]
   );
 
   return {
-    // State Accessors
-    state: context.state,
-    user: context.state.user,
-    balance: context.state.balance,
-    profile: context.state.selectedProfile,
-    campaign: context.state.selectedCampaign,
-    loader: loader,
-    addons: addons,
-    packages: packages,
-    setUnreadCount: setUnreadCount,
-    unreadCount: unreadCount,
-    dispatch: context.dispatch,
-    fetchUnreadCount: fetchUnreadCount,
-    paymentProcessing: context.processing,
-    setProcessing: context.setProcessing,
+    state: state,
+    user: state.user,
+    balance: state.balance,
+    profile: state.selectedProfile,
+    campaign: state.selectedCampaign,
+    loader: state.loader,
+    addons: state.addons,
+    packages: state.packages,
+    unreadCount: state.unreadCount,
+    setUnreadCount,
 
-    // Data Accessors
-    generationAmounts: context.generationAmounts,
+    dispatch: dispatch,
+    fetchUnreadCount,
+    paymentProcessing: processing,
+    setProcessing: setProcessing,
 
-    // Actions
+    generationAmounts: generationAmounts,
+
     refreshUser,
-    refreshBalance: context.fetchBalance,
+    refreshBalance: fetchBalance,
     selectCampaign,
     logout,
     setProfileEditing,

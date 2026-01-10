@@ -81,7 +81,6 @@ export const AuthForm: React.FC<AuthFormProps> = ({
   const [showAuth, setShowAuth] = useState<boolean>(false);
   const [successMessage, setSuccessMessage] = useState("");
   const { t, i18n } = useTranslation();
-  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
 
   const params = new URLSearchParams(window.location.search);
   const referralId: any = params.get("referralId");
@@ -134,7 +133,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
     try {
       const res = await API.generateForgetLink({ email });
 
-      localStorage.setItem("forgot_token", res.data.data.token);
+      localStorage.setItem("forgot_token", res.data.data.accessToken);
       localStorage.setItem("forgot_token_time", Date.now().toString());
       notify("success", t("email_sent_lowercase"));
     } catch (err: any) {
@@ -173,13 +172,17 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         return;
       }
 
-      if (!result.token || !result.user) {
+      if (!result.accessToken || !result.user) {
         return notify("error", t("invalid_response_server"));
       }
 
       notify("success", t("login_successful"));
 
-      localStorage.setItem("auth_token", result.token);
+      localStorage.setItem("auth_token", result.accessToken);
+      localStorage.removeItem("forgot_token");
+      localStorage.removeItem("forgot_token_time");
+      localStorage.setItem("refresh_token", result.refreshToken);
+
       localStorage.removeItem("auth_token_expiry");
       localStorage.removeItem("auth_remember");
 
@@ -202,6 +205,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         }
       } catch (e) {}
     } catch (error: any) {
+      console.log("error312321312", error);
       const message =
         error.response?.data?.message || t("authentication_failed");
       notify("error", message);
@@ -231,7 +235,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
 
       setShowOtpPopup(true);
       const result = await response.data.data;
-      localStorage.setItem("email_token", result?.token);
+      localStorage.setItem("email_token", result.accessToken);
       const url = new URL(window.location.href);
       url.searchParams.set("isVerification", "true");
       window.history.pushState({}, "", url.toString());
@@ -262,8 +266,11 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         return;
       }
 
-      if (result?.token) {
-        localStorage.setItem("auth_token", result.token);
+      if (result.accessToken) {
+        localStorage.setItem("auth_token", result.accessToken);
+        localStorage.removeItem("forgot_token");
+        localStorage.removeItem("forgot_token_time");
+        localStorage.setItem("refresh_token", result.refreshToken);
         onAuthSuccess(result.user);
 
         setTimeout(() => {
@@ -294,7 +301,10 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         return;
       }
 
-      localStorage.setItem("auth_token", result.token);
+      localStorage.setItem("auth_token", result.accessToken);
+      localStorage.removeItem("forgot_token");
+      localStorage.removeItem("forgot_token_time");
+      localStorage.setItem("refresh_token", result.refreshToken);
       onAuthSuccess(result.user);
       try {
         const profile = result.user?.profile;
@@ -341,8 +351,11 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         return;
       }
 
-      if (result?.token) {
-        localStorage.setItem("auth_token", result.token);
+      if (result.accessToken) {
+        localStorage.setItem("auth_token", result.accessToken);
+        localStorage.removeItem("forgot_token");
+        localStorage.removeItem("forgot_token_time");
+        localStorage.setItem("refresh_token", result.refreshToken);
         onAuthSuccess(result.user);
 
         const profile = result.user?.profile;
@@ -811,10 +824,11 @@ export const AuthForm: React.FC<AuthFormProps> = ({
             setShowAuth(false);
             localStorage.removeItem("mfa_session_token");
           }}
-          onSuccess={(data) => {
+          onSuccess={(data: any) => {
             notify("success", t("login_successful"));
 
-            localStorage.setItem("auth_token", data.token);
+            localStorage.setItem("auth_token", data.accessToken);
+            localStorage.setItem("refresh_token", data.refreshToken);
             localStorage.removeItem("auth_token_expiry");
             localStorage.removeItem("auth_remember");
 
@@ -837,7 +851,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
               }
             } catch (e) {}
           }}
-          verifyOtp={async (otp) => {
+          verifyOtp={async (otp: any) => {
             const session = localStorage.getItem("mfa_session_token");
             if (!session) throw new Error("Session expired");
             const res = await API.verifyLogin2FA({ session, otp });

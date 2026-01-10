@@ -509,19 +509,16 @@ const ProfileSetupSinglePage: React.FC = () => {
   const convertFileToBase64 = async (input: any): Promise<string | null> => {
     if (!input) return null;
 
-    // 1️⃣ Already Base64
     if (typeof input === "string" && input.startsWith("data:image")) {
       return input;
     }
 
-    // 2️⃣ URL → fetch & convert
     if (typeof input === "string" && input.startsWith("http")) {
       const response = await fetch(input);
       const blob = await response.blob();
       return await blobToBase64(blob);
     }
 
-    // 3️⃣ File / Blob → convert
     if (input instanceof File || input instanceof Blob) {
       return await blobToBase64(input);
     }
@@ -587,16 +584,15 @@ const ProfileSetupSinglePage: React.FC = () => {
       const ratio = progress / 50;
 
       const red = 255;
-      const green = Math.floor(80 + ratio * 120); // 80 → 200
+      const green = Math.floor(80 + ratio * 120);
       const blue = 0;
 
       return `rgb(${red}, ${green}, ${blue})`;
     } else {
-      // Orange → Dark Green
       const ratio = (progress - 50) / 50;
 
-      const red = Math.floor(255 - ratio * 200); // 255 → 55
-      const green = Math.floor(200 - ratio * 40); // 200 → 160
+      const red = Math.floor(255 - ratio * 200);
+      const green = Math.floor(200 - ratio * 40);
       const blue = 0;
 
       return `rgb(${red}, ${green}, ${blue})`;
@@ -604,7 +600,7 @@ const ProfileSetupSinglePage: React.FC = () => {
   };
   return (
     <div className="bg-transparent md:px-0 px-3">
-      <div className=" flex flex-col md:flex-row-reverse justify-between items-between  md:pb-4 pb-3 ">
+      <div className=" flex flex-col md:flex-row-reverse justify-between items-between  md:pb-4 pb  -3 ">
         <div className="w-full">
           <div className="flex md:justify-between md:flex-row flex-col-reverse items-center gap-2 mb-2">
             <h1 className="text-3xl font-bold text-black  w-full">

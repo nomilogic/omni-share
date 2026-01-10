@@ -20,8 +20,7 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
   );
   const [message, setMessage] = useState("Processing authentication...");
   const [isProcessing, setIsProcessing] = useState(false);
-  const { t, i18n } = useTranslation();
-  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
+  const { t } = useTranslation();
 
   const hasRunRef = useRef(false);
 
@@ -62,7 +61,7 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
         setMessage(t("oauth_authenticating_with", { provider }));
 
         // Handle the OAuth callback
-        const result = await handleOAuthCallback(provider, code, state);
+        const result: any = await handleOAuthCallback(provider, code, state);
         console.log("result", result);
         setStatus("success");
         setMessage(t("oauth_success", { provider }));
@@ -87,8 +86,8 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
             }
           }, 400);
         } else {
-          console.log("result 12113123", result);
-          localStorage.setItem("auth_token", result.token);
+          localStorage.setItem("auth_token", result.accessToken);
+          localStorage.setItem("refresh_token", result.refreshToken);
           onAuthSuccess(result.user);
 
           setTimeout(() => {
@@ -98,7 +97,9 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
       } catch (error) {
         console.error("error", error);
         const errorMessage =
-          error instanceof Error ? error.message : t("oauth_authentication_failed");
+          error instanceof Error
+            ? error.message
+            : t("oauth_authentication_failed");
         setMessage(errorMessage);
 
         if (window.opener) {
@@ -169,7 +170,9 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
 
         <h2 className="text-xl font-semibold theme-text-primary mb-2">
           {status === "processing" &&
-            t("oauth_connecting_to", { provider: getProviderDisplayName(provider || "") })}
+            t("oauth_connecting_to", {
+              provider: getProviderDisplayName(provider || ""),
+            })}
           {status === "success" && t("oauth_authentication_successful")}
           {status === "error" && t("oauth_authentication_failed_heading")}
         </h2>

@@ -26,10 +26,9 @@ export const PricingPage: React.FC = () => {
   const [loadingPackage, setLoadingPackage] = useState(false);
   const [loadingAddon, setLoadingAddon] = useState(false);
   const [selectedAddon, setSelectedAddon] = useState<any | null>(null);
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   useEffect(() => {
-    console.log("sessionId", sessionId);
     if (sessionId !== null) {
       setProcessing(true);
       const timeoutId = setTimeout(() => {
@@ -37,6 +36,7 @@ export const PricingPage: React.FC = () => {
         url.searchParams.delete("session_id");
         window.history.replaceState({}, "", url);
         setProcessing(false);
+        refreshUser();
       }, 4000);
       return () => clearTimeout(timeoutId);
     } else {

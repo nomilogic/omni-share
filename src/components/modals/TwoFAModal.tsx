@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import { useAppContext } from "@/context/AppContext";
 
 type Props = {
-  close: () => void;     // ✅ ModalContext will provide this
+  close: () => void; // ✅ ModalContext will provide this
   onSuccess?: () => void;
 };
 
@@ -91,7 +91,9 @@ export const TwoFAModal: React.FC<Props> = ({ close, onSuccess }) => {
       {/* Body */}
       <div className="px-6 py-6">
         {loading && !qrCodeUrl ? (
-          <p className="text-center text-sm text-gray-500">{t("loading_qr_code")}</p>
+          <p className="text-center text-sm text-gray-500">
+            {t("loading_qr_code")}
+          </p>
         ) : qrCodeUrl ? (
           <>
             <div className="text-center mb-6">
@@ -106,7 +108,9 @@ export const TwoFAModal: React.FC<Props> = ({ close, onSuccess }) => {
             </div>
 
             <div className="mb-6 text-center">
-              <p className="text-xs text-gray-500 mb-2">{t("or_enter_manually")}</p>
+              <p className="text-xs text-gray-500 mb-2">
+                {t("or_enter_manually")}
+              </p>
               <div className="rounded-md bg-gray-50 px-3 py-2">
                 <code className="text-sm font-mono text-gray-800 break-all">
                   {manualCode}
@@ -122,12 +126,16 @@ export const TwoFAModal: React.FC<Props> = ({ close, onSuccess }) => {
                 type="text"
                 maxLength={6}
                 value={otp}
-                onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                onChange={(e) =>
+                  setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
+                }
                 className="w-full rounded-md border px-4 py-2 text-center text-lg font-mono tracking-widest focus:border-purple-600 focus:outline-none"
                 placeholder="••••••"
                 autoFocus
               />
-              {error && <p className="mt-2 text-center text-xs text-red-500">{error}</p>}
+              {error && (
+                <p className="mt-2 text-center text-xs text-red-500">{error}</p>
+              )}
             </div>
           </>
         ) : (
