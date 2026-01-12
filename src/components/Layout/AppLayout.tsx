@@ -283,7 +283,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               ref={userMenuRef}
             >
               <button
-                onClick={() => setShowUserMenu(!showUserMenu)}
+                onClick={() => {
+                    setShowUserMenu(false);
+                    navigate("/dashboard?edit-profile=true");
+
+                } }
                 className="flex items-center gap-x-3 mb-0 w-full hover:theme-bg-secondary rounded-md p-2  transition-colors"
               >
                 <div className=" mx-2 py-4">

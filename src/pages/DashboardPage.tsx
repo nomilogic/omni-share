@@ -13,6 +13,8 @@ import { useTranslation } from "react-i18next";
 import API from "@/services/api";
 import { useModal } from "../context2/ModalContext";
 import { ProfileFormData } from "@/components/profileFormSchema";
+import { useParams } from "react-router-dom";
+
 
 export const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
@@ -25,10 +27,17 @@ export const DashboardPage: React.FC = () => {
   const { t } = useTranslation();
   const [hasAnalytics, setHasAnalytics] = useState<boolean | null>(null);
   const { openModal } = useModal();
+ const profileMode = searchParams.get('edit-profile'); 
+ const profile = searchParams.get('edit-profile'); 
+ //alert(profileMode)
+  
 
   useLayoutEffect(() => {
     setPasswordEditing(false);
+    if(!profileMode)
     setProfileEditing(false);
+    else
+    setProfileEditing(true);
   }, []);
 
   const handleReferralClick = () => {
