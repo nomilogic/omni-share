@@ -60,9 +60,7 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
 
         setMessage(t("oauth_authenticating_with", { provider }));
 
-        // Handle the OAuth callback
         const result: any = await handleOAuthCallback(provider, code, state);
-        console.log("result", result);
         setStatus("success");
         setMessage(t("oauth_success", { provider }));
 

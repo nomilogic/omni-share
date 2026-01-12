@@ -31,12 +31,12 @@ export const PricingPage: React.FC = () => {
   useEffect(() => {
     if (sessionId !== null) {
       setProcessing(true);
+      refreshUser();
       const timeoutId = setTimeout(() => {
         const url = new URL(window.location.href);
         url.searchParams.delete("session_id");
         window.history.replaceState({}, "", url);
         setProcessing(false);
-        refreshUser();
       }, 4000);
       return () => clearTimeout(timeoutId);
     } else {

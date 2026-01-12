@@ -67,6 +67,8 @@ export const initiateGoogleOAuth = (
   refreshToken: string;
   accessToken: string;
   user: any;
+  session: any;
+  challengeName: any;
 }> => {
   return new Promise((resolve, reject) => {
     try {
@@ -173,6 +175,8 @@ export const initiateFacebookOAuth = (): Promise<{
   refreshToken: string;
   accessToken: string;
   user: any;
+  session: any;
+  challengeName: any;
 }> => {
   return new Promise((resolve, reject) => {
     try {
@@ -265,6 +269,8 @@ export const initiateLinkedInOAuth = (
   refreshToken: string;
   accessToken: string;
   user: any;
+  session: any;
+  challengeName: any;
 }> => {
   return new Promise((resolve, reject) => {
     try {
