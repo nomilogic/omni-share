@@ -60,9 +60,7 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
 
         setMessage(t("oauth_authenticating_with", { provider }));
 
-        // Handle the OAuth callback
         const result: any = await handleOAuthCallback(provider, code, state);
-        console.log("result", result);
         setStatus("success");
         setMessage(t("oauth_success", { provider }));
 
@@ -72,7 +70,7 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
               type: "oauth_success",
               provider: provider,
               state: state,
-              result: result,
+              result: result.data,
             },
             "*"
           );
@@ -86,8 +84,8 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
             }
           }, 400);
         } else {
-          localStorage.setItem("auth_token", result.accessToken);
-          localStorage.setItem("refresh_token", result.refreshToken);
+          localStorage.setItem("auth_token", result.data.accessToken);
+          localStorage.setItem("refresh_token", result.data.refreshToken);
           onAuthSuccess(result.user);
 
           setTimeout(() => {

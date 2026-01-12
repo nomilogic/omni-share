@@ -64,8 +64,11 @@ export const verifyOAuthState = (state: string): boolean => {
 export const initiateGoogleOAuth = (
   referralId?: string
 ): Promise<{
-  token: string;
+  refreshToken: string;
+  accessToken: string;
   user: any;
+  session: any;
+  challengeName: any;
 }> => {
   return new Promise((resolve, reject) => {
     try {
@@ -104,6 +107,8 @@ export const initiateGoogleOAuth = (
 
       const messageListener = (event: MessageEvent) => {
         // Verify origin for security
+
+        console.log("event.data", event.data);
         if (event.origin !== window.location.origin) {
           console.warn("Message from untrusted origin:", event.origin);
           return;
@@ -167,8 +172,11 @@ export const initiateGoogleOAuth = (
 };
 
 export const initiateFacebookOAuth = (): Promise<{
-  token: string;
+  refreshToken: string;
+  accessToken: string;
   user: any;
+  session: any;
+  challengeName: any;
 }> => {
   return new Promise((resolve, reject) => {
     try {
@@ -203,6 +211,7 @@ export const initiateFacebookOAuth = (): Promise<{
       };
 
       const messageListener = (event: MessageEvent) => {
+        console.log("event.data", event.data);
         if (event.origin !== window.location.origin) {
           console.warn("Message from untrusted origin:", event.origin);
           return;
@@ -257,8 +266,11 @@ export const initiateFacebookOAuth = (): Promise<{
 export const initiateLinkedInOAuth = (
   referralId: any
 ): Promise<{
-  token: string;
+  refreshToken: string;
+  accessToken: string;
   user: any;
+  session: any;
+  challengeName: any;
 }> => {
   return new Promise((resolve, reject) => {
     try {
@@ -343,7 +355,8 @@ export const initiateLinkedInOAuth = (
 export const initiateInstagramOAuth = (
   referralId?: string
 ): Promise<{
-  token: string;
+  refreshToken: string;
+  accessToken: string;
   user: any;
 }> => {
   return new Promise((resolve, reject) => {
@@ -446,7 +459,7 @@ export const handleOAuthCallback = async (
   provider: "google" | "facebook" | "linkedin" | "instagram",
   code: string,
   state: string
-): Promise<{ token: string; user: any }> => {
+): Promise<{ refreshToken: string; accessToken: string; user: any }> => {
   try {
     const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
