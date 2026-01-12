@@ -635,7 +635,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                       <Icon name="question-mark" size={17} />
                                     </button>
                                     {planMsgOpen && (
-                                      <div className="absolute -right-28 md:left-0 top-full mt-1 w-56 p-2 bg-gray-50 border rounded-md shadow-lg z-50 text-xs text-black">
+                                      <div className="absolute right-[-112px] m-auto top-full mt-1 w-56 p-2 bg-gray-50 border rounded-md shadow-lg z-50 text-xs text-black">
                                         This is your current plan:{" "}
                                         <span className="font-semibold text-purple-600">
                                           {user.wallet?.package?.name || "FREE"}
@@ -694,7 +694,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                       <Icon name="question-mark" size={17} />
                                     </button>
                                     {coinsMsgOpen && (
-                                      <div className="absolute -right-24 md:left-0 top-full mt-1 w-56 p-2 bg-gray-50 border rounded-md shadow-lg z-50 text-xs text-black">
+                                      <div className="absolute right-[-112px] m-auto  top-full mt-1 w-56 p-2 bg-gray-50 border rounded-md shadow-lg z-50 text-xs text-black">
                                         This package gives you{" "}
                                         <span className="font-semibold text-purple-600">
                                           {user.wallet?.coins?.toLocaleString() ??
@@ -740,7 +740,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                       <Icon name="question-mark" size={17} />
                                     </button>
                                     {referralMsgOpen && (
-                                      <div className="absolute -right-24 md:left-0 top-full mt-1 w-56 p-2 bg-gray-50 border rounded-md shadow-lg z-50 text-xs text-black">
+                                      <div className="absolute right-[-112px] m-auto  top-full mt-1 w-56 p-2 bg-gray-50 border rounded-md shadow-lg z-50 text-xs text-black">
                                         Referral coins are always used first.
                                         You currently have{" "}
                                         <span className="font-semibold text-purple-600">
