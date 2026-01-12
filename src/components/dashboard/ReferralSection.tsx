@@ -80,7 +80,7 @@ const ReferralSection: FC<Props> = ({ close, className = "" }) => {
     const handleTermsClick = (e: React.MouseEvent) => {
       e.preventDefault();
       close?.(); // ✅ close modal
-      navigate("/terms"); // ✅ then navigate
+      navigate("/conditions"); // ✅ then navigate
     };
 
     return (
@@ -185,11 +185,11 @@ const ReferralSection: FC<Props> = ({ close, className = "" }) => {
 
             <div className="flex justify-center mt-4">
               <a
-                href="/terms"
+                href="/conditions"
                 onClick={handleTermsClick}
                 className="text-[#7650e3] underline"
               >
-                {t("view_terms_conditions") || "View terms and conditions"}
+                View terms and conditions"
               </a>
             </div>
           </div>
@@ -203,8 +203,8 @@ const ReferralSection: FC<Props> = ({ close, className = "" }) => {
     <div
       className={`bg-purple-600 rounded-md px-4 sm:px-5 py-4 overflow-hidden ${className}`}
     >
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-1 md:gap-5 items-center">
-        <div className="md:col-span-2 w-full flex flex-col order-2 md:order-1 mt-4 md:mt-0">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-0 md:gap-5 items-center">
+        <div className="md:col-span-2 w-full flex flex-col order-2 md:order-1">
           <h2 className="text-3xl sm:text-4xl leading-tight text-white">
             {t("refer_earn")}
           </h2>
@@ -257,6 +257,7 @@ const ReferralSection: FC<Props> = ({ close, className = "" }) => {
           </div>
 
           {/* ✅ Share: Desktop modal / Mobile native */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-5 items-center">
           <button
             onClick={handleInlineShareClick}
             className="mt-3 flex w-full sm:w-fit items-center justify-center rounded-md gap-2 transition-colors text-md font-semibold text-[#7650e3] border-2 border-[#7650e3] bg-white hover:bg-[#d7d7fc] py-2 px-3"
@@ -264,7 +265,19 @@ const ReferralSection: FC<Props> = ({ close, className = "" }) => {
             <Share2 className="w-[18px] h-[18px]" />
             {t("share")}
           </button>
+          <div className=" text-sm mt-1 md:mt-2 flex justify-center md:justify-end ">
+              <a
+                href="/conditions"
+                
+                className="text-white "
+              >
+                View terms and conditions
+              </a>
+            </div>
+            </div>
+        
         </div>
+        
 
         {/* ✅ Image fully contained inside card (no overflow) */}
         <div className="w-full flex justify-center md:justify-end order-1 md:order-2">
