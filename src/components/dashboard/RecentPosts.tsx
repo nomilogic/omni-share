@@ -176,7 +176,8 @@ function RecentPosts({ post }: any) {
       <div 
         className="absolute inset-0 bg-cover bg-top"
         style={{
-          backgroundImage: `url(${image})`,
+          backgroundImage: `url(${image})`, 
+          filter: "brightness(0.3)",
         }}
       />
       
