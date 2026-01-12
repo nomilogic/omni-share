@@ -265,12 +265,12 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         setLoading(false);
         return;
       }
-
+      console.log("result1212312321", result);
       if (result.accessToken) {
         localStorage.setItem("auth_token", result.accessToken);
+        localStorage.setItem("refresh_token", result.refreshToken);
         localStorage.removeItem("forgot_token");
         localStorage.removeItem("forgot_token_time");
-        localStorage.setItem("refresh_token", result.refreshToken);
         onAuthSuccess(result.user);
 
         setTimeout(() => {
@@ -300,11 +300,11 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         setLoading(false);
         return;
       }
-
+      console.log("result1212312321", result);
       localStorage.setItem("auth_token", result.accessToken);
+      localStorage.setItem("refresh_token", result.refreshToken);
       localStorage.removeItem("forgot_token");
       localStorage.removeItem("forgot_token_time");
-      localStorage.setItem("refresh_token", result.refreshToken);
       onAuthSuccess(result.user);
       try {
         const profile = result.user?.profile;
@@ -343,7 +343,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
 
     try {
       const result: any = await initiateLinkedInOAuth(referralId);
-
+      console.log("result", result);
       if (result?.challengeName === "SOFTWARE_TOKEN_MFA" && result?.session) {
         setShowAuth(true);
         localStorage.setItem("mfa_session_token", result?.session);
@@ -375,6 +375,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         navigate("/content");
       }
     } catch (error: any) {
+      console.log("error", error);
       notify(
         "error",
         error.response?.data?.message || t("linkedin_auth_failed")

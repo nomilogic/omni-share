@@ -72,7 +72,7 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
               type: "oauth_success",
               provider: provider,
               state: state,
-              result: result,
+              result: result.data,
             },
             "*"
           );
@@ -86,8 +86,8 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
             }
           }, 400);
         } else {
-          localStorage.setItem("auth_token", result.accessToken);
-          localStorage.setItem("refresh_token", result.refreshToken);
+          localStorage.setItem("auth_token", result.data.accessToken);
+          localStorage.setItem("refresh_token", result.data.refreshToken);
           onAuthSuccess(result.user);
 
           setTimeout(() => {
