@@ -133,45 +133,63 @@ const ReferralSection: FC<Props> = ({ close, className = "" }) => {
               earn 100 Omni Coins.
             </p>
 
-            <div className="mb-3">
-              <label className="text-xs text-gray-500 mb-2 block font-medium">
-                {t("copy_link_share")}
-              </label>
-
-              <div className="flex items-center gap-2 w-full border border-purple-600 bg-white rounded-md overflow-hidden pl-2">
-                <LinkIcon className="w-4 h-4 text-purple-600 " />
-                <input
-                  type="text"
-                  value={referralLink}
-                  readOnly
-                  className="px-1 p-2.5 w-full text-xs text-slate-700 font-mono outline-none"
-                />
+            {/* Conditionally render the input box or Share button based on screen size */}
+            {isMobile ? (
+              // Mobile view: Share button for native share
+              <div className="mb-3">
+                <button
+                  onClick={handleNativeShare}
+                  className="flex w-full items-center justify-center rounded-md gap-2 font-bold transition-colors text-md font-semiboldtransition-all border-2 text-white border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] py-2 px-3"
+                  title="Share referral link"
+                >
+                  <Share2 className="w-[18px] h-[18px]" />
+                  Share
+                </button>
               </div>
+            ) : (
+              // Desktop view: Show the link and copy button
+              <div className="mb-3">
+                <label className="text-xs text-gray-500 mb-2 block font-medium">
+                  Copy and share your referral link:
+                </label>
 
-              {copied && (
-                <p className="text-xs text-green-600 mt-2">
-                  {t("copied_to_clipboard")}
-                </p>
-              )}
-            </div>
+                <div className="flex items-center gap-2 w-full border border-purple-600 bg-white rounded-md overflow-hidden pl-2">
+                  <LinkIcon className="w-4 h-4 text-purple-600 " />
+                  <input
+                    type="text"
+                    value={referralLink}
+                    readOnly
+                    className="px-1 p-2.5 w-full text-xs text-slate-700 font-mono outline-none"
+                  />
+                </div>
 
-            {/* ✅ ONLY Copy button (no extra share button) */}
-            <button
-              onClick={() => copyToClipboard(referralLink)}
-              className="flex w-full items-center justify-center rounded-md gap-2 font-bold transition-colors text-md font-semiboldtransition-all border-2 text-white border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] py-2 px-3"
-              title="Copy referral link"
-            >
-              <Copy className="w-[18px] h-[18px]" />
-              Copy Link
-            </button>
+                {copied && (
+                  <p className="text-xs text-green-600 mt-2">
+                    {t("copied_to_clipboard") || "Copied to clipboard!"}
+                  </p>
+                )}
+              </div>
+            )}
 
-            <div className="flex justify-center  mt-4">
+            {/* Copy button (same for both mobile and desktop) */}
+            {!isMobile && (
+              <button
+                onClick={() => copyToClipboard(referralLink)}
+                className="flex w-full items-center justify-center rounded-md gap-2 font-bold transition-colors text-md font-semiboldtransition-all border-2 text-white border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] py-2 px-3"
+                title="Copy referral link"
+              >
+                <Copy className="w-[18px] h-[18px]" />
+                Copy Link
+              </button>
+            )}
+
+            <div className="flex justify-center mt-4">
               <a
                 href="/terms"
                 onClick={handleTermsClick}
                 className="text-[#7650e3] underline"
               >
-                view terms and conditions
+                {t("view_terms_conditions") || "View terms and conditions"}
               </a>
             </div>
           </div>
@@ -185,8 +203,8 @@ const ReferralSection: FC<Props> = ({ close, className = "" }) => {
     <div
       className={`bg-purple-600 rounded-md px-4 sm:px-5 py-4 overflow-hidden ${className}`}
     >
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-center">
-        <div className="md:col-span-2 w-full flex flex-col">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-1 md:gap-5 items-center">
+        <div className="md:col-span-2 w-full flex flex-col order-2 md:order-1 mt-4 md:mt-0">
           <h2 className="text-3xl sm:text-4xl leading-tight text-white">
             {t("refer_earn")}
           </h2>
@@ -197,7 +215,11 @@ const ReferralSection: FC<Props> = ({ close, className = "" }) => {
               Share your invite link with friends.
             </p>
             <p className="text-white text-sm font-medium leading-relaxed flex gap-2 items-center mb-1">
-              <Icon name="manage-subs" size={18} className="brightness-[1000]" />
+              <Icon
+                name="manage-subs"
+                size={18}
+                className="brightness-[1000]"
+              />
               They sign up and receive 10 Omni Coins.
             </p>
             <p className="text-white text-sm font-medium leading-relaxed flex gap-2 items-center mb-2">
@@ -245,13 +267,14 @@ const ReferralSection: FC<Props> = ({ close, className = "" }) => {
         </div>
 
         {/* ✅ Image fully contained inside card (no overflow) */}
-        <div className="w-full flex justify-center md:justify-end">
+        <div className="w-full flex justify-center md:justify-end order-1 md:order-2">
           <div className="w-full max-w-[340px] md:max-w-none overflow-hidden rounded-md">
             <img
               src={Referal}
               alt="Referral"
               className="w-full h-[180px] sm:h-[210px] md:h-[220px] object-contain md:object-cover object-center"
-            />
+      />
+
           </div>
         </div>
       </div>

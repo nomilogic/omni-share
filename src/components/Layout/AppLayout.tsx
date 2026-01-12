@@ -76,22 +76,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   // };
   const isMobileScreen = () => window.matchMedia("(max-width: 768px)").matches;
   const handleReferShareClick = async () => {
-    // ✅ ONLY mobile screen => native share
-    if (isMobileScreen() && navigator.share) {
-      try {
-        await navigator.share({
-          title: "OmniShare",
-          text: shareText,
-          url: referralLink,
-        });
-      } catch (err: any) {
-      } finally {
-        setIsMobileMenuOpen(false);
-      }
-      return;
-    }
-
-    // ✅ desktop => always modal
+    
     openModal(ReferralSection as any, {});
     setIsMobileMenuOpen(false);
   };
@@ -622,7 +607,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                   />
 
                   {showPackage && (
-                    <div className="absolute bg-gray-50 z-20 lg:left-auto top-5 right-16 mt-6 rounded-md shadow-md md:px-6 px-4 py-6 border md:w-[370px] w-auto">
+                    <div className=" left-0 right-0 ml-5 mr-5 md:mr-10   md:right-6  absolute bg-gray-50 z-50 md:left-auto top-5  mt-6 rounded-md shadow-md md:px-6 px-4 py-6 border md:w-[370px]">
                       {user?.wallet?.package ? (
                         <>
                           {/* Plan Section */}
@@ -646,7 +631,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                       <Icon name="question-mark" size={17} />
                                     </button>
                                     {planMsgOpen && (
-                                      <div className="absolute left-0 top-full mt-1 w-56 p-2 bg-gray-50 border rounded-md shadow-lg z-50 text-xs text-black">
+                                      <div className="absolute left-0 top-full mt-1 w-56 p-2 bg-gray-50 border rounded-md shadow-lg z-50 text-xs text-black 
+      sm:left-1/2 sm:-translate-x-1/2 sm:max-w-xs">
                                         This is your current plan:{" "}
                                         <span className="font-semibold text-purple-600">
                                           {user.wallet?.package?.name || "FREE"}
