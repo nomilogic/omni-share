@@ -599,7 +599,7 @@ const ProfileSetupSinglePage: React.FC = () => {
     }
   };
   return (
-    <div className="bg-transparent md:px-0 px-3">
+    <div className="bg-transparent md:px-0 ">
       <div className=" flex flex-col md:flex-row-reverse justify-between items-between  md:pb-4 pb  -3 ">
         <div className="w-full">
           <div className="flex md:justify-between md:flex-row flex-col-reverse items-center gap-2 mb-2">
@@ -614,10 +614,10 @@ const ProfileSetupSinglePage: React.FC = () => {
               {t("back_to_dashboard")}
             </button>
           </div>
-          <p className="text-gray-500">{t("profile_intro")}</p>
+          <p className="text-gray-500 mb-2">{t("profile_intro")}</p>
         </div>
       </div>
-      <div className=" w-full max-w-5xl  mx-auto bg-white rounded-2xl px-4 py-4   transition-shadow duration-300">
+      <div className=" w-full max-w-5xl  mx-auto bg-white rounded-md px-4 py-4   transition-shadow duration-300">
         <div className="flex justify-between items-center mb-3">
           <h3 className="text-base font-semibold text-gray-900">
             {getProgressTitle(progress)}
@@ -658,7 +658,7 @@ const ProfileSetupSinglePage: React.FC = () => {
       </div>
       <div className="w-full max-w-5xl  mx-auto">
         <div className="bg-transparent  overflow-hidden relative">
-          <div className="md:py-4 py-3">
+          <div className="py-4 ">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
               {profileFormConfig.map((section) => {
                 return (

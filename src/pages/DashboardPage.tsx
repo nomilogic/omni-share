@@ -146,7 +146,7 @@ export const DashboardPage: React.FC = () => {
               {progress !== 100 && (
                 <div
                   onClick={() => setProfileEditing(true)}
-                  className=" w-full max-w-5xl  mx-auto bg-white rounded-2xl px-4 py-4 transition-shadow duration-300 cursor-pointer hover:shadow-lg"
+                  className=" w-full max-w-5xl  mx-auto bg-white rounded-md px-4 py-4 transition-shadow duration-300 cursor-pointer hover:shadow-lg"
                 >
                   <div className="flex justify-between items-center mb-3">
                     <h3 className="text-base font-semibold text-gray-900">
@@ -227,7 +227,7 @@ export const DashboardPage: React.FC = () => {
                     onButtonClick={handleReferralClick}
                   />
                 </div>
-                <div className="h-[480px] block md:hidden">
+                <div className="h-auto block md:hidden">
                   <ReferralSection className="h-full" />
                 </div>
               </div>
