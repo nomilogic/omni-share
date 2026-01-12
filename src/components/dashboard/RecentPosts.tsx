@@ -185,15 +185,16 @@ function RecentPosts({ post }: any) {
   )}
 
     <div className="relative z-10 flex flex-col h-full p-3">
-    <h3 className={`font-bold text-lg mb-2 ${isImage && "drop-shadow-[0_1.5px_1.5px_rgba(0,0,0,0.8)]"} `}>
+    <h3 className={` font-semibold text-lg mb-2 ${isImage && "drop-shadow-[0_1.5px_1.5px_rgba(0,0,0,0.8)]"} line-clamp-2 `}>
       {title || "No Title"}
     </h3>
 
     <p
       title={description || content}
       className={`
-        text-sm mt-auto mb-1 leading-relaxed ${isImage && "drop-shadow-[0_1.5px_1.5px_rgba(0,0,0,0.8)]"}
+        text-sm mt-3 mb-1 leading-relaxed ${isImage && "drop-shadow-[0_1.5px_1.5px_rgba(0,0,0,0.8)]"}
         ${isImage ? "" : "text-gray-700"}
+        line-clamp-5
       `}
     >
       {description || content || "No content available"}

@@ -217,7 +217,7 @@ function Analytics({ onHasAnalyticsChange }: Props) {
 
       {analytics && (
         <div className="mb-2">
-          <h3 className="text-lg font-bold text-gray-900 truncate">
+          <h3 className="text-lg font-semibold text-gray-900 truncate">
             {analytics.page.name}
           </h3>
           {analytics.page.followers !== 0 && (
@@ -231,7 +231,7 @@ function Analytics({ onHasAnalyticsChange }: Props) {
       <div className="flex-1 overflow-y-auto pr-2 -mr-2">
         <div className="mb-2">
           <div className="flex justify-between mb-2">
-            <h4 className="font-semibold">{t("summary")}</h4>
+            <h3 className=" text-lg font-semibold">{t("summary")}</h3>
           </div>
 
           <div className="space-y-1">
@@ -244,7 +244,7 @@ function Analytics({ onHasAnalyticsChange }: Props) {
         <hr className="my-2" />
 
         <div>
-          <h4 className="font-semibold text-sm mb-2">{t("top_posts")}</h4>
+          <h3 className="font-semibold  mb-2 text-lg">Recent Posts</h3>
           {topPosts.length ? (
             <div className="space-y-2">
               {topPosts.slice(0, 3).map((post) => (

@@ -51,7 +51,7 @@ function StatsCard({
         </>
       </div>
 
-      <div className="text-sm text-slate-600 h-8">{subtitle}</div>
+      <div className="text-sm text-slate-600 ">{subtitle}</div>
 
       {buttonText !== "" && badge?.toLocaleLowerCase() !== "pro" && (
         <button
