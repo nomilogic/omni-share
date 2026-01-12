@@ -189,7 +189,7 @@ const ReferralSection: FC<Props> = ({ close, className = "" }) => {
                 onClick={handleTermsClick}
                 className="text-[#7650e3] underline"
               >
-                View terms and conditions"
+                View terms and conditions
               </a>
             </div>
           </div>
