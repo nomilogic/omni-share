@@ -675,12 +675,21 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                   </p>
                                 )} */}
                                 <p className="text-sm text-black mt-1">
-                                  {user.wallet?.downgradeRequested
-                                    ? `Downgraded to ${user.wallet?.downgradedPackage?.name} Effective on:`
-                                    : t("renewing_on")}
+                                  {user.wallet?.downgradeRequested ? (
+                                    <>
+                                      Downgraded to{" "}
+                                      <span className="font-medium">
+                                        {user.wallet?.downgradedPackage?.name}
+                                      </span>{" "}
+                                      <br />
+                                      Effective on:
+                                    </>
+                                  ) : (
+                                    t("renewing_on")
+                                  )}
                                   &nbsp;
                                   <span className="text-black font-medium">
-                                    {user.wallet.expiresAt
+                                    {user.wallet?.expiresAt
                                       ? new Date(
                                           user.wallet.expiresAt
                                         ).toLocaleDateString("en-GB", {

@@ -600,522 +600,521 @@ const ProfileSetupSinglePage: React.FC = () => {
   };
   return (
     <div className="bg-transparent md:px-0">
-  <div className="flex flex-col md:flex-row-reverse justify-between items-between md:pb-4 pb-3">
-    <div className="w-full">
-      <div className="flex md:justify-between md:flex-row flex-col-reverse items-center gap-2 mb-2">
-        <h1 className="text-3xl font-bold text-black w-full">
-          {t("complete_profile")}
-        </h1>
-        <button
-          onClick={handleSkip}
-          className="flex gap-2 top-5 text-[#7650e3] hover:text-[#6540cc] font-semibold transition-colors w-full justify-end text-sm hover:underline"
-        >
-          <ArrowLeft className="w-5 h-5" />
-          {t("back_to_dashboard")}
-        </button>
-      </div>
-      <p className="text-gray-500 mb-2">{t("profile_intro")}</p>
-    </div>
-  </div>
-
-  <div className="w-full max-w-5xl mx-auto bg-white rounded-md px-4 py-4 transition-shadow duration-300">
-    <div className="flex justify-between items-center mb-3">
-      <h3 className="text-base font-semibold text-gray-900">
-        {getProgressTitle(progress)}
-      </h3>
-      <span className="text-base font-semibold text-gray-700">{progress}%</span>
-    </div>
-
-    <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
-      <div
-        className="h-full rounded-full transition-all duration-700 ease-out shadow-inner"
-        style={{
-          width: `${progress}%`,
-          backgroundColor: getProgressColor(progress),
-        }}
-      />
-    </div>
-
-    {progress < 100 && (
-      <p className="mt-4 text-sm text-gray-500 leading-relaxed">
-        Complete your profile for better, personalized recommendations.
-      </p>
-    )}
-
-    {progress === 100 && (
-      <p className="mt-4 text-sm font-medium text-purple-700 flex items-center gap-2">
-        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-          <path
-            fillRule="evenodd"
-            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-            clipRule="evenodd"
-          />
-        </svg>
-        Profile completed — thank you!
-      </p>
-    )}
-  </div>
-
-  <div className="w-full max-w-5xl mx-auto">
-    <div className="bg-transparent overflow-hidden relative">
-      <div className="py-4">
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-          {profileFormConfig.map((section) => (
-            <section
-              key={section.id}
-              className="space-y-4 bg-gray-100 p-4 rounded-lg shadow-md"
+      <div className="flex flex-col md:flex-row-reverse justify-between items-between md:pb-4 pb-3">
+        <div className="w-full">
+          <div className="flex md:justify-between md:flex-row flex-col-reverse items-center gap-2 mb-2">
+            <h1 className="text-3xl font-bold text-black w-full">
+              {t("complete_profile")}
+            </h1>
+            <button
+              onClick={handleSkip}
+              className="flex gap-2 top-5 text-[#7650e3] hover:text-[#6540cc] font-semibold transition-colors w-full justify-end text-sm hover:underline"
             >
-              <div className="flex lg:items-center space-x-3 mb-2">
-                <div>
-                  {section.icon && (
-                    <div className="theme-bg-quaternary p-2 rounded-md">
-                      {React.createElement(section.icon, {
-                        className: "w-6 h-6 theme-text-secondary",
-                      })}
+              <ArrowLeft className="w-5 h-5" />
+              {t("back_to_dashboard")}
+            </button>
+          </div>
+          <p className="text-gray-500 mb-2">{t("profile_intro")}</p>
+        </div>
+      </div>
+
+      <div className="w-full max-w-5xl mx-auto bg-white rounded-md px-4 py-4 transition-shadow duration-300">
+        <div className="flex justify-between items-center mb-3">
+          <h3 className="text-base font-semibold text-gray-900">
+            {getProgressTitle(progress)}
+          </h3>
+          <span className="text-base font-semibold text-gray-700">
+            {progress}%
+          </span>
+        </div>
+
+        <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
+          <div
+            className="h-full rounded-full transition-all duration-700 ease-out shadow-inner"
+            style={{
+              width: `${progress}%`,
+              backgroundColor: getProgressColor(progress),
+            }}
+          />
+        </div>
+
+        {progress < 100 && (
+          <p className="mt-4 text-sm text-gray-500 leading-relaxed">
+            Complete your profile for better, personalized recommendations.
+          </p>
+        )}
+
+        {progress === 100 && (
+          <p className="mt-4 text-sm font-medium text-purple-700 flex items-center gap-2">
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clipRule="evenodd"
+              />
+            </svg>
+            Profile completed — thank you!
+          </p>
+        )}
+      </div>
+
+      <div className="w-full max-w-5xl mx-auto">
+        <div className="bg-transparent overflow-hidden relative">
+          <div className="py-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+              {profileFormConfig.map((section) => (
+                <section
+                  key={section.id}
+                  className="space-y-4 bg-gray-100 p-4 rounded-lg shadow-md"
+                >
+                  <div className="flex lg:items-center space-x-3 mb-2">
+                    <div>
+                      {section.icon && (
+                        <div className="theme-bg-quaternary p-2 rounded-md">
+                          {React.createElement(section.icon, {
+                            className: "w-6 h-6 theme-text-secondary",
+                          })}
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-                <div>
-                  <h2 className="text-xl font-semibold theme-text-secondary">
-                    {section.title}
-                  </h2>
-                  {section.subtext && (
-                    <p className="mt-1 text-sm text-gray-500 font-medium">
-                      {section.subtext}
-                    </p>
-                  )}
-                </div>
-              </div>
+                    <div>
+                      <h2 className="text-xl font-semibold theme-text-secondary">
+                        {section.title}
+                      </h2>
+                      {section.subtext && (
+                        <p className="mt-1 text-sm text-gray-500 font-medium">
+                          {section.subtext}
+                        </p>
+                      )}
+                    </div>
+                  </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {section.fields.map((field) => {
-                  const fieldName = field.name;
-                  const fieldError = errors[fieldName];
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {section.fields.map((field) => {
+                      const fieldName = field.name;
+                      const fieldError = errors[fieldName];
 
-                  switch (field.type) {
-                    case "text":
-                    case "email":
-                    case "tel":
-                    case "url":
-                      return (
-                        <div key={field.name}>
-                          <label className="block text-sm font-medium theme-text-primary mb-2">
-                            {field.label} {field.required && "*"}
-                          </label>
-                          <input
-                            type={field.type}
-                            disabled={field.type === "email"}
-                            {...register(fieldName)}
-                            className={`w-full px-4 py-2.5 text-sm border-2 border-purple-500 bg-gray-100 rounded-md focus:outline-none focus:border-purple-600 transition ${
-                              fieldError
-                                ? "border-red-500"
-                                : "border-gray-300"
-                            }
+                      switch (field.type) {
+                        case "text":
+                        case "email":
+                        case "tel":
+                        case "url":
+                          return (
+                            <div key={field.name}>
+                              <label className="block text-sm font-medium theme-text-primary mb-2">
+                                {field.label} {field.required && "*"}
+                              </label>
+                              <input
+                                type={field.type}
+                                disabled={field.type === "email"}
+                                {...register(fieldName)}
+                                className={`w-full px-4 py-2.5 text-sm border-2 border-purple-500 bg-gray-100 rounded-md focus:outline-none focus:border-purple-600 transition ${
+                                  fieldError
+                                    ? "border-red-500"
+                                    : "border-gray-300"
+                                }
                                 ${
                                   field.type == "email"
                                     ? "disabled text-gray-500 border-gray-300 border"
                                     : ""
-                            }`}
-                            placeholder={field.placeholder || ""}
-                          />
-                          {field.helperText && (
-                            <p className="mt-1 text-sm text-gray-500 font-medium">
-                              {field.helperText}
-                            </p>
-                          )}
-                          {fieldError && (
-                            <p className="mt-1 text-sm text-red-600">
-                              {String(fieldError.message || "")}
-                            </p>
-                          )}
-                          {field.name === "publicUrl" && (
-                                  <>
-                                    <div className="flex items-center mt-2 gap-2">
-                                      {urlAnalysisLoading ? (
-                                        <div className="flex items-center gap-2 theme-text-secondary">
-                                          <Loader2 className="h-5 w-5 animate-spin" />
-                                          <span className="text-sm">
-                                            {t("url_analyzing")}
-                                          </span>
-                                        </div>
-                                      ) : (
-                                        
-                                        <button
-                                          type="button"
-                                          onClick={() =>
-                                            handleUrlAnalysis(
-                                              formData.publicUrl || ""
-                                            )
-                                          }
-                                          className="flex items-center gap-2 w-full theme-bg-trinary text-white py-3 px-6 rounded-md text-lg font-semibold shadow-md disabled:opacity-50 border border-transparent hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition-colors"
-                                          title="Auto-fill from URL"
-                                        >
-                                          <Wand2 className="h-5 w-5" />
-                                          <span className="text-sm">
-                                            {t("auto_fill_url")}
-                                          </span>
-                                        </button>
-                                      )}
-                                    </div>
-                                    {urlAnalysisError && (
-                                      <p className="mt-2 text-sm text-red-600">
-                                        {urlAnalysisError}
-                                      </p>
-                                    )}
-                                  </>
-                                )}
-                        </div>
-                      );
-
-                    case "select":
-                      return (
-                        <div key={field.name} className="w-full">
-                          <label className="block text-sm font-medium theme-text-primary mb-2">
-                            {field.label} {field.required && "*"}
-                          </label>
-                          <select
-                            {...register(fieldName)}
-                            className={`w-full px-4 py-2.5 text-sm border-2 border-purple-500 bg-gray-100 rounded-md focus:outline-none focus:border-purple-600 transition ${
-                              fieldError
-                                ? "border-red-500"
-                                : "border-gray-300"
-                            }`}
-                          >
-                            <option value="">{`Select ${field.label}`}</option>
-                            {field.options?.map((opt) => (
-                              <option key={opt} value={opt}>
-                                {opt}
-                              </option>
-                            ))}
-                          </select>
-                          {field.helperText && (
-                            <p className="mt-1 text-sm text-gray-500 font-medium">
-                              {field.helperText}
-                            </p>
-                          )}
-                          {fieldError && (
-                            <p className="mt-1 text-sm text-red-600">
-                              {String(fieldError.message || "")}
-                            </p>
-                          )}
-                        </div>
-                      );
-
-                    case "checkbox-group":
-                      return (
-                        <div
-                          key={field.name}
-                          className="col-span-1 md:col-span-2"
-                        >
-                          <label className="block text-sm font-medium theme-text-primary mb-2">
-                            {field.label} {field.required && "*"}
-                          </label>
-                          {field.helperText && (
-                            <p className="mt-1 text-sm text-gray-500 font-medium">
-                              {field.helperText}
-                            </p>
-                          )}
-                          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
-                            {field.options?.map((opt) => {
-                              const fieldValue = formData[fieldName];
-                              const isChecked =
-                                Array.isArray(fieldValue) &&
-                                fieldValue.includes(opt);
-
-                              return (
-                                <div
-                                  key={opt}
-                                  data-field-name={field.name}
-                                  className={`flex items-center p-2 border-2 rounded-md cursor-pointer ${
-                                    isChecked
-                                      ? "theme-border-trinary theme-text-secondary"
-                                      : "border-gray-200"
-                                  }`}
-                                  onClick={() =>
-                                    handleArrayChange(field.name, opt)
-                                  }
-                                >
-                                  <input
-                                    type="checkbox"
-                                    checked={isChecked}
-                                    onChange={() =>
-                                      handleArrayChange(field.name, opt)
-                                    }
-                                    className="h-4 w-4 theme-checkbox rounded mr-2"
-                                    aria-label={opt}
-                                  />
-                                  <span className="text-sm font-medium">
-                                    {opt}
-                                  </span>
-                                </div>
-                              );
-                            })}
-                          </div>
-                          {fieldError && (
-                            <p className="mt-2 text-sm text-red-600">
-                              {String(fieldError.message || "")}
-                            </p>
-                          )}
-                        </div>
-                      );
-
-                    case "file":
-                      return (
-                        <div key={field.name} className="">
-                          <label className="block text-sm font-medium theme-text-primary mb-2">
-                            {field.label} {field.required && "*"}
-                          </label>
-
-                          <div className="mt-1 flex flex-col items-center justify-center md:p-4 p-3 border-2 border-gray-300 border-dashed rounded-md relative overflow-hidden">
-                            {formData[fieldName] ? (
-                              <div className="flex flex-col items-center space-y-2">
-                                <img
-                                  src={formData[fieldName]} // URL or base64 preview
-                                  alt="Uploaded logo preview"
-                                  className="w-full object-cover rounded-md shadow-md border h-[150px] border-gray-200"
-                                />
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    setValue(fieldName, "" as any);
-                                    setSelectedFileName("");
-                                  }}
-                                  className="text-xs text-red-500 hover:underline"
-                                >
-                                  {t("remove")}
-                                </button>
-                              </div>
-                            ) : (
-                              <label
-                                htmlFor={`file-upload-${field.name}`}
-                                className="flex flex-col items-center justify-center cursor-pointer"
-                              >
-                                <svg
-                                  className="mx-auto h-8 w-8 text-gray-400"
-                                  stroke="currentColor"
-                                  fill="none"
-                                  viewBox="0 0 48 48"
-                                  aria-hidden="true"
-                                >
-                                  <path
-                                    d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                                    strokeWidth={2}
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                  />
-                                </svg>
-                                <span className="mt-2 text-sm theme-text-secondary">
-                                  {t("click_to_upload")}
-                                </span>
-                                <p className="text-xs text-gray-500 font-medium">
-                                  {t("file_formats")}
+                                }`}
+                                placeholder={field.placeholder || ""}
+                              />
+                              {field.helperText && (
+                                <p className="mt-1 text-sm text-gray-500 font-medium">
+                                  {field.helperText}
                                 </p>
+                              )}
+                              {fieldError && (
+                                <p className="mt-1 text-sm text-red-600">
+                                  {String(fieldError.message || "")}
+                                </p>
+                              )}
+                              {field.name === "publicUrl" && (
+                                <>
+                                  <div className="flex items-center mt-2 gap-2">
+                                    {urlAnalysisLoading ? (
+                                      <div className="flex items-center gap-2 theme-text-secondary">
+                                        <Loader2 className="h-5 w-5 animate-spin" />
+                                        <span className="text-sm">
+                                          {t("url_analyzing")}
+                                        </span>
+                                      </div>
+                                    ) : (
+                                      <button
+                                        type="button"
+                                        onClick={() =>
+                                          handleUrlAnalysis(
+                                            formData.publicUrl || ""
+                                          )
+                                        }
+                                        className="flex items-center gap-2 w-full md:w-fit   theme-bg-trinary text-white py-3 px-6 rounded-md text-lg font-semibold shadow-md disabled:opacity-50 border border-transparent hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition-colors"
+                                        title="Auto-fill from URL"
+                                      >
+                                        <Wand2 className="h-5 w-5" />
+                                        <span className="text-sm">
+                                          {t("auto_fill_url")}
+                                        </span>
+                                      </button>
+                                    )}
+                                  </div>
+                                  {urlAnalysisError && (
+                                    <p className="mt-2 text-sm text-red-600">
+                                      {urlAnalysisError}
+                                    </p>
+                                  )}
+                                </>
+                              )}
+                            </div>
+                          );
+
+                        case "select":
+                          return (
+                            <div key={field.name} className="w-full">
+                              <label className="block text-sm font-medium theme-text-primary mb-2">
+                                {field.label} {field.required && "*"}
                               </label>
-                            )}
-
-                            <input
-                              id={`file-upload-${field.name}`}
-                              {...register(fieldName)}
-                              ref={fileInputRef}
-                              type="file"
-                              accept="image/*"
-                              className="sr-only"
-                              onChange={(e) => {
-                                const file = e.target.files?.[0];
-                                if (!file) return;
-
-                                setSelectedFileName(file.name || "");
-
-                                const reader = new FileReader();
-                                reader.onloadend = () => {
-                                  const base64String =
-                                    reader.result as string;
-                                  setValue(fieldName, base64String); // set base64 preview
-                                };
-                                reader.readAsDataURL(file);
-                              }}
-                            />
-                          </div>
-
-                          {fieldError && (
-                            <p className="mt-2 text-sm text-red-600">
-                              {String(fieldError.message || "")}
-                            </p>
-                          )}
-                        </div>
-                      );
-
-                    case "radio-group":
-                      return (
-                        <div
-                          key={field.name}
-                          className="col-span-1 md:col-span-2"
-                        >
-                          <label className="block text-sm font-medium theme-text-primary mb-2">
-                            {field.label} {field.required && "*"}
-                          </label>
-                          <div className="flex flex-wrap gap-4 mt-2">
-                            {field.options?.map((opt) => (
-                              <label
-                                key={opt}
-                                className="flex items-center space-x-2 cursor-pointer"
+                              <select
+                                {...register(fieldName)}
+                                className={`w-full px-4 py-2.5 text-sm border-2 border-purple-500 bg-gray-100 rounded-md focus:outline-none focus:border-purple-600 transition ${
+                                  fieldError
+                                    ? "border-red-500"
+                                    : "border-gray-300"
+                                }`}
                               >
-                                <input
-                                  type="radio"
-                                  {...register(fieldName)}
-                                  value={opt}
-                                  className="h-4 w-4 theme-radio"
-                                />
-                                <span className="text-sm font-medium">
-                                  {opt}
-                                </span>
+                                <option value="">{`Select ${field.label}`}</option>
+                                {field.options?.map((opt) => (
+                                  <option key={opt} value={opt}>
+                                    {opt}
+                                  </option>
+                                ))}
+                              </select>
+                              {field.helperText && (
+                                <p className="mt-1 text-sm text-gray-500 font-medium">
+                                  {field.helperText}
+                                </p>
+                              )}
+                              {fieldError && (
+                                <p className="mt-1 text-sm text-red-600">
+                                  {String(fieldError.message || "")}
+                                </p>
+                              )}
+                            </div>
+                          );
+
+                        case "checkbox-group":
+                          return (
+                            <div
+                              key={field.name}
+                              className="col-span-1 md:col-span-2"
+                            >
+                              <label className="block text-sm font-medium theme-text-primary mb-2">
+                                {field.label} {field.required && "*"}
                               </label>
-                            ))}
-                          </div>
-                          {fieldError && (
-                            <p className="mt-2 text-sm text-red-600">
-                              {String(fieldError.message || "")}
-                            </p>
-                          )}
-                        </div>
-                      );
+                              {field.helperText && (
+                                <p className="mt-1 text-sm text-gray-500 font-medium">
+                                  {field.helperText}
+                                </p>
+                              )}
+                              <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
+                                {field.options?.map((opt) => {
+                                  const fieldValue = formData[fieldName];
+                                  const isChecked =
+                                    Array.isArray(fieldValue) &&
+                                    fieldValue.includes(opt);
 
-                    case "tags":
-                      return (
-                        <div
-                          key={field.name}
-                          className="col-span-1 md:col-span-2"
-                        >
-                          <label className="block text-sm font-medium theme-text-primary mb-2">
-                            {field.label} {field.required && "*"}
-                          </label>
+                                  return (
+                                    <div
+                                      key={opt}
+                                      data-field-name={field.name}
+                                      className={`flex items-center p-2 border-2 rounded-md cursor-pointer ${
+                                        isChecked
+                                          ? "theme-border-trinary theme-text-secondary"
+                                          : "border-gray-200"
+                                      }`}
+                                      onClick={() =>
+                                        handleArrayChange(field.name, opt)
+                                      }
+                                    >
+                                      <input
+                                        type="checkbox"
+                                        checked={isChecked}
+                                        onChange={() =>
+                                          handleArrayChange(field.name, opt)
+                                        }
+                                        className="h-4 w-4 theme-checkbox rounded mr-2"
+                                        aria-label={opt}
+                                      />
+                                      <span className="text-sm font-medium">
+                                        {opt}
+                                      </span>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                              {fieldError && (
+                                <p className="mt-2 text-sm text-red-600">
+                                  {String(fieldError.message || "")}
+                                </p>
+                              )}
+                            </div>
+                          );
 
-                          <div className="flex flex-wrap items-center gap-2 border border-gray-300 rounded-md px-3 py-2.5 min-h-[44px]">
-                            {Array.isArray(formData[fieldName]) &&
-                              (formData[fieldName] as string[]).map(
-                                (tag: string, idx: number) => (
-                                  <span
-                                    key={idx}
-                                    className="flex items-center theme-bg-trinary theme-text-light px-2 py-1 rounded-full text-sm"
-                                  >
-                                    {tag}
+                        case "file":
+                          return (
+                            <div key={field.name} className="">
+                              <label className="block text-sm font-medium theme-text-primary mb-2">
+                                {field.label} {field.required && "*"}
+                              </label>
+
+                              <div className="mt-1 flex flex-col items-center justify-center md:p-4 p-3 border-2 border-gray-300 border-dashed rounded-md relative overflow-hidden">
+                                {formData[fieldName] ? (
+                                  <div className="flex flex-col items-center space-y-2">
+                                    <img
+                                      src={formData[fieldName]} // URL or base64 preview
+                                      alt="Uploaded logo preview"
+                                      className="w-full object-cover rounded-md shadow-md border h-[150px] border-gray-200"
+                                    />
                                     <button
                                       type="button"
                                       onClick={() => {
-                                        const current = formData[
-                                          fieldName
-                                        ] as string[];
-                                        const updated = current.filter(
-                                          (_: string, i: number) =>
-                                            i !== idx
-                                        );
-                                        setValue(
-                                          fieldName,
-                                          updated as any
-                                        );
+                                        setValue(fieldName, "" as any);
+                                        setSelectedFileName("");
                                       }}
-                                      className="ml-1 theme-text-light"
-                                      title="Remove tag"
+                                      className="text-xs text-red-500 hover:underline"
                                     >
-                                      ×
+                                      {t("remove")}
                                     </button>
-                                  </span>
-                                )
+                                  </div>
+                                ) : (
+                                  <label
+                                    htmlFor={`file-upload-${field.name}`}
+                                    className="flex flex-col items-center justify-center cursor-pointer"
+                                  >
+                                    <svg
+                                      className="mx-auto h-8 w-8 text-gray-400"
+                                      stroke="currentColor"
+                                      fill="none"
+                                      viewBox="0 0 48 48"
+                                      aria-hidden="true"
+                                    >
+                                      <path
+                                        d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                                        strokeWidth={2}
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                      />
+                                    </svg>
+                                    <span className="mt-2 text-sm theme-text-secondary">
+                                      {t("click_to_upload")}
+                                    </span>
+                                    <p className="text-xs text-gray-500 font-medium">
+                                      {t("file_formats")}
+                                    </p>
+                                  </label>
+                                )}
+
+                                <input
+                                  id={`file-upload-${field.name}`}
+                                  {...register(fieldName)}
+                                  ref={fileInputRef}
+                                  type="file"
+                                  accept="image/*"
+                                  className="sr-only"
+                                  onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (!file) return;
+
+                                    setSelectedFileName(file.name || "");
+
+                                    const reader = new FileReader();
+                                    reader.onloadend = () => {
+                                      const base64String =
+                                        reader.result as string;
+                                      setValue(fieldName, base64String); // set base64 preview
+                                    };
+                                    reader.readAsDataURL(file);
+                                  }}
+                                />
+                              </div>
+
+                              {fieldError && (
+                                <p className="mt-2 text-sm text-red-600">
+                                  {String(fieldError.message || "")}
+                                </p>
                               )}
+                            </div>
+                          );
 
-                            <input
-                              type="text"
-                              placeholder={
-                                !formData[fieldName].length && field.placeholder
-                              }
-                              enterKeyHint="done"
-                              className="flex-grow border-none focus:ring-0 text-sm outline-none min-w-[120px] bg-transparent"
-                              onKeyDown={(e) => {
-                                const input =
-                                  e.target as HTMLInputElement;
-                                const value = input.value.trim();
+                        case "radio-group":
+                          return (
+                            <div
+                              key={field.name}
+                              className="col-span-1 md:col-span-2"
+                            >
+                              <label className="block text-sm font-medium theme-text-primary mb-2">
+                                {field.label} {field.required && "*"}
+                              </label>
+                              <div className="flex flex-wrap gap-4 mt-2">
+                                {field.options?.map((opt) => (
+                                  <label
+                                    key={opt}
+                                    className="flex items-center space-x-2 cursor-pointer"
+                                  >
+                                    <input
+                                      type="radio"
+                                      {...register(fieldName)}
+                                      value={opt}
+                                      className="h-4 w-4 theme-radio"
+                                    />
+                                    <span className="text-sm font-medium">
+                                      {opt}
+                                    </span>
+                                  </label>
+                                ))}
+                              </div>
+                              {fieldError && (
+                                <p className="mt-2 text-sm text-red-600">
+                                  {String(fieldError.message || "")}
+                                </p>
+                              )}
+                            </div>
+                          );
 
-                                if (e.key === "Enter" && value) {
-                                  e.preventDefault();
-                                  const existing =
-                                    (formData[fieldName] as string[]) || [];
-                                  const normalized = value.replace(
-                                    /[^\w\s&,-]/g,
-                                    ""
-                                  );
-                                  if (
-                                    normalized &&
-                                    !existing.includes(normalized)
-                                  ) {
-                                    setValue(fieldName, [
-                                      ...existing,
-                                      normalized,
-                                    ] as any);
+                        case "tags":
+                          return (
+                            <div
+                              key={field.name}
+                              className="col-span-1 md:col-span-2"
+                            >
+                              <label className="block text-sm font-medium theme-text-primary mb-2">
+                                {field.label} {field.required && "*"}
+                              </label>
+
+                              <div className="flex flex-wrap items-center gap-2 border border-gray-300 rounded-md px-3 py-2.5 min-h-[44px]">
+                                {Array.isArray(formData[fieldName]) &&
+                                  (formData[fieldName] as string[]).map(
+                                    (tag: string, idx: number) => (
+                                      <span
+                                        key={idx}
+                                        className="flex items-center theme-bg-trinary theme-text-light px-2 py-1 rounded-full text-sm"
+                                      >
+                                        {tag}
+                                        <button
+                                          type="button"
+                                          onClick={() => {
+                                            const current = formData[
+                                              fieldName
+                                            ] as string[];
+                                            const updated = current.filter(
+                                              (_: string, i: number) =>
+                                                i !== idx
+                                            );
+                                            setValue(fieldName, updated as any);
+                                          }}
+                                          className="ml-1 theme-text-light"
+                                          title="Remove tag"
+                                        >
+                                          ×
+                                        </button>
+                                      </span>
+                                    )
+                                  )}
+
+                                <input
+                                  type="text"
+                                  placeholder={
+                                    !formData[fieldName].length &&
+                                    field.placeholder
                                   }
-                                  input.value = "";
-                                }
-                              }}
-                              onPaste={(e) => {
-                                const input =
-                                  e.target as HTMLInputElement;
-                                const pasted = e.clipboardData
-                                  .getData("text")
-                                  .trim();
-                                if (pasted) {
-                                  e.preventDefault();
-                                  const existing =
-                                    (formData[fieldName] as string[]) || [];
-                                  const newTags = pasted
-                                    .split(/\s|,/)
-                                    .map((v) => v.replace(/[^\w\s&,-]/g, ""))
-                                    .filter(
-                                      (v) => v && !existing.includes(v)
-                                    );
-                                  if (newTags.length) {
-                                    setValue(
-                                      fieldName,
-                                      [...existing, ...newTags] as any
-                                    );
-                                  }
-                                  input.value = "";
-                                }
-                              }}
-                            />
-                          </div>
+                                  enterKeyHint="done"
+                                  className="flex-grow border-none focus:ring-0 text-sm outline-none min-w-[120px] bg-transparent"
+                                  onKeyDown={(e) => {
+                                    const input = e.target as HTMLInputElement;
+                                    const value = input.value.trim();
 
-                          {field.helperText && (
-                            <p className="mt-1 text-sm text-gray-500 font-medium">
-                              {field.helperText}
-                            </p>
-                          )}
-                          {fieldError && (
-                            <p className="mt-2 text-sm text-red-600">
-                              {String(fieldError.message || "")}
-                            </p>
-                          )}
-                        </div>
-                      );
+                                    if (e.key === "Enter" && value) {
+                                      e.preventDefault();
+                                      const existing =
+                                        (formData[fieldName] as string[]) || [];
+                                      const normalized = value.replace(
+                                        /[^\w\s&,-]/g,
+                                        ""
+                                      );
+                                      if (
+                                        normalized &&
+                                        !existing.includes(normalized)
+                                      ) {
+                                        setValue(fieldName, [
+                                          ...existing,
+                                          normalized,
+                                        ] as any);
+                                      }
+                                      input.value = "";
+                                    }
+                                  }}
+                                  onPaste={(e) => {
+                                    const input = e.target as HTMLInputElement;
+                                    const pasted = e.clipboardData
+                                      .getData("text")
+                                      .trim();
+                                    if (pasted) {
+                                      e.preventDefault();
+                                      const existing =
+                                        (formData[fieldName] as string[]) || [];
+                                      const newTags = pasted
+                                        .split(/\s|,/)
+                                        .map((v) =>
+                                          v.replace(/[^\w\s&,-]/g, "")
+                                        )
+                                        .filter(
+                                          (v) => v && !existing.includes(v)
+                                        );
+                                      if (newTags.length) {
+                                        setValue(fieldName, [
+                                          ...existing,
+                                          ...newTags,
+                                        ] as any);
+                                      }
+                                      input.value = "";
+                                    }
+                                  }}
+                                />
+                              </div>
 
-                    default:
-                      return null;
-                  }
-                })}
-              </div>
-            </section>
-          ))}
+                              {field.helperText && (
+                                <p className="mt-1 text-sm text-gray-500 font-medium">
+                                  {field.helperText}
+                                </p>
+                              )}
+                              {fieldError && (
+                                <p className="mt-2 text-sm text-red-600">
+                                  {String(fieldError.message || "")}
+                                </p>
+                              )}
+                            </div>
+                          );
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full theme-bg-trinary disabled:bg-purple-600/50 disabled:cursor-not-allowed text-white py-3 px-6 rounded-md text-lg font-semibold shadow-md disabled:opacity-50 border border-transparent hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition-colors"
-          >
-            {loading ? t("saving") : t("complete_profile_setup")}
-          </button>
-        </form>
+                        default:
+                          return null;
+                      }
+                    })}
+                  </div>
+                </section>
+              ))}
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full theme-bg-trinary disabled:bg-purple-600/50 disabled:cursor-not-allowed text-white py-3 px-6 rounded-md text-lg font-semibold shadow-md disabled:opacity-50 border border-transparent hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition-colors"
+              >
+                {loading ? t("saving") : t("complete_profile_setup")}
+              </button>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
   );
 };
 export default ProfileSetupSinglePage;

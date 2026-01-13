@@ -809,7 +809,7 @@ function HomePage() {
                   </motion.button>
                 )}
 
-                {user && (
+                {/* {user && (
                   <motion.div
                     className="cursor-pointer"
                     whileHover={{ scale: 1.05 }}
@@ -833,7 +833,7 @@ function HomePage() {
                       }}
                     />
                   </motion.div>
-                )}
+                )} */}
 
                 {user ? (
                   <motion.button
@@ -842,7 +842,6 @@ function HomePage() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    <LogOut size={20} />
                     {t("logout")}
                   </motion.button>
                 ) : (
@@ -852,8 +851,7 @@ function HomePage() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    <LogIn size={20} />
-                    {t("login")}
+                    {t("Login")}
                   </motion.button>
                 )}
               </div>
@@ -1375,7 +1373,7 @@ function HomePage() {
                   setVisibleCount(faqs.length);
                 }
               }}
-              className="bg-purple-600 text-white hover:text-[#7650e3] hover:bg-[#d7d7fc] border border-[#7650e3] text-base font-semibold px-8 py-3 rounded-full shadow-lg inline-flex items-center space-x-2"
+              className="bg-white text-[#7650e3] hover:bg-[#d7d7fc] border border-[#7650e3] text-base font-semibold px-8 py-3 rounded-full shadow-lg inline-flex items-center space-x-2"
               whileHover={{
                 scale: 1.05,
                 boxShadow: "0 10px 30px rgba(118, 80, 227, 0.3)",
@@ -1414,7 +1412,7 @@ function HomePage() {
             </p>
             <motion.button
               onClick={() => setShowContactForm(!showContactForm)}
-              className="bg-purple-600 text-white hover:text-[#7650e3] hover:bg-[#d7d7fc] border border-[#7650e3] px-8 py-3 rounded-full shadow-lg inline-flex items-center space-x-2"
+              className="bg-white text-[#7650e3]  hover:bg-[#d7d7fc] border border-[#7650e3] px-8 py-3 rounded-full shadow-lg inline-flex items-center space-x-2"
               whileHover={{
                 scale: 1.05,
                 boxShadow: "0 10px 30px rgba(118, 80, 227, 0.3)",
