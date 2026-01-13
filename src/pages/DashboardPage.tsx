@@ -13,6 +13,8 @@ import { useTranslation } from "react-i18next";
 import API from "@/services/api";
 import { useModal } from "../context2/ModalContext";
 import { ProfileFormData } from "@/components/profileFormSchema";
+import { useParams } from "react-router-dom";
+
 
 export const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
@@ -25,10 +27,17 @@ export const DashboardPage: React.FC = () => {
   const { t } = useTranslation();
   const [hasAnalytics, setHasAnalytics] = useState<boolean | null>(null);
   const { openModal } = useModal();
+ const profileMode = searchParams.get('edit-profile'); 
+ const profile = searchParams.get('edit-profile'); 
+ //alert(profileMode)
+  
 
   useLayoutEffect(() => {
     setPasswordEditing(false);
+    if(!profileMode)
     setProfileEditing(false);
+    else
+    setProfileEditing(true);
   }, []);
 
   const handleReferralClick = () => {
@@ -144,7 +153,10 @@ export const DashboardPage: React.FC = () => {
             <div className="bg-gray-100  lg:px-4 px-3 py-4 rounded-md flex flex-col gap-4">
               <ProfileCard />
               {progress !== 100 && (
-                <div className=" w-full max-w-5xl  mx-auto bg-white rounded-2xl px-4 py-4   transition-shadow duration-300">
+                <div
+                  onClick={() => setProfileEditing(true)}
+                  className=" w-full max-w-5xl  mx-auto bg-white rounded-md px-4 py-4 transition-shadow duration-300 cursor-pointer hover:shadow-lg"
+                >
                   <div className="flex justify-between items-center mb-3">
                     <h3 className="text-base font-semibold text-gray-900">
                       {getProgressTitle(progress)}
@@ -224,7 +236,7 @@ export const DashboardPage: React.FC = () => {
                     onButtonClick={handleReferralClick}
                   />
                 </div>
-                <div className="h-[480px] block md:hidden">
+                <div className="h-auto block md:hidden">
                   <ReferralSection className="h-full" />
                 </div>
               </div>
@@ -244,7 +256,7 @@ export const DashboardPage: React.FC = () => {
       )}
 
       {isEditing && (
-        <div className="relative w-full my-10">
+        <div className="relative w-full md:my-10">
           <div className="p-0 w-full bg-gray-100  lg:px-4 px-3 py-4 rounded-md">
             <ProfileSetupSinglePage />
           </div>

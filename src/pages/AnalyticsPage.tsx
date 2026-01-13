@@ -170,6 +170,7 @@ export default function AnalyticsPage() {
           <div className="flex items-center gap-3">
             <h1 className="text-3xl font-bold text-gray-900">
               {selectedPost ? t("post_details") || "Post Details" : "Analytics"}
+              {/* <p className="text-sm font-normal">Updates after 24 hours</p> */}
             </h1>
 
             {platformLabel ? (

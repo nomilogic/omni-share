@@ -34,6 +34,7 @@ import "./i18n";
 import { useTranslation } from "react-i18next";
 import CookieBanner from "./components/CookieBanner";
 import AnalyticsPage from "./pages/AnalyticsPage";
+import ReferralRewards from "./components/RefferalShare";
 const OAuthCallbackWrapper = () => {
   const { dispatch } = useAppContext();
 
@@ -129,6 +130,7 @@ function App() {
                   <Route path="/home" element={<HomePage />} />
                   <Route path="/support" element={<Support />} />
                   <Route path="/faq" element={<FAQ />} />
+                  <Route path="/conditions" element={<ReferralRewards />} />
 
                   <Route
                     path="/analytics"

@@ -80,7 +80,7 @@ const ReferralSection: FC<Props> = ({ close, className = "" }) => {
     const handleTermsClick = (e: React.MouseEvent) => {
       e.preventDefault();
       close?.(); // ✅ close modal
-      navigate("/terms"); // ✅ then navigate
+      navigate("/conditions"); // ✅ then navigate
     };
 
     return (
@@ -97,7 +97,7 @@ const ReferralSection: FC<Props> = ({ close, className = "" }) => {
         className="max-w-2xl mx-auto w-full px-4"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="w-full bg-white rounded-md relative md:w-[60.666667%] mx-auto flex flex-col py-4 overflow-hidden border border-black/50 shadow-md">
+        <div className="w-full bg-white rounded-md relative md:w-[60.666667%] mx-auto flex flex-col pt-4 pb- 1 overflow-hidden border border-black/50 shadow-md">
           <button
             onClick={close}
             aria-label={t("close") || "Close"}
@@ -185,11 +185,11 @@ const ReferralSection: FC<Props> = ({ close, className = "" }) => {
 
             <div className="flex justify-center mt-4">
               <a
-                href="/terms"
+                href="/conditions"
                 onClick={handleTermsClick}
-                className="text-[#7650e3] underline"
+                className="text-[#7650e3] "
               >
-                {t("view_terms_conditions") || "View terms and conditions"}
+                View terms and conditions
               </a>
             </div>
           </div>
@@ -203,18 +203,18 @@ const ReferralSection: FC<Props> = ({ close, className = "" }) => {
     <div
       className={`bg-purple-600 rounded-md px-4 sm:px-5 py-4 overflow-hidden ${className}`}
     >
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-1 md:gap-5 items-center">
-        <div className="md:col-span-2 w-full flex flex-col order-2 md:order-1 mt-4 md:mt-0">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-0 md:gap-5 items-center">
+        <div className="md:col-span-2 w-full flex flex-col order-2 md:order-1">
           <h2 className="text-3xl sm:text-4xl leading-tight text-white">
             {t("refer_earn")}
           </h2>
 
           <div className="mt-2">
-            <p className="text-white text-sm font-medium leading-relaxed flex gap-2 items-center mb-1">
+            <p className="text-white text-sm  leading-relaxed flex gap-2 items-start mb-1">
               <Share2 className="w-[18px] h-[18px]" />
               Share your invite link with friends.
             </p>
-            <p className="text-white text-sm font-medium leading-relaxed flex gap-2 items-center mb-1">
+            <p className="text-white text-sm  leading-relaxed flex gap-2 items-start mb-1">
               <Icon
                 name="manage-subs"
                 size={18}
@@ -222,7 +222,7 @@ const ReferralSection: FC<Props> = ({ close, className = "" }) => {
               />
               They sign up and receive 10 Omni Coins.
             </p>
-            <p className="text-white text-sm font-medium leading-relaxed flex gap-2 items-center mb-2">
+            <p className="text-white text-sm  leading-relaxed flex gap-2 items-start mb-2">
               <Icon name="crown" size={18} className="brightness-[1000]" />
               When they purchase a package using your referral link, you both
               earn 100 Omni Coins.
@@ -257,6 +257,7 @@ const ReferralSection: FC<Props> = ({ close, className = "" }) => {
           </div>
 
           {/* ✅ Share: Desktop modal / Mobile native */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-5 items-center">
           <button
             onClick={handleInlineShareClick}
             className="mt-3 flex w-full sm:w-fit items-center justify-center rounded-md gap-2 transition-colors text-md font-semibold text-[#7650e3] border-2 border-[#7650e3] bg-white hover:bg-[#d7d7fc] py-2 px-3"
@@ -264,15 +265,27 @@ const ReferralSection: FC<Props> = ({ close, className = "" }) => {
             <Share2 className="w-[18px] h-[18px]" />
             {t("share")}
           </button>
+          <div className=" text-sm mt-4  md:mt-2 flex justify-center md:justify-end ">
+              <a
+                href="/conditions"
+                
+                className="text-white "
+              >
+                View terms and conditions
+              </a>
+            </div>
+            </div>
+        
         </div>
+        
 
         {/* ✅ Image fully contained inside card (no overflow) */}
         <div className="w-full flex justify-center md:justify-end order-1 md:order-2">
-          <div className="w-full max-w-[340px] md:max-w-none overflow-hidden rounded-md">
+          <div className="w-full max-w-[340px] md:max-w-none  overflow-hidden rounded-md -mt-2 md:mt-0">
             <img
               src={Referal}
               alt="Referral"
-              className="w-full h-[180px] sm:h-[210px] md:h-[220px] object-contain md:object-cover object-center"
+              className="w-full h-[220px] sm:h-[210px] md:h-[220px] object-contain md:object-cover object-center"
       />
 
           </div>

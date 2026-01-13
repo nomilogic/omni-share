@@ -283,7 +283,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               ref={userMenuRef}
             >
               <button
-                onClick={() => setShowUserMenu(!showUserMenu)}
+                onClick={() => {
+                    setShowUserMenu(false);
+                    navigate("/dashboard?edit-profile=true");
+
+                } }
                 className="flex items-center gap-x-3 mb-0 w-full hover:theme-bg-secondary rounded-md p-2  transition-colors"
               >
                 <div className=" mx-2 py-4">
@@ -362,7 +366,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 className="text-white"
               />
             </div>
-            <div className="px-3">
+            <div className="px-3 absolute bottom-32 left-0 right-0 mx-1">
               <button
                 type="button"
                 onClick={handleReferShareClick}
@@ -607,7 +611,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                   />
 
                   {showPackage && (
-                    <div className=" left-0 right-0 ml-5 mr-5 md:mr-10   md:right-6  absolute bg-gray-50 z-50 md:left-auto top-5  mt-6 rounded-md shadow-md md:px-6 px-4 py-6 border md:w-[370px]">
+                    <div className=" left-0 right-0 ml-3 mr-3 md:mr-10   md:right-6  absolute bg-gray-50 z-50 md:left-auto top-5  mt-6 rounded-md shadow-md md:px-6 px-4 py-6 border md:w-[370px]">
                       {user?.wallet?.package ? (
                         <>
                           {/* Plan Section */}
@@ -631,8 +635,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                       <Icon name="question-mark" size={17} />
                                     </button>
                                     {planMsgOpen && (
-                                      <div className="absolute left-0 top-full mt-1 w-56 p-2 bg-gray-50 border rounded-md shadow-lg z-50 text-xs text-black 
-      sm:left-1/2 sm:-translate-x-1/2 sm:max-w-xs">
+                                      <div className="absolute right-[-112px] m-auto top-full mt-1 w-56 p-2 bg-gray-50 border rounded-md shadow-lg z-50 text-xs text-black">
                                         This is your current plan:{" "}
                                         <span className="font-semibold text-purple-600">
                                           {user.wallet?.package?.name || "FREE"}
@@ -691,7 +694,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                       <Icon name="question-mark" size={17} />
                                     </button>
                                     {coinsMsgOpen && (
-                                      <div className="absolute left-0 top-full mt-1 w-56 p-2 bg-gray-50 border rounded-md shadow-lg z-50 text-xs text-black">
+                                      <div className="absolute right-[-112px] m-auto  top-full mt-1 w-56 p-2 bg-gray-50 border rounded-md shadow-lg z-50 text-xs text-black">
                                         This package gives you{" "}
                                         <span className="font-semibold text-purple-600">
                                           {user.wallet?.coins?.toLocaleString() ??
@@ -737,7 +740,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                       <Icon name="question-mark" size={17} />
                                     </button>
                                     {referralMsgOpen && (
-                                      <div className="absolute left-0 top-full mt-1 w-56 p-2 bg-gray-50 border rounded-md shadow-lg z-50 text-xs text-black">
+                                      <div className="absolute right-[-112px] m-auto  top-full mt-1 w-56 p-2 bg-gray-50 border rounded-md shadow-lg z-50 text-xs text-black">
                                         Referral coins are always used first.
                                         You currently have{" "}
                                         <span className="font-semibold text-purple-600">
