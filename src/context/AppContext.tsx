@@ -247,6 +247,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [logout]);
 
+  useEffect(() => {
+    refreshToken();
+  }, []);
+
   const fetchBalance = useCallback(async () => {
     try {
       const [balanceRes, userRes] = await Promise.all([
@@ -299,7 +303,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     return basic;
   };
 
-  // Initial Auth Load
   useEffect(() => {
     const init = async () => {
       const token = localStorage.getItem("auth_token");
@@ -345,7 +348,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     init();
   }, []);
 
-  // Packages & Addons
   useEffect(() => {
     const loadExtras = async () => {
       dispatch({ type: "SET_LOADER", payload: true });
@@ -368,7 +370,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [state.user?.id]);
 
-  // Pusher & Real-time
   useEffect(() => {
     const userId = state.user?.id;
     if (!userId) return;
@@ -406,11 +407,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       pusher.unsubscribe(`wallet-${userId}`);
     };
   }, [state.user?.id, pusher, fetchBalance, fetchUnreadCount]);
-
-  // Refresh token on /content
-  useEffect(() => {
-    if (window.location.pathname === "/content") refreshToken();
-  }, [refreshToken]);
 
   const contextValue = useMemo(
     () => ({

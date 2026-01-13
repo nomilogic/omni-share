@@ -93,7 +93,7 @@ export const PricingPage: React.FC = () => {
   const handleChoosePlan = (plan: any) => {
     if (loadingPackage) return;
 
-    if (hasCancelRequested || hasPendingDowngrade) return;
+    if (hasPendingDowngrade) return;
 
     const nextAmount = Number(plan.amount ?? 0);
     const currentAmount = Number(currentTier?.amount ?? 0);
@@ -329,7 +329,7 @@ export const PricingPage: React.FC = () => {
                 const currentAmount = Number(currentTier?.amount ?? 0);
                 const isLowerPlan = nextAmount < currentAmount;
 
-                const isLockedByCancel = hasCancelRequested && !isCurrentPlan;
+                const isLockedByCancel = false;
                 const isLockedByDowngrade =
                   hasPendingDowngrade &&
                   !isCurrentPlan &&
@@ -471,7 +471,6 @@ export const PricingPage: React.FC = () => {
                 {/* Upgrade Button */}
                 <Link
                   to="/pricing"
-                  onClick={() => setShowPackage(false)}
                   className="w-full mt-2 px-3 py-2.5 border text-md font-semibold rounded-md group flex items-center justify-center gap-2 text-white bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] border-[#7650e3]"
                 >
                   <div className="group-hover:filter-omni h-full w-full text-center">
