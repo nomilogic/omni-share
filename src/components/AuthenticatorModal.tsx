@@ -179,6 +179,8 @@ export const AuthenticatorModal = ({
   verifyOtp,
   buttonText,
   isResetPassword = false,
+  pendingQuestions,
+  pendingAction,
 }: any) => {
   const [authMethod, setAuthMethod] = useState<AuthMethod>("totp");
   const [otp, setOtp] = useState("");
@@ -237,7 +239,9 @@ export const AuthenticatorModal = ({
 
   const handleVerify = async () => {
     const session = localStorage.getItem("mfa_session_token");
-    if (!session && !isResetPassword) throw new Error("Session expired");
+
+    if (!session && !isResetPassword && pendingAction !== "disable-2fa")
+      throw new Error("Session expired");
     setLoading(true);
     setError("");
     try {
@@ -247,9 +251,8 @@ export const AuthenticatorModal = ({
           setLoading(false);
           return;
         }
-
-        if (isResetPassword) {
-          const result = await verifyOtp(otp);
+        if (pendingAction === "update-questions") {
+          const result = await verifyOtp(pendingQuestions, otp);
           onSuccess(result);
           onClose();
         } else {
@@ -275,11 +278,17 @@ export const AuthenticatorModal = ({
           setError("You cannot select the same question twice.");
           return;
         }
-
-        const result = await API.verifySecretLogin({
-          answers: formValues.answers,
-          session,
-        });
+        let result;
+        if (pendingAction === "disable-2fa") {
+          result = await API.securityQuestionDisable2FA({
+            answers: formValues.answers,
+          });
+        } else {
+          result = await API.verifySecretLogin({
+            answers: formValues.answers,
+            session,
+          });
+        }
         onSuccess(result.data);
         onClose();
       }
