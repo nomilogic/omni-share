@@ -259,10 +259,10 @@ function AccountSecurityTabs() {
   };
 
   useEffect(() => {
-    if (!qrCodeUrl) {
+    if (!qrCodeUrl && !user?.twoFactorEnabled) {
       start2FASetup();
     }
-  }, [user?.isSecurityQuestions, user?.twoFactorEnabled, qrCodeUrl]);
+  }, [user?.twoFactorEnabled, qrCodeUrl]);
 
   const handleContinueTo2FA = async () => {
     const isValid = await questionsForm.trigger();
