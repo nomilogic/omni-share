@@ -104,7 +104,8 @@ const CommunitySignup: React.FC = () => {
     ${
       loading
         ? "sm:bg-purple-600 sm:text-white sm:border-purple-600 sm:cursor-not-allowed"
-        : "sm:bg-white sm:text-theme-secondary sm:border-purple-600"
+        : "sm:bg-white sm:text-purple-600 sm:border-purple-600 sm:hover:bg-purple-100 transition"
+        
     }
   `}
               >

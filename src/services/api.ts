@@ -175,7 +175,8 @@ interface APIInstance extends AxiosInstance {
   verify2FASetup: (data: any) => Promise<any>;
   securityAnswers: (data: any) => Promise<any>;
   enable2FA: () => Promise<any>;
-  disable2FA: () => Promise<any>;
+  disable2FA: (otp: any) => Promise<any>;
+  securityQuestionDisable2FA: (data: any) => Promise<any>;
   facebookAnalytics: () => Promise<any>;
   securityQuestion: () => Promise<any>;
   refreshToken: (token: any) => Promise<any>;
@@ -239,9 +240,15 @@ API.logout = () => {
 };
 
 API.verifyLogin2FA = (data) => API.post("/auth/verifyLogin2FA", data);
-API.disable2FA = () => {
+API.disable2FA = (otp) => {
   const token: any = localStorage.getItem("auth_token");
-  return API.get("/auth/disable2FA", { headers: { authorization: token } });
+  return API.get(`/auth/disable2FA?otp=${otp}`, {
+    headers: { authorization: token },
+  });
+};
+
+API.securityQuestionDisable2FA = (data) => {
+  return API.post(`/auth/security/disable2FA`, data);
 };
 API.enable2FA = () => {
   const token: any = localStorage.getItem("auth_token");

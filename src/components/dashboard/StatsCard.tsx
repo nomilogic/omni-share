@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import Icon from "../Icon";
 
 interface StatsCardProps {
+  className?: string;
   icon?: ReactNode;
   iconName?: string;
   title: string;
@@ -14,7 +15,7 @@ interface StatsCardProps {
 }
 
 function StatsCard({
-  icon,
+   icon,
   iconName,
   title,
   badge,
@@ -23,9 +24,15 @@ function StatsCard({
   buttonText,
   showicon2,
   onButtonClick,
+  className,
+  style,
 }: StatsCardProps) {
+
   return (
-    <div className="rounded-md border border-[#7650e3] bg-white  px-4 py-4">
+    <div
+      className={`rounded-md border border-[#7650e3] bg-white px-4 py-4 ${className ?? ""}`}
+      style={style}
+    >
       <div className="flex items-start justify-between ">
         <div className="flex items-center gap-2">
           {(icon || iconName) && (

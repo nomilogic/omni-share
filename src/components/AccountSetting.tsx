@@ -1,7 +1,16 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { ArrowLeft, Shield, Lock, Copy } from "lucide-react";
+import {
+  ArrowLeft,
+  Shield,
+  Lock,
+  Key,
+  Smartphone,
+  Copy,
+  AlertTriangle,
+  Loader2,
+} from "lucide-react";
 import { useAppContext } from "../context/AppContext";
 import API from "@/services/api";
 import { useForm, useFieldArray } from "react-hook-form";
@@ -9,6 +18,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { notify } from "@/utils/toast";
 import { AuthenticatorModal } from "./AuthenticatorModal";
+import { form } from "framer-motion/client";
+import user from "pusher-js/types/src/core/user";
 
 const passwordSchema = z
   .object({
@@ -66,9 +77,7 @@ function AccountSecurityTabs() {
   const [showAuth, setShowAuth] = useState(false);
   const [pendingPassword, setPendingPassword] =
     useState<PasswordFormType | null>(null);
-  const [pendingAction, setPendingAction] = useState<"update-questions" | null>(
-    null
-  );
+  const [pendingAction, setPendingAction] = useState<any>(null);
   const [editingQuestions, setEditingQuestions] = useState(false);
 
   useEffect(() => {
@@ -98,6 +107,9 @@ function AccountSecurityTabs() {
     },
   });
 
+  const [otp, setOtp] = useState("");
+  const [step, setStep] = useState(1);
+
   const questionsForm = useForm<SecurityQuestionsFormType>({
     resolver: zodResolver(securityQuestionsSchema),
     defaultValues: {
@@ -113,6 +125,7 @@ function AccountSecurityTabs() {
     name: "answers",
   });
 
+  // Password handlers
   const onPasswordSubmit = (data: PasswordFormType) => {
     if (showAuth) return;
     setPendingPassword(data);
@@ -139,7 +152,25 @@ function AccountSecurityTabs() {
     return res.data;
   };
 
+  // Security Questions
+  const [pendingQuestions, setPendingQuestions] =
+    useState<SecurityQuestionsFormType | null>(null);
   const onSecurityQuestionsSubmit = async (data: SecurityQuestionsFormType) => {
+    // 🔐 If 2FA enabled → ask OTP first
+    if (user?.twoFactorEnabled) {
+      setPendingQuestions(data);
+      setPendingAction("update-questions");
+      setShowAuth(true);
+      return;
+    }
+
+    await saveSecurityQuestions(data);
+  };
+
+  const saveSecurityQuestions = async (
+    data: SecurityQuestionsFormType,
+    otp?: string
+  ) => {
     setLoading(true);
     try {
       const payload = {
@@ -147,11 +178,17 @@ function AccountSecurityTabs() {
           questionId: item.questionId,
           answer: item.answer.trim(),
         })),
+        ...(otp && { otp }),
       };
+
       await API.securityAnswers(payload);
-      notify("success", "Security questions saved successfully");
+
+      notify("success", "Security questions saved ");
       refreshUser();
       setEditingQuestions(false);
+      setShowAuth(false);
+      questionsForm.reset();
+      setPendingQuestions(null);
     } catch (err: any) {
       notify(
         "error",
@@ -162,13 +199,15 @@ function AccountSecurityTabs() {
     }
   };
 
-  const disable2FA = async () => {
-    if (!confirm("Are you sure you want to disable 2FA?")) return;
+  const disable2FA = () => {
+    setPendingAction("disable-2fa");
+    setShowAuth(true);
+  };
+
+  const disable2FAConfirm = async (otp: any) => {
     setDisabling2FA(true);
     try {
-      await API.disable2FA();
-      notify("success", "Two-factor authentication disabled");
-      refreshUser();
+      await API.disable2FA(otp);
     } catch (err: any) {
       notify("error", err.response?.data?.message || "Failed to disable 2FA");
     } finally {
@@ -182,15 +221,17 @@ function AccountSecurityTabs() {
   };
 
   const handleAuthSuccess = () => {
-    if (pendingAction === "update-questions") {
-      setEditingQuestions(true);
-      notify(
-        "success",
-        "Authenticated → now you can update security questions"
-      );
+    if (pendingAction === "disable-2fa") {
+      notify("success", "Two-factor authentication disabled");
+      refreshUser();
+    } else if (pendingAction === "update-questions") {
+    } else {
+      notify("success", "Password updated successfully");
+      passwordForm.reset();
+      setPendingPassword(null);
+      setShowAuth(false);
     }
-    setShowAuth(false);
-    setPendingAction(null);
+    refreshUser();
   };
 
   const tabs = [
@@ -198,7 +239,6 @@ function AccountSecurityTabs() {
     { id: "security", label: "Security & 2FA", icon: Shield },
   ];
 
-  // 2FA Setup Data
   const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
   const [manualCode, setManualCode] = useState<string | null>(null);
   const [loadingQr, setLoadingQr] = useState(false);
@@ -219,408 +259,657 @@ function AccountSecurityTabs() {
   };
 
   useEffect(() => {
-    if (user?.isSecurityQuestions && !user?.twoFactorEnabled && !qrCodeUrl) {
-      start2FASetup();
+    // if (user?.isSecurityQuestions && !user?.twoFactorEnabled && !qrCodeUrl) {
+    start2FASetup();
+    // }
+  }, [user?.isSecurityQuestions, user?.twoFactorEnabled]);
+
+  const handleContinueTo2FA = async () => {
+    const isValid = await questionsForm.trigger();
+
+    if (!isValid) {
+      notify("error", "Please complete both security questions correctly");
+      return;
     }
-  }, [user?.isSecurityQuestions, user?.twoFactorEnabled, qrCodeUrl]);
+
+    setStep(2);
+  };
+
+  const handleConfirmAndSecure = async () => {
+    if (otp.length !== 6 || !/^\d{6}$/.test(otp)) {
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      // 1. Verify OTP (most secure order)
+      await API.verify2FASetup({ token: otp });
+
+      // 2. Save security questions
+      const payload = {
+        otp,
+        answers: questionsForm.getValues("answers").map((item) => ({
+          questionId: item.questionId,
+          answer: item.answer.trim(),
+        })),
+      };
+
+      await API.securityAnswers(payload);
+
+      notify(
+        "success",
+        "Security questions and 2FA have been successfully set up!"
+      );
+      refreshUser();
+
+      // Reset form & wizard
+      questionsForm.reset();
+      setStep(1);
+      setOtp("");
+      setQrCodeUrl(null);
+      setManualCode(null);
+    } catch (err: any) {
+      const message =
+        err.response?.data?.message || "Setup failed. Please try again.";
+      notify("error", message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
       {showAuth && (
         <AuthenticatorModal
           open={showAuth}
-          isResetPassword={pendingAction}
+          isResetPassword={pendingAction === "disable-2fa" ? false : true}
           onClose={() => {
             setShowAuth(false);
             setPendingAction(null);
           }}
+          pendingQuestions={pendingQuestions}
           onSuccess={handleAuthSuccess}
+          pendingAction={pendingAction}
           verifyOtp={
-            pendingAction === "update-questions"
-              ? undefined
+            pendingAction === "disable-2fa"
+              ? disable2FAConfirm
+              : pendingAction === "update-questions"
+              ? saveSecurityQuestions
               : verifyResetpassword
           }
         />
       )}
-
-      <div className="w-full max-w-4xl mx-auto p-4">
-        <div className="mb-8">
-          <div className="flex justify-between items-center mb-4">
-            <button
-                          onClick={() => setPasswordEditing?.(false)}
-                          className="flex  gap-2 top-5 text-[#7650e3] hover:text-[#6540cc] font-semibold transition-colors w-full justify-end text-sm hover:underline"
-                        >
-                          <ArrowLeft className="w-5 h-5" />
-                          Back to Dashboard
-                        </button>
-            
-          </div>
-            <h1 className="text-3xl font-bold text-black flex items-center gap-3">
-              <Shield className="w-8 h-8 text-[#7650e3]" />
-              Account Security
-            </h1>
-            
-          <p className="text-gray-500">
-            Protect your account with strong security settings
-          </p>
-        </div>
-
-        {/* Tabs */}
-        <div className="border-b border-gray-200 mb-8">
-          <nav className="flex space-x-8">
-            {tabs.map((tab) => {
-              const Icon = tab.icon;
-              return (
+      {
+        <>
+          <div className="w-full max-w-4xl mx-auto p-4">
+            <div className="mb-8">
+              <div className="flex justify-between items-center mb-4">
+                <h1 className="text-3xl font-bold text-black flex items-center gap-3">
+                  <Shield className="w-8 h-8 text-[#7650e3]" />
+                  Account Security
+                </h1>
                 <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
-                  className={`flex items-center gap-2 py-2.5 px-1 border-b-2 font-medium text-sm transition-colors ${
-                    activeTab === tab.id
-                      ? "border-[#7650e3] text-[#7650e3]"
-                      : "border-transparent text-gray-500 hover:text-gray-700"
-                  }`}
+                  onClick={() => setPasswordEditing?.(false)}
+                  className="flex items-center gap-2 text-[#7650e3] hover:text-[#6540cc] font-semibold text-sm hover:underline"
                 >
-                  <Icon className="w-5 h-5" />
-                  {tab.label}
+                  <ArrowLeft className="w-5 h-5" />
+                  Back to Dashboard
                 </button>
-              );
-            })}
-          </nav>
-        </div>
-
-        <div className="min-h-[500px]">
-          {/* ── PASSWORD TAB ── */}
-          {activeTab === "password" && (
-            <form
-              onSubmit={passwordForm.handleSubmit(
-                user?.twoFactorEnabled ? onPasswordSubmit : Resetpassword
-              )}
-              className="space-y-6 max-w-lg"
-            >
-              {/* Current Password */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Current Password
-                </label>
-                <input
-                  type="password"
-                  {...passwordForm.register("currentPassword")}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                  placeholder="••••••••"
-                />
-                {passwordForm.formState.errors.currentPassword && (
-                  <p className="mt-1 text-sm text-red-600">
-                    {passwordForm.formState.errors.currentPassword.message}
-                  </p>
-                )}
               </div>
+              <p className="text-gray-500">
+                Protect your account with strong security settings
+              </p>
+            </div>
 
-              {/* New Password */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  New Password
-                </label>
-                <input
-                  type="password"
-                  {...passwordForm.register("newPassword")}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                  placeholder="••••••••"
-                />
-                {passwordForm.formState.errors.newPassword && (
-                  <p className="mt-1 text-sm text-red-600">
-                    {passwordForm.formState.errors.newPassword.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Confirm Password */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Confirm New Password
-                </label>
-                <input
-                  type="password"
-                  {...passwordForm.register("confirmPassword")}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                  placeholder="••••••••"
-                />
-                {passwordForm.formState.errors.confirmPassword && (
-                  <p className="mt-1 text-sm text-red-600">
-                    {passwordForm.formState.errors.confirmPassword.message}
-                  </p>
-                )}
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full py-3 bg-[#7650e3] text-white font-semibold rounded-lg hover:bg-[#6540cc] transition disabled:opacity-60"
-              >
-                {loading ? "Updating..." : "Update Password"}
-              </button>
-            </form>
-          )}
-
-          {/* ── SECURITY & 2FA TAB ── */}
-          {activeTab === "security" && (
-            <div className="space-y-8">
-              {/* Status Overview */}
-              <div className="bg-gradient-to-r from-purple-50 to-indigo-50 p-6 rounded-xl border border-purple-200">
-                <h3 className="text-xl font-bold text-gray-800 mb-5 flex items-center gap-3">
-                  <Shield className="w-6 h-6 text-purple-700" />
-                  Security Status
-                </h3>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-white p-5 rounded-lg border shadow-sm">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h4 className="font-semibold">Security Questions</h4>
-                        <p className="text-sm text-gray-600 mt-1">
-                          Account recovery
-                        </p>
-                      </div>
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs font-medium ${
-                          user?.isSecurityQuestions
-                            ? "bg-green-100 text-green-700"
-                            : "bg-amber-100 text-amber-700"
-                        }`}
-                      >
-                        {user?.isSecurityQuestions ? "SET" : "NOT SET"}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="bg-white p-5 rounded-lg border shadow-sm">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h4 className="font-semibold">
-                          Two-Factor Authentication
-                        </h4>
-                        <p className="text-sm text-gray-600 mt-1">
-                          Authenticator App
-                        </p>
-                      </div>
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs font-medium ${
-                          user?.twoFactorEnabled
-                            ? "bg-green-100 text-green-700"
-                            : "bg-gray-100 text-gray-700"
-                        }`}
-                      >
-                        {user?.twoFactorEnabled ? "ENABLED" : "DISABLED"}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Security Questions Section */}
-              <div className="bg-white p-6 rounded-xl border shadow-sm">
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-xl font-bold text-gray-800">
-                    Security Questions
-                  </h3>
-                  {user?.isSecurityQuestions ? (
+            <div className="border-b border-gray-200 mb-8">
+              <nav className="flex space-x-8">
+                {tabs.map((tab) => {
+                  const Icon = tab.icon;
+                  return (
                     <button
-                      type="button"
-                      onClick={() => {
-                        setEditingQuestions(true);
-                      }}
-                      className="px-5 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition text-sm font-medium"
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id as any)}
+                      className={`flex items-center gap-2 py-2.5 px-1 border-b-2 font-medium text-sm transition-colors ${
+                        activeTab === tab.id
+                          ? "border-[#7650e3] text-[#7650e3]"
+                          : "border-transparent text-gray-500 hover:text-gray-700"
+                      }`}
                     >
-                      Update Questions
+                      <Icon className="w-5 h-5" />
+                      {tab.label}
                     </button>
-                  ) : (
-                    <span className="text-amber-600 font-medium">Required</span>
+                  );
+                })}
+              </nav>
+            </div>
+
+            <div className="min-h-[500px]">
+              {activeTab === "password" && (
+                <form
+                  onSubmit={passwordForm.handleSubmit(
+                    user?.twoFactorEnabled ? onPasswordSubmit : Resetpassword
                   )}
-                </div>
-
-                {editingQuestions ? (
-                  <form
-                    onSubmit={questionsForm.handleSubmit(
-                      onSecurityQuestionsSubmit
+                  className="space-y-6 "
+                >
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Current Password
+                    </label>
+                    <input
+                      type="password"
+                      {...passwordForm.register("currentPassword")}
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      placeholder="••••••••"
+                    />
+                    {passwordForm.formState.errors.currentPassword && (
+                      <p className="mt-1 text-sm text-red-600">
+                        {passwordForm.formState.errors.currentPassword.message}
+                      </p>
                     )}
-                    className="space-y-8"
-                  >
-                    {fields.map((field, index) => {
-                      const questionError =
-                        questionsForm.formState.errors.answers?.[index]
-                          ?.questionId;
-                      const answerError =
-                        questionsForm.formState.errors.answers?.[index]?.answer;
-                      const currentValue = questionsForm.watch(
-                        `answers.${index}.questionId`
-                      );
-                      const selectedQuestion = questions.find(
-                        (q) => q.id === currentValue
-                      );
-                      const otherSelected = questionsForm
-                        .getValues("answers")
-                        .filter((_, i) => i !== index)
-                        .map((a) => a.questionId)
-                        .filter(Boolean);
-
-                      return (
-                        <div key={field.id} className="space-y-6">
-                          {/* Question Select */}
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                              Question {index + 1}
-                            </label>
-                            <CustomSelect
-                              value={currentValue}
-                              onChange={(value) =>
-                                questionsForm.setValue(
-                                  `answers.${index}.questionId`,
-                                  value,
-                                  {
-                                    shouldValidate: true,
-                                  }
-                                )
-                              }
-                              questions={questions}
-                              otherSelected={otherSelected}
-                              error={questionError?.message}
-                            />
-                            {questionError && (
-                              <p className="mt-1 text-sm text-red-600">
-                                {questionError.message}
-                              </p>
-                            )}
-                          </div>
-
-                          {/* Answer */}
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                              Your Answer
-                            </label>
-                            <input
-                              type="text"
-                              {...questionsForm.register(
-                                `answers.${index}.answer`
-                              )}
-                              className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 ${
-                                answerError
-                                  ? "border-red-500"
-                                  : "border-gray-300"
-                              }`}
-                              placeholder="Enter your answer"
-                            />
-                            {answerError && (
-                              <p className="mt-1 text-sm text-red-600">
-                                {answerError.message}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-
-                    <div className="flex gap-4 pt-6">
-                      <button
-                        type="submit"
-                        disabled={loading}
-                        className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-lg disabled:opacity-60 font-medium"
-                      >
-                        {loading ? "Saving..." : "Save Security Questions"}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setEditingQuestions(false)}
-                        className="flex-1 bg-gray-200 hover:bg-gray-300 py-3 rounded-lg font-medium"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </form>
-                ) : (
-                  <div className="text-center py-12 text-gray-600">
-                    {user?.isSecurityQuestions
-                      ? "Security questions are protected"
-                      : "Please set up security questions first"}
                   </div>
-                )}
-              </div>
 
-              {/* 2FA Section */}
-              <div className="bg-white p-6 rounded-xl border shadow-sm">
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-xl font-bold text-gray-800">
-                    Two-Factor Authentication
-                  </h3>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      New Password
+                    </label>
+                    <input
+                      type="password"
+                      {...passwordForm.register("newPassword")}
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      placeholder="••••••••"
+                    />
+                    {passwordForm.formState.errors.newPassword && (
+                      <p className="mt-1 text-sm text-red-600">
+                        {passwordForm.formState.errors.newPassword.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Confirm New Password
+                    </label>
+                    <input
+                      type="password"
+                      {...passwordForm.register("confirmPassword")}
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      placeholder="••••••••"
+                    />
+                    {passwordForm.formState.errors.confirmPassword && (
+                      <p className="mt-1 text-sm text-red-600">
+                        {passwordForm.formState.errors.confirmPassword.message}
+                      </p>
+                    )}
+                  </div>
 
                   <button
-                    onClick={() => {
-                      if (!user?.isSecurityQuestions) {
-                        notify(
-                          "warning",
-                          "Please set security questions first"
-                        );
-                        return;
-                      }
-                      if (user?.twoFactorEnabled) {
-                        disable2FA();
-                      } else {
-                        setTwoFAModalOpen(true);
-                      }
-                    }}
-                    disabled={disabling2FA || !user?.isSecurityQuestions}
-                    className={`px-6 py-2.5 rounded-lg font-medium transition ${
-                      user?.twoFactorEnabled
-                        ? "bg-red-600 hover:bg-red-700 text-white"
-                        : "bg-purple-600 hover:bg-purple-700 text-white"
-                    } disabled:opacity-50 disabled:cursor-not-allowed`}
+                    type="submit"
+                    disabled={loading}
+                    className="w-full py-3 bg-[#7650e3] text-white font-semibold rounded-md hover:bg-[#6540cc] transition disabled:opacity-60"
                   >
-                    {disabling2FA
-                      ? "Processing..."
-                      : user?.twoFactorEnabled
-                      ? "Disable 2FA"
-                      : "Enable 2FA"}
+                    {loading ? "Updating..." : "Update Password"}
                   </button>
-                </div>
+                </form>
+              )}
 
-                {!user?.isSecurityQuestions && (
-                  <div className="bg-amber-50 border border-amber-200 p-5 rounded-lg text-amber-800">
-                    You must set up security questions before enabling
-                    two-factor authentication.
+              {activeTab === "security" && (
+                <div className="space-y-6">
+                  <div className="bg-gradient-to-r from-purple-50 to-indigo-50 p-6 rounded-md border border-purple-200">
+                    <h3 className="text-xl font-bold text-gray-800 mb-5 flex items-center gap-3">
+                      <Shield className="w-6 h-6 text-purple-700" />
+                      Security Status
+                    </h3>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="bg-white p-5 rounded-md border shadow-sm">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h4 className="font-semibold">
+                              Security Questions
+                            </h4>
+                            <p className="text-sm text-gray-600 mt-1">
+                              Account recovery
+                            </p>
+                          </div>
+                          <span
+                            className={`px-3 py-1 rounded-full text-xs font-medium ${
+                              user?.isSecurityQuestions
+                                ? "bg-green-100 text-green-700"
+                                : "bg-amber-100 text-amber-700"
+                            }`}
+                          >
+                            {user?.isSecurityQuestions ? "SET" : "NOT SET"}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="bg-white p-5 rounded-md border shadow-sm">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h4 className="font-semibold">
+                              Two-Factor Authentication
+                            </h4>
+                            <p className="text-sm text-gray-600 mt-1">
+                              Authenticator App
+                            </p>
+                          </div>
+                          <span
+                            className={`px-3 py-1 rounded-full text-xs font-medium ${
+                              user?.twoFactorEnabled
+                                ? "bg-green-100 text-green-700"
+                                : "bg-gray-100 text-gray-700"
+                            }`}
+                          >
+                            {user?.twoFactorEnabled ? "ENABLED" : "DISABLED"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                )}
+                  {user.isSecurityQuestion === false &&
+                  user.twoFactorEnabled === false ? (
+                    <div className="bg-white p-6 rounded-md shadow-sm border  mx-auto">
+                      {/* Header */}
+                      <div className="text-center mb-8">
+                        <h2 className="text-2xl font-bold text-gray-900">
+                          {step === 1
+                            ? "Set Security Questions"
+                            : "Enable Two-Factor Authentication"}
+                        </h2>
+                        <p className="mt-2 text-gray-600">
+                          {step === 1
+                            ? "Choose two security questions — these help recover your account"
+                            : "Scan the QR code with your authenticator app"}
+                        </p>
+                      </div>
 
-                {user?.twoFactorEnabled && (
-                  <p className="text-sm text-gray-600 mt-4">
-                    2FA is active. You will be asked for a code when:
-                    <br />• Logging in from new devices
-                    <br />• Changing password
-                    <br />• Updating security questions
-                  </p>
-                )}
-              </div>
+                      {/* Step 1: Security Questions */}
+                      {step === 1 && (
+                        <div className="space-y-6">
+                          {questionsForm.watch("answers").map((_, index) => {
+                            const questionError =
+                              questionsForm.formState.errors.answers?.[index]
+                                ?.questionId;
+                            const answerError =
+                              questionsForm.formState.errors.answers?.[index]
+                                ?.answer;
+
+                            return (
+                              <div key={index} className="space-y-4">
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                                    Question {index + 1}
+                                  </label>
+                                  <CustomSelect
+                                    value={questionsForm.watch(
+                                      `answers.${index}.questionId`
+                                    )}
+                                    onChange={(value) =>
+                                      questionsForm.setValue(
+                                        `answers.${index}.questionId`,
+                                        value,
+                                        { shouldValidate: true }
+                                      )
+                                    }
+                                    questions={questions} // ← assume this comes from props or context
+                                    otherSelected={questionsForm
+                                      .getValues("answers")
+                                      .filter((_, i) => i !== index)
+                                      .map((a) => a.questionId)}
+                                    error={questionError?.message}
+                                  />
+                                </div>
+
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                                    Your Answer
+                                  </label>
+                                  <input
+                                    {...questionsForm.register(
+                                      `answers.${index}.answer`
+                                    )}
+                                    className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition ${
+                                      answerError
+                                        ? "border-red-500"
+                                        : "border-gray-300"
+                                    }`}
+                                    placeholder="Enter your answer here..."
+                                  />
+                                  {answerError && (
+                                    <p className="mt-1.5 text-sm text-red-600">
+                                      {answerError.message}
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+
+                      {/* Step 2: 2FA Setup */}
+                      {step === 2 && (
+                        <div className="space-y-8">
+                          {loading && !qrCodeUrl ? (
+                            <div className="flex flex-col items-center justify-center py-12">
+                              <Loader2 className="h-10 w-10 animate-spin text-purple-600 mb-4" />
+                              <p className="text-gray-600">
+                                Preparing 2FA setup...
+                              </p>
+                            </div>
+                          ) : qrCodeUrl ? (
+                            <>
+                              {/* QR Code */}
+                              <div className="text-center space-y-4">
+                                <p className="text-sm text-gray-600">
+                                  Scan this QR code with your authenticator app
+                                  (Google Authenticator, Authy, etc.)
+                                </p>
+                                <div className="inline-block p-4 bg-white rounded-xl shadow-inner border">
+                                  <img
+                                    src={qrCodeUrl}
+                                    alt="2FA QR Code"
+                                    className="w-48 h-48 mx-auto"
+                                  />
+                                </div>
+                              </div>
+
+                              {/* Manual code */}
+                              {manualCode && (
+                                <div className="text-center">
+                                  <p className="text-sm text-gray-500 mb-2">
+                                    Can't scan? Use this manual code:
+                                  </p>
+                                  <div className="font-mono bg-gray-100 px-6 py-3 rounded-lg inline-block text-lg tracking-wider">
+                                    {manualCode}
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* OTP Input */}
+                              <div className="space-y-4">
+                                <label className="block text-center text-sm font-medium text-gray-700">
+                                  Enter 6-digit code from your authenticator app
+                                </label>
+                                <input
+                                  type="text"
+                                  maxLength={6}
+                                  value={otp}
+                                  onChange={(e) => {
+                                    const val = e.target.value
+                                      .replace(/\D/g, "")
+                                      .slice(0, 6);
+                                    setOtp(val);
+                                  }}
+                                  className="w-full max-w-xs mx-auto block text-center text-3xl font-mono tracking-widest py-3 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none"
+                                  placeholder="000000"
+                                />
+                              </div>
+                            </>
+                          ) : (
+                            <p className="text-center text-red-600 py-8">
+                              Failed to load QR code. Please try again.
+                            </p>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Navigation Buttons */}
+                      <div className="flex gap-4 mt-10">
+                        {step === 2 && (
+                          <button
+                            type="button"
+                            onClick={() => setStep(1)}
+                            disabled={loading}
+                            className="flex-1 py-3 px-6 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition disabled:opacity-50"
+                          >
+                            Back
+                          </button>
+                        )}
+
+                        {step === 1 ? (
+                          <button
+                            type="button"
+                            onClick={handleContinueTo2FA}
+                            disabled={
+                              loading || questionsForm.formState.isSubmitting
+                            }
+                            className="flex-1 py-3 px-6 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition disabled:opacity-60 font-medium flex items-center justify-center gap-2"
+                          >
+                            {loading ? (
+                              <Loader2 className="h-5 w-5 animate-spin" />
+                            ) : null}
+                            Continue
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={handleConfirmAndSecure}
+                            disabled={loading || otp.length !== 6}
+                            className="flex-1 py-3 px-6 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition disabled:opacity-60 font-medium flex items-center justify-center gap-2"
+                          >
+                            {loading ? (
+                              <Loader2 className="h-5 w-5 animate-spin" />
+                            ) : null}
+                            Confirm & Secure Account
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-8">
+                      <div className="bg-white p-6 rounded-md border shadow-sm">
+                        <div className="flex items-center justify-between mb-6">
+                          <h3 className="text-xl font-bold text-gray-800">
+                            Security Questions
+                          </h3>
+                          {user?.isSecurityQuestions ? (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setEditingQuestions(true);
+                              }}
+                              className="px-4 py-2 rounded-md font-medium transition bg-purple-600 hover:bg-purple-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              Update Questions
+                            </button>
+                          ) : (
+                            <span className="text-amber-600 font-medium">
+                              Required
+                            </span>
+                          )}
+                        </div>
+
+                        {editingQuestions ? (
+                          <form
+                            onSubmit={questionsForm.handleSubmit(
+                              onSecurityQuestionsSubmit
+                            )}
+                            className="space-y-8"
+                          >
+                            {fields.map((field, index) => {
+                              const questionError =
+                                questionsForm.formState.errors.answers?.[index]
+                                  ?.questionId;
+                              const answerError =
+                                questionsForm.formState.errors.answers?.[index]
+                                  ?.answer;
+                              const currentValue = questionsForm.watch(
+                                `answers.${index}.questionId`
+                              );
+                              const selectedQuestion = questions.find(
+                                (q) => q.id === currentValue
+                              );
+                              const otherSelected = questionsForm
+                                .getValues("answers")
+                                .filter((_, i) => i !== index)
+                                .map((a) => a.questionId)
+                                .filter(Boolean);
+
+                              return (
+                                <div key={field.id} className="space-y-6">
+                                  {/* Question Select */}
+                                  <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                      Question {index + 1}
+                                    </label>
+                                    <CustomSelect
+                                      value={currentValue}
+                                      onChange={(value) =>
+                                        questionsForm.setValue(
+                                          `answers.${index}.questionId`,
+                                          value,
+                                          {
+                                            shouldValidate: true,
+                                          }
+                                        )
+                                      }
+                                      questions={questions}
+                                      otherSelected={otherSelected}
+                                      error={questionError?.message}
+                                    />
+                                    {questionError && (
+                                      <p className="mt-1 text-sm text-red-600">
+                                        {questionError.message}
+                                      </p>
+                                    )}
+                                  </div>
+
+                                  {/* Answer */}
+                                  <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                      Your Answer
+                                    </label>
+                                    <input
+                                      type="text"
+                                      {...questionsForm.register(
+                                        `answers.${index}.answer`
+                                      )}
+                                      className={`w-full px-4 py-2.5 border rounded-md focus:ring-2 focus:ring-purple-500 focus:border-purple-500 ${
+                                        answerError
+                                          ? "border-red-500"
+                                          : "border-gray-300"
+                                      }`}
+                                      placeholder="Enter your answer"
+                                    />
+                                    {answerError && (
+                                      <p className="mt-1 text-sm text-red-600">
+                                        {answerError.message}
+                                      </p>
+                                    )}
+                                  </div>
+                                </div>
+                              );
+                            })}
+
+                            <div className="flex gap-4 pt-6">
+                              <button
+                                type="submit"
+                                disabled={loading}
+                                className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-md disabled:opacity-60 font-medium"
+                              >
+                                {loading
+                                  ? "Saving..."
+                                  : "Save Security Questions"}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setEditingQuestions(false)}
+                                className="flex-1 bg-gray-200 hover:bg-gray-300 py-3 rounded-md font-medium"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </form>
+                        ) : (
+                          <div className="text-center py-12 text-gray-600">
+                            {user?.isSecurityQuestions
+                              ? "Security questions are protected"
+                              : "Please set up security questions first"}
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="bg-white p-6 rounded-md border shadow-sm">
+                        <div className="flex items-center justify-between mb-6">
+                          <h3 className="text-xl font-bold text-gray-800">
+                            Two-Factor Authentication
+                          </h3>
+
+                          <button
+                            onClick={() => {
+                              if (!user?.isSecurityQuestions) {
+                                notify(
+                                  "warning",
+                                  "Please set security questions first"
+                                );
+                                return;
+                              }
+                              if (user?.twoFactorEnabled) {
+                                disable2FA();
+                              } else {
+                                setTwoFAModalOpen(true);
+                              }
+                            }}
+                            disabled={
+                              disabling2FA || !user?.isSecurityQuestions
+                            }
+                            className={`px-4 py-2 rounded-md font-medium transition ${
+                              user?.twoFactorEnabled
+                                ? "bg-red-600 hover:bg-red-700 text-white"
+                                : "bg-purple-600 hover:bg-purple-700 text-white"
+                            } disabled:opacity-50 disabled:cursor-not-allowed`}
+                          >
+                            {disabling2FA
+                              ? "Processing..."
+                              : user?.twoFactorEnabled
+                              ? "Disable 2FA"
+                              : "Enable 2FA"}
+                          </button>
+                        </div>
+
+                        {!user?.isSecurityQuestions && (
+                          <div className="bg-amber-50 border border-amber-200 p-5 rounded-md text-amber-800">
+                            You must set up security questions before enabling
+                            two-factor authentication.
+                          </div>
+                        )}
+
+                        {user?.twoFactorEnabled && (
+                          <p className="text-sm text-gray-600 mt-4">
+                            2FA is active. You will be asked for a code when:
+                            <br />• Logging in from new devices
+                            <br />• Changing password
+                            <br />• Updating security questions
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+          {twoFAModalOpen && user?.isSecurityQuestions && (
+            <div className="fixed inset-0 z-[9999] flex items-start justify-center bg-black/50 px-4 py-10 overflow-y-auto">
+              <TwoFAModal
+                close={() => setTwoFAModalOpen(false)}
+                onSuccess={handle2FASuccess}
+                qrCodeUrl={qrCodeUrl}
+                manualCode={manualCode}
+                loadingQr={loadingQr}
+                setError={setError}
+                error={error}
+              />
             </div>
           )}
-        </div>
-      </div>
-
-      {/* 2FA Setup Modal */}
-      {twoFAModalOpen && user?.isSecurityQuestions && (
-        <div className="fixed inset-0 z-[9999] flex items-start justify-center bg-black/50 px-4 py-10 overflow-y-auto">
-          <TwoFAModal
-            close={() => setTwoFAModalOpen(false)}
-            onSuccess={handle2FASuccess}
-            qrCodeUrl={qrCodeUrl}
-            manualCode={manualCode}
-            loadingQr={loadingQr}
-            setError={setError}
-            error={error}
-          />
-        </div>
-      )}
+        </>
+      }
     </>
   );
 }
 
-/* ── TwoFAModal Component (unchanged from your original) ── */
 const TwoFAModal = ({
   close,
   onSuccess,
@@ -667,90 +956,79 @@ const TwoFAModal = ({
   };
 
   return (
-    <div className="w-full max-w-md bg-white rounded-xl shadow-2xl overflow-hidden">
-      <div className="px-6 py-5 border-b bg-gray-50">
-        <h2 className="text-xl font-bold text-center text-gray-900">
-          Enable Two-Factor Authentication
-        </h2>
-      </div>
+    <div className="bg-white p-6 rounded-md border shadow-sm max-w-md w-full mx-auto">
+      <h2 className="text-xl font-bold text-gray-800 text-center mb-6">
+        Enable Two-Factor Authentication
+      </h2>
 
-      <div className="p-6">
-        {loadingQr && !qrCodeUrl ? (
-          <p className="text-center text-gray-500">Loading QR code...</p>
-        ) : qrCodeUrl ? (
-          <>
-            <div className="text-center mb-6">
-              <p className="text-sm font-medium text-gray-700 mb-4">
-                Scan with your authenticator app
-              </p>
-              <img
-                src={qrCodeUrl}
-                alt="2FA QR Code"
-                className="mx-auto w-48 h-48 rounded-lg border shadow-sm"
-              />
+      {loadingQr && !qrCodeUrl ? (
+        <p className="text-center text-gray-500">Loading QR code...</p>
+      ) : qrCodeUrl ? (
+        <div className="space-y-6">
+          <div className="text-center">
+            <p className="text-sm text-gray-600 mb-4">
+              Scan this QR code using Authenticator app
+            </p>
+            <img
+              src={qrCodeUrl}
+              className="mx-auto w-44 h-44 rounded-md border shadow-sm"
+            />
+          </div>
+
+          <div className="text-center text-sm text-gray-500">
+            <p>Manual Code</p>
+            <div className="mt-2 inline-flex items-center gap-2    font-mono bg-gray-100 px-4 py-2 rounded-md">
+              {manualCode}
+              <button
+                onClick={copyCode}
+                className="text-purple-600 hover:text-purple-800"
+              >
+                <Copy size={18} />
+              </button>
             </div>
+          </div>
 
-            <div className="mb-6 text-center">
-              <p className="text-xs text-gray-500 mb-2">Or enter manually:</p>
-              <div className="inline-flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-lg">
-                <code className="font-mono text-sm">{manualCode}</code>
-                <button
-                  onClick={copyCode}
-                  className="text-purple-600 hover:text-purple-800"
-                >
-                  <Copy size={18} />
-                </button>
-              </div>
-            </div>
+          <input
+            value={otp}
+            onChange={(e) =>
+              setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
+            }
+            placeholder="000000"
+            className="w-full text-center tracking-widest text-2xl font-mono
+                   border border-gray-300 px-4 py-2 rounded-md
+                   focus:ring-2 focus:ring-purple-500 outline-none"
+          />
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2 text-center">
-                Enter 6-digit code
-              </label>
-              <input
-                type="text"
-                maxLength={6}
-                value={otp}
-                onChange={(e) =>
-                  setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
-                }
-                className="w-full text-center text-2xl font-mono tracking-widest border border-gray-300 rounded-lg py-3 focus:border-purple-500 focus:ring-2 focus:ring-purple-200"
-                placeholder="000000"
-                autoFocus
-              />
-              {error && (
-                <p className="mt-3 text-center text-red-600 text-sm">{error}</p>
-              )}
-            </div>
-          </>
-        ) : (
-          <p className="text-center text-red-600">
-            {error || "Failed to load 2FA setup"}
-          </p>
-        )}
-      </div>
+          {error && <p className="text-center text-red-600 text-sm">{error}</p>}
 
-      <div className="flex border-t px-6 py-4 gap-3 bg-gray-50">
-        <button
-          onClick={close}
-          disabled={verifying}
-          className="flex-1 py-3 border rounded-lg hover:bg-gray-100 disabled:opacity-50"
-        >
-          Cancel
-        </button>
-        <button
-          onClick={verifySetup}
-          disabled={verifying || otp.length !== 6 || !qrCodeUrl}
-          className="flex-1 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 font-medium"
-        >
-          {verifying ? "Verifying..." : "Enable 2FA"}
-        </button>
-      </div>
+          <div className="flex gap-3 pt-4">
+            <button
+              onClick={close}
+              disabled={verifying}
+              className="flex-1 py-2 border rounded-md hover:bg-gray-100 transition"
+            >
+              Cancel
+            </button>
+
+            <button
+              onClick={verifySetup}
+              disabled={verifying || otp.length !== 6}
+              className="flex-1 py-2 bg-purple-600 text-white rounded-md
+                     hover:bg-purple-700 disabled:opacity-50 transition"
+            >
+              {verifying ? "Verifying..." : "Enable 2FA"}
+            </button>
+          </div>
+        </div>
+      ) : (
+        <p className="text-center text-red-600">
+          {error || "Failed to load 2FA setup"}
+        </p>
+      )}
     </div>
   );
 };
 
-/* ── CustomSelect Component (unchanged) ── */
 export const CustomSelect: React.FC<{
   value: string;
   onChange: (value: string) => void;
@@ -782,7 +1060,7 @@ export const CustomSelect: React.FC<{
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full px-4 py-2.5 text-left bg-white border rounded-lg flex items-center justify-between transition ${
+        className={`w-full px-4 py-2.5 text-left bg-white border rounded-md flex items-center justify-between transition ${
           error
             ? "border-red-500"
             : value
@@ -811,7 +1089,7 @@ export const CustomSelect: React.FC<{
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-white border rounded-lg shadow-xl z-50 max-h-64 overflow-y-auto">
+        <div className="absolute top-full left-0 right-0 mt-1 bg-white border rounded-md shadow-xl z-50 max-h-64 overflow-y-auto">
           {questions.map((q) => {
             const isDisabled = otherSelected.includes(q.id);
             return (

@@ -169,9 +169,18 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const [showPackage, setShowPackage] = useState(false);
   const [isCanceled, setIsCanceled] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const packageDropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleClickOutside = () => setShowPackage(false);
+    const handleClickOutside = (event: MouseEvent) => {
+      // Only close dropdown if clicking outside the entire dropdown container
+      if (
+        packageDropdownRef.current &&
+        !packageDropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowPackage(false);
+      }
+    };
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
@@ -221,9 +230,14 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const coinsRef = useRef<HTMLDivElement>(null);
   const referralRef = useRef<HTMLDivElement>(null);
 
-  // Close messages on outside click
+  // Close tooltips on outside click (but not the dropdown itself)
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
+      // Check if click is inside the package dropdown container
+      const isInsidePackageDropdown =
+        packageDropdownRef.current &&
+        packageDropdownRef.current.contains(event.target as Node);
+
       if (planRef.current && !planRef.current.contains(event.target as Node)) {
         setPlanMsgOpen(false);
       }
@@ -600,7 +614,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 <div className=" md:block hidden ">
                   <LanguageDropdown />
                 </div>
-                <div className="flex gap-x-4 items-center">
+                <div className="flex gap-x-4 items-center" ref={packageDropdownRef}>
                   <WalletBalance
                     setShowPackage={(e: any) => {
                       e.stopPropagation();
@@ -611,7 +625,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                   />
 
                   {showPackage && (
-                    <div className=" left-0 right-0 ml-3 mr-3 md:mr-10   md:right-6  absolute bg-gray-50 z-50 md:left-auto top-5  mt-6 rounded-md shadow-md md:px-6 px-4 py-6 border md:w-[370px]">
+                    <div className=" left-0 right-0 ml-3 mr-3 md:mr-10   md:right-6  absolute bg-gray-50 z-50 md:left-auto top-5  mt-6 rounded-md shadow-md md:px-6 px-4 py-6 border md:w-[370px]" onClick={(e) => e.stopPropagation()}>
                       {user?.wallet?.package ? (
                         <>
                           {/* Plan Section */}
@@ -628,6 +642,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                       onClick={(e: any) => {
                                         e.stopPropagation();
                                         e.preventDefault();
+                                        e.nativeEvent.stopImmediatePropagation();
                                         setPlanMsgOpen((prev) => !prev);
                                       }}
                                       className="text-slate-300 cursor-pointer text-xs"
@@ -650,8 +665,19 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                     )}
                                   </div>
                                 </div>
-                                <p className="text-sm text-black font-medium mt-1">
-                                  {t("renewing_on")}
+                                {/* {user.wallet?.downgradeRequested && (
+                                  <p className="text-xs text-red-600  ">
+                                    Downgraded to{" "}
+                                    <span className="font-">
+                                      {user.wallet?.downgradeRequested || "FREE"}
+                                    </span>
+                                  </p>
+                                )} */}
+                                <p className="text-sm text-black mt-1">
+                                  {user.wallet?.downgradeRequested
+                                    ? ` Downgraded to ${user.wallet?.downgradeRequested} Effective on:`
+                                    : t("renewing_on")}
+                                  &nbsp;
                                   <span className="text-black font-medium">
                                     {user.wallet.expiresAt
                                       ? new Date(
@@ -687,6 +713,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                       onClick={(e: any) => {
                                         e.stopPropagation();
                                         e.preventDefault();
+                                        e.nativeEvent.stopImmediatePropagation();
                                         setCoinsMsgOpen((prev) => !prev);
                                       }}
                                       className="text-slate-300 text-xs cursor-pointer"
@@ -733,6 +760,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                       onClick={(e: any) => {
                                         e.stopPropagation();
                                         e.preventDefault();
+                                        e.nativeEvent.stopImmediatePropagation();
                                         setReferralMsgOpen((prev) => !prev);
                                       }}
                                       className="text-slate-300 text-xs cursor-pointer"
