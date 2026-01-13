@@ -245,7 +245,11 @@ function AccountSecurityTabs() {
 
       <div className="w-full max-w-4xl mx-auto p-4">
         <div className="mb-8">
-          <div className="flex justify-between items-center mb-4">
+          <div className="flex md:justify-between md:flex-row flex-col-reverse items-center gap-2 mb-2">
+            <h1 className="text-3xl font-bold text-black flex items-center w-full">
+              <Shield className="w-8 h-8 text-[#7650e3]" />
+              Account Security
+            </h1>
             <button
                           onClick={() => setPasswordEditing?.(false)}
                           className="flex  gap-2 top-5 text-[#7650e3] hover:text-[#6540cc] font-semibold transition-colors w-full justify-end text-sm hover:underline"
@@ -254,13 +258,10 @@ function AccountSecurityTabs() {
                           Back to Dashboard
                         </button>
             
-          </div>
-            <h1 className="text-3xl font-bold text-black flex items-center gap-3">
-              <Shield className="w-8 h-8 text-[#7650e3]" />
-              Account Security
-            </h1>
+          </div>  
             
-          <p className="text-gray-500">
+            
+          <p className="text-gray-500 pl-8">
             Protect your account with strong security settings
           </p>
         </div>

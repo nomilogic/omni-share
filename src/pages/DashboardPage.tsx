@@ -226,8 +226,8 @@ export const DashboardPage: React.FC = () => {
                   onButtonClick={() => navigate("/pricing?tab=addons")}
                 />
 
-                <div className="hidden md:block">
-                  <StatsCard
+             
+                  <StatsCard className="hidden md:block"
                     iconName="share"
                     title={t("referral_coins")}
                     stats={referralCoin.toLocaleString()}
@@ -235,7 +235,7 @@ export const DashboardPage: React.FC = () => {
                     buttonText={t("refer_earn")}
                     onButtonClick={handleReferralClick}
                   />
-                </div>
+               
                 <div className="h-auto block md:hidden">
                   <ReferralSection className="h-full" />
                 </div>
