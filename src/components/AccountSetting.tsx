@@ -259,16 +259,15 @@ function AccountSecurityTabs() {
   };
 
   useEffect(() => {
-    // if (user?.isSecurityQuestions && !user?.twoFactorEnabled && !qrCodeUrl) {
-    start2FASetup();
-    // }
-  }, [user?.isSecurityQuestions, user?.twoFactorEnabled]);
+    if (!qrCodeUrl) {
+      start2FASetup();
+    }
+  }, [user?.isSecurityQuestions, user?.twoFactorEnabled, qrCodeUrl]);
 
   const handleContinueTo2FA = async () => {
     const isValid = await questionsForm.trigger();
 
     if (!isValid) {
-      notify("error", "Please complete both security questions correctly");
       return;
     }
 
@@ -507,7 +506,7 @@ function AccountSecurityTabs() {
                       </div>
                     </div>
                   </div>
-                  {user.isSecurityQuestion === false &&
+                  {user.isSecurityQuestions === false &&
                   user.twoFactorEnabled === false ? (
                     <div className="bg-white p-6 rounded-md shadow-sm border  mx-auto">
                       {/* Header */}
@@ -642,7 +641,7 @@ function AccountSecurityTabs() {
                                       .slice(0, 6);
                                     setOtp(val);
                                   }}
-                                  className="w-full max-w-xs mx-auto block text-center text-3xl font-mono tracking-widest py-3 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none"
+                                  className="w-full max-w-xs mx-auto block text-center text-3xl font-mono tracking-widest py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none"
                                   placeholder="000000"
                                 />
                               </div>
@@ -769,11 +768,6 @@ function AccountSecurityTabs() {
                                       otherSelected={otherSelected}
                                       error={questionError?.message}
                                     />
-                                    {questionError && (
-                                      <p className="mt-1 text-sm text-red-600">
-                                        {questionError.message}
-                                      </p>
-                                    )}
                                   </div>
 
                                   {/* Answer */}
@@ -832,7 +826,7 @@ function AccountSecurityTabs() {
                       </div>
 
                       <div className="bg-white p-6 rounded-md border shadow-sm">
-                        <div className="flex items-center justify-between mb-6">
+                        <div className="flex items-center justify-between ">
                           <h3 className="text-xl font-bold text-gray-800">
                             Two-Factor Authentication
                           </h3>
@@ -870,7 +864,7 @@ function AccountSecurityTabs() {
                         </div>
 
                         {!user?.isSecurityQuestions && (
-                          <div className="bg-amber-50 border border-amber-200 p-5 rounded-md text-amber-800">
+                          <div className="bg-amber-50 mt-5 border border-amber-200 p-5 rounded-md text-amber-800">
                             You must set up security questions before enabling
                             two-factor authentication.
                           </div>
@@ -1111,17 +1105,15 @@ export const CustomSelect: React.FC<{
               >
                 {q.question}
                 {isDisabled && (
-                  <span className="ml-2 text-xs text-gray-400">
+                  <p className="ml-2 text-xs text-gray-400">
                     (already selected)
-                  </span>
+                  </p>
                 )}
               </button>
             );
           })}
         </div>
       )}
-
-      {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
     </div>
   );
 };

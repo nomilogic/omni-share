@@ -14,8 +14,15 @@ import { useTranslation } from "react-i18next";
 import CustomCurrencySelector from "@/components/CustomCurrencySelector";
 
 export const PricingPage: React.FC = () => {
-  const { state, refreshUser, setProcessing, packages, addons, loader, user } =
-    useAppContext();
+  const {
+    state,
+    refreshUser,
+    setProcessing,
+    packages,
+    addons,
+    loader,
+    user,
+  }: any = useAppContext();
 
   const [searchParams, setSearchParams] = useSearchParams();
   const initialTab = (searchParams.get("tab") as "" | "addons") || "";
@@ -238,14 +245,14 @@ export const PricingPage: React.FC = () => {
   useEffect(() => {
     if (!exchangeRates) return;
 
-    packages.forEach((pkg) => {
+    packages.forEach((pkg: any) => {
       setConvertedAmounts((prev) => ({
         ...prev,
         [pkg.id]: convertAmount(pkg.amount, selectedCurrency),
       }));
     });
 
-    addons?.forEach((addon) => {
+    addons?.forEach((addon: any) => {
       setConvertedAddonAmounts((prev) => ({
         ...prev,
         [addon.id]: convertAmount(addon.amount, selectedCurrency),
@@ -334,7 +341,7 @@ export const PricingPage: React.FC = () => {
                   hasPendingDowngrade &&
                   !isCurrentPlan &&
                   !isPendingDowngradePackage;
-
+                console.log("isLockedByDowngrade", isLockedByDowngrade);
                 const isFree = tier.amount === 0;
                 if (Number(tier.amount) < Number(currentTier?.amount))
                   return null;
@@ -352,7 +359,7 @@ export const PricingPage: React.FC = () => {
                         : "opacity-100"
                     } relative       ${mobileOrder} ${desktopOrder}`}
                   >
-                    <div className="bg-gradient-to-br from-[#c7bdef] to-[#c7bdef] px-6  flex flex-col justify-start items-center min-h-56 pt-7 text-center relative">
+                    <div className="bg-gradient-to-br from-[#c7bdef] to-[#c7bdef] px-5  flex flex-col justify-start items-center min-h-56 pt-7 text-center relative">
                       <h3 className="text-[#7650e3] text-2xl font-bold -mb-1">
                         {tier.name}
                       </h3>
@@ -368,7 +375,6 @@ export const PricingPage: React.FC = () => {
                         </span>
                       </div>
 
-                      {/* CTA Button */}
                       {!isFree && (
                         <button
                           onClick={() => {
@@ -417,9 +423,27 @@ export const PricingPage: React.FC = () => {
                             : t("upgrade")}
                         </button>
                       )}
+
+                      {user.wallet?.downgradeRequested && (
+                        <p className="text-xs text-purple-600 mt-1.5 ">
+                          Downgraded to {user.wallet?.downgradedPackage?.name}{" "}
+                          Effective on: &nbsp;
+                          <span className=" font-medium">
+                            {user.wallet.expiresAt
+                              ? new Date(
+                                  user.wallet.expiresAt
+                                ).toLocaleDateString("en-GB", {
+                                  day: "2-digit",
+                                  month: "short",
+                                  year: "numeric",
+                                })
+                              : "N/A"}
+                          </span>
+                        </p>
+                      )}
                     </div>
 
-                    <div className=" px-6 py-4">
+                    <div className=" px-5 py-4">
                       <div className="mb-5 border-b-2 border-purple-600  h-[130px] text-center">
                         <p className=" text-purple-600 font-bold text-2xl mb-1 ">
                           {t("ideal_for")}
@@ -494,7 +518,7 @@ export const PricingPage: React.FC = () => {
                   </p>
                 </div>
               ) : (
-                addons?.map((addon) => {
+                addons?.map((addon: any) => {
                   const hasSale = addon.isSale;
                   const bonusAmount = addon.bonus || 0;
                   const totalCoins = addon.coins + bonusAmount;

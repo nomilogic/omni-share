@@ -61,7 +61,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const userMenuRef = useRef<HTMLDivElement>(null);
   const mainContentRef = useRef<HTMLElement>(null);
   const { openModal } = useModal();
-    const [zoom, setZoom] = useState(1);
+  const [zoom, setZoom] = useState(1);
 
   const referralLink = `http://omnishare.ai/auth?referralId=${user?.id}`;
   const shareText = "Join me on OmniShare! Use my referral link:";
@@ -76,7 +76,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   // };
   const isMobileScreen = () => window.matchMedia("(max-width: 768px)").matches;
   const handleReferShareClick = async () => {
-    
     openModal(ReferralSection as any, {});
     setIsMobileMenuOpen(false);
   };
@@ -187,22 +186,19 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   useEffect(() => {
     const handleWindowResize = () => {
       //handleResizeMainToFullScreen(window.matchMedia("(max-width: 768px)").matches);
-     // alert(window.innerHeight/800);
-      const portrait=window.innerHeight/window.innerWidth > 1;
-     
-        if(window.innerHeight < 800)
-        { setZoom(window.innerHeight/800)
+      // alert(window.innerHeight/800);
+      const portrait = window.innerHeight / window.innerWidth > 1;
 
-        }
-      
-     
+      if (window.innerHeight < 800) {
+        setZoom(window.innerHeight / 800);
+      }
     };
     handleWindowResize();
     window.addEventListener("resize", handleWindowResize);
     window.addEventListener("load", handleWindowResize);
     return () => {
       window.removeEventListener("resize", handleWindowResize);
-     // window.removeEventListener("load", handleWindowResize);
+      // window.removeEventListener("load", handleWindowResize);
     };
   }, []);
 
@@ -262,11 +258,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     <ResizeContext.Provider value={{ handleResizeMainToFullScreen }}>
       <>
         <div className="">
-          <div style={{zoom:zoom}} 
+          <div
+            style={{ zoom: zoom }}
             className={`fixed inset-y-0 left-0 z-50 w-full xl:w-[20%] sm:w-[40%] theme-bg-trinary border-r border-white/10 transform ${
               isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
             } transition-transform duration-300 ease-in-out`}
-             
           >
             <div className="flex items-center justify-between border-b border-white/20 p-2 py-3 ">
               <Link
@@ -298,10 +294,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             >
               <button
                 onClick={() => {
-                    setShowUserMenu(false);
-                    navigate("/dashboard?edit-profile=true");
-
-                } }
+                  setShowUserMenu(false);
+                  navigate("/dashboard?edit-profile=true");
+                }}
                 className="flex items-center gap-x-3 mb-0 w-full hover:theme-bg-secondary rounded-md p-2  transition-colors"
               >
                 <div className=" mx-2 py-4">
@@ -614,7 +609,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 <div className=" md:block hidden ">
                   <LanguageDropdown />
                 </div>
-                <div className="flex gap-x-4 items-center" ref={packageDropdownRef}>
+                <div
+                  className="flex gap-x-4 items-center"
+                  ref={packageDropdownRef}
+                >
                   <WalletBalance
                     setShowPackage={(e: any) => {
                       e.stopPropagation();
@@ -625,7 +623,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                   />
 
                   {showPackage && (
-                    <div className=" left-0 right-0 ml-3 mr-3 md:mr-10   md:right-6  absolute bg-gray-50 z-50 md:left-auto top-5  mt-6 rounded-md shadow-md md:px-6 px-4 py-6 border md:w-[370px]" onClick={(e) => e.stopPropagation()}>
+                    <div
+                      className=" left-0 right-0 ml-3 mr-3 md:mr-10   md:right-6  absolute bg-gray-50 z-50 md:left-auto top-5  mt-6 rounded-md shadow-md md:px-6 px-4 py-6 border md:w-[370px]"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       {user?.wallet?.package ? (
                         <>
                           {/* Plan Section */}
@@ -675,7 +676,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                 )} */}
                                 <p className="text-sm text-black mt-1">
                                   {user.wallet?.downgradeRequested
-                                    ? ` Downgraded to ${user.wallet?.downgradeRequested} Effective on:`
+                                    ? `Downgraded to ${user.wallet?.downgradedPackage?.name} Effective on:`
                                     : t("renewing_on")}
                                   &nbsp;
                                   <span className="text-black font-medium">
