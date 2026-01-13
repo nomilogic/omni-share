@@ -25,6 +25,8 @@ import {
   Building2,
   History,
   Video,
+  LogOut,
+  LogIn,
 } from "lucide-react";
 import Icon from "../components/Icon";
 import { Link, useNavigate } from "react-router-dom";
@@ -46,9 +48,11 @@ import OmniVideo from "../assets/video/omnishare.mp4";
 import LanguageDropdown from "../components/LanguageDropdown";
 import { Trans, useTranslation } from "react-i18next";
 import { div } from "framer-motion/client";
+import { useAppContext } from "../context/AppContext";
 
 function HomePage() {
   const { t } = useTranslation();
+  const { user, logout } = useAppContext();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrollY, setScrollY] = useState(0);
   const [currentReviewIndex, setCurrentReviewIndex] = useState(0);
@@ -274,6 +278,11 @@ function HomePage() {
     }
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -374,6 +383,44 @@ function HomePage() {
               </button>
             </div>
 
+            {/* User Profile Section - shown when logged in */}
+            {user && (
+              <div className="border-b border-white/20 p-2">
+                <button
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    navigate("/dashboard");
+                  }}
+                  className="flex items-center gap-x-3 w-full hover:bg-white/10 rounded-md p-2 transition-colors"
+                >
+                  <img
+                    className="w-12 h-12 rounded-full object-cover border-2 border-white/50"
+                    src={
+                      user?.avatarUrl
+                        ? user.avatarUrl
+                        : `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                            user?.user_metadata?.name || user?.email || "U"
+                          )}&background=7650e3&color=fff`
+                    }
+                    alt="User avatar"
+                    onError={(e) => {
+                      e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                        user?.user_metadata?.name || user?.email || "U"
+                      )}&background=7650e3&color=fff`;
+                    }}
+                  />
+                  <div className="flex-1 min-w-0 text-left">
+                    <div className="text-md font-medium text-white truncate">
+                      {user?.user_metadata?.name || user?.email || "User"}
+                    </div>
+                    <div className="text-sm text-white/80 truncate">
+                      {user?.email}
+                    </div>
+                  </div>
+                </button>
+              </div>
+            )}
+
             <nav className="flex-1 px-1 py-2.5 flex flex-col mx-2 gap-y-2">
               {[
                 { name: t("home"), icon: Home },
@@ -396,35 +443,76 @@ function HomePage() {
               ))}
             </nav>
 
-            <div className="px-3 py-4">
-              <motion.button
-                onClick={() => {
-                  setIsMenuOpen(false);
-                  if (localStorage.getItem("auth_token")) {
-                    navigate("/content");
-                  } else {
+            <div className="px-1 mx-2 pb-2 space-y-4 ">
+              <div className=" px-1 pb-2">
+                <LanguageDropdown
+                  alignRight={false}
+                  showGlobe={true}
+                  className="text-white"
+                />
+              </div>
+
+              {!user && (
+                <motion.button
+                  onClick={() => {
+                    setIsMenuOpen(false);
                     navigate("/auth");
-                  }
-                }}
-                className="w-full bg-white text-[#7650e3] px-6 py-3 rounded-full font-semibold shadow-lg transition-all"
-                initial={{ x: -50, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: 0.2 }}
-                whileHover={{
-                  scale: 1.05,
-                  boxShadow: "0 10px 30px rgba(0, 0, 0, 0.2)",
-                }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {t("get_started_free")}
-              </motion.button>
-            </div>
-            <div className="pl-4 pt-3">
-              <LanguageDropdown
-                alignRight={false}
-                showGlobe={true}
-                className="text-white"
-              />
+                  }}
+                  className="w-full bg-white text-[#7650e3] px-6 py-3 rounded-full font-semibold shadow-lg transition-all"
+                  initial={{ x: -50, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.2 }}
+                  whileHover={{
+                    scale: 1.05,
+                    boxShadow: "0 10px 30px rgba(0, 0, 0, 0.2)",
+                  }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {t("get_started_free")}
+                </motion.button>
+              )}
+
+              {!user && (
+                <motion.button
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    navigate("/auth");
+                  }}
+                  className="w-full bg-white text-[#7650e3] px-6 py-3 rounded-full font-semibold shadow-lg transition-all flex items-center justify-center gap-2"
+                  initial={{ x: -50, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.25 }}
+                  whileHover={{
+                    scale: 1.05,
+                    boxShadow: "0 10px 30px rgba(0, 0, 0, 0.2)",
+                  }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <LogIn size={18} />
+                  {t("login")}
+                </motion.button>
+              )}
+
+              {user && (
+                <motion.button
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    handleLogout();
+                  }}
+                  className="w-full bg-white text-[#7650e3] px-6 py-3 rounded-full font-semibold shadow-lg transition-all flex items-center justify-center gap-2"
+                  initial={{ x: -50, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.2 }}
+                  whileHover={{
+                    scale: 1.05,
+                    boxShadow: "0 10px 30px rgba(0, 0, 0, 0.2)",
+                  }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <LogOut size={18} />
+                  {t("logout")}
+                </motion.button>
+              )}
             </div>
             {/* Footer */}
             <div className="absolute bottom-0 left-0 right-0">
@@ -709,21 +797,65 @@ function HomePage() {
                 )
               )}
 
-              <div className="flex items-center gap-2 w-auto">
-                <motion.button
-                  onClick={() => {
-                    if (localStorage.getItem("auth_token")) {
-                      navigate("/content");
-                    } else {
-                      navigate("/auth");
-                    }
-                  }}
-                  className="bg-white text-[#7650e3] px-6 py-2.5 text-base rounded-full font-semibold shadow-lg"
-                >
-                  {t("get_started_free")}
-                </motion.button>
-
+              <div className="flex items-center gap-3 w-auto">
                 <LanguageDropdown alignRight={false} className="text-white" />
+
+                {!user && (
+                  <motion.button
+                    onClick={() => navigate("/auth")}
+                    className="bg-white text-[#7650e3] px-6 py-2.5 text-base rounded-full font-semibold shadow-lg"
+                  >
+                    {t("get_started_free")}
+                  </motion.button>
+                )}
+
+                {user && (
+                  <motion.div
+                    className="cursor-pointer"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => navigate("/dashboard")}
+                  >
+                    <img
+                      className="w-10 h-10 rounded-full object-cover border-2 border-white/50 hover:border-white"
+                      src={
+                        user?.avatarUrl
+                          ? user.avatarUrl
+                          : `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                              user?.user_metadata?.name || user?.email || "U"
+                            )}&background=7650e3&color=fff`
+                      }
+                      alt="User avatar"
+                      onError={(e) => {
+                        e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                          user?.user_metadata?.name || user?.email || "U"
+                        )}&background=7650e3&color=fff`;
+                      }}
+                    />
+                  </motion.div>
+                )}
+
+                {user ? (
+                  <motion.button
+                    onClick={handleLogout}
+                    className="text-white hover:text-[#d7d7fc] transition-colors flex items-center gap-2 font-medium"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <LogOut size={20} />
+                    {t("logout")}
+                  </motion.button>
+                ) : (
+                  <motion.button
+                    onClick={() => navigate("/auth")}
+                    className="text-white hover:text-[#d7d7fc] transition-colors flex items-center gap-2 font-medium"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <LogIn size={20} />
+                    {t("login")}
+                  </motion.button>
+                )}
               </div>
             </div>
           </div>
@@ -1243,7 +1375,7 @@ function HomePage() {
                   setVisibleCount(faqs.length);
                 }
               }}
-              className="bg-[#7650e3] text-white text-base font-semibold px-8 py-3 rounded-full shadow-lg inline-flex items-center space-x-2"
+              className="bg-purple-600 text-white hover:text-[#7650e3] hover:bg-[#d7d7fc] border border-[#7650e3] text-base font-semibold px-8 py-3 rounded-full shadow-lg inline-flex items-center space-x-2"
               whileHover={{
                 scale: 1.05,
                 boxShadow: "0 10px 30px rgba(118, 80, 227, 0.3)",
@@ -1282,7 +1414,7 @@ function HomePage() {
             </p>
             <motion.button
               onClick={() => setShowContactForm(!showContactForm)}
-              className="bg-[#7650e3] text-white px-8 py-3 rounded-full shadow-lg inline-flex items-center space-x-2"
+              className="bg-purple-600 text-white hover:text-[#7650e3] hover:bg-[#d7d7fc] border border-[#7650e3] px-8 py-3 rounded-full shadow-lg inline-flex items-center space-x-2"
               whileHover={{
                 scale: 1.05,
                 boxShadow: "0 10px 30px rgba(118, 80, 227, 0.3)",
