@@ -1,4 +1,3 @@
-import { useResize } from "../context/ResizeContext";
 import { useModal } from '../context2/ModalContext';
 import DiscardImageModal from '../components/modals/DiscardImageModal';
 import React, { useState, useRef, useEffect, useCallback } from "react";
@@ -63,7 +62,7 @@ interface ImageTemplateEditorProps {
   profileData?: any; // Profile info for data binding
 }
 
-export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
+export const ImageTemplateEditor = ({
   imageUrl,
   selectedTemplate,
   onSave,
@@ -71,18 +70,16 @@ export const ImageTemplateEditor: React.FC<ImageTemplateEditorProps> = ({
   isVideoThumbnail = false,
   aspectRatio = "16:9",
   profileData: externalProfileData,
-}) => {
+}: ImageTemplateEditorProps): JSX.Element => {
   const stageRef = useRef<Konva.Stage>(null);
   const transformerRef = useRef<Konva.Transformer>(null);
   const selectedNodeRef = useRef<Konva.Node | null>(null);
 
-  const { handleResizeMainToFullScreen } = useResize();
   const { t, i18n } = useTranslation();
   const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
-const [isTemplatesLoading, setIsTemplatesLoading] = useState(false);
+  const [isTemplatesLoading, setIsTemplatesLoading] = useState(false);
   const logoInputRef = useRef<HTMLInputElement>(null);
   const addElementLogoInputRef = useRef<HTMLInputElement>(null);
-  const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null);
   const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>(null);
   const [elements, setElements] = useState<TemplateElement[]>([]);
   const { openModal } = useModal();
@@ -337,6 +334,27 @@ const [isTemplatesLoading, setIsTemplatesLoading] = useState(false);
     }
   };
 
+  // Helper function to extract aspect ratio from template name (e.g., "1280x720" -> "16:9")
+  const getAspectRatioFromTemplateName = (name: string): string | null => {
+    // Try to match dimensions pattern like "1280x720"
+    const match = name.match(/(\d+)x(\d+)/);
+    if (!match) return null;
+    
+    const width = parseInt(match[1], 10);
+    const height = parseInt(match[2], 10);
+    
+    // Calculate GCD to simplify ratio
+    const gcd = (a: number, b: number): number => b === 0 ? a : gcd(b, a % b);
+    const divisor = gcd(width, height);
+    
+    return `${width / divisor}:${height / divisor}`;
+  };
+
+  // Filter templates by current aspect ratio
+  const templatesForCurrentRatio = savedTemplates.filter((tpl) => {
+    return tpl.aspectRatio === aspectRatio;
+  });
+
   const refreshSavedTemplates = async () => {
   setIsTemplatesLoading(true);
   try {
@@ -584,33 +602,37 @@ const [isTemplatesLoading, setIsTemplatesLoading] = useState(false);
     }
   };
 
-  const deleteTemplateById = (id: string) => {
+  const deleteTemplateById = async (id: string) => {
     try {
       const tpl = savedTemplates.find((t) => t.id === id);
-      if (tpl?.source && tpl.source !== "local") {
-        console.warn("⚠️ Delete not supported for server templates yet");
+      if (!tpl) {
+        console.warn("⚠️ Template not found", id);
         return;
       }
 
-      const templates = readTemplatesFromLocalStorage();
-      const next = templates.filter((t) => t.id !== id);
-      writeTemplatesToLocalStorage(next);
+      if (tpl.source === "user") {
+        // Delete user-saved template via API
+        await templateService.deleteTemplate(id);
+        console.log("✅ User template deleted from server", id);
+      } else if (tpl.source === "local") {
+        // Delete local template from storage
+        const templates = readTemplatesFromLocalStorage();
+        const next = templates.filter((t) => t.id !== id);
+        writeTemplatesToLocalStorage(next);
+        console.log("✅ Local template deleted", id);
+      } else {
+        console.warn("⚠️ Delete not supported for global templates");
+        return;
+      }
 
-      setSavedTemplates((prev) => {
-        const remote = prev.filter((t) => t.source === "user" || t.source === "global");
-        const locals = next.map((t) => ({ ...t, source: "local" as const }));
-        return [...remote, ...locals];
-      });
+      // Update state
+      setSavedTemplates((prev) => prev.filter((t) => t.id !== id));
 
       setSelectedTemplateId((prev) => {
         if (prev !== id) return prev;
-        const stillSelected = next[0]?.id;
-        // if no local remains, keep any remote selected
-        if (stillSelected) return stillSelected;
-        const firstRemote = savedTemplates.find(
-          (t) => t.source === "user" || t.source === "global"
-        )?.id;
-        return firstRemote || "";
+        // Select the next available template
+        const remaining = savedTemplates.filter((t) => t.id !== id);
+        return remaining.length > 0 ? remaining[0].id : "";
       });
 
       console.log("🗑️ Template deleted", id);
@@ -906,30 +928,30 @@ const [isTemplatesLoading, setIsTemplatesLoading] = useState(false);
     currentElements: TemplateElement[],
     showSelection: boolean = true
   ) => {
-    if (!canvas) return;
+    if (!context.canvas) return;
 
     // Clear canvas
-    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.clearRect(0, 0, context.canvas.width, context.canvas.height);
 
     // Draw background image using "cover" behavior (crop from all sides to fill canvas)
     // Calculate scaling factor to cover the entire canvas
-    const canvasAspect = canvas.width / canvas.height;
+    const canvasAspect = context.canvas.width / context.canvas.height;
     const imageAspect = bgImage.width / bgImage.height;
 
     let drawWidth, drawHeight, sourceX, sourceY, sourceWidth, sourceHeight;
 
     if (imageAspect > canvasAspect) {
       // Image is wider than canvas - crop left/right edges
-      drawWidth = canvas.width;
-      drawHeight = canvas.height;
+      drawWidth = context.canvas.width;
+      drawHeight = context.canvas.height;
       sourceHeight = bgImage.height;
       sourceWidth = bgImage.height * canvasAspect; // Maintain canvas aspect ratio
       sourceX = (bgImage.width - sourceWidth) / 2; // Center horizontally
       sourceY = 0;
     } else {
       // Image is taller than canvas - crop top/bottom edges
-      drawWidth = canvas.width;
-      drawHeight = canvas.height;
+      drawWidth = context.canvas.width;
+      drawHeight = context.canvas.height;
       sourceWidth = bgImage.width;
       sourceHeight = bgImage.width / canvasAspect; // Maintain canvas aspect ratio
       sourceX = 0;
@@ -2224,7 +2246,7 @@ const [isTemplatesLoading, setIsTemplatesLoading] = useState(false);
       </button>
     </div>
 
-    <label className="flex items-center gap-2 text-xs text-slate-700 select-none flex-shrink-0">
+    {/* <label className="flex items-center gap-2 text-xs text-slate-700 select-none flex-shrink-0">
       <input
         type="checkbox"
         checked={saveAsGlobal}
@@ -2233,7 +2255,7 @@ const [isTemplatesLoading, setIsTemplatesLoading] = useState(false);
         disabled={isTemplatesLoading}
       />
       Save as global (isPublic)
-    </label>
+    </label> */}
 
     <div className="flex items-center justify-between flex-shrink-0">
       <p className="text-xs text-gray-600 font-medium">Saved templates</p>
@@ -2253,11 +2275,12 @@ const [isTemplatesLoading, setIsTemplatesLoading] = useState(false);
           disabled={
             isTemplatesLoading ||
             !selectedTemplateId ||
-            savedTemplates.find((t) => t.id === selectedTemplateId)?.source !==
-              "local"
+            !["local", "user"].includes(
+              savedTemplates.find((t) => t.id === selectedTemplateId)?.source || ""
+            )
           }
           className="h-8 px-2 flex items-center justify-center rounded-md bg-red-100 hover:bg-red-200 disabled:opacity-50 text-xs text-red-700"
-          title="Delete (local templates only)"
+          title="Delete (local and user templates only)"
           type="button"
         >
           <Trash className="w-3 h-3" />
@@ -2265,13 +2288,23 @@ const [isTemplatesLoading, setIsTemplatesLoading] = useState(false);
       </div>
     </div>
 
-    {savedTemplates.length === 0 ? (
-      <p className="text-xs text-gray-400">No templates saved yet.</p>
+    {templatesForCurrentRatio.length === 0 ? (
+      <p className="text-xs text-gray-400">No templates saved for {aspectRatio} aspect ratio.</p>
     ) : (
       <div className="space-y-2 overflow-y-auto min-h-0 flex-1">
         <div className="grid grid-cols-2 gap-2">
-          {[...savedTemplates]
-            .sort((a, b) => (b.savedAt || "").localeCompare(a.savedAt || ""))
+          {[...templatesForCurrentRatio]
+            .sort((a, b) => {
+              // Priority: user > global > local
+              const sourcePriority = { user: 3, global: 2, local: 1 };
+              const aPriority = sourcePriority[a.source] || 0;
+              const bPriority = sourcePriority[b.source] || 0;
+              if (aPriority !== bPriority) {
+                return bPriority - aPriority;
+              }
+              // Then sort by savedAt descending
+              return (b.savedAt || "").localeCompare(a.savedAt || "");
+            })
             .map((tpl) => (
               <div
                 key={tpl.id}
@@ -2279,6 +2312,8 @@ const [isTemplatesLoading, setIsTemplatesLoading] = useState(false);
                 className={`relative cursor-pointer rounded-md overflow-hidden border-2 transition-all ${
                   selectedTemplateId === tpl.id
                     ? "border-purple-600 bg-purple-50"
+                    : tpl.source === "global"
+                    ? "border-green-500 bg-green-50 hover:border-green-600"
                     : "border-gray-200 bg-gray-50 hover:border-gray-300"
                 } ${isTemplatesLoading ? "pointer-events-none opacity-60" : ""}`}
                 title={`${
@@ -2489,56 +2524,58 @@ const [isTemplatesLoading, setIsTemplatesLoading] = useState(false);
                     </div>
 
                     {/* Profile Field Binding - Logo elements only (excluding background) */}
-                    {selectedElementData.type === "logo" && selectedElement !== "background-image" && (
-                      <div className="mb-2 md:mb-3">
-                        <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5 md:mb-2">
-                          Bind to Profile Field
-                        </label>
-                        <select
-                          value={selectedElementData.name || ""}
-                          onChange={(e) =>
-                            updateSelectedElement({
-                              name: e.target.value || undefined,
-                            })
-                          }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md text-xs md:text-sm"
-                        >
-                          <option value="">No binding</option>
-                          <option value="logo">Logo</option>
-                        </select>
+                    {
+                    // selectedElementData.type === "logo" && selectedElement !== "background-image" && (
+                    //   <div className="mb-2 md:mb-3">
+                    //     <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5 md:mb-2">
+                    //       Bind to Profile Field
+                    //     </label>
+                    //     <select
+                    //       value={selectedElementData.name || ""}
+                    //       onChange={(e) =>
+                    //         updateSelectedElement({
+                    //           name: e.target.value || undefined,
+                    //         })
+                    //       }
+                    //       className="w-full px-3 py-2 border border-gray-300 rounded-md text-xs md:text-sm"
+                    //     >
+                    //       <option value="">No binding</option>
+                    //       <option value="logo">Logo</option>
+                    //     </select>
 
-                        {/* Show preview of bound data */}
-                        {selectedElementData.name && (
-                          <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded text-xs">
-                            <p className="font-medium text-blue-900 mb-1">
-                              Preview:
-                            </p>
-                            {selectedElementData.type === "logo" && (
-                              <div>
-                                {profileBindingData.logo ? (
-                                  <>
-                                    <p className="text-blue-700 mb-1">
-                                      Logo URL:
-                                    </p>
-                                    <p className="text-blue-600 break-all text-xs font-mono max-h-12 overflow-y-auto">
-                                      {profileBindingData.logo}
-                                    </p>
-                                  </>
-                                ) : (
-                                  <p className="text-blue-700">
-                                    (no logo in profile)
-                                  </p>
-                                )}
-                              </div>
-                            )}
-                          </div>
-                        )}
+                    //     {/* Show preview of bound data */}
+                    //     {selectedElementData.name && (
+                    //       <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded text-xs">
+                    //         <p className="font-medium text-blue-900 mb-1">
+                    //           Preview:
+                    //         </p>
+                    //         {selectedElementData.type === "logo" && (
+                    //           <div>
+                    //             {profileBindingData.logo ? (
+                    //               <>
+                    //                 <p className="text-blue-700 mb-1">
+                    //                   Logo URL:
+                    //                 </p>
+                    //                 <p className="text-blue-600 break-all text-xs font-mono max-h-12 overflow-y-auto">
+                    //                   {profileBindingData.logo}
+                    //                 </p>
+                    //               </>
+                    //             ) : (
+                    //               <p className="text-blue-700">
+                    //                 (no logo in profile)
+                    //               </p>
+                    //             )}
+                    //           </div>
+                    //         )}
+                    //       </div>
+                    //     )}
 
-                        <p className="text-xs text-gray-500 mt-1">
-                          Logo will auto-populate from profile
-                        </p>
-                      </div>
-                    )}
+                    //     <p className="text-xs text-gray-500 mt-1">
+                    //       Logo will auto-populate from profile
+                    //     </p>
+                    //   </div>
+                    // )
+                    }
                     {/* Text Content last */}
                    {selectedElementData.type === "text" && <div>
                       <label className="block text-sm font-medium text-yellow-500-700 mb-1.5">
@@ -2562,46 +2599,50 @@ const [isTemplatesLoading, setIsTemplatesLoading] = useState(false);
                       />
                     </div>}
                     {/* Profile Field Binding - Text elements */}
-                    {selectedElementData.type === "text" && (
-                      <div className="mb-2 md:mb-3">
-                        <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5 md:mb-2">
-                          Bind to Profile Field
-                        </label>
-                        <select
-                          value={selectedElementData.name || ""}
-                          onChange={(e) =>
-                            updateSelectedElement({
-                              name: e.target.value || undefined,
-                            })
-                          }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md text-xs md:text-sm"
-                        >
-                          <option value="">No binding</option>
-                          <option value="email">Email</option>
-                          <option value="website">Website</option>
-                          <option value="brandName">Brand Name</option>
-                          <option value="fullName">Full Name</option>
-                          <option value="phoneNumber">Phone Number</option>
-                        </select>
+                    {
+                    
+                    // selectedElementData.type === "text" && (
+                    //   <div className="mb-2 md:mb-3">
+                    //     <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5 md:mb-2">
+                    //       Bind to Profile Field
+                    //     </label>
+                    //     <select
+                    //       value={selectedElementData.name || ""}
+                    //       onChange={(e) =>
+                    //         updateSelectedElement({
+                    //           name: e.target.value || undefined,
+                    //         })
+                    //       }
+                    //       className="w-full px-3 py-2 border border-gray-300 rounded-md text-xs md:text-sm"
+                    //     >
+                    //       <option value="">No binding</option>
+                    //       <option value="email">Email</option>
+                    //       <option value="website">Website</option>
+                    //       <option value="brandName">Brand Name</option>
+                    //       <option value="fullName">Full Name</option>
+                    //       <option value="phoneNumber">Phone Number</option>
+                    //     </select>
 
-                        {/* Show preview of bound data */}
-                        {selectedElementData.name && (
-                          <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded text-xs">
-                            <p className="font-medium text-blue-900 mb-1">
-                              Preview:
-                            </p>
-                            <p className="text-blue-700 break-words truncate max-w-xs">
-                              {profileBindingData[selectedElementData.name] ||
-                                "(empty)"}
-                            </p>
-                          </div>
-                        )}
+                    //     {/* Show preview of bound data */}
+                    //     {selectedElementData.name && (
+                    //       <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded text-xs">
+                    //         <p className="font-medium text-blue-900 mb-1">
+                    //           Preview:
+                    //         </p>
+                    //         <p className="text-blue-700 break-words truncate max-w-xs">
+                    //           {profileBindingData[selectedElementData.name] ||
+                    //             "(empty)"}
+                    //         </p>
+                    //       </div>
+                    //     )}
 
-                        <p className="text-xs text-gray-500 mt-1">
-                          Element will auto-populate with profile data
-                        </p>
-                      </div>
-                    )}
+                    //     <p className="text-xs text-gray-500 mt-1">
+                    //       Element will auto-populate with profile data
+                    //     </p>
+                    //   </div>
+                    // )
+                    
+                    }
 
                     {/* W H X Y Controls in one row */}
                     <div className="grid grid-cols-4 gap-1.5 md:gap-2 mb-2 md:mb-3 text-center">

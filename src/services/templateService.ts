@@ -54,4 +54,10 @@ export const templateService = {
     const res = await API.listGlobalTemplates();
     return extractTemplatesArray(res.data);
   },
+
+  async deleteTemplate(id: string) {
+    // Only delete user-saved templates, not global ones
+    // The API endpoint is designed to only allow deletion of user templates
+    return API.deleteTemplate(id);
+  },
 };
