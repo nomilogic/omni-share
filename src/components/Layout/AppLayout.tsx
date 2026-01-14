@@ -270,7 +270,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             >
               <button
                 onClick={() => {
-                  setShowUserMenu(false);
+                  setIsMobileMenuOpen(false)
                   navigate("/dashboard?edit-profile=true");
                 }}
                 className="flex items-center gap-x-3 mb-0 w-full hover:theme-bg-secondary rounded-md p-2  transition-colors"
@@ -581,8 +581,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 <img src={logoText} alt="Logo" className="h-4   " />
               </Link>
 
-              <div className="flex items-center space-x-1">
-                <div className=" md:block hidden ">
+              <div className="flex items-center space-x-1 ">
+                <div className=" md:block hidden  ">
                   <LanguageDropdown />
                 </div>
                 <div
@@ -599,8 +599,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                   />
 
                   {showPackage && (
+                    <>
+                    <div className="top-[50px] right-0 left-0 bottom-0 absolute bg-black opacity-50 md:hidden h-screen"
+                    onClick={() => setShowPackage(false)}
+                    > </div>
                     <div
-                      className=" left-0 right-0 ml-3 mr-3 md:mr-10   md:right-6  absolute bg-gray-50 z-50 md:left-auto top-5  mt-6 rounded-md shadow-md md:px-6 px-4 py-6 border md:w-[370px]"
+                      className="  left-0 right-0 ml-3 mr-3 md:mr-10   md:right-6  absolute bg-gray-50 z-50 md:left-auto top-5  mt-6 rounded-md shadow-md md:px-6 px-4 py-6 border md:w-[370px]"
                       onClick={(e) => e.stopPropagation()}
                     >
                       {user?.wallet?.package ? (
@@ -776,7 +780,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                               className="text-purple-600 font-medium"
                               to="/faq"
                             >
-                              FAQ
+                              FAQs
                             </Link>
                           </p>
 
@@ -822,7 +826,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                         </p>
                       )}
                     </div>
-                  )}
+                    </>                 )}
                 </div>
               </div>
             </div>

@@ -148,8 +148,8 @@ export const DashboardPage: React.FC = () => {
   return (
     <>
       {!isEditing && !isPasswordEditing && (
-        <div className=" md:my-10">
-          <main className="max-w-8xl mx-auto  flex flex-col gap-y-8 ">
+        <div className=" mb-4 md:my-10">
+          <main className="max-w-8xl mx-auto  flex flex-col gap-y-4 md:gap-y-8 ">
             <div className="bg-gray-100  lg:px-4 px-3 py-4 rounded-md flex flex-col gap-4">
               <ProfileCard />
               {progress !== 100 && (

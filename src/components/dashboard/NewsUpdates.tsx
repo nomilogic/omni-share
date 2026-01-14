@@ -34,25 +34,30 @@ function NewsUpdates() {
 
   return (
     <div className="bg-gray-100 rounded-md p-5 flex flex-col w-full h-[450px]">
-      <div className="flex-1 flex flex-col items-center">
-        <img src={slides[currentSlide].image} alt="slide" className="" />
-        <p className="text-sm text-black text-center mt-5">
-          {slides[currentSlide].text}
-        </p>
-      </div>
+  <div className="flex-1 flex flex-col items-center justify-center">
+    <img
+      src={slides[currentSlide].image}
+      alt="slide"
+      className="h-48 w-full object-contain"
+    />
 
-      <div className="flex mb-2 justify-center gap-2 mt-auto">
-        {slides.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => setCurrentSlide(i)}
-            className={`w-2 h-2 rounded-full transition-colors ${
-              currentSlide === i ? "bg-[#7650e3]" : "bg-gray-300"
-            }`}
-          />
-        ))}
-      </div>
-    </div>
+    <p className="text-sm text-black text-center mt-5 min-h-[60px]">
+      {slides[currentSlide].text}
+    </p>
+  </div>
+
+  <div className="flex mb-2 justify-center gap-2">
+    {slides.map((_, i) => (
+      <button
+        key={i}
+        onClick={() => setCurrentSlide(i)}
+        className={`w-2 h-2 rounded-full transition-colors ${
+          currentSlide === i ? "bg-[#7650e3]" : "bg-gray-300"
+        }`}
+      />
+    ))}
+  </div>
+</div>
   );
 }
 
