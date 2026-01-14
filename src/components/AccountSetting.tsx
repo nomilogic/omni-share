@@ -65,13 +65,13 @@ interface SecurityQuestion {
 }
 
 function AccountSecurityTabs() {
-  const { setPasswordEditing, refreshUser, user }: any = useAppContext();
+  const { setPasswordEditing, refreshUser, user, security_question }: any =
+    useAppContext();
 
   const [activeTab, setActiveTab] = useState<"password" | "security">(
     "password"
   );
   const [loading, setLoading] = useState(false);
-  const [questions, setQuestions] = useState<SecurityQuestion[]>([]);
   const [twoFAModalOpen, setTwoFAModalOpen] = useState(false);
   const [disabling2FA, setDisabling2FA] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
@@ -85,18 +85,6 @@ function AccountSecurityTabs() {
       setEditingQuestions(true);
     }
   }, [user]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const questionsRes = await API.securityQuestion();
-        setQuestions(questionsRes.data.data || []);
-      } catch (err) {
-        notify("error", "Failed to load security questions");
-      }
-    };
-    fetchData();
-  }, []);
 
   const passwordForm = useForm<PasswordFormType>({
     resolver: zodResolver(passwordSchema),
@@ -114,6 +102,8 @@ function AccountSecurityTabs() {
     resolver: zodResolver(securityQuestionsSchema),
     defaultValues: {
       answers: [
+        { questionId: "", answer: "" },
+        { questionId: "", answer: "" },
         { questionId: "", answer: "" },
         { questionId: "", answer: "" },
       ],
@@ -342,26 +332,22 @@ function AccountSecurityTabs() {
       {
         <>
           <div className="w-full max-w-4xl mx-auto p-4">
-            <div className="mb-8">
-              <div className="flex justify-between items-center mb-4">
-                <h1 className="text-3xl font-bold text-black flex items-center gap-3">
-                  <Shield className="w-8 h-8 text-[#7650e3]" />
+            <div className="mb-5">
+              <div className="flex  justify-between items-center mb-3">
+                <h1 className="text-2xl font-bold text-black flex items-center gap-3">
                   Account Security
                 </h1>
                 <button
                   onClick={() => setPasswordEditing?.(false)}
-                  className="flex items-center gap-2 text-[#7650e3] hover:text-[#6540cc] font-semibold text-sm hover:underline"
+                  className="flex items-center gap-2 mt-2 text-[#7650e3] hover:text-[#6540cc] font-semibold text-sm hover:underline"
                 >
                   <ArrowLeft className="w-5 h-5" />
                   Back to Dashboard
                 </button>
               </div>
-              <p className="text-gray-500">
-                Protect your account with strong security settings
-              </p>
             </div>
 
-            <div className="border-b border-gray-200 mb-8">
+            <div className="border-b border-gray-200 mb-3">
               <nav className="flex space-x-8">
                 {tabs.map((tab) => {
                   const Icon = tab.icon;
@@ -389,7 +375,7 @@ function AccountSecurityTabs() {
                   onSubmit={passwordForm.handleSubmit(
                     user?.twoFactorEnabled ? onPasswordSubmit : Resetpassword
                   )}
-                  className="space-y-6 "
+                  className="space-y-3 "
                 >
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -453,9 +439,9 @@ function AccountSecurityTabs() {
               )}
 
               {activeTab === "security" && (
-                <div className="space-y-6">
-                  <div className="bg-gradient-to-r from-purple-50 to-indigo-50 p-6 rounded-md border border-purple-200">
-                    <h3 className="text-xl font-bold text-gray-800 mb-5 flex items-center gap-3">
+                <div className="space-y-3">
+                  <div className="bg-gradient-to-r from-purple-50  p-5 rounded-md border border-purple-200">
+                    <h3 className="text-xl font-bold text-gray-800 mb-3 flex items-center gap-3">
                       <Shield className="w-6 h-6 text-purple-700" />
                       Security Status
                     </h3>
@@ -508,7 +494,7 @@ function AccountSecurityTabs() {
                   </div>
                   {user.isSecurityQuestions === false &&
                   user.twoFactorEnabled === false ? (
-                    <div className="bg-white p-6 rounded-md shadow-sm border  mx-auto">
+                    <div className="bg-white p-5 rounded-md shadow-sm border  mx-auto">
                       {/* Header */}
                       <div className="text-center mb-8">
                         <h2 className="text-2xl font-bold text-gray-900">
@@ -525,7 +511,7 @@ function AccountSecurityTabs() {
 
                       {/* Step 1: Security Questions */}
                       {step === 1 && (
-                        <div className="space-y-6">
+                        <div className="space-y-3">
                           {questionsForm.watch("answers").map((_, index) => {
                             const questionError =
                               questionsForm.formState.errors.answers?.[index]
@@ -535,7 +521,7 @@ function AccountSecurityTabs() {
                                 ?.answer;
 
                             return (
-                              <div key={index} className="space-y-4">
+                              <div key={index} className="space-y-3">
                                 <div>
                                   <label className="block text-sm font-medium text-gray-700 mb-1.5">
                                     Question {index + 1}
@@ -551,7 +537,7 @@ function AccountSecurityTabs() {
                                         { shouldValidate: true }
                                       )
                                     }
-                                    questions={questions} // ← assume this comes from props or context
+                                    questions={security_question} // ← assume this comes from props or context
                                     otherSelected={questionsForm
                                       .getValues("answers")
                                       .filter((_, i) => i !== index)
@@ -600,7 +586,7 @@ function AccountSecurityTabs() {
                           ) : qrCodeUrl ? (
                             <>
                               {/* QR Code */}
-                              <div className="text-center space-y-4">
+                              <div className="text-center space-y-3">
                                 <p className="text-sm text-gray-600">
                                   Scan this QR code with your authenticator app
                                   (Google Authenticator, Authy, etc.)
@@ -627,7 +613,7 @@ function AccountSecurityTabs() {
                               )}
 
                               {/* OTP Input */}
-                              <div className="space-y-4">
+                              <div className="space-y-3">
                                 <label className="block text-center text-sm font-medium text-gray-700">
                                   Enter 6-digit code from your authenticator app
                                 </label>
@@ -697,9 +683,9 @@ function AccountSecurityTabs() {
                       </div>
                     </div>
                   ) : (
-                    <div className="space-y-8">
-                      <div className="bg-white p-6 rounded-md border shadow-sm">
-                        <div className="flex items-center justify-between mb-6">
+                    <div className="space-y-3">
+                      <div className="bg-white p-5 rounded-md border shadow-sm">
+                        <div className="flex items-center justify-between mb-3">
                           <h3 className="text-xl font-bold text-gray-800">
                             Security Questions
                           </h3>
@@ -711,7 +697,7 @@ function AccountSecurityTabs() {
                               }}
                               className="px-4 py-2 rounded-md font-medium transition bg-purple-600 hover:bg-purple-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                              Update Questions
+                              Update
                             </button>
                           ) : (
                             <span className="text-amber-600 font-medium">
@@ -737,9 +723,7 @@ function AccountSecurityTabs() {
                               const currentValue = questionsForm.watch(
                                 `answers.${index}.questionId`
                               );
-                              const selectedQuestion = questions.find(
-                                (q) => q.id === currentValue
-                              );
+
                               const otherSelected = questionsForm
                                 .getValues("answers")
                                 .filter((_, i) => i !== index)
@@ -747,7 +731,7 @@ function AccountSecurityTabs() {
                                 .filter(Boolean);
 
                               return (
-                                <div key={field.id} className="space-y-6">
+                                <div key={field.id} className="space-y-3">
                                   {/* Question Select */}
                                   <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -764,7 +748,7 @@ function AccountSecurityTabs() {
                                           }
                                         )
                                       }
-                                      questions={questions}
+                                      questions={security_question}
                                       otherSelected={otherSelected}
                                       error={questionError?.message}
                                     />
@@ -797,7 +781,7 @@ function AccountSecurityTabs() {
                               );
                             })}
 
-                            <div className="flex gap-4 pt-6">
+                            <div className="flex gap-3 pt-3">
                               <button
                                 type="submit"
                                 disabled={loading}
@@ -825,7 +809,7 @@ function AccountSecurityTabs() {
                         )}
                       </div>
 
-                      <div className="bg-white p-6 rounded-md border shadow-sm">
+                      <div className="bg-white p-5 rounded-md border shadow-sm">
                         <div className="flex items-center justify-between ">
                           <h3 className="text-xl font-bold text-gray-800">
                             Two-Factor Authentication
@@ -950,15 +934,15 @@ const TwoFAModal = ({
   };
 
   return (
-    <div className="bg-white p-6 rounded-md border shadow-sm max-w-md w-full mx-auto">
-      <h2 className="text-xl font-bold text-gray-800 text-center mb-6">
+    <div className="bg-white p-5 rounded-md border shadow-sm max-w-md w-full mx-auto">
+      <h2 className="text-xl font-bold text-gray-800 text-center mb-3">
         Enable Two-Factor Authentication
       </h2>
 
       {loadingQr && !qrCodeUrl ? (
         <p className="text-center text-gray-500">Loading QR code...</p>
       ) : qrCodeUrl ? (
-        <div className="space-y-6">
+        <div className="space-y-3">
           <div className="text-center">
             <p className="text-sm text-gray-600 mb-4">
               Scan this QR code using Authenticator app
@@ -1104,10 +1088,11 @@ export const CustomSelect: React.FC<{
                 }`}
               >
                 {q.question}
+                <br />
                 {isDisabled && (
-                  <p className="ml-2 text-xs text-gray-400">
-                    (already selected)
-                  </p>
+                  <span className=" text-xs bg-gray-200 px-2 py-1 rounded-full">
+                    Already selected
+                  </span>
                 )}
               </button>
             );

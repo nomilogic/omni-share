@@ -10,7 +10,6 @@ import {
   History,
   CreditCard,
   Plus,
-  Share2,
 } from "lucide-react";
 import { useAppContext } from "../../context/AppContext";
 import { useLoading } from "../../context/LoadingContext";
@@ -44,7 +43,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     unreadCount,
     setUnreadCount,
     fetchUnreadCount,
-  } = useAppContext();
+  }: any = useAppContext();
   const { t } = useTranslation();
   const { loadingState } = useLoading();
 
@@ -63,17 +62,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const { openModal } = useModal();
   const [zoom, setZoom] = useState(1);
 
-  const referralLink = `http://omnishare.ai/auth?referralId=${user?.id}`;
-  const shareText = "Join me on OmniShare! Use my referral link:";
-
-  // const isProbablyMobile = () => {
-  //   // screen + touch based (safe-ish)
-  //   return (
-  //     window.matchMedia("(max-width: 768px)").matches ||
-  //     ("ontouchstart" in window) ||
-  //     navigator.maxTouchPoints > 0
-  //   );
-  // };
   const isMobileScreen = () => window.matchMedia("(max-width: 768px)").matches;
   const handleReferShareClick = async () => {
     openModal(ReferralSection as any, {});
@@ -172,7 +160,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      // Only close dropdown if clicking outside the entire dropdown container
       if (
         packageDropdownRef.current &&
         !packageDropdownRef.current.contains(event.target as Node)
@@ -185,10 +172,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   }, []);
   useEffect(() => {
     const handleWindowResize = () => {
-      //handleResizeMainToFullScreen(window.matchMedia("(max-width: 768px)").matches);
-      // alert(window.innerHeight/800);
-      const portrait = window.innerHeight / window.innerWidth > 1;
-
       if (window.innerHeight < 800) {
         setZoom(window.innerHeight / 800);
       }
@@ -198,7 +181,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     window.addEventListener("load", handleWindowResize);
     return () => {
       window.removeEventListener("resize", handleWindowResize);
-      // window.removeEventListener("load", handleWindowResize);
     };
   }, []);
 
@@ -226,14 +208,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const coinsRef = useRef<HTMLDivElement>(null);
   const referralRef = useRef<HTMLDivElement>(null);
 
-  // Close tooltips on outside click (but not the dropdown itself)
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      // Check if click is inside the package dropdown container
-      const isInsidePackageDropdown =
-        packageDropdownRef.current &&
-        packageDropdownRef.current.contains(event.target as Node);
-
       if (planRef.current && !planRef.current.contains(event.target as Node)) {
         setPlanMsgOpen(false);
       }
@@ -666,14 +642,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                     )}
                                   </div>
                                 </div>
-                                {/* {user.wallet?.downgradeRequested && (
-                                  <p className="text-xs text-red-600  ">
-                                    Downgraded to{" "}
-                                    <span className="font-">
-                                      {user.wallet?.downgradeRequested || "FREE"}
-                                    </span>
-                                  </p>
-                                )} */}
+
                                 <p className="text-sm text-black mt-1">
                                   {user.wallet?.downgradeRequested ? (
                                     <>
@@ -759,7 +728,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                               </p>
                             </div>
 
-                            {/* Referral Coins */}
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-2 text-md text-slate-800 font-medium">
                                 <Icon name="share" className="scale-[0.8]" />
@@ -802,7 +770,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                             </div>
                           </div>
 
-                          {/* More info and buttons */}
                           <p className="text-base my-4">
                             {t("more_info")}{" "}
                             <Link

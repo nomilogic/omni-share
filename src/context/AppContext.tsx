@@ -104,9 +104,11 @@ type AppAction =
   | { type: "SET_PACKAGES"; payload: any[] }
   | { type: "SET_ADDONS"; payload: any[] }
   | { type: "SET_LOADER"; payload: boolean }
-  | { type: "SET_UNREAD_COUNT"; payload: number };
+  | { type: "SET_UNREAD_COUNT"; payload: number }
+  | { type: "SET_SECURITY_QUESTIONS"; payload: any[] };
 
 const initialState: AppState & {
+  security_question: any[];
   packages: any[];
   addons: any[];
   loader: boolean;
@@ -126,6 +128,7 @@ const initialState: AppState & {
   hasProfileSetup: false,
   balance: 0,
   packages: [],
+  security_question: [],
   addons: [],
   loader: false,
   unreadCount: 0,
@@ -183,6 +186,8 @@ function appReducer(
       return { ...state, isBusinessAccount: action.payload };
     case "SET_PACKAGES":
       return { ...state, packages: action.payload };
+    case "SET_SECURITY_QUESTIONS":
+      return { ...state, security_question: action.payload };
     case "SET_ADDONS":
       return { ...state, addons: action.payload };
     case "SET_LOADER":
@@ -370,6 +375,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [state.user?.id]);
 
+  const loadSecurityQuestion = async () => {
+    try {
+      if (!state.security_question.length) {
+        const [question] = await Promise.all([API.securityQuestion()]);
+        dispatch({
+          type: "SET_SECURITY_QUESTIONS",
+          payload: question.data?.data || [],
+        });
+      }
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    loadSecurityQuestion();
+  }, []);
+
   useEffect(() => {
     const userId = state.user?.id;
     if (!userId) return;
@@ -479,6 +500,7 @@ export const useAppContext = () => {
 
   return {
     state: state,
+    security_question: state.security_question,
     user: state.user,
     balance: state.balance,
     profile: state.selectedProfile,

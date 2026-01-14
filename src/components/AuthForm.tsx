@@ -75,12 +75,11 @@ export const AuthForm: React.FC<AuthFormProps> = ({
   const navigate = useNavigate();
   const [mode, setMode] = useState<AuthMode>("login");
   const [loading, setLoading] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
   const [showOtpPopup, setShowOtpPopup] = useState<boolean>(false);
   const [showAuth, setShowAuth] = useState<boolean>(false);
   const [successMessage, setSuccessMessage] = useState("");
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   const params = new URLSearchParams(window.location.search);
   const referralId: any = params.get("referralId");
@@ -145,7 +144,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
       setLoading(false);
     }
   };
-
+  const [question, setQuestion] = useState([]);
   const handleLoginSubmit = async (data: LoginFormData) => {
     if (!isCookieAccepted()) {
       return notify("error", "Please accept cookies first.");
@@ -161,14 +160,14 @@ export const AuthForm: React.FC<AuthFormProps> = ({
       });
 
       const result = response.data.data;
-      console.log("response", response);
       if (
         response?.data?.challengeName === "SOFTWARE_TOKEN_MFA" &&
         response?.data?.session
       ) {
-        setShowAuth(true);
+        setQuestion(response?.data?.question);
         localStorage.setItem("mfa_session_token", response.data.session);
         setLoading(false);
+        setShowAuth(true);
         return;
       }
 
@@ -825,6 +824,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
             setShowAuth(false);
             localStorage.removeItem("mfa_session_token");
           }}
+          question={question}
           onSuccess={(data: any) => {
             notify("success", t("login_successful"));
 

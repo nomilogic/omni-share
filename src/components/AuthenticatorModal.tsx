@@ -6,6 +6,7 @@ import API from "@/services/api";
 import { useForm, useFieldArray } from "react-hook-form";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAppContext } from "@/context/AppContext";
 
 type AuthMethod = "totp" | "security";
 
@@ -36,7 +37,17 @@ const CustomSelect: React.FC<{
   otherSelected: string[];
   error?: string;
   label: string;
-}> = ({ index, value, onChange, questions, otherSelected, error, label }) => {
+  disable: Boolean;
+}> = ({
+  index,
+  value,
+  onChange,
+  questions,
+  otherSelected,
+  error,
+  label,
+  disable = false,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const selectedQuestion = questions.find((q) => q.id === value);
@@ -73,6 +84,7 @@ const CustomSelect: React.FC<{
 
       <button
         type="button"
+        disabled={disable === true}
         onClick={() => setIsOpen(!isOpen)}
         className={`w-full px-3 py-2.5 text-left bg-white rounded-md border-2 transition-all duration-200 flex items-center justify-between focus:outline-none focus:ring-4 focus:ring-purple-100 group ${
           error
@@ -87,21 +99,23 @@ const CustomSelect: React.FC<{
         <span className={value ? "text-black " : "text-gray-600"}>
           {selectedQuestion?.question || "Select a security question..."}
         </span>
-        <svg
-          className={`w-5 h-5 text-gray-600 transition-transform duration-200 group-hover:text-gray-700 ${
-            isOpen ? "rotate-180" : ""
-          }`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M19 9l-7 7-7-7"
-          />
-        </svg>
+        {disable !== true && (
+          <svg
+            className={`w-5 h-5 text-gray-600 transition-transform duration-200 group-hover:text-gray-700 ${
+              isOpen ? "rotate-180" : ""
+            }`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 9l-7 7-7-7"
+            />
+          </svg>
+        )}
       </button>
 
       {isOpen && (
@@ -114,7 +128,7 @@ const CustomSelect: React.FC<{
               <button
                 key={q.id}
                 type="button"
-                disabled={isDisabled}
+                disabled={isDisabled || disable === true}
                 onClick={() => {
                   onChange(q.id);
                   setIsOpen(false);
@@ -182,22 +196,32 @@ export const AuthenticatorModal = ({
   isResetPassword = false,
   pendingQuestions,
   pendingAction,
+  question = [],
 }: any) => {
   const [authMethod, setAuthMethod] = useState<AuthMethod>("totp");
   const [otp, setOtp] = useState("");
-  const [questions, setQuestions] = useState<SecurityQuestion[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-
+  const { security_question } = useAppContext();
   const questionsForm = useForm<SecurityQuestionsFormType>({
     resolver: zodResolver(securityQuestionsSchema),
     defaultValues: {
       answers: [
-        { questionId: "", answer: "" },
-        { questionId: "", answer: "" },
+        { questionId: question[0]?.securityQuestionId || "", answer: "" },
+        { questionId: question[1]?.securityQuestionId || "", answer: "" },
       ],
     },
   });
+  useEffect(() => {
+    if (!question || question.length === 0) return;
+
+    questionsForm.setValue(
+      "answers",
+      question?.map((q: any) => ({
+        questionId: q?.securityQuestionId,
+        answer: "",
+      }))
+    );
+  }, [open, question]);
 
   const { fields } = useFieldArray({
     control: questionsForm.control,
@@ -208,26 +232,8 @@ export const AuthenticatorModal = ({
     if (open) {
       setAuthMethod("totp");
       setOtp("");
-      setError("");
-      questionsForm.reset({
-        answers: [
-          { questionId: "", answer: "" },
-          { questionId: "", answer: "" },
-        ],
-      });
     }
   }, [open, questionsForm]);
-
-  useEffect(() => {
-    if (authMethod === "security") {
-      API.securityQuestion()
-        .then((res) => {
-          const list: SecurityQuestion[] = res.data?.data || [];
-          setQuestions(list);
-        })
-        .catch(() => setError("Failed to load security questions."));
-    }
-  }, [authMethod]);
 
   const handleQuestionChange = useCallback(
     (index: number, questionId: string) => {
@@ -244,11 +250,9 @@ export const AuthenticatorModal = ({
     if (!session && !isResetPassword && pendingAction !== "disable-2fa")
       throw new Error("Session expired");
     setLoading(true);
-    setError("");
     try {
       if (authMethod === "totp") {
         if (!/^\d{6}$/.test(otp)) {
-          setError("Please enter a valid 6-digit code.");
           setLoading(false);
           return;
         }
@@ -270,13 +274,11 @@ export const AuthenticatorModal = ({
           answers.length < 2 ||
           answers.some((a) => !a.questionId || !a.answer.trim())
         ) {
-          setError("Please answer all security questions.");
           return;
         }
 
         const questionIds = answers.map((a) => a.questionId);
         if (new Set(questionIds).size !== questionIds.length) {
-          setError("You cannot select the same question twice.");
           return;
         }
         let result;
@@ -297,7 +299,6 @@ export const AuthenticatorModal = ({
       console.log("err", err);
       const message =
         err?.response?.data?.message || err?.message || "Verification failed.";
-      setError(message);
       notify("error", message);
     } finally {
       setLoading(false);
@@ -307,8 +308,8 @@ export const AuthenticatorModal = ({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 px-8">
-      <div className="w-full max-w-md rounded-md bg-white px-8 py-10 shadow-md animate-in fade-in zoom-in duration-200 max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 ">
+      <div className="w-full max-w-[460px] rounded-md bg-white px-6 py-10 shadow-md animate-in fade-in zoom-in duration-200 max-h-[90vh] overflow-y-auto">
         <div className="mb-6 text-center">
           <h2 className="text-2xl font-bold text-black mb-2">
             Two-Factor Authentication
@@ -370,8 +371,9 @@ export const AuthenticatorModal = ({
                   <CustomSelect
                     index={index}
                     value={currentValue}
+                    disable={question.length ? true : false}
                     onChange={(value) => handleQuestionChange(index, value)}
-                    questions={questions}
+                    questions={security_question}
                     otherSelected={otherSelected}
                     error={questionError?.message}
                     label={`Question ${index + 1}`}
