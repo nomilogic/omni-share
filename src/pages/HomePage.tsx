@@ -62,7 +62,7 @@ function HomePage() {
   const [showContactForm, setShowContactForm] = useState(false);
   const isInitialMount = useRef(true);
   const navigate = useNavigate();
-
+  const profile = user?.profile;
   const { scrollYProgress } = useScroll();
   const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
   const heroScale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95]);
@@ -396,22 +396,20 @@ function HomePage() {
                   <img
                     className="w-12 h-12 rounded-full object-cover border-2 border-white/50"
                     src={
-                      user?.avatarUrl
-                        ? user.avatarUrl
-                        : `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                            user?.user_metadata?.name || user?.email || "U"
-                          )}&background=7650e3&color=fff`
-                    }
+                         `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                              profile?.fullName || "U"
+                            )}&background=7650e3&color=fff`
+                      }
                     alt="User avatar"
-                    onError={(e) => {
-                      e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                        user?.user_metadata?.name || user?.email || "U"
-                      )}&background=7650e3&color=fff`;
-                    }}
+                      onError={(e) => {
+                        e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                          profile?.fullName ||  "U"
+                        )}&background=7650e3&color=fff`;
+                      }}
                   />
                   <div className="flex-1 min-w-0 text-left">
                     <div className="text-md font-medium text-white truncate">
-                      {user?.user_metadata?.name || user?.email || "User"}
+                      {user?.name || user?.email || "User"}
                     </div>
                     <div className="text-sm text-white/80 truncate">
                       {user?.email}
@@ -451,7 +449,26 @@ function HomePage() {
                   className="text-white"
                 />
               </div>
-
+{!user && (
+                <motion.button
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    navigate("/auth");
+                  }}
+                  className="text-white px-4   font-semibold  flex items-center justify-center gap-4"
+                  initial={{ x: -50, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.25 }}
+                  whileHover={{
+                    scale: 1.05,
+                    boxShadow: "0 10px 30px rgba(0, 0, 0, 0.2)",
+                  }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <LogIn size={18} />
+                  {t("login")}
+                </motion.button>
+              )}
               {!user && (
                 <motion.button
                   onClick={() => {
@@ -472,26 +489,7 @@ function HomePage() {
                 </motion.button>
               )}
 
-              {!user && (
-                <motion.button
-                  onClick={() => {
-                    setIsMenuOpen(false);
-                    navigate("/auth");
-                  }}
-                  className="w-full bg-white text-[#7650e3] px-6 py-3 rounded-full font-semibold shadow-lg transition-all flex items-center justify-center gap-2"
-                  initial={{ x: -50, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 0.25 }}
-                  whileHover={{
-                    scale: 1.05,
-                    boxShadow: "0 10px 30px rgba(0, 0, 0, 0.2)",
-                  }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <LogIn size={18} />
-                  {t("login")}
-                </motion.button>
-              )}
+              
 
               {user && (
                 <motion.button
@@ -499,7 +497,7 @@ function HomePage() {
                     setIsMenuOpen(false);
                     handleLogout();
                   }}
-                  className="w-full bg-white text-[#7650e3] px-6 py-3 rounded-full font-semibold shadow-lg transition-all flex items-center justify-center gap-2"
+                  className="  text-white px-4   font-semibold  flex items-center justify-center gap-4"
                   initial={{ x: -50, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: 0.2 }}
@@ -809,7 +807,7 @@ function HomePage() {
                   </motion.button>
                 )}
 
-                {/* {user && (
+                {user && (
                   <motion.div
                     className="cursor-pointer"
                     whileHover={{ scale: 1.05 }}
@@ -819,21 +817,19 @@ function HomePage() {
                     <img
                       className="w-10 h-10 rounded-full object-cover border-2 border-white/50 hover:border-white"
                       src={
-                        user?.avatarUrl
-                          ? user.avatarUrl
-                          : `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                              user?.user_metadata?.name || user?.email || "U"
+                         `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                              profile?.fullName || "U"
                             )}&background=7650e3&color=fff`
                       }
                       alt="User avatar"
                       onError={(e) => {
                         e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                          user?.user_metadata?.name || user?.email || "U"
+                          profile?.fullName ||  "U"
                         )}&background=7650e3&color=fff`;
                       }}
                     />
                   </motion.div>
-                )} */}
+                )}
 
                 {user ? (
                   <motion.button
@@ -847,7 +843,7 @@ function HomePage() {
                 ) : (
                   <motion.button
                     onClick={() => navigate("/auth")}
-                    className="text-white hover:text-[#d7d7fc] transition-colors flex items-center gap-2 font-medium"
+                    className="text-white  transition-colors flex items-center gap-2 font-medium"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
@@ -991,33 +987,35 @@ function HomePage() {
           </motion.div>
 
           <motion.button
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.8,
-              delay: 0.8,
-              type: "spring",
-              stiffness: 100,
-            }}
-            onClick={() => {
-              if (localStorage.getItem("auth_token")) {
-                navigate("/content");
-              } else {
-                navigate("/auth");
-              }
-            }}
-            className="bg-white text-[#7650e3] px-6 py-3 rounded-full text-lg font-semibold shadow-2xl inline-flex items-center space-x-2"
-            whileHover={{
-              scale: 1.08,
-              boxShadow: "0 20px 40px rgba(0, 0, 0, 0.2)",
-              y: -5,
-            }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <span>{t("get_started_free")}</span>
+  initial={{ opacity: 0, y: 30 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{
+    duration: 0.8,
+    delay: 0.8,
+    type: "spring",
+    stiffness: 100,
+  }}
+  onClick={() => {
+    if (user) {
+      navigate("/content");
+    } else {
+      navigate("/auth");
+    }
+  }}
+  className="bg-white text-[#7650e3] px-6 py-3 rounded-full text-lg font-semibold shadow-2xl inline-flex items-center space-x-2"
+  whileHover={{
+    scale: 1.08,
+    boxShadow: "0 20px 40px rgba(0, 0, 0, 0.2)",
+    y: -5,
+  }}
+  whileTap={{ scale: 0.95 }}
+>
+  <span>
+    {user ? "Let's Create" : t("get_started_free")}
+  </span>
 
-            <ChevronDown className="w-5 h-5" />
-          </motion.button>
+  <ChevronDown className="w-5 h-5" />
+</motion.button>
         </motion.div>
 
         <motion.div

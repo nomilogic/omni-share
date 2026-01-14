@@ -499,6 +499,7 @@ const ProfileSetupSinglePage: React.FC = () => {
       refreshUser();
 
       navigate("/content");
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
       console.error(err);
     } finally {
@@ -1108,7 +1109,7 @@ const ProfileSetupSinglePage: React.FC = () => {
                 disabled={loading}
                 className="w-full theme-bg-trinary disabled:bg-purple-600/50 disabled:cursor-not-allowed text-white py-3 px-6 rounded-md text-lg font-semibold shadow-md disabled:opacity-50 border border-transparent hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition-colors"
               >
-                {loading ? t("saving") : t("complete_profile_setup")}
+                {loading ? t("saving") : t("Save and Continue")}
               </button>
             </form>
           </div>
