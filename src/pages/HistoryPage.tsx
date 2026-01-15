@@ -147,8 +147,8 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
       );
     }
 
-    const bgColorMatch = colorClasses.match(/bg-[\w-]+/);
-    const bgColor = bgColorMatch ? bgColorMatch[0] : "bg-blue-600";
+    const bgColorMatch = colorClasses;
+    const bgColor = bgColorMatch;
 
     return (
       <div
