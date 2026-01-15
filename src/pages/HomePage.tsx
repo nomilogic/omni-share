@@ -175,7 +175,7 @@ function HomePage() {
     },
   ];
 
-  const [expandedFaqIndex, setExpandedFaqIndex] = useState(null);
+  const [expandedFaqIndex, setExpandedFaqIndex] = useState<number | null>(null);
   const [visibleCount, setVisibleCount] = useState(6);
 
   const faqs = [
