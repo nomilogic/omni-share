@@ -49,6 +49,7 @@ import LanguageDropdown from "../components/LanguageDropdown";
 import { Trans, useTranslation } from "react-i18next";
 import { div } from "framer-motion/client";
 import { useAppContext } from "../context/AppContext";
+import Cookies from "js-cookie";
 
 function HomePage() {
   const { t } = useTranslation();
@@ -412,7 +413,7 @@ function HomePage() {
 
             {/* User Profile Section - shown when logged in */}
             <AnimatePresence>
-              {user && (
+              {Cookies.get("auth_token") && (
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
@@ -476,7 +477,7 @@ function HomePage() {
 
             <div className="px-1 mx-2 pb-2 space-y-4 ">
               <AnimatePresence mode="wait">
-                {!user && (
+                {!Cookies.get("auth_token") && (
                   <motion.div
                     key="login-mobile"
                     initial={{ opacity: 0, y: 10 }}
@@ -488,22 +489,11 @@ function HomePage() {
                     <motion.button
                       onClick={() => {
                         setIsMenuOpen(false);
-                        navigate("/auth");
-                      }}
-                      className="w-full flex justify-item justify-center gap-4 bg-[#7650e3] text-white  hover:bg-[#d7d7fc] border border-white  px-6 py-3 rounded-full font-semibold shadow-lg transition-all items-center"
-                      whileHover={{
-                        scale: 1.05,
-                        boxShadow: "0 10px 30px rgba(0, 0, 0, 0.2)",
-                      }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <LogIn size={18} />
-                      {t("login")}
-                    </motion.button>
-                    <motion.button
-                      onClick={() => {
-                        setIsMenuOpen(false);
-                        navigate("/auth");
+                        if (Cookies.get("auth_token")) {
+                          navigate("/content");
+                        } else {
+                          navigate("/auth");
+                        }
                       }}
                       className="w-full bg-white text-[#7650e3] px-6 py-3 rounded-full font-semibold shadow-lg transition-all"
                       whileHover={{
@@ -514,10 +504,29 @@ function HomePage() {
                     >
                       {t("get_started_free")}
                     </motion.button>
+                    <motion.button
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        if (Cookies.get("auth_token")) {
+                          navigate("/content");
+                        } else {
+                          navigate("/auth");
+                        }
+                      }}
+                      className="w-full flex justify-item  justify-center gap-2 bg-[#7650e3] text-white  hover:bg-[#d7d7fc] border border-white  px-6 py-3 rounded-full font-semibold shadow-lg transition-all items-center"
+                      whileHover={{
+                        scale: 1.05,
+                        boxShadow: "0 10px 30px rgba(0, 0, 0, 0.2)",
+                      }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <LogIn size={18} />
+                      {t("login")}
+                    </motion.button>
                   </motion.div>
                 )}
 
-                {user && (
+                {Cookies.get("auth_token") && (
                   <motion.div
                     key="login-mobile"
                     initial={{ opacity: 0, y: 10 }}
@@ -529,7 +538,11 @@ function HomePage() {
                     <motion.button
                       onClick={() => {
                         setIsMenuOpen(false);
-                        navigate("/auth");
+                        if (Cookies.get("auth_token")) {
+                          navigate("/content");
+                        } else {
+                          navigate("/auth");
+                        }
                       }}
                       className="w-full bg-white text-[#7650e3] px-6 py-3 rounded-full font-semibold shadow-lg transition-all"
                       whileHover={{
@@ -562,7 +575,6 @@ function HomePage() {
                       <LogOut size={18} />
                       {t("logout")}
                     </motion.button>
-                    
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -858,10 +870,8 @@ function HomePage() {
               )}
 
               <div className="flex items-center gap-3 w-auto">
-                
-
                 <AnimatePresence mode="wait">
-                  {!user && (
+                  {!Cookies.get("auth_token") && (
                     <motion.button
                       key="signup-btn"
                       initial={{ opacity: 0, x: 10 }}
@@ -875,7 +885,7 @@ function HomePage() {
                     </motion.button>
                   )}
 
-                  {user && (
+                  {Cookies.get("auth_token") && (
                     <motion.div
                       key="avatar"
                       initial={{ opacity: 0, scale: 0.8 }}
@@ -1081,7 +1091,7 @@ function HomePage() {
               stiffness: 100,
             }}
             onClick={() => {
-              if (user) {
+              if (Cookies.get("auth_token")) {
                 navigate("/content");
               } else {
                 navigate("/auth");

@@ -3,6 +3,7 @@ import mainImage from "../assets/omni.jpg";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "@/context/AppContext";
+import Cookies from "js-cookie";
 
 const TwoColumnSection: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -34,7 +35,7 @@ const TwoColumnSection: React.FC = () => {
         <div className="flex justify-center md:justify-start w-full">
           <button
             onClick={() => {
-              if (user) {
+              if (Cookies.get("auth_token")) {
                 navigate("/content");
               } else {
                 navigate("/auth");

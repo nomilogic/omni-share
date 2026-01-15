@@ -3,6 +3,7 @@ import mainImage from "../assets/Omni sshare-layout-02.png";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "@/context/AppContext";
+import Cookies from "js-cookie";
 
 const TwoColumnSection2 = () => {
   const { t, i18n } = useTranslation();
@@ -29,7 +30,7 @@ const TwoColumnSection2 = () => {
         <div className="flex justify-center md:justify-start w-full ">
           <button
             onClick={() => {
-              if (user) {
+              if (Cookies.get("auth_token")) {
                 navigate("/content");
               } else {
                 navigate("/auth");

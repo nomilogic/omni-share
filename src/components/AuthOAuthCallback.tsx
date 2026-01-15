@@ -4,6 +4,7 @@ import { handleOAuthCallback } from "../utils/authOAuth";
 import { CheckCircle, Loader, XCircle } from "lucide-react";
 import Icon from "./Icon";
 import { useTranslation } from "react-i18next"; // Added import
+import Cookies from "js-cookie";
 
 interface AuthOAuthCallbackProps {
   onAuthSuccess: (user: any) => void;
@@ -121,7 +122,11 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
           }, 2000);
         } else {
           setTimeout(() => {
-            navigate("/auth");
+            if (Cookies.get("auth_token")) {
+              navigate("/content");
+            } else {
+              navigate("/auth");
+            }
           }, 3000);
         }
       } finally {
