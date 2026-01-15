@@ -430,12 +430,12 @@ function HomePage() {
                     <img
                       className="w-12 h-12 rounded-full object-cover border-2 border-white/50"
                       src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
-                        profile?.name || "U"
+                        user.name || "U"
                       )}&background=7650e3&color=fff`}
                       alt="User avatar"
                       onError={(e) => {
                         e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                          profile?.name || "U"
+                          user.name || "U"
                         )}&background=7650e3&color=fff`;
                       }}
                     />
@@ -890,12 +890,12 @@ function HomePage() {
                       <img
                         className="w-10 h-10 rounded-full object-cover border-2 border-white/50 hover:border-white transition-colors"
                         src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
-                          profile?.name || "U"
+                          user.name || "U"
                         )}&background=7650e3&color=fff`}
                         alt="User avatar"
                         onError={(e) => {
                           e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                            profile?.name || "U"
+                            user.name || "U"
                           )}&background=7650e3&color=fff`;
                         }}
                       />
