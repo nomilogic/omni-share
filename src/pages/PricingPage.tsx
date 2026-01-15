@@ -441,6 +441,23 @@ export const PricingPage: React.FC = () => {
                           </span>
                         </p>
                       )}
+                      {isCurrentPlan &&
+                        user.wallet?.cancelRequested == true && (
+                          <p className="text-xs text-purple-600 mt-1.5 ">
+                            Downgraded to Free Effective on: &nbsp;
+                            <span className=" font-medium">
+                              {user.wallet.expiresAt
+                                ? new Date(
+                                    user.wallet.expiresAt
+                                  ).toLocaleDateString("en-GB", {
+                                    day: "2-digit",
+                                    month: "short",
+                                    year: "numeric",
+                                  })
+                                : "N/A"}
+                            </span>
+                          </p>
+                        )}
                     </div>
 
                     <div className=" px-5 py-4">

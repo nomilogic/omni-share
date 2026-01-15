@@ -654,11 +654,20 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                     {user.wallet?.downgradeRequested ? (
                                       <>
                                         Downgraded to{" "}
-                                        <span className="font-medium">
+                                        <span className="font-medium ml-1">
                                           {user.wallet?.downgradedPackage?.name}
                                         </span>{" "}
                                         <br />
                                         Effective on:
+                                      </>
+                                    ) : user.wallet?.cancelRequested == true ? (
+                                      <>
+                                        Downgraded to
+                                        <span className="font-medium ml-1">
+                                          Free
+                                        </span>
+                                        <br />
+                                        Effective on
                                       </>
                                     ) : (
                                       t("renewing_on")
