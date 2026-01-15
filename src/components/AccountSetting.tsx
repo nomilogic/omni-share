@@ -995,8 +995,7 @@ const TwoFAModal = ({
             <button
               onClick={verifySetup}
               disabled={verifying || otp.length !== 6}
-              className="flex-1 py-2 bg-purple-600 text-white rounded-md
-                     hover:bg-purple-700 disabled:opacity-50 transition"
+              className="flex-1 py-2 text-white text-md transition-all border-2 border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]disabled:opacity-50 "
             >
               {verifying ? "Verifying..." : "Enable 2FA"}
             </button>
