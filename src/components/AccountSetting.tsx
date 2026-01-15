@@ -12,12 +12,36 @@ import {
   Loader2,
 } from "lucide-react";
 import { useAppContext } from "../context/AppContext";
+import { useModal } from "../context2/ModalContext";
 import API from "@/services/api";
 import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { notify } from "@/utils/toast";
 import { AuthenticatorModal } from "./AuthenticatorModal";
+import { FC } from "react";
+
+// Wrapper component for AuthenticatorModal to work with modal context
+const AuthenticatorModalWrapper: FC<any> = ({
+  close,
+  isResetPassword,
+  pendingQuestions,
+  onSuccess,
+  pendingAction,
+  verifyOtp,
+}) => {
+  return (
+    <AuthenticatorModal
+      open={true}
+      onClose={close}
+      isResetPassword={isResetPassword}
+      pendingQuestions={pendingQuestions}
+      onSuccess={onSuccess}
+      pendingAction={pendingAction}
+      verifyOtp={verifyOtp}
+    />
+  );
+};
 import { form } from "framer-motion/client";
 import user from "pusher-js/types/src/core/user";
 
@@ -67,14 +91,13 @@ interface SecurityQuestion {
 function AccountSecurityTabs() {
   const { setPasswordEditing, refreshUser, user, security_question }: any =
     useAppContext();
+  const { openModal } = useModal();
 
   const [activeTab, setActiveTab] = useState<"password" | "security">(
     "password"
   );
   const [loading, setLoading] = useState(false);
-  const [twoFAModalOpen, setTwoFAModalOpen] = useState(false);
   const [disabling2FA, setDisabling2FA] = useState(false);
-  const [showAuth, setShowAuth] = useState(false);
   const [pendingPassword, setPendingPassword] =
     useState<PasswordFormType | null>(null);
   const [pendingAction, setPendingAction] = useState<any>(null);
@@ -116,10 +139,24 @@ function AccountSecurityTabs() {
   });
 
   // Password handlers
+  const openAuthModal = () => {
+    openModal(AuthenticatorModalWrapper, {
+      isResetPassword: pendingAction === "disable-2fa" ? false : true,
+      pendingQuestions: pendingQuestions,
+      onSuccess: handleAuthSuccess,
+      pendingAction: pendingAction,
+      verifyOtp:
+        pendingAction === "disable-2fa"
+          ? disable2FAConfirm
+          : pendingAction === "update-questions"
+          ? saveSecurityQuestions
+          : verifyResetpassword,
+    });
+  };
+
   const onPasswordSubmit = (data: PasswordFormType) => {
-    if (showAuth) return;
     setPendingPassword(data);
-    setShowAuth(true);
+    openAuthModal();
   };
 
   const Resetpassword = async (data: any) => {
@@ -150,7 +187,7 @@ function AccountSecurityTabs() {
     if (user?.twoFactorEnabled) {
       setPendingQuestions(data);
       setPendingAction("update-questions");
-      setShowAuth(true);
+      openAuthModal();
       return;
     }
 
@@ -176,7 +213,6 @@ function AccountSecurityTabs() {
       notify("success", "Security questions saved ");
       refreshUser();
       setEditingQuestions(false);
-      setShowAuth(false);
       questionsForm.reset();
       setPendingQuestions(null);
     } catch (err: any) {
@@ -191,7 +227,7 @@ function AccountSecurityTabs() {
 
   const disable2FA = () => {
     setPendingAction("disable-2fa");
-    setShowAuth(true);
+    openAuthModal();
   };
 
   const disable2FAConfirm = async (otp: any) => {
@@ -207,7 +243,6 @@ function AccountSecurityTabs() {
 
   const handle2FASuccess = () => {
     refreshUser();
-    setTwoFAModalOpen(false);
   };
 
   const handleAuthSuccess = () => {
@@ -219,7 +254,6 @@ function AccountSecurityTabs() {
       notify("success", "Password updated successfully");
       passwordForm.reset();
       setPendingPassword(null);
-      setShowAuth(false);
     }
     refreshUser();
   };
@@ -309,26 +343,6 @@ function AccountSecurityTabs() {
 
   return (
     <>
-      {showAuth && (
-        <AuthenticatorModal
-          open={showAuth}
-          isResetPassword={pendingAction === "disable-2fa" ? false : true}
-          onClose={() => {
-            setShowAuth(false);
-            setPendingAction(null);
-          }}
-          pendingQuestions={pendingQuestions}
-          onSuccess={handleAuthSuccess}
-          pendingAction={pendingAction}
-          verifyOtp={
-            pendingAction === "disable-2fa"
-              ? disable2FAConfirm
-              : pendingAction === "update-questions"
-              ? saveSecurityQuestions
-              : verifyResetpassword
-          }
-        />
-      )}
       {
         <>
           <div className="w-full max-w-4xl mx-auto p-4">
@@ -827,7 +841,14 @@ function AccountSecurityTabs() {
                               if (user?.twoFactorEnabled) {
                                 disable2FA();
                               } else {
-                                setTwoFAModalOpen(true);
+                                openModal(TwoFAModal, {
+                                  onSuccess: handle2FASuccess,
+                                  qrCodeUrl,
+                                  manualCode,
+                                  loadingQr,
+                                  setError,
+                                  error,
+                                });
                               }
                             }}
                             disabled={
@@ -869,19 +890,6 @@ function AccountSecurityTabs() {
               )}
             </div>
           </div>
-          {twoFAModalOpen && user?.isSecurityQuestions && (
-            <div className="fixed inset-0 z-[9999] flex items-start justify-center bg-black/50 px-4 py-10 overflow-y-auto">
-              <TwoFAModal
-                close={() => setTwoFAModalOpen(false)}
-                onSuccess={handle2FASuccess}
-                qrCodeUrl={qrCodeUrl}
-                manualCode={manualCode}
-                loadingQr={loadingQr}
-                setError={setError}
-                error={error}
-              />
-            </div>
-          )}
         </>
       }
     </>
@@ -934,7 +942,15 @@ const TwoFAModal = ({
   };
 
   return (
-    <div className="bg-white p-5 rounded-md border shadow-sm max-w-md w-full mx-auto">
+    <div 
+      style={{
+        position: 'fixed',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        zIndex: 1001,
+      }}
+      className="bg-white p-5 rounded-md border shadow-sm max-w-md w-full mx-auto">
       <h2 className="text-xl font-bold text-gray-800 text-center mb-3">
         Enable Two-Factor Authentication
       </h2>
