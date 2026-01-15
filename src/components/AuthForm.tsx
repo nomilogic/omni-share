@@ -178,10 +178,10 @@ export const AuthForm: React.FC<AuthFormProps> = ({
       notify("success", t("login_successful"));
 
       localStorage.setItem("auth_token", result.accessToken);
-      localStorage.removeItem("forgot_token");
-      localStorage.removeItem("forgot_token_time");
       localStorage.setItem("refresh_token", result.refreshToken);
 
+      localStorage.removeItem("forgot_token");
+      localStorage.removeItem("forgot_token_time");
       localStorage.removeItem("auth_token_expiry");
       localStorage.removeItem("auth_remember");
 
@@ -259,6 +259,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
     try {
       const result: any = await initiateGoogleOAuth(referralId);
       if (result?.challengeName === "SOFTWARE_TOKEN_MFA" && result?.session) {
+        setQuestion(result?.question);
         setShowAuth(true);
         localStorage.setItem("mfa_session_token", result?.session);
         setLoading(false);
@@ -294,6 +295,8 @@ export const AuthForm: React.FC<AuthFormProps> = ({
       const result: any = await initiateFacebookOAuth();
 
       if (result?.challengeName === "SOFTWARE_TOKEN_MFA" && result?.session) {
+        setQuestion(result?.question);
+
         setShowAuth(true);
         localStorage.setItem("mfa_session_token", result?.session);
         setLoading(false);
@@ -344,6 +347,8 @@ export const AuthForm: React.FC<AuthFormProps> = ({
       const result: any = await initiateLinkedInOAuth(referralId);
       console.log("result", result);
       if (result?.challengeName === "SOFTWARE_TOKEN_MFA" && result?.session) {
+        setQuestion(result?.question);
+
         setShowAuth(true);
         localStorage.setItem("mfa_session_token", result?.session);
         setLoading(false);

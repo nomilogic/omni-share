@@ -62,7 +62,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const { openModal } = useModal();
   const [zoom, setZoom] = useState(1);
 
-  const isMobileScreen = () => window.matchMedia("(max-width: 768px)").matches;
   const handleReferShareClick = async () => {
     openModal(ReferralSection as any, {});
     setIsMobileMenuOpen(false);
@@ -270,7 +269,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             >
               <button
                 onClick={() => {
-                  setIsMobileMenuOpen(false)
+                  setIsMobileMenuOpen(false);
                   navigate("/dashboard?edit-profile=true");
                 }}
                 className="flex items-center gap-x-3 mb-0 w-full hover:theme-bg-secondary rounded-md p-2  transition-colors"
@@ -600,233 +599,238 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
                   {showPackage && (
                     <>
-                    <div className="top-[50px] right-0 left-0 bottom-0 absolute bg-black opacity-50 md:hidden h-screen"
-                    onClick={() => setShowPackage(false)}
-                    > </div>
-                    <div
-                      className="  left-0 right-0 ml-3 mr-3 md:mr-10   md:right-6  absolute bg-gray-50 z-50 md:left-auto top-5  mt-6 rounded-md shadow-md md:px-6 px-4 py-6 border md:w-[370px]"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      {user?.wallet?.package ? (
-                        <>
-                          {/* Plan Section */}
-                          <div className="flex justify-between items-start mb-3">
-                            <div className="flex items-start gap-2 text-slate-800 text-md font-medium">
-                              <Icon name="crown" size={24} />
-                              <div>
-                                <div className="flex items-center gap-3">
-                                  <h2 className="text-base font-semibold text-slate-800">
-                                    {t("my_plan")}
-                                  </h2>
-                                  <div className="relative" ref={planRef}>
-                                    <button
-                                      onClick={(e: any) => {
-                                        e.stopPropagation();
-                                        e.preventDefault();
-                                        e.nativeEvent.stopImmediatePropagation();
-                                        setPlanMsgOpen((prev) => !prev);
-                                      }}
-                                      className="text-slate-300 cursor-pointer text-xs"
-                                    >
-                                      <Icon name="question-mark" size={17} />
-                                    </button>
-                                    {planMsgOpen && (
-                                      <div className="absolute right-[-112px] m-auto top-full mt-1 w-56 p-2 bg-gray-50 border rounded-md shadow-lg z-50 text-xs text-black">
-                                        This is your current plan:{" "}
-                                        <span className="font-semibold text-purple-600">
-                                          {user.wallet?.package?.name || "FREE"}
+                      <div
+                        className="top-[50px] right-0 left-0 bottom-0 absolute bg-black opacity-50 md:hidden h-screen"
+                        onClick={() => setShowPackage(false)}
+                      >
+                        {" "}
+                      </div>
+                      <div
+                        className="  left-0 right-0 ml-3 mr-3 md:mr-10   md:right-6  absolute bg-gray-50 z-50 md:left-auto top-5  mt-6 rounded-md shadow-md md:px-6 px-4 py-6 border md:w-[370px]"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {user?.wallet?.package ? (
+                          <>
+                            {/* Plan Section */}
+                            <div className="flex justify-between items-start mb-3">
+                              <div className="flex items-start gap-2 text-slate-800 text-md font-medium">
+                                <Icon name="crown" size={24} />
+                                <div>
+                                  <div className="flex items-center gap-3">
+                                    <h2 className="text-base font-semibold text-slate-800">
+                                      {t("my_plan")}
+                                    </h2>
+                                    <div className="relative" ref={planRef}>
+                                      <button
+                                        onClick={(e: any) => {
+                                          e.stopPropagation();
+                                          e.preventDefault();
+                                          e.nativeEvent.stopImmediatePropagation();
+                                          setPlanMsgOpen((prev) => !prev);
+                                        }}
+                                        className="text-slate-300 cursor-pointer text-xs"
+                                      >
+                                        <Icon name="question-mark" size={17} />
+                                      </button>
+                                      {planMsgOpen && (
+                                        <div className="absolute right-[-112px] m-auto top-full mt-1 w-56 p-2 bg-gray-50 border rounded-md shadow-lg z-50 text-xs text-black">
+                                          This is your current plan:{" "}
+                                          <span className="font-semibold text-purple-600">
+                                            {user.wallet?.package?.name ||
+                                              "FREE"}
+                                          </span>{" "}
+                                          with{" "}
+                                          <span className="font-semibold text-purple-600">
+                                            {user.wallet?.coins ?? 0}
+                                          </span>{" "}
+                                          coins. You can also view other plans
+                                          and the coins they include.
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+
+                                  <p className="text-sm text-black mt-1">
+                                    {user.wallet?.downgradeRequested ? (
+                                      <>
+                                        Downgraded to{" "}
+                                        <span className="font-medium">
+                                          {user.wallet?.downgradedPackage?.name}
                                         </span>{" "}
-                                        with{" "}
-                                        <span className="font-semibold text-purple-600">
-                                          {user.wallet?.coins ?? 0}
-                                        </span>{" "}
-                                        coins. You can also view other plans and
-                                        the coins they include.
-                                      </div>
+                                        <br />
+                                        Effective on:
+                                      </>
+                                    ) : (
+                                      t("renewing_on")
                                     )}
+                                    &nbsp;
+                                    <span className="text-black font-medium">
+                                      {user.wallet?.expiresAt
+                                        ? new Date(
+                                            user.wallet.expiresAt
+                                          ).toLocaleDateString("en-GB", {
+                                            day: "2-digit",
+                                            month: "short",
+                                            year: "numeric",
+                                          })
+                                        : "N/A"}
+                                    </span>
+                                  </p>
+                                </div>
+                              </div>
+
+                              <span
+                                className="text-base font-semibold"
+                                style={{ color: "#7650e3" }}
+                              >
+                                {user.wallet?.package?.name || "FREE"}
+                              </span>
+                            </div>
+
+                            {/* Omni Coins */}
+                            <div className="space-y-3">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2 text-slate-800 text-md font-medium">
+                                  <Icon name="spiral-logo" />
+                                  <div className="flex items-center gap-3">
+                                    <p>Omni Coins</p>
+                                    <div className="relative" ref={coinsRef}>
+                                      <button
+                                        onClick={(e: any) => {
+                                          e.stopPropagation();
+                                          e.preventDefault();
+                                          e.nativeEvent.stopImmediatePropagation();
+                                          setCoinsMsgOpen((prev) => !prev);
+                                        }}
+                                        className="text-slate-300 text-xs cursor-pointer"
+                                      >
+                                        <Icon name="question-mark" size={17} />
+                                      </button>
+                                      {coinsMsgOpen && (
+                                        <div className="absolute right-[-112px] m-auto  top-full mt-1 w-56 p-2 bg-gray-50 border rounded-md shadow-lg z-50 text-xs text-black">
+                                          This package gives you{" "}
+                                          <span className="font-semibold text-purple-600">
+                                            {user.wallet?.coins?.toLocaleString() ??
+                                              0}
+                                          </span>{" "}
+                                          coins. Your vault limit is{" "}
+                                          <span className="font-semibold text-purple-600">
+                                            {user.wallet?.package?.coinLimit?.toLocaleString() ??
+                                              0}
+                                          </span>{" "}
+                                          coins. You can buy extra credits
+                                          anytime, but you cannot exceed your
+                                          vault limit.
+                                        </div>
+                                      )}
+                                    </div>
                                   </div>
                                 </div>
+                                <p
+                                  className="text-base font-semibold"
+                                  style={{ color: "#7650e3" }}
+                                >
+                                  {user.wallet.coins.toLocaleString() ?? 0}/
+                                  {user.wallet.package.coinLimit.toLocaleString()}
+                                </p>
+                              </div>
 
-                                <p className="text-sm text-black mt-1">
-                                  {user.wallet?.downgradeRequested ? (
-                                    <>
-                                      Downgraded to{" "}
-                                      <span className="font-medium">
-                                        {user.wallet?.downgradedPackage?.name}
-                                      </span>{" "}
-                                      <br />
-                                      Effective on:
-                                    </>
-                                  ) : (
-                                    t("renewing_on")
-                                  )}
-                                  &nbsp;
-                                  <span className="text-black font-medium">
-                                    {user.wallet?.expiresAt
-                                      ? new Date(
-                                          user.wallet.expiresAt
-                                        ).toLocaleDateString("en-GB", {
-                                          day: "2-digit",
-                                          month: "short",
-                                          year: "numeric",
-                                        })
-                                      : "N/A"}
-                                  </span>
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2 text-md text-slate-800 font-medium">
+                                  <Icon name="share" className="scale-[0.8]" />
+                                  <div className="flex items-center gap-3">
+                                    <p>{t("referral_coins")}</p>
+                                    <div className="relative" ref={referralRef}>
+                                      <button
+                                        onClick={(e: any) => {
+                                          e.stopPropagation();
+                                          e.preventDefault();
+                                          e.nativeEvent.stopImmediatePropagation();
+                                          setReferralMsgOpen((prev) => !prev);
+                                        }}
+                                        className="text-slate-300 text-xs cursor-pointer"
+                                      >
+                                        <Icon name="question-mark" size={17} />
+                                      </button>
+                                      {referralMsgOpen && (
+                                        <div className="absolute right-[-112px] m-auto  top-full mt-1 w-56 p-2 bg-gray-50 border rounded-md shadow-lg z-50 text-xs text-black">
+                                          Referral coins are always used first.
+                                          You currently have{" "}
+                                          <span className="font-semibold text-purple-600">
+                                            {user?.wallet?.referralCoin?.toLocaleString() ??
+                                              0}
+                                          </span>{" "}
+                                          referral coins. Once referral coins
+                                          run out, your purchased package coins
+                                          will be used.
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                                <p
+                                  className="text-base font-semibold"
+                                  style={{ color: "#7650e3" }}
+                                >
+                                  {user?.wallet?.referralCoin?.toLocaleString()}
                                 </p>
                               </div>
                             </div>
 
-                            <span
-                              className="text-base font-semibold"
-                              style={{ color: "#7650e3" }}
-                            >
-                              {user.wallet?.package?.name || "FREE"}
-                            </span>
-                          </div>
-
-                          {/* Omni Coins */}
-                          <div className="space-y-3">
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2 text-slate-800 text-md font-medium">
-                                <Icon name="spiral-logo" />
-                                <div className="flex items-center gap-3">
-                                  <p>Omni Coins</p>
-                                  <div className="relative" ref={coinsRef}>
-                                    <button
-                                      onClick={(e: any) => {
-                                        e.stopPropagation();
-                                        e.preventDefault();
-                                        e.nativeEvent.stopImmediatePropagation();
-                                        setCoinsMsgOpen((prev) => !prev);
-                                      }}
-                                      className="text-slate-300 text-xs cursor-pointer"
-                                    >
-                                      <Icon name="question-mark" size={17} />
-                                    </button>
-                                    {coinsMsgOpen && (
-                                      <div className="absolute right-[-112px] m-auto  top-full mt-1 w-56 p-2 bg-gray-50 border rounded-md shadow-lg z-50 text-xs text-black">
-                                        This package gives you{" "}
-                                        <span className="font-semibold text-purple-600">
-                                          {user.wallet?.coins?.toLocaleString() ??
-                                            0}
-                                        </span>{" "}
-                                        coins. Your vault limit is{" "}
-                                        <span className="font-semibold text-purple-600">
-                                          {user.wallet?.package?.coinLimit?.toLocaleString() ??
-                                            0}
-                                        </span>{" "}
-                                        coins. You can buy extra credits
-                                        anytime, but you cannot exceed your
-                                        vault limit.
-                                      </div>
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-                              <p
-                                className="text-base font-semibold"
-                                style={{ color: "#7650e3" }}
-                              >
-                                {user.wallet.coins.toLocaleString() ?? 0}/
-                                {user.wallet.package.coinLimit.toLocaleString()}
-                              </p>
-                            </div>
-
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2 text-md text-slate-800 font-medium">
-                                <Icon name="share" className="scale-[0.8]" />
-                                <div className="flex items-center gap-3">
-                                  <p>{t("referral_coins")}</p>
-                                  <div className="relative" ref={referralRef}>
-                                    <button
-                                      onClick={(e: any) => {
-                                        e.stopPropagation();
-                                        e.preventDefault();
-                                        e.nativeEvent.stopImmediatePropagation();
-                                        setReferralMsgOpen((prev) => !prev);
-                                      }}
-                                      className="text-slate-300 text-xs cursor-pointer"
-                                    >
-                                      <Icon name="question-mark" size={17} />
-                                    </button>
-                                    {referralMsgOpen && (
-                                      <div className="absolute right-[-112px] m-auto  top-full mt-1 w-56 p-2 bg-gray-50 border rounded-md shadow-lg z-50 text-xs text-black">
-                                        Referral coins are always used first.
-                                        You currently have{" "}
-                                        <span className="font-semibold text-purple-600">
-                                          {user?.wallet?.referralCoin?.toLocaleString() ??
-                                            0}
-                                        </span>{" "}
-                                        referral coins. Once referral coins run
-                                        out, your purchased package coins will
-                                        be used.
-                                      </div>
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-                              <p
-                                className="text-base font-semibold"
-                                style={{ color: "#7650e3" }}
-                              >
-                                {user?.wallet?.referralCoin?.toLocaleString()}
-                              </p>
-                            </div>
-                          </div>
-
-                          <p className="text-base my-4">
-                            {t("more_info")}{" "}
-                            <Link
-                              className="text-purple-600 font-medium"
-                              to="/faq"
-                            >
-                              FAQs
-                            </Link>
-                          </p>
-
-                          {user?.wallet?.package?.tier !== "free" && (
-                            <button
-                              onClick={() => openManageSubscription()}
-                              className="w-full py-2.5 text-md font-semibold rounded-md border bg-white flex items-center justify-center gap-2 transition hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
-                              style={{
-                                borderColor: "#7650e3",
-                                color: "#7650e3",
-                              }}
-                            >
-                              <Icon
-                                name="manage-subs"
-                                size={20}
-                                className="filter-omni"
-                              />
-                              {t("manage_subscription")}
-                            </button>
-                          )}
-
-                          {user.wallet?.downgradeRequested !== null ||
-                            (user.wallet?.package?.tier !== "pro" && (
+                            <p className="text-base my-4">
+                              {t("more_info")}{" "}
                               <Link
-                                to="/pricing"
-                                onClick={() => setShowPackage(false)}
-                                className="w-full mt-3 px-3 py-2.5 border text-md font-semibold rounded-md group flex items-center justify-center gap-2 text-white bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] border-[#7650e3]"
+                                className="text-purple-600 font-medium"
+                                to="/faq"
                               >
-                                <div className="group-hover:filter-omni h-full w-full text-center">
-                                  <Icon
-                                    name="white-diamond"
-                                    size={20}
-                                    className="mr-2"
-                                  />
-                                  {t("upgrade")}
-                                </div>
+                                FAQs
                               </Link>
-                            ))}
-                        </>
-                      ) : (
-                        <p className="text-gray-500 font-medium text-md text-center">
-                          No active package found
-                        </p>
-                      )}
-                    </div>
-                    </>                 )}
+                            </p>
+
+                            {user?.wallet?.package?.tier !== "free" && (
+                              <button
+                                onClick={() => openManageSubscription()}
+                                className="w-full py-2.5 text-md font-semibold rounded-md border bg-white flex items-center justify-center gap-2 transition hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
+                                style={{
+                                  borderColor: "#7650e3",
+                                  color: "#7650e3",
+                                }}
+                              >
+                                <Icon
+                                  name="manage-subs"
+                                  size={20}
+                                  className="filter-omni"
+                                />
+                                {t("manage_subscription")}
+                              </button>
+                            )}
+
+                            {user.wallet?.downgradeRequested !== null ||
+                              (user.wallet?.package?.tier !== "pro" && (
+                                <Link
+                                  to="/pricing"
+                                  onClick={() => setShowPackage(false)}
+                                  className="w-full mt-3 px-3 py-2.5 border text-md font-semibold rounded-md group flex items-center justify-center gap-2 text-white bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] border-[#7650e3]"
+                                >
+                                  <div className="group-hover:filter-omni h-full w-full text-center">
+                                    <Icon
+                                      name="white-diamond"
+                                      size={20}
+                                      className="mr-2"
+                                    />
+                                    {t("upgrade")}
+                                  </div>
+                                </Link>
+                              ))}
+                          </>
+                        ) : (
+                          <p className="text-gray-500 font-medium text-md text-center">
+                            No active package found
+                          </p>
+                        )}
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
