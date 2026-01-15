@@ -344,14 +344,14 @@ function AccountSecurityTabs() {
   return (
     <>
       <div className="w-full max-w-4xl mx-auto p-4">
-        <div className="mb-5">
-          <div className="flex  justify-between items-center mb-3">
-            <h1 className="text-2xl font-bold text-black flex items-center gap-3">
+        <div className="mb-5 w-full">
+          <div className="flex md:justify-between md:flex-row flex-col-reverse items-center gap-2 mb-2">
+            <h1 className="text-3xl font-bold text-black w-full">
               Account Security
             </h1>
             <button
               onClick={() => setPasswordEditing?.(false)}
-              className="flex items-center gap-2 mt-2 text-[#7650e3] hover:text-[#6540cc] font-semibold text-sm hover:underline"
+              className="flex gap-2 top-5 text-[#7650e3] hover:text-[#6540cc] font-semibold transition-colors w-full justify-end text-sm hover:underline"
             >
               <ArrowLeft className="w-5 h-5" />
               Back to Dashboard
@@ -359,7 +359,7 @@ function AccountSecurityTabs() {
           </div>
         </div>
 
-        <div className="border-b border-gray-200 mb-3">
+        <div className="border-b border-gray-200 mb-3 ">
           <nav className="flex space-x-8">
             {tabs.map((tab) => {
               const Icon = tab.icon;
@@ -447,7 +447,7 @@ function AccountSecurityTabs() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 bg-[#7650e3] text-white font-semibold rounded-md hover:bg-[#6540cc] transition disabled:opacity-60"
+                className="w-full py-3  text-white px-4 rounded-md font-semibold text-md  border-2 border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition disabled:opacity-60"
               >
                 {loading ? "Updating..." : "Update Password"}
               </button>
@@ -456,14 +456,14 @@ function AccountSecurityTabs() {
 
           {activeTab === "security" && (
             <div className="space-y-3">
-              <div className="bg-gradient-to-r from-purple-50  p-5 rounded-md border border-purple-200">
+              <div className="bg-white p-5 rounded-md border ">
                 <h3 className="text-xl font-bold text-gray-800 mb-3 flex items-center gap-3">
                   <Shield className="w-6 h-6 text-purple-700" />
                   Security Status
                 </h3>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-white p-5 rounded-md border shadow-sm">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 ">
+                  <div className="p-5 rounded-md border shadow-sm ">
                     <div className="flex justify-between items-start">
                       <div>
                         <h4 className="font-semibold">Security Questions</h4>
@@ -472,18 +472,15 @@ function AccountSecurityTabs() {
                         </p>
                       </div>
                       <span
-                        className={`px-3 py-1 rounded-full text-xs font-medium ${
-                          user?.isSecurityQuestions
-                            ? "bg-green-100 text-green-700"
-                            : "bg-amber-100 text-amber-700"
-                        }`}
+                        className= "px-3 py-1 rounded-md text-xs font-medium bg-purple-100 "
+                          
                       >
                         {user?.isSecurityQuestions ? "SET" : "NOT SET"}
                       </span>
                     </div>
                   </div>
 
-                  <div className="bg-white p-5 rounded-md border shadow-sm">
+                  <div className="bg-white p-5 rounded-md border shadow-sm ">
                     <div className="flex justify-between items-start">
                       <div>
                         <h4 className="font-semibold">
@@ -494,11 +491,7 @@ function AccountSecurityTabs() {
                         </p>
                       </div>
                       <span
-                        className={`px-3 py-1 rounded-full text-xs font-medium ${
-                          user?.twoFactorEnabled
-                            ? "bg-green-100 text-green-700"
-                            : "bg-gray-100 text-gray-700"
-                        }`}
+                        className="px-3 py-1 rounded-md bg-gray-100 text-xs font-medium" 
                       >
                         {user?.twoFactorEnabled ? "ENABLED" : "DISABLED"}
                       </span>
@@ -508,7 +501,7 @@ function AccountSecurityTabs() {
               </div>
               {user.isSecurityQuestions === false &&
               user.twoFactorEnabled === false ? (
-                <div className="bg-white p-5 rounded-md shadow-sm border  mx-auto">
+                <div className="bg-white p-5 rounded-md shadow-sm border  mx-auto ">
                   {/* Header */}
                   <div className="text-center mb-8">
                     <h2 className="text-2xl font-bold text-gray-900">
@@ -535,9 +528,9 @@ function AccountSecurityTabs() {
                             ?.answer;
 
                         return (
-                          <div key={index} className="space-y-3">
+                          <div key={index} className="space-y-3 ">
                             <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                              <label className="block text-sm font-medium text-gray-700 mb-1.5  ">
                                 Question {index + 1}
                               </label>
                               <CustomSelect
@@ -709,7 +702,7 @@ function AccountSecurityTabs() {
                           onClick={() => {
                             setEditingQuestions(true);
                           }}
-                          className="px-4 py-2 rounded-md font-medium transition bg-purple-600 hover:bg-purple-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="px-4 py-2 rounded-md font-medium transition  text-white  border-2 border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           Update
                         </button>
@@ -795,18 +788,18 @@ function AccountSecurityTabs() {
                           );
                         })}
 
-                        <div className="flex gap-3 pt-3">
+                        <div className="flex gap-3  md:flex-row flex-col">
                           <button
                             type="submit"
                             disabled={loading}
-                            className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-md disabled:opacity-60 font-medium"
+                            className="flex-1 text-white text-md transition-all border-2 border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] py-3 rounded-md disabled:opacity-60 font-medium"
                           >
                             {loading ? "Saving..." : "Save Security Questions"}
                           </button>
                           <button
                             type="button"
                             onClick={() => setEditingQuestions(false)}
-                            className="flex-1 bg-gray-200 hover:bg-gray-300 py-3 rounded-md font-medium"
+                            className="flex-1 bg-transparent border-purple-600 border text-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] py-3 rounded-md font-medium"
                           >
                             Cancel
                           </button>
@@ -822,8 +815,8 @@ function AccountSecurityTabs() {
                   </div>
 
                   <div className="bg-white p-5 rounded-md border shadow-sm">
-                    <div className="flex items-center justify-between ">
-                      <h3 className="text-xl font-bold text-gray-800">
+                    <div className="flex-1 flex-row md:flex items-center justify-between">
+                      <h3 className="  text-xl font-bold text-gray-800  mb-2 ">
                         Two-Factor Authentication
                       </h3>
 
@@ -850,10 +843,10 @@ function AccountSecurityTabs() {
                           }
                         }}
                         disabled={disabling2FA || !user?.isSecurityQuestions}
-                        className={`px-4 py-2 rounded-md font-medium transition ${
+                        className={`px-2 py-2 w-full md:w-auto rounded-md font-medium transition ${
                           user?.twoFactorEnabled
                             ? "bg-red-600 hover:bg-red-700 text-white"
-                            : "bg-purple-600 hover:bg-purple-700 text-white"
+                            : "text-white text-md transition-all border-2 border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
                         } disabled:opacity-50 disabled:cursor-not-allowed`}
                       >
                         {disabling2FA
@@ -1002,8 +995,7 @@ const TwoFAModal = ({
             <button
               onClick={verifySetup}
               disabled={verifying || otp.length !== 6}
-              className="flex-1 py-2 bg-purple-600 text-white rounded-md
-                     hover:bg-purple-700 disabled:opacity-50 transition"
+              className="flex-1 py-2 rounded-md text-white text-md transiton-all border-2 border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]disabled:opacity-50  "
             >
               {verifying ? "Verifying..." : "Enable 2FA"}
             </button>

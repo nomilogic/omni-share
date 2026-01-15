@@ -6,6 +6,7 @@ import React, {
   useState,
   useCallback,
   useMemo,
+  useLayoutEffect,
 } from "react";
 import { getCurrentUser } from "../lib/database";
 import { LoadingProvider } from "./LoadingContext";
@@ -259,6 +260,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     localStorage.removeItem("pusherTransportTLS");
     localStorage.removeItem("forgot_token");
     localStorage.removeItem("forgot_token_time");
+    localStorage.removeItem("cached_user");
     dispatch({ type: "RESET_STATE" });
   }, []);
 
@@ -336,7 +338,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     return basic;
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const init = async () => {
       const token = Cookies.get("auth_token");
       if (!token) {
@@ -344,13 +346,50 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
         return;
       }
 
+      // Try to load cached user data first
+      const cachedUser = localStorage.getItem("cached_user");
+      if (cachedUser) {
+        try {
+          const user = JSON.parse(cachedUser);
+          dispatch({ type: "SET_USER", payload: user });
+          dispatch({
+            type: "SET_BALANCE",
+            payload: user.wallet.coins + user.wallet.referralCoin,
+          });
+
+          const profile = user.profile as Profile | null;
+          if (profile) {
+            dispatch({ type: "SET_SELECTED_PROFILE", payload: profile });
+            dispatch({ type: "SET_USER_PLAN", payload: profile.plan || "free" });
+            dispatch({
+              type: "SET_BUSINESS_ACCOUNT",
+              payload: profile.type === "business",
+            });
+            const complete = checkProfileCompletion(profile);
+            dispatch({ type: "SET_TIER_SELECTED", payload: true });
+            dispatch({ type: "SET_PROFILE_SETUP", payload: complete });
+            dispatch({ type: "SET_ONBOARDING_COMPLETE", payload: complete });
+          }
+          // Set loading to false to show page immediately
+          dispatch({ type: "SET_LOADING", payload: false });
+        } catch (error) {
+          console.error("Failed to parse cached user:", error);
+        }
+      }
+
+      // Fetch fresh data in background
       try {
         const res: any = await getCurrentUser();
         const user = res?.user || null;
         if (!user) {
-          dispatch({ type: "SET_LOADING", payload: false });
+          if (!cachedUser) {
+            dispatch({ type: "SET_LOADING", payload: false });
+          }
           return;
         }
+
+        // Update cache
+        localStorage.setItem("cached_user", JSON.stringify(user));
 
         dispatch({ type: "SET_USER", payload: user });
         dispatch({
@@ -371,9 +410,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
           dispatch({ type: "SET_PROFILE_SETUP", payload: complete });
           dispatch({ type: "SET_ONBOARDING_COMPLETE", payload: complete });
         }
+
+        // Ensure loading is off
+        dispatch({ type: "SET_LOADING", payload: false });
       } catch (error) {
         console.error("Auth init failed:", error);
-      } finally {
         dispatch({ type: "SET_LOADING", payload: false });
       }
     };

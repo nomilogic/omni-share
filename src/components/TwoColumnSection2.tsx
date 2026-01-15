@@ -2,11 +2,13 @@ import React from "react";
 import mainImage from "../assets/Omni sshare-layout-02.png";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { useAppContext } from "@/context/AppContext";
 
 const TwoColumnSection2 = () => {
   const { t, i18n } = useTranslation();
   const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
   const navigate = useNavigate();
+  const { user } = useAppContext();
   return (
     <section
       className="pt-8 pb-4 md:pb-14  md:pt-14 relative max-w-full mx-auto px-4 sm:px-6 lg:px-[10%]
@@ -15,19 +17,27 @@ const TwoColumnSection2 = () => {
       {/* Left Side - Text */}
       <div className="flex flex-col gap-3 md:gap-4 items-center md:items-start">
         <h2 className="font-bold text-4xl sm:text-5xl text-black">
-          <span className="text-purple-600 ">{t("line_06")}</span> {t("line_07")}
+          <span className="text-purple-600 ">{t("line_06")}</span>{" "}
+          {t("line_07")}
         </h2>
 
         <p className="text-lg text-gray-500 leading-relaxed">
-          {t("line_08")} <span className="text-xl font-medium"> {t("line_09")}</span>
+          {t("line_08")}{" "}
+          <span className="text-xl font-medium"> {t("line_09")}</span>
         </p>
 
         <div className="flex justify-center md:justify-start w-full ">
           <button
-            onClick={() => navigate("/auth")}
+            onClick={() => {
+              if (user) {
+                navigate("/content");
+              } else {
+                navigate("/auth");
+              }
+            }}
             className="group px-6 py-2.5 border border-purple-600 text-purple-600 font-semibold rounded-md hover:bg-purple-100 transition"
           >
-            {t("get_started_free")}
+            <span>{user ? "Create Post" : t("get_started_free")}</span> &nbsp;
             <span className="inline-block transform transition-transform duration-300 group-hover:translate-x-1">
               →
             </span>
