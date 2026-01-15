@@ -344,7 +344,7 @@ function AccountSecurityTabs() {
   return (
     <>
       <div className="w-full max-w-4xl mx-auto p-4">
-        <div className="mb-5">
+        <div className="mb-5 w-full">
           <div className="flex md:justify-between md:flex-row flex-col-reverse items-center gap-2 mb-2">
             <h1 className="text-3xl font-bold text-black w-full">
               Account Security
@@ -472,7 +472,7 @@ function AccountSecurityTabs() {
                         </p>
                       </div>
                       <span
-                        className= "px-3 py-1 rounded-md text-xs font-medium bg-gray-100 "
+                        className= "px-3 py-1 rounded-md text-xs font-medium bg-purple-100 "
                           
                       >
                         {user?.isSecurityQuestions ? "SET" : "NOT SET"}
@@ -799,7 +799,7 @@ function AccountSecurityTabs() {
                           <button
                             type="button"
                             onClick={() => setEditingQuestions(false)}
-                            className="flex-1 bg-gray-200 hover:bg-gray-300 py-3 rounded-md font-medium"
+                            className="flex-1 bg-transparent border-purple-600 border text-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] py-3 rounded-md font-medium"
                           >
                             Cancel
                           </button>
@@ -815,8 +815,8 @@ function AccountSecurityTabs() {
                   </div>
 
                   <div className="bg-white p-5 rounded-md border shadow-sm">
-                    <div className="flex items-center justify-between ">
-                      <h3 className="text-xl font-bold text-gray-800">
+                    <div className="flex-1 flex-row md:flex items-center justify-between">
+                      <h3 className="  text-xl font-bold text-gray-800  mb-2 ">
                         Two-Factor Authentication
                       </h3>
 
@@ -843,7 +843,7 @@ function AccountSecurityTabs() {
                           }
                         }}
                         disabled={disabling2FA || !user?.isSecurityQuestions}
-                        className={`px-2 py-2 rounded-md font-medium transition ${
+                        className={`px-2 py-2 w-full md:w-auto rounded-md font-medium transition ${
                           user?.twoFactorEnabled
                             ? "bg-red-600 hover:bg-red-700 text-white"
                             : "text-white text-md transition-all border-2 border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
@@ -995,7 +995,7 @@ const TwoFAModal = ({
             <button
               onClick={verifySetup}
               disabled={verifying || otp.length !== 6}
-              className="flex-1 py-2 text-white text-md transition-all border-2 border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]disabled:opacity-50 "
+              className="flex-1 py-2 rounded-md text-white text-md transiton-all border-2 border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]disabled:opacity-50  "
             >
               {verifying ? "Verifying..." : "Enable 2FA"}
             </button>

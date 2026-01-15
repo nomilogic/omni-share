@@ -17,27 +17,27 @@ const TwoColumnSection2 = () => {
       {/* Left Side - Text */}
       <div className="flex flex-col gap-3 md:gap-4 items-center md:items-start">
         <h2 className="font-bold text-4xl sm:text-5xl text-black">
-          <span className="text-purple-600 ">{t("line_06")}</span> {t("line_07")}
+          <span className="text-purple-600 ">{t("line_06")}</span>{" "}
+          {t("line_07")}
         </h2>
 
         <p className="text-lg text-gray-500 leading-relaxed">
-          {t("line_08")} <span className="text-xl font-medium"> {t("line_09")}</span>
+          {t("line_08")}{" "}
+          <span className="text-xl font-medium"> {t("line_09")}</span>
         </p>
 
         <div className="flex justify-center md:justify-start w-full ">
           <button
             onClick={() => {
-    if (user) {
-      navigate("/content");
-    } else {
-      navigate("/auth");
-    }
-  }}
+              if (user) {
+                navigate("/content");
+              } else {
+                navigate("/auth");
+              }
+            }}
             className="group px-6 py-2.5 border border-purple-600 text-purple-600 font-semibold rounded-md hover:bg-purple-100 transition"
           >
-           <span>
-    {user ? "Let's Create" : t("get_started_free")}
-  </span>
+            <span>{user ? "Create Post" : t("get_started_free")}</span> &nbsp;
             <span className="inline-block transform transition-transform duration-300 group-hover:translate-x-1">
               →
             </span>

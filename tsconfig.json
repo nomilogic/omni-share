@@ -5,7 +5,6 @@
     "lib": ["esnext", "dom", "dom.iterable"],
     "tsBuildInfoFile": "./node_modules/typescript/tsbuildinfo",
     "jsx": "preserve",
-
     "moduleResolution": "bundler",
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -15,7 +14,7 @@
       "@/*": ["src/*"],
       "@shared/*": ["../shared/*"]
     },
-    "types": ["vite/client"]
+    "types": ["vite/client", "swiper"]  // Add "swiper" here
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]

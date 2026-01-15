@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "@/context/AppContext";
 
-
 const TwoColumnSection: React.FC = () => {
   const { t, i18n } = useTranslation();
   const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
@@ -25,26 +24,25 @@ const TwoColumnSection: React.FC = () => {
       {/* Right Side - Text + Button */}
       <div className="w-full flex flex-col gap-3 md:gap-4 items-center md:items-start">
         <h2 className="font-bold text-4xl sm:text-5xl text-black">
-          {t("line_01")} <span className="text-purple-600">{t("line_02")}</span> {t("line_03")}
+          {t("line_01")} <span className="text-purple-600">{t("line_02")}</span>{" "}
+          {t("line_03")}
         </h2>
         <p className="leading-relaxed text-lg text-gray-500">
-          {t("line_04")} <span className="text-xl font-medium">{t("line_05")}</span>
+          {t("line_04")}{" "}
+          <span className="text-xl font-medium">{t("line_05")}</span>
         </p>
         <div className="flex justify-center md:justify-start w-full">
-
           <button
             onClick={() => {
-    if (user) {
-      navigate("/content");
-    } else {
-      navigate("/auth");
-    }
-  }}
+              if (user) {
+                navigate("/content");
+              } else {
+                navigate("/auth");
+              }
+            }}
             className="group px-6 py-2.5 border border-purple-600 text-purple-600 font-semibold rounded-md hover:bg-purple-100 transition"
           >
-            <span>
-    {user ? "Let's Create" : t("get_started_free")}
-  </span>
+            <span>{user ? "Create Post" : t("get_started_free")}</span>&nbsp;
             <span className="inline-block transform transition-transform duration-300 group-hover:translate-x-1">
               →
             </span>

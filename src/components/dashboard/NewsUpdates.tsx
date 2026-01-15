@@ -1,8 +1,12 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import laptop from "../../assets/dashboard-1.svg";
 import mobile from "../../assets/dashboard-2.svg";
 import tablet from "../../assets/dashboard-3.svg";
 import { useTranslation } from "react-i18next";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/pagination";
+import { Autoplay, Pagination } from "swiper";
 
 function NewsUpdates() {
   const { t, i18n } = useTranslation();
@@ -22,42 +26,38 @@ function NewsUpdates() {
     },
   ];
 
-  const [currentSlide, setCurrentSlide] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [slides.length]);
-
   return (
     <div className="bg-gray-100 rounded-md p-5 flex flex-col w-full h-[450px]">
-  <div className="flex-1 flex flex-col items-center justify-center">
-    <img
-      src={slides[currentSlide].image}
-      alt="slide"
-      className="h-48 w-full object-contain"
-    />
-
-    <p className="text-sm text-black text-center mt-5 min-h-[60px]">
-      {slides[currentSlide].text}
-    </p>
-  </div>
-
-  <div className="flex mb-2 justify-center gap-2">
-    {slides.map((_, i) => (
-      <button
-        key={i}
-        onClick={() => setCurrentSlide(i)}
-        className={`w-2 h-2 rounded-full transition-colors ${
-          currentSlide === i ? "bg-[#7650e3]" : "bg-gray-300"
-        }`}
-      />
-    ))}
-  </div>
-</div>
+      <Swiper
+        spaceBetween={10}
+        slidesPerView={1}
+        loop={true}
+        pagination={{
+          clickable: true,
+        }}
+        autoplay={{
+          delay: 5000, // Slide change delay in ms
+          disableOnInteraction: false, // Allow autoplay even after user interaction
+        }}
+        modules={[Autoplay, Pagination]}
+        className="w-full h-full"
+      >
+        {slides.map((slide, index) => (
+          <SwiperSlide key={index} className="h-full">
+            <div className="h-full flex flex-col items-center justify-center">
+              <img
+                src={slide.image}
+                alt={`slide-${index}`}
+                className="h-48 w-auto object-contain"
+              />
+              <p className="text-sm text-black text-center mt-5 min-h-[60px]">
+                {slide.text}
+              </p>
+            </div>
+          </SwiperSlide>
+        ))}
+      </Swiper>
+    </div>
   );
 }
 
