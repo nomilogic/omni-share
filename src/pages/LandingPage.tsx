@@ -17,6 +17,9 @@ export const LandingPage: React.FC = () => {
   };
 
   const handleAuthSuccess = (user: any) => {
+    // Cache user to localStorage on login
+    localStorage.setItem("cached_user", JSON.stringify(user));
+    
     dispatch({ type: "SET_USER", payload: user });
     try {
       const profile = user?.profile;
