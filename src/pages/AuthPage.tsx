@@ -21,6 +21,9 @@ export const AuthPage: React.FC = () => {
   }, [localStorage.getItem("auth_token")]);
 
   const handleAuthSuccess = (user: any) => {
+    // Cache user to localStorage on login
+    localStorage.setItem("cached_user", JSON.stringify(user));
+    
     dispatch({ type: "SET_USER", payload: user });
     dispatch({
       type: "SET_BALANCE",

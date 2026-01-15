@@ -21,7 +21,6 @@ import { notify } from "@/utils/toast";
 import { AuthenticatorModal } from "./AuthenticatorModal";
 import { FC } from "react";
 
-// Wrapper component for AuthenticatorModal to work with modal context
 const AuthenticatorModalWrapper: FC<any> = ({
   close,
   isResetPassword,
@@ -29,6 +28,7 @@ const AuthenticatorModalWrapper: FC<any> = ({
   onSuccess,
   pendingAction,
   verifyOtp,
+  passwordsValue,
 }) => {
   return (
     <AuthenticatorModal
@@ -39,11 +39,10 @@ const AuthenticatorModalWrapper: FC<any> = ({
       onSuccess={onSuccess}
       pendingAction={pendingAction}
       verifyOtp={verifyOtp}
+      passwordsValue={passwordsValue}
     />
   );
 };
-import { form } from "framer-motion/client";
-import user from "pusher-js/types/src/core/user";
 
 const passwordSchema = z
   .object({
@@ -98,8 +97,7 @@ function AccountSecurityTabs() {
   );
   const [loading, setLoading] = useState(false);
   const [disabling2FA, setDisabling2FA] = useState(false);
-  const [pendingPassword, setPendingPassword] =
-    useState<PasswordFormType | null>(null);
+
   const [pendingAction, setPendingAction] = useState<any>(null);
   const [editingQuestions, setEditingQuestions] = useState(false);
   const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
@@ -143,25 +141,27 @@ function AccountSecurityTabs() {
     control: questionsForm.control,
     name: "answers",
   });
-
-  const openAuthModal = () => {
+  const openAuthModal = (action: any, passwordsValue?: any) => {
+    console.log("action", action);
     openModal(AuthenticatorModalWrapper, {
-      isResetPassword: pendingAction === "disable-2fa" ? false : true,
+      isResetPassword: action == "disable-2fa" ? false : true,
       pendingQuestions: pendingQuestions,
       onSuccess: handleAuthSuccess,
-      pendingAction: pendingAction,
+      pendingAction: action,
+      passwordsValue: passwordsValue,
       verifyOtp:
-        pendingAction === "disable-2fa"
+        action == "disable-2fa"
           ? disable2FAConfirm
-          : pendingAction === "update-questions"
+          : action == "update-questions"
           ? saveSecurityQuestions
-          : verifyResetpassword,
+          : action == null
+          ? verifyResetpassword
+          : null,
     });
   };
 
   const onPasswordSubmit = (data: PasswordFormType) => {
-    setPendingPassword(data);
-    openAuthModal();
+    openAuthModal(null, data);
   };
 
   const Resetpassword = async (data: any) => {
@@ -174,13 +174,14 @@ function AccountSecurityTabs() {
     passwordForm.reset();
   };
 
-  const verifyResetpassword = async (otp: string) => {
-    if (!pendingPassword) return;
+  const verifyResetpassword = async (otp: string, password: any) => {
     const res = await API.updatePassword({
-      currentPassword: pendingPassword.currentPassword,
-      newPassword: pendingPassword.newPassword,
+      currentPassword: password?.currentPassword,
+      newPassword: password?.newPassword,
       otp,
     });
+    notify("success", "Password updated successfully");
+    passwordForm.reset();
     return res.data;
   };
 
@@ -188,7 +189,7 @@ function AccountSecurityTabs() {
     if (user?.twoFactorEnabled) {
       setPendingQuestions(data);
       setPendingAction("update-questions");
-      openAuthModal();
+      openAuthModal("update-questions");
       return;
     }
 
@@ -228,7 +229,7 @@ function AccountSecurityTabs() {
 
   const disable2FA = () => {
     setPendingAction("disable-2fa");
-    openAuthModal();
+    openAuthModal("disable-2fa");
   };
 
   const disable2FAConfirm = async (otp: any) => {
@@ -249,12 +250,6 @@ function AccountSecurityTabs() {
   const handleAuthSuccess = () => {
     if (pendingAction === "disable-2fa") {
       notify("success", "Two-factor authentication disabled");
-      refreshUser();
-    } else if (pendingAction === "update-questions") {
-    } else {
-      notify("success", "Password updated successfully");
-      passwordForm.reset();
-      setPendingPassword(null);
     }
     refreshUser();
   };
@@ -302,10 +297,8 @@ function AccountSecurityTabs() {
     setLoading(true);
 
     try {
-      // 1. Verify OTP (most secure order)
       await API.verify2FASetup({ token: otp });
 
-      // 2. Save security questions
       const payload = {
         otp,
         answers: questionsForm.getValues("answers").map((item) => ({
@@ -322,7 +315,6 @@ function AccountSecurityTabs() {
       );
       refreshUser();
 
-      // Reset form & wizard
       questionsForm.reset();
       setStep(1);
       setOtp("");
@@ -340,12 +332,10 @@ function AccountSecurityTabs() {
   const resetAllStates = () => {
     setLoading(false);
     setDisabling2FA(false);
-    setPendingPassword(null);
     setPendingAction(null);
     setEditingQuestions(false);
-    setQrCodeUrl(null);
-    setManualCode(null);
-    setLoadingQr(false);
+    questionsForm.reset();
+    passwordForm.reset();
     setError("");
     setOtp("");
     setStep(1);
