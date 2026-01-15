@@ -29,6 +29,7 @@ import { useTranslation } from "react-i18next";
 import { useModal } from "../context2/ModalContext";
 import DiscardPostModal from "../components/modals/DiscardPostModal";
 
+
 interface PostPreviewProps {
   posts: any[];
   onBack: () => void;
@@ -61,6 +62,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
   const [isRegeneratingMode, setIsRegeneratingMode] = useState<boolean>(false);
   const [regenerationPrompt, setRegenerationPrompt] = useState<string>("");
   const [isRegenerating, setIsRegenerating] = useState<boolean>(false);
+  
 
   const [pendingDiscardAction, setPendingDiscardAction] = useState<
     (() => void) | null
@@ -76,9 +78,19 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
     }));
     setPosts(postsWithCharacterCount);
   }, [generatedPosts]);
-
+const { dispatch } = useAppContext();
   const handleDiscardAction = useCallback(() => {
+     dispatch({ type: "SET_GENERATED_POSTS", payload: [] });
+    dispatch({ type: "SET_CONTENT_DATA", payload: null });
+
+    
+
+    document.body.classList.remove("modal-open");
+    document.documentElement.classList.remove("modal-open");
+
     navigate("/content");
+
+
   }, [navigate]);
 
   const handleDiscardClick = useCallback(() => {
