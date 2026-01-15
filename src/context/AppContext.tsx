@@ -377,7 +377,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const loadSecurityQuestion = async () => {
     try {
-      if (!state.security_question.length) {
+      if (!state?.security_question?.length) {
         const [question] = await Promise.all([API.securityQuestion()]);
         dispatch({
           type: "SET_SECURITY_QUESTIONS",

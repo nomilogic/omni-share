@@ -197,7 +197,9 @@ export const AuthenticatorModal = ({
   pendingQuestions,
   pendingAction,
   question = [],
+  passwordsValue,
 }: any) => {
+  console.log("passwordsValue", passwordsValue);
   const [authMethod, setAuthMethod] = useState<AuthMethod>("totp");
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
@@ -247,8 +249,9 @@ export const AuthenticatorModal = ({
   const handleVerify = async () => {
     const session = localStorage.getItem("mfa_session_token");
 
-    if (!session && !isResetPassword && pendingAction !== "disable-2fa")
+    if (!session && isResetPassword == false && pendingAction !== "disable-2fa")
       throw new Error("Session expired");
+
     setLoading(true);
     try {
       if (authMethod === "totp") {
@@ -261,7 +264,7 @@ export const AuthenticatorModal = ({
           onSuccess(result);
           onClose();
         } else {
-          const result = await verifyOtp(otp);
+          const result = await verifyOtp(otp, passwordsValue ?? passwordsValue);
           onSuccess(result);
           onClose();
         }
