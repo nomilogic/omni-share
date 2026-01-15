@@ -19,6 +19,7 @@ import { useTranslation } from "react-i18next";
 import { useModal } from "../context2/ModalContext";
 import DiscardWarningModal from "../components/modals/DiscardWarningModal";
 import { useAppContext } from "@/context/AppContext";
+import Cookies from "js-cookie";
 
 type TikTokPrivacyLevel = string; // e.g. "SELF_ONLY", "FRIENDS", "PUBLIC" – comes from creator_info
 
@@ -87,10 +88,9 @@ export const PublishPosts: React.FC<PublishProps> = ({
   const [selectedFacebookPage, setSelectedFacebookPage] = useState<string>(
     localStorage.getItem("selectedFacebookPage") || ""
   );
-  const [selectedYoutubeChannel, setSelectedYoutubeChannel] =
-    useState<string>(
-      localStorage.getItem("selectedYoutubeChannel") || ""
-    );
+  const [selectedYoutubeChannel, setSelectedYoutubeChannel] = useState<string>(
+    localStorage.getItem("selectedYoutubeChannel") || ""
+  );
   const [publishedPlatforms, setPublishedPlatforms] = useState<Platform[]>([]);
   const [loadingFacebookPages, setLoadingFacebookPages] =
     useState<boolean>(false);
@@ -109,15 +109,19 @@ export const PublishPosts: React.FC<PublishProps> = ({
     isYourBrand: false,
     isBrandedContent: false,
   });
-  const [tiktokPostingBlockedReason, setTiktokPostingBlockedReason] =
-    useState<string | null>(null);
+  const [tiktokPostingBlockedReason, setTiktokPostingBlockedReason] = useState<
+    string | null
+  >(null);
 
   const navigate = useNavigate();
 
   // On mount, mirror AccountsPage behaviour: immediately check which platforms
   // are already connected, regardless of current posts.
   useEffect(() => {
-    console.log("[PublishPosts] Checking initially connected platforms for user:", userId);
+    console.log(
+      "[PublishPosts] Checking initially connected platforms for user:",
+      userId
+    );
     checkConnectedPlatforms();
   }, []);
 
@@ -171,7 +175,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
   const checkConnectedPlatforms = async () => {
     try {
       // Get the authentication token
-      const token = localStorage.getItem("auth_token");
+      const token = Cookies.get("auth_token");
       if (!token) {
         console.warn("No authentication token found");
         setConnectedPlatforms([]);
@@ -226,7 +230,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
 
   const fetchLinkedPages = async () => {
     try {
-      const token = localStorage.getItem("auth_token");
+      const token = Cookies.get("auth_token");
       if (!token) return;
 
       const tokenResponse = await API.tokenForPlatform("linkedin");
@@ -238,15 +242,23 @@ export const PublishPosts: React.FC<PublishProps> = ({
           if (res?.data) {
             const pagesData = await res.data;
             setlinkedinPages(pagesData.data || []);
-            
+
             // Load saved selection from localStorage, or use first page as default
-            const savedLinkedInPage = localStorage.getItem("selectedlinkedinPage");
-            if (savedLinkedInPage && pagesData.data?.some((p: any) => p.urn === savedLinkedInPage)) {
+            const savedLinkedInPage = localStorage.getItem(
+              "selectedlinkedinPage"
+            );
+            if (
+              savedLinkedInPage &&
+              pagesData.data?.some((p: any) => p.urn === savedLinkedInPage)
+            ) {
               setSelectedlinkedinPage(savedLinkedInPage);
               console.log("Restored saved LinkedIn page:", savedLinkedInPage);
             } else if (pagesData?.data?.[0]?.urn) {
               setSelectedlinkedinPage(pagesData.data[0].urn);
-              localStorage.setItem("selectedlinkedinPage", pagesData.data[0].urn);
+              localStorage.setItem(
+                "selectedlinkedinPage",
+                pagesData.data[0].urn
+              );
             }
           }
         }
@@ -258,7 +270,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
   const fetchFacebookPages = async () => {
     setLoadingFacebookPages(true);
     try {
-      const token = localStorage.getItem("auth_token");
+      const token = Cookies.get("auth_token");
       if (!token) {
         console.warn("No auth token found");
         return;
@@ -308,8 +320,13 @@ export const PublishPosts: React.FC<PublishProps> = ({
           setFacebookPages(pagesData);
 
           // Load saved selection from localStorage, or use first page as default
-          const savedFacebookPage = localStorage.getItem("selectedFacebookPage");
-          if (savedFacebookPage && pagesData.some((p) => p.id === savedFacebookPage)) {
+          const savedFacebookPage = localStorage.getItem(
+            "selectedFacebookPage"
+          );
+          if (
+            savedFacebookPage &&
+            pagesData.some((p) => p.id === savedFacebookPage)
+          ) {
             setSelectedFacebookPage(savedFacebookPage);
             console.log("Restored saved page:", savedFacebookPage);
           } else if (pagesData && pagesData.length > 0) {
@@ -332,7 +349,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
 
   const fetchYouTubeChannels = async () => {
     try {
-      const token = localStorage.getItem("auth_token");
+      const token = Cookies.get("auth_token");
       if (!token) return;
 
       const tokenResponse = await API.tokenForPlatform("youtube");
@@ -346,18 +363,31 @@ export const PublishPosts: React.FC<PublishProps> = ({
           if (channelsResponse.ok) {
             const channelsData = await channelsResponse.json();
             setYoutubeChannels(channelsData.channels || []);
-            
+
             // Load saved selection from localStorage, or use first channel as default
-            const savedYoutubeChannel = localStorage.getItem("selectedYoutubeChannel");
-            if (savedYoutubeChannel && channelsData.channels?.some((c: any) => c.id === savedYoutubeChannel)) {
+            const savedYoutubeChannel = localStorage.getItem(
+              "selectedYoutubeChannel"
+            );
+            if (
+              savedYoutubeChannel &&
+              channelsData.channels?.some(
+                (c: any) => c.id === savedYoutubeChannel
+              )
+            ) {
               setSelectedYoutubeChannel(savedYoutubeChannel);
-              console.log("Restored saved YouTube channel:", savedYoutubeChannel);
+              console.log(
+                "Restored saved YouTube channel:",
+                savedYoutubeChannel
+              );
             } else if (
               channelsData.channels &&
               channelsData.channels.length > 0
             ) {
               setSelectedYoutubeChannel(channelsData.channels[0].id);
-              localStorage.setItem("selectedYoutubeChannel", channelsData.channels[0].id);
+              localStorage.setItem(
+                "selectedYoutubeChannel",
+                channelsData.channels[0].id
+              );
             }
           }
         }
@@ -550,10 +580,14 @@ export const PublishPosts: React.FC<PublishProps> = ({
         tikTokPost?.tiktokVideoDurationSec &&
         tiktokCreatorInfo?.max_video_post_duration_sec &&
         tikTokPost.tiktokVideoDurationSec >
-          (tiktokCreatorInfo.max_video_post_duration_sec + 30)
+          tiktokCreatorInfo.max_video_post_duration_sec + 30
       ) {
         setError(
-          `Your TikTok video duration (${Math.round(tikTokPost.tiktokVideoDurationSec)}s) exceeds your account limit (${tiktokCreatorInfo.max_video_post_duration_sec}s). Please use a shorter video.`
+          `Your TikTok video duration (${Math.round(
+            tikTokPost.tiktokVideoDurationSec
+          )}s) exceeds your account limit (${
+            tiktokCreatorInfo.max_video_post_duration_sec
+          }s). Please use a shorter video.`
         );
         return;
       }
@@ -687,461 +721,512 @@ export const PublishPosts: React.FC<PublishProps> = ({
               const progress = publishProgress[post.platform];
 
               // Duration-based disablement for TikTok (uses creator_info limit)
-              const durationSec = (post as any).tiktokVideoDurationSec as number | undefined;
+              const durationSec = (post as any).tiktokVideoDurationSec as
+                | number
+                | undefined;
               const tiktokDurationLimit =
                 post.platform === "tiktok"
                   ? tiktokCreatorInfo?.max_video_post_duration_sec
                   : undefined;
-              
+
               // Only disable if we have a duration AND a limit AND duration is significantly over
               // Allow some buffer (30 seconds grace period) for encoding/processing differences
               const disableByDuration =
                 post.platform === "tiktok" &&
                 !!durationSec &&
                 !!tiktokDurationLimit &&
-                durationSec > (tiktokDurationLimit + 30);
+                durationSec > tiktokDurationLimit + 30;
 
               return (
                 <>
-                <div
-                  key={post.platform}
-                  className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-md hover:bg-gray-50 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    {/* Platform Icon */}
-                    <div
-                      className={`w-8 h-8 md:w-12 md:h-12 rounded-full flex items-center  justify-center text-white ${getPlatformIconBackgroundColors(
-                        post.platform
-                      )}`}
-                    >
-                      {(() => {
-                        const IconComponent = getPlatformIcon(post.platform);
-                        if (!IconComponent) {
-                          return (
-                            <span className="text-lg font-bold">
-                              {post.platform.substring(0, 2)}
-                            </span>
-                          );
-                        }
-                        return <IconComponent className="w-8 h-4 md:w-6 md:h-6" />;
-                      })()}
-                    </div>
-
-                    {/* Platform Info */}
-                    <div>
-                      <h4 className="font-medium text-slate-900">
-                        {getPlatformDisplayName(post.platform)}
-                      </h4>
-                      <p
-                        className={`text-sm ${
-                          isConnected ? "text-green-600" : "text-red-600"
-                        }`}
+                  <div
+                    key={post.platform}
+                    className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-md hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      {/* Platform Icon */}
+                      <div
+                        className={`w-8 h-8 md:w-12 md:h-12 rounded-full flex items-center  justify-center text-white ${getPlatformIconBackgroundColors(
+                          post.platform
+                        )}`}
                       >
-                        {isConnected ? t("connected") : t("not_connected")}
-                      </p>
-                      
-                      {/* Video Limits Display - Only show when there's video content */}
-                      {(() => {
-                        const mediaUrl = post.mediaUrl || post.imageUrl;
-                        const isVideo = mediaUrl && (
-                          /\.(mp4|webm|ogg|mov|avi|mkv|flv|wmv|3gp)(\?.*)?$/i.test(mediaUrl) ||
-                          (post as any).isVideoContent ||
-                          (post as any).mediaType === "video"
-                        );
-                        
-                        if (!isVideo) return null;
-
-                        const videoAspectRatio = (post as any).videoAspectRatio;
-                        const isShorts = videoAspectRatio && videoAspectRatio >= 0.5 && videoAspectRatio <= 0.65;
-                        
-                        const videoLimits = getPlatformVideoLimits(post.platform, isShorts);
-                        if (videoLimits) {
-                          return (
-                            <div className="mt-2 text-xs text-gray-600 space-y-1">
-                              <p className="font-medium text-gray-700">
-                                {isShorts ? "Shorts" : "Video"} Limits:
-                              </p>
-                              <p>Aspect Ratio: <span className="font-semibold">{videoLimits.aspectRatio}</span></p>
-                              <p>Max Duration: <span className="font-semibold">{videoLimits.maxDuration}</span></p>
-                              <p>Max File Size: <span className="font-semibold">{videoLimits.maxFileSize}</span></p>
-                              {videoLimits.notes && (
-                                <p className="text-yellow-700 italic mt-1">⚠️ {videoLimits.notes}</p>
-                              )}
-                            </div>
-                          );
-                        }
-                        return null;
-                      })()}
-                      
-                      {disableByDuration && (
-                        <p className="text-xs text-red-600 mt-1">
-                          This video is longer than your TikTok account's allowed
-                          duration; TikTok is disabled for this post.
-                        </p>
-                      )}
-                      {progress && (
-                        <p
-                          className={`text-xs mt-1 ${
-                            progress === "pending"
-                              ? "text-yellow-600"
-                              : progress === "success"
-                              ? "text-green-600"
-                              : "text-red-600"
-                          }`}
-                        >
-                          {progress === "pending"
-                            ? "Publishing..."
-                            : progress === "success"
-                            ? "Published"
-                            : "Failed"}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    {isConnected ? (
-                      <>
-                        <button
-                          onClick={() => handleConnect(post.platform)}
-                          disabled={isConnecting}
-                          className="p-2 text-gray-500 font-medium hover:text-blue-600 disabled:opacity-50 rounded-md hover:bg-gray-100"
-                          title="Refresh connection"
-                        >
-                          <RefreshCw className={`w-4 h-4`} />
-                        </button>
-                        <button
-                          onClick={() => handleDisconnect(post.platform)}
-                          disabled={isConnecting}
-                          className="p-2 text-gray-500 font-medium hover:text-red-600 disabled:opacity-50 rounded-md hover:bg-gray-100"
-                          title="Disconnect"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </>
-                    ) : (
-                      <> </>
-                    )}
-
-                    <div className="flex items-center gap-2">
-                      {isConnected &&
-                        !publishedPlatforms.includes(post.platform) &&
-                        !disableByDuration && (
-                          <label
-                            className="flex items-center cursor-pointer"
-                            htmlFor={`platform-${post.platform}`}
-                          >
-                            <div className="relative">
-                              <input
-                                className="text-green-500 focus:ring-green-400 hidden absolute opacity-0 w-0 h-0"
-                                type="checkbox"
-                                checked={selectedPlatforms.includes(
-                                  post.platform
-                                )}
-                                onChange={(e) => {
-                                  setSelectedPlatforms((prev) =>
-                                    e.target.checked
-                                      ? [...prev, post.platform]
-                                      : prev.filter((p) => p !== post.platform)
-                                  );
-                                }}
-                                id={`platform-${post.platform}`}
-                              />
-                              <div
-                                className={`w-6 h-6 rounded border-2 transition-all duration-200 flex items-center justify-center ${
-                                  selectedPlatforms.includes(post.platform)
-                                    ? "bg-blue-600 border-blue-600 text-white"
-                                    : "bg-white border-gray-300 hover:border-blue-500"
-                                }`}
-                              >
-                                {selectedPlatforms.includes(post.platform) && (
-                                  <svg
-                                    className="w-4 h-4"
-                                    fill="currentColor"
-                                    viewBox="0 0 20 20"
-                                  >
-                                    <path
-                                      fillRule="evenodd"
-                                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                      clipRule="evenodd"
-                                    />
-                                  </svg>
-                                )}
-                              </div>
-                            </div>
-                          </label>
-                        )}
-
-                      {isConnected &&
-                        publishedPlatforms.includes(post.platform) && (
-                          <div className="flex items-center gap-2 px-3 py-1 rounded-md bg-purple-200 bg-green-100 text-purple-600 text-sm font-medium">
-                            <svg
-                              className="w-4 h-4"
-                              fill="currentColor"
-                              viewBox="0 0 20 20"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                            <span>PUBLISHED</span>
-                          </div>
-                        )}
-
-                      {!isConnected && (
-                        <button
-                          onClick={() => handleConnect(post.platform)}
-                          disabled={isConnecting}
-                          className="flex items-center gap-2 px-3 py-1 capitalize rounded-md bg-purple-600 text-sm font-medium text-white"
-                        >
-                          {isConnecting ? (
-                            <>
-                              <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
-                              <span>{t("connecting")}...</span>
-                            </>
-                          ) : (
-                            t("connect")
-                          )}
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* TikTok Settings Box - shown below TikTok card */}
-                {post.platform === "tiktok" && (
-                  <div className="mt-2 p-4 bg-purple-50 border border-purple-200 rounded-md space-y-3">
-                    <h3 className="font-semibold text-purple-900 text-sm">
-                      TikTok Settings (required for Direct Post compliance)
-                    </h3>
-
-                    {tiktokCreatorInfo?.nickname && (
-                      <p className="text-xs text-purple-800">
-                        Posting to TikTok account: <strong>{tiktokCreatorInfo.nickname}</strong>
-                      </p>
-                    )}
-
-                    {tiktokPostingBlockedReason && (
-                      <p className="text-xs text-red-600">
-                        {tiktokPostingBlockedReason}
-                      </p>
-                    )}
-
-                    {/* TikTok Information Box */}
-                    <div className="p-3 bg-blue-50 border border-blue-200 rounded-md">
-                      <p className="text-xs text-blue-800">
-                        <span className="font-semibold">ℹ️ TikTok Direct Post:</span> Required settings must be configured before publishing. Ensure your title and privacy settings are appropriate for your content.
-                      </p>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs md:text-sm">
-                      <div className="flex flex-col gap-1">
-                        <label className="font-medium text-purple-900">
-                          TikTok Title
-                          <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          value={tiktokSettings.title}
-                          onChange={(e) =>
-                            setTiktokSettings((prev) => ({
-                              ...prev,
-                              title: e.target.value,
-                            }))
+                        {(() => {
+                          const IconComponent = getPlatformIcon(post.platform);
+                          if (!IconComponent) {
+                            return (
+                              <span className="text-lg font-bold">
+                                {post.platform.substring(0, 2)}
+                              </span>
+                            );
                           }
-                          className="border border-purple-200 rounded-md px-2 py-1 text-sm focus:ring-1 focus:ring-purple-500 focus:border-purple-500"
-                          placeholder="Enter a title for your TikTok post"
-                        />
+                          return (
+                            <IconComponent className="w-8 h-4 md:w-6 md:h-6" />
+                          );
+                        })()}
                       </div>
 
-                      <div className="flex flex-col gap-1">
-                        <label className="font-medium text-purple-900">
-                          TikTok Privacy Status
-                          <span className="text-red-500">*</span>
-                        </label>
-                        <select
-                          value={tiktokSettings.privacyLevel}
-                          onChange={(e) =>
-                            setTiktokSettings((prev) => ({
-                              ...prev,
-                              privacyLevel: e.target.value as TikTokPrivacyLevel,
-                            }))
-                          }
-                          className="border border-purple-200 rounded-md px-2 py-1 text-sm focus:ring-1 focus:ring-purple-500 focus:border-purple-500 bg-white"
+                      {/* Platform Info */}
+                      <div>
+                        <h4 className="font-medium text-slate-900">
+                          {getPlatformDisplayName(post.platform)}
+                        </h4>
+                        <p
+                          className={`text-sm ${
+                            isConnected ? "text-green-600" : "text-red-600"
+                          }`}
                         >
-                          <option value="" disabled>
-                            Select privacy level
-                          </option>
-                          {(tiktokCreatorInfo?.privacy_level_options || [
-                            "SELF_ONLY",
-                            "FRIENDS",
-                            "EVERYONE",
-                          ]).map((opt) => {
-                            const isPrivateOption =
-                              opt.toUpperCase() === "SELF_ONLY" ||
-                              opt.toUpperCase() === "PRIVATE";
-                            const disabled =
-                              tiktokSettings.isBrandedContent && isPrivateOption;
+                          {isConnected ? t("connected") : t("not_connected")}
+                        </p>
+
+                        {/* Video Limits Display - Only show when there's video content */}
+                        {(() => {
+                          const mediaUrl = post.mediaUrl || post.imageUrl;
+                          const isVideo =
+                            mediaUrl &&
+                            (/\.(mp4|webm|ogg|mov|avi|mkv|flv|wmv|3gp)(\?.*)?$/i.test(
+                              mediaUrl
+                            ) ||
+                              (post as any).isVideoContent ||
+                              (post as any).mediaType === "video");
+
+                          if (!isVideo) return null;
+
+                          const videoAspectRatio = (post as any)
+                            .videoAspectRatio;
+                          const isShorts =
+                            videoAspectRatio &&
+                            videoAspectRatio >= 0.5 &&
+                            videoAspectRatio <= 0.65;
+
+                          const videoLimits = getPlatformVideoLimits(
+                            post.platform,
+                            isShorts
+                          );
+                          if (videoLimits) {
                             return (
-                              <option
-                                key={opt}
-                                value={opt}
-                                disabled={disabled}
-                                title={
-                                  disabled
-                                    ? "Branded content visibility cannot be set to private."
-                                    : undefined
-                                }
-                              >
-                                {opt}
-                              </option>
+                              <div className="mt-2 text-xs text-gray-600 space-y-1">
+                                <p className="font-medium text-gray-700">
+                                  {isShorts ? "Shorts" : "Video"} Limits:
+                                </p>
+                                <p>
+                                  Aspect Ratio:{" "}
+                                  <span className="font-semibold">
+                                    {videoLimits.aspectRatio}
+                                  </span>
+                                </p>
+                                <p>
+                                  Max Duration:{" "}
+                                  <span className="font-semibold">
+                                    {videoLimits.maxDuration}
+                                  </span>
+                                </p>
+                                <p>
+                                  Max File Size:{" "}
+                                  <span className="font-semibold">
+                                    {videoLimits.maxFileSize}
+                                  </span>
+                                </p>
+                                {videoLimits.notes && (
+                                  <p className="text-yellow-700 italic mt-1">
+                                    ⚠️ {videoLimits.notes}
+                                  </p>
+                                )}
+                              </div>
                             );
-                          })}
-                        </select>
-                        {tiktokSettings.isBrandedContent && (
-                          <p className="text-[11px] text-purple-700">
-                            Branded content cannot be posted with "only me" visibility.
+                          }
+                          return null;
+                        })()}
+
+                        {disableByDuration && (
+                          <p className="text-xs text-red-600 mt-1">
+                            This video is longer than your TikTok account's
+                            allowed duration; TikTok is disabled for this post.
+                          </p>
+                        )}
+                        {progress && (
+                          <p
+                            className={`text-xs mt-1 ${
+                              progress === "pending"
+                                ? "text-yellow-600"
+                                : progress === "success"
+                                ? "text-green-600"
+                                : "text-red-600"
+                            }`}
+                          >
+                            {progress === "pending"
+                              ? "Publishing..."
+                              : progress === "success"
+                              ? "Published"
+                              : "Failed"}
                           </p>
                         )}
                       </div>
+                    </div>
 
-                      <div className="flex flex-col gap-1">
-                        <span className="font-medium text-purple-900">
-                          Interaction Options
-                        </span>
-                        <div className="flex flex-col gap-1">
-                          <label className="inline-flex items-center gap-2 text-xs">
-                            <input
-                              type="checkbox"
-                              checked={tiktokSettings.allowComment}
-                              onChange={(e) =>
-                                setTiktokSettings((prev) => ({
-                                  ...prev,
-                                  allowComment: e.target.checked,
-                                }))
-                              }
-                            />
-                            <span>Allow comments</span>
-                          </label>
-                          <label className="inline-flex items-center gap-2 text-xs">
-                            <input
-                              type="checkbox"
-                              checked={tiktokSettings.allowDuet}
-                              onChange={(e) =>
-                                setTiktokSettings((prev) => ({
-                                  ...prev,
-                                  allowDuet: e.target.checked,
-                                }))
-                              }
-                            />
-                            <span>Allow Duet</span>
-                          </label>
-                          <label className="inline-flex items-center gap-2 text-xs">
-                            <input
-                              type="checkbox"
-                              checked={tiktokSettings.allowStitch}
-                              onChange={(e) =>
-                                setTiktokSettings((prev) => ({
-                                  ...prev,
-                                  allowStitch: e.target.checked,
-                                }))
-                              }
-                            />
-                            <span>Allow Stitch</span>
-                          </label>
-                        </div>
-                      </div>
+                    <div className="flex items-center gap-3">
+                      {isConnected ? (
+                        <>
+                          <button
+                            onClick={() => handleConnect(post.platform)}
+                            disabled={isConnecting}
+                            className="p-2 text-gray-500 font-medium hover:text-blue-600 disabled:opacity-50 rounded-md hover:bg-gray-100"
+                            title="Refresh connection"
+                          >
+                            <RefreshCw className={`w-4 h-4`} />
+                          </button>
+                          <button
+                            onClick={() => handleDisconnect(post.platform)}
+                            disabled={isConnecting}
+                            className="p-2 text-gray-500 font-medium hover:text-red-600 disabled:opacity-50 rounded-md hover:bg-gray-100"
+                            title="Disconnect"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </>
+                      ) : (
+                        <> </>
+                      )}
 
-                      <div className="flex flex-col gap-1">
-                        <label className=" flex items-center gap-1 text-xs font-medium text-purple-900">
-                          <input
-                            type="checkbox"
-                            className="mr-1 aspect-[1/1]" 
-                            checked={tiktokSettings.isCommercial}
-                            onChange={(e) =>
-                              setTiktokSettings((prev) => ({
-                                ...prev,
-                                isCommercial: e.target.checked,
-                                // Reset options if turning off
-                                ...(e.target.checked
-                                  ? {}
-                                  : {
-                                      isYourBrand: false,
-                                      isBrandedContent: false,
-                                    }),
-                              }))
-                            }
-                          />
-                          <span>
-                            This TikTok post promotes yourself, a brand, product or
-                            service
-                          </span>
-                        </label>
-
-                        {tiktokSettings.isCommercial && (
-                          <div className="ml-5 mt-1 space-y-1">
-                            <label className="inline-flex items-center gap-2 text-xs">
-                              <input
-                                type="checkbox"
-                                checked={tiktokSettings.isYourBrand}
-                                onChange={(e) =>
-                                  setTiktokSettings((prev) => ({
-                                    ...prev,
-                                    isYourBrand: e.target.checked,
-                                  }))
-                                }
-                              />
-                              <span>Your brand</span>
+                      <div className="flex items-center gap-2">
+                        {isConnected &&
+                          !publishedPlatforms.includes(post.platform) &&
+                          !disableByDuration && (
+                            <label
+                              className="flex items-center cursor-pointer"
+                              htmlFor={`platform-${post.platform}`}
+                            >
+                              <div className="relative">
+                                <input
+                                  className="text-green-500 focus:ring-green-400 hidden absolute opacity-0 w-0 h-0"
+                                  type="checkbox"
+                                  checked={selectedPlatforms.includes(
+                                    post.platform
+                                  )}
+                                  onChange={(e) => {
+                                    setSelectedPlatforms((prev) =>
+                                      e.target.checked
+                                        ? [...prev, post.platform]
+                                        : prev.filter(
+                                            (p) => p !== post.platform
+                                          )
+                                    );
+                                  }}
+                                  id={`platform-${post.platform}`}
+                                />
+                                <div
+                                  className={`w-6 h-6 rounded border-2 transition-all duration-200 flex items-center justify-center ${
+                                    selectedPlatforms.includes(post.platform)
+                                      ? "bg-blue-600 border-blue-600 text-white"
+                                      : "bg-white border-gray-300 hover:border-blue-500"
+                                  }`}
+                                >
+                                  {selectedPlatforms.includes(
+                                    post.platform
+                                  ) && (
+                                    <svg
+                                      className="w-4 h-4"
+                                      fill="currentColor"
+                                      viewBox="0 0 20 20"
+                                    >
+                                      <path
+                                        fillRule="evenodd"
+                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                        clipRule="evenodd"
+                                      />
+                                    </svg>
+                                  )}
+                                </div>
+                              </div>
                             </label>
-                            <label className="inline-flex items-center gap-2 text-xs ml-4 ">
-                              <input
-                                type="checkbox"
-                                checked={tiktokSettings.isBrandedContent}
-                                onChange={(e) =>
-                                  setTiktokSettings((prev) => ({
-                                    ...prev,
-                                    isBrandedContent: e.target.checked,
-                                  }))
-                                }
-                              />
-                              <span>Branded content (third party)</span>
-                            </label>
-                            {!tiktokSettings.isYourBrand &&
-                              !tiktokSettings.isBrandedContent && (
-                                <p className="text-[11px] text-purple-700">
-                                  You need to indicate if your content promotes yourself,
-                                  a third party, or both.
-                                </p>
-                              )}
-                          </div>
+                          )}
+
+                        {isConnected &&
+                          publishedPlatforms.includes(post.platform) && (
+                            <div className="flex items-center gap-2 px-3 py-1 rounded-md bg-purple-200 bg-green-100 text-purple-600 text-sm font-medium">
+                              <svg
+                                className="w-4 h-4"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                              <span>PUBLISHED</span>
+                            </div>
+                          )}
+
+                        {!isConnected && (
+                          <button
+                            onClick={() => handleConnect(post.platform)}
+                            disabled={isConnecting}
+                            className="flex items-center gap-2 px-3 py-1 capitalize rounded-md bg-purple-600 text-sm font-medium text-white"
+                          >
+                            {isConnecting ? (
+                              <>
+                                <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+                                <span>{t("connecting")}...</span>
+                              </>
+                            ) : (
+                              t("connect")
+                            )}
+                          </button>
                         )}
                       </div>
                     </div>
-
-                    {/* TikTok legal declaration text */}
-                    <p className="mt-2 text-[11px] text-purple-900">
-                      {(() => {
-                        const { isCommercial, isYourBrand, isBrandedContent } =
-                          tiktokSettings;
-                        if (!isCommercial || (isYourBrand && !isBrandedContent)) {
-                          return "By posting, you agree to TikTok's Music Usage Confirmation.";
-                        }
-                        if (isBrandedContent) {
-                          return "By posting, you agree to TikTok's Branded Content Policy and Music Usage Confirmation.";
-                        }
-                        return "By posting, you agree to TikTok's Music Usage Confirmation.";
-                      })()}
-                    </p>
-
-                    {/* Processing note per TikTok guidelines */}
-                    <p className="mt-1 text-[11px] text-purple-700">
-                      After you publish, TikTok may take a few minutes to process your
-                      video before it appears on your profile.
-                    </p>
                   </div>
-                )}
+
+                  {/* TikTok Settings Box - shown below TikTok card */}
+                  {post.platform === "tiktok" && (
+                    <div className="mt-2 p-4 bg-purple-50 border border-purple-200 rounded-md space-y-3">
+                      <h3 className="font-semibold text-purple-900 text-sm">
+                        TikTok Settings (required for Direct Post compliance)
+                      </h3>
+
+                      {tiktokCreatorInfo?.nickname && (
+                        <p className="text-xs text-purple-800">
+                          Posting to TikTok account:{" "}
+                          <strong>{tiktokCreatorInfo.nickname}</strong>
+                        </p>
+                      )}
+
+                      {tiktokPostingBlockedReason && (
+                        <p className="text-xs text-red-600">
+                          {tiktokPostingBlockedReason}
+                        </p>
+                      )}
+
+                      {/* TikTok Information Box */}
+                      <div className="p-3 bg-blue-50 border border-blue-200 rounded-md">
+                        <p className="text-xs text-blue-800">
+                          <span className="font-semibold">
+                            ℹ️ TikTok Direct Post:
+                          </span>{" "}
+                          Required settings must be configured before
+                          publishing. Ensure your title and privacy settings are
+                          appropriate for your content.
+                        </p>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs md:text-sm">
+                        <div className="flex flex-col gap-1">
+                          <label className="font-medium text-purple-900">
+                            TikTok Title
+                            <span className="text-red-500">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            value={tiktokSettings.title}
+                            onChange={(e) =>
+                              setTiktokSettings((prev) => ({
+                                ...prev,
+                                title: e.target.value,
+                              }))
+                            }
+                            className="border border-purple-200 rounded-md px-2 py-1 text-sm focus:ring-1 focus:ring-purple-500 focus:border-purple-500"
+                            placeholder="Enter a title for your TikTok post"
+                          />
+                        </div>
+
+                        <div className="flex flex-col gap-1">
+                          <label className="font-medium text-purple-900">
+                            TikTok Privacy Status
+                            <span className="text-red-500">*</span>
+                          </label>
+                          <select
+                            value={tiktokSettings.privacyLevel}
+                            onChange={(e) =>
+                              setTiktokSettings((prev) => ({
+                                ...prev,
+                                privacyLevel: e.target
+                                  .value as TikTokPrivacyLevel,
+                              }))
+                            }
+                            className="border border-purple-200 rounded-md px-2 py-1 text-sm focus:ring-1 focus:ring-purple-500 focus:border-purple-500 bg-white"
+                          >
+                            <option value="" disabled>
+                              Select privacy level
+                            </option>
+                            {(
+                              tiktokCreatorInfo?.privacy_level_options || [
+                                "SELF_ONLY",
+                                "FRIENDS",
+                                "EVERYONE",
+                              ]
+                            ).map((opt) => {
+                              const isPrivateOption =
+                                opt.toUpperCase() === "SELF_ONLY" ||
+                                opt.toUpperCase() === "PRIVATE";
+                              const disabled =
+                                tiktokSettings.isBrandedContent &&
+                                isPrivateOption;
+                              return (
+                                <option
+                                  key={opt}
+                                  value={opt}
+                                  disabled={disabled}
+                                  title={
+                                    disabled
+                                      ? "Branded content visibility cannot be set to private."
+                                      : undefined
+                                  }
+                                >
+                                  {opt}
+                                </option>
+                              );
+                            })}
+                          </select>
+                          {tiktokSettings.isBrandedContent && (
+                            <p className="text-[11px] text-purple-700">
+                              Branded content cannot be posted with "only me"
+                              visibility.
+                            </p>
+                          )}
+                        </div>
+
+                        <div className="flex flex-col gap-1">
+                          <span className="font-medium text-purple-900">
+                            Interaction Options
+                          </span>
+                          <div className="flex flex-col gap-1">
+                            <label className="inline-flex items-center gap-2 text-xs">
+                              <input
+                                type="checkbox"
+                                checked={tiktokSettings.allowComment}
+                                onChange={(e) =>
+                                  setTiktokSettings((prev) => ({
+                                    ...prev,
+                                    allowComment: e.target.checked,
+                                  }))
+                                }
+                              />
+                              <span>Allow comments</span>
+                            </label>
+                            <label className="inline-flex items-center gap-2 text-xs">
+                              <input
+                                type="checkbox"
+                                checked={tiktokSettings.allowDuet}
+                                onChange={(e) =>
+                                  setTiktokSettings((prev) => ({
+                                    ...prev,
+                                    allowDuet: e.target.checked,
+                                  }))
+                                }
+                              />
+                              <span>Allow Duet</span>
+                            </label>
+                            <label className="inline-flex items-center gap-2 text-xs">
+                              <input
+                                type="checkbox"
+                                checked={tiktokSettings.allowStitch}
+                                onChange={(e) =>
+                                  setTiktokSettings((prev) => ({
+                                    ...prev,
+                                    allowStitch: e.target.checked,
+                                  }))
+                                }
+                              />
+                              <span>Allow Stitch</span>
+                            </label>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-col gap-1">
+                          <label className=" flex items-center gap-1 text-xs font-medium text-purple-900">
+                            <input
+                              type="checkbox"
+                              className="mr-1 aspect-[1/1]"
+                              checked={tiktokSettings.isCommercial}
+                              onChange={(e) =>
+                                setTiktokSettings((prev) => ({
+                                  ...prev,
+                                  isCommercial: e.target.checked,
+                                  // Reset options if turning off
+                                  ...(e.target.checked
+                                    ? {}
+                                    : {
+                                        isYourBrand: false,
+                                        isBrandedContent: false,
+                                      }),
+                                }))
+                              }
+                            />
+                            <span>
+                              This TikTok post promotes yourself, a brand,
+                              product or service
+                            </span>
+                          </label>
+
+                          {tiktokSettings.isCommercial && (
+                            <div className="ml-5 mt-1 space-y-1">
+                              <label className="inline-flex items-center gap-2 text-xs">
+                                <input
+                                  type="checkbox"
+                                  checked={tiktokSettings.isYourBrand}
+                                  onChange={(e) =>
+                                    setTiktokSettings((prev) => ({
+                                      ...prev,
+                                      isYourBrand: e.target.checked,
+                                    }))
+                                  }
+                                />
+                                <span>Your brand</span>
+                              </label>
+                              <label className="inline-flex items-center gap-2 text-xs ml-4 ">
+                                <input
+                                  type="checkbox"
+                                  checked={tiktokSettings.isBrandedContent}
+                                  onChange={(e) =>
+                                    setTiktokSettings((prev) => ({
+                                      ...prev,
+                                      isBrandedContent: e.target.checked,
+                                    }))
+                                  }
+                                />
+                                <span>Branded content (third party)</span>
+                              </label>
+                              {!tiktokSettings.isYourBrand &&
+                                !tiktokSettings.isBrandedContent && (
+                                  <p className="text-[11px] text-purple-700">
+                                    You need to indicate if your content
+                                    promotes yourself, a third party, or both.
+                                  </p>
+                                )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* TikTok legal declaration text */}
+                      <p className="mt-2 text-[11px] text-purple-900">
+                        {(() => {
+                          const {
+                            isCommercial,
+                            isYourBrand,
+                            isBrandedContent,
+                          } = tiktokSettings;
+                          if (
+                            !isCommercial ||
+                            (isYourBrand && !isBrandedContent)
+                          ) {
+                            return "By posting, you agree to TikTok's Music Usage Confirmation.";
+                          }
+                          if (isBrandedContent) {
+                            return "By posting, you agree to TikTok's Branded Content Policy and Music Usage Confirmation.";
+                          }
+                          return "By posting, you agree to TikTok's Music Usage Confirmation.";
+                        })()}
+                      </p>
+
+                      {/* Processing note per TikTok guidelines */}
+                      <p className="mt-1 text-[11px] text-purple-700">
+                        After you publish, TikTok may take a few minutes to
+                        process your video before it appears on your profile.
+                      </p>
+                    </div>
+                  )}
                 </>
               );
             })}
