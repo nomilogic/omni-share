@@ -250,7 +250,9 @@ async function optimizeThumbnail(thumbnailUrl: string): Promise<string> {
     // Check if already optimized
     if (blob.size < MAX_FILE_SIZE) {
       console.log(
-        `📊 Thumbnail size ${(blob.size / 1024 / 1024).toFixed(2)} MiB is already within limit`
+        `📊 Thumbnail size ${(blob.size / 1024 / 1024).toFixed(
+          2
+        )} MiB is already within limit`
       );
       // Still resize to target dimensions
       return await resizeImage(thumbnailUrl, TARGET_WIDTH, TARGET_HEIGHT);
@@ -293,7 +295,10 @@ async function resizeImage(
       }
 
       // Draw image to fit canvas (maintain aspect ratio with letterboxing)
-      const scale = Math.min(targetWidth / img.width, targetHeight / img.height);
+      const scale = Math.min(
+        targetWidth / img.width,
+        targetHeight / img.height
+      );
       const x = (targetWidth - img.width * scale) / 2;
       const y = (targetHeight - img.height * scale) / 2;
 
@@ -306,7 +311,11 @@ async function resizeImage(
           if (blob) {
             const url = URL.createObjectURL(blob);
             console.log(
-              `✅ Thumbnail resized to ${targetWidth}x${targetHeight}, size: ${(blob.size / 1024 / 1024).toFixed(2)} MiB`
+              `✅ Thumbnail resized to ${targetWidth}x${targetHeight}, size: ${(
+                blob.size /
+                1024 /
+                1024
+              ).toFixed(2)} MiB`
             );
             resolve(url);
           } else {
@@ -349,7 +358,10 @@ async function compressImage(
       }
 
       // Draw image to fit canvas
-      const scale = Math.min(targetWidth / img.width, targetHeight / img.height);
+      const scale = Math.min(
+        targetWidth / img.width,
+        targetHeight / img.height
+      );
       const x = (targetWidth - img.width * scale) / 2;
       const y = (targetHeight - img.height * scale) / 2;
 
@@ -369,7 +381,11 @@ async function compressImage(
             if (blob.size <= maxFileSize) {
               const url = URL.createObjectURL(blob);
               console.log(
-                `✅ Thumbnail compressed to ${targetWidth}x${targetHeight}, quality: ${(currentQuality * 100).toFixed(0)}%, size: ${(blob.size / 1024 / 1024).toFixed(2)} MiB`
+                `✅ Thumbnail compressed to ${targetWidth}x${targetHeight}, quality: ${(
+                  currentQuality * 100
+                ).toFixed(0)}%, size: ${(blob.size / 1024 / 1024).toFixed(
+                  2
+                )} MiB`
               );
               resolve(url);
             } else if (currentQuality > 0.3) {
@@ -379,7 +395,11 @@ async function compressImage(
             } else {
               reject(
                 new Error(
-                  `Could not compress thumbnail below ${(maxFileSize / 1024 / 1024).toFixed(1)} MiB`
+                  `Could not compress thumbnail below ${(
+                    maxFileSize /
+                    1024 /
+                    1024
+                  ).toFixed(1)} MiB`
                 )
               );
             }
@@ -623,7 +643,7 @@ export async function postToAllPlatforms(
   const errors: string[] = [];
   const successes: string[] = [];
 
-  const token = localStorage.getItem("auth_token");
+  const token = Cookies.get("auth_token");
   if (!token) {
     throw new Error("Authentication token not found. Please log in again.");
   }

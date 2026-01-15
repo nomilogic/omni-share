@@ -3,6 +3,7 @@ import axios, {
   AxiosError,
   InternalAxiosRequestConfig,
 } from "axios";
+import Cookies from "js-cookie";
 
 const BASE_URL: string =
   import.meta.env.VITE_API_URL || "https://omnishare.ai/server/api";
@@ -137,7 +138,7 @@ export const API = axios.create({
 
 API.interceptors.request.use(
   (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
-    const token = localStorage.getItem("auth_token");
+    const token = Cookies.get("auth_token");
 
     if (token) {
       if (!config.headers) {
@@ -170,11 +171,11 @@ API.otpVerification = (data) => {
   );
 };
 API.logout = () => {
-  const token: any = localStorage.getItem("auth_token");
+  const token: any = Cookies.get("auth_token");
   return API.get("/auth/logout", { headers: { authorization: token } });
 };
 API.getUser = () => {
-  const token: any = localStorage.getItem("auth_token");
+  const token: any = Cookies.get("auth_token");
   return API.get("/auth", { headers: { authorization: token } });
 };
 

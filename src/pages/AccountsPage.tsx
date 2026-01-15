@@ -1,15 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Platform } from "../types";
-import { oauthManagerClient } from "../lib/oauthManagerClient";
-import Icon from "../components/Icon";
 import { RefreshCw, Trash2 } from "lucide-react";
 import {
   getPlatformIcon,
   getPlatformIconBackgroundColors,
   getPlatformDisplayName,
 } from "../utils/platformIcons";
-import API from "../services/api";
 import { useTranslation } from "react-i18next";
+import { useAppContext } from "@/context/AppContext";
 
 const ALL_PLATFORMS: Platform[] = [
   "linkedin",
@@ -21,303 +19,46 @@ const ALL_PLATFORMS: Platform[] = [
 
 export const AccountsPage: React.FC = () => {
   const { t } = useTranslation();
-  const [connectedPlatforms, setConnectedPlatforms] = useState<Platform[]>([]);
-  const [connectingPlatforms, setConnectingPlatforms] = useState<Platform[]>(
-    []
-  );
-  const [facebookPages, setFacebookPages] = useState<any[]>([]);
-  const [linkedinPages, setlinkedinPages] = useState<any[]>([]);
-  const [youtubeChannels, setYoutubeChannels] = useState<any[]>([]);
-  const [selectedlinkedinPage, setSelectedlinkedinPage] = useState<string>("");
-  const [selectedFacebookPage, setSelectedFacebookPage] = useState<string>("");
-  const [selectedYoutubeChannel, setSelectedYoutubeChannel] =
-    useState<string>("");
-  console.log("linkedinPages", linkedinPages);
+
+  const {
+    connectedPlatforms,
+    connectingPlatforms,
+    handleConnectPlatform,
+    handleDisconnectPlatform,
+    checkConnectedPlatforms,
+  } = useAppContext();
+
+  // Refresh connected platforms on mount
   useEffect(() => {
     checkConnectedPlatforms();
-  }, []);
-
-  const checkConnectedPlatforms = async () => {
-    try {
-      // Get the authentication token
-      const token = localStorage.getItem("auth_token");
-      if (!token) {
-        console.warn("No authentication token found");
-        setConnectedPlatforms([]);
-        return;
-      }
-
-      const response = await API.connectionsStatus();
-
-      const statusData = response.data;
-
-      const connected: Platform[] = [];
-      for (const platform of ALL_PLATFORMS) {
-        if (statusData[platform]?.connected) {
-          connected.push(platform);
-        }
-      }
-      setConnectedPlatforms(connected);
-
-      // if (connected.includes("facebook")) {
-      //   await fetchFacebookPages();
-      // }
-      // if (connected.includes("linkedin")) {
-      //   await fetchLinkedPages();
-      // }
-
-      // if (connected.includes("youtube")) {
-      //   await fetchYouTubeChannels();
-      // }
-    } catch (error) {
-      console.error("Failed to check connected platforms:", error);
-      setConnectedPlatforms([]);
-    }
-  };
-
-  const fetchLinkedPages = async () => {
-    try {
-      const token = localStorage.getItem("auth_token");
-      if (!token) return;
-
-      const tokenResponse = await API.tokenForPlatform("linkedin");
-
-      if (tokenResponse?.data) {
-        const tokenData = await tokenResponse?.data;
-        if (tokenData.connected && tokenData.token?.access_token) {
-          const res = await API.linkedinPages(tokenData.token?.access_token);
-          if (res?.data) {
-            const pagesData = await res.data;
-            setlinkedinPages(pagesData.data || []);
-            setSelectedlinkedinPage(pagesData.data[0].urn);
-          }
-        }
-      }
-    } catch (error) {
-      console.error("Failed to fetch Facebook pages:", error);
-    }
-  };
-  const fetchFacebookPages = async () => {
-    try {
-      const token = localStorage.getItem("auth_token");
-      if (!token) {
-        console.warn("No auth token found");
-        return;
-      }
-
-      const tokenResponse = await API.tokenForPlatform("facebook");
-      console.log("Token response:", tokenResponse);
-
-      if (tokenResponse?.data) {
-        const tokenData = await tokenResponse.data;
-        console.log("Token data:", tokenData);
-
-        if (tokenData.connected && tokenData.token?.access_token) {
-          console.log(
-            "Fetching Facebook pages with token:",
-            tokenData.token.access_token.substring(0, 10) + "..."
-          );
-
-          const pagesResponse = await API.facebookPages(
-            tokenData.token.access_token
-          );
-          console.log("Pages response:", pagesResponse);
-
-          // Handle both possible response structures
-          let pagesData = [];
-
-          // Check if response has status 200 and data.data
-          if (pagesResponse?.data?.data) {
-            pagesData = Array.isArray(pagesResponse.data.data)
-              ? pagesResponse.data.data
-              : [];
-          }
-          // Check if response directly has pages array
-          else if (pagesResponse?.pages) {
-            pagesData = Array.isArray(pagesResponse.pages)
-              ? pagesResponse.pages
-              : [];
-          }
-          // Check if response.data has pages array
-          else if (pagesResponse?.data?.pages) {
-            pagesData = Array.isArray(pagesResponse.data.pages)
-              ? pagesResponse.data.pages
-              : [];
-          }
-
-          console.log("Extracted pages data:", pagesData);
-          setFacebookPages(pagesData);
-
-          if (pagesData && pagesData.length > 0 && !selectedFacebookPage) {
-            setSelectedFacebookPage(pagesData[0].id);
-            console.log("Set initial page:", pagesData[0].id);
-          }
-        } else {
-          console.warn("Facebook not connected or no access token");
-        }
-      } else {
-        console.warn("No token response data");
-      }
-    } catch (error) {
-      console.error("Failed to fetch Facebook pages:", error);
-    } finally {
-    }
-  };
-
-  const fetchYouTubeChannels = async () => {
-    try {
-      const token = localStorage.getItem("auth_token");
-      if (!token) return;
-
-      const tokenResponse = await API.tokenForPlatform("youtube");
-      if (tokenResponse.data) {
-        const tokenData = await tokenResponse.data;
-        if (tokenData.connected && tokenData.token?.access_token) {
-          const channelsResponse = await fetch(
-            `/api/youtube/channels?access_token=${tokenData.token.access_token}`
-          );
-          if (channelsResponse.ok) {
-            const channelsData = await channelsResponse.json();
-            setYoutubeChannels(channelsData.channels || []);
-            if (
-              channelsData.channels &&
-              channelsData.channels.length > 0 &&
-              !selectedYoutubeChannel
-            ) {
-              setSelectedYoutubeChannel(channelsData.channels[0].id);
-            }
-          }
-        }
-      }
-    } catch (error) {
-      console.error("Failed to fetch YouTube channels:", error);
-    }
-  };
-
-  const handleConnect = async (platform: Platform) => {
-    console.log("Connecting to platform:", platform);
-
-    try {
-      setConnectingPlatforms((prev) => [...prev, platform]);
-
-      // Use the OAuth client to start OAuth flow (uses JWT authentication)
-      const result: any = await oauthManagerClient.startOAuthFlow(platform);
-      const { authUrl } = result.data.data;
-      console.log("Opening OAuth popup with URL:", authUrl);
-
-      const authWindow = window.open(
-        authUrl,
-        `${platform}_oauth`,
-        "width=600,height=700,scrollbars=yes,resizable=yes"
-      );
-      console.log(authWindow, "authWindow");
-      if (!authWindow) {
-        throw new Error("OAuth popup blocked");
-      }
-
-      // Listen for messages from the OAuth callback
-      const messageListener = (event: MessageEvent) => {
-        if (
-          event.data.type === "oauth_success" &&
-          event.data.platform === platform
-        ) {
-          console.log("OAuth success for", platform);
-          // Close popup from parent window for better browser compatibility
-          try {
-            authWindow?.close();
-          } catch (error) {
-            console.warn("Could not close popup from parent:", error);
-          }
-          setTimeout(checkConnectedPlatforms, 1000);
-          window.removeEventListener("message", messageListener);
-        } else if (event.data.type === "oauth_error") {
-          console.error("OAuth error:", event.data.error);
-          // Close popup from parent window for better browser compatibility
-          try {
-            authWindow?.close();
-          } catch (error) {
-            console.warn("Could not close popup from parent:", error);
-          }
-
-          window.removeEventListener("message", messageListener);
-        }
-      };
-
-      window.addEventListener("message", messageListener);
-
-      // Monitor window closure
-      const checkClosed = setInterval(() => {
-        if (authWindow?.closed) {
-          clearInterval(checkClosed);
-          window.removeEventListener("message", messageListener);
-          setTimeout(checkConnectedPlatforms, 1000);
-        }
-      }, 1000);
-    } catch (error) {
-      console.error("Error connecting to platform:", error);
-    } finally {
-      setConnectingPlatforms((prev) => prev.filter((p) => p !== platform));
-    }
-  };
-
-  const handleDisconnect = async (platform: Platform) => {
-    try {
-      // Use the OAuth manager client for disconnecting (uses JWT authentication)
-      await oauthManagerClient.disconnectPlatform(platform);
-      checkConnectedPlatforms();
-    } catch (error) {
-      console.error("Failed to disconnect:", error);
-    }
-  };
+  }, [checkConnectedPlatforms]);
 
   const renderPlatformIcon = (platform: Platform) => {
     const IconComponent = getPlatformIcon(platform);
-
     if (!IconComponent) {
       return (
-        <span className="text-lg font-bold ">{platform.substring(0, 2)}</span>
+        <span className="text-lg font-bold">{platform.substring(0, 2)}</span>
       );
     }
-
     return <IconComponent className="w-6 h-6" />;
   };
 
   return (
     <div className="max-w-full mx-auto md:px-4 px-3 py-2.5 flex flex-col gap-y-3">
       <div className="flex flex-col gap-y-3">
-        <div className="">
+        <div>
           <h2 className="text-3xl font-bold theme-text-primary mb-1">
             {t("connect_accounts")}
           </h2>
-          {/* <p className="text-sm text-gray-500 font-medium ">
-            Connect your social media accounts to enable publishing across all
-            platforms.
-          </p> */}
         </div>
 
-        <div className=" p-2 bg-blue-50 border border-blue-200 rounded-md">
+        <div className="p-2 bg-blue-50 border border-blue-200 rounded-md">
           <p className="text-sm text-blue-800">
             <span className="font-medium">{connectedPlatforms.length}</span> of{" "}
             <span className="font-medium">{ALL_PLATFORMS.length}</span>{" "}
             {t("platforms_connected")}
           </p>
         </div>
-
-        {connectedPlatforms.length === 0 && (
-          <div>
-            {/* <div className="flex items-start gap-4">
-              <div>
-                <h3 className="font-semibold theme-text-secondary mb-1">
-                  No Accounts Connected
-                </h3>
-                <p className="text-sm theme-text-secondary leading-relaxed">
-                  Connect your social media accounts to start publishing content
-                  across multiple platforms.
-                </p>
-              </div>
-            </div> */}
-          </div>
-        )}
       </div>
 
       <div className="flex flex-col gap-y-3 mb-2">
@@ -360,7 +101,7 @@ export const AccountsPage: React.FC = () => {
                 {isConnected ? (
                   <>
                     <button
-                      onClick={() => handleConnect(platform)}
+                      onClick={() => handleConnectPlatform(platform)}
                       disabled={isConnecting}
                       className="p-2 text-gray-500 font-medium hover:text-blue-600 disabled:opacity-50 rounded-md hover:bg-gray-100"
                       title="Refresh connection"
@@ -368,7 +109,7 @@ export const AccountsPage: React.FC = () => {
                       <RefreshCw className="w-4 h-4" />
                     </button>
                     <button
-                      onClick={() => handleDisconnect(platform)}
+                      onClick={() => handleDisconnectPlatform(platform)}
                       disabled={isConnecting}
                       className="p-2 text-gray-500 font-medium hover:text-red-600 disabled:opacity-50 rounded-md hover:bg-gray-100"
                       title="Disconnect"
@@ -387,12 +128,11 @@ export const AccountsPage: React.FC = () => {
                           clipRule="evenodd"
                         />
                       </svg>
-                      {/* <span>CONNECTED</span> */}
                     </div>
                   </>
                 ) : (
                   <button
-                    onClick={() => handleConnect(platform)}
+                    onClick={() => handleConnectPlatform(platform)}
                     disabled={isConnecting}
                     className="flex items-center gap-2 px-3 py-1 capitalize rounded-md bg-purple-600 text-sm font-medium text-white"
                   >
@@ -411,80 +151,6 @@ export const AccountsPage: React.FC = () => {
           );
         })}
       </div>
-
-      {/* Platform-specific options */}
-      {/* {connectedPlatforms.includes("linkedin") && linkedinPages.length > 0 && (
-        <div className="mb-6 p-2 bg-blue-50 border border-blue-200 rounded-md">
-          <h4 className="font-medium text-blue-900 mb-2">
-            Linkedin page Selection
-          </h4>
-          <p className="text-blue-700 text-sm mb-3">
-            Choose your default Linkedin page for publishing:
-          </p>
-          <select
-            value={selectedlinkedinPage}
-            onChange={(e) => setSelectedlinkedinPage(e.target.value)}
-            className="w-full p-3 border border-blue-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-            {linkedinPages.map((page) => (
-              <option key={page.urn} value={page.urn}>
-                {page.name}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
-
-      {connectedPlatforms.includes("facebook") && facebookPages.length > 0 && (
-        <div className="mb-6 p-2 bg-blue-50 border border-blue-200 rounded-md">
-          <h4 className="font-medium text-blue-900 mb-2">
-            {t("facebook_page_selection")}
-          </h4>
-          <p className="text-blue-700 text-sm mb-3">
-            {t("choose_default_facebook_page_for_publishing")}
-          </p>
-          <select
-            value={selectedFacebookPage}
-            onChange={(e) => setSelectedFacebookPage(e.target.value)}
-            className="w-full p-3 border border-blue-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-            {facebookPages.map((page) => (
-              <option key={page.id} value={page.id}>
-                {page.name} ({page.category})
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
-
-      {connectedPlatforms.includes("youtube") && youtubeChannels.length > 0 && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
-          <h4 className="font-medium text-red-900 mb-2">
-            {t("youtube_channel_selection")}
-          </h4>
-          <p className="text-red-700 text-sm mb-3">
-            {t("choose_default_youtube_channel_for_publishing")}
-          </p>
-          <select
-            value={selectedYoutubeChannel}
-            onChange={(e) => setSelectedYoutubeChannel(e.target.value)}
-            className="w-full p-3 border border-red-300 rounded-md focus:ring-2 focus:ring-red-500 focus:border-transparent"
-          >
-            {youtubeChannels.map((channel) => (
-              <option key={channel.id} value={channel.id}>
-                {channel.snippet.title}
-              </option>
-            ))}
-          </select>
-        </div>
-      )} */}
-
-      {/* Error Messages */}
-      {/* {error && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
-          <p className="text-red-800 text-sm">{error}</p>
-        </div>
-      )} */}
     </div>
   );
 };

@@ -68,7 +68,7 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
   const [stats, setStats] = useState<CampaignStats | null>(null);
   const [loading, setLoading] = useState(true);
   const { t, i18n } = useTranslation();
-    const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
+  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
 
   useEffect(() => {
     if (campaign && campaign.id) {
@@ -86,7 +86,7 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
       setLoading(true);
       console.log("Loading stats for campaign:", campaign.id);
 
-      const token = localStorage.getItem("auth_token");
+      const token = Cookies.get("auth_token");
       const headers = {
         Authorization: `Bearer ${token}`,
       };
@@ -335,7 +335,9 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
             >
               <Plus className="w-6 h-6 text-blue-600" />
               <div className="text-left">
-                <div className="font-medium text-slate-900">{t("create_post")}</div>
+                <div className="font-medium text-slate-900">
+                  {t("create_post")}
+                </div>
                 <div className="text-sm text-gray-500 font-medium">
                   Generate new content
                 </div>

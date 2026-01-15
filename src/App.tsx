@@ -52,13 +52,6 @@ const OAuthCallbackWrapper = () => {
 };
 
 function App() {
-  const logout = () => {
-    localStorage.removeItem("auth_token");
-    localStorage.removeItem("refresh_token");
-    localStorage.removeItem("pusherTransportTLS");
-    window.location.href = "/auth";
-  };
-
   useEffect(() => {
     themeManager.initialize();
     localStorage.getItem("hasLanded");

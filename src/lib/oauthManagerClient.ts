@@ -1,3 +1,4 @@
+import Cookies from "js-cookie";
 import API from "../services/api";
 
 export interface OAuthConnection {
@@ -18,7 +19,7 @@ export class OAuthManagerClient {
   }
 
   private ensureAuthenticated() {
-    const token = this.authToken || localStorage.getItem("auth_token");
+    const token = this.authToken || Cookies.get("auth_token");
     if (!token)
       throw new Error("Authentication token required. Please log in.");
     this.authToken = token;
@@ -76,7 +77,6 @@ export class OAuthManagerClient {
     this.ensureAuthenticated();
     return API.statusByUser(userId);
   }
-  
 }
 
 export const oauthManagerClient = new OAuthManagerClient();

@@ -20,6 +20,7 @@
     "date-fns": "^4.1.0",
     "framer-motion": "^12.23.26",
     "i18next": "^25.6.3",
+    "js-cookie": "^3.0.5",
     "konva": "^10.0.0",
     "lucide-react": "^0.545.0",
     "pusher-js": "^8.4.0",
@@ -36,6 +37,7 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
+    "@types/js-cookie": "^3.0.6",
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.2",
     "@types/react-color": "^3.0.13",

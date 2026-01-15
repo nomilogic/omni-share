@@ -1,6 +1,7 @@
 // components/CookieBanner.tsx
 "use client";
 
+import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 
 export default function CookieBanner() {
@@ -10,7 +11,7 @@ export default function CookieBanner() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      const consent = localStorage.getItem("cookie-consent");
+      const consent = Cookies.get("cookie-consent");
 
       if (!consent) {
         setShow(true);
@@ -28,7 +29,7 @@ export default function CookieBanner() {
   };
 
   const accept = () => {
-    localStorage.setItem("cookie-consent", "accepted");
+    Cookies.set("cookie-consent", "accepted");
     setShow(false);
     setSettingsOpen(false);
   };

@@ -1,6 +1,7 @@
 import axios from "axios";
 import { CampaignInfo, PostContent, GeneratedPost } from "../types";
 import API from "../services/api";
+import Cookies from "js-cookie";
 
 // Base API configuration
 const api = axios.create({
@@ -13,7 +14,7 @@ const api = axios.create({
 // Add auth token to all requests
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("auth_token");
+    const token = Cookies.get("auth_token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -29,8 +30,6 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Token is invalid, clear it and redirect to login
-      localStorage.removeItem("auth_token");
       window.location.href = "/auth";
     }
     return Promise.reject(error);

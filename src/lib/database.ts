@@ -1,4 +1,5 @@
 // Using API calls instead of Supabase client
+import Cookies from "js-cookie";
 import API from "../services/api";
 import { CampaignInfo, PostContent, GeneratedPost } from "../types";
 import { apiRequest } from "./api";
@@ -7,7 +8,7 @@ import { apiRequest } from "./api";
 export async function saveCampaign(campaignInfo: CampaignInfo, userId: string) {
   console.log("saveCampaign called with:", { campaignInfo, userId });
 
-  const token = localStorage.getItem("auth_token");
+  const token = Cookies.get("auth_token");
   console.log("Auth token exists:", !!token);
 
   const requestBody = {
@@ -49,7 +50,7 @@ export async function saveCampaign(campaignInfo: CampaignInfo, userId: string) {
 export const getCampaigns = async (userId: string) => {
   try {
     console.log("Fetching campaigns for userId:", userId);
-    const token = localStorage.getItem("auth_token");
+    const token = Cookies.get("auth_token");
     const response = await fetch(`/api/campaigns?userId=${userId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -73,7 +74,7 @@ export const getCampaigns = async (userId: string) => {
 export const getCampaignById = async (campaignId: string, userId: string) => {
   try {
     console.log("Fetching campaign by ID:", campaignId, "for userId:", userId);
-    const token = localStorage.getItem("auth_token");
+    const token = Cookies.get("auth_token");
     const response = await fetch(
       `/api/campaigns/${campaignId}?userId=${userId}`,
       {
@@ -102,7 +103,7 @@ export async function updateCampaign(
   updates: Partial<CampaignInfo>,
   userId: string
 ) {
-  const token = localStorage.getItem("auth_token");
+  const token = Cookies.get("auth_token");
   const response = await fetch(`/api/campaigns/${campaignId}`, {
     method: "PUT",
     headers: {
@@ -126,7 +127,7 @@ export async function updateCampaign(
 }
 
 export async function deleteCampaign(campaignId: string, userId: string) {
-  const token = localStorage.getItem("auth_token");
+  const token = Cookies.get("auth_token");
   const response = await fetch(
     `/api/campaigns/${campaignId}?userId=${userId}`,
     {
@@ -229,11 +230,9 @@ export async function uploadMedia(file: File, userId?: string) {
   return result.data.fileUrl;
 }
 
-// Authentication helpers
 export async function getCurrentUser() {
-  const token = localStorage.getItem("auth_token");
+  const token = Cookies.get("auth_token");
   if (!token) {
-    console.log("🔑 No auth token found");
     return null;
   }
 
@@ -248,8 +247,6 @@ export async function getCurrentUser() {
       error: null,
     };
   } catch (error) {
-    console.error("❌ Error fetching current user:", error);
-    localStorage.removeItem("auth_token");
     return null;
   }
 }
@@ -258,7 +255,7 @@ export async function signInAnonymously() {
   try {
     // Import auth service for authentication operations
     const { authService } = await import("./auth");
-    return await authService.signInAnonymously();
+    return;
   } catch (error) {
     console.error("Error in signInAnonymously:", error);
     throw error;

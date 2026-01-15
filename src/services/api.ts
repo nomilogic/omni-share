@@ -3,6 +3,7 @@ import axios, {
   AxiosError,
   InternalAxiosRequestConfig,
 } from "axios";
+import Cookies from "js-cookie";
 
 const BASE_URL: string =
   import.meta.env.VITE_API_URL || "https://omnishare.ai/server/api";
@@ -188,7 +189,7 @@ export const API = axios.create({
 
 API.interceptors.request.use(
   (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
-    const token = localStorage.getItem("auth_token");
+    const token = Cookies.get("auth_token");
 
     if (token) {
       if (!config.headers) {
@@ -202,9 +203,12 @@ API.interceptors.request.use(
 );
 
 API.refreshToken = (token) => {
-  const refresh_token = token || localStorage.getItem("refresh_token");
-
-  return API.post("/auth/refresh-token", { refreshToken: refresh_token });
+  const tokens = Cookies.get("refresh_token");
+  return API.get(`/auth/refresh-token`, {
+    headers: {
+      authorization: token || tokens,
+    },
+  });
 };
 
 API.securityAnswers = (data: any) =>
@@ -235,13 +239,13 @@ API.otpVerification = (data) => {
   );
 };
 API.logout = () => {
-  const token: any = localStorage.getItem("auth_token");
+  const token: any = Cookies.get("auth_token");
   return API.get("/auth/logout", { headers: { authorization: token } });
 };
 
 API.verifyLogin2FA = (data) => API.post("/auth/verifyLogin2FA", data);
 API.disable2FA = (otp) => {
-  const token: any = localStorage.getItem("auth_token");
+  const token: any = Cookies.get("auth_token");
   return API.get(`/auth/disable2FA?otp=${otp}`, {
     headers: { authorization: token },
   });
@@ -251,13 +255,13 @@ API.securityQuestionDisable2FA = (data) => {
   return API.post(`/auth/security/disable2FA`, data);
 };
 API.enable2FA = () => {
-  const token: any = localStorage.getItem("auth_token");
+  const token: any = Cookies.get("auth_token");
   return API.get("/auth/enable2FA", { headers: { authorization: token } });
 };
 API.verify2FASetup = (data) => API.post("/auth/verify2FASetup", data);
 
 API.getUser = () => {
-  const token: any = localStorage.getItem("auth_token");
+  const token: any = Cookies.get("auth_token");
   return API.get("/auth", { headers: { authorization: token } });
 };
 

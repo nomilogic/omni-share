@@ -12,6 +12,8 @@ import { LoadingProvider } from "./LoadingContext";
 import { Platform } from "../types";
 import Pusher from "pusher-js";
 import API from "../services/api";
+import Cookies from "js-cookie";
+import { oauthManagerClient } from "@/lib/oauthManagerClient";
 
 // --- Types ---
 
@@ -78,6 +80,8 @@ export interface AppState {
   balance: number;
   isProfileEditing?: boolean;
   isPasswordEditing?: boolean;
+  connectedPlatforms: Platform[];
+  connectingPlatforms: Platform[];
 }
 
 type AppAction =
@@ -105,7 +109,9 @@ type AppAction =
   | { type: "SET_ADDONS"; payload: any[] }
   | { type: "SET_LOADER"; payload: boolean }
   | { type: "SET_UNREAD_COUNT"; payload: number }
-  | { type: "SET_SECURITY_QUESTIONS"; payload: any[] };
+  | { type: "SET_SECURITY_QUESTIONS"; payload: any[] }
+  | { type: "SET_CONNECTED_PLATFORMS"; payload: Platform[] }
+  | { type: "SET_CONNECTING_PLATFORMS"; payload: Platform[] };
 
 const initialState: AppState & {
   security_question: any[];
@@ -132,6 +138,8 @@ const initialState: AppState & {
   addons: [],
   loader: false,
   unreadCount: 0,
+  connectedPlatforms: [],
+  connectingPlatforms: [],
 };
 
 function appReducer(
@@ -194,10 +202,23 @@ function appReducer(
       return { ...state, loader: action.payload };
     case "SET_UNREAD_COUNT":
       return { ...state, unreadCount: action.payload };
+    case "SET_CONNECTED_PLATFORMS":
+      return { ...state, connectedPlatforms: action.payload };
+
+    case "SET_CONNECTING_PLATFORMS":
+      return { ...state, connectingPlatforms: action.payload };
+
     default:
       return state;
   }
 }
+const ALL_PLATFORMS: Platform[] = [
+  "linkedin",
+  "facebook",
+  "instagram",
+  "youtube",
+  "tiktok",
+];
 
 interface AppContextType {
   state: typeof initialState;
@@ -214,6 +235,7 @@ interface AppContextType {
   setPasswordEditing: (v: boolean) => void;
   fetchUnreadCount: () => Promise<void>;
   refreshBalance: () => Promise<void>;
+  checkConnectedPlatforms: () => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -232,8 +254,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 
   const logout = useCallback(() => {
-    localStorage.removeItem("auth_token");
-    localStorage.removeItem("refresh_token");
+    Cookies.remove("auth_token");
+    Cookies.remove("refresh_token");
     localStorage.removeItem("pusherTransportTLS");
     localStorage.removeItem("forgot_token");
     localStorage.removeItem("forgot_token_time");
@@ -241,16 +263,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const refreshToken = useCallback(async () => {
-    const refToken = localStorage.getItem("refresh_token");
+    const refToken = Cookies.get("refresh_token");
     if (!refToken) return logout();
     try {
       const res = await API.refreshToken(refToken);
-      localStorage.setItem("auth_token", res.data.data.accessToken);
-      localStorage.setItem("refresh_token", res.data.data.refreshToken);
-    } catch (error) {
-      logout();
-    }
-  }, [logout]);
+      Cookies.set("auth_token", res.data.data.accessToken, {
+        expires: 1,
+        secure: true,
+        sameSite: "strict",
+      });
+      Cookies.set("refresh_token", res.data.data.refreshToken, {
+        expires: 14,
+        secure: true,
+        sameSite: "strict",
+      });
+    } catch (error) {}
+  }, []);
 
   useEffect(() => {
     refreshToken();
@@ -310,7 +338,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     const init = async () => {
-      const token = localStorage.getItem("auth_token");
+      const token = Cookies.get("auth_token");
       if (!token) {
         dispatch({ type: "SET_LOADING", payload: false });
         return;
@@ -429,6 +457,32 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     };
   }, [state.user?.id, pusher, fetchBalance, fetchUnreadCount]);
 
+  const checkConnectedPlatforms = useCallback(async () => {
+    try {
+      const response = await API.connectionsStatus();
+      const statusData = response.data;
+
+      const connected: Platform[] = [];
+
+      ALL_PLATFORMS.forEach((platform) => {
+        const status = statusData[platform];
+        if (status?.connected && !status.expired) {
+          connected.push(platform);
+        }
+      });
+
+      dispatch({ type: "SET_CONNECTED_PLATFORMS", payload: connected });
+    } catch (error) {
+      dispatch({ type: "SET_CONNECTED_PLATFORMS", payload: [] });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (state.user?.id) {
+      checkConnectedPlatforms();
+    }
+  }, [state.user?.id, checkConnectedPlatforms]);
+
   const contextValue = useMemo(
     () => ({
       state,
@@ -437,6 +491,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       setProcessing,
       generationAmounts,
       setGenerationAmounts,
+      checkConnectedPlatforms,
       fetchBalance,
       refreshUser,
       selectCampaign: (campaign: null) =>
@@ -489,6 +544,7 @@ export const useAppContext = () => {
     selectCampaign,
     setProfileEditing,
     setPasswordEditing,
+    checkConnectedPlatforms,
   } = context;
 
   const setUnreadCount = useCallback(
@@ -496,6 +552,84 @@ export const useAppContext = () => {
       dispatch({ type: "SET_UNREAD_COUNT", payload: count });
     },
     [dispatch]
+  );
+
+  const handleConnectPlatform = useCallback(
+    async (platform: Platform) => {
+      let authWindow: Window | null = null;
+
+      try {
+        // Mark platform as connecting
+        dispatch({
+          type: "SET_CONNECTING_PLATFORMS",
+          payload: [...state.connectingPlatforms, platform],
+        });
+
+        // Start OAuth flow
+        const result: any = await oauthManagerClient.startOAuthFlow(platform);
+        const authUrl = result?.data?.data?.authUrl;
+        if (!authUrl) throw new Error("No auth URL returned from server");
+
+        authWindow = window.open(
+          authUrl,
+          `${platform}_oauth`,
+          "width=600,height=700,scrollbars=yes,resizable=yes"
+        );
+        if (!authWindow) throw new Error("OAuth popup blocked by browser");
+
+        const messageListener = (event: MessageEvent) => {
+          if (!event.data?.type || event.data.provider !== platform) return;
+
+          console.log("OAuth message received:", event.data);
+
+          switch (event.data.type) {
+            case "oauth_success":
+              authWindow?.close();
+              break;
+
+            case "oauth_error":
+              authWindow?.close();
+              break;
+
+            case "oauth_cancelled":
+              authWindow?.close();
+              break;
+          }
+
+          window.removeEventListener("message", messageListener);
+        };
+
+        window.addEventListener("message", messageListener);
+
+        const checkClosed = setInterval(() => {
+          if (authWindow?.closed) {
+            clearInterval(checkClosed);
+            window.removeEventListener("message", messageListener);
+            checkConnectedPlatforms();
+          }
+        }, 800);
+      } catch (error: any) {
+        checkConnectedPlatforms();
+      } finally {
+        dispatch({
+          type: "SET_CONNECTING_PLATFORMS",
+          payload: state.connectingPlatforms.filter((p) => p !== platform),
+        });
+      }
+    },
+    [state.connectingPlatforms, checkConnectedPlatforms]
+  );
+
+  const handleDisconnectPlatform = useCallback(
+    async (platform: Platform) => {
+      try {
+        await oauthManagerClient.disconnectPlatform(platform);
+        checkConnectedPlatforms();
+      } catch (error) {
+        console.error("Failed to disconnect:", error);
+      }
+    },
+    [checkConnectedPlatforms]
   );
 
   return {
@@ -524,5 +658,11 @@ export const useAppContext = () => {
     logout,
     setProfileEditing,
     setPasswordEditing,
+
+    connectedPlatforms: state.connectedPlatforms,
+    connectingPlatforms: state.connectingPlatforms,
+    checkConnectedPlatforms: checkConnectedPlatforms,
+    handleConnectPlatform: handleConnectPlatform,
+    handleDisconnectPlatform: handleDisconnectPlatform,
   };
 };

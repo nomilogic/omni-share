@@ -22,7 +22,7 @@ import { notify } from "@/utils/toast";
 import Icon from "./Icon";
 import { useTranslation } from "react-i18next";
 import { AuthenticatorModal } from "./AuthenticatorModal";
-
+import Cookies from "js-cookie";
 interface AuthFormProps {
   onAuthSuccess: (user: any) => void;
   onForgetPassword?: (email: string) => Promise<void>;
@@ -86,8 +86,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
   const isVerification = params.get("isVerification");
 
   const isCookieAccepted = () => {
-    if (typeof window === "undefined") return false;
-    return localStorage.getItem("cookie-consent") === "accepted";
+    return Cookies.get("cookie-consent") === "accepted";
   };
 
   // Login Form
@@ -177,13 +176,19 @@ export const AuthForm: React.FC<AuthFormProps> = ({
 
       notify("success", t("login_successful"));
 
-      localStorage.setItem("auth_token", result.accessToken);
-      localStorage.setItem("refresh_token", result.refreshToken);
+      Cookies.set("auth_token", result.accessToken, {
+        expires: 1,
+        secure: true,
+        sameSite: "strict",
+      });
+      Cookies.set("refresh_token", result.accessToken, {
+        expires: 14,
+        secure: true,
+        sameSite: "strict",
+      });
 
       localStorage.removeItem("forgot_token");
       localStorage.removeItem("forgot_token_time");
-      localStorage.removeItem("auth_token_expiry");
-      localStorage.removeItem("auth_remember");
 
       onAuthSuccess(result.user);
 
@@ -267,8 +272,17 @@ export const AuthForm: React.FC<AuthFormProps> = ({
       }
       console.log("result1212312321", result);
       if (result.accessToken) {
-        localStorage.setItem("auth_token", result.accessToken);
-        localStorage.setItem("refresh_token", result.refreshToken);
+        Cookies.set("auth_token", result.accessToken, {
+          expires: 1,
+          secure: true,
+          sameSite: "strict",
+        });
+        Cookies.set("refresh_token", result.accessToken, {
+          expires: 14,
+          secure: true,
+          sameSite: "strict",
+        });
+
         localStorage.removeItem("forgot_token");
         localStorage.removeItem("forgot_token_time");
         onAuthSuccess(result.user);
@@ -302,9 +316,17 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         setLoading(false);
         return;
       }
-      console.log("result1212312321", result);
-      localStorage.setItem("auth_token", result.accessToken);
-      localStorage.setItem("refresh_token", result.refreshToken);
+      Cookies.set("auth_token", result.accessToken, {
+        expires: 1,
+        secure: true,
+        sameSite: "strict",
+      });
+      Cookies.set("refresh_token", result.accessToken, {
+        expires: 14,
+        secure: true,
+        sameSite: "strict",
+      });
+
       localStorage.removeItem("forgot_token");
       localStorage.removeItem("forgot_token_time");
       onAuthSuccess(result.user);
@@ -356,10 +378,19 @@ export const AuthForm: React.FC<AuthFormProps> = ({
       }
 
       if (result.accessToken) {
-        localStorage.setItem("auth_token", result.accessToken);
+        Cookies.set("auth_token", result.accessToken, {
+          expires: 1,
+          secure: true,
+          sameSite: "strict",
+        });
+        Cookies.set("refresh_token", result.accessToken, {
+          expires: 14,
+          secure: true,
+          sameSite: "strict",
+        });
+
         localStorage.removeItem("forgot_token");
         localStorage.removeItem("forgot_token_time");
-        localStorage.setItem("refresh_token", result.refreshToken);
         onAuthSuccess(result.user);
 
         const profile = result.user?.profile;
@@ -835,8 +866,6 @@ export const AuthForm: React.FC<AuthFormProps> = ({
 
             localStorage.setItem("auth_token", data.accessToken);
             localStorage.setItem("refresh_token", data.refreshToken);
-            localStorage.removeItem("auth_token_expiry");
-            localStorage.removeItem("auth_remember");
 
             onAuthSuccess(data.user);
 

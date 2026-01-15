@@ -8,6 +8,7 @@ import { ArrowLeftIcon } from "lucide-react";
 import { notify } from "@/utils/toast";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import Cookies from "js-cookie";
 type OtpModalProps = {
   open: boolean;
   onClose: () => void;
@@ -93,8 +94,17 @@ export function OtpModal({
       const result: any = await fn(otp);
 
       if (result.accessToken) {
-        localStorage.setItem("auth_token", result.accessToken!);
         localStorage.removeItem("email_token");
+        Cookies.set("auth_token", result.accessToken, {
+          expires: 1,
+          secure: true,
+          sameSite: "strict",
+        });
+        Cookies.set("refresh_token", result.accessToken, {
+          expires: 14,
+          secure: true,
+          sameSite: "strict",
+        });
 
         onSuccess(result?.user);
         notify("success", t("verification_successful"));

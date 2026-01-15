@@ -1,6 +1,7 @@
 import React, { createContext, useContext } from "react";
 import { useAppContext } from "../context/AppContext";
 import API from "../services/api";
+import Cookies from "js-cookie";
 
 interface AuthContextType {
   user: any;
@@ -16,9 +17,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const updateProfile = async (profileData: any) => {
     try {
-      const token =
-        localStorage.getItem("auth_token") ||
-        sessionStorage.getItem("auth_token");
+      const token = Cookies.get("auth_token");
 
       if (!token) {
         throw new Error("Authentication token not found");
