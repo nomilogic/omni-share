@@ -2,11 +2,13 @@ import React from "react";
 import mainImage from "../assets/Omni sshare-layout-02.png";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { useAppContext } from "@/context/AppContext";
 
 const TwoColumnSection2 = () => {
   const { t, i18n } = useTranslation();
   const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
   const navigate = useNavigate();
+  const { user } = useAppContext();
   return (
     <section
       className="pt-8 pb-4 md:pb-14  md:pt-14 relative max-w-full mx-auto px-4 sm:px-6 lg:px-[10%]
@@ -24,10 +26,18 @@ const TwoColumnSection2 = () => {
 
         <div className="flex justify-center md:justify-start w-full ">
           <button
-            onClick={() => navigate("/auth")}
+            onClick={() => {
+    if (user) {
+      navigate("/content");
+    } else {
+      navigate("/auth");
+    }
+  }}
             className="group px-6 py-2.5 border border-purple-600 text-purple-600 font-semibold rounded-md hover:bg-purple-100 transition"
           >
-            {t("get_started_free")}
+           <span>
+    {user ? "Let's Create" : t("get_started_free")}
+  </span>
             <span className="inline-block transform transition-transform duration-300 group-hover:translate-x-1">
               →
             </span>

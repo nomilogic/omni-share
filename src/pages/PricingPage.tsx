@@ -318,7 +318,7 @@ export const PricingPage: React.FC = () => {
             <div className="grid xl:grid-cols-3 lg:grid-cols-2 gap-5 mx-auto order-2 md:order-1">
               {packages.map((tier: any, index: any) => {
                 const mobileOrder =
-                  index === 0 ? "order-3" : index === 1 ? "order-2" : "order-1";
+                   index === 0 ? "order-1" : index === 1 ? "order-2" : "order-3";
 
                 const desktopOrder =
                   index === 0
