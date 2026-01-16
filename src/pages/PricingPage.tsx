@@ -209,38 +209,19 @@ export const PricingPage: React.FC = () => {
   };
 
   const [selectedCurrency, setSelectedCurrency] = useState("USD");
-  const apiKey = "80f18a670f8f17b074ee56f9";
-  const [exchangeRates, setExchangeRates] = useState<Record<string, number>>(
-    {}
-  );
-  const [convertedAmounts, setConvertedAmounts] = useState<
-    Record<string, number>
-  >({});
   const [convertedAddonAmounts, setConvertedAddonAmounts] = useState<
     Record<string, number>
   >({});
-  const fetchExchangeRates = async () => {
-    const url = `https://v6.exchangerate-api.com/v6/${apiKey}/latest/USD`;
+  const [convertedAmounts, setConvertedAmounts] = useState<
+    Record<string, number>
+  >({});
 
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
+  const exchangeRates = state.exchangeRates;
 
-      if (data.result === "success") {
-        setExchangeRates(data.conversion_rates);
-      }
-    } catch (error) {
-      console.error("Failed to fetch exchange rates:", error);
-    }
-  };
   const convertAmount = (baseAmount: number, currencyCode: string) => {
     if (!exchangeRates || !exchangeRates[currencyCode]) return baseAmount;
     return Number((baseAmount * exchangeRates[currencyCode]).toFixed(2));
   };
-
-  useEffect(() => {
-    fetchExchangeRates();
-  }, []);
 
   useEffect(() => {
     if (!exchangeRates) return;
@@ -318,7 +299,7 @@ export const PricingPage: React.FC = () => {
             <div className="grid xl:grid-cols-3 lg:grid-cols-2 gap-5 mx-auto order-2 md:order-1">
               {packages.map((tier: any, index: any) => {
                 const mobileOrder =
-                   index === 0 ? "order-1" : index === 1 ? "order-2" : "order-3";
+                  index === 0 ? "order-1" : index === 1 ? "order-2" : "order-3";
 
                 const desktopOrder =
                   index === 0

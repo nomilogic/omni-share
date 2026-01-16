@@ -4,7 +4,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import API from "@/services/api";
-
 import { ExternalLink, RefreshCcw } from "lucide-react";
 
 import {
@@ -12,6 +11,7 @@ import {
   getPlatformIconBackgroundColors,
 } from "../utils/platformIcons";
 import { Platform } from "../types/";
+import { useAppContext } from "@/context/AppContext";
 
 // ---------------- Types ----------------
 interface TopPost {
@@ -48,12 +48,16 @@ interface AnalyticsData {
   };
 }
 
+// ---------------- Component ----------------
 export default function AnalyticsPage() {
   const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { state, fetchAnalytics } = useAppContext();
 
-  const [analyticsList, setAnalyticsList] = useState<AnalyticsData[]>([]);
-  const [loading, setLoading] = useState(false);
+  const analyticsList = state.analyticsList || [];
+  console.log("analyticsList", analyticsList);
+  const loading = state.analyticsLoading;
+
   const [selectedPost, setSelectedPost] = useState<TopPost | null>(null);
 
   const platforms: Platform[] = [
@@ -63,9 +67,9 @@ export default function AnalyticsPage() {
     "youtube",
     "tiktok",
   ];
-
   const platformParam = (searchParams.get("platform") || "") as Platform;
 
+  // ------------- Helpers -------------
   const hasAnyUsefulData = (a: AnalyticsData) => {
     const followers = a?.page?.followers ?? 0;
     const likes = a?.summary?.likes ?? 0;
@@ -78,42 +82,11 @@ export default function AnalyticsPage() {
         0
       ) ?? 0;
 
-    return (
-      followers > 0 ||
-      likes > 0 ||
-      comments > 0 ||
-      shares > 0 ||
-      postsLen > 0 ||
-      reach > 0
-    );
+    return followers || likes || comments || shares || postsLen || reach;
   };
 
-  const fetchAnalytics = async () => {
-    try {
-      setLoading(true);
-      const res = await API.facebookAnalytics();
-      setAnalyticsList(res?.data?.data || []);
-    } catch (e) {
-      console.error("Analytics fetch error:", e);
-      setAnalyticsList([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchAnalytics();
-  }, []);
-
-  // platforms that have usable data
   const platformsWithData = useMemo(() => {
-    const map = new Map<Platform, AnalyticsData>();
-    for (const a of analyticsList) {
-      if (a?.platform) map.set(a.platform, a);
-    }
-    return Array.from(map.values())
-      .filter(hasAnyUsefulData)
-      .map((a) => a.platform);
+    return analyticsList.map((a) => a.platform); // sab platforms include karo
   }, [analyticsList]);
 
   const platformsWithDataSet = useMemo(
@@ -121,17 +94,13 @@ export default function AnalyticsPage() {
     [platformsWithData]
   );
 
-  // ✅ selected platform: URL valid -> else facebook(if has data) -> else first available
   const selectedPlatform = useMemo<Platform | null>(() => {
     if (platformParam && platformsWithDataSet.has(platformParam))
       return platformParam;
-
     if (platformsWithDataSet.has("facebook")) return "facebook";
-
     return platformsWithData[0] ?? null;
   }, [platformParam, platformsWithData, platformsWithDataSet]);
 
-  // keep URL in sync (refresh-safe)
   useEffect(() => {
     if (!loading && selectedPlatform) {
       const current = searchParams.get("platform");
@@ -149,35 +118,29 @@ export default function AnalyticsPage() {
 
   const topPosts = analytics?.top_posts?.posts || [];
 
-  const getReachByPeriod = (period: "day" | "week" | "days_28") => {
-    const insight = analytics?.insights?.find((i) => i.period === period);
-    return insight?.values?.[0]?.value ?? 0;
-  };
+  const getReachByPeriod = (period: "day" | "week" | "days_28") =>
+    analytics?.insights?.find((i: any) => i.period === period)?.values?.[0]
+      ?.value ?? 0;
 
   const dailyReach = getReachByPeriod("day");
   const weeklyReach = getReachByPeriod("week");
   const monthlyReach = getReachByPeriod("days_28");
 
-  const platformLabel = selectedPlatform
-    ? selectedPlatform[0].toUpperCase() + selectedPlatform.slice(1)
-    : "";
-
+  // ---------------- Render ----------------
   return (
     <div className="mt-5">
       <main className="w-full flex flex-col gap-y-3">
-        {/* Header row */}
+        {/* Header */}
         <div className="flex items-center justify-between gap-3 px-3">
           <div className="flex items-center gap-3">
             <h1 className="text-3xl font-bold text-gray-900">
               {selectedPost ? t("post_details") || "Post Details" : "Analytics"}
-              {/* <p className="text-sm font-normal">Updates after 24 hours</p> */}
             </h1>
-
-            {platformLabel ? (
+            {selectedPlatform && (
               <span className="hidden sm:inline-flex px-3 py-1 rounded-md text-xs font-semibold bg-purple-100 text-purple-700">
-                {platformLabel}
+                {selectedPlatform[0].toUpperCase() + selectedPlatform.slice(1)}
               </span>
-            ) : null}
+            )}
           </div>
 
           <button
@@ -193,7 +156,7 @@ export default function AnalyticsPage() {
           </button>
         </div>
 
-        {/* ✅ ALL platform icons (data => active, no-data => disabled) */}
+        {/* Platform icons */}
         <div className="flex flex-wrap gap-2 md:gap-3 px-3">
           {platforms.map((p) => {
             const IconComponent = getPlatformIcon(p);
@@ -212,14 +175,8 @@ export default function AnalyticsPage() {
                 }}
                 className={`relative p-1 rounded-full transition-all duration-200 transform h-fit
                   ${hasData ? "hover:scale-105" : ""}
-                  ${
-                    isActive && hasData
-                      ? "ring-4 ring-blue-200 shadow-md"
-                      : hasData
-                      ? "hover:shadow-md"
-                      : "opacity-30 grayscale cursor-not-allowed"
-                  }
-                `}
+                  ${isActive && hasData ? "ring-4 ring-blue-200 shadow-md" : ""}
+                  ${hasData ? "" : "opacity-30 grayscale cursor-not-allowed"}`}
                 title={hasData ? p : `${p} (no data)`}
               >
                 <div
@@ -231,21 +188,10 @@ export default function AnalyticsPage() {
                     <IconComponent className="w-4 md:w-6 h-4 md:h-6" />
                   ) : (
                     <span className="text-white font-bold text-sm">
-                      {p === "facebook"
-                        ? "FB"
-                        : p === "instagram"
-                        ? "IG"
-                        : p === "linkedin"
-                        ? "IN"
-                        : p === "youtube"
-                        ? "YT"
-                        : p === "tiktok"
-                        ? "TT"
-                        : "P"}
+                      {p.slice(0, 2).toUpperCase()}
                     </span>
                   )}
                 </div>
-
                 {isActive && hasData && (
                   <div className="absolute inset-0 rounded-full border-2 border-blue-500 animate-pulse" />
                 )}
@@ -254,23 +200,19 @@ export default function AnalyticsPage() {
           })}
         </div>
 
-        {/* ✅ Center heading under icons */}
-       
-
+        {/* Analytics content */}
         <div className="bg-gray-100 lg:px-4 px-3 py-4 rounded-md">
-          {/* Empty state */}
           {!loading && (!analytics || platformsWithData.length === 0) && (
             <div className="bg-white rounded-md p-6 border">
               <p className="text-sm text-gray-700 font-medium">
                 No analytics data available yet.
               </p>
               <p className="text-sm text-gray-600 mt-1">
-                  Connect your accounts and publish content to start seeing analytics.
+                Connect accounts & publish content to start seeing analytics.
               </p>
             </div>
           )}
 
-          {/* Main content */}
           {!!analytics && platformsWithData.length > 0 && (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
               {/* Left/Main */}
@@ -287,14 +229,11 @@ export default function AnalyticsPage() {
                         <h2 className="text-xl font-bold text-gray-900 truncate">
                           {analytics.page.name}
                         </h2>
-
-                        {analytics.platform === "facebook" && (
-                          <p className="text-sm text-gray-600 mt-1">
-                            {analytics.page.category} •{" "}
-                            {analytics.page.followers?.toLocaleString?.() ?? 0}{" "}
-                            {t("followers") || "followers"}
-                          </p>
-                        )}
+                        <p className="text-sm text-gray-600 mt-1">
+                          {analytics.page.category} •{" "}
+                          {analytics.page.followers?.toLocaleString?.() ?? 0}{" "}
+                          {t("followers")}
+                        </p>
                       </div>
                     </div>
 
@@ -302,36 +241,31 @@ export default function AnalyticsPage() {
                       <StatCard
                         title={t("likes") || "Likes"}
                         value={analytics.summary.likes}
-                        tone="blue"
                       />
                       <StatCard
                         title={t("comments") || "Comments"}
                         value={analytics.summary.comments}
-                        tone="blue"
                       />
                       <StatCard
                         title={t("shares") || "Shares"}
                         value={analytics.summary.shares}
-                        tone="blue"
                       />
                     </div>
 
-                    {analytics.platform === "facebook" && (
-                      <div className="grid grid-cols-3 gap-3 mt-4">
-                        <ReachCard
-                          period={t("today") || "Today"}
-                          value={dailyReach}
-                        />
-                        <ReachCard
-                          period={t("week") || "Week"}
-                          value={weeklyReach}
-                        />
-                        <ReachCard
-                          period={t("month") || "Month"}
-                          value={monthlyReach}
-                        />
-                      </div>
-                    )}
+                    <div className="grid grid-cols-3 gap-3 mt-4">
+                      <ReachCard
+                        period={t("today") || "Today"}
+                        value={dailyReach}
+                      />
+                      <ReachCard
+                        period={t("week") || "Week"}
+                        value={weeklyReach}
+                      />
+                      <ReachCard
+                        period={t("month") || "Month"}
+                        value={monthlyReach}
+                      />
+                    </div>
                   </div>
                 )}
               </div>
@@ -345,16 +279,13 @@ export default function AnalyticsPage() {
                     </h4>
                     {topPosts?.length ? (
                       <span className="text-xs text-gray-500">
-                        {topPosts.length} {t("posts") || "posts"}
+                        {topPosts.length} {t("posts")}
                       </span>
                     ) : null}
                   </div>
-
                   <PostsList
                     topPosts={topPosts}
-                    onSelect={(p) => {
-                      setSelectedPost(p);
-                    }}
+                    onSelect={(p) => setSelectedPost(p)}
                   />
                 </div>
               </div>
@@ -367,7 +298,6 @@ export default function AnalyticsPage() {
 }
 
 // ---------------- UI Components ----------------
-
 function PostsList({
   topPosts,
   onSelect,
@@ -376,15 +306,10 @@ function PostsList({
   onSelect: (post: TopPost) => void;
 }) {
   const { t } = useTranslation();
-
-  if (!topPosts?.length) {
+  if (!topPosts?.length)
     return (
-      <p className="text-xs text-gray-500 italic">
-        {t("no_posts_available") || "No posts available."}
-      </p>
+      <p className="text-xs text-gray-500 italic">{t("no_posts_available")}</p>
     );
-  }
-
   return (
     <div className="space-y-2 max-h-[520px] overflow-y-auto">
       {topPosts.map((post) => (
@@ -402,14 +327,11 @@ function PostsList({
                 {new Date(post.created_time).toLocaleDateString()}
               </p>
             </div>
-
             <div className="text-right">
               <p className="text-lg font-bold text-blue-600 leading-none">
                 {post.engagement ?? 0}
               </p>
-              <p className="text-[11px] text-gray-500">
-                {t("engagement") || "engagement"}
-              </p>
+              <p className="text-[11px] text-gray-500">{t("engagement")}</p>
             </div>
           </div>
         </button>
@@ -427,21 +349,19 @@ function PostDetailsCard({
 }) {
   const { t } = useTranslation();
   const message = post.fullMessage || post.title;
-
   return (
     <div className="bg-white rounded-md border p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h3 className="text-lg font-bold text-gray-900">
-            {t("post_details") || "Post Details"}
+            {t("post_details")}
           </h3>
           <p className="text-xs text-gray-600 mt-1">
             {new Date(post.created_time).toLocaleString()}
           </p>
         </div>
-
         <div className="flex items-center gap-3">
-          {post.permalink ? (
+          {post.permalink && (
             <a
               href={post.permalink}
               target="_blank"
@@ -449,42 +369,32 @@ function PostDetailsCard({
               className="inline-flex items-center gap-2 text-sm font-semibold text-purple-700 hover:underline"
             >
               <ExternalLink className="w-4 h-4" />
-              {t("open") || "Open"}
+              {t("open")}
             </a>
-          ) : null}
-
+          )}
           <button
             onClick={onBack}
             className="text-sm font-semibold text-gray-700 hover:text-gray-900"
           >
-            {t("back") || "Back"}
+            {t("back")}
           </button>
         </div>
       </div>
-
       <div className="mt-4 bg-gray-50 p-4 rounded-md text-sm text-gray-800 leading-relaxed">
         {message}
       </div>
-
       <div className="grid grid-cols-3 gap-3 mt-4">
-        <StatCard title={t("likes") || "Likes"} value={post.likesCount} tone="blue" />
-        <StatCard title={t("comments") || "Comments"} value={post.commentsCount} tone="blue" />
-        <StatCard title={t("shares") || "Shares"} value={post.sharesCount} tone="blue" />
+        <StatCard title={t("likes")} value={post.likesCount} />
+        <StatCard title={t("comments")} value={post.commentsCount} />
+        <StatCard title={t("shares")} value={post.sharesCount} />
       </div>
     </div>
   );
 }
 
-function StatCard({
-  title,
-  value,
-}: {
-  title: string;
-  value: any;
-}) {
-
+function StatCard({ title, value }: { title: string; value: any }) {
   return (
-    <div className={`rounded-md p-3 text-center bg-[#7650e3]`}>
+    <div className="rounded-md p-3 text-center bg-[#7650e3]">
       <p className="text-lg font-bold text-theme-text-light">{value || 0}</p>
       <p className="text-xs text-theme-text-light">{title}</p>
     </div>

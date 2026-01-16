@@ -49,7 +49,7 @@ export default function ImageRegenerationModal({
 
   const handleSubmit = async () => {
     if (!prompt?.trim()) return;
-    
+
     let payload = null;
     if (modifyMode && activeImage) {
       // Convert blob URL to base64 if needed
@@ -59,7 +59,7 @@ export default function ImageRegenerationModal({
         payload = activeImage;
       }
     }
-    
+
     onRegenerate(prompt, payload);
   };
 
@@ -258,7 +258,6 @@ export default function ImageRegenerationModal({
                 {/* Desktop actions */}
                 <div className="hidden sm:flex gap-3 pt-1">
                   <button
-                  
                     onClick={handleSubmit}
                     disabled={isLoading || !prompt.trim()}
                     className="group w-full rounded-xl flex items-center justify-between border border-[#7650e3] theme-bg-trinary theme-text-light hover:bg-[#d7d7fc] hover:text-[#7650e3] transition-colors duration-200 py-3 px-4 font-medium disabled:opacity-50 disabled:cursor-not-allowed text-sm"
@@ -296,18 +295,17 @@ export default function ImageRegenerationModal({
         <div className="sm:hidden sticky bottom-0 z-10 border-t border-gray-200 bg-white/90 backdrop-blur px-4 py-3">
           <div className="flex gap-3">
             <button
-             
               onClick={handleSubmit}
               disabled={isLoading || !prompt.trim()}
               className=" group w-full rounded-xl flex items-center justify-between border border-[#7650e3] theme-bg-trinary theme-text-light hover:bg-[#d7d7fc] hover:text-[#7650e3] transition-colors duration-200 py-3 px-4 font-medium disabled:opacity-50 disabled:cursor-not-allowed text-sm"
             >
               {isLoading ? "Generating..." : modifyMode ? "Modify" : "Generate"}
               <div className="px-2.5 py-1.5 flex items-center gap-2">
-                      <Icon
-                        name="spiral-logo"
-                        size={16}
-                        className="brightness-[1000%] transition group-hover:brightness-100"
-                      />
+                <Icon
+                  name="spiral-logo"
+                  size={16}
+                  className="brightness-[1000%] transition group-hover:brightness-100"
+                />
                 <span>{generationAmounts}</span>
               </div>
             </button>

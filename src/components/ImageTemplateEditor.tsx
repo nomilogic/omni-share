@@ -193,12 +193,14 @@ export const ImageTemplateEditor = ({
         initialElements.push(backgroundElement);
       }
 
-      // Add template elements if they exist
+      // Add template elements if they exist (excluding background-image)
       if (selectedTemplate?.elements) {
-        const templateElements = selectedTemplate.elements.map((el, index) => ({
-          ...el,
-          zIndex: el.zIndex !== undefined ? el.zIndex : index + 1, // Start from 1 to be above background
-        }));
+        const templateElements = selectedTemplate.elements
+          .filter((el) => el.id !== "background-image")
+          .map((el, index) => ({
+            ...el,
+            zIndex: el.zIndex !== undefined ? el.zIndex : index + 1, // Start from 1 to be above background
+          }));
         initialElements = [...initialElements, ...templateElements];
       }
 
@@ -574,11 +576,13 @@ export const ImageTemplateEditor = ({
         return;
       }
 
-      // Normalize elements
-      const normalizedElements = tpl.elements.map((el, index) => ({
-        ...el,
-        zIndex: el.zIndex !== undefined ? el.zIndex : index,
-      }));
+      // Normalize elements and filter out background-image
+      const normalizedElements = tpl.elements
+        .filter((el) => el.id !== "background-image")
+        .map((el, index) => ({
+          ...el,
+          zIndex: el.zIndex !== undefined ? el.zIndex : index,
+        }));
 
       // Apply profile bindings immediately
       const elementsWithBindings = applyProfileBindings(normalizedElements);

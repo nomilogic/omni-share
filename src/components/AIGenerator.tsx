@@ -18,13 +18,11 @@ interface AIGeneratorProps {
 export const AIGenerator: React.FC<AIGeneratorProps> = ({
   contentData,
   onComplete,
-  onBack,
 }) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [currentPlatform, setCurrentPlatform] = useState<Platform | null>(null);
   const [progress, setProgress] = useState(0);
   const { t, i18n } = useTranslation();
-  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
 
   const useRefFlag = React.useRef(false);
   useEffect(() => {
@@ -34,15 +32,6 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
       generatePosts();
     }
   }, [contentData]);
-  const [selectedLang, setSelectedLang] = useState("en");
-
-  /*************  ✨ Windsurf Command ⭐  *************/
-  /**
-/*******  cd48cf95-a3b2-41f4-8278-0465b264c47a  *******/
-  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedLang(event.target.value);
-    console.log("Selected language:", event.target.value);
-  };
 
   const langMap: Record<string, string> = {
     en: "English",
@@ -67,13 +56,9 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
 
       const campaignInfo: CampaignInfo = {
         name:
-          contentData?.campaignName ||
-          contentData?.campaignInfo?.name ||
-          "",
+          contentData?.campaignName || contentData?.campaignInfo?.name || "",
         website:
-          contentData?.website ||
-          contentData?.campaignInfo?.website ||
-          "",
+          contentData?.website || contentData?.campaignInfo?.website || "",
         industry:
           contentData?.industry ||
           contentData?.campaignInfo?.industry ||
@@ -95,7 +80,6 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
         goals: contentData?.goals ||
           contentData?.campaignInfo?.goals || ["brand_building"],
         platforms: targetPlatforms,
-        // Additional campaign fields if available
         objective:
           contentData?.objective || contentData?.campaignInfo?.objective,
         keywords:
@@ -197,7 +181,8 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
               </div>
               <div>
                 <p className="text-lg font-medium text-slate-800">
-                  {t("optimizing_for")} {getPlatformDisplayName(currentPlatform)}
+                  {t("optimizing_for")}{" "}
+                  {getPlatformDisplayName(currentPlatform)}
                 </p>
                 <p className="text-sm text-gray-500 font-medium">
                   {t("analyzing_audience")}
@@ -249,9 +234,11 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
 
         <div className="text-center text-sm text-gray-500 font-medium">
           <p>
-            {t("processing")} {contentData?.selectedPlatforms?.length ||
+            {t("processing")}{" "}
+            {contentData?.selectedPlatforms?.length ||
               contentData?.platforms?.length ||
-              1} {t("platforms")}
+              1}{" "}
+            {t("platforms")}
             {(contentData?.selectedPlatforms?.length ||
               contentData?.platforms?.length ||
               1) > 1

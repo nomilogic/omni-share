@@ -8,11 +8,8 @@ import { Platform } from "../types";
 import {
   ExternalLink,
   Clock,
-  Eye,
-  EyeOff,
   Image,
   Video,
-  FileText,
   Filter,
   ChevronDown,
   RotateCcw,
@@ -24,12 +21,10 @@ import { useTranslation } from "react-i18next";
 import { Icon } from "@/components";
 import { useAppContext } from "@/context/AppContext";
 
-// Export inter  for external access
 export interface HistoryPageRef {
   refreshHistory: () => Promise<void>;
 }
 
-// Interface for post history items
 interface PostHistoryItem {
   id: string;
   platform: Platform;
@@ -53,53 +48,35 @@ interface PostHistoryItem {
   };
 }
 
-// Filter and sort types
 type ReadFilter = "all" | "read" | "unread";
 type PlatformFilter = "all" | Platform;
 type TimePeriod = "all" | "today" | "week" | "month";
 type SortBy = "date_desc" | "date_asc" | "platform_asc" | "platform_desc";
 
 export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
-  const [posts, setPosts] = useState<PostHistoryItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { setUnreadCount, state } = useAppContext();
+  const posts: any = state.postHistory;
   const [error, setError] = useState<string | null>(null);
   const { t, i18n } = useTranslation();
-  const { setUnreadCount } = useAppContext();
 
-  // Filter states
   const [readFilter, setReadFilter] = useState<ReadFilter>("all");
   const [platformFilter, setPlatformFilter] = useState<PlatformFilter>("all");
   const [timePeriod, setTimePeriod] = useState<TimePeriod>("all");
   const [sortBy, setSortBy] = useState<SortBy>("date_desc");
   const [showFilters, setShowFilters] = useState(false);
-  const [loader, setLoader] = useState(true);
   useEffect(() => {
     markAllAsRead();
   }, []);
-
-  const fetchPostHistory = async () => {
-    try {
-      const response = await API.getHistory();
-      const data = await response.data.data;
-      setPosts(data || []);
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to fetch post history"
-      );
-    } finally {
-      setTimeout(() => setLoader(false), 500);
-    }
-  };
 
   const markAsRead = async (postId: string) => {
     try {
       await API.readHistoryById(postId);
 
-      setPosts((prevPosts) =>
-        prevPosts.map((post) =>
-          post.id === postId ? { ...post, isRead: true } : post
-        )
-      );
+      // setPosts((prevPosts) =>
+      //   prevPosts.map((post:any) =>
+      //     post.id === postId ? { ...post, isRead: true } : post
+      //   )
+      // );
 
       historyRefreshService.refreshHistory();
     } catch (error) {
@@ -109,10 +86,9 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
 
   const markAllAsRead = async () => {
     try {
-      fetchPostHistory();
-      setPosts((prevPosts) =>
-        prevPosts.map((post) => ({ ...post, isRead: true }))
-      );
+      // setPosts((prevPosts) =>
+      //   prevPosts.map((post:any) => ({ ...post, isRead: true }))
+      // );
       await API.readAllHistory();
       await historyRefreshService.refreshHistory();
       setUnreadCount(0);
@@ -171,7 +147,6 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
     return `${Math.floor(diffInSeconds / 86400)}d ago`;
   };
 
-  // Get thumbnail URL from multiple possible sources
   const getThumbnailUrl = (post: PostHistoryItem) => {
     return (
       post.thumbnailUrl ||
@@ -189,24 +164,20 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
     const thumbnailUrl = getThumbnailUrl(post);
     if (!thumbnailUrl) return "text";
 
-    // Check file extension
     const url = thumbnailUrl.toLowerCase();
     if (url.match(/\.(jpg|jpeg|png|gif|webp|svg)$/)) return "image";
     if (url.match(/\.(mp4|webm|ogg|avi|mov|wmv|flv)$/)) return "video";
 
-    // YouTube video detection
     if (url.includes("youtube.com") || url.includes("youtu.be")) return "video";
 
-    return "image"; // Default to image for unknown types
+    return "image";
   };
 
-  // Render media thumbnail with proper fallbacks
   const renderThumbnail = (post: PostHistoryItem) => {
     const thumbnailUrl = getThumbnailUrl(post);
     const mediaType = getMediaType(post);
 
     if (!thumbnailUrl) {
-      // Don't show anything for text posts
       if (mediaType === "text") {
         return null;
       }
@@ -231,7 +202,6 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
             const target = e.currentTarget;
             const parent = target.parentElement;
             if (parent) {
-              const IconComponent = mediaType === "video" ? Video : Image;
               parent.innerHTML = `
                 <div class="w-full h-full bg-gray-100 flex items-center justify-center">
                   <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -257,29 +227,17 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
     );
   };
 
-  useImperativeHandle(
-    ref,
-    () => ({
-      refreshHistory: async () => {
-        console.log("📋 Refreshing post history...");
-        setLoading(true);
-        await fetchPostHistory();
-      },
-    }),
-    []
-  );
-
-  let filteredPosts = posts;
+  let filteredPosts: any = posts;
 
   if (readFilter === "read") {
-    filteredPosts = filteredPosts.filter((post) => post.isRead);
+    filteredPosts = filteredPosts?.filter((post: any) => post.isRead);
   } else if (readFilter === "unread") {
-    filteredPosts = filteredPosts.filter((post) => !post.isRead);
+    filteredPosts = filteredPosts?.filter((post: any) => !post.isRead);
   }
 
   if (platformFilter !== "all") {
-    filteredPosts = filteredPosts.filter(
-      (post) => post.platform === platformFilter
+    filteredPosts = filteredPosts?.filter(
+      (post: any) => post.platform === platformFilter
     );
   }
 
@@ -299,7 +257,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
         break;
     }
 
-    filteredPosts = filteredPosts.filter((post) => {
+    filteredPosts = filteredPosts.filter((post: any) => {
       const postDate = new Date(post.publishedAt);
       return postDate >= filterDate;
     });
@@ -324,9 +282,9 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
     }
   });
 
-  const unreadCount = posts.filter((post) => !post.isRead).length;
+  const unreadCount = posts?.filter((post: any) => !post.isRead).length;
   const availablePlatforms = Array.from(
-    new Set(posts.map((post) => post.platform))
+    new Set(posts.map((post: any) => post.platform))
   );
 
   return (
@@ -396,7 +354,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
                   className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:ring-blue-600 focus:border-blue-500"
                 >
                   <option value="all">{t("all_platforms")}</option>
-                  {availablePlatforms.map((platform) => (
+                  {availablePlatforms.map((platform: any) => (
                     <option key={platform} value={platform}>
                       {platform.charAt(0).toUpperCase() + platform.slice(1)}
                     </option>
@@ -490,7 +448,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
           </div>
         )}
 
-        {loader ? (
+        {state.postHistoryLoading ? (
           <div className=" flex flex-col justify-center items-center min-h-[50vh]">
             <Icon name="spiral-logo" size={45} className="animate-spin" />
             <p className="mt-1 text-base font-medium text-gray-500">
@@ -521,7 +479,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
           </div>
         ) : (
           <div className="space-y-6">
-            {filteredPosts.map((post) => (
+            {filteredPosts.map((post: any) => (
               <div
                 key={post.id}
                 className={`bg-white border rounded-md overflow-hidden hover:shadow-md transition-all duration-200 ${

@@ -2,6 +2,7 @@ import axios from "axios";
 import { GeneratedPost, Platform } from "../types";
 import API from "../services/api";
 import { post } from "node_modules/axios/index.cjs";
+import Cookies from "js-cookie";
 
 // Facebook
 export async function postToFacebook(
@@ -650,7 +651,6 @@ export async function postToAllPlatforms(
 
   for (const post of posts) {
     try {
-      console.log("post", post);
       onProgress?.(post.platform, "pending");
 
       let realPostResult = null;

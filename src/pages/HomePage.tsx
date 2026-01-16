@@ -39,7 +39,6 @@ import CommunitySignup from "@/components/CommunitySignup";
 import TwoColumnSection from "@/components/TwoColumnSection";
 import IntroVideo from "../assets/Omnishare Ad.00.mp4";
 import { Platform } from "@/types";
-
 import { notify } from "@/utils/toast";
 import z from "zod";
 import { useForm } from "react-hook-form";
@@ -47,7 +46,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import OmniVideo from "../assets/video/omnishare.mp4";
 import LanguageDropdown from "../components/LanguageDropdown";
 import { Trans, useTranslation } from "react-i18next";
-import { div } from "framer-motion/client";
 import { useAppContext } from "../context/AppContext";
 import Cookies from "js-cookie";
 
@@ -73,14 +71,6 @@ function HomePage() {
     damping: 30,
   });
 
-  const socialPlatforms: Platform[] = [
-    "linkedin",
-    "facebook",
-    "instagram",
-    "youtube",
-    "tiktok",
-  ];
-
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -91,7 +81,6 @@ function HomePage() {
     isInitialMount.current = false;
   }, []);
 
-  // Force show page after 3 seconds if still loading
   useEffect(() => {
     const timer = setTimeout(() => {
       setForceShow(true);
@@ -99,13 +88,10 @@ function HomePage() {
     return () => clearTimeout(timer);
   }, []);
 
-  // SEO Meta Tags
   useEffect(() => {
-    // Update document title
     document.title =
       "OmniShare - AI-Powered Social Media Content Generator & Scheduler";
 
-    // Update meta description
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
       metaDescription.setAttribute(
@@ -114,7 +100,6 @@ function HomePage() {
       );
     }
 
-    // Add breadcrumb schema
     const breadcrumbSchema = {
       "@context": "https://schema.org",
       "@type": "BreadcrumbList",
@@ -345,20 +330,6 @@ function HomePage() {
       notify("error", err.response?.data?.message || t("something_went_wrong"));
     }
   };
-
-  // Show loader while user data is loading (with 3 second fallback)
-  // Temporarily disabled - just render the page
-  // if (state.loading && !forceShow) {
-  //   return (
-  //     <div className="min-h-screen bg-white flex items-center justify-center">
-  //       <motion.div
-  //         animate={{ rotate: 360 }}
-  //         transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-  //         className="w-12 h-12 border-4 border-[#7650e3] border-t-transparent rounded-full"
-  //       />
-  //     </div>
-  //   );
-  // }
 
   return (
     <div className="min-h-screen bg-white overflow-x-hidden">
