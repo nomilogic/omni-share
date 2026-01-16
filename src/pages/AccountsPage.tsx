@@ -25,13 +25,7 @@ export const AccountsPage: React.FC = () => {
     connectingPlatforms,
     handleConnectPlatform,
     handleDisconnectPlatform,
-    checkConnectedPlatforms,
   } = useAppContext();
-
-  // Refresh connected platforms on mount
-  useEffect(() => {
-    checkConnectedPlatforms();
-  }, [checkConnectedPlatforms]);
 
   const renderPlatformIcon = (platform: Platform) => {
     const IconComponent = getPlatformIcon(platform);
