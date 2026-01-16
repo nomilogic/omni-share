@@ -529,9 +529,9 @@ export const PublishPosts: React.FC<PublishProps> = ({
                 <>
                   <div
                     key={post.platform}
-                    className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-md hover:bg-gray-50 transition-colors"
+                    className="flex flex-row gap-1  justify-between py-4 px-2 md:px-4 bg-white border border-gray-200 rounded-md hover:bg-gray-50 transition-colors"
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 md:gap-4">
                       {/* Platform Icon */}
                       <div
                         className={`w-8 h-8 md:w-12 md:h-12 rounded-full flex items-center  justify-center text-white ${getPlatformIconBackgroundColors(
@@ -657,7 +657,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
                           <button
                             onClick={() => handleConnectPlatform(post.platform)}
                             disabled={isConnecting}
-                            className="p-3 text-gray-500 font-medium hover:text-blue-600 disabled:opacity-50 rounded-md hover:bg-gray-100"
+                            className="md:p-3 text-gray-500 font-medium hover:text-blue-600 disabled:opacity-50 rounded-md hover:bg-gray-100"
                             title="Refresh connection"
                           >
                             <RefreshCw className={`w-4 h-4`} />
@@ -667,7 +667,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
                               handleDisconnectPlatform(post.platform)
                             }
                             disabled={isConnecting}
-                            className="p-3 text-gray-500 font-medium hover:text-red-600 disabled:opacity-50 rounded-md hover:bg-gray-100"
+                            className="md:p-3 text-gray-500 font-medium hover:text-red-600 disabled:opacity-50 rounded-md hover:bg-gray-100"
                             title="Disconnect"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -704,7 +704,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
                                   id={`platform-${post.platform}`}
                                 />
                                 <div
-                                  className={`w-6 h-6 rounded border-2 transition-all duration-200 flex items-center justify-center ${
+                                  className={`w-5 md:w-6 h-5 md:h-6 mx-2 rounded border-2 transition-all duration-200 flex items-center justify-center ${
                                     selectedPlatforms.includes(post.platform)
                                       ? "bg-blue-600 border-blue-600 text-white"
                                       : "bg-white border-gray-300 hover:border-blue-500"
@@ -732,7 +732,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
 
                         {isConnected &&
                           publishedPlatforms.includes(post.platform) && (
-                            <div className="flex items-center gap-2 px-3 py-1 rounded-md bg-purple-200 bg-green-100 text-purple-600 text-sm font-medium">
+                            <div className="flex items-center gap-1 text-xs px-2 md:text-sm md:gap-2  py-1 rounded-md bg-purple-200 bg-green-100 text-purple-600  font-medium">
                               <svg
                                 className="w-4 h-4"
                                 fill="currentColor"
@@ -1266,7 +1266,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
                         : "bg-red-50 border-red-200"
                     }`}
                   >
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center ">
                       <h4
                         className={`font-medium  ${
                           result.success ? "text-green-800" : "text-red-800"
@@ -1274,11 +1274,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
                       >
                         {result.success ? "✅" : "❌"} {platform}
                       </h4>
-                      {result.success && result.postId && (
-                        <span className="text-xs text-gray-500 font-medium bg-gray-200 px-2 py-1 rounded-md">
-                          ID: {result.postId}
-                        </span>
-                      )}
+                      
                     </div>
                     <p
                       className={`text-sm mt-1 ${
