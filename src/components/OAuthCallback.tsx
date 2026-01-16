@@ -20,11 +20,7 @@ export const OAuthCallback: React.FC = () => {
 
   useEffect(() => {
     const handleCallback = async () => {
-      // Prevent multiple simultaneous OAuth requests and StrictMode double-invoke
       if (hasRunRef.current || isProcessing) {
-        console.log(
-          "OAuth callback already in progress or already handled, skipping..."
-        );
         return;
       }
       hasRunRef.current = true;
@@ -34,7 +30,7 @@ export const OAuthCallback: React.FC = () => {
         const code = searchParams.get("code");
         const state = searchParams.get("state");
         const error = searchParams.get("error");
-        const platform = window.location.pathname.split("/")[2]; // Extract platform from /oauth/{platform}/callback
+        const platform = window.location.pathname.split("/")[2];
         setPlatform(platform);
 
         console.log(
@@ -59,7 +55,6 @@ export const OAuthCallback: React.FC = () => {
 
         setMessage(`Connecting to ${platform}...`);
 
-        // Handle the OAuth callback
         const credentials = await API.OauthExchangeCode({
           platform: platform,
           code: code,
@@ -69,80 +64,52 @@ export const OAuthCallback: React.FC = () => {
         setStatus("success");
         setMessage(`Successfully connected to ${platform}!`);
 
-        // Extract user info from credentials response
-        const username =
-          credentials?.userProfile?.username ||
-          credentials?.userProfile?.name ||
-          "User";
-        const connectedAt =
-          credentials?.connectedAt || new Date().getTime();
-
-        // POST MESSAGE FIRST before attempting any window operations
-        // This ensures the parent gets the message even if window.close() doesn't work
         const messageData = {
           type: "oauth_success",
           platform: platform,
-          username: username,
-          connectedAt: connectedAt,
           credentials: credentials,
         };
 
-        console.log("Posting message to parent:", messageData);
-
-        // Notify parent window if opened in popup
         if (window.opener) {
           window.opener.postMessage(messageData, "*");
-          
-          // Try to close after a short delay
-          // If this fails due to redirects, the parent will close it based on window monitoring
+
           setTimeout(() => {
             try {
               window.close();
             } catch (error) {
               console.warn("Could not close popup window:", error);
-              // Fallback: show user message to close manually
               setMessage(
                 "Authentication successful! You can close this window."
               );
             }
           }, 100);
         } else {
-          // Redirect to settings page after successful connection
           setTimeout(() => {
             navigate("/settings");
           }, 2000);
         }
       } catch (error) {
-        console.error("OAuth callback error:", error);
+        window.close();
         const errorMessage =
           error instanceof Error ? error.message : "Authentication failed";
         setStatus("error");
         setMessage(errorMessage);
 
-        // POST ERROR MESSAGE FIRST
         const messageData = {
           type: "oauth_error",
           error: errorMessage,
         };
 
-        console.log("Posting error message to parent:", messageData);
-
-        // Notify parent window if opened in popup
         if (window.opener) {
           window.opener.postMessage(messageData, "*");
-          
-          // Try to close after a short delay
+
           setTimeout(() => {
             try {
-              window.close();
             } catch (error) {
-              console.warn("Could not close popup window:", error);
-              // Fallback: show user message to close manually
               setMessage("Authentication failed. You can close this window.");
             }
           }, 100);
         } else {
-          // Redirect to settings page after error
           setTimeout(() => {
             navigate("/settings");
           }, 2000);
@@ -177,8 +144,7 @@ export const OAuthCallback: React.FC = () => {
         </div>
 
         <h2 className="text-xl font-semibold theme-text-primary mb-2">
-          {status === "processing" &&
-            `Connecting to ${platform}...`}
+          {status === "processing" && `Connecting to ${platform}...`}
           {status === "success" && "Authentication Successful"}
           {status === "error" && "Authentication Failed"}
         </h2>

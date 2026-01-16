@@ -14,7 +14,7 @@ import API from "@/services/api";
 import { useModal } from "../context2/ModalContext";
 import { ProfileFormData } from "@/components/profileFormSchema";
 import { useParams } from "react-router-dom";
-
+import { post } from "node_modules/axios/index.cjs";
 
 export const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
@@ -27,17 +27,14 @@ export const DashboardPage: React.FC = () => {
   const { t } = useTranslation();
   const [hasAnalytics, setHasAnalytics] = useState<boolean | null>(null);
   const { openModal } = useModal();
- const profileMode = searchParams.get('edit-profile'); 
- const profile = searchParams.get('edit-profile'); 
- //alert(profileMode)
-  
+  const profileMode = searchParams.get("edit-profile");
+  const profile = searchParams.get("edit-profile");
+  //alert(profileMode)
 
   useLayoutEffect(() => {
     setPasswordEditing(false);
-    if(!profileMode)
-    setProfileEditing(false);
-    else
-    setProfileEditing(true);
+    if (!profileMode) setProfileEditing(false);
+    else setProfileEditing(true);
   }, []);
 
   const handleReferralClick = () => {
@@ -57,22 +54,8 @@ export const DashboardPage: React.FC = () => {
   const coinLimit = user?.wallet?.package?.coinLimit || 0;
   const referralCoin = user?.wallet?.referralCoin || 0;
 
-  const [post, setPosts] = useState([]);
-  const fetchPostHistory = async () => {
-    try {
-      const response = await API.getHistory();
-      const data = response?.data?.data || [];
-      setPosts(data);
-    } catch (err: any) {
-      console.error("Failed to fetch posts:", err);
-    } finally {
-    }
-  };
-
-  useEffect(() => {
-    fetchPostHistory();
-  }, []);
-
+  const posts = state.postHistory;
+  console.log("posts", posts);
   const isFreePlan = userPlan?.toLowerCase() === "free";
   const hasLowCoins = (user.wallet?.coins ?? 0) < 6;
   const shouldShowUpgrade = isFreePlan || hasLowCoins;
@@ -226,23 +209,23 @@ export const DashboardPage: React.FC = () => {
                   onButtonClick={() => navigate("/pricing?tab=addons")}
                 />
 
-             
-                  <StatsCard className="hidden md:block"
-                    iconName="share"
-                    title={t("referral_coins")}
-                    stats={referralCoin.toLocaleString()}
-                    subtitle={t("referral_earn_message")}
-                    buttonText={t("refer_earn")}
-                    onButtonClick={handleReferralClick}
-                  />
-               
+                <StatsCard
+                  className="hidden md:block"
+                  iconName="share"
+                  title={t("referral_coins")}
+                  stats={referralCoin.toLocaleString()}
+                  subtitle={t("referral_earn_message")}
+                  buttonText={t("refer_earn")}
+                  onButtonClick={handleReferralClick}
+                />
+
                 <div className="h-auto block md:hidden">
                   <ReferralSection className="h-full" />
                 </div>
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <RecentPosts post={post} />
+              <RecentPosts post={posts} />
               <Analytics onHasAnalyticsChange={setHasAnalytics} />
               <NewsUpdates />
             </div>

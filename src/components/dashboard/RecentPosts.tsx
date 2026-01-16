@@ -15,7 +15,7 @@ function RecentPosts({ post }: any) {
   const { t } = useTranslation();
 
   const allPosts = post || state?.generatedPosts || [];
-
+  console.log("allPosts", allPosts);
   const socialPlatforms: Platform[] = [
     "facebook",
     "linkedin",
@@ -160,49 +160,50 @@ function RecentPosts({ post }: any) {
           </div>
         </div>
       ) : (
-<div
-  className={`
+        <div
+          className={`
     relative flex-1 h-full shadow-md rounded-md 
     overflow-hidden flex flex-col
-    ${isImage 
-      ? "bg-gray-900 text-white" 
-      : "bg-white text-black"
-    }
+    ${isImage ? "bg-gray-900 text-white" : "bg-white text-black"}
   `}
->
+        >
+          {isImage && (
+            <>
+              <div
+                className="absolute inset-0 bg-cover bg-top"
+                style={{
+                  backgroundImage: `url(${image})`,
+                  filter: "brightness(0.3)",
+                }}
+              />
 
-  {isImage && (
-    <>
-      <div 
-        className="absolute inset-0 bg-cover bg-top"
-        style={{
-          backgroundImage: `url(${image})`, 
-          filter: "brightness(0.3)",
-        }}
-      />
-      
-      <div className="absolute inset-0 bg-gradient-to-t " />
-    </>
-  )}
+              <div className="absolute inset-0 bg-gradient-to-t " />
+            </>
+          )}
 
-    <div className="relative z-10 flex flex-col h-full p-3">
-    <h3 className={` font-semibold text-lg mb-2 ${isImage && "drop-shadow-[0_1.5px_1.5px_rgba(0,0,0,0.8)]"} line-clamp-2 `}>
-      {title || "No Title"}
-    </h3>
+          <div className="relative z-10 flex flex-col h-full p-3">
+            <h3
+              className={` font-semibold text-lg mb-2 ${
+                isImage && "drop-shadow-[0_1.5px_1.5px_rgba(0,0,0,0.8)]"
+              } line-clamp-2 `}
+            >
+              {title || "No Title"}
+            </h3>
 
-    <p
-      title={description || content}
-      className={`
-        text-sm mt-3 mb-1 leading-relaxed ${isImage && "drop-shadow-[0_1.5px_1.5px_rgba(0,0,0,0.8)]"}
+            <p
+              title={description || content}
+              className={`
+        text-sm mt-3 mb-1 leading-relaxed ${
+          isImage && "drop-shadow-[0_1.5px_1.5px_rgba(0,0,0,0.8)]"
+        }
         ${isImage ? "" : "text-gray-700"}
         line-clamp-5
       `}
-    >
-      {description || content || "No content available"}
-    </p>
-  </div>
-</div>
-
+            >
+              {description || content || "No content available"}
+            </p>
+          </div>
+        </div>
       )}
 
       <button
