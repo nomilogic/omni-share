@@ -249,7 +249,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
           );
           if (
             savedFacebookPage &&
-            pagesData.some((p) => p.id === savedFacebookPage)
+            pagesData.some((p: any) => p.id === savedFacebookPage)
           ) {
             setSelectedFacebookPage(savedFacebookPage);
             console.log("Restored saved page:", savedFacebookPage);
