@@ -50,34 +50,31 @@ interface PublishProps {
   onReset?: () => void;
 }
 
-const ALL_PLATFORMS: Platform[] = [
-  "linkedin",
-  "facebook",
-  "instagram",
-  "youtube",
-  "tiktok",
-];
-
 export const PublishPosts: React.FC<PublishProps> = ({
   posts,
   userId,
   onBack,
   onReset,
 }) => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
+
+  const {
+    connectedPlatforms,
+    connectingPlatforms,
+    checkConnectedPlatforms,
+    handleConnectPlatform,
+    handleDisconnectPlatform,
+  } = useAppContext();
+
   const [selectedPlatforms, setSelectedPlatforms] = useState<Platform[]>(
     posts.map((p) => p.platform)
   );
   const [publishing, setPublishing] = useState(false);
   const [results, setResults] = useState<Record<string, any> | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [connectedPlatforms, setConnectedPlatforms] = useState<Platform[]>([]);
   const [publishProgress, setPublishProgress] = useState<
     Record<string, "pending" | "success" | "error">
   >({});
-  const [connectingPlatforms, setConnectingPlatforms] = useState<Platform[]>(
-    []
-  );
+
   const [selectedlinkedinPage, setSelectedlinkedinPage] = useState<string>(
     localStorage.getItem("selectedlinkedinPage") || ""
   );
@@ -115,17 +112,6 @@ export const PublishPosts: React.FC<PublishProps> = ({
 
   const navigate = useNavigate();
 
-  // On mount, mirror AccountsPage behaviour: immediately check which platforms
-  // are already connected, regardless of current posts.
-  useEffect(() => {
-    console.log(
-      "[PublishPosts] Checking initially connected platforms for user:",
-      userId
-    );
-    checkConnectedPlatforms();
-  }, []);
-
-  // Fetch latest TikTok creator info whenever TikTok is connected & present in posts
   useEffect(() => {
     const hasTikTokPost = posts.some((p) => p.platform === "tiktok");
     if (!hasTikTokPost) {
@@ -172,60 +158,16 @@ export const PublishPosts: React.FC<PublishProps> = ({
     fetchCreatorInfo();
   }, [posts]);
 
-  const checkConnectedPlatforms = async () => {
-    try {
-      // Get the authentication token
-      const token = Cookies.get("auth_token");
-      if (!token) {
-        console.warn("No authentication token found");
-        setConnectedPlatforms([]);
-        return;
-      }
-
-      const response = await API.connectionsStatus();
-
-      const statusData = response.data;
-
-      const connected: Platform[] = [];
-      // Align behaviour with AccountsPage: check all known platforms,
-      // not just those present in the current posts array.
-      for (const platform of ALL_PLATFORMS) {
-        if (statusData[platform]?.connected) {
-          connected.push(platform);
-        }
-      }
-      setConnectedPlatforms(connected);
-      console.log(connected, "platforms connected");
-
-      if (connected.includes("facebook")) {
-        await fetchFacebookPages();
-      }
-      if (connected.includes("linkedin")) {
-        await fetchLinkedPages();
-      }
-
-      // Fetch YouTube channels if YouTube is connected
-      if (connected.includes("youtube")) {
-        await fetchYouTubeChannels();
-      }
-    } catch (error) {
-      console.error("Failed to check connected platforms:", error);
-      setConnectedPlatforms([]);
-    }
-  };
-
   const confirmNavigationAction = useCallback(() => {
     navigate("/content");
   }, [navigate]);
 
   // ✅ BUTTON CLICK HANDLER
   const handleDiscardClick = useCallback(() => {
-    // openModal ko call karein aur woh saare props pass karein jo zaroori hain.
     openModal(DiscardWarningModal, {
       t: t,
-      onConfirmAction: confirmNavigationAction, // Action pass karein
+      onConfirmAction: confirmNavigationAction,
     });
-    // Ab na state badalni hai, na pending action save karna hai.
   }, [t, confirmNavigationAction]);
 
   const fetchLinkedPages = async () => {
@@ -243,7 +185,6 @@ export const PublishPosts: React.FC<PublishProps> = ({
             const pagesData = await res.data;
             setlinkedinPages(pagesData.data || []);
 
-            // Load saved selection from localStorage, or use first page as default
             const savedLinkedInPage = localStorage.getItem(
               "selectedlinkedinPage"
             );
@@ -272,54 +213,37 @@ export const PublishPosts: React.FC<PublishProps> = ({
     try {
       const token = Cookies.get("auth_token");
       if (!token) {
-        console.warn("No auth token found");
         return;
       }
 
       const tokenResponse = await API.tokenForPlatform("facebook");
-      console.log("Token response:", tokenResponse);
 
       if (tokenResponse?.data) {
         const tokenData = await tokenResponse.data;
-        console.log("Token data:", tokenData);
 
         if (tokenData.connected && tokenData.token?.access_token) {
-          console.log(
-            "Fetching Facebook pages with token:",
-            tokenData.token.access_token.substring(0, 10) + "..."
-          );
-
           const pagesResponse = await API.facebookPages(
             tokenData.token.access_token
           );
-          console.log("Pages response:", pagesResponse);
 
-          // Handle both possible response structures
           let pagesData = [];
 
-          // Check if response has status 200 and data.data
           if (pagesResponse?.data?.data) {
             pagesData = Array.isArray(pagesResponse.data.data)
               ? pagesResponse.data.data
               : [];
-          }
-          // Check if response directly has pages array
-          else if (pagesResponse?.pages) {
+          } else if (pagesResponse?.pages) {
             pagesData = Array.isArray(pagesResponse.pages)
               ? pagesResponse.pages
               : [];
-          }
-          // Check if response.data has pages array
-          else if (pagesResponse?.data?.pages) {
+          } else if (pagesResponse?.data?.pages) {
             pagesData = Array.isArray(pagesResponse.data.pages)
               ? pagesResponse.data.pages
               : [];
           }
 
-          console.log("Extracted pages data:", pagesData);
           setFacebookPages(pagesData);
 
-          // Load saved selection from localStorage, or use first page as default
           const savedFacebookPage = localStorage.getItem(
             "selectedFacebookPage"
           );
@@ -397,133 +321,29 @@ export const PublishPosts: React.FC<PublishProps> = ({
     }
   };
 
-  const handleConnect = async (platform: Platform) => {
-    console.log("Connecting to platform:", platform);
+  useEffect(() => {
+    fetchFacebookPages();
+    fetchLinkedPages();
+    fetchYouTubeChannels();
+  }, []);
 
-    try {
-      setConnectingPlatforms((prev) => [...prev, platform]);
-
-      // Start OAuth flow (JWT-authenticated)
-      const result: any = await oauthManagerClient.startOAuthFlow(platform);
-      const { authUrl } = result.data.data;
-      console.log("Opening OAuth popup with URL:", authUrl);
-
-      const authWindow = window.open(
-        authUrl,
-        `${platform}_oauth`,
-        "width=600,height=700,scrollbars=yes,resizable=yes"
-      );
-      if (!authWindow) {
-        throw new Error("OAuth popup blocked");
-      }
-
-      // Listen for messages from the OAuth callback
-      const messageListener = (event: MessageEvent) => {
-        if (
-          event.data.type === "oauth_success" &&
-          event.data.platform === platform
-        ) {
-          console.log("OAuth success for", platform);
-          // Close popup from parent window for better browser compatibility
-          try {
-            authWindow?.close();
-          } catch (error) {
-            console.warn("Could not close popup from parent:", error);
-          }
-          setTimeout(checkConnectedPlatforms, 1000);
-          window.removeEventListener("message", messageListener);
-        } else if (event.data.type === "oauth_error") {
-          console.error("OAuth error:", event.data.error);
-          // Close popup from parent window for better browser compatibility
-          try {
-            authWindow?.close();
-          } catch (error) {
-            console.warn("Could not close popup from parent:", error);
-          }
-
-          window.removeEventListener("message", messageListener);
-          setError(
-            `Failed to connect ${platform}: ${
-              event.data.error || "OAuth failed"
-            }`
-          );
-        }
-      };
-
-      window.addEventListener("message", messageListener);
-
-      // Monitor window closure as fallback (same as AccountsPage)
-      const checkClosed = setInterval(() => {
-        if (authWindow?.closed) {
-          clearInterval(checkClosed);
-          window.removeEventListener("message", messageListener);
-          setTimeout(checkConnectedPlatforms, 1000);
-        }
-      }, 1000);
-    } catch (error) {
-      console.error("Error connecting to platform:", error);
-      setError(
-        `Failed to connect ${platform}: ${
-          error instanceof Error ? error.message : "Connection failed"
-        }`
-      );
-    } finally {
-      setConnectingPlatforms((prev) => prev.filter((p) => p !== platform));
-    }
-  };
-
-  // Save selectedFacebookPage to localStorage whenever it changes
   useEffect(() => {
     if (selectedFacebookPage) {
       localStorage.setItem("selectedFacebookPage", selectedFacebookPage);
     }
   }, [selectedFacebookPage]);
 
-  // Save selectedlinkedinPage to localStorage whenever it changes
   useEffect(() => {
     if (selectedlinkedinPage) {
       localStorage.setItem("selectedlinkedinPage", selectedlinkedinPage);
     }
   }, [selectedlinkedinPage]);
 
-  // Save selectedYoutubeChannel to localStorage whenever it changes
   useEffect(() => {
     if (selectedYoutubeChannel) {
       localStorage.setItem("selectedYoutubeChannel", selectedYoutubeChannel);
     }
   }, [selectedYoutubeChannel]);
-
-  const handleDisconnect = async (platform: Platform) => {
-    // if (
-    //   !confirm(
-    //     `Are you sure you want to disconnect ${getPlatformDisplayName(platform)}?`,
-    //   )
-    // ) {
-    //   return;
-    // }
-
-    try {
-      // Use the OAuth manager client for disconnecting (uses JWT authentication)
-      await oauthManagerClient.disconnectPlatform(platform);
-
-      // Clear saved page selections if disconnecting
-      if (platform === "facebook") {
-        localStorage.removeItem("selectedFacebookPage");
-        setSelectedFacebookPage("");
-      } else if (platform === "linkedin") {
-        localStorage.removeItem("selectedlinkedinPage");
-        setSelectedlinkedinPage("");
-      } else if (platform === "youtube") {
-        localStorage.removeItem("selectedYoutubeChannel");
-        setSelectedYoutubeChannel("");
-      }
-
-      checkConnectedPlatforms();
-      // window.removeEventListener("message", messageListener);
-    } catch (error) {
-      console.error("Failed to disconnect:", error);
-    }
-  };
 
   const isTikTokSelectedAndConnected = () => {
     return (
@@ -534,43 +354,32 @@ export const PublishPosts: React.FC<PublishProps> = ({
   };
 
   const handlePublish = async () => {
-    // TikTok-specific validation before building availablePlatforms
     if (isTikTokSelectedAndConnected()) {
       const tikTokPost = posts.find((p) => p.platform === "tiktok");
 
       if (tiktokPostingBlockedReason) {
-        setError(tiktokPostingBlockedReason);
         return;
       }
 
       if (!tiktokSettings.title.trim()) {
-        setError("Please enter a TikTok title before publishing.");
         return;
       }
 
       if (!tiktokSettings.privacyLevel) {
-        setError("Please select a TikTok privacy status before publishing.");
         return;
       }
 
       if (tiktokSettings.isCommercial) {
         if (!tiktokSettings.isYourBrand && !tiktokSettings.isBrandedContent) {
-          setError(
-            "For TikTok commercial content, please indicate if it promotes yourself, a third party, or both."
-          );
           return;
         }
       }
 
-      // If branded content is selected, disallow private / only-me visibility
       const privacyIsPrivate =
         tiktokSettings.privacyLevel.toUpperCase() === "SELF_ONLY" ||
         tiktokSettings.privacyLevel.toUpperCase() === "PRIVATE";
 
       if (tiktokSettings.isBrandedContent && privacyIsPrivate) {
-        setError(
-          "TikTok branded content cannot be set to private. Please choose a more public visibility option."
-        );
         return;
       }
 
@@ -582,13 +391,6 @@ export const PublishPosts: React.FC<PublishProps> = ({
         tikTokPost.tiktokVideoDurationSec >
           tiktokCreatorInfo.max_video_post_duration_sec + 30
       ) {
-        setError(
-          `Your TikTok video duration (${Math.round(
-            tikTokPost.tiktokVideoDurationSec
-          )}s) exceeds your account limit (${
-            tiktokCreatorInfo.max_video_post_duration_sec
-          }s). Please use a shorter video.`
-        );
         return;
       }
     }
@@ -598,14 +400,10 @@ export const PublishPosts: React.FC<PublishProps> = ({
     );
 
     if (availablePlatforms.length === 0) {
-      setError(
-        `No available platforms to publish to. All connected platforms have been published or none are selected.`
-      );
       return;
     }
 
     setPublishing(true);
-    setError(null);
     setPublishProgress({});
 
     try {
@@ -653,7 +451,6 @@ export const PublishPosts: React.FC<PublishProps> = ({
 
       setResults(publishResults);
 
-      // Check if all originally selected connected platforms have been published
       const originalConnectedPlatforms = posts
         .map((p) => p.platform)
         .filter((p) => connectedPlatforms.includes(p));
@@ -664,18 +461,12 @@ export const PublishPosts: React.FC<PublishProps> = ({
 
       const allPublishedPlatforms = [...publishedPlatforms, ...newlyPublished];
 
-      // If any posts were published successfully, trigger history refresh
       if (newlyPublished.length > 0) {
-        console.log(
-          `🚀 Successfully published to ${newlyPublished.length} platforms, triggering history refresh...`
-        );
-        // Delay slightly to allow the API to fully save the posts
         setTimeout(() => {
           historyRefreshService.refreshHistory();
         }, 500);
       }
 
-      // Check if all connected platforms have been published
       const allConnectedPlatformsPublished = originalConnectedPlatforms.every(
         (p) => allPublishedPlatforms.includes(p)
       );
@@ -689,7 +480,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
         }, 3000);
       }
     } catch (err: any) {
-      setError(err.message || "Failed to publish posts.");
+      console.log("err", err);
     } finally {
       setPublishing(false);
       fetchUnreadCount();
@@ -703,15 +494,13 @@ export const PublishPosts: React.FC<PublishProps> = ({
           {t("publish_posts")}
         </h2>
 
-        <div className=" p-2 bg-blue-50 border border-blue-200 rounded-md">
+        <div className=" p-3 bg-blue-50 border border-blue-200 rounded-md">
           <p className="text-sm text-blue-800">
             <span className="font-medium">{connectedPlatforms.length}</span> of{" "}
             <span className="font-medium">{posts.length}</span>{" "}
             {t("platforms_connected")}
           </p>
         </div>
-
-        {/* TikTok-specific settings will be shown inside the TikTok platform card */}
 
         <div className="mb-4 mt-4">
           <div className="space-y-4">
@@ -720,7 +509,6 @@ export const PublishPosts: React.FC<PublishProps> = ({
               const isConnecting = connectingPlatforms.includes(post.platform);
               const progress = publishProgress[post.platform];
 
-              // Duration-based disablement for TikTok (uses creator_info limit)
               const durationSec = (post as any).tiktokVideoDurationSec as
                 | number
                 | undefined;
@@ -867,17 +655,19 @@ export const PublishPosts: React.FC<PublishProps> = ({
                       {isConnected ? (
                         <>
                           <button
-                            onClick={() => handleConnect(post.platform)}
+                            onClick={() => handleConnectPlatform(post.platform)}
                             disabled={isConnecting}
-                            className="p-2 text-gray-500 font-medium hover:text-blue-600 disabled:opacity-50 rounded-md hover:bg-gray-100"
+                            className="p-3 text-gray-500 font-medium hover:text-blue-600 disabled:opacity-50 rounded-md hover:bg-gray-100"
                             title="Refresh connection"
                           >
                             <RefreshCw className={`w-4 h-4`} />
                           </button>
                           <button
-                            onClick={() => handleDisconnect(post.platform)}
+                            onClick={() =>
+                              handleDisconnectPlatform(post.platform)
+                            }
                             disabled={isConnecting}
-                            className="p-2 text-gray-500 font-medium hover:text-red-600 disabled:opacity-50 rounded-md hover:bg-gray-100"
+                            className="p-3 text-gray-500 font-medium hover:text-red-600 disabled:opacity-50 rounded-md hover:bg-gray-100"
                             title="Disconnect"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -960,7 +750,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
 
                         {!isConnected && (
                           <button
-                            onClick={() => handleConnect(post.platform)}
+                            onClick={() => handleConnectPlatform(post.platform)}
                             disabled={isConnecting}
                             className="flex items-center gap-2 px-3 py-1 capitalize rounded-md bg-purple-600 text-sm font-medium text-white"
                           >
@@ -1237,13 +1027,15 @@ export const PublishPosts: React.FC<PublishProps> = ({
           <SocialMediaManager
             userId={userId || ""}
             onCredentialsUpdate={checkConnectedPlatforms}
+            handleConnectPlatform={handleConnectPlatform}
+            handleDisconnectPlatform={handleDisconnectPlatform}
           />
         </div>
         {connectedPlatforms.includes("facebook") &&
           selectedPlatforms.includes("facebook") && (
             <>
               {facebookPages.length > 0 ? (
-                <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-md">
+                <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
                   <h4 className="font-medium text-blue-900 mb-2">
                     {t("facebook_page_selection")}
                   </h4>
@@ -1300,7 +1092,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
         {connectedPlatforms.includes("linkedin") &&
           connectedPlatforms.includes("linkedin") &&
           linkedinPages.length > 0 && (
-            <div className="mb-6 p-2 bg-blue-50 border border-blue-200 rounded-md">
+            <div className="mb-6 p-3 bg-blue-50 border border-blue-200 rounded-md">
               <h4 className="font-medium text-blue-900 mb-2">
                 Linkedin page Selection
               </h4>

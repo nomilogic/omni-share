@@ -723,46 +723,49 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       // allow using an uploaded custom thumbnail. This only runs for
       // aspect ratios that support thumbnails (not 9:16 stories).
       if (
-  (selectedVideoMode === "upload" || selectedVideoMode === "uploadShorts") &&
-  !formData.mediaUrl &&
-  !formData.media
-) {
-  console.log("🎯 Video upload required");
-  notify("error", t("upload_video_first"));
-  return;
-}
-
-// Proceed only if we have a video (either uploaded file or URL)
-if (
-  (selectedVideoMode === "upload" || selectedVideoMode === "uploadShorts") &&
-  (originalVideoFile || formData.mediaUrl) &&
-  !is9x16Video(videoAspectRatio || 0)
-) {
-  if (generateVideoThumbnailAI) {
-    console.log(
-      "🎥 Generating video thumbnail from content description, then opening template editor..."
-    );
-
-    try {
-      const generatedThumbnailUrl = await generateThumbnailForPost(
-        formData.prompt,
-        videoAspectRatio
-      );
-
-      if (generatedThumbnailUrl) {
-        setVideoThumbnailForRegeneration(generatedThumbnailUrl);
-        setVideoThumbnailGenerations([generatedThumbnailUrl]);
-        setShowVideoThumbnailModal(true);
+        (selectedVideoMode === "upload" ||
+          selectedVideoMode === "uploadShorts") &&
+        !formData.mediaUrl &&
+        !formData.media
+      ) {
+        console.log("🎯 Video upload required");
+        notify("error", t("upload_video_first"));
         return;
-      } else {
-        console.error("❌ Failed to generate video thumbnail, continuing without thumbnail");
       }
-    } catch (err) {
-      console.error("❌ Thumbnail generation error", err);
-      // continue with normal flow
-    }
-  } else {
 
+      // Proceed only if we have a video (either uploaded file or URL)
+      if (
+        (selectedVideoMode === "upload" ||
+          selectedVideoMode === "uploadShorts") &&
+        (originalVideoFile || formData.mediaUrl) &&
+        !is9x16Video(videoAspectRatio || 0)
+      ) {
+        if (generateVideoThumbnailAI) {
+          console.log(
+            "🎥 Generating video thumbnail from content description, then opening template editor..."
+          );
+
+          try {
+            const generatedThumbnailUrl = await generateThumbnailForPost(
+              formData.prompt,
+              videoAspectRatio
+            );
+
+            if (generatedThumbnailUrl) {
+              setVideoThumbnailForRegeneration(generatedThumbnailUrl);
+              setVideoThumbnailGenerations([generatedThumbnailUrl]);
+              setShowVideoThumbnailModal(true);
+              return;
+            } else {
+              console.error(
+                "❌ Failed to generate video thumbnail, continuing without thumbnail"
+              );
+            }
+          } catch (err) {
+            console.error("❌ Thumbnail generation error", err);
+            // continue with normal flow
+          }
+        } else {
           // User chose to upload a custom thumbnail instead of AI generation.
           // If a custom thumbnail URL already exists, open the template editor
           // immediately using that image.
@@ -2982,7 +2985,6 @@ if (
                           ? t("generate_image_post_ai")
                           : t("content_description")}
                       </label>
-
                       <textarea
                         value={formData.prompt}
                         onChange={(e) =>
@@ -2991,7 +2993,12 @@ if (
                             prompt: e.target.value,
                           }))
                         }
-                        className="w-full px-3 py-2.5  theme-bg-primary transition-all duration-200 min-h-[160px] lg:min-h-[180px] text-sm  rounded-md placeholder-gray-500 bg-white"
+                        className="w-full px-3 py-2.5 bg-white text-sm rounded-md placeholder-gray-500
+             min-h-[160px] lg:min-h-[180px]
+             border-0 outline-none ring-0
+             focus:border-0 focus:outline-none focus:ring-0
+             focus-visible:border-0 focus-visible:outline-none focus-visible:ring-0
+             transition-all duration-200"
                         placeholder={t("describe_placeholder")}
                         required
                       />

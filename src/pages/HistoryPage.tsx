@@ -8,11 +8,8 @@ import { Platform } from "../types";
 import {
   ExternalLink,
   Clock,
-  Eye,
-  EyeOff,
   Image,
   Video,
-  FileText,
   Filter,
   ChevronDown,
   RotateCcw,
@@ -24,12 +21,10 @@ import { useTranslation } from "react-i18next";
 import { Icon } from "@/components";
 import { useAppContext } from "@/context/AppContext";
 
-// Export inter  for external access
 export interface HistoryPageRef {
   refreshHistory: () => Promise<void>;
 }
 
-// Interface for post history items
 interface PostHistoryItem {
   id: string;
   platform: Platform;
@@ -53,7 +48,6 @@ interface PostHistoryItem {
   };
 }
 
-// Filter and sort types
 type ReadFilter = "all" | "read" | "unread";
 type PlatformFilter = "all" | Platform;
 type TimePeriod = "all" | "today" | "week" | "month";
@@ -66,7 +60,6 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
   const { t, i18n } = useTranslation();
   const { setUnreadCount } = useAppContext();
 
-  // Filter states
   const [readFilter, setReadFilter] = useState<ReadFilter>("all");
   const [platformFilter, setPlatformFilter] = useState<PlatformFilter>("all");
   const [timePeriod, setTimePeriod] = useState<TimePeriod>("all");
@@ -171,7 +164,6 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
     return `${Math.floor(diffInSeconds / 86400)}d ago`;
   };
 
-  // Get thumbnail URL from multiple possible sources
   const getThumbnailUrl = (post: PostHistoryItem) => {
     return (
       post.thumbnailUrl ||

@@ -88,13 +88,14 @@ const platformInfo: Record<Platform, PlatformInfo> = {
   },
 };
 
-export const SocialMediaManager: React.FC<SocialMediaManagerProps> = ({
+export const SocialMediaManager = ({
   userId,
   onCredentialsUpdate,
   selectedPlatforms,
-}) => {
-  const { t, i18n } = useTranslation();
-  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
+  handleConnectPlatform,
+  handleDisconnectPlatform,
+}: any) => {
+  const { t } = useTranslation();
   const [platformStatuses, setPlatformStatuses] = useState<PlatformStatus[]>(
     []
   );
@@ -109,176 +110,6 @@ export const SocialMediaManager: React.FC<SocialMediaManagerProps> = ({
     "youtube",
   ];
 
-  useEffect(() => {
-    checkPlatformStatuses();
-  }, [userId]);
-
-  const checkPlatformStatuses = async () => {
-    console.log("Checking platform statuses");
-    setLoading(true);
-    const statuses: PlatformStatus[] = [];
-
-    try {
-      // Use the OAuth manager client to get connection status (uses JWT authentication)
-      const statusData = await oauthManagerClient.getConnectionStatus();
-
-      for (const platform of platforms) {
-        const platformStatus = statusData[platform];
-
-        statuses.push({
-          platform,
-          connected: platformStatus?.connected || false,
-          loading: false,
-          profile: platformStatus?.profile || null,
-          error: platformStatus?.needsRefresh ? "Token expired" : undefined,
-        });
-      }
-    } catch (error) {
-      console.error("Error checking platform statuses:", error);
-      // Fallback: mark all as disconnected
-      for (const platform of platforms) {
-        statuses.push({
-          platform,
-          connected: false,
-          loading: false,
-          error: "Failed to check status",
-        });
-      }
-    }
-
-    setPlatformStatuses(statuses);
-    setLoading(false);
-  };
-
-  const handleConnect = async (platform: Platform) => {
-    console.log("Connecting to platform:", platform);
-
-    try {
-      setPlatformStatuses((prev) =>
-        prev.map((status) =>
-          status.platform === platform
-            ? { ...status, loading: true, error: undefined }
-            : status
-        )
-      );
-
-      const result: any = await oauthManagerClient.startOAuthFlow(platform);
-      const { authUrl } = result.data.data;
-
-      const authWindow = window.open(
-        authUrl,
-        `${platform}_oauth`,
-        "width=600,height=700,scrollbars=yes,resizable=yes"
-      );
-
-      if (!authWindow) {
-        throw new Error("OAuth popup blocked");
-      }
-
-      // Listen for messages from the OAuth callback
-      const messageListener = (event: MessageEvent) => {
-        if (
-          event.data.type === "oauth_success" &&
-          event.data.platform === platform
-        ) {
-          console.log("OAuth success for", platform);
-          // Close popup from parent window for better browser compatibility
-          try {
-            authWindow?.close();
-          } catch (error) {
-            console.warn("Could not close popup from parent:", error);
-          }
-          setTimeout(checkPlatformStatuses, 1000);
-          window.removeEventListener("message", messageListener);
-          onCredentialsUpdate?.();
-        } else if (event.data.type === "oauth_error") {
-          // Close popup from parent window for better browser compatibility
-          try {
-            authWindow?.close();
-          } catch (error) {
-            console.warn("Could not close popup from parent:", error);
-          }
-          setPlatformStatuses((prev) =>
-            prev.map((status) =>
-              status.platform === platform
-                ? {
-                    ...status,
-                    loading: false,
-                    error: event.data.error || "OAuth failed",
-                  }
-                : status
-            )
-          );
-          window.removeEventListener("message", messageListener);
-        }
-      };
-
-      window.addEventListener("message", messageListener);
-
-      // Monitor window closure
-      const checkClosed = setInterval(() => {
-        if (authWindow?.closed) {
-          clearInterval(checkClosed);
-          window.removeEventListener("message", messageListener);
-          setTimeout(checkPlatformStatuses, 1000);
-        }
-      }, 1000);
-    } catch (error) {
-      console.error("Error connecting to platform:", error);
-      setPlatformStatuses((prev) =>
-        prev.map((status) =>
-          status.platform === platform
-            ? {
-                ...status,
-                loading: false,
-                error:
-                  error instanceof Error ? error.message : "Connection failed",
-              }
-            : status
-        )
-      );
-    }
-  };
-
-  const handleDisconnect = async (platform: Platform) => {
-    if (
-      !confirm(
-        `Are you sure you want to disconnect ${getPlatformDisplayName(
-          platform
-        )}?`
-      )
-    ) {
-      return;
-    }
-
-    try {
-      // Use the OAuth manager client for disconnecting (uses JWT authentication)
-      await oauthManagerClient.disconnectPlatform(platform);
-
-      setPlatformStatuses((prev) =>
-        prev.map((status) =>
-          status.platform === platform
-            ? {
-                ...status,
-                connected: false,
-                error: undefined,
-                profile: undefined,
-              }
-            : status
-        )
-      );
-
-      // Refresh platform statuses from server to ensure UI is in sync
-      setTimeout(checkPlatformStatuses, 500);
-
-      onCredentialsUpdate?.();
-    } catch (error) {
-      console.error("Failed to disconnect:", error);
-      // Refresh statuses even on error to show actual server state
-      setTimeout(checkPlatformStatuses, 500);
-    }
-  };
-
   const handleRefresh = async (platform: Platform) => {
     try {
       setPlatformStatuses((prev) =>
@@ -289,10 +120,6 @@ export const SocialMediaManager: React.FC<SocialMediaManagerProps> = ({
         )
       );
 
-      // Simply check status again to refresh the connection state
-      // Note: Token refresh is typically handled server-side automatically
-      // Uses JWT authentication automatically
-      await checkPlatformStatuses();
       onCredentialsUpdate?.();
     } catch (error) {
       setPlatformStatuses((prev) =>
@@ -429,7 +256,7 @@ export const SocialMediaManager: React.FC<SocialMediaManagerProps> = ({
                       />
                     </button>
                     <button
-                      onClick={() => handleDisconnect(status.platform)}
+                      onClick={() => handleDisconnectPlatform(status.platform)}
                       disabled={status.loading}
                       className="p-2 text-gray-500 font-medium hover:text-red-600 disabled:opacity-50 rounded-md hover:bg-gray-100"
                       title="Disconnect"
@@ -439,7 +266,7 @@ export const SocialMediaManager: React.FC<SocialMediaManagerProps> = ({
                   </>
                 ) : (
                   <button
-                    onClick={() => handleConnect(status.platform)}
+                    onClick={() => handleConnectPlatform(status.platform)}
                     disabled={status.loading}
                     className="flex items-center space-x-2 px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
@@ -485,7 +312,8 @@ export const SocialMediaManager: React.FC<SocialMediaManagerProps> = ({
       {platformStatuses.filter((s) => s.connected).length > 0 && (
         <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-md">
           <p className="text-sm text-green-700">
-            ✅ You have {platformStatuses.filter((s) => s.connected).length} of {platforms.length} platform(s) connected and ready for publishing!
+            ✅ You have {platformStatuses.filter((s) => s.connected).length} of{" "}
+            {platforms.length} platform(s) connected and ready for publishing!
           </p>
         </div>
       )}
