@@ -83,6 +83,8 @@ export interface AppState {
   isPasswordEditing?: boolean;
   connectedPlatforms: Platform[];
   connectingPlatforms: Platform[];
+  analyticsList: any[];
+  analyticsLoading: boolean;
 }
 
 type AppAction =
@@ -112,7 +114,9 @@ type AppAction =
   | { type: "SET_UNREAD_COUNT"; payload: number }
   | { type: "SET_SECURITY_QUESTIONS"; payload: any[] }
   | { type: "SET_CONNECTED_PLATFORMS"; payload: Platform[] }
-  | { type: "SET_CONNECTING_PLATFORMS"; payload: Platform[] };
+  | { type: "SET_CONNECTING_PLATFORMS"; payload: Platform[] }
+  | { type: "SET_ANALYTICS"; payload: any[] }
+  | { type: "SET_ANALYTICS_LOADING"; payload: boolean };
 
 const initialState: AppState & {
   security_question: any[];
@@ -141,6 +145,8 @@ const initialState: AppState & {
   unreadCount: 0,
   connectedPlatforms: [],
   connectingPlatforms: [],
+  analyticsList: [],
+  analyticsLoading: false,
 };
 
 function appReducer(
@@ -208,6 +214,11 @@ function appReducer(
 
     case "SET_CONNECTING_PLATFORMS":
       return { ...state, connectingPlatforms: action.payload };
+    case "SET_ANALYTICS_LOADING":
+      return { ...state, analyticsLoading: action.payload };
+
+    case "SET_ANALYTICS":
+      return { ...state, analyticsList: action.payload };
 
     default:
       return state;
@@ -237,6 +248,7 @@ interface AppContextType {
   fetchUnreadCount: () => Promise<void>;
   refreshBalance: () => Promise<void>;
   checkConnectedPlatforms: () => Promise<void>;
+  fetchAnalytics: () => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -280,6 +292,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
         sameSite: "strict",
       });
     } catch (error) {}
+  }, []);
+
+  const fetchAnalytics = useCallback(async () => {
+    try {
+      dispatch({ type: "SET_ANALYTICS_LOADING", payload: true });
+
+      const res = await API.facebookAnalytics();
+      dispatch({
+        type: "SET_ANALYTICS",
+        payload: res?.data?.data || [],
+      });
+    } catch (e) {
+      console.error("Analytics fetch error:", e);
+      dispatch({ type: "SET_ANALYTICS", payload: [] });
+    } finally {
+      dispatch({ type: "SET_ANALYTICS_LOADING", payload: false });
+    }
   }, []);
 
   useEffect(() => {
@@ -360,7 +389,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
           const profile = user.profile as Profile | null;
           if (profile) {
             dispatch({ type: "SET_SELECTED_PROFILE", payload: profile });
-            dispatch({ type: "SET_USER_PLAN", payload: profile.plan || "free" });
+            dispatch({
+              type: "SET_USER_PLAN",
+              payload: profile.plan || "free",
+            });
             dispatch({
               type: "SET_BUSINESS_ACCOUNT",
               payload: profile.type === "business",
@@ -524,6 +556,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [state.user?.id, checkConnectedPlatforms]);
 
+  useEffect(() => {
+    if (state.user?.id) {
+      fetchAnalytics();
+    }
+  }, [state.user?.id]);
+
   const contextValue = useMemo(
     () => ({
       state,
@@ -544,6 +582,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
         dispatch({ type: "SET_PASSWORD_EDITING", payload: v }),
       fetchUnreadCount,
       refreshBalance: fetchBalance,
+      fetchAnalytics,
     }),
     [
       state,
@@ -586,6 +625,7 @@ export const useAppContext = () => {
     setProfileEditing,
     setPasswordEditing,
     checkConnectedPlatforms,
+    fetchAnalytics,
   } = context;
 
   const setUnreadCount = useCallback(
@@ -699,7 +739,7 @@ export const useAppContext = () => {
     logout,
     setProfileEditing,
     setPasswordEditing,
-
+    fetchAnalytics,
     connectedPlatforms: state.connectedPlatforms,
     connectingPlatforms: state.connectingPlatforms,
     checkConnectedPlatforms: checkConnectedPlatforms,

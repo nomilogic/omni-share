@@ -94,8 +94,24 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       case "text":
         return textPrice * 2;
       case "image":
-        return imagePrice + textPrice * 3;
+        switch (selectedImageMode) {
+          case "textToImage":
+            return imagePrice + textPrice * 3;
+          case "upload":
+            return textPrice * 3;
+        }
       case "video":
+        switch (selectedVideoMode) {
+          case "uploadShorts":
+            return textPrice * 5;
+          case "upload":
+            switch (generateVideoThumbnailAI) {
+              case true:
+                return imagePrice + textPrice * 3;
+              case false:
+                return textPrice * 3;
+            }
+        }
         return videoPrice + textPrice * 5;
       default:
         return textPrice;
@@ -222,9 +238,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         }
 
         if (shouldClearWarning && videoAspectRatioWarning) {
-          console.log(
-            "✅ Video mode now matches aspect ratio, clearing warning"
-          );
           if (warningTimeoutId) {
             clearTimeout(warningTimeoutId);
             setWarningTimeoutId(null);
