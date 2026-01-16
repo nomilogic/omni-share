@@ -255,7 +255,6 @@ export default function AnalyticsPage() {
         </div>
 
         {/* ✅ Center heading under icons */}
-       
 
         <div className="bg-gray-100 lg:px-4 px-3 py-4 rounded-md">
           {/* Empty state */}
@@ -265,7 +264,8 @@ export default function AnalyticsPage() {
                 No analytics data available yet.
               </p>
               <p className="text-sm text-gray-600 mt-1">
-                  Connect your accounts and publish content to start seeing analytics.
+                Connect your accounts and publish content to start seeing
+                analytics.
               </p>
             </div>
           )}
@@ -467,22 +467,27 @@ function PostDetailsCard({
       </div>
 
       <div className="grid grid-cols-3 gap-3 mt-4">
-        <StatCard title={t("likes") || "Likes"} value={post.likesCount} tone="blue" />
-        <StatCard title={t("comments") || "Comments"} value={post.commentsCount} tone="blue" />
-        <StatCard title={t("shares") || "Shares"} value={post.sharesCount} tone="blue" />
+        <StatCard
+          title={t("likes") || "Likes"}
+          value={post.likesCount}
+          tone="blue"
+        />
+        <StatCard
+          title={t("comments") || "Comments"}
+          value={post.commentsCount}
+          tone="blue"
+        />
+        <StatCard
+          title={t("shares") || "Shares"}
+          value={post.sharesCount}
+          tone="blue"
+        />
       </div>
     </div>
   );
 }
 
-function StatCard({
-  title,
-  value,
-}: {
-  title: string;
-  value: any;
-}) {
-
+function StatCard({ title, value }: { title: string; value: any }) {
   return (
     <div className={`rounded-md p-3 text-center bg-[#7650e3]`}>
       <p className="text-lg font-bold text-theme-text-light">{value || 0}</p>
