@@ -18,25 +18,12 @@ import { Platform, CampaignInfo } from "../types";
 export const ContentPage: React.FC = () => {
   const { state, dispatch } = useAppContext();
   const navigate = useNavigate();
-  const location = useLocation();
   const [showPublishModal, setShowPublishModal] = useState(false);
   const [showGenerateModal, setShowGenerateModal] = useState(false);
 
-  // Cleanup background scrolling on component unmount
-  useEffect(() => {
-    return () => {
-      // Restore background scrolling when component unmounts
-      // document.body.classList.remove("modal-open");
-      // document.documentElement.classList.remove("modal-open");
-    };
-  }, []);
-
   const handleContentNext = (contentData: any) => {
     dispatch({ type: "SET_CONTENT_DATA", payload: contentData });
-    // Show generate modal instead of navigating
     setShowGenerateModal(true);
-    // document.body.classList.add("modal-open");
-    // document.documentElement.classList.add("modal-open");
   };
 
   const handleGenerationComplete = async (posts: any[]) => {
@@ -114,10 +101,9 @@ export const ContentPage: React.FC = () => {
           "professional",
         targetAudience:
           state.selectedProfile?.target_audience || "General audience",
-        tags: existingPost?.hashtags?.map((tag) => tag.replace("#", "")) || [
-          "social",
-          "content",
-        ],
+        tags: existingPost?.hashtags?.map((tag: any) =>
+          tag.replace("#", "")
+        ) || ["social", "content"],
         mediaUrl: existingPost?.mediaUrl || existingPost?.imageUrl || null,
         serverUrl: existingPost?.mediaUrl || existingPost?.imageUrl || null,
       };
@@ -189,39 +175,22 @@ export const ContentPage: React.FC = () => {
             />
           }
         />
-        {/* Generate route removed - now showing as modal overlay instead */}
         <Route
           path="preview"
           element={(() => {
-            // Debug logging for preview route
-            console.log("🔍 Preview route accessed:", {
-              hasGeneratedPosts: !!state.generatedPosts,
-              generatedPostsLength: state.generatedPosts?.length || 0,
-              generatedPosts: state.generatedPosts,
-              location: location.pathname,
-            });
-
             return state.generatedPosts && state.generatedPosts.length > 0 ? (
               <>
                 {!showPublishModal && (
                   <PostPreview
                     posts={state.generatedPosts}
                     onEdit={() => {
-                      console.log(
-                        "Edit Content clicked - navigating to /content"
-                      );
                       navigate("/content");
                     }}
                     onBack={() => {
-                      console.log(
-                        "Regenerate clicked - clearing posts and navigating to generate"
-                      );
-                      // Clear the generated posts to trigger fresh generation
                       dispatch({
                         type: "SET_GENERATED_POSTS",
                         payload: [],
                       });
-                      // Navigate to generate route which will start fresh AI generation
                       navigate("/content/generate");
                     }}
                     onPublish={handleGoToPublish}
@@ -234,7 +203,6 @@ export const ContentPage: React.FC = () => {
                     onRegeneratePlatform={handleRegeneratePlatform}
                   />
                 )}
-                {/* Publish Modal */}
                 {showPublishModal && state.generatedPosts && (
                   <div className=" inset-0  flex justify-center z-50 ` ">
                     <div className="bg-white w-full mt-6">
@@ -261,7 +229,6 @@ export const ContentPage: React.FC = () => {
         />
       </Routes>
 
-      {/* Generate Modal - Show AI Generator as modal instead of route */}
       {showGenerateModal && state.contentData && (
         <div className="fixed inset-0 bg-[#fafafa] z-50 h-full">
           <div className="  w-full h-full overflow-y-auto modal-content">

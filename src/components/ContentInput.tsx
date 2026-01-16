@@ -647,9 +647,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     //   navigate("/pricing");
     //   return;
     // }
-    console.log("formData.generateImageWithPost", formData.mediaUrl);
-    console.log("generateImageWithPost", selectedImageMode);
-    console.log("generateImageWithPost", generateImageWithPost);
+
     if (formData?.prompt?.trim()) {
       if (
         selectedImageMode === "textToImage" &&
@@ -666,24 +664,19 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         !generateImageWithPost &&
         !formData.mediaUrl
       ) {
-        console.log("🎯 Image generation required - no image found");
         notify("error", t("generate_image_first"));
         return;
       }
 
-      // For upload mode, check if image is uploaded
       if (
         selectedImageMode === "upload" &&
         !formData.mediaUrl &&
         !formData.media
       ) {
-        console.log("🎯 Image upload required");
         notify("error", t("upload_image_first"));
         return;
       }
 
-      // For uploaded images - open regeneration modal AFTER clicking Generate
-      // This makes it uniform with text-to-image flow
       if (
         selectedImageMode === "upload" &&
         (formData.media || formData.mediaUrl)
@@ -692,49 +685,16 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           "📷 Opening regeneration modal for uploaded image - uniform with text-to-image"
         );
 
-        // Set up the regeneration modal with the uploaded image as first generation
-        // const imageUrlOrBase64 = generatedImage || formData.mediaUrl || "";
-        // setGeneratedImage(imageUrlOrBase64);
-        // setAllGeneration([imageUrlOrBase64]);
-        // setModelImage(true);
-        // setIsGeneratingImageUpload(imageUrlOrBase64);
-
-        // // Store post generation data for template editor
-        // const currentCampaignInfo = campaignInfo || {
-        //   name: "Default Campaign",
-        //   industry: "General",
-        //   brand_tone: "professional",
-        //   target_audience: "General",
-        //   description:
-        //     "General content generation without specific campaign context",
-        // };
-
-        // const postGenerationData = {
-        //   prompt: formData.prompt,
-        //   originalImageUrl: formData.mediaUrl || generatedImage,
-        //   campaignInfo: currentCampaignInfo,
-        //   selectedPlatforms: formData.selectedPlatforms,
-        //   imageAnalysis,
-        //   formData,
-        // };
-
-        // setPendingPostGeneration(postGenerationData);
-
-        // create the blob url from selectedImage
         const imageUrl =
           formData.mediaUrl ||
           (formData.media ? URL.createObjectURL(formData.media) : "");
 
-        // Clear selectedFile so onFileSave won't upload it when Continue is clicked
         setSelectedFile(null);
 
         await handleRegenerate(formData.prompt, imageUrl);
-        return; // Wait for user to confirm in regeneration modal
+        return;
       }
 
-      // NEW: For uploaded videos, either generate thumbnail with AI or
-      // allow using an uploaded custom thumbnail. This only runs for
-      // aspect ratios that support thumbnails (not 9:16 stories).
       if (
         (selectedVideoMode === "upload" ||
           selectedVideoMode === "uploadShorts") &&
@@ -754,10 +714,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         !is9x16Video(videoAspectRatio || 0)
       ) {
         if (generateVideoThumbnailAI) {
-          console.log(
-            "🎥 Generating video thumbnail from content description, then opening template editor..."
-          );
-
           try {
             const generatedThumbnailUrl = await generateThumbnailForPost(
               formData.prompt,
@@ -917,10 +873,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           currentCampaignInfo.targetAudience,
         description: currentCampaignInfo.description,
         imageAnalysis: imageAnalysis,
-        // Include thumbnailUrl for video posts
         thumbnailUrl:
           templatedImageUrl || videoThumbnailUrl || finalPostData.thumbnailUrl,
-        // Additional campaign fields if available
         website: currentCampaignInfo.website,
         objective: currentCampaignInfo.objective,
         goals: currentCampaignInfo.goals,
@@ -1334,21 +1288,20 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     }, 500);
   };
   const handleTemplateEditorCancel = () => {
-    console.log(
-      "🔴 TEMPLATE EDITOR CANCEL CALLED - This should close without saving"
-    );
+    setImageDescription("");
+
+    setGeneratedImage(null);
+    setModify(false);
+    setAllGeneration([]);
+    setPendingPostGeneration(null);
+    setIsGeneratingBoth(false);
     setShowTemplateEditor(false);
     setSelectedTemplate(undefined);
     setModelImage(false);
     setAllGeneration([]);
-
-    if (formData.mediaUrl && formData.mediaUrl.startsWith("blob:")) {
-      URL.revokeObjectURL(formData.mediaUrl);
-      console.log("🗑️ Cleaned up blob URL during template editor cancel");
-    }
-
     setFormData((prev) => ({
       ...prev,
+      prompt: "",
       media: undefined,
       mediaUrl: undefined,
       serverUrl: undefined,
@@ -1356,20 +1309,22 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       videoUrl: undefined,
       thumbnailUrl: undefined,
     }));
-
     setTemplatedImageUrl("");
     setImageAnalysis("");
     setVideoThumbnailUrl("");
     setOriginalVideoFile(null);
     setVideoAspectRatio(null);
     setShowPreview(false);
+    setPendingPostGeneration(null);
+    setIsGeneratingBoth(false);
 
-    if (pendingPostGeneration) {
-      console.log("❌ Template editor cancelled, aborting post generation");
-      setPendingPostGeneration(null);
-      setIsGeneratingBoth(false);
-    }
-    console.log("🔴 TEMPLATE EDITOR CANCEL COMPLETED");
+    setFormData((prev) => ({
+      ...prev,
+      media: undefined,
+      mediaUrl: undefined,
+    }));
+    setSelectedFile(null);
+    setGeneratedImage(null);
   };
 
   const handleTemplateSelectorCancel = () => {
@@ -1408,18 +1363,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     setIsGeneratingThumbnail(true);
     try {
       return await executeVideoThumbnailGeneration(async () => {
-        console.log(
-          "🎨 Generating video thumbnail from content description:",
-          contentDescription.substring(0, 100) + "..."
-        );
-        console.log("📐 Input video aspect ratio:", aspectRatio);
-
-        const apiUrl =
-          import.meta.env.VITE_API_URL ||
-          (typeof window !== "undefined"
-            ? `${window.location.protocol}//${window.location.host}`
-            : "http://localhost:5000/api");
-
         const targetAspectRatio = "16:9";
         const aspectRatioDescription =
           "16:9 horizontal/landscape format (forced)";
@@ -1440,8 +1383,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           aspectRatio: targetAspectRatio,
         };
 
-        console.log("📋 Request body for thumbnail generation:", requestBody);
-
         const response = await API.generateImage(requestBody);
 
         const result = await response.data;
@@ -1449,9 +1390,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           throw new Error(result.error || "Video thumbnail generation failed");
         }
 
-        console.log("✅ Video thumbnail generated successfully");
-
-        // Try to upload generated thumbnail to our storage for a stable URL
         try {
           const user = await getCurrentUser();
           if (user?.user?.id) {
@@ -1461,7 +1399,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
               type: "image/png",
             });
             const uploadedUrl = await uploadMedia(file, user.user.id);
-            console.log("📤 Video thumbnail uploaded to storage:", uploadedUrl);
             setVideoThumbnailUrl(uploadedUrl);
             return uploadedUrl;
           }
@@ -1937,23 +1874,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           setModify={setModify}
           modifyMode={modifyMode}
           generationAmounts={generationAmounts["image"]}
-          onClose={() => {
-            setModelImage(false);
-            setSelectedFile(null);
-
-            setGeneratedImage(null);
-            setIsGeneratingImageUpload("");
-            setAllGeneration([]);
-            setFormData((prev) => {
-              const newData = {
-                ...prev,
-                mediaUrl: undefined,
-                serverUrl: undefined,
-              };
-
-              return newData;
-            });
-          }}
+          onClose={handleTemplateEditorCancel}
           onRegenerate={handleRegenerate}
           confirmImage={confirmImage}
           onFileSave={onFileSave}
@@ -2103,12 +2024,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               uploadAbortControllerRef.current.abort();
                               uploadAbortControllerRef.current = null;
                             }
-                            // Clear the current file being processed
                             currentFileRef.current = null;
-                            // Close the upload progress modal
                             hideLoading();
                             setShowImageMenu(false);
-                            // Clear any previously selected/generated image when switching modes
 
                             setSelectedFile(null);
 
@@ -3116,11 +3034,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                       {t("back")}
                     </button>
                     <div className="flex w-full">
-                      {user.wallet?.coins < 6 ? (
-                        // Upgrade link shown when coins < 6
+                      {user?.wallet?.coins < 6 ? (
                         <Link
                           to="/pricing"
-                          onClick={() => setShowPackage(false)}
                           className="group flex-1 min-w-0 rounded-md px-3 py-2.5 font-semibold text-md flex items-center justify-center gap-2 text-white bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] border border-[#7650e3]"
                         >
                           <div className="flex items-center">

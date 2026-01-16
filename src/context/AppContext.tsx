@@ -116,7 +116,11 @@ type AppAction =
   | { type: "SET_CONNECTED_PLATFORMS"; payload: Platform[] }
   | { type: "SET_CONNECTING_PLATFORMS"; payload: Platform[] }
   | { type: "SET_ANALYTICS"; payload: any[] }
-  | { type: "SET_ANALYTICS_LOADING"; payload: boolean };
+  | { type: "SET_ANALYTICS_LOADING"; payload: boolean }
+  | { type: "SET_POST_HISTORY"; payload: any[] }
+  | { type: "SET_POST_HISTORY_LOADING"; payload: boolean }
+  | { type: "SET_EXCHANGE_RATES"; payload: Record<string, number> }
+  | { type: "SET_EXCHANGE_RATES_LOADING"; payload: boolean };
 
 const initialState: AppState & {
   security_question: any[];
@@ -124,6 +128,10 @@ const initialState: AppState & {
   addons: any[];
   loader: boolean;
   unreadCount: number;
+  postHistory: any[];
+  postHistoryLoading: Boolean;
+  exchangeRatesLoading: Boolean;
+  exchangeRates: any;
 } = {
   user: null,
   userPlan: null,
@@ -147,6 +155,10 @@ const initialState: AppState & {
   connectingPlatforms: [],
   analyticsList: [],
   analyticsLoading: false,
+  postHistory: [],
+  postHistoryLoading: false,
+  exchangeRates: {},
+  exchangeRatesLoading: false,
 };
 
 function appReducer(
@@ -219,6 +231,16 @@ function appReducer(
 
     case "SET_ANALYTICS":
       return { ...state, analyticsList: action.payload };
+    case "SET_POST_HISTORY":
+      return { ...state, postHistory: action.payload };
+
+    case "SET_POST_HISTORY_LOADING":
+      return { ...state, postHistoryLoading: action.payload };
+    case "SET_EXCHANGE_RATES":
+      return { ...state, exchangeRates: action.payload };
+
+    case "SET_EXCHANGE_RATES_LOADING":
+      return { ...state, exchangeRatesLoading: action.payload };
 
     default:
       return state;
@@ -265,6 +287,33 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       new Pusher("5a8f542f7e4c1f452d53", { cluster: "ap2", forceTLS: true }),
     []
   );
+
+  const apiKey = "80f18a670f8f17b074ee56f9";
+
+  const fetchExchangeRates = async () => {
+    const url = `https://v6.exchangerate-api.com/v6/${apiKey}/latest/USD`;
+
+    try {
+      dispatch({ type: "SET_EXCHANGE_RATES_LOADING", payload: true });
+
+      const res = await fetch(url);
+      const data = await res.json();
+
+      if (data?.result === "success") {
+        dispatch({
+          type: "SET_EXCHANGE_RATES",
+          payload: data.conversion_rates || {},
+        });
+      } else {
+        dispatch({ type: "SET_EXCHANGE_RATES", payload: {} });
+      }
+    } catch (err) {
+      console.error("Failed to fetch exchange rates:", err);
+      dispatch({ type: "SET_EXCHANGE_RATES", payload: {} });
+    } finally {
+      dispatch({ type: "SET_EXCHANGE_RATES_LOADING", payload: false });
+    }
+  };
 
   const logout = useCallback(() => {
     Cookies.remove("auth_token");
@@ -549,16 +598,28 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       dispatch({ type: "SET_CONNECTED_PLATFORMS", payload: [] });
     }
   }, []);
+  const fetchPostHistory = async () => {
+    try {
+      dispatch({ type: "SET_POST_HISTORY_LOADING", payload: true });
+
+      const res = await API.getHistory();
+      dispatch({
+        type: "SET_POST_HISTORY",
+        payload: res?.data?.data || [],
+      });
+    } catch (err) {
+      dispatch({ type: "SET_POST_HISTORY", payload: [] });
+    } finally {
+      dispatch({ type: "SET_POST_HISTORY_LOADING", payload: false });
+    }
+  };
 
   useEffect(() => {
     if (state.user?.id) {
       checkConnectedPlatforms();
-    }
-  }, [state.user?.id, checkConnectedPlatforms]);
-
-  useEffect(() => {
-    if (state.user?.id) {
+      fetchPostHistory();
       fetchAnalytics();
+      fetchExchangeRates();
     }
   }, [state.user?.id]);
 
