@@ -142,14 +142,7 @@ const SubscriptionPauseModal = ({
             </ul>
 
             <div className="flex gap-2">
-              <button
-                disabled={downgradeLoading}
-                onClick={handleCancelDowngradeRequest}
-                className="w-full bg-purple-600 disabled:cursor-not-allowed hover:bg-[#d7d7fc] hover:text-[#7650e3] 
-          text-white font-semibold py-2.5 rounded-md border border-[#7F56D9] transition"
-              >
-                {downgradeLoading ? "Processing..." : " Cancel Request"}
-              </button>
+              
 
               <button
                 onClick={openDowngradeModel}
@@ -157,6 +150,14 @@ const SubscriptionPauseModal = ({
            font-semibold py-2.5 rounded-md border border-[#7F56D9] transition"
               >
                 Back
+              </button>
+              <button
+                disabled={downgradeLoading}
+                onClick={handleCancelDowngradeRequest}
+                className="w-full bg-purple-600 disabled:cursor-not-allowed hover:bg-[#d7d7fc] hover:text-[#7650e3] 
+          text-white font-semibold py-2.5 rounded-md border border-[#7F56D9] transition"
+              >
+                {downgradeLoading ? "Processing..." : " Cancel Request"}
               </button>
             </div>
           </div>
