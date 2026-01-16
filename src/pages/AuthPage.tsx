@@ -5,6 +5,7 @@ import { useAppContext } from "../context/AppContext";
 import API from "../services/api";
 import { notify } from "@/utils/toast";
 import { useTranslation } from "react-i18next";
+import Cookies from "js-cookie";
 
 export const AuthPage: React.FC = () => {
   const { state, dispatch } = useAppContext();
@@ -15,15 +16,15 @@ export const AuthPage: React.FC = () => {
   const { t } = useTranslation();
 
   useEffect(() => {
-    if (localStorage.getItem("auth_token")) {
+    if (Cookies.get("auth_token")) {
       navigate("/content", { replace: true });
     }
-  }, [localStorage.getItem("auth_token")]);
+  }, [Cookies.get("auth_token")]);
 
   const handleAuthSuccess = (user: any) => {
     // Cache user to localStorage on login
     localStorage.setItem("cached_user", JSON.stringify(user));
-    
+
     dispatch({ type: "SET_USER", payload: user });
     dispatch({
       type: "SET_BALANCE",

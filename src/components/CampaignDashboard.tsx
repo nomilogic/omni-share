@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { CampaignInfo } from "../types";
 import { useTranslation } from "react-i18next";
+import Cookies from "js-cookie";
 
 interface CampaignDashboardProps {
   campaign: any;

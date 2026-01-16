@@ -752,12 +752,6 @@ export async function postToAllPlatforms(
     }
   }
 
-  // Log summary
-  console.log(
-    `Publishing complete. Successes: ${
-      successes.join(", ") || "none"
-    }. Errors: ${errors.length}`
-  );
   if (errors.length > 0) {
     console.warn("Publishing errors:", errors);
   }

@@ -89,25 +89,21 @@ export const AuthForm: React.FC<AuthFormProps> = ({
     return Cookies.get("cookie-consent") === "accepted";
   };
 
-  // Login Form
   const loginForm = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema(t)),
     defaultValues: { email: "", password: "" },
   });
 
-  // Signup Form
   const signupForm = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema(t)),
     defaultValues: { name: "", email: "", password: "" },
   });
 
-  // Forgot Password Form
   const forgotPasswordForm = useForm<ForgotPasswordFormData>({
     resolver: zodResolver(forgotPasswordSchema(t)),
     defaultValues: { email: "" },
   });
 
-  // Reset Password Form
   const resetPasswordForm = useForm<ResetPasswordFormData>({
     resolver: zodResolver(resetPasswordSchema(t)),
     defaultValues: { password: "", confirmPassword: "" },
@@ -434,16 +430,6 @@ export const AuthForm: React.FC<AuthFormProps> = ({
     setSuccessMessage("Password successfully reset.");
     resetPasswordForm.reset();
     setMode("login");
-  };
-
-  const resetMode = () => {
-    setMode("login");
-    setError("");
-    setSuccessMessage("");
-    loginForm.reset();
-    signupForm.reset();
-    forgotPasswordForm.reset();
-    resetPasswordForm.reset();
   };
 
   return (
