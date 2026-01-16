@@ -63,9 +63,9 @@ export const AccountsPage: React.FC = () => {
           return (
             <div
               key={platform}
-              className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-md hover:bg-gray-50 transition-colors"
+              className="flex items-center flex-row gap-2 justify-between p-4 bg-white border border-gray-200 rounded-md hover:bg-gray-50 transition-colors"
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 ">
                 {/* Platform Icon */}
                 <div
                   className={`w-12 h-12 rounded-full flex items-center justify-center text-white ${getPlatformIconBackgroundColors(
