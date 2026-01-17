@@ -171,21 +171,20 @@ export default function Analytics({ onHasAnalyticsChange }: Props) {
           );
         })}
       </div>
-
       {/* Page info */}
       {analytics && (
         <div className="mb-2">
           <h3 className="text-lg font-semibold text-gray-900 truncate">
-            {analytics.page.name}
+            {analytics.page.name} ({analytics?.page?.username || ""})
           </h3>
           <p className="text-sm text-gray-600">
-            {analytics?.page?.followers?.toLocaleString()}{" "}
+            {analytics?.page?.followers?.toLocaleString() ||
+              analytics?.page?.subscribers?.toLocaleString()}
             {getAudienceLabel(selectedPlatform)}
           </p>
         </div>
       )}
 
-      {/* Metrics + Posts */}
       <div className="flex-1 overflow-y-auto pr-2 -mr-2">
         <h3 className="text-lg font-semibold mb-3">{t("summary")}</h3>
 
@@ -193,6 +192,21 @@ export default function Analytics({ onHasAnalyticsChange }: Props) {
           {(selectedPlatform === "facebook" ||
             selectedPlatform === "instagram") && (
             <Metric label={t("reach")} value={monthlyReach} color="indigo" />
+          )}
+
+          {selectedPlatform === "youtube" && (
+            <Metric
+              label={"Total views"}
+              value={analytics?.summary.totalViews}
+              color="blue"
+            />
+          )}
+          {selectedPlatform === "youtube" && (
+            <Metric
+              label={"Video Count"}
+              value={analytics?.summary.videoCount}
+              color="blue"
+            />
           )}
 
           {(selectedPlatform === "youtube" ||
@@ -246,7 +260,6 @@ export default function Analytics({ onHasAnalyticsChange }: Props) {
           )}
         </div>
       </div>
-
       <button
         onClick={() => navigate(`/analytics?platform=${selectedPlatform}`)}
         className="w-full text-white py-2 px-4 rounded-md font-semibold text-md transition-all border-2 border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] mt-4"
