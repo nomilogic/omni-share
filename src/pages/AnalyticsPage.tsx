@@ -242,7 +242,6 @@ export default function AnalyticsPage() {
                           {analytics?.page?.followers?.toLocaleString() ||
                             analytics?.page?.subscribers?.toLocaleString()}{" "}
                           {getAudienceLabel(selectedPlatform)}
-                          {t("followers")}
                         </p>
                       </div>
                     </div>
