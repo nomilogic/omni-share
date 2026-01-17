@@ -153,10 +153,10 @@ function AccountSecurityTabs() {
         action == "disable-2fa"
           ? disable2FAConfirm
           : action == "update-questions"
-          ? saveSecurityQuestions
-          : action == null
-          ? verifyResetpassword
-          : null,
+            ? saveSecurityQuestions
+            : action == null
+              ? verifyResetpassword
+              : null,
     });
   };
 
@@ -236,6 +236,7 @@ function AccountSecurityTabs() {
     setDisabling2FA(true);
     try {
       await API.disable2FA(otp);
+      notify("success", "Two-factor authentication disabled");
     } catch (err: any) {
       notify("error", err.response?.data?.message || "Failed to disable 2FA");
     } finally {
@@ -248,9 +249,6 @@ function AccountSecurityTabs() {
   };
 
   const handleAuthSuccess = () => {
-    if (pendingAction === "disable-2fa") {
-      notify("success", "Two-factor authentication disabled");
-    }
     refreshUser();
   };
 
@@ -471,10 +469,7 @@ function AccountSecurityTabs() {
                           Account recovery
                         </p>
                       </div>
-                      <span
-                        className= "px-3 py-1 rounded-md text-xs font-medium bg-purple-100 "
-                          
-                      >
+                      <span className="px-3 py-1 rounded-md text-xs font-medium bg-purple-100 ">
                         {user?.isSecurityQuestions ? "SET" : "NOT SET"}
                       </span>
                     </div>
@@ -490,9 +485,13 @@ function AccountSecurityTabs() {
                           Authenticator App
                         </p>
                       </div>
+<<<<<<< HEAD
                       <span
                         className="px-3 py-1 rounded-md bg-purple-100 text-xs font-medium" 
                       >
+=======
+                      <span className="px-3 py-1 rounded-md bg-gray-100 text-xs font-medium">
+>>>>>>> c9f0958e3fc1dc30ab8029cc649acc107052eaea
                         {user?.twoFactorEnabled ? "ENABLED" : "DISABLED"}
                       </span>
                     </div>
@@ -855,8 +854,8 @@ function AccountSecurityTabs() {
                         {disabling2FA
                           ? "Processing..."
                           : user?.twoFactorEnabled
-                          ? "Disable 2FA"
-                          : "Enable 2FA"}
+                            ? "Disable 2FA"
+                            : "Enable 2FA"}
                       </button>
                     </div>
 
@@ -1048,8 +1047,8 @@ export const CustomSelect: React.FC<{
           error
             ? "border-red-500"
             : value
-            ? "border-purple-500"
-            : "border-gray-300"
+              ? "border-purple-500"
+              : "border-gray-300"
         }`}
       >
         <span className={value ?  "text-gray-900" : "text-gray-500"}>
@@ -1089,8 +1088,8 @@ export const CustomSelect: React.FC<{
                   value === q.id
                     ? "bg-purple-50 text-purple-700 font-medium"
                     : isDisabled
-                    ? "text-gray-400 bg-gray-50 cursor-not-allowed"
-                    : "hover:bg-gray-100"
+                      ? "text-gray-400 bg-gray-50 cursor-not-allowed"
+                      : "hover:bg-gray-100"
                 }`}
               >
                 {q.question}

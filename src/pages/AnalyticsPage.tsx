@@ -238,6 +238,17 @@ export default function AnalyticsPage() {
                     </div>
 
                     <div className="grid grid-cols-3 gap-3 mt-4">
+                      {(selectedPlatform === "youtube" ||
+                        selectedPlatform === "tiktok") && (
+                        <StatCard
+                          title={t("views")}
+                          value={analytics?.summary.views}
+                        />
+                      )}
+                      {(selectedPlatform === "facebook" ||
+                        selectedPlatform === "instagram") && (
+                        <StatCard title={t("reach")} value={monthlyReach} />
+                      )}
                       <StatCard
                         title={t("likes") || "Likes"}
                         value={analytics.summary.likes}
@@ -252,20 +263,22 @@ export default function AnalyticsPage() {
                       />
                     </div>
 
-                    <div className="grid grid-cols-3 gap-3 mt-4">
-                      <ReachCard
-                        period={t("today") || "Today"}
-                        value={dailyReach}
-                      />
-                      <ReachCard
-                        period={t("week") || "Week"}
-                        value={weeklyReach}
-                      />
-                      <ReachCard
-                        period={t("month") || "Month"}
-                        value={monthlyReach}
-                      />
-                    </div>
+                    {platformParam !== "youtube" && (
+                      <div className="grid grid-cols-3 gap-3 mt-4">
+                        <ReachCard
+                          period={t("today") || "Today"}
+                          value={dailyReach}
+                        />
+                        <ReachCard
+                          period={t("week") || "Week"}
+                          value={weeklyReach}
+                        />
+                        <ReachCard
+                          period={t("month") || "Month"}
+                          value={monthlyReach}
+                        />
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -324,7 +337,9 @@ function PostsList({
                 {post.title}
               </p>
               <p className="text-xs text-gray-600 mt-1">
-                {new Date(post.created_time).toLocaleDateString()}
+                {post?.created_time
+                  ? new Date(post.created_time).toLocaleDateString()
+                  : new Date().toLocaleDateString()}
               </p>
             </div>
             <div className="text-right">

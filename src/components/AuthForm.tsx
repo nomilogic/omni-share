@@ -850,9 +850,16 @@ export const AuthForm: React.FC<AuthFormProps> = ({
           onSuccess={(data: any) => {
             notify("success", t("login_successful"));
 
-            localStorage.setItem("auth_token", data.accessToken);
-            localStorage.setItem("refresh_token", data.refreshToken);
-
+            Cookies.set("auth_token", data.accessToken, {
+              expires: 1,
+              secure: true,
+              sameSite: "strict",
+            });
+            Cookies.set("refresh_token", data.accessToken, {
+              expires: 14,
+              secure: true,
+              sameSite: "strict",
+            });
             onAuthSuccess(data.user);
 
             try {

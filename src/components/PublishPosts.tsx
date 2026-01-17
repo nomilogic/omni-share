@@ -407,8 +407,6 @@ export const PublishPosts: React.FC<PublishProps> = ({
     setPublishProgress({});
 
     try {
-      // Only process posts for available platforms (connected and not published)
-      // Enrich TikTok post with settings before publishing
       const selectedPosts = posts
         .filter((post) => availablePlatforms.includes(post.platform))
         .map((post) => {
@@ -426,7 +424,6 @@ export const PublishPosts: React.FC<PublishProps> = ({
             tiktokIsBrandedContent: tiktokSettings.isBrandedContent,
           };
         });
-npm 
       const youtubePost = selectedPosts.find(
         (post) => post.platform === "youtube"
       );
@@ -637,15 +634,15 @@ npm
                               progress === "pending"
                                 ? "text-yellow-600"
                                 : progress === "success"
-                                ? "text-green-600"
-                                : "text-red-600"
+                                  ? "text-green-600"
+                                  : "text-red-600"
                             }`}
                           >
                             {progress === "pending"
                               ? "Publishing..."
                               : progress === "success"
-                              ? "Published"
-                              : "Failed"}
+                                ? "Published"
+                                : "Failed"}
                           </p>
                         )}
                       </div>
@@ -1138,8 +1135,8 @@ npm
             ).length === 0
               ? "bg-gray-400"
               : publishing
-              ? "theme-bg-trinary"
-              : "bg-#7650e3"
+                ? "theme-bg-trinary"
+                : "bg-#7650e3"
           }`}
         >
           {publishing ? (
@@ -1274,7 +1271,6 @@ npm
                       >
                         {result.success ? "✅" : "❌"} {platform}
                       </h4>
-                      
                     </div>
                     <p
                       className={`text-sm mt-1 ${

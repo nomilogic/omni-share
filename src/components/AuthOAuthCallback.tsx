@@ -27,11 +27,7 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
 
   useEffect(() => {
     const handleCallback = async () => {
-      // Prevent multiple simultaneous OAuth requests and StrictMode double-invoke
       if (hasRunRef.current || isProcessing) {
-        console.log(
-          "OAuth callback already in progress or already handled, skipping..."
-        );
         return;
       }
       hasRunRef.current = true;
@@ -85,8 +81,16 @@ export const AuthOAuthCallback: React.FC<AuthOAuthCallbackProps> = ({
             }
           }, 400);
         } else {
-          localStorage.setItem("auth_token", result.data.accessToken);
-          localStorage.setItem("refresh_token", result.data.refreshToken);
+          Cookies.set("auth_token", result.accessToken, {
+            expires: 1,
+            secure: true,
+            sameSite: "strict",
+          });
+          Cookies.set("refresh_token", result.accessToken, {
+            expires: 14,
+            secure: true,
+            sameSite: "strict",
+          });
           onAuthSuccess(result.user);
 
           setTimeout(() => {
