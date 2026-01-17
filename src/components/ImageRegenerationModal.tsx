@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import Icon from "./Icon";
-import { useAppContext } from "../context/AppContext";
 
 export default function ImageRegenerationModal({
   imageUrl,
@@ -14,16 +13,15 @@ export default function ImageRegenerationModal({
   modifyMode,
   setModify,
   generationAmounts,
+  useLogo,
+  setUseLogo,
+  useTheme,
+  setUseTheme,
+  logoUrl,
+  themeUrl,
 }: any) {
-  const { state } = useAppContext();
   const [prompt, setPrompt] = useState("");
   const [activeImage, setActiveImage] = useState(imageUrl);
-  
-  // Brand Logo and Theme states
-  const [useLogo, setUseLogo] = useState(false);
-  const [useTheme, setUseTheme] = useState(false);
-  const logoUrl = state.user?.profile?.brandLogo || "";
-  const themeUrl = state.user?.profile?.publicUrl || "";
 
   useEffect(() => {
     if (imageUrl) setActiveImage(imageUrl);
@@ -68,8 +66,8 @@ export default function ImageRegenerationModal({
       }
     }
 
-    // Pass brand logo and theme info to parent
-    onRegenerate(prompt, payload, { useLogo, useTheme, logoUrl, themeUrl });
+    // Pass just prompt and payload - checkboxes are already bound to parent state
+    onRegenerate(prompt, payload);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {

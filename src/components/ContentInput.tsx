@@ -1889,6 +1889,12 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           confirmImage={confirmImage}
           onFileSave={onFileSave}
           selectedFile={selectedFile}
+          useLogo={useLogo}
+          setUseLogo={setUseLogo}
+          useTheme={useTheme}
+          setUseTheme={setUseTheme}
+          logoUrl={logoUrl}
+          themeUrl={themeUrl}
         />
       )}
       {showVideoThumbnailModal && videoThumbnailForRegeneration && (
