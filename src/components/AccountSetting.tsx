@@ -485,13 +485,7 @@ function AccountSecurityTabs() {
                           Authenticator App
                         </p>
                       </div>
-<<<<<<< HEAD
-                      <span
-                        className="px-3 py-1 rounded-md bg-purple-100 text-xs font-medium" 
-                      >
-=======
-                      <span className="px-3 py-1 rounded-md bg-gray-100 text-xs font-medium">
->>>>>>> c9f0958e3fc1dc30ab8029cc649acc107052eaea
+                      <span className="px-3 py-1 rounded-md bg-purple-100 text-xs font-medium">
                         {user?.twoFactorEnabled ? "ENABLED" : "DISABLED"}
                       </span>
                     </div>
@@ -754,11 +748,9 @@ function AccountSecurityTabs() {
                                       }
                                     )
                                   }
-                                  
                                   questions={security_question}
                                   otherSelected={otherSelected}
                                   error={questionError?.message}
-                                  
                                 />
                               </div>
 
@@ -804,7 +796,6 @@ function AccountSecurityTabs() {
                           >
                             {loading ? "Saving..." : "Save Security Questions"}
                           </button>
-                          
                         </div>
                       </form>
                     ) : (
@@ -1051,7 +1042,7 @@ export const CustomSelect: React.FC<{
               : "border-gray-300"
         }`}
       >
-        <span className={value ?  "text-gray-900" : "text-gray-500"}>
+        <span className={value ? "text-gray-900" : "text-gray-500"}>
           {selectedQuestion?.question || "Select a question..."}
         </span>
         <svg
