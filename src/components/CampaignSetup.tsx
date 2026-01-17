@@ -301,7 +301,7 @@ export const CampaignSetup: React.FC<CampaignSetupProps> = ({
             {toneOptions.map((tone) => (
               <div
                 key={tone.value}
-                className={`p-4 border-2 rounded-md cursor-pointer transition-all duration-200 hover:shadow-md ${
+                className={`p-4 border rounded-md cursor-pointer transition-all duration-200 hover:shadow-md ${
                   formData.brandTone === tone.value
                     ? "border-blue-500 bg-blue-50"
                     : "border-gray-200 hover:border-gray-300 bg-white"
@@ -336,8 +336,8 @@ export const CampaignSetup: React.FC<CampaignSetupProps> = ({
                 onClick={() => toggleGoal(goal)}
                 className={`px-4 py-3 rounded-md text-sm font-medium transition-all duration-200 ${
                   formData.goals?.includes(goal)
-                    ? "bg-blue-500 text-white border-2 border-blue-500 shadow-md"
-                    : "bg-white text-slate-700 border-2 border-gray-200 hover:bg-gray-50 hover:border-gray-300"
+                    ? "bg-blue-500 text-white border border-blue-500 shadow-md"
+                    : "bg-white text-slate-700 border border-gray-200 hover:bg-gray-50 hover:border-gray-300"
                 }`}
               >
                 {goal}
@@ -361,7 +361,7 @@ export const CampaignSetup: React.FC<CampaignSetupProps> = ({
               return (
                 <div
                   key={platform.id}
-                  className={`p-4 border-2 rounded-md cursor-pointer transition-all duration-200 hover:shadow-md ${
+                  className={`p-4 border rounded-md cursor-pointer transition-all duration-200 hover:shadow-md ${
                     isSelected
                       ? `border-blue-500 bg-blue-50 shadow-md`
                       : `border-gray-200 hover:border-gray-300 bg-white ${platform.bgColor}`

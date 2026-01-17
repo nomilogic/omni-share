@@ -170,7 +170,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   const [isGeneratingBoth, setIsGeneratingBoth] = useState(false);
   const [isGeneratingThumbnail, setIsGeneratingThumbnail] = useState(false);
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
-  
+
   // Brand Logo and Theme states
   const [useLogo, setUseLogo] = useState(false);
   const [useTheme, setUseTheme] = useState(false);
@@ -197,11 +197,33 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   const [pendingPostGeneration, setPendingPostGeneration] = useState<any>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const isValidUrl = (u?: string | null) => {
+    if (!u) return false;
+    const s = u.trim();
+    if (!s) return false;
+    try {
+      new URL(s);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  const hasLogo = isValidUrl(logoUrl);
+  const hasTheme = isValidUrl(themeUrl);
+
+  useEffect(() => {
+    if (!hasLogo && useLogo) setUseLogo(false);
+  }, [hasLogo, useLogo, setUseLogo]);
+
+  useEffect(() => {
+    if (!hasTheme && useTheme) setUseTheme(false);
+  }, [hasTheme, useTheme, setUseTheme]);
 
   const getAppropiatePlatforms = (
     postType: "text" | "image" | "video",
     imageMode?: string,
-    videoMode?: string
+    videoMode?: string,
   ): Platform[] => {
     switch (postType) {
       case "text":
@@ -224,7 +246,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     const appropriatePlatforms = getAppropiatePlatforms(
       selectedPostType?.toLowerCase() as "text" | "image" | "video",
       selectedImageMode,
-      selectedVideoMode
+      selectedVideoMode,
     );
     setFormData((prev) => ({
       ...prev,
@@ -254,7 +276,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     } else {
       if (videoAspectRatioWarning) {
         console.log(
-          "🔄 Clearing video warning when switching away from video post type"
+          "🔄 Clearing video warning when switching away from video post type",
         );
         setVideoAspectRatioWarning("");
       }
@@ -292,7 +314,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
           const campaign = await getCampaignById(
             state.selectedCampaign.id,
-            state.user.id
+            state.user.id,
           );
           setCampaignInfo(campaign);
           console.log("Campaign info fetched:", campaign);
@@ -425,7 +447,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
               setOriginalVideoFile(null);
               setVideoAspectRatio(null);
             },
-          }
+          },
         );
 
         // If mediaUrl is null, upload was aborted - don't proceed
@@ -438,7 +460,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         // Double-check: if abort controller was cleared (mode was switched), don't add the image
         if (!uploadAbortControllerRef.current) {
           console.log(
-            "📛 Upload was aborted before completion, skipping image addition"
+            "📛 Upload was aborted before completion, skipping image addition",
           );
           return;
         }
@@ -446,7 +468,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         // Triple-check: verify this is still the current file being processed
         if (currentFileRef.current !== file) {
           console.log(
-            "📛 A different file is now being processed, skipping old file update"
+            "📛 A different file is now being processed, skipping old file update",
           );
           return;
         }
@@ -496,12 +518,12 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         if (error instanceof Error) {
           console.log(
             "📱 File should still be set for local preview, error was:",
-            error.message
+            error.message,
           );
         } else {
           console.log(
             "📱 File should still be set for local preview, unknown error:",
-            error
+            error,
           );
         }
       }
@@ -553,7 +575,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       } else {
         console.log("No analysis in result:", result);
         setImageAnalysis(
-          "Image uploaded successfully. Add a description for better content generation."
+          "Image uploaded successfully. Add a description for better content generation.",
         );
       }
     } catch (error: any) {
@@ -565,7 +587,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           error.message?.includes("quota")
             ? "AI analysis quota exceeded."
             : "Add a description for better content generation."
-        }`
+        }`,
       );
     } finally {
       setAnalyzingImage(false);
@@ -628,7 +650,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         setImageAnalysis(result.analysis);
       } else {
         setImageAnalysis(
-          "AI-generated image analyzed. Add a description for better content generation."
+          "AI-generated image analyzed. Add a description for better content generation.",
         );
       }
     } catch (error: any) {
@@ -637,7 +659,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           error.message?.includes("quota")
             ? "AI analysis quota exceeded."
             : "Add a description for better content generation."
-        }`
+        }`,
       );
     } finally {
       setAnalyzingImage(false);
@@ -688,7 +710,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         (formData.media || formData.mediaUrl)
       ) {
         console.log(
-          "📷 Opening regeneration modal for uploaded image - uniform with text-to-image"
+          "📷 Opening regeneration modal for uploaded image - uniform with text-to-image",
         );
 
         const imageUrl =
@@ -723,7 +745,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           try {
             const generatedThumbnailUrl = await generateThumbnailForPost(
               formData.prompt,
-              videoAspectRatio
+              videoAspectRatio,
             );
 
             if (generatedThumbnailUrl) {
@@ -733,7 +755,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
               return;
             } else {
               console.error(
-                "❌ Failed to generate video thumbnail, continuing without thumbnail"
+                "❌ Failed to generate video thumbnail, continuing without thumbnail",
               );
             }
           } catch (err) {
@@ -1092,12 +1114,12 @@ export const ContentInput: React.FC<ContentInputProps> = ({
             blob.type && blob.type.includes("png")
               ? "png"
               : blob.type && blob.type.includes("jpeg")
-              ? "jpg"
-              : "png";
+                ? "jpg"
+                : "png";
           const file = new File(
             [blob],
             `templated-image-${Date.now()}.${ext}`,
-            { type: blob.type || "image/png" }
+            { type: blob.type || "image/png" },
           );
           const uploadedUrl = await uploadMedia(file, user.user.id);
           if (uploadedUrl) {
@@ -1364,7 +1386,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
   const generateThumbnailForPost = async (
     contentDescription: string,
-    aspectRatio: number | null
+    aspectRatio: number | null,
   ): Promise<string | null> => {
     setIsGeneratingThumbnail(true);
     try {
@@ -1380,7 +1402,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         console.log(
           "📐 Final target aspect ratio:",
           targetAspectRatio,
-          "(" + aspectRatioDescription + ")"
+          "(" + aspectRatioDescription + ")",
         );
 
         const requestBody = {
@@ -1411,7 +1433,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         } catch (uploadErr) {
           console.warn(
             "Failed to upload video thumbnail, using direct URL:",
-            uploadErr
+            uploadErr,
           );
         }
 
@@ -1428,7 +1450,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
   // Handle user-uploaded custom thumbnail for video posts
   const handleCustomThumbnailChange = async (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -1455,7 +1477,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
             console.log("Custom thumbnail upload cancelled");
             uploadAbortControllerRef.current = null;
           },
-        }
+        },
       );
 
       // If upload was aborted, don't proceed
@@ -1543,7 +1565,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   // Combined generation function - generates both post and image from main prompt
   const handleCombinedGeneration = async (
     prompt: string,
-    image?: any
+    image?: any,
   ): Promise<string | null> => {
     return await executeImageGeneration(async () => {
       const response = await API.generateImage({
@@ -1613,7 +1635,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         console.log("🔄 Modify mode: Regenerating with existing image as base");
         const result: any = await handleCombinedGeneration(
           newPrompt,
-          imageToModify
+          imageToModify,
         );
         finalImageUrl = result.imageUrl;
         setGeneratedImage(finalImageUrl);
@@ -1622,7 +1644,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         // Upload mode without modify: Use uploaded image directly, no generation
         finalImageUrl = Url;
         console.log(
-          "📷 Upload mode: Using selected image directly, no AI generation"
+          "📷 Upload mode: Using selected image directly, no AI generation",
         );
         setGeneratedImage(finalImageUrl);
         setAllGeneration([finalImageUrl]);
@@ -1670,12 +1692,12 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
   const handleVideoThumbnailRegenerate = async (
     newPrompt: string,
-    Url?: string
+    Url?: string,
   ) => {
     try {
       console.log(
         "🎥 Regenerating video thumbnail with new prompt:",
-        newPrompt
+        newPrompt,
       );
 
       let isModifyMode = Url !== null && Url !== undefined;
@@ -1749,7 +1771,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       console.log("✅ Video thumbnail confirmed, opening template editor");
       console.log(
         "🎬 Selected thumbnail:",
-        videoThumbnailForRegeneration?.substring(0, 80) + "..."
+        videoThumbnailForRegeneration?.substring(0, 80) + "...",
       );
 
       // Set the selected thumbnail to videoThumbnailUrl so template editor can use it
@@ -1800,7 +1822,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   };
 
   const handleFileChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const files = event.currentTarget.files;
     if (!files || files.length === 0) return;
@@ -1842,7 +1864,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       };
       reader.readAsDataURL(file);
       console.log(
-        "📷 Image selected and displayed - user can add prompt and click generate to regenerate"
+        "📷 Image selected and displayed - user can add prompt and click generate to regenerate",
       );
     }
   };
@@ -1950,7 +1972,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         currentFileRef.current = null;
                       }
                       setSelectedPostType(
-                        selectedPostType === "text" ? "" : "text"
+                        selectedPostType === "text" ? "" : "text",
                       );
                     }}
                     className={`  border  duration-200 text-center px-2 py-3 rounded-md  ${
@@ -2337,8 +2359,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                     (formData.media
                                       ? URL.createObjectURL(formData.media)
                                       : selectedFile
-                                      ? URL.createObjectURL(selectedFile)
-                                      : "");
+                                        ? URL.createObjectURL(selectedFile)
+                                        : "");
 
                                   return (
                                     <img
@@ -2348,13 +2370,13 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                       onLoad={() => {
                                         console.log(
                                           "✅ Upload preview image loaded successfully:",
-                                          imageSrc.substring(0, 30) + "..."
+                                          imageSrc.substring(0, 30) + "...",
                                         );
                                       }}
                                       onError={(e) => {
                                         console.error(
                                           "❌ Upload preview image failed to load:",
-                                          imageSrc
+                                          imageSrc,
                                         );
                                         console.error("❌ Error details:", e);
                                       }}
@@ -2461,8 +2483,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               placeholder="Describe the image you want to generate... (e.g., 'A professional product photo of eco-friendly water bottles')"
                               required
                             />
-                            
-                           
                           </div>
                         )}
 
@@ -2548,7 +2568,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                     hasMedia: !!formData.media,
                                     mediaType: formData.media?.type,
                                     finalSrc: imageSrc.substring(0, 50) + "...",
-                                  }
+                                  },
                                 );
                                 return (
                                   <img
@@ -2617,7 +2637,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                   </label>
                   <div className="  theme-bg-primary  border border-slate-200/70 backdrop-blur-sm rounded-md shadow-md p-6">
                     <div
-                      className={` border-2 border-dashed  p-0 text-center transition-all duration-200 ${
+                      className={` border border-dashed  p-0 text-center transition-all duration-200 ${
                         dragActive
                           ? "border-blue-400/50 bg-blue-500/10"
                           : "border-white/20 hover:border-white/30"
@@ -2634,8 +2654,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                           selectedPostType === "image"
                             ? "image/*"
                             : selectedPostType === "video"
-                            ? "video/*"
-                            : "image/*,video/*"
+                              ? "video/*"
+                              : "image/*,video/*"
                         }
                         onChange={handleFileChange}
                         className="hidden"
@@ -2649,7 +2669,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                           (formData.mediaUrl &&
                             !formData.media &&
                             !formData.mediaUrl.match(
-                              /\.(mp4|mov|avi|wmv|flv|webm|mkv|m4v)$/i
+                              /\.(mp4|mov|avi|wmv|flv|webm|mkv|m4v)$/i,
                             )) ? (
                             <div className="relative">
                               <img
@@ -2667,7 +2687,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                     "Image failed to load:",
                                     templatedImageUrl ||
                                       formData.mediaUrl ||
-                                      formData.media?.name
+                                      formData.media?.name,
                                   );
                                 }}
                               />
@@ -2687,8 +2707,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                   formData.mediaUrl
                                     ? formData.mediaUrl
                                     : formData.media
-                                    ? URL.createObjectURL(formData.media)
-                                    : undefined
+                                      ? URL.createObjectURL(formData.media)
+                                      : undefined
                                 }
                                 className="max-h-40 mx-auto shadow-md rounded"
                                 controls
@@ -2738,15 +2758,15 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               <span className="text-green-300">
                                 {is9x16Video(videoAspectRatio)
                                   ? t(
-                                      "vertical_video_ready_stories_format_no_thumbnail_needed"
+                                      "vertical_video_ready_stories_format_no_thumbnail_needed",
                                     )
                                   : is16x9Video(videoAspectRatio)
-                                  ? t(
-                                      "horizontal_video_ready_thumbnail_generated_when_click_generate_post"
-                                    )
-                                  : t(
-                                      "video_processed_ready_thumbnail_generated_when_click_generate_post"
-                                    )}
+                                    ? t(
+                                        "horizontal_video_ready_thumbnail_generated_when_click_generate_post",
+                                      )
+                                    : t(
+                                        "video_processed_ready_thumbnail_generated_when_click_generate_post",
+                                      )}
                               </span>
                             </div>
                           ) : null}
@@ -2759,7 +2779,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                   checked={generateVideoThumbnailAI}
                                   onChange={(e) =>
                                     setGenerateVideoThumbnailAI(
-                                      e.target.checked
+                                      e.target.checked,
                                     )
                                   }
                                   className="w-4 h-4"
@@ -2802,7 +2822,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               (formData.mediaUrl &&
                                 !formData.media &&
                                 !formData.mediaUrl.match(
-                                  /\.(mp4|mov|avi|wmv|flv|webm|mkv|m4v)$/i
+                                  /\.(mp4|mov|avi|wmv|flv|webm|mkv|m4v)$/i,
                                 ))) &&
                             !analyzingImage && <></>}
 
@@ -2929,57 +2949,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                           ? t("generate_image_post_ai")
                           : t("content_description")}
                       </label>
-                       {/* Use for Generation Section */}
-                            { selectedImageMode === "textToImage" && <div className="mt-4 p-3 bg-purple-500/5 border border-purple-400/20 rounded-md">
-                              <p className="text-sm font-semibold theme-text-primary mb-3">Use for generation</p>
-                              <div className=" flex flex-row justify-start gap-10">
-                                {/* Brand Logo Checkbox */}
-                                <div className="flex items-start gap-3">
-                                  <input
-                                    type="checkbox"
-                                    id="useBrandLogo"
-                                    checked={useLogo}
-                                    onChange={(e) => setUseLogo(e.target.checked)}
-                                    disabled={!logoUrl}
-                                    className="w-4 h-4 mt-0.5 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                                  />
-                                  <div className="flex-1">
-                                    <label
-                                      htmlFor="useBrandLogo"
-                                      className="text-sm font-medium theme-text-primary cursor-pointer"
-                                    >
-                                      Brand Logo
-                                    </label>
-                                    <p className="text-xs theme-text-secondary mt-0.5">
-                                      {logoUrl ? "Include your brand logo in the image generation" : "No brand logo set in profile"}
-                                    </p>
-                                  </div>
-                                </div>
+                     
 
-                                {/* Theme/Website Checkbox */}
-                                <div className="flex items-start gap-3 " >
-                                  <input
-                                    type="checkbox"
-                                    id="useBrandTheme"
-                                    checked={useTheme}
-                                    onChange={(e) => setUseTheme(e.target.checked)}
-                                    disabled={!themeUrl}
-                                    className="w-4 h-4 mt-0.5 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                                  />
-                                  <div className="flex-1">
-                                    <label
-                                      htmlFor="useBrandTheme"
-                                      className="text-sm font-medium theme-text-primary cursor-pointer"
-                                    >
-                                      Brand Theme
-                                    </label>
-                                    <p className="text-xs theme-text-secondary mt-0.5">
-                                      {themeUrl ? `Use your website theme: ${themeUrl}` : "No website URL set in profile"}
-                                    </p>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>}
                       <textarea
                         value={formData.prompt}
                         onChange={(e) =>
@@ -2998,6 +2969,72 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         required
                       />
                     </div>
+
+                    {selectedImageMode === "textToImage" && (
+                      <div>
+                        <label className="text-sm font-medium theme-text-primary  mb-2 flex items-center">
+                          Use for generation
+                        </label>
+                      <div className=" p-3 theme-bg-primary shadow-md  rounded-md">
+                        
+                        <div className=" flex flex-row justify-start gap-10">
+                          {/* Brand Logo Checkbox */}
+                          <div className="flex items-start gap-3">
+                            <input
+                              type="checkbox"
+                              id="useBrandLogo"
+                              checked={useLogo}
+                              onChange={(e) => setUseLogo(e.target.checked)}
+                              disabled={!hasLogo}
+                              className="w-4 h-4 mt-0.5 text-purple-600  bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                            />
+                            <div className="flex-1">
+                              <label
+  htmlFor="useBrandLogo"
+  className={`text-sm font-medium theme-text-primary ${
+    hasLogo ? "cursor-pointer" : "cursor-not-allowed opacity-60"
+  }`}
+>
+  Brand Logo
+</label>
+                              <p className="text-xs theme-text-secondary mt-0.5">
+                                {hasLogo
+                                  ? "Include your brand logo in the image generation"
+                                  : "No brand logo set in profile"}
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Theme/Website Checkbox */}
+                          <div className="flex items-start gap-3 ">
+                            <input
+                              type="checkbox"
+                              id="useBrandTheme"
+                              checked={useTheme}
+                              onChange={(e) => setUseTheme(e.target.checked)}
+                              disabled={!hasTheme}
+                              className="w-4 h-4 mt-0.5 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                            />
+                            <div className="flex-1">
+                              <label
+  htmlFor="useBrandLogo"
+  className={`text-sm font-medium theme-text-primary ${
+    hasLogo ? "cursor-pointer" : "cursor-not-allowed opacity-60"
+  }`}
+>
+  Brand Theme
+</label>
+                              <p className="text-xs theme-text-secondary mt-0.5">
+                                {hasTheme
+                                  ? `Use your website theme: ${themeUrl}`
+                                  : "No website URL set in profile"}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      </div>
+                    )}
 
                     {(selectedImageMode === "textToImage" ||
                       selectedImageMode === "upload") && (
@@ -3028,13 +3065,13 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                   ratio.value === "1:1"
                                     ? "w-8 h-8 border-1 border-purple-600 "
                                     : ratio.value === "16:9"
-                                    ? "w-10 h-6 border-1"
-                                    : ratio.value === "9:16"
-                                    ? "w-6 h-10 border-1 border-purple-600"
-                                    : "w-8 h-8 border-1"
+                                      ? "w-10 h-6 border-1"
+                                      : ratio.value === "9:16"
+                                        ? "w-6 h-10 border-1 border-purple-600"
+                                        : "w-8 h-8 border-1"
                                 } ${
                                   aspectRatio === ratio.value
-                                    ? "border-purple-600 border-2"
+                                    ? "border-purple-600 border"
                                     : "theme-border-dark border-1"
                                 }`}
                               ></div>
@@ -3055,7 +3092,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                       {platformOptions.map((platform) => {
                         const IconComponent = platform.icon;
                         const isSelected = formData.selectedPlatforms?.includes(
-                          platform.id
+                          platform.id,
                         );
                         return (
                           <button
@@ -3070,7 +3107,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                           >
                             <div
                               className={`w-6 h-6 rounded flex items-center justify-center text-white ${getPlatformColors(
-                                platform.id
+                                platform.id,
                               )}`}
                             >
                               <IconComponent className="w-3 h-3" />

@@ -400,7 +400,7 @@ function AccountSecurityTabs() {
                 <input
                   type="password"
                   {...passwordForm.register("currentPassword")}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                   placeholder="••••••••"
                 />
                 {passwordForm.formState.errors.currentPassword && (
@@ -417,7 +417,7 @@ function AccountSecurityTabs() {
                 <input
                   type="password"
                   {...passwordForm.register("newPassword")}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                   placeholder="••••••••"
                 />
                 {passwordForm.formState.errors.newPassword && (
@@ -434,7 +434,7 @@ function AccountSecurityTabs() {
                 <input
                   type="password"
                   {...passwordForm.register("confirmPassword")}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                   placeholder="••••••••"
                 />
                 {passwordForm.formState.errors.confirmPassword && (
@@ -447,7 +447,7 @@ function AccountSecurityTabs() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3  text-white px-4 rounded-md font-semibold text-md  border-2 border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition disabled:opacity-60"
+                className="w-full py-3  text-white px-4 rounded-md font-semibold text-md  border border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition disabled:opacity-60"
               >
                 {loading ? "Updating..." : "Update Password"}
               </button>
@@ -491,7 +491,7 @@ function AccountSecurityTabs() {
                         </p>
                       </div>
                       <span
-                        className="px-3 py-1 rounded-md bg-gray-100 text-xs font-medium" 
+                        className="px-3 py-1 rounded-md bg-purple-100 text-xs font-medium" 
                       >
                         {user?.twoFactorEnabled ? "ENABLED" : "DISABLED"}
                       </span>
@@ -561,7 +561,7 @@ function AccountSecurityTabs() {
                                 {...questionsForm.register(
                                   `answers.${index}.answer`
                                 )}
-                                className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition ${
+                                className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition ${
                                   answerError
                                     ? "border-red-500"
                                     : "border-gray-300"
@@ -702,7 +702,7 @@ function AccountSecurityTabs() {
                           onClick={() => {
                             setEditingQuestions(true);
                           }}
-                          className="px-4 py-2 rounded-md font-medium transition  text-white  border-2 border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="px-2 py-2 w-28 rounded-md font-medium transition  text-white  border border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           Update
                         </button>
@@ -755,9 +755,11 @@ function AccountSecurityTabs() {
                                       }
                                     )
                                   }
+                                  
                                   questions={security_question}
                                   otherSelected={otherSelected}
                                   error={questionError?.message}
+                                  
                                 />
                               </div>
 
@@ -771,7 +773,7 @@ function AccountSecurityTabs() {
                                   {...questionsForm.register(
                                     `answers.${index}.answer`
                                   )}
-                                  className={`w-full px-4 py-2.5 border rounded-md focus:ring-2 focus:ring-purple-500 focus:border-purple-500 ${
+                                  className={`w-full px-4 py-2.5 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 ${
                                     answerError
                                       ? "border-red-500"
                                       : "border-gray-300"
@@ -790,19 +792,20 @@ function AccountSecurityTabs() {
 
                         <div className="flex gap-3  md:flex-row flex-col">
                           <button
-                            type="submit"
-                            disabled={loading}
-                            className="flex-1 text-white text-md transition-all border-2 border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] py-3 rounded-md disabled:opacity-60 font-medium"
-                          >
-                            {loading ? "Saving..." : "Save Security Questions"}
-                          </button>
-                          <button
                             type="button"
                             onClick={() => setEditingQuestions(false)}
                             className="flex-1 bg-transparent border-purple-600 border text-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] py-3 rounded-md font-medium"
                           >
                             Cancel
                           </button>
+                          <button
+                            type="submit"
+                            disabled={loading}
+                            className="flex-1 text-white text-md transition-all border border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] py-3 rounded-md disabled:opacity-60 font-medium"
+                          >
+                            {loading ? "Saving..." : "Save Security Questions"}
+                          </button>
+                          
                         </div>
                       </form>
                     ) : (
@@ -843,10 +846,10 @@ function AccountSecurityTabs() {
                           }
                         }}
                         disabled={disabling2FA || !user?.isSecurityQuestions}
-                        className={`px-2 py-2 w-full md:w-auto rounded-md font-medium transition ${
+                        className={`px-2 py-2 w-full md:w-28 rounded-md font-medium transition ${
                           user?.twoFactorEnabled
                             ? "bg-red-600 hover:bg-red-700 text-white"
-                            : "text-white text-md transition-all border-2 border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
+                            : "text-white text-md transition-all border border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
                         } disabled:opacity-50 disabled:cursor-not-allowed`}
                       >
                         {disabling2FA
@@ -978,7 +981,7 @@ const TwoFAModal = ({
             placeholder="000000"
             className="w-full text-center tracking-widest text-2xl font-mono
                    border border-gray-300 px-4 py-2 rounded-md
-                   focus:ring-2 focus:ring-purple-500 outline-none"
+                   focus:outline-none focus:ring-2 focus:ring-purple-500 outline-none"
           />
 
           {error && <p className="text-center text-red-600 text-sm">{error}</p>}
@@ -987,7 +990,7 @@ const TwoFAModal = ({
             <button
               onClick={close}
               disabled={verifying}
-              className="flex-1 py-2 border rounded-md hover:bg-gray-100 transition"
+              className="flex-1 rounded-md theme-bg-light text-base border border-[#7650e3] text-[#7650e3] transition-colors hover:bg-[#d7d7fc] theme-bg-light  py-2  hover:bg-[#d7d7fc]t-[#7650e3] hover:border-[#7650e3]"
             >
               Cancel
             </button>
@@ -995,7 +998,7 @@ const TwoFAModal = ({
             <button
               onClick={verifySetup}
               disabled={verifying || otp.length !== 6}
-              className="flex-1 py-2 rounded-md text-white text-md transiton-all border-2 border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]disabled:opacity-50  "
+              className="flex-1 py-2 rounded-md text-white text-md transiton-all border border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]disabled:opacity-50  "
             >
               {verifying ? "Verifying..." : "Enable 2FA"}
             </button>
@@ -1041,7 +1044,7 @@ export const CustomSelect: React.FC<{
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full px-4 py-2.5 text-left bg-white border rounded-md flex items-center justify-between transition ${
+        className={`w-full px-4 py-2.5 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-left bg-white border rounded-md flex items-center justify-between transition ${
           error
             ? "border-red-500"
             : value
@@ -1049,7 +1052,7 @@ export const CustomSelect: React.FC<{
             : "border-gray-300"
         }`}
       >
-        <span className={value ? "text-gray-900" : "text-gray-500"}>
+        <span className={value ?  "text-gray-900" : "text-gray-500"}>
           {selectedQuestion?.question || "Select a question..."}
         </span>
         <svg

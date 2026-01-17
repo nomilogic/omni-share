@@ -158,7 +158,7 @@ export default function Analytics({ onHasAnalyticsChange }: Props) {
               </div>
 
               {isActive && hasData && (
-                <div className="absolute inset-0 rounded-full border-2 border-blue-500 animate-pulse" />
+                <div className="absolute inset-0 rounded-full border border-blue-500 animate-pulse" />
               )}
             </button>
           );
@@ -211,7 +211,7 @@ export default function Analytics({ onHasAnalyticsChange }: Props) {
 
       <button
         onClick={() => navigate(`/analytics?platform=${selectedPlatform}`)}
-        className="w-full text-white py-2 px-4 rounded-md font-semibold text-md transition-all border-2 border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] mt-4"
+        className="w-full text-white py-2 px-4 rounded-md font-semibold text-md transition-all border border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] mt-4"
       >
         {t("view_details")}
       </button>
@@ -293,7 +293,7 @@ function ReferralPromoCard() {
       </div>
       <button
         onClick={handleShareClick}
-        className=" w-full rounded-md hover:opacity-95 text-white font-semibold py-2 flex items-center justify-center gap-2 text-md transition-all border-2 border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
+        className=" w-full rounded-md hover:opacity-95 text-white font-semibold py-2 flex items-center justify-center gap-2 text-md transition-all border border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
       >
         <Share2 className="w-4 h-4" /> {t("share") || "Share"}
       </button>

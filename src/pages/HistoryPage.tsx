@@ -20,6 +20,7 @@ import API from "../services/api";
 import { useTranslation } from "react-i18next";
 import { Icon } from "@/components";
 import { useAppContext } from "@/context/AppContext";
+import { CustomSelect } from "../components/CustomSelect"; // ✅ ADD
 
 export interface HistoryPageRef {
   refreshHistory: () => Promise<void>;
@@ -57,13 +58,14 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
   const { setUnreadCount, state } = useAppContext();
   const posts: any = state.postHistory;
   const [error, setError] = useState<string | null>(null);
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   const [readFilter, setReadFilter] = useState<ReadFilter>("all");
   const [platformFilter, setPlatformFilter] = useState<PlatformFilter>("all");
   const [timePeriod, setTimePeriod] = useState<TimePeriod>("all");
   const [sortBy, setSortBy] = useState<SortBy>("date_desc");
   const [showFilters, setShowFilters] = useState(false);
+
   useEffect(() => {
     markAllAsRead();
   }, []);
@@ -71,13 +73,6 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
   const markAsRead = async (postId: string) => {
     try {
       await API.readHistoryById(postId);
-
-      // setPosts((prevPosts) =>
-      //   prevPosts.map((post:any) =>
-      //     post.id === postId ? { ...post, isRead: true } : post
-      //   )
-      // );
-
       historyRefreshService.refreshHistory();
     } catch (error) {
       console.error("Error marking post as read:", error);
@@ -86,9 +81,6 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
 
   const markAllAsRead = async () => {
     try {
-      // setPosts((prevPosts) =>
-      //   prevPosts.map((post:any) => ({ ...post, isRead: true }))
-      // );
       await API.readAllHistory();
       await historyRefreshService.refreshHistory();
       setUnreadCount(0);
@@ -96,6 +88,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
       console.error("Error marking all posts as read:", error);
     }
   };
+
   const resetFilters = () => {
     setReadFilter("all");
     setPlatformFilter("all");
@@ -123,13 +116,10 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
       );
     }
 
-    const bgColorMatch = colorClasses;
-    const bgColor = bgColorMatch;
+    const bgColor = colorClasses;
 
     return (
-      <div
-        className={`w-8 h-8 rounded-full ${bgColor} flex items-center justify-center`}
-      >
+      <div className={`w-8 h-8 rounded-full ${bgColor} flex items-center justify-center`}>
         <IconComponent className="w-5 h-5 text-white" />
       </div>
     );
@@ -142,8 +132,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
 
     if (diffInSeconds < 60) return `${diffInSeconds}s ago`;
     if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
-    if (diffInSeconds < 86400)
-      return `${Math.floor(diffInSeconds / 3600)}h ago`;
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
     return `${Math.floor(diffInSeconds / 86400)}d ago`;
   };
 
@@ -157,7 +146,6 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
     );
   };
 
-  // Detect media type from URL or provided type
   const getMediaType = (post: PostHistoryItem): "image" | "video" | "text" => {
     if (post.mediaType) return post.mediaType;
 
@@ -167,7 +155,6 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
     const url = thumbnailUrl.toLowerCase();
     if (url.match(/\.(jpg|jpeg|png|gif|webp|svg)$/)) return "image";
     if (url.match(/\.(mp4|webm|ogg|avi|mov|wmv|flv)$/)) return "video";
-
     if (url.includes("youtube.com") || url.includes("youtu.be")) return "video";
 
     return "image";
@@ -178,13 +165,9 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
     const mediaType = getMediaType(post);
 
     if (!thumbnailUrl) {
-      if (mediaType === "text") {
-        return null;
-      }
+      if (mediaType === "text") return null;
 
-      // Show media type icon only for image/video posts without thumbnails
       const IconComponent = mediaType === "video" ? Video : Image;
-
       return (
         <div className="flex-shrink-0 w-32 h-24 bg-gray-100 border-r border-gray-200 flex items-center justify-center">
           <IconComponent className="w-8 h-8 text-gray-400" />
@@ -193,7 +176,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
     }
 
     return (
-      <div className=" flex-shrink-0 w-32 p-1 bg-gray-300 border-r border-gray-200 relative">
+      <div className="flex-shrink-0 w-32 p-1 bg-gray-300 border-r border-gray-200 relative">
         <img
           src={thumbnailUrl}
           alt="Post thumbnail"
@@ -266,13 +249,9 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
   filteredPosts = [...filteredPosts].sort((a, b) => {
     switch (sortBy) {
       case "date_asc":
-        return (
-          new Date(a.publishedAt).getTime() - new Date(b.publishedAt).getTime()
-        );
+        return new Date(a.publishedAt).getTime() - new Date(b.publishedAt).getTime();
       case "date_desc":
-        return (
-          new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
-        );
+        return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
       case "platform_asc":
         return a.platform.localeCompare(b.platform);
       case "platform_desc":
@@ -287,27 +266,56 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
     new Set(posts.map((post: any) => post.platform))
   );
 
+  // ✅ Options for custom selects (same labels as before)
+  const readOptions = [
+    { value: "all", label: t("all_posts") },
+    { value: "unread", label: `${t("unread")} (${unreadCount})` },
+    { value: "read", label: `${t("read")} (${posts.length - unreadCount})` },
+  ] as const;
+
+  const platformOptions = [
+    { value: "all", label: t("all_platforms") },
+    ...availablePlatforms.map((p: any) => ({
+      value: p as PlatformFilter,
+      label: p.charAt(0).toUpperCase() + p.slice(1),
+    })),
+  ] as const;
+
+  const timeOptions = [
+    { value: "all", label: t("all_time") },
+    { value: "today", label: t("today") },
+    { value: "week", label: t("last_7_days") },
+    { value: "month", label: t("last_30_days") },
+  ] as const;
+
+  const sortOptions = [
+    { value: "date_desc", label: t("newest_first") },
+    { value: "date_asc", label: t("oldest_first") },
+    { value: "platform_asc", label: t("platform_a_z") },
+    { value: "platform_desc", label: t("platform_z_a") },
+  ] as const;
+
   return (
-    <div className="h-fit p-4 py-2 ">
+    <div className="h-fit p-4 py-2">
       <div>
-        <div className=" max-w-5xl mx-auto mb-6">
+        <div className="max-w-5xl mx-auto mb-6">
           <div className="flex justify-between items-center gap-4">
             <h2 className="text-3xl font-bold text-gray-900 mb-2">
               {t("post_history")}
             </h2>
-            {/* <h2 className="text-3xl font-bold text-gray-900 ">Post History</h2> */}
+
             <button
               onClick={() => setShowFilters(!showFilters)}
               className={`flex items-center gap-2 text-sm font-medium px-3 py-1.5 rounded-md border transition-colors ${
                 showFilters || hasActiveFilters
-                  ? "bg-blue-50 border-blue-200 text-blue-700"
-                  : "bg-white border-purple-600  text-purple-600 "
+                  ? "bg-purple-50 border-purple-200 text-purple-700"
+                  : "bg-white border-purple-600 text-purple-600"
               }`}
             >
               <Filter className="w-3 h-3" />
               {t("filters")}
               {hasActiveFilters && (
-                <span className="ml-1 w-2 h-2 bg-blue-600 rounded-full"></span>
+                <span className="ml-1 w-2 h-2 bg-purple-600 rounded-full"></span>
               )}
               <ChevronDown
                 className={`w-4 h-4 transition-transform ${
@@ -318,6 +326,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
           </div>
         </div>
 
+        {/* ✅ FILTERS (UPDATED) */}
         {showFilters && (
           <div className="w-full mb-6 p-4 bg-white border border-gray-200 rounded-md">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -326,19 +335,12 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
                 <label className="block text-sm font-medium text-slate-700 mb-2">
                   {t("read_status")}
                 </label>
-                <select
+
+                <CustomSelect
                   value={readFilter}
-                  onChange={(e) => setReadFilter(e.target.value as ReadFilter)}
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:ring-blue-600 focus:border-blue-500"
-                >
-                  <option value="all">{t("all_posts")}</option>
-                  <option value="unread">
-                    {t("unread")} ({unreadCount})
-                  </option>
-                  <option value="read">
-                    {t("read")} ({posts.length - unreadCount})
-                  </option>
-                </select>
+                  onChange={(v) => setReadFilter(v as ReadFilter)}
+                  options={readOptions as any}
+                />
               </div>
 
               {/* Platform Filter */}
@@ -346,52 +348,38 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
                 <label className="block text-sm font-medium text-slate-700 mb-2">
                   {t("platform")}
                 </label>
-                <select
+
+                <CustomSelect
                   value={platformFilter}
-                  onChange={(e) =>
-                    setPlatformFilter(e.target.value as PlatformFilter)
-                  }
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:ring-blue-600 focus:border-blue-500"
-                >
-                  <option value="all">{t("all_platforms")}</option>
-                  {availablePlatforms.map((platform: any) => (
-                    <option key={platform} value={platform}>
-                      {platform.charAt(0).toUpperCase() + platform.slice(1)}
-                    </option>
-                  ))}
-                </select>
+                  onChange={(v) => setPlatformFilter(v as PlatformFilter)}
+                  options={platformOptions as any}
+                />
               </div>
 
+              {/* Time Period */}
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
                   {t("time_period")}
                 </label>
-                <select
+
+                <CustomSelect
                   value={timePeriod}
-                  onChange={(e) => setTimePeriod(e.target.value as TimePeriod)}
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:ring-blue-600 focus:border-blue-500"
-                >
-                  <option value="all">{t("all_time")}</option>
-                  <option value="today">{t("today")}</option>
-                  <option value="week">{t("last_7_days")}</option>
-                  <option value="month">{t("last_30_days")}</option>
-                </select>
+                  onChange={(v) => setTimePeriod(v as TimePeriod)}
+                  options={timeOptions as any}
+                />
               </div>
 
+              {/* Sort By */}
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
                   {t("sort_by")}
                 </label>
-                <select
+
+                <CustomSelect
                   value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as SortBy)}
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:ring-blue-600 focus:border-blue-500"
-                >
-                  <option value="date_desc">{t("newest_first")}</option>
-                  <option value="date_asc">{t("oldest_first")}</option>
-                  <option value="platform_asc">{t("platform_a_z")}</option>
-                  <option value="platform_desc">{t("platform_z_a")}</option>
-                </select>
+                  onChange={(v) => setSortBy(v as SortBy)}
+                  options={sortOptions as any}
+                />
               </div>
             </div>
 
@@ -409,17 +397,18 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
           </div>
         )}
 
+        {/* rest of your code below remains SAME */}
         {hasActiveFilters && (
-          <div className=" mb-4">
+          <div className="mb-4">
             <div className="flex items-center gap-2 text-sm text-gray-500 font-medium">
               <span>{t("showing")}:</span>
               {readFilter !== "all" && (
-                <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded">
+                <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded">
                   {readFilter === "read" ? "Read posts" : "Unread posts"}
                 </span>
               )}
               {platformFilter !== "all" && (
-                <span className="px-2 py-1 bg-green-100 text-green-700 rounded">
+                <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded">
                   {platformFilter.charAt(0).toUpperCase() +
                     platformFilter.slice(1)}
                 </span>
@@ -441,7 +430,8 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
         )}
       </div>
 
-      <div className="w-full  mx-auto ">
+      {/* remaining render stays same... */}
+      <div className="w-full mx-auto">
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
             <p className="text-red-800 text-sm">{error}</p>
@@ -449,7 +439,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
         )}
 
         {state.postHistoryLoading ? (
-          <div className=" flex flex-col justify-center items-center min-h-[50vh]">
+          <div className="flex flex-col justify-center items-center min-h-[50vh]">
             <Icon name="spiral-logo" size={45} className="animate-spin" />
             <p className="mt-1 text-base font-medium text-gray-500">
               {t("loading_history")}
@@ -464,14 +454,12 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
               {hasActiveFilters ? t("no_posts_match") : t("no_posts_yet")}
             </h3>
             <p className="text-gray-500 font-medium">
-              {hasActiveFilters
-                ? t("adjust_filters")
-                : t("published_posts_here")}
+              {hasActiveFilters ? t("adjust_filters") : t("published_posts_here")}
             </p>
             {hasActiveFilters && (
               <button
                 onClick={resetFilters}
-                className="mt-4 text-blue-600 hover:text-blue-800 font-medium"
+                className="mt-4 text-purple-600 hover:text-purple-800 font-medium"
               >
                 Clear all filters
               </button>
@@ -483,20 +471,19 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
               <div
                 key={post.id}
                 className={`bg-white border rounded-md overflow-hidden hover:shadow-md transition-all duration-200 ${
-                  !post.isRead ? " bg-blue-50/30" : "border-gray-100"
+                  !post.isRead ? "bg-purple-50/30" : "border-gray-100"
                 }`}
               >
-                {/* Post Header */}
                 <div className="flex items-center justify-between p-4 border-b border-gray-100">
                   <div className="flex items-center gap-3">
                     {renderPlatformIcon(post.platform)}
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="font-semibold text-slate-900 ">
+                        <span className="font-semibold text-slate-900">
                           {post.platform}
                         </span>
                         {!post.isRead && (
-                          <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
+                          <span className="w-2 h-2 bg-purple-600 rounded-full"></span>
                         )}
                       </div>
                       <p className="text-sm text-gray-500 font-medium flex items-center gap-1">
@@ -505,21 +492,22 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
                       </p>
                     </div>
                   </div>
+
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => !post.isRead && markAsRead(post.id)}
                       className={`p-1 rounded-full transition-colors ${
                         post.isRead
                           ? "text-gray-400"
-                          : "text-blue-600 hover:bg-blue-100"
+                          : "text-purple-600 hover:bg-purple-100"
                       }`}
                       title={post.isRead ? "Read" : "Mark as read"}
-                    ></button>
+                    />
                     <a
                       href={post.postUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-1 rounded-full text-gray-500 font-medium hover:text-blue-600 hover:bg-blue-100 transition-colors"
+                      className="p-1 rounded-full text-gray-500 font-medium hover:text-purple-600 hover:bg-purple-100 transition-colors"
                       title="Open original post"
                     >
                       <ExternalLink className="w-4 h-4" />
@@ -536,7 +524,6 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
                 >
                   <div className="flex">
                     {renderThumbnail(post)}
-
                     <div className="flex-1 p-4 min-w-0">
                       <div className="flex items-start justify-between">
                         <div className="flex-1 min-w-0">
@@ -546,7 +533,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
                           <p className="text-gray-500 font-medium text-sm line-clamp-2 mb-2">
                             {post.metadata?.description || post.content}
                           </p>
-                          <p className="text-xs text-gray-500 font-medium mb-2 ">
+                          <p className="text-xs text-gray-500 font-medium mb-2">
                             {post.platform} •{" "}
                             {post.postUrl && new URL(post.postUrl).hostname}
                           </p>

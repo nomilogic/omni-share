@@ -342,7 +342,7 @@ export default function ImageRegenerationModal({
                   <button
                     onClick={selectedFile ? onFileSave : confirmImage}
                     disabled={isLoading || !activeImage}
-                    className="px-6 rounded-xl bg-purple-600/10 border border-purple-600 py-3 text-sm font-medium text-purple-700  disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-6 rounded-xl hover:bg-[#d7d7fc] border border-purple-600 py-3 text-sm font-medium text-purple-700  disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Continue
                   </button>

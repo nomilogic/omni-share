@@ -704,7 +704,7 @@ npm
                                   id={`platform-${post.platform}`}
                                 />
                                 <div
-                                  className={`w-5 md:w-6 h-5 md:h-6 mx-2 rounded border-2 transition-all duration-200 flex items-center justify-center ${
+                                  className={`w-5 md:w-6 h-5 md:h-6 mx-2 rounded border transition-all duration-200 flex items-center justify-center ${
                                     selectedPlatforms.includes(post.platform)
                                       ? "bg-blue-600 border-blue-600 text-white"
                                       : "bg-white border-gray-300 hover:border-blue-500"
@@ -752,11 +752,11 @@ npm
                           <button
                             onClick={() => handleConnectPlatform(post.platform)}
                             disabled={isConnecting}
-                            className="flex items-center gap-2 px-3 py-1 capitalize rounded-md bg-purple-600 text-sm font-medium text-white"
+                            className="flex items-center gap-2 px-3 py-1 capitalize rounded-md hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] border  bg-purple-600 text-sm font-medium text-white"
                           >
                             {isConnecting ? (
                               <>
-                                <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+                                <div className="w-3 h-3 border border-current border-t-transparent rounded-full animate-spin"></div>
                                 <span>{t("connecting")}...</span>
                               </>
                             ) : (
@@ -1144,7 +1144,7 @@ npm
         >
           {publishing ? (
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-4 h-4 border border-current border-t-transparent rounded-full animate-spin"></div>
               <span>{t("publish")}</span>
             </div>
           ) : (

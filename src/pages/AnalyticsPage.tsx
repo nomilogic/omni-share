@@ -193,7 +193,7 @@ export default function AnalyticsPage() {
                   )}
                 </div>
                 {isActive && hasData && (
-                  <div className="absolute inset-0 rounded-full border-2 border-blue-500 animate-pulse" />
+                  <div className="absolute inset-0 rounded-full border border-blue-500 animate-pulse" />
                 )}
               </button>
             );
