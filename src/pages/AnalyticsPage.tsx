@@ -257,10 +257,7 @@ export default function AnalyticsPage() {
                           }
                         />
                       )}
-                      {(selectedPlatform === "facebook" ||
-                        selectedPlatform === "instagram") && (
-                        <StatCard title={t("reach")} value={monthlyReach} />
-                      )}
+
                       <StatCard
                         title={t("likes") || "Likes"}
                         value={analytics.summary.likes}
