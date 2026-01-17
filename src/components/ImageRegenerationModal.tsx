@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Icon from "./Icon";
+import { useAppContext } from "../context/AppContext";
 
 export default function ImageRegenerationModal({
   imageUrl,
@@ -14,8 +15,15 @@ export default function ImageRegenerationModal({
   setModify,
   generationAmounts,
 }: any) {
+  const { state } = useAppContext();
   const [prompt, setPrompt] = useState("");
   const [activeImage, setActiveImage] = useState(imageUrl);
+  
+  // Brand Logo and Theme states
+  const [useLogo, setUseLogo] = useState(false);
+  const [useTheme, setUseTheme] = useState(false);
+  const logoUrl = state.user?.profile?.brandLogo || "";
+  const themeUrl = state.user?.profile?.publicUrl || "";
 
   useEffect(() => {
     if (imageUrl) setActiveImage(imageUrl);
@@ -60,7 +68,8 @@ export default function ImageRegenerationModal({
       }
     }
 
-    onRegenerate(prompt, payload);
+    // Pass brand logo and theme info to parent
+    onRegenerate(prompt, payload, { useLogo, useTheme, logoUrl, themeUrl });
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -252,6 +261,58 @@ export default function ImageRegenerationModal({
                       Tip: Be specific (style, lighting, background, etc.)
                     </span>
                     <span>{prompt?.length ?? 0}</span>
+                  </div>
+
+                  {/* Use for Generation Section */}
+                  <div className="mt-4 p-3 bg-purple-500/5 border border-purple-400/20 rounded-md">
+                    <p className="text-sm font-semibold text-gray-900 mb-3">Use for generation</p>
+                    <div className="space-y-2">
+                      {/* Brand Logo Checkbox */}
+                      <div className="flex items-start gap-3">
+                        <input
+                          type="checkbox"
+                          id="modalUseBrandLogo"
+                          checked={useLogo}
+                          onChange={(e) => setUseLogo(e.target.checked)}
+                          disabled={!logoUrl}
+                          className="w-4 h-4 mt-0.5 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        />
+                        <div className="flex-1">
+                          <label
+                            htmlFor="modalUseBrandLogo"
+                            className="text-sm font-medium text-gray-900 cursor-pointer"
+                          >
+                            Brand Logo
+                          </label>
+                          <p className="text-xs text-gray-500 mt-0.5">
+                            {logoUrl ? "Include your brand logo in the image generation" : "No brand logo set in profile"}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Theme/Website Checkbox */}
+                      <div className="flex items-start gap-3">
+                        <input
+                          type="checkbox"
+                          id="modalUseBrandTheme"
+                          checked={useTheme}
+                          onChange={(e) => setUseTheme(e.target.checked)}
+                          disabled={!themeUrl}
+                          className="w-4 h-4 mt-0.5 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        />
+                        <div className="flex-1">
+                          <label
+                            htmlFor="modalUseBrandTheme"
+                            className="text-sm font-medium text-gray-900 cursor-pointer"
+                          >
+                            Brand Theme
+                          </label>
+                          <p className="text-xs text-gray-500 mt-0.5">
+                            {themeUrl ? `Use your website theme: ${themeUrl}` : "No website URL set in profile"}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
 

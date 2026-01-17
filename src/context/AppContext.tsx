@@ -63,6 +63,8 @@ export interface Profile {
   campaign_type?: string;
   content_niche?: string;
   business_name?: string;
+  brandLogo?: string;
+  publicUrl?: string;
 }
 
 export interface AppState {

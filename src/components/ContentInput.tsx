@@ -170,6 +170,12 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   const [isGeneratingBoth, setIsGeneratingBoth] = useState(false);
   const [isGeneratingThumbnail, setIsGeneratingThumbnail] = useState(false);
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+  
+  // Brand Logo and Theme states
+  const [useLogo, setUseLogo] = useState(false);
+  const [useTheme, setUseTheme] = useState(false);
+  const logoUrl = state.user?.profile?.brandLogo || "";
+  const themeUrl = state.user?.profile?.publicUrl || "";
 
   const [generateVideoThumbnailAI, setGenerateVideoThumbnailAI] =
     useState(true);
@@ -1546,6 +1552,10 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         ...(image && modifyMode === true && { imageUrl: image }),
         aspectRatio: String(aspectRatio),
         ...(image && modifyMode === true && { modifyMode: true }),
+        ...(useLogo && logoUrl && { logoUrl: logoUrl }),
+        ...(useTheme && themeUrl && { useTheme: useTheme }),
+        ...(useLogo && logoUrl && { useLogo: useLogo }),
+        ...(useTheme && themeUrl && { themeUrl: themeUrl }),
       });
 
       const result = response.data;
@@ -2418,6 +2428,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               }
                               className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
                             />
+
                             <div className="flex-1">
                               <label
                                 htmlFor="generateImageWithPostTextToImage"
@@ -2450,6 +2461,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               placeholder="Describe the image you want to generate... (e.g., 'A professional product photo of eco-friendly water bottles')"
                               required
                             />
+                            
+                           
                           </div>
                         )}
 
@@ -2916,6 +2929,57 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                           ? t("generate_image_post_ai")
                           : t("content_description")}
                       </label>
+                       {/* Use for Generation Section */}
+                            { selectedImageMode === "textToImage" && <div className="mt-4 p-3 bg-purple-500/5 border border-purple-400/20 rounded-md">
+                              <p className="text-sm font-semibold theme-text-primary mb-3">Use for generation</p>
+                              <div className=" flex flex-row justify-start gap-10">
+                                {/* Brand Logo Checkbox */}
+                                <div className="flex items-start gap-3">
+                                  <input
+                                    type="checkbox"
+                                    id="useBrandLogo"
+                                    checked={useLogo}
+                                    onChange={(e) => setUseLogo(e.target.checked)}
+                                    disabled={!logoUrl}
+                                    className="w-4 h-4 mt-0.5 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                  />
+                                  <div className="flex-1">
+                                    <label
+                                      htmlFor="useBrandLogo"
+                                      className="text-sm font-medium theme-text-primary cursor-pointer"
+                                    >
+                                      Brand Logo
+                                    </label>
+                                    <p className="text-xs theme-text-secondary mt-0.5">
+                                      {logoUrl ? "Include your brand logo in the image generation" : "No brand logo set in profile"}
+                                    </p>
+                                  </div>
+                                </div>
+
+                                {/* Theme/Website Checkbox */}
+                                <div className="flex items-start gap-3 " >
+                                  <input
+                                    type="checkbox"
+                                    id="useBrandTheme"
+                                    checked={useTheme}
+                                    onChange={(e) => setUseTheme(e.target.checked)}
+                                    disabled={!themeUrl}
+                                    className="w-4 h-4 mt-0.5 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                  />
+                                  <div className="flex-1">
+                                    <label
+                                      htmlFor="useBrandTheme"
+                                      className="text-sm font-medium theme-text-primary cursor-pointer"
+                                    >
+                                      Brand Theme
+                                    </label>
+                                    <p className="text-xs theme-text-secondary mt-0.5">
+                                      {themeUrl ? `Use your website theme: ${themeUrl}` : "No website URL set in profile"}
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>}
                       <textarea
                         value={formData.prompt}
                         onChange={(e) =>
@@ -2928,7 +2992,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
              min-h-[160px] lg:min-h-[180px]
              border-0 outline-none ring-0
              focus:border-0 focus:outline-none focus:ring-0
-             focus-visible:border-0 focus-visible:outline-none focus-visible:ring-0
+             focus-visible:border-0 focus-visible:outline-none focus-v  isible:ring-0
              transition-all duration-200"
                         placeholder={t("describe_placeholder")}
                         required
