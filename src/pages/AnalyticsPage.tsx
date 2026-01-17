@@ -93,6 +93,14 @@ export default function AnalyticsPage() {
     () => new Set<Platform>(platformsWithData),
     [platformsWithData]
   );
+  const getAudienceLabel = (platform: Platform | null) => {
+    switch (platform) {
+      case "youtube":
+        return "Subscriber";
+      default:
+        return t("followers");
+    }
+  };
 
   const selectedPlatform = useMemo<Platform | null>(() => {
     if (platformParam && platformsWithDataSet.has(platformParam))
@@ -230,8 +238,10 @@ export default function AnalyticsPage() {
                           {analytics.page.name}
                         </h2>
                         <p className="text-sm text-gray-600 mt-1">
-                          {analytics.page.category} •{" "}
-                          {analytics.page.followers?.toLocaleString?.() ?? 0}{" "}
+                          {analytics.page.category}
+                          {analytics?.page?.followers?.toLocaleString() ||
+                            analytics?.page?.subscribers?.toLocaleString()}{" "}
+                          {getAudienceLabel(selectedPlatform)}
                           {t("followers")}
                         </p>
                       </div>
@@ -242,7 +252,10 @@ export default function AnalyticsPage() {
                         selectedPlatform === "tiktok") && (
                         <StatCard
                           title={t("views")}
-                          value={analytics?.summary.views}
+                          value={
+                            analytics?.page?.totalViews ||
+                            analytics?.summary.views
+                          }
                         />
                       )}
                       {(selectedPlatform === "facebook" ||
