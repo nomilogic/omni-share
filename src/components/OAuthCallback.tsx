@@ -75,9 +75,8 @@ export const OAuthCallback: React.FC = () => {
 
           setTimeout(() => {
             try {
-              // window.close();
+              window.close();
             } catch (error) {
-              console.warn("Could not close popup window:", error);
               setMessage(
                 "Authentication successful! You can close this window."
               );
@@ -89,32 +88,32 @@ export const OAuthCallback: React.FC = () => {
           }, 2000);
         }
       } catch (error) {
-        // window.close();
-        const errorMessage =
-          error instanceof Error ? error.message : "Authentication failed";
-        setStatus("error");
-        setMessage(errorMessage);
+        window.close();
+        //   const errorMessage =
+        //     error instanceof Error ? error.message : "Authentication failed";
+        //   setStatus("error");
+        //   setMessage(errorMessage);
 
-        const messageData = {
-          type: "oauth_error",
-          error: errorMessage,
-        };
+        //   const messageData = {
+        //     type: "oauth_error",
+        //     error: errorMessage,
+        //   };
 
-        if (window.opener) {
-          window.opener.postMessage(messageData, "*");
+        //   if (window.opener) {
+        //     window.opener.postMessage(messageData, "*");
 
-          setTimeout(() => {
-            try {
-            } catch (error) {
-              setMessage("Authentication failed. You can close this window.");
-            }
-          }, 100);
-        } else {
-          setTimeout(() => {
-            navigate("/settings");
-          }, 2000);
-        }
-      } finally {
+        //     setTimeout(() => {
+        //       try {
+        //       } catch (error) {
+        //         setMessage("Authentication failed. You can close this window.");
+        //       }
+        //     }, 100);
+        //   } else {
+        //     setTimeout(() => {
+        //       navigate("/settings");
+        //     }, 2000);
+        //   }
+        // } finally {
         setIsProcessing(false);
       }
     };
