@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { AuthForm } from "../components/AuthForm";
 import { useAppContext } from "../context/AppContext";
@@ -15,9 +15,10 @@ export const AuthPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const { t } = useTranslation();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (Cookies.get("auth_token")) {
       navigate("/content", { replace: true });
+    } else {
     }
   }, [Cookies.get("auth_token")]);
 
