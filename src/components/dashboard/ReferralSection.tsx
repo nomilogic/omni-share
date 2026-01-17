@@ -139,7 +139,7 @@ const ReferralSection: FC<Props> = ({ close, className = "" }) => {
               <div className="mb-3">
                 <button
                   onClick={handleNativeShare}
-                  className="flex w-full items-center justify-center rounded-md gap-2 font-bold transition-colors text-md font-semiboldtransition-all border-2 text-white border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] py-2 px-3"
+                  className="flex w-full items-center justify-center rounded-md gap-2 font-bold transition-colors text-md font-semiboldtransition-all border text-white border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] py-2 px-3"
                   title="Share referral link"
                 >
                   <Share2 className="w-[18px] h-[18px]" />
@@ -175,7 +175,7 @@ const ReferralSection: FC<Props> = ({ close, className = "" }) => {
             {!isMobile && (
               <button
                 onClick={() => copyToClipboard(referralLink)}
-                className="flex w-full items-center justify-center rounded-md gap-2 font-bold transition-colors text-md font-semiboldtransition-all border-2 text-white border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] py-2 px-3"
+                className="flex w-full items-center justify-center rounded-md gap-2 font-bold transition-colors text-md font-semiboldtransition-all border text-white border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] py-2 px-3"
                 title="Copy referral link"
               >
                 <Copy className="w-[18px] h-[18px]" />
@@ -260,7 +260,7 @@ const ReferralSection: FC<Props> = ({ close, className = "" }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-5 items-center">
           <button
             onClick={handleInlineShareClick}
-            className="mt-3 flex w-full sm:w-fit items-center justify-center rounded-md gap-2 transition-colors text-md font-semibold text-[#7650e3] border-2 border-[#7650e3] bg-white hover:bg-[#d7d7fc] py-2 px-3"
+            className="mt-3 flex w-full sm:w-fit items-center justify-center rounded-md gap-2 transition-colors text-md font-semibold text-[#7650e3] border border-[#7650e3] bg-white hover:bg-[#d7d7fc] py-2 px-3"
           >
             <Share2 className="w-[18px] h-[18px]" />
             {t("share")}

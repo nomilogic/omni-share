@@ -128,11 +128,11 @@ export const AccountsPage: React.FC = () => {
                   <button
                     onClick={() => handleConnectPlatform(platform)}
                     disabled={isConnecting}
-                    className="flex items-center gap-2 px-3 py-1 capitalize rounded-md bg-purple-600 text-sm font-medium text-white"
+                    className="flex items-center gap-2 px-3 py-1 capitalize rounded-md hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] border  bg-purple-600 text-sm font-medium text-white"
                   >
                     {isConnecting ? (
                       <>
-                        <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+                        <div className="w-3 h-3 border border-current border-t-transparent rounded-full animate-spin"></div>
                         <span>{t("connecting")}...</span>
                       </>
                     ) : (

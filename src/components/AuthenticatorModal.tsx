@@ -86,7 +86,7 @@ const CustomSelect: React.FC<{
         type="button"
         disabled={disable === true}
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full px-3 py-2.5 text-left bg-white rounded-md border-2 transition-all duration-200 flex items-center justify-between focus:outline-none focus:ring-4 focus:ring-purple-100 group ${
+        className={`w-full px-3 py-2.5 text-left bg-white rounded-md border transition-all duration-200 flex items-center justify-between focus:outline-none focus:ring-4 focus:ring-purple-100 group ${
           error
             ? "border-red-400"
             : value
@@ -119,7 +119,7 @@ const CustomSelect: React.FC<{
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-gray-200 rounded-md shadow-xl z-50 max-h-64 overflow-y-auto">
+        <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-md shadow-xl z-50 max-h-64 overflow-y-auto">
           {questions.map((q) => {
             const isSelected = value === q.id;
             const isDisabled = otherSelected.includes(q.id);
@@ -337,7 +337,7 @@ export const AuthenticatorModal = ({
                   setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
                 }
                 placeholder="••••••"
-                className="w-full rounded-md border-2 border-purple-600  px-6 py-3 text-center text-lg font-mono tracking-widest text-purple-600 focus:outline-none  transition-all"
+                className="w-full rounded-md border border-purple-600  px-6 py-3 text-center text-lg font-mono tracking-widest text-purple-600 focus:outline-none  transition-all"
               />
               {isResetPassword == false && (
                 <button
@@ -391,7 +391,7 @@ export const AuthenticatorModal = ({
                       placeholder="Enter your answer here..."
                       autoComplete="off"
                       {...questionsForm.register(`answers.${index}.answer`)}
-                      className={`w-full px-3 py-2.5 rounded-md border-2 bg-white placeholder-gray-600 text-black transition-all focus:outline-none focus:ring-4 focus:ring-purple-100 ${
+                      className={`w-full px-3 py-2.5 rounded-md border bg-white placeholder-gray-600 text-black transition-all focus:outline-none focus:ring-4 focus:ring-purple-100 ${
                         answerError
                           ? "border-red-400 focus:border-red-400"
                           : "border-gray-300 hover:border-gray-400 focus:border-purple-500"
@@ -453,7 +453,7 @@ export const AuthenticatorModal = ({
           <button
             onClick={handleVerify}
             disabled={loading}
-            className="w-full rounded-md bg-gradient-to-r from-purple-600 to-purple-700 py-2.5 font-semibold text-white hover:from-purple-700 hover:to-purple-800 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-4 focus:ring-purple-200 transition-all shadow-lg hover:shadow-xl"
+            className="flex-1 rounded-md bg-purple-600 text-white hover:text-[#7650e3] hover:bg-[#d7d7fc] border border-[#7650e3] py-2.5 font-semibold disabled:opacity-50 disabled:cursor-not-allowed  "
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
@@ -486,7 +486,7 @@ export const AuthenticatorModal = ({
           <button
             onClick={onClose}
             disabled={loading}
-            className="w-full rounded-md border-2 border-purple-600 py-2.5   font-semibold text-purple-700 hover:bg-purple-50 hover:border-purple-300 hover:text-purple-800 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-4 focus:ring-purple-200 transition-all"
+            className="flex-1 theme-bg-light text-base border border-[#7650e3] text-[#7650e3] transition-colors hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] font-semibold py-2.5 rounded-md disabled:opacity-50 disabled:cursor-not-allowed "
           >
             Cancel
           </button>
