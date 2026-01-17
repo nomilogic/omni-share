@@ -75,7 +75,7 @@ export const OAuthCallback: React.FC = () => {
 
           setTimeout(() => {
             try {
-              window.close();
+              // window.close();
             } catch (error) {
               console.warn("Could not close popup window:", error);
               setMessage(
@@ -89,7 +89,7 @@ export const OAuthCallback: React.FC = () => {
           }, 2000);
         }
       } catch (error) {
-        window.close();
+        // window.close();
         const errorMessage =
           error instanceof Error ? error.message : "Authentication failed";
         setStatus("error");

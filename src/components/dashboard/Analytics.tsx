@@ -118,7 +118,14 @@ export default function Analytics({ onHasAnalyticsChange }: Props) {
   useEffect(() => {
     onHasAnalyticsChange?.(hasAnalytics);
   }, [hasAnalytics]);
-
+  const getAudienceLabel = (platform: Platform | null) => {
+    switch (platform) {
+      case "youtube":
+        return "Subscriber";
+      default:
+        return t("followers");
+    }
+  };
   // ---------------- Render ----------------
   if (!hasAnalytics) return <ReferralPromoCard />;
 
@@ -172,27 +179,58 @@ export default function Analytics({ onHasAnalyticsChange }: Props) {
             {analytics.page.name}
           </h3>
           <p className="text-sm text-gray-600">
-            {analytics.page.followers.toLocaleString()} {t("followers")}
+            {analytics.page.followers.toLocaleString()}{" "}
+            {getAudienceLabel(selectedPlatform)}
           </p>
         </div>
       )}
 
       {/* Metrics + Posts */}
       <div className="flex-1 overflow-y-auto pr-2 -mr-2">
-        <div className="mb-2">
-          <h3 className="text-lg font-semibold mb-2">{t("summary")}</h3>
-          <Metric label={t("reach")} value={monthlyReach} />
-          <Metric label={t("likes")} value={analytics?.summary.likes} />
-          <Metric label={t("comments")} value={analytics?.summary.comments} />
+        <h3 className="text-lg font-semibold mb-3">{t("summary")}</h3>
+
+        <div className="flex flex-col gap-2 mb-4">
+          {(selectedPlatform === "facebook" ||
+            selectedPlatform === "instagram") && (
+            <Metric label={t("reach")} value={monthlyReach} color="indigo" />
+          )}
+
+          {(selectedPlatform === "youtube" ||
+            selectedPlatform === "tiktok") && (
+            <Metric
+              label={t("views")}
+              value={analytics?.summary.views}
+              color="blue"
+            />
+          )}
+
+          <Metric
+            label={t("likes")}
+            value={analytics?.summary.likes}
+            color="green"
+          />
+          <Metric
+            label={t("comments")}
+            value={analytics?.summary.comments}
+            color="orange"
+          />
+
+          {analytics?.performance?.engagementRate !== undefined && (
+            <Metric
+              label="Engagement Rate"
+              value={`${(analytics.performance.engagementRate * 100).toFixed(2)}%`}
+              color="purple"
+            />
+          )}
         </div>
 
         <hr className="my-2" />
 
         <div>
-          <h3 className="font-semibold mb-2 text-lg">{t("recent_posts")}</h3>
+          <h3 className="font-semibold mb-2 text-lg">Recent Post </h3>
           {topPosts.length ? (
             <div className="space-y-2">
-              {topPosts.slice(0, 3).map((post) => (
+              {topPosts.slice(0, 3).map((post: any) => (
                 <div
                   key={post.id}
                   className="w-full text-left text-sm text-blue-600 rounded truncate"
