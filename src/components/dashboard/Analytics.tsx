@@ -92,7 +92,7 @@ export default function Analytics({ onHasAnalyticsChange }: Props) {
   const topPosts = analytics?.top_posts?.posts || [];
 
   const getReachByPeriod = (period: "day" | "week" | "days_28") => {
-    const insight = analytics?.insights?.find((i) => i.period === period);
+    const insight = analytics?.insights?.find((i: any) => i.period === period);
     return insight?.values?.[0]?.value ?? 0;
   };
 
@@ -179,7 +179,7 @@ export default function Analytics({ onHasAnalyticsChange }: Props) {
             {analytics.page.name}
           </h3>
           <p className="text-sm text-gray-600">
-            {analytics.page.followers.toLocaleString()}{" "}
+            {analytics?.page?.followers?.toLocaleString()}{" "}
             {getAudienceLabel(selectedPlatform)}
           </p>
         </div>

@@ -593,7 +593,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                       e.stopPropagation();
                       setShowPackage((prev) => !prev);
                     }}
-                    balance={balance.toLocaleString()}
+                    balance={balance?.toLocaleString()}
                     showPackage={showPackage}
                   />
 
