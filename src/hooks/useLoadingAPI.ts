@@ -51,9 +51,8 @@ export const useLoadingAPI = () => {
 
         return result;
       } catch (error) {
-        console.error("API call failed:", error);
         notify("error", "AI image generation failed.");
-        // Show error message briefly if provided (for non-file-uploads only)
+
         if (options?.errorMessage) {
           updateLoadingMessage(options.errorMessage);
           // Skip error message delay for file uploads to allow immediate cleanup
