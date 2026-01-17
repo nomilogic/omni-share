@@ -179,7 +179,7 @@ export default function Analytics({ onHasAnalyticsChange }: Props) {
           </h3>
           <p className="text-sm text-gray-600">
             {analytics?.page?.followers?.toLocaleString() ||
-              analytics?.page?.subscribers?.toLocaleString()}
+              analytics?.page?.subscribers?.toLocaleString()}{" "}
             {getAudienceLabel(selectedPlatform)}
           </p>
         </div>
@@ -196,24 +196,8 @@ export default function Analytics({ onHasAnalyticsChange }: Props) {
 
           {selectedPlatform === "youtube" && (
             <Metric
-              label={"Total views"}
-              value={analytics?.summary.totalViews}
-              color="blue"
-            />
-          )}
-          {selectedPlatform === "youtube" && (
-            <Metric
-              label={"Video Count"}
-              value={analytics?.summary.videoCount}
-              color="blue"
-            />
-          )}
-
-          {(selectedPlatform === "youtube" ||
-            selectedPlatform === "tiktok") && (
-            <Metric
-              label={t("views")}
-              value={analytics?.summary.views}
+              label={"Total Views"}
+              value={analytics?.page?.totalViews}
               color="blue"
             />
           )}
