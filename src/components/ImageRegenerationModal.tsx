@@ -82,7 +82,7 @@ export default function ImageRegenerationModal({
         {/* Header */}
         <div className="sticky top-0 z-10 border-b border-gray-200 bg-white/80 backdrop-blur px-4 sm:px-6 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-lg bg-purple-600/10 flex items-center justify-center">
+            <div className="h-9 w-9 rounded-md bg-purple-600/10 flex items-center justify-center">
               <span className="text-purple-700 font-semibold">✨</span>
             </div>
             <div>
@@ -99,7 +99,7 @@ export default function ImageRegenerationModal({
 
           <button
             onClick={onClose}
-            className="rounded-lg px-3 py-2 text-gray-600 hover:bg-gray-100 active:bg-gray-200 transition"
+            className="rounded-md px-3 py-2 text-gray-600 hover:bg-gray-100 active:bg-gray-200 transition"
             aria-label="Close"
             title="Close"
           >
@@ -112,7 +112,7 @@ export default function ImageRegenerationModal({
           <div className="h-full grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] grid-rows-[65%_35%] lg:grid-rows-1">
             {/* Left: Preview (NO SCROLL) */}
             <div className="min-h-0 overflow-hidden p-4 sm:p-6 flex flex-col h-full">
-              <div className="flex-1 min-h-0 rounded-2xl border border-gray-200 bg-gray-50 overflow-hidden shadow-sm relative">
+              <div className="flex-1 min-h-0 rounded-md border border-gray-200 bg-gray-50 overflow-hidden shadow-sm relative">
                 {activeImage ? (
                   <>
                     {/* Image area (reserve space for the mobile thumbnails overlay) */}
@@ -139,7 +139,7 @@ export default function ImageRegenerationModal({
                               key={index}
                               type="button"
                               onClick={() => setActiveImage(img)}
-                              className="group relative h-12 w-12 flex-shrink-0 rounded-lg overflow-hidden border"
+                              className="group relative h-12 w-12 flex-shrink-0 rounded-md overflow-hidden border"
                               aria-label={`Select generation ${index + 1}`}
                               title={`Generation ${index + 1}`}
                             >
@@ -164,7 +164,7 @@ export default function ImageRegenerationModal({
                   </>
                 ) : (
                   <div className="h-full w-full flex flex-col items-center justify-center text-center p-8">
-                    <div className="h-12 w-12 rounded-2xl bg-purple-600/10 flex items-center justify-center mb-3">
+                    <div className="h-12 w-12 rounded-md bg-purple-600/10 flex items-center justify-center mb-3">
                       <span className="text-purple-700 text-xl">🖼️</span>
                     </div>
                     <p className="text-sm font-medium text-gray-900">
@@ -182,7 +182,7 @@ export default function ImageRegenerationModal({
             <div className="min-h-0 h-full overflow-auto border-t lg:border-t-0 lg:border-l border-gray-200 bg-white p-4 sm:p-6">
               {/* Previous Generations (moved BELOW status) */}
               {allGeneration.length > 0 && (
-                <div className=" hidden sm:block rounded-xl border border-gray-200 p-4">
+                <div className=" hidden sm:block rounded-md border border-gray-200 p-4">
                   <div className="flex items-center justify-between mb-3">
                     <p className="text-sm font-semibold text-gray-900">
                       Images
@@ -196,7 +196,7 @@ export default function ImageRegenerationModal({
                         key={index}
                         type="button"
                         onClick={() => setActiveImage(img)}
-                        className="group relative h-16 w-16 flex-shrink-0 rounded-lg overflow-hidden border"
+                        className="group relative h-16 w-16 flex-shrink-0 rounded-md overflow-hidden border"
                         aria-label={`Select generation ${index + 1}`}
                         title={`Generation ${index + 1}`}
                       >
@@ -220,7 +220,7 @@ export default function ImageRegenerationModal({
               )}
               <div className="space-y-5 pt-4">
                 {/* Mode Selection */}
-                <label className="flex items-start gap-3 cursor-pointer rounded-xl border border-gray-200 p-4 hover:bg-gray-50 transition">
+                <label className="flex items-start gap-3 cursor-pointer rounded-md border border-gray-200 p-4 hover:bg-gray-50 transition">
                   <input
                     type="checkbox"
                     checked={modifyMode}
@@ -252,7 +252,7 @@ export default function ImageRegenerationModal({
                         ? "Describe the changes you want to make..."
                         : "Describe the image you want to create..."
                     }
-                    className="w-full resize-none rounded-xl border border-gray-300 px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full resize-none rounded-md border border-gray-300 px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                   <div className="mt-2 flex items-center justify-between text-xs text-gray-500">
                     <span>
@@ -262,8 +262,11 @@ export default function ImageRegenerationModal({
                   </div>
 
                   {/* Use for Generation Section */}
-                  <div className="mt-4 p-3 bg-purple-500/5 border border-purple-400/20 rounded-md">
-                    <p className="text-sm font-semibold text-gray-900 mb-3">Use for generation</p>
+                  <div className="mt-2">
+                    <label className="text-sm font-medium theme-text-primary  mb-2 flex items-center">
+                          Use for generation
+                        </label>
+                  <div className="p-3 theme-bg-primary shadow-md  rounded-md">
                     <div className="space-y-2">
                       {/* Brand Logo Checkbox */}
                       <div className="flex items-start gap-3">
@@ -313,25 +316,25 @@ export default function ImageRegenerationModal({
                     </div>
                   </div>
                 </div>
+                </div>
 
                 {/* Desktop actions */}
-                <div className="hidden sm:flex gap-3 pt-1">
+                <div className="hidden sm:flex gap-3 pt-1 justify-between">
                   <button
                     onClick={handleSubmit}
                     disabled={isLoading || !prompt.trim()}
-                    className="group w-full rounded-xl flex items-center justify-between border border-[#7650e3] theme-bg-trinary theme-text-light hover:bg-[#d7d7fc] hover:text-[#7650e3] transition-colors duration-200 py-3 px-4 font-medium disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                    className="group w-full rounded-md hover:bg-[#d7d7fc] border border-purple-600 flex items-center justify-between   text-[#7650e3] transition-colors duration-200 py-2 px-4 font-medium disabled:opacity-50 disabled:cursor-not-allowed text-md"
                   >
                     {isLoading
                       ? "Generating..."
                       : modifyMode
                       ? "Modify"
-                      : "Generate"}
+                      : "Regenerate"}
 
                     <div className="px-2.5 py-1.5 flex items-center gap-2">
                       <Icon
                         name="spiral-logo"
-                        size={16}
-                        className="brightness-[1000%] transition group-hover:brightness-100"
+                        size={20}
                       />
                       <span>{generationAmounts}</span>
                     </div>
@@ -340,7 +343,7 @@ export default function ImageRegenerationModal({
                   <button
                     onClick={selectedFile ? onFileSave : confirmImage}
                     disabled={isLoading || !activeImage}
-                    className="px-6 rounded-xl hover:bg-[#d7d7fc] border border-purple-600 py-3 text-sm font-medium text-purple-700  disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-4 rounded-md w-full  py-2 text-lg font-medium text-purple-700 border border-[#7650e3] theme-bg-trinary theme-text-light hover:bg-[#d7d7fc] hover:text-[#7650e3]  disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Continue
                   </button>
@@ -351,19 +354,19 @@ export default function ImageRegenerationModal({
         </div>
 
         {/* Mobile bottom action bar */}
-        <div className="sm:hidden sticky bottom-0 z-10 border-t border-gray-200 bg-white/90 backdrop-blur px-4 py-3">
+        <div className="sm:hidden sticky bottom-0 z-10 justify-between border-t border-gray-200 bg-white/90 backdrop-blur px-4 py-3">
           <div className="flex gap-3">
             <button
               onClick={handleSubmit}
               disabled={isLoading || !prompt.trim()}
-              className=" group w-full rounded-xl flex items-center justify-between border border-[#7650e3] theme-bg-trinary theme-text-light hover:bg-[#d7d7fc] hover:text-[#7650e3] transition-colors duration-200 py-3 px-4 font-medium disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+              className=" group w-full rounded-md border border-purple-600 hover:bg-gray-50 transition  flex items-center justify-between   text-[#7650e3]  duration-200 py-3 px-4 font-medium disabled:opacity-50 disabled:cursor-not-allowed text-sm"
             >
-              {isLoading ? "Generating..." : modifyMode ? "Modify" : "Generate"}
+              {isLoading ? "Generating..." : modifyMode ? "Modify" : "Regenerate"}
               <div className="px-2.5 py-1.5 flex items-center gap-2">
                 <Icon
                   name="spiral-logo"
                   size={16}
-                  className="brightness-[1000%] transition group-hover:brightness-100"
+                  
                 />
                 <span>{generationAmounts}</span>
               </div>
@@ -372,7 +375,7 @@ export default function ImageRegenerationModal({
             <button
               onClick={selectedFile ? onFileSave : confirmImage}
               disabled={isLoading || !activeImage}
-              className="px-5 rounded-xl bg-purple-600/10 border border-purple-600 py-3 text-sm font-medium text-purple-700 hover:border-gray-400 hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-5 rounded-md w-full bg-purple-600/10  py-3 text-md font-medium text-purple-700 hover:border-gray-400  border border-[#7650e3] theme-bg-trinary theme-text-light hover:bg-[#d7d7fc] hover:text-[#7650e3] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Continue
             </button>

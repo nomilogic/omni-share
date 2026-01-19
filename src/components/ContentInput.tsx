@@ -2955,7 +2955,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                           ? t("generate_image_post_ai")
                           : t("content_description")}
                       </label>
-                     
 
                       <textarea
                         value={formData.prompt}
@@ -2981,64 +2980,67 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         <label className="text-sm font-medium theme-text-primary  mb-2 flex items-center">
                           Use for generation
                         </label>
-                      <div className=" p-3 theme-bg-primary shadow-md  rounded-md">
-                        
-                        <div className=" flex flex-row justify-start gap-10">
-                          {/* Brand Logo Checkbox */}
-                          <div className="flex items-start gap-3">
-                            <input
-                              type="checkbox"
-                              id="useBrandLogo"
-                              checked={useLogo}
-                              onChange={(e) => setUseLogo(e.target.checked)}
-                              disabled={!hasLogo}
-                              className="w-4 h-4 mt-0.5 text-purple-600  bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                            />
-                            <div className="flex-1">
-                              <label
-  htmlFor="useBrandLogo"
-  className={`text-sm font-medium theme-text-primary ${
-    hasLogo ? "cursor-pointer" : "cursor-not-allowed opacity-60"
-  }`}
->
-  Brand Logo
-</label>
-                              <p className="text-xs theme-text-secondary mt-0.5">
-                                {hasLogo
-                                  ? "Include your brand logo in the image generation"
-                                  : "No brand logo set in profile"}
-                              </p>
+                        <div className=" p-3 theme-bg-primary shadow-md  rounded-md">
+                          <div className=" flex flex-row justify-start gap-10">
+                            {/* Brand Logo Checkbox */}
+                            <div className="flex items-start gap-3">
+                              <input
+                                type="checkbox"
+                                id="useBrandLogo"
+                                checked={useLogo}
+                                onChange={(e) => setUseLogo(e.target.checked)}
+                                disabled={!hasLogo}
+                                className="w-4 h-4 mt-0.5 text-purple-600  bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                              />
+                              <div className="flex-1">
+                                <label
+                                  htmlFor="useBrandLogo"
+                                  className={`text-sm font-medium theme-text-primary ${
+                                    hasLogo
+                                      ? "cursor-pointer"
+                                      : "cursor-not-allowed opacity-60"
+                                  }`}
+                                >
+                                  Brand Logo
+                                </label>
+                                <p className="text-xs theme-text-secondary mt-0.5">
+                                  {hasLogo
+                                    ? "Include your brand logo in the image generation"
+                                    : "No brand logo set in profile"}
+                                </p>
+                              </div>
                             </div>
-                          </div>
 
-                          {/* Theme/Website Checkbox */}
-                          <div className="flex items-start gap-3 ">
-                            <input
-                              type="checkbox"
-                              id="useBrandTheme"
-                              checked={useTheme}
-                              onChange={(e) => setUseTheme(e.target.checked)}
-                              disabled={!hasTheme}
-                              className="w-4 h-4 mt-0.5 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                            />
-                            <div className="flex-1">
-                              <label
-  htmlFor="useBrandLogo"
-  className={`text-sm font-medium theme-text-primary ${
-    hasLogo ? "cursor-pointer" : "cursor-not-allowed opacity-60"
-  }`}
->
-  Brand Theme
-</label>
-                              <p className="text-xs theme-text-secondary mt-0.5">
-                                {hasTheme
-                                  ? `Use your website theme: ${themeUrl}`
-                                  : "No website URL set in profile"}
-                              </p>
+                            {/* Theme/Website Checkbox */}
+                            <div className="flex items-start gap-3 ">
+                              <input
+                                type="checkbox"
+                                id="useBrandTheme"
+                                checked={useTheme}
+                                onChange={(e) => setUseTheme(e.target.checked)}
+                                disabled={!hasTheme}
+                                className="w-4 h-4 mt-0.5 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                              />
+                              <div className="flex-1">
+                                <label
+                                  htmlFor="useBrandLogo"
+                                  className={`text-sm font-medium theme-text-primary ${
+                                    hasLogo
+                                      ? "cursor-pointer"
+                                      : "cursor-not-allowed opacity-60"
+                                  }`}
+                                >
+                                  Brand Theme
+                                </label>
+                                <p className="text-xs theme-text-secondary mt-0.5">
+                                  {hasTheme
+                                    ? `Use your website theme: ${themeUrl}`
+                                    : "No website URL set in profile"}
+                                </p>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
                       </div>
                     )}
 

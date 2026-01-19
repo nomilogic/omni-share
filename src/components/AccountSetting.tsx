@@ -485,13 +485,7 @@ function AccountSecurityTabs() {
                           Authenticator App
                         </p>
                       </div>
-<<<<<<< HEAD
-                      <span
-                        className="px-3 py-1 rounded-md bg-purple-100 text-xs font-medium" 
-                      >
-=======
-                      <span className="px-3 py-1 rounded-md bg-gray-100 text-xs font-medium">
->>>>>>> c9f0958e3fc1dc30ab8029cc649acc107052eaea
+                      <span className="px-3 py-1 rounded-md bg-purple-100 text-xs font-medium">
                         {user?.twoFactorEnabled ? "ENABLED" : "DISABLED"}
                       </span>
                     </div>
