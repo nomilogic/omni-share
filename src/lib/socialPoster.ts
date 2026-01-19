@@ -1110,32 +1110,15 @@ async function savePublishedPostToHistory(
   publishResult: any
 ): Promise<void> {
   try {
-    console.log("📊 Saving post to history", {
-      platform: post.platform,
-      publishResult,
-      postIdValue: publishResult.postId,
-      postIdType: typeof publishResult.postId,
-      postIdIsUnknown: publishResult.postId === "Unknown",
-    });
-
     const postId = `${post.platform}-${Date.now()}-${Math.random()
       .toString(36)
       .substr(2, 9)}`;
     let platformUrl = "";
 
-    // Debug: Log all properties of publishResult
-    console.log(
-      "🔍 Full publishResult object:",
-      JSON.stringify(publishResult, null, 2)
-    );
-
     if (publishResult.postId && publishResult.postId !== "Unknown") {
-      console.log(
-        `🔗 Building ${post.platform} URL from postId: ${publishResult.postId}`
-      );
       switch (post.platform) {
         case "linkedin":
-          if (publishResult.postId.startsWith("urn:li:share:")) {
+          if (publishResult?.postId?.startsWith("urn:li:share:")) {
             platformUrl = `https://www.linkedin.com/feed/update/${publishResult.postId}`;
           } else if (publishResult.postId.includes("activity-")) {
             platformUrl = `https://www.linkedin.com/posts/${publishResult.postId}`;
@@ -1144,22 +1127,12 @@ async function savePublishedPostToHistory(
           }
           break;
         case "facebook":
-          console.log("🔵 Facebook postId details:", {
-            postId: publishResult.postId,
-            hasUnderscore: publishResult.postId?.includes("_"),
-            length: publishResult.postId?.length,
-          });
-
-          // Facebook post ID format: {page_id}_{post_id}
-          // URL format: https://www.facebook.com/{page_id}/posts/{post_id}
           if (publishResult.postId?.includes("_")) {
             const [pageId, postIdOnly] = publishResult.postId.split("_");
             platformUrl = `https://www.facebook.com/${pageId}/posts/${postIdOnly}`;
           } else {
-            // If no underscore, it might be just the post ID
             platformUrl = `https://www.facebook.com/posts/${publishResult.postId}`;
           }
-          console.log(`✅ Facebook URL constructed: ${platformUrl}`);
           break;
         case "youtube":
           platformUrl = `https://www.youtube.com/watch?v=${publishResult.postId}`;
@@ -1180,19 +1153,8 @@ async function savePublishedPostToHistory(
           break;
       }
     } else {
-      console.warn(`⚠️ No valid postId for ${post.platform}:`, {
-        postId: publishResult.postId,
-        isUnknown: publishResult.postId === "Unknown",
-        isEmpty: !publishResult.postId,
-        allKeys: Object.keys(publishResult),
-      });
-
-      // Fallback: Use a generic Facebook profile link since we can't get the post ID
       if (post.platform === "facebook") {
-        console.log(
-          "🔄 Using fallback Facebook URL (post not found in history)"
-        );
-        platformUrl = "https://www.facebook.com"; // Generic fallback
+        platformUrl = "https://www.facebook.com";
       }
     }
 
@@ -1200,28 +1162,18 @@ async function savePublishedPostToHistory(
       [post.platform]: platformUrl,
     };
 
-    console.log(`💾 Saving published URL:`, {
-      platform: post.platform,
-      url: platformUrl,
-      publishedUrls,
-    });
-
     const response = await API.savePublishedUrls({
       postId,
       postContent: post.content || post.caption,
+      postUrl: post?.url,
       publishedUrls,
       platforms: [post.platform],
       category: "General",
       imageUrl: post.imageUrl || post.mediaUrl,
     });
 
-    console.log(`✅ Successfully saved to history`);
     await response.data.data;
   } catch (error: any) {
-    console.error(
-      `❌ Failed to save ${post.platform} post to history:`,
-      error.message
-    );
     throw error;
   }
 }
