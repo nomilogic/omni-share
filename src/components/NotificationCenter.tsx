@@ -227,7 +227,7 @@ const NotificationsTab: React.FC<{
   if (loading) {
     return (
       <div className="p-4 text-center">
-        <div className="animate-spin w-6 h-6 border border-blue-600 border-t-transparent rounded-full mx-auto"></div>
+        <div className="animate-spin w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full mx-auto"></div>
         <p className="text-gray-500 font-medium mt-2 text-sm">
           Loading notifications...
         </p>
@@ -334,18 +334,16 @@ const NotificationsTab: React.FC<{
                     {notification.type === "reminder" &&
                       notification.metadata.scheduledPostTime && (
                         <p>
-                          Scheduled for:{" "}
-                          {new Date(
+                          Scheduled for: {new Date(
                             notification.metadata.scheduledPostTime
-                          )?.toLocaleString()}
+                          ).toLocaleString()}
                         </p>
                       )}
                     {(notification.type === "success" ||
                       notification.type === "error") &&
                       notification.metadata.platforms && (
                         <p>
-                          Platforms:{" "}
-                          {notification.metadata.platforms.join(", ")}
+                          Platforms: {notification.metadata.platforms.join(", ")}
                         </p>
                       )}
                   </div>

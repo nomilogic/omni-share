@@ -69,7 +69,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
   const [editingPost, setEditingPost] = useState<PostGalleryItem | null>(null); // State to manage editing
   const { t, i18n } = useTranslation();
-  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
+    const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
 
   // Filters
   const [filters, setFilters] = useState({
@@ -130,8 +130,9 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
           break;
 
         case "templates":
-          const templateList =
-            await postHistoryService.getContentTemplates(campaignId);
+          const templateList = await postHistoryService.getContentTemplates(
+            campaignId
+          );
           setTemplates(templateList);
           break;
       }
@@ -655,14 +656,14 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
               <div className="flex items-center gap-4">
                 <span className="flex items-center gap-1">
                   <Eye className="w-4 h-4" />
-                  {post.performance.reach?.toLocaleString()}
+                  {post.performance.reach.toLocaleString()}
                 </span>
                 <span className="flex items-center gap-1">
                   <Heart className="w-4 h-4" />
-                  {post.performance.engagement?.toLocaleString()}
+                  {post.performance.engagement.toLocaleString()}
                 </span>
               </div>
-              <span>{new Date(post?.createdAt)?.toLocaleDateString()}</span>
+              <span>{new Date(post.createdAt).toLocaleDateString()}</span>
             </div>
           </div>
         </div>
@@ -796,7 +797,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
       ))}
 
       {/* Add New Media Button */}
-      <div className="bg-white rounded-md shadow-md border border-dashed border-gray-300 hover:border-blue-400 transition-colors group cursor-pointer flex flex-col items-center justify-center aspect-square">
+      <div className="bg-white rounded-md shadow-md border-2 border-dashed border-gray-300 hover:border-blue-400 transition-colors group cursor-pointer flex flex-col items-center justify-center aspect-square">
         <div className="text-center p-6">
           <div className="flex gap-2 mb-4 justify-center">
             <button

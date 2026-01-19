@@ -200,6 +200,7 @@ export default function Analytics({ onHasAnalyticsChange }: Props) {
         </div>
       )}
 
+      {/* Metrics + Posts */}
       <div className="flex-1 overflow-y-auto pr-2 -mr-2">
         <h3 className="text-lg font-semibold mb-3">
           {t("summary") || "Summary"}
@@ -383,7 +384,7 @@ function ReferralPromoCard() {
       </div>
       <button
         onClick={handleShareClick}
-        className=" w-full rounded-md hover:opacity-95 text-white font-semibold py-2 flex items-center justify-center gap-2 text-md transition-all border border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
+        className=" w-full rounded-md hover:opacity-95 text-white font-semibold py-2 flex items-center justify-center gap-2 text-md transition-all border-2 border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
       >
         <Share2 className="w-4 h-4" /> {t("share") || "Share"}
       </button>

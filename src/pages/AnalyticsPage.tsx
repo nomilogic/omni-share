@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ExternalLink, RefreshCcw } from "lucide-react";
+import { useLoading } from "@/context/LoadingContext";
 
 import {
   getPlatformIcon,
@@ -60,6 +61,7 @@ interface AnalyticsItem {
 
 export default function AnalyticsPage() {
   const { t } = useTranslation();
+  const { showLoading, hideLoading } = useLoading();
   const [searchParams, setSearchParams] = useSearchParams();
   const { state, fetchAnalytics } = useAppContext();
 
@@ -67,6 +69,14 @@ export default function AnalyticsPage() {
   const loading = state.analyticsLoading;
 
   const [selectedPost, setSelectedPost] = useState<any>(null);
+
+  useEffect(() => {
+    if (loading) {
+      showLoading(t("loading_analytics") || "Loading analytics...");
+    } else {
+      hideLoading();
+    }
+  }, [loading, showLoading, hideLoading, t]);
 
   const platforms: Platform[] = [
     "facebook",

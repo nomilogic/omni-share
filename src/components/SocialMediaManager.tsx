@@ -144,7 +144,7 @@ export const SocialMediaManager = ({
           Social Media Connections
         </h3>
         <div className="flex items-center justify-center py-8">
-          <div className="animate-spin w-6 h-6 border border-blue-600 border-t-transparent rounded-full"></div>
+          <div className="animate-spin w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full"></div>
           <span className="ml-3 text-gray-500 font-medium">
             Checking connections...
           </span>
@@ -272,7 +272,7 @@ export const SocialMediaManager = ({
                   >
                     {status.loading ? (
                       <>
-                        <div className="w-4 h-4 border border-white border-t-transparent rounded-full animate-spin"></div>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                         <span>{t("connecting")}...</span>
                       </>
                     ) : (

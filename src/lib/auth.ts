@@ -4,7 +4,6 @@
  * Abstracts away Supabase implementation details
  */
 
-import { notify } from "@/utils/toast";
 import API from "../services/api";
 
 export interface User {
@@ -103,8 +102,7 @@ class JWTAuthService {
         await API.logout();
       }
     } catch (error) {
-      notify("error", "Logout failed.");
-      console.warn(" API call failed:", error);
+      console.warn("Logout API call failed:", error);
     } finally {
       this.clearTokens();
       this.clearRefreshTimeout();

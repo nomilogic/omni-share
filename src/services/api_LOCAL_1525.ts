@@ -3,7 +3,6 @@ import axios, {
   AxiosError,
   InternalAxiosRequestConfig,
 } from "axios";
-import Cookies from "js-cookie";
 
 const BASE_URL: string = "https://4q2ddj89-3000.uks1.devtunnels.ms/api";
 
