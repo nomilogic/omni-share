@@ -19,6 +19,7 @@ import { useTranslation } from "react-i18next";
 import { useModal } from "../context2/ModalContext";
 import DiscardWarningModal from "../components/modals/DiscardWarningModal";
 import { useAppContext } from "@/context/AppContext";
+import { useLoading } from "@/context/LoadingContext";
 import Cookies from "js-cookie";
 
 type TikTokPrivacyLevel = string; // e.g. "SELF_ONLY", "FRIENDS", "PUBLIC" – comes from creator_info
@@ -57,6 +58,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
   onReset,
 }) => {
   const { t } = useTranslation();
+  const { showLoading, hideLoading, updateLoadingMessage } = useLoading();
 
   const {
     connectedPlatforms,
@@ -173,7 +175,9 @@ export const PublishPosts: React.FC<PublishProps> = ({
   const fetchLinkedPages = async () => {
     try {
       const token = Cookies.get("auth_token");
-      if (!token) return;
+      if (!token) {
+        return;
+      }
 
       const tokenResponse = await API.tokenForPlatform("linkedin");
 
@@ -205,7 +209,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
         }
       }
     } catch (error) {
-      console.error("Failed to fetch Facebook pages:", error);
+      console.error("Failed to fetch LinkedIn pages:", error);
     }
   };
   const fetchFacebookPages = async () => {
@@ -274,7 +278,9 @@ export const PublishPosts: React.FC<PublishProps> = ({
   const fetchYouTubeChannels = async () => {
     try {
       const token = Cookies.get("auth_token");
-      if (!token) return;
+      if (!token) {
+        return;
+      }
 
       const tokenResponse = await API.tokenForPlatform("youtube");
 
@@ -316,16 +322,22 @@ export const PublishPosts: React.FC<PublishProps> = ({
           }
         }
       }
+      hideLoading();
     } catch (error) {
       console.error("Failed to fetch YouTube channels:", error);
     }
   };
 
   useEffect(() => {
-    fetchFacebookPages();
-    fetchLinkedPages();
-    fetchYouTubeChannels();
-  }, []);
+    showLoading(t("loading_publishing_options") || "Loading publishing options...");
+    Promise.all([
+      fetchFacebookPages(),
+      fetchLinkedPages(),
+      fetchYouTubeChannels()
+    ]).finally(() => {
+      hideLoading();
+    });
+  }, [showLoading, hideLoading, t]);
 
   useEffect(() => {
     if (selectedFacebookPage) {

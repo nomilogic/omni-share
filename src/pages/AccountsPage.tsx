@@ -8,6 +8,7 @@ import {
 } from "../utils/platformIcons";
 import { useTranslation } from "react-i18next";
 import { useAppContext } from "@/context/AppContext";
+import { useLoading } from "@/context/LoadingContext";
 
 const ALL_PLATFORMS: Platform[] = [
   "linkedin",
@@ -19,6 +20,7 @@ const ALL_PLATFORMS: Platform[] = [
 
 export const AccountsPage: React.FC = () => {
   const { t } = useTranslation();
+  const { showLoading, hideLoading } = useLoading();
 
   const {
     connectedPlatforms,
@@ -26,6 +28,22 @@ export const AccountsPage: React.FC = () => {
     handleConnectPlatform,
     handleDisconnectPlatform,
   } = useAppContext();
+
+  const isLoading = !connectedPlatforms || connectedPlatforms.length === 0;
+
+  useEffect(() => {
+    // Show preloader while platforms are being fetched
+    if (isLoading) {
+      showLoading(t("loading_accounts") || "Loading accounts...");
+    } else {
+      hideLoading();
+    }
+  }, [isLoading, showLoading, hideLoading, t]);
+
+  // Don't render UI until data is loaded
+  // if (isLoading) {
+  //   return null;
+  // }
 
   const renderPlatformIcon = (platform: Platform) => {
     const IconComponent = getPlatformIcon(platform);
