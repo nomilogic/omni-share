@@ -36,7 +36,7 @@ const DiscardImageModal: FC<DiscardImageModalProps> = ({ close, t, onConfirmActi
           onClick={() => {
             close(); // Modal band karein
           }}
-          className="flex-1 theme-bg-light text-base border border-[#7650e3] text-[#7650e3] transition-colors hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] disabled:cursor-not-allowed font-semibold py-2.5 rounded-md "
+          className="flex-1 bg-transparent border-purple-600 border text-purple-600 font-semibold py-2.5 rounded-md transition disabled:opacity-50"
         >
           {t("cancel")}
         </button>
@@ -47,7 +47,7 @@ const DiscardImageModal: FC<DiscardImageModalProps> = ({ close, t, onConfirmActi
             onConfirmAction(); // 👈 onCancel() function chalao
             close();           // Modal band karo
           }}
-          className="flex-1 rounded-md bg-purple-600 text-white hover:text-[#7650e3] hover:bg-[#d7d7fc] border border-[#7650e3] "
+          className="flex-1 bg-purple-600 text-white font-semibold py-2.5 rounded-md transition disabled:opacity-50"
         >
           {t("confirm")}
         </button>

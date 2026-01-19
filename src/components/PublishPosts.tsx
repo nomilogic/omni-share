@@ -19,6 +19,7 @@ import { useTranslation } from "react-i18next";
 import { useModal } from "../context2/ModalContext";
 import DiscardWarningModal from "../components/modals/DiscardWarningModal";
 import { useAppContext } from "@/context/AppContext";
+import { useLoading } from "@/context/LoadingContext";
 import Cookies from "js-cookie";
 
 type TikTokPrivacyLevel = string; // e.g. "SELF_ONLY", "FRIENDS", "PUBLIC" – comes from creator_info
@@ -57,6 +58,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
   onReset,
 }) => {
   const { t } = useTranslation();
+  const { showLoading, hideLoading, updateLoadingMessage } = useLoading();
 
   const {
     connectedPlatforms,
@@ -173,7 +175,9 @@ export const PublishPosts: React.FC<PublishProps> = ({
   const fetchLinkedPages = async () => {
     try {
       const token = Cookies.get("auth_token");
-      if (!token) return;
+      if (!token) {
+        return;
+      }
 
       const tokenResponse = await API.tokenForPlatform("linkedin");
 
@@ -205,7 +209,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
         }
       }
     } catch (error) {
-      console.error("Failed to fetch Facebook pages:", error);
+      console.error("Failed to fetch LinkedIn pages:", error);
     }
   };
   const fetchFacebookPages = async () => {
@@ -274,7 +278,9 @@ export const PublishPosts: React.FC<PublishProps> = ({
   const fetchYouTubeChannels = async () => {
     try {
       const token = Cookies.get("auth_token");
-      if (!token) return;
+      if (!token) {
+        return;
+      }
 
       const tokenResponse = await API.tokenForPlatform("youtube");
 
@@ -316,16 +322,22 @@ export const PublishPosts: React.FC<PublishProps> = ({
           }
         }
       }
+      hideLoading();
     } catch (error) {
       console.error("Failed to fetch YouTube channels:", error);
     }
   };
 
   useEffect(() => {
-    fetchFacebookPages();
-    fetchLinkedPages();
-    fetchYouTubeChannels();
-  }, []);
+    showLoading(t("loading_publishing_options") || "Loading publishing options...");
+    Promise.all([
+      fetchFacebookPages(),
+      fetchLinkedPages(),
+      fetchYouTubeChannels()
+    ]).finally(() => {
+      hideLoading();
+    });
+  }, [showLoading, hideLoading, t]);
 
   useEffect(() => {
     if (selectedFacebookPage) {
@@ -407,6 +419,8 @@ export const PublishPosts: React.FC<PublishProps> = ({
     setPublishProgress({});
 
     try {
+      // Only process posts for available platforms (connected and not published)
+      // Enrich TikTok post with settings before publishing
       const selectedPosts = posts
         .filter((post) => availablePlatforms.includes(post.platform))
         .map((post) => {
@@ -424,6 +438,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
             tiktokIsBrandedContent: tiktokSettings.isBrandedContent,
           };
         });
+npm 
       const youtubePost = selectedPosts.find(
         (post) => post.platform === "youtube"
       );
@@ -634,15 +649,15 @@ export const PublishPosts: React.FC<PublishProps> = ({
                               progress === "pending"
                                 ? "text-yellow-600"
                                 : progress === "success"
-                                  ? "text-green-600"
-                                  : "text-red-600"
+                                ? "text-green-600"
+                                : "text-red-600"
                             }`}
                           >
                             {progress === "pending"
                               ? "Publishing..."
                               : progress === "success"
-                                ? "Published"
-                                : "Failed"}
+                              ? "Published"
+                              : "Failed"}
                           </p>
                         )}
                       </div>
@@ -701,7 +716,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
                                   id={`platform-${post.platform}`}
                                 />
                                 <div
-                                  className={`w-5 md:w-6 h-5 md:h-6 mx-2 rounded border transition-all duration-200 flex items-center justify-center ${
+                                  className={`w-5 md:w-6 h-5 md:h-6 mx-2 rounded border-2 transition-all duration-200 flex items-center justify-center ${
                                     selectedPlatforms.includes(post.platform)
                                       ? "bg-blue-600 border-blue-600 text-white"
                                       : "bg-white border-gray-300 hover:border-blue-500"
@@ -749,11 +764,11 @@ export const PublishPosts: React.FC<PublishProps> = ({
                           <button
                             onClick={() => handleConnectPlatform(post.platform)}
                             disabled={isConnecting}
-                            className="flex items-center gap-2 px-3 py-1 capitalize rounded-md hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] border  bg-purple-600 text-sm font-medium text-white"
+                            className="flex items-center gap-2 px-3 py-1 capitalize rounded-md bg-purple-600 text-sm font-medium text-white"
                           >
                             {isConnecting ? (
                               <>
-                                <div className="w-3 h-3 border border-current border-t-transparent rounded-full animate-spin"></div>
+                                <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
                                 <span>{t("connecting")}...</span>
                               </>
                             ) : (
@@ -1135,13 +1150,13 @@ export const PublishPosts: React.FC<PublishProps> = ({
             ).length === 0
               ? "bg-gray-400"
               : publishing
-                ? "theme-bg-trinary"
-                : "bg-#7650e3"
+              ? "theme-bg-trinary"
+              : "bg-#7650e3"
           }`}
         >
           {publishing ? (
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 border border-current border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
               <span>{t("publish")}</span>
             </div>
           ) : (
@@ -1271,6 +1286,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
                       >
                         {result.success ? "✅" : "❌"} {platform}
                       </h4>
+                      
                     </div>
                     <p
                       className={`text-sm mt-1 ${

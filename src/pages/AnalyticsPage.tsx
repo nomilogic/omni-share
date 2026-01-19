@@ -5,6 +5,7 @@ import { useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import API from "@/services/api";
 import { ExternalLink, RefreshCcw } from "lucide-react";
+import { useLoading } from "@/context/LoadingContext";
 
 import {
   getPlatformIcon,
@@ -51,6 +52,7 @@ interface AnalyticsData {
 // ---------------- Component ----------------
 export default function AnalyticsPage() {
   const { t } = useTranslation();
+  const { showLoading, hideLoading } = useLoading();
   const [searchParams, setSearchParams] = useSearchParams();
   const { state, fetchAnalytics } = useAppContext();
 
@@ -59,6 +61,14 @@ export default function AnalyticsPage() {
   const loading = state.analyticsLoading;
 
   const [selectedPost, setSelectedPost] = useState<TopPost | null>(null);
+
+  useEffect(() => {
+    if (loading) {
+      showLoading(t("loading_analytics") || "Loading analytics...");
+    } else {
+      hideLoading();
+    }
+  }, [loading, showLoading, hideLoading, t]);
 
   const platforms: Platform[] = [
     "facebook",
@@ -193,7 +203,7 @@ export default function AnalyticsPage() {
                   )}
                 </div>
                 {isActive && hasData && (
-                  <div className="absolute inset-0 rounded-full border border-blue-500 animate-pulse" />
+                  <div className="absolute inset-0 rounded-full border-2 border-blue-500 animate-pulse" />
                 )}
               </button>
             );
@@ -238,17 +248,6 @@ export default function AnalyticsPage() {
                     </div>
 
                     <div className="grid grid-cols-3 gap-3 mt-4">
-                      {(selectedPlatform === "youtube" ||
-                        selectedPlatform === "tiktok") && (
-                        <StatCard
-                          title={t("views")}
-                          value={analytics?.summary.views}
-                        />
-                      )}
-                      {(selectedPlatform === "facebook" ||
-                        selectedPlatform === "instagram") && (
-                        <StatCard title={t("reach")} value={monthlyReach} />
-                      )}
                       <StatCard
                         title={t("likes") || "Likes"}
                         value={analytics.summary.likes}
@@ -263,22 +262,20 @@ export default function AnalyticsPage() {
                       />
                     </div>
 
-                    {platformParam !== "youtube" && (
-                      <div className="grid grid-cols-3 gap-3 mt-4">
-                        <ReachCard
-                          period={t("today") || "Today"}
-                          value={dailyReach}
-                        />
-                        <ReachCard
-                          period={t("week") || "Week"}
-                          value={weeklyReach}
-                        />
-                        <ReachCard
-                          period={t("month") || "Month"}
-                          value={monthlyReach}
-                        />
-                      </div>
-                    )}
+                    <div className="grid grid-cols-3 gap-3 mt-4">
+                      <ReachCard
+                        period={t("today") || "Today"}
+                        value={dailyReach}
+                      />
+                      <ReachCard
+                        period={t("week") || "Week"}
+                        value={weeklyReach}
+                      />
+                      <ReachCard
+                        period={t("month") || "Month"}
+                        value={monthlyReach}
+                      />
+                    </div>
                   </div>
                 )}
               </div>
@@ -337,9 +334,7 @@ function PostsList({
                 {post.title}
               </p>
               <p className="text-xs text-gray-600 mt-1">
-                {post?.created_time
-                  ? new Date(post.created_time).toLocaleDateString()
-                  : new Date().toLocaleDateString()}
+                {new Date(post.created_time).toLocaleDateString()}
               </p>
             </div>
             <div className="text-right">

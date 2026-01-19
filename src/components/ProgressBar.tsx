@@ -26,7 +26,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
                 index < currentStep
                   ? "bg-blue-600 text-white"
                   : index === currentStep
-                    ? "bg-black text-white-600 border border-white-600"
+                    ? "bg-black text-white-600 border-2 border-white-600"
                     : "bg-white text-black"
               }`}
             >

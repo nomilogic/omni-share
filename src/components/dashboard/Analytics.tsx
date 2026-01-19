@@ -118,14 +118,7 @@ export default function Analytics({ onHasAnalyticsChange }: Props) {
   useEffect(() => {
     onHasAnalyticsChange?.(hasAnalytics);
   }, [hasAnalytics]);
-  const getAudienceLabel = (platform: Platform | null) => {
-    switch (platform) {
-      case "youtube":
-        return "Subscriber";
-      default:
-        return t("followers");
-    }
-  };
+
   // ---------------- Render ----------------
   if (!hasAnalytics) return <ReferralPromoCard />;
 
@@ -165,7 +158,7 @@ export default function Analytics({ onHasAnalyticsChange }: Props) {
               </div>
 
               {isActive && hasData && (
-                <div className="absolute inset-0 rounded-full border border-blue-500 animate-pulse" />
+                <div className="absolute inset-0 rounded-full border-2 border-blue-500 animate-pulse" />
               )}
             </button>
           );
@@ -179,58 +172,27 @@ export default function Analytics({ onHasAnalyticsChange }: Props) {
             {analytics.page.name}
           </h3>
           <p className="text-sm text-gray-600">
-            {analytics.page.followers.toLocaleString()}{" "}
-            {getAudienceLabel(selectedPlatform)}
+            {analytics.page.followers.toLocaleString()} {t("followers")}
           </p>
         </div>
       )}
 
       {/* Metrics + Posts */}
       <div className="flex-1 overflow-y-auto pr-2 -mr-2">
-        <h3 className="text-lg font-semibold mb-3">{t("summary")}</h3>
-
-        <div className="flex flex-col gap-2 mb-4">
-          {(selectedPlatform === "facebook" ||
-            selectedPlatform === "instagram") && (
-            <Metric label={t("reach")} value={monthlyReach} color="indigo" />
-          )}
-
-          {(selectedPlatform === "youtube" ||
-            selectedPlatform === "tiktok") && (
-            <Metric
-              label={t("views")}
-              value={analytics?.summary.views}
-              color="blue"
-            />
-          )}
-
-          <Metric
-            label={t("likes")}
-            value={analytics?.summary.likes}
-            color="green"
-          />
-          <Metric
-            label={t("comments")}
-            value={analytics?.summary.comments}
-            color="orange"
-          />
-
-          {analytics?.performance?.engagementRate !== undefined && (
-            <Metric
-              label="Engagement Rate"
-              value={`${(analytics.performance.engagementRate * 100).toFixed(2)}%`}
-              color="purple"
-            />
-          )}
+        <div className="mb-2">
+          <h3 className="text-lg font-semibold mb-2">{t("summary")}</h3>
+          <Metric label={t("reach")} value={monthlyReach} />
+          <Metric label={t("likes")} value={analytics?.summary.likes} />
+          <Metric label={t("comments")} value={analytics?.summary.comments} />
         </div>
 
         <hr className="my-2" />
 
         <div>
-          <h3 className="font-semibold mb-2 text-lg">Recent Post </h3>
+          <h3 className="font-semibold mb-2 text-lg">{t("recent_posts")}</h3>
           {topPosts.length ? (
             <div className="space-y-2">
-              {topPosts.slice(0, 3).map((post: any) => (
+              {topPosts.slice(0, 3).map((post) => (
                 <div
                   key={post.id}
                   className="w-full text-left text-sm text-blue-600 rounded truncate"
@@ -249,7 +211,7 @@ export default function Analytics({ onHasAnalyticsChange }: Props) {
 
       <button
         onClick={() => navigate(`/analytics?platform=${selectedPlatform}`)}
-        className="w-full text-white py-2 px-4 rounded-md font-semibold text-md transition-all border border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] mt-4"
+        className="w-full text-white py-2 px-4 rounded-md font-semibold text-md transition-all border-2 border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] mt-4"
       >
         {t("view_details")}
       </button>
@@ -331,7 +293,7 @@ function ReferralPromoCard() {
       </div>
       <button
         onClick={handleShareClick}
-        className=" w-full rounded-md hover:opacity-95 text-white font-semibold py-2 flex items-center justify-center gap-2 text-md transition-all border border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
+        className=" w-full rounded-md hover:opacity-95 text-white font-semibold py-2 flex items-center justify-center gap-2 text-md transition-all border-2 border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
       >
         <Share2 className="w-4 h-4" /> {t("share") || "Share"}
       </button>

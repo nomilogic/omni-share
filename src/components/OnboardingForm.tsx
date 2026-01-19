@@ -380,7 +380,7 @@ const OnboardingForm: React.FC = () => {
             value={formData.fullName}
             onChange={handleInputChange}
             placeholder="e.g. Sarah Ahmed"
-            className="w-full px-4 py-2.5  text-sm border border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
+            className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
           />
         </div>
 
@@ -394,7 +394,7 @@ const OnboardingForm: React.FC = () => {
             value={formData.email}
             onChange={handleInputChange}
             placeholder="e.g. sarah@brandstudio.com"
-            className="w-full px-4 py-2.5  text-sm border border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
+            className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
           />
         </div>
 
@@ -408,7 +408,7 @@ const OnboardingForm: React.FC = () => {
             value={formData.phoneNumber}
             onChange={handleInputChange}
             placeholder="e.g. +971 50 123 4567"
-            className="w-full px-4 py-2.5  text-sm border border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
+            className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
           />
         </div>
       </div>
@@ -435,7 +435,7 @@ const OnboardingForm: React.FC = () => {
             value={formData.publicUrl}
             onChange={handleInputChange}
             placeholder="e.g. https://instagram.com/brandstudio or https://yourbrand.com"
-            className="w-full px-4 py-2.5  text-sm border border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
+            className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
           />
         </div>
 
@@ -461,7 +461,7 @@ const OnboardingForm: React.FC = () => {
             value={formData.brandName}
             onChange={handleInputChange}
             placeholder="e.g. Brand Studio"
-            className="w-full px-4 py-2.5  text-sm border border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
+            className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
           />
         </div>
 
@@ -498,7 +498,7 @@ const OnboardingForm: React.FC = () => {
             name="brandTone"
             value={formData.brandTone}
             onChange={handleInputChange}
-            className="w-full px-4 py-2.5  text-sm border border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
+            className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
           >
             <option value="">Select tone</option>
             {BRAND_TONES.map((tone) => (
@@ -574,7 +574,7 @@ const OnboardingForm: React.FC = () => {
               );
               setFormData((prev) => ({ ...prev, audienceRegions: selected }));
             }}
-            className="w-full px-4 py-2.5  text-sm border border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
+            className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
           >
             <option value="UAE">UAE</option>
             <option value="Saudi Arabia">Saudi Arabia</option>
@@ -716,7 +716,7 @@ const OnboardingForm: React.FC = () => {
               name="postingStyle"
               value={formData.postingStyle}
               onChange={handleInputChange}
-              className="w-full px-4 py-2.5  text-sm border border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
+              className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
             >
               <option value="">Select style</option>
               {POSTING_STYLES.map((style) => (
