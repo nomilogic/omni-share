@@ -20,6 +20,7 @@ import API from "../services/api";
 import { useTranslation } from "react-i18next";
 import { Icon } from "@/components";
 import { useAppContext } from "@/context/AppContext";
+import { useLoading } from "@/context/LoadingContext";
 
 export interface HistoryPageRef {
   refreshHistory: () => Promise<void>;
@@ -55,6 +56,7 @@ type SortBy = "date_desc" | "date_asc" | "platform_asc" | "platform_desc";
 
 export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
   const { setUnreadCount, state } = useAppContext();
+  const { showLoading, hideLoading } = useLoading();
   const posts: any = state.postHistory;
   const [error, setError] = useState<string | null>(null);
   const { t, i18n } = useTranslation();
@@ -65,7 +67,8 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
   const [sortBy, setSortBy] = useState<SortBy>("date_desc");
   const [showFilters, setShowFilters] = useState(false);
   useEffect(() => {
-    markAllAsRead();
+    showLoading(t("loading_history") || "Loading history...");
+    markAllAsRead().then(() => hideLoading());
   }, []);
 
   const markAsRead = async (postId: string) => {

@@ -6,6 +6,7 @@ import { AIScheduleGenerator } from "../components/AIScheduleGenerator";
 import { useAppContext } from "../context/AppContext";
 import { FeatureRestriction } from "../components/FeatureRestriction";
 import { usePlanFeatures } from "../hooks/usePlanFeatures";
+import { useLoading } from "@/context/LoadingContext";
 
 interface ScheduledPost {
   id: string;
@@ -19,8 +20,8 @@ interface ScheduledPost {
 export const SchedulePage: React.FC = () => {
   const { state } = useAppContext();
   const { canUseFeature } = usePlanFeatures();
+  const { showLoading, hideLoading } = useLoading();
   const [scheduledPosts, setScheduledPosts] = useState<ScheduledPost[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
 
   const canSchedulePosts = canUseFeature("ipro");
 
@@ -29,7 +30,7 @@ export const SchedulePage: React.FC = () => {
       if (!state.selectedProfile?.id) return;
 
       try {
-        setIsLoading(true);
+        showLoading(t("loading_scheduled_posts") || "Loading scheduled posts...");
         const response = await fetch(
           `/api/schedule/posts?campaignId=${state.selectedProfile.id}`,
         );
@@ -55,12 +56,12 @@ export const SchedulePage: React.FC = () => {
       } catch (error) {
         console.error("Error fetching scheduled posts:", error);
       } finally {
-        setIsLoading(false);
+        hideLoading();
       }
     };
 
     fetchScheduledPosts();
-  }, [state.selectedProfile?.id]);
+  }, [state.selectedProfile?.id, showLoading, hideLoading]);
 
   const handleCreatePost = (date: Date) => {
     // Navigate to content creation with pre-filled date
