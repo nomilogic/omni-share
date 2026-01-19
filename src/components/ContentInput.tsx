@@ -200,13 +200,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   const isValidUrl = (u?: string | null) => {
     if (!u) return false;
     const s = u.trim();
-    if (!s) return false;
-    try {
-      new URL(s);
-      return true;
-    } catch {
-      return false;
-    }
+    return true;
   };
 
   const hasLogo = isValidUrl(logoUrl);
@@ -223,7 +217,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   const getAppropiatePlatforms = (
     postType: "text" | "image" | "video",
     imageMode?: string,
-    videoMode?: string,
+    videoMode?: string
   ): Platform[] => {
     switch (postType) {
       case "text":
@@ -246,7 +240,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     const appropriatePlatforms = getAppropiatePlatforms(
       selectedPostType?.toLowerCase() as "text" | "image" | "video",
       selectedImageMode,
-      selectedVideoMode,
+      selectedVideoMode
     );
     setFormData((prev) => ({
       ...prev,
@@ -276,7 +270,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     } else {
       if (videoAspectRatioWarning) {
         console.log(
-          "🔄 Clearing video warning when switching away from video post type",
+          "🔄 Clearing video warning when switching away from video post type"
         );
         setVideoAspectRatioWarning("");
       }
@@ -314,7 +308,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
           const campaign = await getCampaignById(
             state.selectedCampaign.id,
-            state.user.id,
+            state.user.id
           );
           setCampaignInfo(campaign);
           console.log("Campaign info fetched:", campaign);
@@ -447,7 +441,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
               setOriginalVideoFile(null);
               setVideoAspectRatio(null);
             },
-          },
+          }
         );
 
         // If mediaUrl is null, upload was aborted - don't proceed
@@ -460,7 +454,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         // Double-check: if abort controller was cleared (mode was switched), don't add the image
         if (!uploadAbortControllerRef.current) {
           console.log(
-            "📛 Upload was aborted before completion, skipping image addition",
+            "📛 Upload was aborted before completion, skipping image addition"
           );
           return;
         }
@@ -468,7 +462,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         // Triple-check: verify this is still the current file being processed
         if (currentFileRef.current !== file) {
           console.log(
-            "📛 A different file is now being processed, skipping old file update",
+            "📛 A different file is now being processed, skipping old file update"
           );
           return;
         }
@@ -518,12 +512,12 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         if (error instanceof Error) {
           console.log(
             "📱 File should still be set for local preview, error was:",
-            error.message,
+            error.message
           );
         } else {
           console.log(
             "📱 File should still be set for local preview, unknown error:",
-            error,
+            error
           );
         }
       }
@@ -575,7 +569,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       } else {
         console.log("No analysis in result:", result);
         setImageAnalysis(
-          "Image uploaded successfully. Add a description for better content generation.",
+          "Image uploaded successfully. Add a description for better content generation."
         );
       }
     } catch (error: any) {
@@ -587,7 +581,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           error.message?.includes("quota")
             ? "AI analysis quota exceeded."
             : "Add a description for better content generation."
-        }`,
+        }`
       );
     } finally {
       setAnalyzingImage(false);
@@ -650,7 +644,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         setImageAnalysis(result.analysis);
       } else {
         setImageAnalysis(
-          "AI-generated image analyzed. Add a description for better content generation.",
+          "AI-generated image analyzed. Add a description for better content generation."
         );
       }
     } catch (error: any) {
@@ -659,7 +653,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           error.message?.includes("quota")
             ? "AI analysis quota exceeded."
             : "Add a description for better content generation."
-        }`,
+        }`
       );
     } finally {
       setAnalyzingImage(false);
@@ -710,7 +704,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         (formData.media || formData.mediaUrl)
       ) {
         console.log(
-          "📷 Opening regeneration modal for uploaded image - uniform with text-to-image",
+          "📷 Opening regeneration modal for uploaded image - uniform with text-to-image"
         );
 
         const imageUrl =
@@ -745,7 +739,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           try {
             const generatedThumbnailUrl = await generateThumbnailForPost(
               formData.prompt,
-              videoAspectRatio,
+              videoAspectRatio
             );
 
             if (generatedThumbnailUrl) {
@@ -755,7 +749,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
               return;
             } else {
               console.error(
-                "❌ Failed to generate video thumbnail, continuing without thumbnail",
+                "❌ Failed to generate video thumbnail, continuing without thumbnail"
               );
             }
           } catch (err) {
@@ -1119,7 +1113,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           const file = new File(
             [blob],
             `templated-image-${Date.now()}.${ext}`,
-            { type: blob.type || "image/png" },
+            { type: blob.type || "image/png" }
           );
           const uploadedUrl = await uploadMedia(file, user.user.id);
           if (uploadedUrl) {
@@ -1386,7 +1380,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
   const generateThumbnailForPost = async (
     contentDescription: string,
-    aspectRatio: number | null,
+    aspectRatio: number | null
   ): Promise<string | null> => {
     setIsGeneratingThumbnail(true);
     try {
@@ -1402,7 +1396,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         console.log(
           "📐 Final target aspect ratio:",
           targetAspectRatio,
-          "(" + aspectRatioDescription + ")",
+          "(" + aspectRatioDescription + ")"
         );
 
         const requestBody = {
@@ -1433,7 +1427,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         } catch (uploadErr) {
           console.warn(
             "Failed to upload video thumbnail, using direct URL:",
-            uploadErr,
+            uploadErr
           );
         }
 
@@ -1450,7 +1444,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
   // Handle user-uploaded custom thumbnail for video posts
   const handleCustomThumbnailChange = async (
-    e: React.ChangeEvent<HTMLInputElement>,
+    e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -1477,7 +1471,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
             console.log("Custom thumbnail upload cancelled");
             uploadAbortControllerRef.current = null;
           },
-        },
+        }
       );
 
       // If upload was aborted, don't proceed
@@ -1565,7 +1559,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   // Combined generation function - generates both post and image from main prompt
   const handleCombinedGeneration = async (
     prompt: string,
-    image?: any,
+    image?: any
   ): Promise<string | null> => {
     return await executeImageGeneration(async () => {
       const response = await API.generateImage({
@@ -1635,7 +1629,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         console.log("🔄 Modify mode: Regenerating with existing image as base");
         const result: any = await handleCombinedGeneration(
           newPrompt,
-          imageToModify,
+          imageToModify
         );
         finalImageUrl = result.imageUrl;
         setGeneratedImage(finalImageUrl);
@@ -1644,7 +1638,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         // Upload mode without modify: Use uploaded image directly, no generation
         finalImageUrl = Url;
         console.log(
-          "📷 Upload mode: Using selected image directly, no AI generation",
+          "📷 Upload mode: Using selected image directly, no AI generation"
         );
         setGeneratedImage(finalImageUrl);
         setAllGeneration([finalImageUrl]);
@@ -1692,12 +1686,12 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
   const handleVideoThumbnailRegenerate = async (
     newPrompt: string,
-    Url?: string,
+    Url?: string
   ) => {
     try {
       console.log(
         "🎥 Regenerating video thumbnail with new prompt:",
-        newPrompt,
+        newPrompt
       );
 
       let isModifyMode = Url !== null && Url !== undefined;
@@ -1771,7 +1765,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       console.log("✅ Video thumbnail confirmed, opening template editor");
       console.log(
         "🎬 Selected thumbnail:",
-        videoThumbnailForRegeneration?.substring(0, 80) + "...",
+        videoThumbnailForRegeneration?.substring(0, 80) + "..."
       );
 
       // Set the selected thumbnail to videoThumbnailUrl so template editor can use it
@@ -1822,7 +1816,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   };
 
   const handleFileChange = async (
-    event: React.ChangeEvent<HTMLInputElement>,
+    event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const files = event.currentTarget.files;
     if (!files || files.length === 0) return;
@@ -1864,7 +1858,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       };
       reader.readAsDataURL(file);
       console.log(
-        "📷 Image selected and displayed - user can add prompt and click generate to regenerate",
+        "📷 Image selected and displayed - user can add prompt and click generate to regenerate"
       );
     }
   };
@@ -1978,7 +1972,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         currentFileRef.current = null;
                       }
                       setSelectedPostType(
-                        selectedPostType === "text" ? "" : "text",
+                        selectedPostType === "text" ? "" : "text"
                       );
                     }}
                     className={`  border  duration-200 text-center px-2 py-3 rounded-md  ${
@@ -2376,13 +2370,13 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                       onLoad={() => {
                                         console.log(
                                           "✅ Upload preview image loaded successfully:",
-                                          imageSrc.substring(0, 30) + "...",
+                                          imageSrc.substring(0, 30) + "..."
                                         );
                                       }}
                                       onError={(e) => {
                                         console.error(
                                           "❌ Upload preview image failed to load:",
-                                          imageSrc,
+                                          imageSrc
                                         );
                                         console.error("❌ Error details:", e);
                                       }}
@@ -2574,7 +2568,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                     hasMedia: !!formData.media,
                                     mediaType: formData.media?.type,
                                     finalSrc: imageSrc.substring(0, 50) + "...",
-                                  },
+                                  }
                                 );
                                 return (
                                   <img
@@ -2675,7 +2669,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                           (formData.mediaUrl &&
                             !formData.media &&
                             !formData.mediaUrl.match(
-                              /\.(mp4|mov|avi|wmv|flv|webm|mkv|m4v)$/i,
+                              /\.(mp4|mov|avi|wmv|flv|webm|mkv|m4v)$/i
                             )) ? (
                             <div className="relative">
                               <img
@@ -2693,7 +2687,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                     "Image failed to load:",
                                     templatedImageUrl ||
                                       formData.mediaUrl ||
-                                      formData.media?.name,
+                                      formData.media?.name
                                   );
                                 }}
                               />
@@ -2764,14 +2758,14 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               <span className="text-green-300">
                                 {is9x16Video(videoAspectRatio)
                                   ? t(
-                                      "vertical_video_ready_stories_format_no_thumbnail_needed",
+                                      "vertical_video_ready_stories_format_no_thumbnail_needed"
                                     )
                                   : is16x9Video(videoAspectRatio)
                                     ? t(
-                                        "horizontal_video_ready_thumbnail_generated_when_click_generate_post",
+                                        "horizontal_video_ready_thumbnail_generated_when_click_generate_post"
                                       )
                                     : t(
-                                        "video_processed_ready_thumbnail_generated_when_click_generate_post",
+                                        "video_processed_ready_thumbnail_generated_when_click_generate_post"
                                       )}
                               </span>
                             </div>
@@ -2785,7 +2779,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                   checked={generateVideoThumbnailAI}
                                   onChange={(e) =>
                                     setGenerateVideoThumbnailAI(
-                                      e.target.checked,
+                                      e.target.checked
                                     )
                                   }
                                   className="w-4 h-4"
@@ -2828,7 +2822,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               (formData.mediaUrl &&
                                 !formData.media &&
                                 !formData.mediaUrl.match(
-                                  /\.(mp4|mov|avi|wmv|flv|webm|mkv|m4v)$/i,
+                                  /\.(mp4|mov|avi|wmv|flv|webm|mkv|m4v)$/i
                                 ))) &&
                             !analyzingImage && <></>}
 
@@ -3100,7 +3094,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                       {platformOptions.map((platform) => {
                         const IconComponent = platform.icon;
                         const isSelected = formData.selectedPlatforms?.includes(
-                          platform.id,
+                          platform.id
                         );
                         return (
                           <button
@@ -3115,7 +3109,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                           >
                             <div
                               className={`w-6 h-6 rounded flex items-center justify-center text-white ${getPlatformColors(
-                                platform.id,
+                                platform.id
                               )}`}
                             >
                               <IconComponent className="w-3 h-3" />
