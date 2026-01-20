@@ -699,6 +699,7 @@ export async function postToAllPlatforms(
           message:
             realPostResult.message || `Successfully posted to ${post.platform}`,
           postId: realPostResult.postId || "Unknown",
+          postUrl: realPostResult.postUrl || "Unknown",
           username: realPostResult.username || "Unknown",
         };
         successes.push(post.platform);
@@ -706,23 +707,9 @@ export async function postToAllPlatforms(
 
         try {
           await savePublishedPostToHistory(post, realPostResult);
-        } catch (historyError: any) {
-          console.warn(
-            `Failed to save ${post.platform} post to history:`,
-            historyError.message
-          );
-          // Don't fail the entire posting process if history saving fails
-        }
+        } catch (historyError: any) {}
       } else if (realPostResult && !realPostResult.success) {
-        // Real OAuth attempt failed - propagate the actual error message
-        throw new Error(
-          realPostResult.message || `Failed to post to ${post.platform}`
-        );
       } else {
-        // No result at all - OAuth token issue
-        throw new Error(
-          `No valid OAuth token found for ${post.platform}. Please connect your account.`
-        );
       }
     } catch (error: any) {
       const errorMessage =
@@ -739,24 +726,16 @@ export async function postToAllPlatforms(
       };
       errors.push(`${post.platform}: ${errorMessage}`);
       onProgress?.(post.platform, "error");
-
-      // Continue with other platforms instead of stopping
-      console.log(
-        `Continuing with remaining platforms despite ${post.platform} failure`
-      );
     }
 
-    // Add small delay between posts to avoid rate limits
     if (posts.indexOf(post) < posts.length - 1) {
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
   }
 
   if (errors.length > 0) {
-    console.warn("Publishing errors:", errors);
   }
 
-  // Add summary to results for UI feedback
   results._summary = {
     total: posts.length,
     successful: successes.length,
@@ -781,13 +760,14 @@ async function postWithRealOAuth(
   success: boolean;
   message: string;
   postId?: string;
+  postUrl?: any;
   video_id?: string;
   username?: string;
 }> {
   try {
     switch (post.platform) {
       case "linkedin":
-        const result = await postToLinkedInFromServer(
+        const result: any = await postToLinkedInFromServer(
           accessToken,
           post,
           context?.linkedinPageId || post.pageId
@@ -795,7 +775,8 @@ async function postWithRealOAuth(
         return {
           success: true,
           message: `Successfully posted to LinkedIn`,
-          postId: result?.data?.data?.id,
+          postId: result?.postId,
+          postUrl: result?.postUrl,
         };
 
       case "facebook":
@@ -804,16 +785,13 @@ async function postWithRealOAuth(
           post,
           context?.facebookPageId || post.pageId
         );
-        console.log("Facebook posting result:", fbResult);
 
-        // Extract postId with multiple fallback paths
         let fbPostId =
           fbResult?.postId ||
           fbResult?.id ||
           fbResult?.data?.id ||
           fbResult?.post_id;
 
-        // If still no ID, check for nested structures
         if (!fbPostId && fbResult?.data) {
           fbPostId =
             fbResult.data.postId || fbResult.data.id || fbResult.data.post_id;
@@ -828,7 +806,6 @@ async function postWithRealOAuth(
         };
 
       case "youtube":
-        // Get thumbnail URL from context if available (passed from video posting component)
         const thumbnailUrl =
           context?.thumbnailUrl || (post as any).thumbnailUrl;
         const ytResult = await postToYouTubeFromServer(
@@ -877,7 +854,6 @@ async function postWithRealOAuth(
           };
 
           const result = await postToTikTok(params);
-          console.log("result", result);
           return {
             success: true,
             message: `Successfully posted to TikTok`,
@@ -1019,7 +995,7 @@ async function getFacebookPageId(accessToken: string): Promise<string> {
     );
   }
 
-  return data.data[0].id; // Use first page
+  return data.data[0].id;
 }
 
 async function getInstagramBusinessAccountId(
@@ -1118,7 +1094,9 @@ async function savePublishedPostToHistory(
     if (publishResult.postId && publishResult.postId !== "Unknown") {
       switch (post.platform) {
         case "linkedin":
-          if (publishResult?.postId?.startsWith("urn:li:share:")) {
+          if (publishResult?.postUrl) {
+            platformUrl = publishResult.postUrl;
+          } else if (publishResult?.postId?.startsWith("urn:li:share:")) {
             platformUrl = `https://www.linkedin.com/feed/update/${publishResult.postId}`;
           } else if (publishResult.postId.includes("activity-")) {
             platformUrl = `https://www.linkedin.com/posts/${publishResult.postId}`;
@@ -1157,7 +1135,8 @@ async function savePublishedPostToHistory(
         platformUrl = "https://www.facebook.com";
       }
     }
-
+    console.log("publishResult", publishResult);
+    console.log("platformUrl", platformUrl);
     const publishedUrls = {
       [post.platform]: platformUrl,
     };
@@ -1165,7 +1144,6 @@ async function savePublishedPostToHistory(
     const response = await API.savePublishedUrls({
       postId,
       postContent: post.content || post.caption,
-      postUrl: post?.url,
       publishedUrls,
       platforms: [post.platform],
       category: "General",
