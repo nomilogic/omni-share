@@ -3122,7 +3122,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             !formData.selectedPlatforms?.length ||
                             isGeneratingBoth
                           }
-                          className="group flex-1 min-w-0 rounded-md flex items-center justify-between theme-bg-trinary theme-text-light border border-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] transition-colors duration-200 py-2.5 px-3 font-medium disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                          className="group flex-1 py-2.5 font-semibold text-base  min-w-0 rounded-md flex items-center justify-between theme-bg-trinary theme-text-light border border-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] transition-colors duration-200  px-3  disabled:opacity-50 disabled:cursor-not-allowed "
                         >
                           <div className="flex items-center">
                             {isGeneratingBoth ? (

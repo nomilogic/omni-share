@@ -149,7 +149,7 @@ const { t, i18n } = useTranslation();
     <div className={`space-y-4 ${className}`}>
       {/* Upload Area */}
       <div
-        className={`relative border-2 border-dashed rounded-md p-6 text-center transition-all duration-200 ${
+        className={`relative border border-dashed rounded-md p-6 text-center transition-all duration-200 ${
           dragActive
             ? "border-blue-400/50 bg-blue-500/10"
             : "border-white/20 hover:border-white/30"

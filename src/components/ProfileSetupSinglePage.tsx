@@ -709,7 +709,7 @@ const ProfileSetupSinglePage: React.FC = () => {
                                 type={field.type}
                                 disabled={field.type === "email"}
                                 {...register(fieldName)}
-                                className={`w-full px-4 py-2.5 text-sm border-2 border-purple-500 bg-gray-100 rounded-md focus:outline-none focus:border-purple-600 transition ${
+                                className={`w-full px-4 py-2.5 text-sm border border-purple-500 bg-gray-100 rounded-md focus:outline-none focus:border-purple-600 transition ${
                                   fieldError
                                     ? "border-red-500"
                                     : "border-gray-300"
@@ -749,7 +749,7 @@ const ProfileSetupSinglePage: React.FC = () => {
                                             formData.publicUrl || ""
                                           )
                                         }
-                                        className="flex items-center gap-2 w-full md:w-fit   theme-bg-trinary text-white py-3 px-6 rounded-md text-lg font-semibold shadow-md disabled:opacity-50 border border-transparent hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition-colors"
+                                        className="flex items-center gap-2 w-full md:w-fit   theme-bg-trinary text-white py-2 px-6 rounded-md text-lg font-semibold shadow-md disabled:opacity-50 border border-transparent hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition-colors"
                                         title="Auto-fill from URL"
                                       >
                                         <Wand2 className="h-5 w-5" />
@@ -777,7 +777,7 @@ const ProfileSetupSinglePage: React.FC = () => {
                               </label>
                               <select
                                 {...register(fieldName)}
-                                className={`w-full px-4 py-2.5 text-sm border-2 border-purple-500 bg-gray-100 rounded-md focus:outline-none focus:border-purple-600 transition ${
+                                className={`w-full px-4 py-2.5 text-sm border border-purple-500 bg-gray-100 rounded-md focus:outline-none focus:border-purple-600 transition ${
                                   fieldError
                                     ? "border-red-500"
                                     : "border-gray-300"
@@ -828,7 +828,7 @@ const ProfileSetupSinglePage: React.FC = () => {
                                     <div
                                       key={opt}
                                       data-field-name={field.name}
-                                      className={`flex items-center p-2 border-2 rounded-md cursor-pointer ${
+                                      className={`flex items-center p-2 border rounded-md cursor-pointer ${
                                         isChecked
                                           ? "theme-border-trinary theme-text-secondary"
                                           : "border-gray-200"
@@ -868,7 +868,7 @@ const ProfileSetupSinglePage: React.FC = () => {
                                 {field.label} {field.required && "*"}
                               </label>
 
-                              <div className="mt-1 flex flex-col items-center justify-center md:p-4 p-3 border-2 border-gray-300 border-dashed rounded-md relative overflow-hidden">
+                              <div className="mt-1 flex flex-col items-center justify-center md:p-4 p-3 border border-gray-300 border-dashed rounded-md relative overflow-hidden">
                                 {formData[fieldName] ? (
                                   <div className="flex flex-col items-center space-y-2">
                                     <img
@@ -1107,7 +1107,7 @@ const ProfileSetupSinglePage: React.FC = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full theme-bg-trinary disabled:bg-purple-600/50 disabled:cursor-not-allowed text-white py-3 px-6 rounded-md text-lg font-semibold shadow-md disabled:opacity-50 border border-transparent hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition-colors"
+                className="w-full theme-bg-trinary disabled:bg-purple-600/50 disabled:cursor-not-allowed text-white py-2.5 px-6 rounded-md text-base font-semibold shadow-md disabled:opacity-50 border border-transparent hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition-colors"
               >
                 {loading ? t("saving") : t("Save and Continue")}
               </button>

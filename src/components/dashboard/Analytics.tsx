@@ -312,7 +312,7 @@ export default function Analytics({ onHasAnalyticsChange }: Props) {
 
       <button
         onClick={() => navigate(`/analytics?platform=${selectedPlatform}`)}
-        className="mt-4 w-full py-2.5 px-4 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-md transition-colors"
+        className="mt-4 w-full py-2.5 px-4 border border-purple-600 hover:text-purple-600 bg-purple-600 hover:bg-[#d7d7fc] text-white font-medium rounded-md transition-colors"
         disabled={!selectedPlatform}
       >
         {t("view_details") || "View Full Analytics"}
@@ -384,7 +384,7 @@ function ReferralPromoCard() {
       </div>
       <button
         onClick={handleShareClick}
-        className=" w-full rounded-md hover:opacity-95 text-white font-semibold py-2 flex items-center justify-center gap-2 text-md transition-all border-2 border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
+        className=" w-full rounded-md hover:opacity-95 text-white font-semibold py-2 flex items-center justify-center gap-2 text-md transition-all border border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
       >
         <Share2 className="w-4 h-4" /> {t("share") || "Share"}
       </button>

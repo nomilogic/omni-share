@@ -325,7 +325,7 @@ export default function ImageRegenerationModal({
                   <button
                     onClick={handleSubmit}
                     disabled={isLoading || !prompt.trim()}
-                    className="group w-full rounded-md hover:bg-[#d7d7fc] border border-purple-600 flex items-center justify-between   text-[#7650e3] transition-colors duration-200 py-2 px-4 font-medium disabled:opacity-50 disabled:cursor-not-allowed text-md"
+                    className="group w-full rounded-md hover:bg-[#d7d7fc] border border-purple-600 flex items-center justify-between text-base font-semibold  text-[#7650e3] transition-colors duration-200 py-2.5 px-4 disabled:opacity-50 disabled:cursor-not-allowed text-md"
                   >
                     {isLoading
                       ? "Generating..."
@@ -342,7 +342,7 @@ export default function ImageRegenerationModal({
                   <button
                     onClick={selectedFile ? onFileSave : confirmImage}
                     disabled={isLoading || !activeImage}
-                    className="px-4 rounded-md w-full  py-2 text-lg font-medium text-purple-700 border border-[#7650e3] theme-bg-trinary theme-text-light hover:bg-[#d7d7fc] hover:text-[#7650e3]  disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-4 rounded-md w-full text-base font-semibold  py-2.5  text-purple-700 border border-[#7650e3] theme-bg-trinary theme-text-light hover:bg-[#d7d7fc] hover:text-[#7650e3]  disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Continue
                   </button>

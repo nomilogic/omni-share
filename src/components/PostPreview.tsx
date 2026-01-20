@@ -1065,7 +1065,7 @@ const { dispatch } = useAppContext();
                   )}
 
                   {selectedPlatform === post.platform && (
-                    <div className="absolute inset-0 rounded-full border-2 border-blue-500 animate-pulse"></div>
+                    <div className="absolute inset-0 rounded-full border border-blue-500 animate-pulse"></div>
                   )}
                 </button>
               );
@@ -1087,24 +1087,25 @@ const { dispatch } = useAppContext();
                 {editingMode ? (
                   // Editing Mode - Show save/cancel buttons
                   <div className="flex gap-3 justify-center">
+                    
+                    <button
+                      onClick={() => {
+                        discardChanges();
+                      }}
+                      className="flex items-center justify-center w-full gap-2 px-4 py-2.5 border border-purple-600 text-purple-600 rounded-md hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition-colors font-medium"
+                    >
+                      <X className="w-4 h-4" />
+                      {t("cancel")}
+                    </button>
                     <button
                       onClick={() => {
                         saveChanges();
                         setEditingMode(false);
                       }}
-                      className="flex items-center w-auto gap-2 px-4 py-2.5 bg-purple-600 text-white rounded-md border border-transparent hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition-colors font-medium"
+                      className="flex items-center justify-center w-full gap-2 px-4 py-2.5 bg-purple-600 text-white rounded-md border border-transparent hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition-colors font-medium"
                     >
                       <Save className="w-4 h-4" />
                       {t("save_changes")}
-                    </button>
-                    <button
-                      onClick={() => {
-                        discardChanges();
-                      }}
-                      className="flex items-center w-auto gap-2 px-4 py-2.5 border border-purple-600 text-purple-600 rounded-md hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition-colors font-medium"
-                    >
-                      <X className="w-4 h-4" />
-                      {t("cancel")}
                     </button>
                   </div>
                 ) : (

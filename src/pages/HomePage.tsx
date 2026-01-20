@@ -400,7 +400,7 @@ function HomePage() {
                     className="flex items-center gap-x-3 w-full hover:bg-white/10 rounded-md p-2 transition-colors"
                   >
                     <img
-                      className="w-12 h-12 rounded-full object-cover border-2 border-white/50"
+                      className="w-12 h-12 rounded-full object-cover border border-white/50"
                       src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
                         user?.name || "U"
                       )}&background=7650e3&color=fff`}
@@ -869,7 +869,7 @@ function HomePage() {
                       onClick={() => navigate("/dashboard")}
                     >
                       <img
-                        className="w-10 h-10 rounded-full object-cover border-2 border-white/50 hover:border-white transition-colors"
+                        className="w-10 h-10 rounded-full object-cover border border-white/50 hover:border-white transition-colors"
                         src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
                           user?.name || "U"
                         )}&background=7650e3&color=fff`}

@@ -41,7 +41,7 @@ const DiscardPostModal: FC<DiscardPostModalProps> = ({ close, onConfirm, t }) =>
             close(); // Simply call the close function from props
             // setPendingDiscardAction(null) ki zaroorat nahi, state is component mein nahi hai
           }}
-          className="flex-1 bg-transparent border-purple-600 border text-purple-600 font-semibold py-2.5 rounded-md transition disabled:opacity-50"
+          className="flex-1 bg-transparent hover:bg-[#d7d7fc] border-purple-600 border text-purple-600 font-semibold py-2.5 rounded-md transition disabled:opacity-50"
         >
           {t("cancel")}
         </button>
@@ -52,7 +52,7 @@ const DiscardPostModal: FC<DiscardPostModalProps> = ({ close, onConfirm, t }) =>
             onConfirm(); // Perform the actual navigation
             close();     // Close the modal
           }}
-          className="flex-1 bg-purple-600 text-white font-semibold py-2.5 rounded-md transition disabled:opacity-50"
+          className="flex-1 bg-purple-600 text-white font-semibold py-2.5 rounded-md transition disabled:opacity-50 hover:bg-[#d7d7fc] hover:text-[#7650e3] border border-purple-600"
         >
           {t("confirm")}
         </button>
