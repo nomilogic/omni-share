@@ -19,8 +19,9 @@ export default function ImageRegenerationModal({
   setUseTheme,
   logoUrl,
   themeUrl,
+  prompt,
+  setPrompt,
 }: any) {
-  const [prompt, setPrompt] = useState("");
   const [activeImage, setActiveImage] = useState(imageUrl);
 
   useEffect(() => {
@@ -82,9 +83,6 @@ export default function ImageRegenerationModal({
         {/* Header */}
         <div className="sticky top-0 z-10 border-b border-gray-200 bg-white/80 backdrop-blur px-4 sm:px-6 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-md bg-purple-600/10 flex items-center justify-center">
-              <span className="text-purple-700 font-semibold">✨</span>
-            </div>
             <div>
               <h2 className="text-base sm:text-lg font-semibold text-gray-900">
                 Image Generator
@@ -264,58 +262,62 @@ export default function ImageRegenerationModal({
                   {/* Use for Generation Section */}
                   <div className="mt-2">
                     <label className="text-sm font-medium theme-text-primary  mb-2 flex items-center">
-                          Use for generation
-                        </label>
-                  <div className="p-3 theme-bg-primary shadow-md  rounded-md">
-                    <div className="space-y-2">
-                      {/* Brand Logo Checkbox */}
-                      <div className="flex items-start gap-3">
-                        <input
-                          type="checkbox"
-                          id="modalUseBrandLogo"
-                          checked={useLogo}
-                          onChange={(e) => setUseLogo(e.target.checked)}
-                          disabled={!logoUrl}
-                          className="w-4 h-4 mt-0.5 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                        />
-                        <div className="flex-1">
-                          <label
-                            htmlFor="modalUseBrandLogo"
-                            className="text-sm font-medium text-gray-900 cursor-pointer"
-                          >
-                            Brand Logo
-                          </label>
-                          <p className="text-xs text-gray-500 mt-0.5">
-                            {logoUrl ? "Include your brand logo in the image generation" : "No brand logo set in profile"}
-                          </p>
+                      Use for generation
+                    </label>
+                    <div className="p-3 theme-bg-primary shadow-md  rounded-md">
+                      <div className="space-y-2">
+                        {/* Brand Logo Checkbox */}
+                        <div className="flex items-start gap-3">
+                          <input
+                            type="checkbox"
+                            id="modalUseBrandLogo"
+                            checked={useLogo}
+                            onChange={(e) => setUseLogo(e.target.checked)}
+                            disabled={!logoUrl}
+                            className="w-4 h-4 mt-0.5 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                          />
+                          <div className="flex-1">
+                            <label
+                              htmlFor="modalUseBrandLogo"
+                              className="text-sm font-medium text-gray-900 cursor-pointer"
+                            >
+                              Brand Logo
+                            </label>
+                            <p className="text-xs text-gray-500 mt-0.5">
+                              {logoUrl
+                                ? "Include your brand logo in the image generation"
+                                : "No brand logo set in profile"}
+                            </p>
+                          </div>
                         </div>
-                      </div>
 
-                      {/* Theme/Website Checkbox */}
-                      <div className="flex items-start gap-3">
-                        <input
-                          type="checkbox"
-                          id="modalUseBrandTheme"
-                          checked={useTheme}
-                          onChange={(e) => setUseTheme(e.target.checked)}
-                          disabled={!themeUrl}
-                          className="w-4 h-4 mt-0.5 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                        />
-                        <div className="flex-1">
-                          <label
-                            htmlFor="modalUseBrandTheme"
-                            className="text-sm font-medium text-gray-900 cursor-pointer"
-                          >
-                            Brand Theme
-                          </label>
-                          <p className="text-xs text-gray-500 mt-0.5">
-                            {themeUrl ? `Use your website theme: ${themeUrl}` : "No website URL set in profile"}
-                          </p>
+                        {/* Theme/Website Checkbox */}
+                        <div className="flex items-start gap-3">
+                          <input
+                            type="checkbox"
+                            id="modalUseBrandTheme"
+                            checked={useTheme}
+                            onChange={(e) => setUseTheme(e.target.checked)}
+                            disabled={!themeUrl}
+                            className="w-4 h-4 mt-0.5 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                          />
+                          <div className="flex-1">
+                            <label
+                              htmlFor="modalUseBrandTheme"
+                              className="text-sm font-medium text-gray-900 cursor-pointer"
+                            >
+                              Brand Theme
+                            </label>
+                            <p className="text-xs text-gray-500 mt-0.5">
+                              {themeUrl
+                                ? `Use your website theme: ${themeUrl}`
+                                : "No website URL set in profile"}
+                            </p>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
                 </div>
 
                 {/* Desktop actions */}
@@ -328,14 +330,11 @@ export default function ImageRegenerationModal({
                     {isLoading
                       ? "Generating..."
                       : modifyMode
-                      ? "Modify"
-                      : "Regenerate"}
+                        ? "Modify"
+                        : "Regenerate"}
 
                     <div className="px-2.5 py-1.5 flex items-center gap-2">
-                      <Icon
-                        name="spiral-logo"
-                        size={20}
-                      />
+                      <Icon name="spiral-logo" size={20} />
                       <span>{generationAmounts}</span>
                     </div>
                   </button>
@@ -361,13 +360,13 @@ export default function ImageRegenerationModal({
               disabled={isLoading || !prompt.trim()}
               className=" group w-full rounded-md border border-purple-600 hover:bg-gray-50 transition  flex items-center justify-between   text-[#7650e3]  duration-200 py-3 px-4 font-medium disabled:opacity-50 disabled:cursor-not-allowed text-sm"
             >
-              {isLoading ? "Generating..." : modifyMode ? "Modify" : "Regenerate"}
+              {isLoading
+                ? "Generating..."
+                : modifyMode
+                  ? "Modify"
+                  : "Regenerate"}
               <div className="px-2.5 py-1.5 flex items-center gap-2">
-                <Icon
-                  name="spiral-logo"
-                  size={16}
-                  
-                />
+                <Icon name="spiral-logo" size={16} />
                 <span>{generationAmounts}</span>
               </div>
             </button>

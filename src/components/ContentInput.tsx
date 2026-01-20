@@ -73,7 +73,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   selectedPlatforms,
   editMode,
 }) => {
-  const { state, generationAmounts } = useAppContext();
+  const { state, generationAmounts, user }: any = useAppContext();
   const {
     executeVideoThumbnailGeneration,
     executeImageGeneration,
@@ -118,7 +118,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     }
   };
 
-  const [formData, setFormData] = useState<PostContent>({
+  const [formData, setFormData] = useState<any>({
     prompt: initialData?.prompt || "",
     tags: initialData?.tags || [],
     selectedPlatforms: initialData?.selectedPlatforms ||
@@ -161,8 +161,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   const [videoAspectRatio, setVideoAspectRatio] = useState<number | null>(null);
   const [videoAspectRatioWarning, setVideoAspectRatioWarning] =
     useState<string>("");
-  const [warningTimeoutId, setWarningTimeoutId] =
-    useState<NodeJS.Timeout | null>(null);
+  const [warningTimeoutId, setWarningTimeoutId] = useState<any | null>(null);
 
   const [aspectRatio, setAspectRatio] = useState<string>("16:9");
   const [imageDescription, setImageDescription] = useState<string>("");
@@ -242,7 +241,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       selectedImageMode,
       selectedVideoMode
     );
-    setFormData((prev) => ({
+    setFormData((prev: any) => ({
       ...prev,
       selectedPlatforms: appropriatePlatforms,
     }));
@@ -319,7 +318,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
             (!formData.selectedPlatforms ||
               formData.selectedPlatforms.length === 0)
           ) {
-            setFormData((prev) => ({
+            setFormData((prev: any) => ({
               ...prev,
               selectedPlatforms: campaign.platforms,
             }));
@@ -795,7 +794,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         }
       }
 
-      const currentFormData = formData; // Track the current form data state
+      const currentFormData: any = formData; // Track the current form data state
 
       // Use fetched campaign info if available, otherwise use default values
       const currentCampaignInfo = campaignInfo || {
@@ -964,7 +963,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   };
 
   const togglePlatform = (platform: string) => {
-    setFormData((prev) => ({
+    setFormData((prev: any) => ({
       ...prev,
       selectedPlatforms: prev.selectedPlatforms?.includes(platform as Platform)
         ? prev.selectedPlatforms.filter((p) => p !== platform)
@@ -973,7 +972,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   };
 
   const useImageAnalysis = () => {
-    setFormData((prev) => ({
+    setFormData((prev: any) => ({
       ...prev,
       prompt:
         prev.prompt +
@@ -1052,41 +1051,15 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         return newData;
       });
     } catch (error) {
-      console.log("error", error);
       setFormData((prev) => {
         const newData = { ...prev, mediaUrl: imageUrl };
 
         return newData;
       });
-
-      // // Auto-open template editor with blank template only if requested
-      // if (shouldAutoOpenTemplate) {
-      //   console.log(
-      //     "🎨 Auto-opening template editor with blank template for fallback image"
-      //   );
-      //   // Get blank template
-      //   const blankTemplate = getTemplateById("blank-template");
-      //   if (blankTemplate) {
-      //     console.log(
-      //       "📋 Setting blank template and opening editor for fallback image"
-      //     );
-      //     setTimeout(() => {
-      //       setSelectedTemplate(blankTemplate);
-      //       setShowTemplateEditor(true);
-      //     }, 500); // Small delay to ensure state is updated
-      //   } else {
-      //     console.error(
-      //       "❌ Blank template not found for fallback image - this should not happen!"
-      //     );
-      //     // Don't open anything if blank template is missing - this is a critical error
-      //   }
-      // }
     }
   };
 
-  // Template handler functions
   const handleTemplateSelect = (template: Template) => {
-    console.log("Template selected:", template.name);
     setSelectedTemplate(template);
     setShowTemplateSelector(false);
     setShowTemplateEditor(true);
@@ -1593,6 +1566,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       return false;
     }
   };
+  const [prompt, setPrompt] = useState("");
 
   const urlToBase64 = async (url: string): Promise<string> => {
     const response = await fetch(url);
@@ -1625,8 +1599,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       const imageToModify = Url || generatedImage;
 
       if (modifyMode && imageToModify) {
-        // Modify mode: Regenerate with existing image as base
-        console.log("🔄 Modify mode: Regenerating with existing image as base");
         const result: any = await handleCombinedGeneration(
           newPrompt,
           imageToModify
@@ -1635,26 +1607,19 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         setGeneratedImage(finalImageUrl);
         setAllGeneration([...allGeneration, finalImageUrl]);
       } else if (Url && !modifyMode) {
-        // Upload mode without modify: Use uploaded image directly, no generation
         finalImageUrl = Url;
-        console.log(
-          "📷 Upload mode: Using selected image directly, no AI generation"
-        );
+
         setGeneratedImage(finalImageUrl);
         setAllGeneration([finalImageUrl]);
       } else {
-        // TextToImage mode: Generate image from prompt
-        console.log("🎨 TextToImage mode: Generating image from prompt");
         const result: any = await handleCombinedGeneration(newPrompt);
         finalImageUrl = result.imageUrl;
         setGeneratedImage(finalImageUrl);
         setAllGeneration([finalImageUrl]);
       }
 
-      // Open the modal with the image (generated or selected)
       setModelImage(true);
 
-      // Store post generation data for template editor
       const postGenerationData = {
         prompt: newPrompt,
         originalImageUrl: finalImageUrl,
@@ -1675,12 +1640,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
         return newData;
       });
-      setIsGeneratingBoth(true);
-      setGeneratedImage(null);
-      setPendingPostGeneration({});
-      setModelImage(false);
+      notify("error", "We couldn’t generate the image.");
       setIsGeneratingBoth(false);
-      setIsGeneratingThumbnail(false);
+      setPrompt("");
     }
   };
 
@@ -1887,13 +1849,13 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     }
   };
 
-  const { user } = useAppContext();
-
   return (
     <div className="w-full mx-auto rounded-md border border-white/10  md:p-5 p-3 ">
       {modelImage && (
         <ImageRegenerationModal
           imageUrl={generatedImage}
+          prompt={prompt}
+          setPrompt={setPrompt}
           isLoading={isGeneratingBoth}
           allGeneration={allGeneration}
           setAllGeneration={setAllGeneration}
@@ -2958,7 +2920,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             prompt: e.target.value,
                           }))
                         }
-                        className="w-full px-3 py-2.5 bg-white text-sm rounded-md placeholder-gray-500
+                        className="w-full px-3  border shadow-md backdrop-blur-md py-2.5 bg-white text-sm rounded-md placeholder-gray-500
              min-h-[160px] lg:min-h-[180px]
              border-0 outline-none ring-0
              focus:border-0 focus:outline-none focus:ring-0
@@ -2974,7 +2936,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         <label className="text-sm font-medium theme-text-primary  mb-2 flex items-center">
                           Use for generation
                         </label>
-                        <div className=" p-3 theme-bg-primary shadow-md  rounded-md">
+                        <div className=" p-3 theme-bg-primary   rounded-md border shadow-md backdrop-blur-md">
                           <div className=" flex flex-row justify-start gap-10">
                             {/* Brand Logo Checkbox */}
                             <div className="flex items-start gap-3">
@@ -3056,7 +3018,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               onClick={() =>
                                 handleAspectRatioChange(ratio.value)
                               }
-                              className={`w-full h-24 p-2 border transition-all rounded-md duration-200 flex flex-col items-center justify-center ${
+                              className={`w-full h-24 p-2 border transition-all   theme-bg-primary shadow-md  rounded-md duration-200 flex flex-col items-center justify-center ${
                                 aspectRatio === ratio.value
                                   ? "theme-bg-quaternary shadow-md theme-text-secondary"
                                   : "theme-bg-primary hover:theme-bg-primary/50"
@@ -3181,15 +3143,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               </div>
                             )}
                           </div>
-
-                          <div className="px-2.5 py-1.5 flex items-center gap-2">
-                            <Icon
-                              name="spiral-logo"
-                              size={20}
-                              className="brightness-[1000%] transition group-hover:brightness-100"
-                            />
-                            {getCost()}
-                          </div>
                         </button>
                       )}
                     </div>
@@ -3212,7 +3165,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                       stiffness: 80,
                     }}
                   >
-                    <div className="relative  rounded-md overflow-hidden shadow-md aspect-video w-full">
+                    <div className="relative  rounded-md overflow-hidden aspect-video w-full  border shadow-md backdrop-blur-md border-slate-200/70">
                       <motion.video
                         src={IntroVideo}
                         muted

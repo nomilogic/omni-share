@@ -66,6 +66,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
     checkConnectedPlatforms,
     handleConnectPlatform,
     handleDisconnectPlatform,
+    fetchPostHistory,
   } = useAppContext();
 
   const [selectedPlatforms, setSelectedPlatforms] = useState<Platform[]>(
@@ -483,15 +484,12 @@ export const PublishPosts: React.FC<PublishProps> = ({
       );
 
       if (allConnectedPlatformsPublished && onReset) {
-        console.log(
-          "All connected platforms published successfully, triggering reset workflow in 3 seconds..."
-        );
         setTimeout(() => {
+          fetchPostHistory();
           onReset();
-        }, 3000);
+        }, 2000);
       }
     } catch (err: any) {
-      console.log("err", err);
     } finally {
       setPublishing(false);
       fetchUnreadCount();

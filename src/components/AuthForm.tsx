@@ -86,7 +86,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
   const isVerification = params.get("isVerification");
 
   const isCookieAccepted = () => {
-    return Cookies.get("cookie-consent") === "accepted";
+    return localStorage.getItem("cookie-consent") == "accepted";
   };
 
   const loginForm = useForm<LoginFormData>({

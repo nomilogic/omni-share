@@ -11,11 +11,11 @@ export default function CookieBanner() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      const consent = Cookies.get("cookie-consent");
+      const consent = localStorage.getItem("cookie-consent");
 
       if (!consent) {
         setShow(true);
-      } else if (consent === "accepted") {
+      } else if (consent == "accepted") {
         loadAnalytics();
       }
     }, 1500);
@@ -29,7 +29,7 @@ export default function CookieBanner() {
   };
 
   const accept = () => {
-    Cookies.set("cookie-consent", "accepted");
+    localStorage.setItem("cookie-consent", "accepted");
     setShow(false);
     setSettingsOpen(false);
   };

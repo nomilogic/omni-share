@@ -706,23 +706,9 @@ export async function postToAllPlatforms(
 
         try {
           await savePublishedPostToHistory(post, realPostResult);
-        } catch (historyError: any) {
-          console.warn(
-            `Failed to save ${post.platform} post to history:`,
-            historyError.message
-          );
-          // Don't fail the entire posting process if history saving fails
-        }
+        } catch (historyError: any) {}
       } else if (realPostResult && !realPostResult.success) {
-        // Real OAuth attempt failed - propagate the actual error message
-        throw new Error(
-          realPostResult.message || `Failed to post to ${post.platform}`
-        );
       } else {
-        // No result at all - OAuth token issue
-        throw new Error(
-          `No valid OAuth token found for ${post.platform}. Please connect your account.`
-        );
       }
     } catch (error: any) {
       const errorMessage =
@@ -739,24 +725,16 @@ export async function postToAllPlatforms(
       };
       errors.push(`${post.platform}: ${errorMessage}`);
       onProgress?.(post.platform, "error");
-
-      // Continue with other platforms instead of stopping
-      console.log(
-        `Continuing with remaining platforms despite ${post.platform} failure`
-      );
     }
 
-    // Add small delay between posts to avoid rate limits
     if (posts.indexOf(post) < posts.length - 1) {
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
   }
 
   if (errors.length > 0) {
-    console.warn("Publishing errors:", errors);
   }
 
-  // Add summary to results for UI feedback
   results._summary = {
     total: posts.length,
     successful: successes.length,
@@ -804,16 +782,13 @@ async function postWithRealOAuth(
           post,
           context?.facebookPageId || post.pageId
         );
-        console.log("Facebook posting result:", fbResult);
 
-        // Extract postId with multiple fallback paths
         let fbPostId =
           fbResult?.postId ||
           fbResult?.id ||
           fbResult?.data?.id ||
           fbResult?.post_id;
 
-        // If still no ID, check for nested structures
         if (!fbPostId && fbResult?.data) {
           fbPostId =
             fbResult.data.postId || fbResult.data.id || fbResult.data.post_id;
@@ -828,7 +803,6 @@ async function postWithRealOAuth(
         };
 
       case "youtube":
-        // Get thumbnail URL from context if available (passed from video posting component)
         const thumbnailUrl =
           context?.thumbnailUrl || (post as any).thumbnailUrl;
         const ytResult = await postToYouTubeFromServer(
@@ -1157,7 +1131,8 @@ async function savePublishedPostToHistory(
         platformUrl = "https://www.facebook.com";
       }
     }
-
+    console.log("publishResult", platformUrl);
+    console.log("platformUrl", platformUrl);
     const publishedUrls = {
       [post.platform]: platformUrl,
     };
