@@ -475,7 +475,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
 
       if (newlyPublished.length > 0) {
         setTimeout(() => {
-          historyRefreshService.refreshHistory();
+          fetchPostHistory();
         }, 500);
       }
 
@@ -485,7 +485,6 @@ export const PublishPosts: React.FC<PublishProps> = ({
 
       if (allConnectedPlatformsPublished && onReset) {
         setTimeout(() => {
-          fetchPostHistory();
           onReset();
         }, 2000);
       }

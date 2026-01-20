@@ -357,7 +357,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       handleFileUpload(files[0]);
     }
   };
-  console.log("formData.mediaUrl", formData.mediaUrl);
 
   const handleFileUpload = async (file: File) => {
     currentFileRef.current = file;

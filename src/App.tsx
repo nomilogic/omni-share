@@ -41,7 +41,7 @@ const OAuthCallbackWrapper = () => {
   const handleAuthSuccess = (user: any) => {
     // Cache user to localStorage on login
     localStorage.setItem("cached_user", JSON.stringify(user));
-    
+
     console.log("user", user);
     dispatch({ type: "SET_USER", payload: user });
     dispatch({
@@ -88,7 +88,6 @@ function App() {
     };
 
     const savedLang = localStorage.getItem("siteLang");
-    console.log("savedLang", savedLang);
     if (savedLang && savedLang.trim() !== "") {
       i18n.changeLanguage(savedLang);
     } else {

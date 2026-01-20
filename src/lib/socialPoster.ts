@@ -699,6 +699,7 @@ export async function postToAllPlatforms(
           message:
             realPostResult.message || `Successfully posted to ${post.platform}`,
           postId: realPostResult.postId || "Unknown",
+          postUrl: realPostResult.postUrl || "Unknown",
           username: realPostResult.username || "Unknown",
         };
         successes.push(post.platform);
@@ -759,13 +760,14 @@ async function postWithRealOAuth(
   success: boolean;
   message: string;
   postId?: string;
+  postUrl?: any;
   video_id?: string;
   username?: string;
 }> {
   try {
     switch (post.platform) {
       case "linkedin":
-        const result = await postToLinkedInFromServer(
+        const result: any = await postToLinkedInFromServer(
           accessToken,
           post,
           context?.linkedinPageId || post.pageId
@@ -773,7 +775,8 @@ async function postWithRealOAuth(
         return {
           success: true,
           message: `Successfully posted to LinkedIn`,
-          postId: result?.data?.data?.id,
+          postId: result?.postId,
+          postUrl: result?.postUrl,
         };
 
       case "facebook":
@@ -851,7 +854,6 @@ async function postWithRealOAuth(
           };
 
           const result = await postToTikTok(params);
-          console.log("result", result);
           return {
             success: true,
             message: `Successfully posted to TikTok`,
@@ -993,7 +995,7 @@ async function getFacebookPageId(accessToken: string): Promise<string> {
     );
   }
 
-  return data.data[0].id; // Use first page
+  return data.data[0].id;
 }
 
 async function getInstagramBusinessAccountId(
@@ -1092,7 +1094,9 @@ async function savePublishedPostToHistory(
     if (publishResult.postId && publishResult.postId !== "Unknown") {
       switch (post.platform) {
         case "linkedin":
-          if (publishResult?.postId?.startsWith("urn:li:share:")) {
+          if (publishResult?.postUrl) {
+            platformUrl = publishResult.postUrl;
+          } else if (publishResult?.postId?.startsWith("urn:li:share:")) {
             platformUrl = `https://www.linkedin.com/feed/update/${publishResult.postId}`;
           } else if (publishResult.postId.includes("activity-")) {
             platformUrl = `https://www.linkedin.com/posts/${publishResult.postId}`;
@@ -1131,7 +1135,7 @@ async function savePublishedPostToHistory(
         platformUrl = "https://www.facebook.com";
       }
     }
-    console.log("publishResult", platformUrl);
+    console.log("publishResult", publishResult);
     console.log("platformUrl", platformUrl);
     const publishedUrls = {
       [post.platform]: platformUrl,
@@ -1140,7 +1144,6 @@ async function savePublishedPostToHistory(
     const response = await API.savePublishedUrls({
       postId,
       postContent: post.content || post.caption,
-      postUrl: post?.url,
       publishedUrls,
       platforms: [post.platform],
       category: "General",
