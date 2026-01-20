@@ -15,7 +15,6 @@ function RecentPosts({ post }: any) {
   const { t } = useTranslation();
 
   const allPosts = post || state?.generatedPosts || [];
-  console.log("allPosts", allPosts);
   const socialPlatforms: Platform[] = [
     "facebook",
     "linkedin",
@@ -24,7 +23,6 @@ function RecentPosts({ post }: any) {
     "tiktok",
   ];
 
-  // ✅ platforms which actually have posts
   const platformsWithData = useMemo(() => {
     const set = new Set<Platform>();
     for (const p of allPosts) {
@@ -40,18 +38,14 @@ function RecentPosts({ post }: any) {
   const [selectedPlatform, setSelectedPlatform] =
     useState<Platform>("facebook");
 
-  // ✅ keep selected platform valid
   useEffect(() => {
-    // if selected has data => keep
     if (platformsWithDataSet.has(selectedPlatform)) return;
 
-    // else: if facebook has data => facebook
     if (platformsWithDataSet.has("facebook")) {
       setSelectedPlatform("facebook");
       return;
     }
 
-    // else: first available
     const first = platformsWithData[0];
     if (first) setSelectedPlatform(first);
   }, [platformsWithData, platformsWithDataSet, selectedPlatform]);
@@ -97,8 +91,8 @@ function RecentPosts({ post }: any) {
                     isActive && hasData
                       ? "ring-4 ring-blue-200 shadow-md"
                       : hasData
-                      ? "hover:shadow-md"
-                      : ""
+                        ? "hover:shadow-md"
+                        : ""
                   }
                   ${hasData ? "" : "opacity-30 cursor-not-allowed"}
                 `}
@@ -117,14 +111,14 @@ function RecentPosts({ post }: any) {
                       {platform === "facebook"
                         ? "FB"
                         : platform === "instagram"
-                        ? "IG"
-                        : platform === "linkedin"
-                        ? "IN"
-                        : platform === "youtube"
-                        ? "YT"
-                        : platform === "tiktok"
-                        ? "TT"
-                        : "P"}
+                          ? "IG"
+                          : platform === "linkedin"
+                            ? "IN"
+                            : platform === "youtube"
+                              ? "YT"
+                              : platform === "tiktok"
+                                ? "TT"
+                                : "P"}
                     </span>
                   )}
                 </div>

@@ -83,7 +83,7 @@ export interface AppState {
   balance: number;
   isProfileEditing?: boolean;
   isPasswordEditing?: boolean;
-  connectedPlatforms: Platform[];
+  connectedPlatforms: Platform[] | null;
   connectingPlatforms: Platform[];
   analyticsList: any[];
   analyticsLoading: boolean;
@@ -153,7 +153,7 @@ const initialState: AppState & {
   addons: [],
   loader: false,
   unreadCount: 0,
-  connectedPlatforms: [],
+  connectedPlatforms: null,
   connectingPlatforms: [],
   analyticsList: [],
   analyticsLoading: false,
@@ -674,7 +674,7 @@ export const useAppContext = () => {
   if (!context) {
     throw new Error("useAppContext must be used within AppProvider");
   }
-
+  const [cost, setCost] = useState(0);
   const {
     state,
     dispatch,
@@ -795,7 +795,8 @@ export const useAppContext = () => {
     fetchUnreadCount,
     paymentProcessing: processing,
     setProcessing: setProcessing,
-
+    cost,
+    setCost,
     generationAmounts: generationAmounts,
     fetchPostHistory: fetchPostHistory,
     refreshUser,

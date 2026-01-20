@@ -95,7 +95,6 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
           prompt: ` Please write the content strictly in ${languageName}. ${contentData?.prompt}`,
         },
         (platform, progress) => {
-          console.log(`Progress: ${platform} - ${progress}%`);
           setCurrentPlatform(platform);
           setProgress(progress);
         }

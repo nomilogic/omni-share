@@ -646,5 +646,11 @@
   "join_now": "立即加入",
   "joining": "正在加入",
   "omnishare_auto_resizes_description": "当然。OmniShare 会自动调整您的图片和视频大小，创建 YouTube 缩略图，并确保每条发布都符合各个平台的精确规范。",
-  "does_omnishare_optimize_media_for_each_platform": "OmniShare 是否针对每个平台优化媒体？"
+  "does_omnishare_optimize_media_for_each_platform": "OmniShare 是否针对每个平台优化媒体？",
+
+  "unsaved_changes_warning": "您有未保存的更改。您确定要离开吗？",
+  "publishing_in_progress": "发布进行中。您确定要离开吗？",
+  "image_regeneration_in_progress": "图像重新生成进行中。您确定要离开吗？",
+  "loading_dashboard": "正在加载仪表板...",
+  "loading_accounts": "正在加载帐户..."
 }

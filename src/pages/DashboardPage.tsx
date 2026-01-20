@@ -1,6 +1,7 @@
 import React, { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
+import { useLoading } from "../context/LoadingContext";
 import ProfileCard from "../components/dashboard/ProfileCard";
 import StatsCard from "../components/dashboard/StatsCard";
 import RecentPosts from "../components/dashboard/RecentPosts";
@@ -21,6 +22,7 @@ export const DashboardPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const { state, user, setPasswordEditing, setProfileEditing }: any =
     useAppContext();
+  const { showLoading, hideLoading } = useLoading();
   const profileParam = searchParams.get("profile") === "true";
   const isEditing = profileParam || state?.isProfileEditing || false;
   const isPasswordEditing = state?.isPasswordEditing || false;
@@ -36,6 +38,15 @@ export const DashboardPage: React.FC = () => {
     if (!profileMode) setProfileEditing(false);
     else setProfileEditing(true);
   }, []);
+
+  // Show loading while analytics data is being fetched
+  useEffect(() => {
+    if (hasAnalytics === null) {
+      showLoading(t("loading_dashboard") || "Loading dashboard...");
+    } else {
+      hideLoading();
+    }
+  }, [hasAnalytics, showLoading, hideLoading, t]);
 
   const handleReferralClick = () => {
     openModal(ReferralSection, {});
@@ -55,7 +66,6 @@ export const DashboardPage: React.FC = () => {
   const referralCoin = user?.wallet?.referralCoin || 0;
 
   const posts = state.postHistory;
-  console.log("posts", posts);
   const isFreePlan = userPlan?.toLowerCase() === "free";
   const hasLowCoins = (user.wallet?.coins ?? 0) < 6;
   const shouldShowUpgrade = isFreePlan || hasLowCoins;

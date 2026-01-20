@@ -142,7 +142,6 @@ function AccountSecurityTabs() {
     name: "answers",
   });
   const openAuthModal = (action: any, passwordsValue?: any) => {
-    console.log("action", action);
     openModal(AuthenticatorModalWrapper, {
       isResetPassword: action == "disable-2fa" ? false : true,
       pendingQuestions: pendingQuestions,

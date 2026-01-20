@@ -85,7 +85,6 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
 
     try {
       setLoading(true);
-      console.log("Loading stats for campaign:", campaign.id);
 
       const token = Cookies.get("auth_token");
       const headers = {
@@ -176,10 +175,7 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
       };
 
       setStats(actualStats);
-      console.log("Campaign stats loaded:", actualStats);
     } catch (error) {
-      console.error("Error loading campaign stats:", error);
-      // Set default stats on error
       setStats({
         totalPosts: 0,
         publishedPosts: 0,

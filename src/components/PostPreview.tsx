@@ -29,7 +29,6 @@ import { useTranslation } from "react-i18next";
 import { useModal } from "../context2/ModalContext";
 import DiscardPostModal from "../components/modals/DiscardPostModal";
 
-
 interface PostPreviewProps {
   posts: any[];
   onBack: () => void;
@@ -40,14 +39,13 @@ interface PostPreviewProps {
   onConnectAccounts?: () => void;
 }
 
-export const PostPreview: React.FC<PostPreviewProps> = ({
+export const PostPreview = ({
   posts: generatedPosts,
-  onBack,
-  onEdit,
+
   onPublish,
   onPostsUpdate,
   onRegeneratePlatform,
-}) => {
+}: any) => {
   const { t, i18n } = useTranslation();
   const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
   const [selectedPlatform, setSelectedPlatform] = useState<Platform>(
@@ -62,12 +60,137 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
   const [isRegeneratingMode, setIsRegeneratingMode] = useState<boolean>(false);
   const [regenerationPrompt, setRegenerationPrompt] = useState<string>("");
   const [isRegenerating, setIsRegenerating] = useState<boolean>(false);
-  
 
   const [pendingDiscardAction, setPendingDiscardAction] = useState<
     (() => void) | null
   >(null);
   const navigate = useNavigate();
+
+  // Check if there's unsaved content or active operations (including unpublished posts)
+  const hasActiveOperation = useCallback(() => {
+    return (
+      hasUnsavedChanges ||
+      isRegenerating ||
+      editingMode ||
+      (posts?.length ?? 0) > 0
+    );
+  }, [hasUnsavedChanges, isRegenerating, editingMode, posts]);
+
+  // Create a navigation wrapper that checks for unsaved content
+  const navigateWithConfirm = (path: string) => {
+    if (hasActiveOperation()) {
+      const confirmLeave = window.confirm(
+        t("unsaved_changes_warning") ||
+          "You have unsaved changes. Are you sure you want to leave?"
+      );
+      if (!confirmLeave) return;
+    }
+    navigate(path);
+  };
+
+  // Add beforeunload listener for page refresh
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (hasActiveOperation()) {
+        e.preventDefault();
+        e.returnValue =
+          t("unsaved_changes_warning") ||
+          "You have unsaved changes. Are you sure you want to leave?";
+        return e.returnValue;
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [hasActiveOperation, t]);
+
+  // Intercept all navigation attempts (including link clicks and React Router links)
+  useEffect(() => {
+    const handleClickCapture = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      // Check for both regular links and React Router Link components
+      const link = target.closest("a") as HTMLAnchorElement;
+
+      if (link) {
+        // Only intercept internal links (not external URLs and not downloads)
+        const href = link.getAttribute("href");
+        if (href && !href.includes("://") && !link.download) {
+          if (hasActiveOperation()) {
+            e.preventDefault();
+            e.stopPropagation();
+            const confirmLeave = window.confirm(
+              t("unsaved_changes_warning") ||
+                "You have unsaved changes. Are you sure you want to leave?"
+            );
+            if (confirmLeave) {
+              // Use navigate instead of click for React Router Links
+              navigate(href);
+            }
+          }
+        }
+      }
+    };
+
+    // Use capture phase to intercept before default behavior
+    document.addEventListener("click", handleClickCapture, true);
+    return () => {
+      document.removeEventListener("click", handleClickCapture, true);
+    };
+  }, [hasActiveOperation, t, navigate]);
+
+  // Monitor URL changes and show confirmation for React Router navigation
+  useEffect(() => {
+    let previousPathname = window.location.pathname;
+
+    const handleLocationChange = () => {
+      const currentPathname = window.location.pathname;
+      if (previousPathname !== currentPathname && hasActiveOperation()) {
+        // URL is changing, show confirmation
+        const confirmLeave = window.confirm(
+          t("unsaved_changes_warning") ||
+            "You have unsaved changes. Are you sure you want to leave?"
+        );
+        if (!confirmLeave) {
+          // Revert to previous URL
+          window.history.replaceState(null, "", previousPathname);
+          window.history.back();
+        } else {
+          previousPathname = currentPathname;
+        }
+      } else {
+        previousPathname = currentPathname;
+      }
+    };
+
+    window.addEventListener("popstate", handleLocationChange);
+    return () => {
+      window.removeEventListener("popstate", handleLocationChange);
+    };
+  }, [hasActiveOperation, t]);
+
+  // Override navigation to show confirmation for back button
+  useEffect(() => {
+    const handlePopState = (e: PopStateEvent) => {
+      if (hasActiveOperation()) {
+        const confirmLeave = window.confirm(
+          t("unsaved_changes_warning") ||
+            "You have unsaved changes. Are you sure you want to leave?"
+        );
+        if (!confirmLeave) {
+          // Re-push current state to prevent navigation
+          window.history.pushState(null, "", window.location.href);
+        }
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [hasActiveOperation, t]);
+
   // Calculate initial character counts for all posts
   useEffect(() => {
     const postsWithCharacterCount = generatedPosts.map((post) => ({
@@ -78,19 +201,15 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
     }));
     setPosts(postsWithCharacterCount);
   }, [generatedPosts]);
-const { dispatch } = useAppContext();
+  const { dispatch, cost }: any = useAppContext();
   const handleDiscardAction = useCallback(() => {
-     dispatch({ type: "SET_GENERATED_POSTS", payload: [] });
+    dispatch({ type: "SET_GENERATED_POSTS", payload: [] });
     dispatch({ type: "SET_CONTENT_DATA", payload: null });
-
-    
 
     document.body.classList.remove("modal-open");
     document.documentElement.classList.remove("modal-open");
 
     navigate("/content");
-
-
   }, [navigate]);
 
   const handleDiscardClick = useCallback(() => {
@@ -249,13 +368,11 @@ const { dispatch } = useAppContext();
     regenerationPrompt,
   ]);
 
-  // Handle regeneration cancel
   const handleRegenerateCancel = useCallback(() => {
     setIsRegeneratingMode(false);
     setRegenerationPrompt("");
   }, []);
 
-  // Update regeneration prompt when platform changes (for when regeneration mode is already active)
   useEffect(() => {
     if (isRegeneratingMode) {
       const currentPost = posts.find(
@@ -270,12 +387,9 @@ const { dispatch } = useAppContext();
     }
   }, [selectedPlatform, posts, isRegeneratingMode]);
 
-  // Utility function to detect if URL is a video
   const isVideoUrl = useCallback((url: string) => {
     if (!url) return false;
 
-    // Check if it's a video file - match actual video file extensions
-    // Exclude data URLs and certain image generation services
     return (
       !url.startsWith("data:") &&
       !url.includes("pollinations.ai") &&
@@ -283,7 +397,6 @@ const { dispatch } = useAppContext();
     );
   }, []);
 
-  // Helper to detect video even when URL has no extension (e.g., blob: URLs)
   const isVideoMedia = useCallback(
     (p: any, url?: string) => {
       const mUrl = url ?? p?.mediaUrl;
@@ -1029,18 +1142,22 @@ const { dispatch } = useAppContext();
   };
 
   const selectedPost = posts.find((post) => post.platform === selectedPlatform);
-
+  console.log("cost", cost);
   return (
     <div className="preview w-full mx-auto bg-transparent  md:rounded-md p-4 md:shadow-md md:px-8  md:py-6 md:my-5 bg-white ">
       <h2 className="text-3xl font-semibold theme-text-primary mb-1">
         {t("ai_generated_posts")}
       </h2>
+
       <p className="text-sm theme-text-primary">{t("review_copy_share")}</p>
       <div className="grid lg:grid-cols-1  gap-1">
         <div className="lg:col-span-1 space-y-4">
-          <h3 className="text-lg font-semibold text-slate-900 mb-0 text-left lg:text-center mt-2">
-            {t("select_platform")}
-          </h3>
+          <div>
+            <h3 className="text-lg font-semibold text-slate-900 mb-0 text-left lg:text-center mt-2">
+              {t("select_platform")}
+            </h3>
+          </div>
+
           <div className="flex flex-wrap gap-3 justify-center">
             {generatedPosts.map((post, index) => {
               const IconComponent = getPlatformIcon(post.platform);
@@ -1087,7 +1204,6 @@ const { dispatch } = useAppContext();
                 {editingMode ? (
                   // Editing Mode - Show save/cancel buttons
                   <div className="flex gap-3 justify-center">
-                    
                     <button
                       onClick={() => {
                         discardChanges();
