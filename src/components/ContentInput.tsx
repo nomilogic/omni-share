@@ -40,7 +40,7 @@ import API from "@/services/api";
 import { notify } from "@/utils/toast";
 import { useTranslation } from "react-i18next";
 import ImageRegenerationModal from "./ImageRegenerationModal";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const fileToBase64 = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -197,6 +197,129 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   const [pendingPostGeneration, setPendingPostGeneration] = useState<any>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
+
+  // Check if there's unsaved content (including generated posts)
+  const hasUnsavedContent = () => {
+    return (
+      (formData?.prompt?.trim?.()?.length ?? 0) > 0 ||
+      !!formData?.media ||
+      !!formData?.mediaUrl ||
+      !!selectedTemplate ||
+      !!selectedPostType ||
+      (generatedResults?.length ?? 0) > 0 ||  // Check for generated posts
+      showPreview  // Check if preview is open
+    );
+  };
+
+  // Create a navigation wrapper that checks for unsaved content
+  const navigateWithConfirm = (path: string) => {
+    if (hasUnsavedContent()) {
+      const confirmLeave = window.confirm(
+        t("unsaved_changes_warning") || "You have unsaved changes. Are you sure you want to leave?"
+      );
+      if (!confirmLeave) return;
+    }
+    navigate(path);
+  };
+
+  // Add beforeunload listener for page refresh
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (hasUnsavedContent()) {
+        e.preventDefault();
+        e.returnValue = t("unsaved_changes_warning") || "You have unsaved changes. Are you sure you want to leave?";
+        return e.returnValue;
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [formData, selectedTemplate, selectedPostType, t]);
+
+  // Intercept all navigation attempts (including link clicks and React Router links)
+  useEffect(() => {
+    const handleClickCapture = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      // Check for both regular links and React Router Link components
+      const link = target.closest("a") as HTMLAnchorElement;
+      
+      if (link) {
+        // Only intercept internal links (not external URLs and not downloads)
+        const href = link.getAttribute("href");
+        if (href && !href.includes("://") && !link.download) {
+          if (hasUnsavedContent()) {
+            e.preventDefault();
+            e.stopPropagation();
+            const confirmLeave = window.confirm(
+              t("unsaved_changes_warning") || "You have unsaved changes. Are you sure you want to leave?"
+            );
+            if (confirmLeave) {
+              // Use navigate instead of click for React Router Links
+              navigate(href);
+            }
+          }
+        }
+      }
+    };
+
+    // Use capture phase to intercept before default behavior
+    document.addEventListener("click", handleClickCapture, true);
+    return () => {
+      document.removeEventListener("click", handleClickCapture, true);
+    };
+  }, [hasUnsavedContent, t, navigate]);
+
+  // Monitor URL changes and show confirmation for React Router navigation
+  useEffect(() => {
+    let previousPathname = window.location.pathname;
+
+    const handleLocationChange = () => {
+      const currentPathname = window.location.pathname;
+      if (previousPathname !== currentPathname && hasUnsavedContent()) {
+        // URL is changing, show confirmation
+        const confirmLeave = window.confirm(
+          t("unsaved_changes_warning") || "You have unsaved changes. Are you sure you want to leave?"
+        );
+        if (!confirmLeave) {
+          // Revert to previous URL
+          window.history.replaceState(null, "", previousPathname);
+          window.history.back();
+        } else {
+          previousPathname = currentPathname;
+        }
+      } else {
+        previousPathname = currentPathname;
+      }
+    };
+
+    window.addEventListener("popstate", handleLocationChange);
+    return () => {
+      window.removeEventListener("popstate", handleLocationChange);
+    };
+  }, [hasUnsavedContent, t]);
+
+  // Override navigation to show confirmation for back button
+  useEffect(() => {
+    const handlePopState = (e: PopStateEvent) => {
+      if (hasUnsavedContent()) {
+        const confirmLeave = window.confirm(
+          t("unsaved_changes_warning") || "You have unsaved changes. Are you sure you want to leave?"
+        );
+        if (!confirmLeave) {
+          // Re-push current state to prevent navigation
+          window.history.pushState(null, "", window.location.href);
+        }
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [hasUnsavedContent, t]);
 
   const getAppropiatePlatforms = (
     postType: "text" | "image" | "video",

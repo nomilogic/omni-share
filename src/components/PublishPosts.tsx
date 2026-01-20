@@ -114,6 +114,130 @@ export const PublishPosts: React.FC<PublishProps> = ({
 
   const navigate = useNavigate();
 
+  // Check if there's active publishing or selected platforms
+  const hasActiveOperation = () => {
+    return publishing || (selectedPlatforms?.length ?? 0) > 0;
+  };
+
+  // Create a navigation wrapper that checks for unsaved content
+  const navigateWithConfirm = (path: string) => {
+    if (hasActiveOperation()) {
+      const confirmLeave = window.confirm(
+        publishing
+          ? (t("publishing_in_progress") || "Publishing is in progress. Are you sure you want to leave?")
+          : (t("unsaved_changes_warning") || "You have unsaved changes. Are you sure you want to leave?")
+      );
+      if (!confirmLeave) return;
+    }
+    navigate(path);
+  };
+
+  // Add beforeunload listener for page refresh
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (hasActiveOperation()) {
+        e.preventDefault();
+        e.returnValue = publishing
+          ? (t("publishing_in_progress") || "Publishing is in progress. Are you sure you want to leave?")
+          : (t("unsaved_changes_warning") || "You have unsaved changes. Are you sure you want to leave?");
+        return e.returnValue;
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [publishing, selectedPlatforms, t]);
+
+  // Intercept all navigation attempts (including link clicks and React Router links)
+  useEffect(() => {
+    const handleClickCapture = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      // Check for both regular links and React Router Link components
+      const link = target.closest("a") as HTMLAnchorElement;
+      
+      if (link) {
+        // Only intercept internal links (not external URLs and not downloads)
+        const href = link.getAttribute("href");
+        if (href && !href.includes("://") && !link.download) {
+          if (hasActiveOperation()) {
+            e.preventDefault();
+            e.stopPropagation();
+            const confirmLeave = window.confirm(
+              publishing
+                ? (t("publishing_in_progress") || "Publishing is in progress. Are you sure you want to leave?")
+                : (t("unsaved_changes_warning") || "You have unsaved changes. Are you sure you want to leave?")
+            );
+            if (confirmLeave) {
+              // Use navigate instead of click for React Router Links
+              navigate(href);
+            }
+          }
+        }
+      }
+    };
+
+    // Use capture phase to intercept before default behavior
+    document.addEventListener("click", handleClickCapture, true);
+    return () => {
+      document.removeEventListener("click", handleClickCapture, true);
+    };
+  }, [hasActiveOperation, publishing, t, navigate]);
+
+  // Monitor URL changes and show confirmation for React Router navigation
+  useEffect(() => {
+    let previousPathname = window.location.pathname;
+
+    const handleLocationChange = () => {
+      const currentPathname = window.location.pathname;
+      if (previousPathname !== currentPathname && hasActiveOperation()) {
+        // URL is changing, show confirmation
+        const confirmLeave = window.confirm(
+          publishing
+            ? (t("publishing_in_progress") || "Publishing is in progress. Are you sure you want to leave?")
+            : (t("unsaved_changes_warning") || "You have unsaved changes. Are you sure you want to leave?")
+        );
+        if (!confirmLeave) {
+          // Revert to previous URL
+          window.history.replaceState(null, "", previousPathname);
+          window.history.back();
+        } else {
+          previousPathname = currentPathname;
+        }
+      } else {
+        previousPathname = currentPathname;
+      }
+    };
+
+    window.addEventListener("popstate", handleLocationChange);
+    return () => {
+      window.removeEventListener("popstate", handleLocationChange);
+    };
+  }, [hasActiveOperation, publishing, t]);
+
+  // Override navigation to show confirmation for back button
+  useEffect(() => {
+    const handlePopState = (e: PopStateEvent) => {
+      if (hasActiveOperation()) {
+        const confirmLeave = window.confirm(
+          publishing
+            ? (t("publishing_in_progress") || "Publishing is in progress. Are you sure you want to leave?")
+            : (t("unsaved_changes_warning") || "You have unsaved changes. Are you sure you want to leave?")
+        );
+        if (!confirmLeave) {
+          // Re-push current state to prevent navigation
+          window.history.pushState(null, "", window.location.href);
+        }
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [hasActiveOperation, publishing, t]);
+
   useEffect(() => {
     const hasTikTokPost = posts.some((p) => p.platform === "tiktok");
     if (!hasTikTokPost) {

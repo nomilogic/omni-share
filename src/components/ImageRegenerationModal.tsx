@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import Icon from "./Icon";
 
 export default function ImageRegenerationModal({
@@ -22,6 +23,118 @@ export default function ImageRegenerationModal({
 }: any) {
   const [prompt, setPrompt] = useState("");
   const [activeImage, setActiveImage] = useState(imageUrl);
+  const { t } = useTranslation();
+
+  // Check if there's active regeneration or unsaved changes
+  const hasActiveOperation = () => {
+    return isLoading || prompt.trim().length > 0 || allGeneration?.length > 0;
+  };
+
+  // Add beforeunload listener for page refresh
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (hasActiveOperation()) {
+        e.preventDefault();
+        e.returnValue = isLoading
+          ? (t("image_regeneration_in_progress") || "Image regeneration in progress. Are you sure you want to leave?")
+          : (t("unsaved_changes_warning") || "You have unsaved changes. Are you sure you want to leave?");
+        return e.returnValue;
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [isLoading, prompt, t]);
+
+  // Intercept all navigation attempts (including link clicks and React Router links)
+  useEffect(() => {
+    const handleClickCapture = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      // Check for both regular links and React Router Link components
+      const link = target.closest("a") as HTMLAnchorElement;
+      
+      if (link) {
+        // Only intercept internal links (not external URLs and not downloads)
+        const href = link.getAttribute("href");
+        if (href && !href.includes("://") && !link.download) {
+          if (hasActiveOperation()) {
+            e.preventDefault();
+            e.stopPropagation();
+            const confirmLeave = window.confirm(
+              isLoading
+                ? (t("image_regeneration_in_progress") || "Image regeneration in progress. Are you sure you want to leave?")
+                : (t("unsaved_changes_warning") || "You have unsaved changes. Are you sure you want to leave?")
+            );
+            if (confirmLeave) {
+              // Close modal and let parent handle navigation
+              onClose();
+            }
+          }
+        }
+      }
+    };
+
+    // Use capture phase to intercept before default behavior
+    document.addEventListener("click", handleClickCapture, true);
+    return () => {
+      document.removeEventListener("click", handleClickCapture, true);
+    };
+  }, [hasActiveOperation, isLoading, t]);
+
+  // Monitor URL changes and show confirmation for React Router navigation
+  useEffect(() => {
+    let previousPathname = window.location.pathname;
+
+    const handleLocationChange = () => {
+      const currentPathname = window.location.pathname;
+      if (previousPathname !== currentPathname && hasActiveOperation()) {
+        // URL is changing, show confirmation
+        const confirmLeave = window.confirm(
+          isLoading
+            ? (t("image_regeneration_in_progress") || "Image regeneration in progress. Are you sure you want to leave?")
+            : (t("unsaved_changes_warning") || "You have unsaved changes. Are you sure you want to leave?")
+        );
+        if (!confirmLeave) {
+          // Revert to previous URL
+          window.history.replaceState(null, "", previousPathname);
+          window.history.back();
+        } else {
+          previousPathname = currentPathname;
+        }
+      } else {
+        previousPathname = currentPathname;
+      }
+    };
+
+    window.addEventListener("popstate", handleLocationChange);
+    return () => {
+      window.removeEventListener("popstate", handleLocationChange);
+    };
+  }, [hasActiveOperation, isLoading, t]);
+
+  // Override navigation to show confirmation for back button
+  useEffect(() => {
+    const handlePopState = (e: PopStateEvent) => {
+      if (hasActiveOperation()) {
+        const confirmLeave = window.confirm(
+          isLoading
+            ? (t("image_regeneration_in_progress") || "Image regeneration in progress. Are you sure you want to leave?")
+            : (t("unsaved_changes_warning") || "You have unsaved changes. Are you sure you want to leave?")
+        );
+        if (!confirmLeave) {
+          // Re-push current state to prevent navigation
+          window.history.pushState(null, "", window.location.href);
+        }
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [hasActiveOperation, isLoading, t]);
 
   useEffect(() => {
     if (imageUrl) setActiveImage(imageUrl);
@@ -98,7 +211,20 @@ export default function ImageRegenerationModal({
           </div>
 
           <button
-            onClick={onClose}
+            onClick={() => {
+              if (hasActiveOperation()) {
+                const confirmLeave = window.confirm(
+                  isLoading
+                    ? (t("image_regeneration_in_progress") || "Image regeneration in progress. Are you sure you want to leave?")
+                    : (t("unsaved_changes_warning") || "You have unsaved changes. Are you sure you want to leave?")
+                );
+                if (confirmLeave) {
+                  onClose();
+                }
+              } else {
+                onClose();
+              }
+            }}
             className="rounded-lg px-3 py-2 text-gray-600 hover:bg-gray-100 active:bg-gray-200 transition"
             aria-label="Close"
             title="Close"
