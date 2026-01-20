@@ -782,19 +782,20 @@ function AccountSecurityTabs() {
                         })}
 
                         <div className="flex gap-3  md:flex-row flex-col">
-                          <button
-                            type="submit"
-                            disabled={loading}
-                            className="flex-1 text-white text-md transition-all border-2 border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] py-3 rounded-md disabled:opacity-60 font-medium"
-                          >
-                            {loading ? "Saving..." : "Save Security Questions"}
-                          </button>
+                          
                           <button
                             type="button"
                             onClick={() => setEditingQuestions(false)}
                             className="flex-1 bg-transparent border-purple-600 border text-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] py-3 rounded-md font-medium"
                           >
                             Cancel
+                          </button>
+                          <button
+                            type="submit"
+                            disabled={loading}
+                            className="flex-1 text-white text-md transition-all border-2 border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] py-3 rounded-md disabled:opacity-60 font-medium"
+                          >
+                            {loading ? "Saving..." : "Save Security Questions"}
                           </button>
                         </div>
                       </form>

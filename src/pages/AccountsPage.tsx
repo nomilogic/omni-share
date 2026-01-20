@@ -34,7 +34,7 @@ export const AccountsPage: React.FC = () => {
   useEffect(() => {
     // Show preloader while platforms are being fetched
     if (isLoading) {
-      showLoading(t("loading_accounts") || "Loading accounts...");
+      showLoading("Loading accounts...");
     } else {
       hideLoading();
     }

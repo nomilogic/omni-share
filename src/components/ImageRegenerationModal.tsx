@@ -359,7 +359,7 @@ export default function ImageRegenerationModal({
             <button
               onClick={handleSubmit}
               disabled={isLoading || !prompt.trim()}
-              className=" group w-full rounded-md border border-purple-600 hover:bg-gray-50 transition  flex items-center justify-between   text-[#7650e3]  duration-200 py-3 px-4 font-medium disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+              className=" group w-full py-2 rounded-md border border-purple-600 hover:bg-gray-50 transition  flex items-center justify-between   text-[#7650e3]  duration-200  px-4 font-medium disabled:opacity-50 disabled:cursor-not-allowed text-sm"
             >
               {isLoading ? "Generating..." : modifyMode ? "Modify" : "Regenerate"}
               <div className="px-2.5 py-1.5 flex items-center gap-2">
@@ -375,7 +375,7 @@ export default function ImageRegenerationModal({
             <button
               onClick={selectedFile ? onFileSave : confirmImage}
               disabled={isLoading || !activeImage}
-              className="px-5 rounded-md w-full bg-purple-600/10  py-3 text-md font-medium text-purple-700 hover:border-gray-400  border border-[#7650e3] theme-bg-trinary theme-text-light hover:bg-[#d7d7fc] hover:text-[#7650e3] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-5 rounded-md w-full bg-purple-600/10  py-2 text-md font-medium text-purple-700 hover:border-gray-400  border border-[#7650e3] theme-bg-trinary theme-text-light hover:bg-[#d7d7fc] hover:text-[#7650e3] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Continue
             </button>
