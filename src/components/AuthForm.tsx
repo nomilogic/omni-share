@@ -205,7 +205,6 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         }
       } catch (e) {}
     } catch (error: any) {
-      console.log("error312321312", error);
       const message =
         error.response?.data?.message || t("authentication_failed");
       notify("error", message);
@@ -266,7 +265,6 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         setLoading(false);
         return;
       }
-      console.log("result1212312321", result);
       if (result.accessToken) {
         Cookies.set("auth_token", result.accessToken, {
           expires: 1,
@@ -363,7 +361,6 @@ export const AuthForm: React.FC<AuthFormProps> = ({
 
     try {
       const result: any = await initiateLinkedInOAuth(referralId);
-      console.log("result", result);
       if (result?.challengeName === "SOFTWARE_TOKEN_MFA" && result?.session) {
         setQuestion(result?.question);
 
@@ -406,7 +403,6 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         navigate("/content");
       }
     } catch (error: any) {
-      console.log("error", error);
       notify(
         "error",
         error.response?.data?.message || t("linkedin_auth_failed")

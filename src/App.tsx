@@ -39,10 +39,8 @@ const OAuthCallbackWrapper = () => {
   const { dispatch } = useAppContext();
 
   const handleAuthSuccess = (user: any) => {
-    // Cache user to localStorage on login
     localStorage.setItem("cached_user", JSON.stringify(user));
 
-    console.log("user", user);
     dispatch({ type: "SET_USER", payload: user });
     dispatch({
       type: "SET_BALANCE",
@@ -72,7 +70,6 @@ function App() {
 
         const chineseCountries = ["CN", "HK", "TW", "SG", "MO"];
         const spanishCountries = ["ES", "MX", "AR", "CO", "PE"];
-        console.log("data", data);
         if (spanishCountries.includes(data.country)) {
           lang = "es";
         } else if (chineseCountries.includes(data.country)) {
@@ -82,9 +79,7 @@ function App() {
         i18n.changeLanguage(lang);
 
         localStorage.setItem("siteLang", lang);
-      } catch (error) {
-        console.log("Location detection failed:", error);
-      }
+      } catch (error) {}
     };
 
     const savedLang = localStorage.getItem("siteLang");

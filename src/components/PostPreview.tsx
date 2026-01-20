@@ -29,7 +29,6 @@ import { useTranslation } from "react-i18next";
 import { useModal } from "../context2/ModalContext";
 import DiscardPostModal from "../components/modals/DiscardPostModal";
 
-
 interface PostPreviewProps {
   posts: any[];
   onBack: () => void;
@@ -40,14 +39,13 @@ interface PostPreviewProps {
   onConnectAccounts?: () => void;
 }
 
-export const PostPreview: React.FC<PostPreviewProps> = ({
+export const PostPreview = ({
   posts: generatedPosts,
-  onBack,
-  onEdit,
+
   onPublish,
   onPostsUpdate,
   onRegeneratePlatform,
-}) => {
+}: any) => {
   const { t, i18n } = useTranslation();
   const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
   const [selectedPlatform, setSelectedPlatform] = useState<Platform>(
@@ -62,7 +60,6 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
   const [isRegeneratingMode, setIsRegeneratingMode] = useState<boolean>(false);
   const [regenerationPrompt, setRegenerationPrompt] = useState<string>("");
   const [isRegenerating, setIsRegenerating] = useState<boolean>(false);
-  
 
   const [pendingDiscardAction, setPendingDiscardAction] = useState<
     (() => void) | null
@@ -78,19 +75,15 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
     }));
     setPosts(postsWithCharacterCount);
   }, [generatedPosts]);
-const { dispatch } = useAppContext();
+  const { dispatch, cost }: any = useAppContext();
   const handleDiscardAction = useCallback(() => {
-     dispatch({ type: "SET_GENERATED_POSTS", payload: [] });
+    dispatch({ type: "SET_GENERATED_POSTS", payload: [] });
     dispatch({ type: "SET_CONTENT_DATA", payload: null });
-
-    
 
     document.body.classList.remove("modal-open");
     document.documentElement.classList.remove("modal-open");
 
     navigate("/content");
-
-
   }, [navigate]);
 
   const handleDiscardClick = useCallback(() => {
@@ -249,13 +242,11 @@ const { dispatch } = useAppContext();
     regenerationPrompt,
   ]);
 
-  // Handle regeneration cancel
   const handleRegenerateCancel = useCallback(() => {
     setIsRegeneratingMode(false);
     setRegenerationPrompt("");
   }, []);
 
-  // Update regeneration prompt when platform changes (for when regeneration mode is already active)
   useEffect(() => {
     if (isRegeneratingMode) {
       const currentPost = posts.find(
@@ -270,12 +261,9 @@ const { dispatch } = useAppContext();
     }
   }, [selectedPlatform, posts, isRegeneratingMode]);
 
-  // Utility function to detect if URL is a video
   const isVideoUrl = useCallback((url: string) => {
     if (!url) return false;
 
-    // Check if it's a video file - match actual video file extensions
-    // Exclude data URLs and certain image generation services
     return (
       !url.startsWith("data:") &&
       !url.includes("pollinations.ai") &&
@@ -283,7 +271,6 @@ const { dispatch } = useAppContext();
     );
   }, []);
 
-  // Helper to detect video even when URL has no extension (e.g., blob: URLs)
   const isVideoMedia = useCallback(
     (p: any, url?: string) => {
       const mUrl = url ?? p?.mediaUrl;
@@ -1029,18 +1016,22 @@ const { dispatch } = useAppContext();
   };
 
   const selectedPost = posts.find((post) => post.platform === selectedPlatform);
-
+  console.log("cost", cost);
   return (
     <div className="preview w-full mx-auto bg-transparent  md:rounded-md p-4 md:shadow-md md:px-8  md:py-6 md:my-5 bg-white ">
       <h2 className="text-3xl font-semibold theme-text-primary mb-1">
         {t("ai_generated_posts")}
       </h2>
+
       <p className="text-sm theme-text-primary">{t("review_copy_share")}</p>
       <div className="grid lg:grid-cols-1  gap-1">
         <div className="lg:col-span-1 space-y-4">
-          <h3 className="text-lg font-semibold text-slate-900 mb-0 text-left lg:text-center mt-2">
-            {t("select_platform")}
-          </h3>
+          <div>
+            <h3 className="text-lg font-semibold text-slate-900 mb-0 text-left lg:text-center mt-2">
+              {t("select_platform")}
+            </h3>
+          </div>
+
           <div className="flex flex-wrap gap-3 justify-center">
             {generatedPosts.map((post, index) => {
               const IconComponent = getPlatformIcon(post.platform);
@@ -1065,7 +1056,7 @@ const { dispatch } = useAppContext();
                   )}
 
                   {selectedPlatform === post.platform && (
-                    <div className="absolute inset-0 rounded-full border-2 border-blue-500 animate-pulse"></div>
+                    <div className="absolute inset-0 rounded-full  animate-pulse"></div>
                   )}
                 </button>
               );

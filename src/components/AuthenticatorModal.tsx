@@ -90,8 +90,8 @@ const CustomSelect: React.FC<{
           error
             ? "border-red-400"
             : value
-            ? "border-purple-500 shadow-md"
-            : "border-purple-500 shadow-md"
+              ? "border-purple-500 shadow-md"
+              : "border-purple-500 shadow-md"
         }`}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
@@ -137,8 +137,8 @@ const CustomSelect: React.FC<{
                   isSelected
                     ? "bg-purple-50 text-purple-700 font-semibold border-l-4 border-purple-500"
                     : isDisabled
-                    ? "text-gray-400 bg-gray-50 cursor-not-allowed"
-                    : "hover:bg-gray-50 text-black"
+                      ? "text-gray-400 bg-gray-50 cursor-not-allowed"
+                      : "hover:bg-gray-50 text-black"
                 }`}
               >
                 {q.question}
@@ -199,7 +199,6 @@ export const AuthenticatorModal = ({
   question = [],
   passwordsValue,
 }: any) => {
-  console.log("passwordsValue", passwordsValue);
   const [authMethod, setAuthMethod] = useState<AuthMethod>("totp");
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
@@ -299,7 +298,6 @@ export const AuthenticatorModal = ({
         onClose();
       }
     } catch (err: any) {
-      console.log("err", err);
       const message =
         err?.response?.data?.message || err?.message || "Verification failed.";
       notify("error", message);

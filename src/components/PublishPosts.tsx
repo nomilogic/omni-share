@@ -58,7 +58,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
   onReset,
 }) => {
   const { t } = useTranslation();
-  const { showLoading, hideLoading, updateLoadingMessage } = useLoading();
+  const { showLoading, hideLoading } = useLoading();
 
   const {
     connectedPlatforms,

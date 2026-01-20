@@ -674,7 +674,7 @@ export const useAppContext = () => {
   if (!context) {
     throw new Error("useAppContext must be used within AppProvider");
   }
-
+  const [cost, setCost] = useState(0);
   const {
     state,
     dispatch,
@@ -795,7 +795,8 @@ export const useAppContext = () => {
     fetchUnreadCount,
     paymentProcessing: processing,
     setProcessing: setProcessing,
-
+    cost,
+    setCost,
     generationAmounts: generationAmounts,
     fetchPostHistory: fetchPostHistory,
     refreshUser,

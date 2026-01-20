@@ -312,7 +312,7 @@ export default function Analytics({ onHasAnalyticsChange }: Props) {
 
       <button
         onClick={() => navigate(`/analytics?platform=${selectedPlatform}`)}
-        className="mt-4 w-full py-2.5 px-4 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-md transition-colors"
+        className="w-full text-white py-2 px-4 rounded-md font-semibold text-md transition-all border-2 border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] mt-4"
         disabled={!selectedPlatform}
       >
         {t("view_details") || "View Full Analytics"}
