@@ -29,7 +29,9 @@ export const AccountsPage: React.FC = () => {
     handleDisconnectPlatform,
   } = useAppContext();
 
-  const isLoading = !connectedPlatforms || connectedPlatforms.length === 0;
+  // Only show loading if connectedPlatforms is null/undefined (data hasn't been fetched yet)
+  // Empty array means data is loaded but no platforms are connected
+  const isLoading = connectedPlatforms === null || connectedPlatforms === undefined;
 
   useEffect(() => {
     // Show preloader while platforms are being fetched
@@ -66,7 +68,7 @@ export const AccountsPage: React.FC = () => {
 
         <div className="p-2 bg-blue-50 border border-blue-200 rounded-md">
           <p className="text-sm text-blue-800">
-            <span className="font-medium">{connectedPlatforms.length}</span> of{" "}
+            <span className="font-medium">{connectedPlatforms?.length ?? 0}</span> of{" "}
             <span className="font-medium">{ALL_PLATFORMS.length}</span>{" "}
             {t("platforms_connected")}
           </p>
@@ -75,7 +77,7 @@ export const AccountsPage: React.FC = () => {
 
       <div className="flex flex-col gap-y-3 mb-2">
         {ALL_PLATFORMS.map((platform) => {
-          const isConnected = connectedPlatforms.includes(platform);
+          const isConnected = connectedPlatforms?.includes(platform) ?? false;
           const isConnecting = connectingPlatforms.includes(platform);
 
           return (
