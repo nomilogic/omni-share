@@ -686,5 +686,11 @@
   "week": "This Week",
   "month": "This Month",
   "engagement": "Engagement",
-  "close": "Close"
+  "close": "Close",
+
+  "unsaved_changes_warning": "You have unsaved changes. Are you sure you want to leave?",
+  "publishing_in_progress": "Publishing is in progress. Are you sure you want to leave?",
+  "image_regeneration_in_progress": "Image regeneration in progress. Are you sure you want to leave?",
+  "loading_dashboard": "Loading dashboard...",
+  "loading_accounts": "Loading accounts..."
 }

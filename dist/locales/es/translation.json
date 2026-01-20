@@ -646,5 +646,11 @@
   "join_now": "Únete",
   "joining": "Uniéndose",
   "omnishare_auto_resizes_description": "Absolutamente. OmniShare redimensiona automáticamente tus imágenes y videos, crea miniaturas para YouTube y garantiza que cada publicación cumpla con las especificaciones exactas de la plataforma.",
-  "does_omnishare_optimize_media_for_each_platform": "¿OmniShare optimiza los medios para cada plataforma?"
+  "does_omnishare_optimize_media_for_each_platform": "¿OmniShare optimiza los medios para cada plataforma?",
+
+  "unsaved_changes_warning": "Tienes cambios sin guardar. ¿Estás seguro de que quieres irte?",
+  "publishing_in_progress": "La publicación está en progreso. ¿Estás seguro de que quieres irte?",
+  "image_regeneration_in_progress": "La regeneración de imagen está en progreso. ¿Estás seguro de que quieres irte?",
+  "loading_dashboard": "Cargando panel...",
+  "loading_accounts": "Cargando cuentas..."
 }
