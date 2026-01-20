@@ -264,6 +264,7 @@ interface AppContextType {
   generationAmounts: any;
   setGenerationAmounts: React.Dispatch<React.SetStateAction<any>>;
   fetchBalance: () => Promise<void>;
+  fetchPostHistory: () => Promise<void>;
   refreshUser: () => Promise<void>;
   selectCampaign: (campaign: null) => void;
   logout: () => void;
@@ -426,7 +427,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
         return;
       }
 
-      // Try to load cached user data first
       const cachedUser = localStorage.getItem("cached_user");
       if (cachedUser) {
         try {
@@ -646,6 +646,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       fetchUnreadCount,
       refreshBalance: fetchBalance,
       fetchAnalytics,
+      fetchPostHistory,
     }),
     [
       state,
@@ -673,7 +674,7 @@ export const useAppContext = () => {
   if (!context) {
     throw new Error("useAppContext must be used within AppProvider");
   }
-
+  const [cost, setCost] = useState(0);
   const {
     state,
     dispatch,
@@ -689,6 +690,7 @@ export const useAppContext = () => {
     setPasswordEditing,
     checkConnectedPlatforms,
     fetchAnalytics,
+    fetchPostHistory,
   } = context;
 
   const setUnreadCount = useCallback(
@@ -793,9 +795,10 @@ export const useAppContext = () => {
     fetchUnreadCount,
     paymentProcessing: processing,
     setProcessing: setProcessing,
-
+    cost,
+    setCost,
     generationAmounts: generationAmounts,
-
+    fetchPostHistory: fetchPostHistory,
     refreshUser,
     refreshBalance: fetchBalance,
     selectCampaign,

@@ -2344,7 +2344,7 @@ export const ImageTemplateEditor = ({
     {isTemplatesLoading && (
       <div className="absolute inset-0 z-10 bg-white/70 backdrop-blur-[1px] rounded-md flex items-center justify-center">
         <div className="flex items-center gap-2 text-sm text-slate-700">
-          <span className="h-4 w-4 rounded-full border-2 border-slate-300 border-t-purple-600 animate-spin" />
+          <span className="h-4 w-4 rounded-full border border-slate-300 border-t-purple-600 animate-spin" />
           Loading templates...
         </div>
       </div>
@@ -2433,7 +2433,7 @@ export const ImageTemplateEditor = ({
               <div
                 key={tpl.id}
                 onClick={() => !isTemplatesLoading && loadTemplateById(tpl.id)}
-                className={`relative cursor-pointer rounded-md overflow-hidden border-2 transition-all ${
+                className={`relative cursor-pointer rounded-md overflow-hidden border transition-all ${
                   selectedTemplateId === tpl.id
                     ? "border-purple-600 bg-purple-50"
                     : tpl.source === "global"
@@ -3518,7 +3518,7 @@ export const ImageTemplateEditor = ({
                   setElementsOpen(true);
                 }
               }}
-              className="border-2 border-gray-300 rounded-md shadow-md bg-white transition-all duration-200"
+              className="border border-gray-300 rounded-md shadow-md bg-white transition-all duration-200"
             >
               <Layer>
                 <Rect

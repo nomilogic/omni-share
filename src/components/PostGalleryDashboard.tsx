@@ -797,7 +797,7 @@ export const PostGalleryDashboard: React.FC<PostGalleryDashboardProps> = ({
       ))}
 
       {/* Add New Media Button */}
-      <div className="bg-white rounded-md shadow-md border-2 border-dashed border-gray-300 hover:border-blue-400 transition-colors group cursor-pointer flex flex-col items-center justify-center aspect-square">
+      <div className="bg-white rounded-md shadow-md border border-dashed border-gray-300 hover:border-blue-400 transition-colors group cursor-pointer flex flex-col items-center justify-center aspect-square">
         <div className="text-center p-6">
           <div className="flex gap-2 mb-4 justify-center">
             <button

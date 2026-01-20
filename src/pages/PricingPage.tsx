@@ -305,8 +305,8 @@ export const PricingPage: React.FC = () => {
                   index === 0
                     ? "md:order-1"
                     : index === 1
-                    ? "md:order-2"
-                    : "md:order-3";
+                      ? "md:order-2"
+                      : "md:order-3";
                 const isCurrentPlan =
                   activePackage?.packageId === tier.id &&
                   activePackage?.isActive;
@@ -322,7 +322,6 @@ export const PricingPage: React.FC = () => {
                   hasPendingDowngrade &&
                   !isCurrentPlan &&
                   !isPendingDowngradePackage;
-                console.log("isLockedByDowngrade", isLockedByDowngrade);
                 const isFree = tier.amount === 0;
                 if (Number(tier.amount) < Number(currentTier?.amount))
                   return null;
@@ -392,16 +391,16 @@ export const PricingPage: React.FC = () => {
                           {loadingPackage
                             ? "Processing..."
                             : isCurrentPlan && hasCancelRequested
-                            ? t("manage")
-                            : isCurrentPlan && !hasPendingDowngrade
-                            ? t("manage")
-                            : isCurrentPlan
-                            ? t("manage")
-                            : isPendingDowngradePackage
-                            ? t("cancel_request")
-                            : isLowerPlan
-                            ? t("upgrade")
-                            : t("upgrade")}
+                              ? t("manage")
+                              : isCurrentPlan && !hasPendingDowngrade
+                                ? t("manage")
+                                : isCurrentPlan
+                                  ? t("manage")
+                                  : isPendingDowngradePackage
+                                    ? t("cancel_request")
+                                    : isLowerPlan
+                                      ? t("upgrade")
+                                      : t("upgrade")}
                         </button>
                       )}
 

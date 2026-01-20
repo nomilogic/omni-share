@@ -58,7 +58,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
   onReset,
 }) => {
   const { t } = useTranslation();
-  const { showLoading, hideLoading, updateLoadingMessage } = useLoading();
+  const { showLoading, hideLoading } = useLoading();
 
   const {
     connectedPlatforms,
@@ -66,6 +66,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
     checkConnectedPlatforms,
     handleConnectPlatform,
     handleDisconnectPlatform,
+    fetchPostHistory,
   } = useAppContext();
 
   const [selectedPlatforms, setSelectedPlatforms] = useState<Platform[]>(
@@ -453,11 +454,13 @@ export const PublishPosts: React.FC<PublishProps> = ({
   };
 
   useEffect(() => {
-    showLoading(t("loading_publishing_options") || "Loading publishing options...");
+    showLoading(
+      t("loading_publishing_options") || "Loading publishing options..."
+    );
     Promise.all([
       fetchFacebookPages(),
       fetchLinkedPages(),
-      fetchYouTubeChannels()
+      fetchYouTubeChannels(),
     ]).finally(() => {
       hideLoading();
     });
@@ -519,8 +522,6 @@ export const PublishPosts: React.FC<PublishProps> = ({
         return;
       }
 
-      // Enforce max video duration if both creatorInfo and post provide it
-      // Allow 30 second buffer for encoding/processing differences
       if (
         tikTokPost?.tiktokVideoDurationSec &&
         tiktokCreatorInfo?.max_video_post_duration_sec &&
@@ -562,7 +563,6 @@ export const PublishPosts: React.FC<PublishProps> = ({
             tiktokIsBrandedContent: tiktokSettings.isBrandedContent,
           };
         });
-npm 
       const youtubePost = selectedPosts.find(
         (post) => post.platform === "youtube"
       );
@@ -599,7 +599,7 @@ npm
 
       if (newlyPublished.length > 0) {
         setTimeout(() => {
-          historyRefreshService.refreshHistory();
+          fetchPostHistory();
         }, 500);
       }
 
@@ -608,15 +608,11 @@ npm
       );
 
       if (allConnectedPlatformsPublished && onReset) {
-        console.log(
-          "All connected platforms published successfully, triggering reset workflow in 3 seconds..."
-        );
         setTimeout(() => {
           onReset();
-        }, 3000);
+        }, 2000);
       }
     } catch (err: any) {
-      console.log("err", err);
     } finally {
       setPublishing(false);
       fetchUnreadCount();
@@ -773,15 +769,15 @@ npm
                               progress === "pending"
                                 ? "text-yellow-600"
                                 : progress === "success"
-                                ? "text-green-600"
-                                : "text-red-600"
+                                  ? "text-green-600"
+                                  : "text-red-600"
                             }`}
                           >
                             {progress === "pending"
                               ? "Publishing..."
                               : progress === "success"
-                              ? "Published"
-                              : "Failed"}
+                                ? "Published"
+                                : "Failed"}
                           </p>
                         )}
                       </div>
@@ -840,7 +836,7 @@ npm
                                   id={`platform-${post.platform}`}
                                 />
                                 <div
-                                  className={`w-5 md:w-6 h-5 md:h-6 mx-2 rounded border-2 transition-all duration-200 flex items-center justify-center ${
+                                  className={`w-5 md:w-6 h-5 md:h-6 mx-2 rounded border transition-all duration-200 flex items-center justify-center ${
                                     selectedPlatforms.includes(post.platform)
                                       ? "bg-blue-600 border-blue-600 text-white"
                                       : "bg-white border-gray-300 hover:border-blue-500"
@@ -892,7 +888,7 @@ npm
                           >
                             {isConnecting ? (
                               <>
-                                <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+                                <div className="w-3 h-3 border border-current border-t-transparent rounded-full animate-spin"></div>
                                 <span>{t("connecting")}...</span>
                               </>
                             ) : (
@@ -1274,13 +1270,13 @@ npm
             ).length === 0
               ? "bg-gray-400"
               : publishing
-              ? "theme-bg-trinary"
-              : "bg-#7650e3"
+                ? "theme-bg-trinary"
+                : "bg-#7650e3"
           }`}
         >
           {publishing ? (
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-4 h-4 border border-current border-t-transparent rounded-full animate-spin"></div>
               <span>{t("publish")}</span>
             </div>
           ) : (
@@ -1410,7 +1406,6 @@ npm
                       >
                         {result.success ? "✅" : "❌"} {platform}
                       </h4>
-                      
                     </div>
                     <p
                       className={`text-sm mt-1 ${

@@ -110,7 +110,7 @@ const FAQ: React.FC = () => {
             {faqItems.map((item) => (
               <div
                 key={item.id}
-                className="border border-gray-200 rounded-lg overflow-hidden hover:border-[#7650e3] transition-colors"
+                className="border border-gray-200 rounded-md overflow-hidden hover:border-[#7650e3] transition-colors"
               >
                 <button
                   onClick={() => toggleExpand(item.id)}

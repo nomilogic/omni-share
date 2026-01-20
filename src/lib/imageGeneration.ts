@@ -16,15 +16,12 @@ export interface GeneratedImage {
   created_at: string;
 }
 
-// Using OpenAI DALL-E 3 API
 export async function generateImage(
   request: ImageGenerationRequest
 ): Promise<GeneratedImage> {
   try {
-    // Enhanced prompt based on style and platform requirements
     let enhancedPrompt = request.prompt;
 
-    // Add style modifiers
     switch (request.style) {
       case "professional":
         enhancedPrompt +=
@@ -45,7 +42,6 @@ export async function generateImage(
           ", photorealistic, high quality, professional lighting";
     }
 
-    // Add aspect ratio guidance
     switch (request.aspectRatio) {
       case "16:9":
         enhancedPrompt += ", landscape orientation, wide format";
@@ -61,11 +57,9 @@ export async function generateImage(
         enhancedPrompt += ", square format, social media optimized";
     }
 
-    // Use Pollinations with model selection
     const model = request.model || "stabilityai/stable-diffusion-xl-base-1.0";
     const endpoint = "/ai/generate-image";
 
-    // Convert aspect ratio to dimensions
     const dimensions = {
       "1:1": { width: 1024, height: 1024 },
       "16:9": { width: 1280, height: 720 },
@@ -83,9 +77,8 @@ export async function generateImage(
       width,
       height,
       saveToStorage: true,
-      userId: "anonymous", // Can be updated to use actual user ID
+      userId: "anonymous",
     };
-    // notify("error",import.meta.env.VITE_API_URL+ 'VITE_API_URL'  );
 
     const response = await axios.post(
       `${
@@ -107,7 +100,6 @@ export async function generateImage(
   }
 }
 
-// Generate multiple variations of an image
 export async function generateImageVariations(
   request: ImageGenerationRequest,
   count: number = 3
@@ -129,7 +121,6 @@ export async function generateImageVariations(
   return variations;
 }
 
-// Get platform-optimized image suggestions
 export function getPlatformImageSuggestions(
   platforms: string[]
 ): ImageGenerationRequest[] {
@@ -183,7 +174,6 @@ export function getPlatformImageSuggestions(
   return suggestions;
 }
 
-// Analyze image content and suggest improvements
 export async function analyzeGeneratedImage(imageUrl: string): Promise<string> {
   try {
     const response = await axios.post(

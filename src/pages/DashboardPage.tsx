@@ -66,7 +66,6 @@ export const DashboardPage: React.FC = () => {
   const referralCoin = user?.wallet?.referralCoin || 0;
 
   const posts = state.postHistory;
-  console.log("posts", posts);
   const isFreePlan = userPlan?.toLowerCase() === "free";
   const hasLowCoins = (user.wallet?.coins ?? 0) < 6;
   const shouldShowUpgrade = isFreePlan || hasLowCoins;

@@ -86,7 +86,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
   const isVerification = params.get("isVerification");
 
   const isCookieAccepted = () => {
-    return Cookies.get("cookie-consent") === "accepted";
+    return localStorage.getItem("cookie-consent") == "accepted";
   };
 
   const loginForm = useForm<LoginFormData>({
@@ -205,7 +205,6 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         }
       } catch (e) {}
     } catch (error: any) {
-      console.log("error312321312", error);
       const message =
         error.response?.data?.message || t("authentication_failed");
       notify("error", message);
@@ -266,7 +265,6 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         setLoading(false);
         return;
       }
-      console.log("result1212312321", result);
       if (result.accessToken) {
         Cookies.set("auth_token", result.accessToken, {
           expires: 1,
@@ -363,7 +361,6 @@ export const AuthForm: React.FC<AuthFormProps> = ({
 
     try {
       const result: any = await initiateLinkedInOAuth(referralId);
-      console.log("result", result);
       if (result?.challengeName === "SOFTWARE_TOKEN_MFA" && result?.session) {
         setQuestion(result?.question);
 
@@ -406,7 +403,6 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         navigate("/content");
       }
     } catch (error: any) {
-      console.log("error", error);
       notify(
         "error",
         error.response?.data?.message || t("linkedin_auth_failed")
@@ -483,7 +479,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                 <button
                   onClick={handleGoogleOAuth}
                   disabled={loading}
-                  className="w-full border-2 border-purple-600 rounded-md py-2.5  flex items-center justify-start bg-white px-4 gap-2 hover:bg-purple-50 transition font-medium text-base text-slate-700 disabled:opacity-50"
+                  className="w-full border border-purple-600 rounded-md py-2.5  flex items-center justify-start bg-white px-4 gap-2 hover:bg-purple-50 transition font-medium text-base text-slate-700 disabled:opacity-50"
                 >
                   <svg
                     className="w-5 h-5"
@@ -515,7 +511,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                   <button
                     onClick={handleFacebookOAuth}
                     disabled={loading}
-                    className="w-full border-2 border-purple-600 rounded-md py-2.5  flex items-center justify-start bg-white px-4 gap-2 hover:bg-purple-50 transition font-medium text-base text-slate-700 disabled:opacity-50"
+                    className="w-full border border-purple-600 rounded-md py-2.5  flex items-center justify-start bg-white px-4 gap-2 hover:bg-purple-50 transition font-medium text-base text-slate-700 disabled:opacity-50"
                   >
                     <svg className="w-5 h-5" fill="#1877F2" viewBox="0 0 24 24">
                       <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
@@ -528,7 +524,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                 <button
                   onClick={handleLinkedInOAuth}
                   disabled={loading}
-                  className="w-full border-2 border-purple-600 rounded-md py-2.5  flex items-center justify-start bg-white px-4 gap-2 hover:bg-purple-50 transition font-medium text-base text-slate-700 disabled:opacity-50"
+                  className="w-full border border-purple-600 rounded-md py-2.5  flex items-center justify-start bg-white px-4 gap-2 hover:bg-purple-50 transition font-medium text-base text-slate-700 disabled:opacity-50"
                 >
                   <svg className="w-5 h-5" fill="#0A66C2" viewBox="0 0 24 24">
                     <path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5zM.2 8.98h4.6V24H.2V8.98zM9.98 8.98h4.4v2.06h.06c.61-1.16 2.1-2.38 4.32-2.38 4.62 0 5.47 3.04 5.47 6.99V24h-4.6v-6.92c0-1.65-.03-3.78-2.3-3.78-2.31 0-2.66 1.8-2.66 3.67V24h-4.6V8.98z" />
@@ -540,7 +536,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                 <button
                   onClick={() => setMode("signup")}
                   disabled={loading}
-                  className="w-full border-2 border-purple-600 rounded-md py-2.5  flex items-center justify-start bg-white px-4 gap-2 hover:bg-purple-50 transition font-medium text-base text-slate-700 disabled:opacity-50"
+                  className="w-full border border-purple-600 rounded-md py-2.5  flex items-center justify-start bg-white px-4 gap-2 hover:bg-purple-50 transition font-medium text-base text-slate-700 disabled:opacity-50"
                 >
                   <Mail className="w-5 h-5" />
                   <span className="hidden sm:inline">
@@ -571,7 +567,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                     type="email"
                     placeholder={t("enter_your_email")}
                     {...loginForm.register("email")}
-                    className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
+                    className="w-full px-4 py-2.5  text-sm border border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
                   />
                   {loginForm.formState.errors.email && (
                     <p className="text-red-500 text-xs mt-1">
@@ -587,7 +583,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                     type="password"
                     placeholder={t("enter_your_password")}
                     {...loginForm.register("password")}
-                    className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
+                    className="w-full px-4 py-2.5  text-sm border border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
                   />
                   {loginForm.formState.errors.password && (
                     <p className="text-red-500 text-xs mt-1">
@@ -631,7 +627,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                   type="text"
                   placeholder={t("enter_your_full_name")}
                   {...signupForm.register("name")}
-                  className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
+                  className="w-full px-4 py-2.5  text-sm border border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
                 />
                 {signupForm.formState.errors.name && (
                   <p className="text-red-500 text-xs mt-1">
@@ -648,7 +644,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                   type="email"
                   placeholder={t("enter_your_email")}
                   {...signupForm.register("email")}
-                  className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
+                  className="w-full px-4 py-2.5  text-sm border border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
                 />
                 {signupForm.formState.errors.email && (
                   <p className="text-red-500 text-xs mt-1">
@@ -665,7 +661,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                   type="password"
                   placeholder={t("enter_your_password")}
                   {...signupForm.register("password")}
-                  className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
+                  className="w-full px-4 py-2.5  text-sm border border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
                 />
                 {signupForm.formState.errors.password && (
                   <p className="text-red-500 text-xs mt-1">
@@ -683,7 +679,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                     type="text"
                     value={referralId}
                     disabled
-                    className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md disabled:bg-slate-50 disabled:cursor-not-allowed"
+                    className="w-full px-4 py-2.5  text-sm border border-purple-500 bg-white rounded-md disabled:bg-slate-50 disabled:cursor-not-allowed"
                   />
                 </div>
               )}
@@ -728,7 +724,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                   type="email"
                   placeholder={t("enter_your_email")}
                   {...forgotPasswordForm.register("email")}
-                  className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
+                  className="w-full px-4 py-2.5  text-sm border border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
                 />
                 {forgotPasswordForm.formState.errors.email && (
                   <p className="text-red-500 text-xs mt-1">
@@ -767,7 +763,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                   type="password"
                   placeholder={t("enter_your_password")}
                   {...resetPasswordForm.register("password")}
-                  className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
+                  className="w-full px-4 py-2.5  text-sm border border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
                 />
                 {resetPasswordForm.formState.errors.password && (
                   <p className="text-red-500 text-xs mt-1">
@@ -784,7 +780,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                   type="password"
                   placeholder="Re-enter your Password"
                   {...resetPasswordForm.register("confirmPassword")}
-                  className="w-full px-4 py-2.5  text-sm border-2 border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
+                  className="w-full px-4 py-2.5  text-sm border border-purple-500 bg-white rounded-md focus:outline-none focus:border-purple-600 transition"
                 />
                 {resetPasswordForm.formState.errors.confirmPassword && (
                   <p className="text-red-500 text-xs mt-1">

@@ -86,12 +86,12 @@ const CustomSelect: React.FC<{
         type="button"
         disabled={disable === true}
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full px-3 py-2.5 text-left bg-white rounded-md border-2 transition-all duration-200 flex items-center justify-between focus:outline-none focus:ring-4 focus:ring-purple-100 group ${
+        className={`w-full px-3 py-2.5 text-left bg-white rounded-md border transition-all duration-200 flex items-center justify-between focus:outline-none focus:ring-4 focus:ring-purple-100 group ${
           error
             ? "border-red-400"
             : value
-            ? "border-purple-500 shadow-md"
-            : "border-purple-500 shadow-md"
+              ? "border-purple-500 shadow-md"
+              : "border-purple-500 shadow-md"
         }`}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
@@ -119,7 +119,7 @@ const CustomSelect: React.FC<{
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-gray-200 rounded-md shadow-xl z-50 max-h-64 overflow-y-auto">
+        <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-md shadow-xl z-50 max-h-64 overflow-y-auto">
           {questions.map((q) => {
             const isSelected = value === q.id;
             const isDisabled = otherSelected.includes(q.id);
@@ -137,8 +137,8 @@ const CustomSelect: React.FC<{
                   isSelected
                     ? "bg-purple-50 text-purple-700 font-semibold border-l-4 border-purple-500"
                     : isDisabled
-                    ? "text-gray-400 bg-gray-50 cursor-not-allowed"
-                    : "hover:bg-gray-50 text-black"
+                      ? "text-gray-400 bg-gray-50 cursor-not-allowed"
+                      : "hover:bg-gray-50 text-black"
                 }`}
               >
                 {q.question}
@@ -199,7 +199,6 @@ export const AuthenticatorModal = ({
   question = [],
   passwordsValue,
 }: any) => {
-  console.log("passwordsValue", passwordsValue);
   const [authMethod, setAuthMethod] = useState<AuthMethod>("totp");
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
@@ -299,7 +298,6 @@ export const AuthenticatorModal = ({
         onClose();
       }
     } catch (err: any) {
-      console.log("err", err);
       const message =
         err?.response?.data?.message || err?.message || "Verification failed.";
       notify("error", message);
@@ -337,7 +335,7 @@ export const AuthenticatorModal = ({
                   setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
                 }
                 placeholder="••••••"
-                className="w-full rounded-md border-2 border-purple-600  px-6 py-3 text-center text-lg font-mono tracking-widest text-purple-600 focus:outline-none  transition-all"
+                className="w-full rounded-md border border-purple-600  px-6 py-3 text-center text-lg font-mono tracking-widest text-purple-600 focus:outline-none  transition-all"
               />
               {isResetPassword == false && (
                 <button
@@ -391,7 +389,7 @@ export const AuthenticatorModal = ({
                       placeholder="Enter your answer here..."
                       autoComplete="off"
                       {...questionsForm.register(`answers.${index}.answer`)}
-                      className={`w-full px-3 py-2.5 rounded-md border-2 bg-white placeholder-gray-600 text-black transition-all focus:outline-none focus:ring-4 focus:ring-purple-100 ${
+                      className={`w-full px-3 py-2.5 rounded-md border bg-white placeholder-gray-600 text-black transition-all focus:outline-none focus:ring-4 focus:ring-purple-100 ${
                         answerError
                           ? "border-red-400 focus:border-red-400"
                           : "border-gray-300 hover:border-gray-400 focus:border-purple-500"
@@ -486,7 +484,7 @@ export const AuthenticatorModal = ({
           <button
             onClick={onClose}
             disabled={loading}
-            className="w-full rounded-md border-2 border-purple-600 py-2.5   font-semibold text-purple-700 hover:bg-purple-50 hover:border-purple-300 hover:text-purple-800 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-4 focus:ring-purple-200 transition-all"
+            className="w-full rounded-md border border-purple-600 py-2.5   font-semibold text-purple-700 hover:bg-purple-50 hover:border-purple-300 hover:text-purple-800 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-4 focus:ring-purple-200 transition-all"
           >
             Cancel
           </button>

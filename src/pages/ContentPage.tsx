@@ -194,7 +194,7 @@ export const ContentPage: React.FC = () => {
                       navigate("/content/generate");
                     }}
                     onPublish={handleGoToPublish}
-                    onPostsUpdate={(updatedPosts) => {
+                    onPostsUpdate={(updatedPosts: any) => {
                       dispatch({
                         type: "SET_GENERATED_POSTS",
                         payload: updatedPosts,

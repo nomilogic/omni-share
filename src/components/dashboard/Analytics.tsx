@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, useCallback } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import {
@@ -8,7 +8,6 @@ import {
   getPlatformIconBackgroundColors,
 } from "../../utils/platformIcons";
 import { Platform } from "../../types";
-import API from "../../services/api";
 import { useAppContext } from "@/context/AppContext";
 import ReferralSection from "./ReferralSection";
 import Referal from "../../assets/referal.png";
@@ -16,42 +15,53 @@ import { Share2 } from "lucide-react";
 import { useModal } from "../../context2/ModalContext";
 import Icon from "../Icon";
 
-// ---------------- Types ----------------
-interface TopPost {
-  id: string;
-  title: string;
-  fullMessage?: string;
-  permalink?: string;
-  engagement: number;
-  likesCount: number;
-  commentsCount: number;
-  sharesCount: number;
-  created_time: string;
-}
-
-interface AnalyticsData {
+// Types (adjusted to match your real data structure)
+interface AnalyticsItem {
   platform: Platform;
   page: {
     id: string;
     name: string;
-    category: string;
-    followers: number;
+    username?: string;
+    category?: string;
+    followers?: number;
+    subscribers?: number;
+    totalViews?: number;
+    videoCount?: number;
+    following?: number;
+    [key: string]: any;
   };
   summary: {
-    likes: number;
-    comments: number;
-    shares: number;
+    likes?: number;
+    comments?: number;
+    shares?: number;
+    views?: number;
+    engagement?: number;
+    [key: string]: any;
   };
-  insights: Array<{
-    period: "day" | "week" | "days_28";
-    values: Array<{ value: number }>;
-  }>;
+  performance?: {
+    engagementRate?: number;
+    avgViewsPerVideo?: number;
+    subscriberToViewRatio?: number;
+    avgViewsPerPost?: number;
+    [key: string]: any;
+  };
   top_posts: {
-    posts: TopPost[];
+    posts: Array<{
+      id: string;
+      title: string;
+      likes?: number;
+      comments?: number;
+      shares?: number;
+      views?: number;
+      engagement?: number;
+      created_time?: string;
+      publishedAt?: string;
+      [key: string]: any;
+    }>;
   };
+  insights?: any[];
 }
 
-// ---------------- Component ----------------
 type Props = {
   onHasAnalyticsChange?: (has: boolean) => void;
 };
@@ -60,23 +70,22 @@ export default function Analytics({ onHasAnalyticsChange }: Props) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { state } = useAppContext();
-  const { openModal } = useModal();
 
-  const analyticsList = state.analyticsList || [];
+  const analyticsList: AnalyticsItem[] = state.analyticsList || [];
   const [selectedPlatform, setSelectedPlatform] = useState<Platform | null>(
     null
   );
 
   const platforms: Platform[] = [
     "facebook",
-    "linkedin",
     "instagram",
     "youtube",
     "tiktok",
+    "linkedin",
   ];
 
-  // ---------------- Helpers ----------------
-  const platformsWithDataSet = useMemo(() => {
+  // Platforms that actually have data
+  const platformsWithData = useMemo(() => {
     const set = new Set<Platform>();
     analyticsList.forEach((a) => {
       if (a?.platform) set.add(a.platform);
@@ -84,152 +93,234 @@ export default function Analytics({ onHasAnalyticsChange }: Props) {
     return set;
   }, [analyticsList]);
 
-  const analytics = useMemo(
+  // Selected analytics data
+  const current = useMemo(
     () => analyticsList.find((a) => a.platform === selectedPlatform) ?? null,
     [analyticsList, selectedPlatform]
   );
 
-  const topPosts = analytics?.top_posts?.posts || [];
+  const topPosts = current?.top_posts?.posts || [];
 
-  const getReachByPeriod = (period: "day" | "week" | "days_28") => {
-    const insight = analytics?.insights?.find((i) => i.period === period);
-    return insight?.values?.[0]?.value ?? 0;
+  // Get correct audience count
+  const getAudienceCount = () => {
+    if (!current?.page) return 0;
+    if (current.platform === "youtube") return current.page.subscribers ?? 0;
+    if (current.platform === "tiktok") return current.page.followers ?? 0;
+    return current.page.followers ?? 0;
   };
 
-  const dailyReach = getReachByPeriod("day");
-  const weeklyReach = getReachByPeriod("week");
-  const monthlyReach = getReachByPeriod("days_28");
+  const getAudienceLabel = () => {
+    switch (selectedPlatform) {
+      case "youtube":
+        return "Subscribers";
+      case "tiktok":
+        return "Followers";
+      default:
+        return "Followers";
+    }
+  };
 
   const hasAnalytics = analyticsList.length > 0;
 
-  // ---------------- Effects ----------------
-  // Set default selected platform
+  // Auto select first available platform
   useEffect(() => {
     if (!analyticsList.length) return;
 
     setSelectedPlatform((prev) => {
-      if (prev && platformsWithDataSet.has(prev)) return prev;
-      if (platformsWithDataSet.has("facebook")) return "facebook";
+      if (prev && platformsWithData.has(prev)) return prev;
+      if (platformsWithData.has("facebook")) return "facebook";
       return analyticsList[0]?.platform ?? null;
     });
-  }, [analyticsList, platformsWithDataSet]);
+  }, [analyticsList, platformsWithData]);
 
-  // Callback to parent if needed
   useEffect(() => {
     onHasAnalyticsChange?.(hasAnalytics);
-  }, [hasAnalytics]);
+  }, [hasAnalytics, onHasAnalyticsChange]);
 
-  // ---------------- Render ----------------
-  if (!hasAnalytics) return <ReferralPromoCard />;
+  if (!hasAnalytics) {
+    return <ReferralPromoCard />;
+  }
 
   return (
     <div className="bg-gray-100 rounded-md p-5 h-[450px] flex flex-col">
-      {/* Platform icons */}
+      {/* Platform selector */}
       <div className="flex flex-wrap gap-3 mb-3">
         {platforms.map((p) => {
           const IconComponent = getPlatformIcon(p);
-          const isActive = selectedPlatform === p;
-          const hasData = platformsWithDataSet.has(p);
+          const active = selectedPlatform === p;
+          const hasData = platformsWithData.has(p);
 
           return (
             <button
               key={p}
-              type="button"
               disabled={!hasData}
-              onClick={() => setSelectedPlatform(p)}
+              onClick={() => hasData && setSelectedPlatform(p)}
               className={`relative p-1 rounded-full transition-all duration-200 transform h-fit
-                ${hasData ? "hover:scale-105" : ""}
-                ${isActive && hasData ? "ring-4 ring-blue-200 shadow-md" : ""}
-                ${hasData ? "" : "opacity-30 cursor-not-allowed"}`}
-              title={hasData ? p : `${p} (no data)`}
+                  ${hasData ? "hover:scale-105" : ""}
+                  ${
+                    active && hasData
+                      ? "ring-4 ring-blue-200 shadow-md"
+                      : hasData
+                        ? "hover:shadow-md"
+                        : ""
+                  }
+                  ${hasData ? "" : "opacity-30 cursor-not-allowed"}
+                `}
+              title={
+                hasData
+                  ? p.charAt(0).toUpperCase() + p.slice(1)
+                  : `${p} (no data)`
+              }
             >
               <div
-                className={`w-8 md:w-10 h-8 md:h-10 rounded-full flex items-center justify-center text-white shadow-md
+                className={`w-10 h-10 rounded-full flex items-center justify-center text-white shadow
                   ${getPlatformIconBackgroundColors(p)}
-                  ${hasData ? "" : "grayscale"}`}
+                  ${!hasData ? "grayscale" : ""}
+                `}
               >
                 {IconComponent ? (
-                  <IconComponent className="w-4 md:w-5 h-4 md:h-5" />
+                  <IconComponent className="w-6 h-6" />
                 ) : (
-                  <span className="text-white font-bold text-sm">
-                    {p.slice(0, 2).toUpperCase()}
-                  </span>
+                  p.slice(0, 2).toUpperCase()
                 )}
               </div>
-
-              {isActive && hasData && (
-                <div className="absolute inset-0 rounded-full border-2 border-blue-500 animate-pulse" />
-              )}
             </button>
           );
         })}
       </div>
 
-      {/* Page info */}
-      {analytics && (
-        <div className="mb-2">
-          <h3 className="text-lg font-semibold text-gray-900 truncate">
-            {analytics.page.name}
+      {current && (
+        <div className="mb-3">
+          <h3 className="text-lg font-bold text-gray-900 truncate">
+            {current.page.name}
           </h3>
           <p className="text-sm text-gray-600">
-            {analytics.page.followers.toLocaleString()} {t("followers")}
+            {getAudienceCount().toLocaleString()} {getAudienceLabel()}
           </p>
         </div>
       )}
 
       {/* Metrics + Posts */}
       <div className="flex-1 overflow-y-auto pr-2 -mr-2">
-        <div className="mb-2">
-          <h3 className="text-lg font-semibold mb-2">{t("summary")}</h3>
-          <Metric label={t("reach")} value={monthlyReach} />
-          <Metric label={t("likes")} value={analytics?.summary.likes} />
-          <Metric label={t("comments")} value={analytics?.summary.comments} />
-        </div>
+        <h3 className="text-lg font-semibold mb-3">
+          {t("summary") || "Summary"}
+        </h3>
 
-        <hr className="my-2" />
-
-        <div>
-          <h3 className="font-semibold mb-2 text-lg">{t("recent_posts")}</h3>
-          {topPosts.length ? (
-            <div className="space-y-2">
-              {topPosts.slice(0, 3).map((post) => (
-                <div
-                  key={post.id}
-                  className="w-full text-left text-sm text-blue-600 rounded truncate"
-                >
-                  {post.title}
+        <div className="flex flex-col gap-2 mb-3 text-sm">
+          {current?.platform === "youtube" && (
+            <>
+              <div className="flex justify-between">
+                <span>Total Views</span>
+                <span className="font-bold text-blue-700">
+                  {current.page?.totalViews?.toLocaleString() ?? "0"}
+                </span>
+              </div>
+              {current.performance?.avgViewsPerVideo && (
+                <div className="flex justify-between">
+                  <span>Avg Views/Video</span>
+                  <span className="font-bold text-blue-700">
+                    {current.performance.avgViewsPerVideo.toFixed(1)}
+                  </span>
                 </div>
-              ))}
+              )}
+            </>
+          )}
+
+          {current?.platform === "linkedin" &&
+            current?.summary?.views !== undefined && (
+              <div className="flex justify-between">
+                <span>Impressions</span>
+                <span className="font-bold text-blue-700">
+                  {current.summary.views.toLocaleString()}
+                </span>
+              </div>
+            )}
+
+          {/* Common metrics - show only if they exist */}
+          {current?.summary?.likes !== undefined && (
+            <div className="flex justify-between">
+              <span>Likes</span>
+              <span className="font-bold text-rose-600">
+                {current.summary.likes.toLocaleString()}
+              </span>
             </div>
-          ) : (
-            <p className="text-xs text-gray-500 italic">
-              {t("no_posts_available")}
-            </p>
+          )}
+
+          {current?.summary?.comments !== undefined && (
+            <div className="flex justify-between">
+              <span>Comments</span>
+              <span className="font-bold text-orange-600">
+                {current.summary.comments.toLocaleString()}
+              </span>
+            </div>
+          )}
+
+          {current?.summary?.shares !== undefined && (
+            <div className="flex justify-between">
+              <span>Shares</span>
+              <span className="font-bold text-purple-600">
+                {current.summary.shares.toLocaleString()}
+              </span>
+            </div>
+          )}
+
+          {current?.summary?.views !== undefined &&
+            current.platform !== "youtube" &&
+            current.platform !== "linkedin" && (
+              <div className="flex justify-between">
+                <span>Views</span>
+                <span className="font-bold text-blue-600">
+                  {current.summary.views.toLocaleString()}
+                </span>
+              </div>
+            )}
+
+          {current?.performance?.engagementRate !== undefined && (
+            <div className="flex justify-between">
+              <span>Engagement Rate</span>
+              <span className="font-bold text-emerald-600">
+                {(current.performance.engagementRate * 100).toFixed(2)}%
+              </span>
+            </div>
           )}
         </div>
+
+        <hr className="my-2 border-gray-300" />
+
+        <h3 className="font-semibold text-lg mb-2">Recent Posts</h3>
+
+        {topPosts.length > 0 ? (
+          <div className="space-y-2">
+            {topPosts.slice(0, 3).map((post) => (
+              <div key={post.id} className=" text-sm">
+                <p className="text-purple-600">
+                  {post.title
+                    ? post.title.length > 40
+                      ? post.title.slice(0, 40) + "..."
+                      : post.title
+                    : "(no caption)"}
+                </p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-gray-500 italic">
+            No recent posts available
+          </p>
+        )}
       </div>
 
       <button
         onClick={() => navigate(`/analytics?platform=${selectedPlatform}`)}
-        className="w-full text-white py-2 px-4 rounded-md font-semibold text-md transition-all border-2 border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] mt-4"
+        className="mt-4 w-full py-2.5 px-4 border border-purple-600 hover:text-purple-600 bg-purple-600 hover:bg-[#d7d7fc] text-white font-medium rounded-md transition-colors"
+        disabled={!selectedPlatform}
       >
-        {t("view_details")}
+        {t("view_details") || "View Full Analytics"}
       </button>
     </div>
   );
 }
 
-// ---------------- Metric Component ----------------
-const Metric = ({ label, value }: any) => (
-  <div className="flex justify-between text-sm">
-    <span>{label}</span>
-    <span className="font-bold text-blue-600">
-      {value?.toLocaleString?.() ?? 0}
-    </span>
-  </div>
-);
-
-// ---------------- Referral Card ----------------
 function ReferralPromoCard() {
   const { t } = useTranslation();
   const { user } = useAppContext();
@@ -293,7 +384,7 @@ function ReferralPromoCard() {
       </div>
       <button
         onClick={handleShareClick}
-        className=" w-full rounded-md hover:opacity-95 text-white font-semibold py-2 flex items-center justify-center gap-2 text-md transition-all border-2 border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
+        className=" w-full rounded-md hover:opacity-95 text-white font-semibold py-2 flex items-center justify-center gap-2 text-md transition-all border border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
       >
         <Share2 className="w-4 h-4" /> {t("share") || "Share"}
       </button>

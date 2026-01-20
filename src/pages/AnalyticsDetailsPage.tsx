@@ -404,7 +404,7 @@
 //     <button
 //       onClick={onClick}
 //       className={`flex-1 sm:flex-none px-4 py-2 rounded-md text-sm font-semibold flex items-center justify-center gap-2 transition
-//         ${active ? "text-white   transition-all border-2 border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]" : "bg-gray-100 text-gray-800 hover:bg-gray-200"}
+//         ${active ? "text-white   transition-all border border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]" : "bg-gray-100 text-gray-800 hover:bg-gray-200"}
 //       `}
 //     >
 //       {icon}

@@ -536,7 +536,6 @@ export class SocialMediaAPI {
     }
   }
 
-  // Universal posting method
   async postToAllPlatforms(
     userId: string,
     posts: GeneratedPost[],
@@ -574,9 +573,8 @@ export class SocialMediaAPI {
             break;
           case "instagram":
             // Need to get business account first
-            const accounts = await this.getInstagramBusinessAccounts(
-              accessToken
-            );
+            const accounts =
+              await this.getInstagramBusinessAccounts(accessToken);
             if (accounts.length === 0) {
               throw new Error("No Instagram business accounts found");
             }

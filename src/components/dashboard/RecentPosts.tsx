@@ -15,7 +15,6 @@ function RecentPosts({ post }: any) {
   const { t } = useTranslation();
 
   const allPosts = post || state?.generatedPosts || [];
-  console.log("allPosts", allPosts);
   const socialPlatforms: Platform[] = [
     "facebook",
     "linkedin",
@@ -24,7 +23,6 @@ function RecentPosts({ post }: any) {
     "tiktok",
   ];
 
-  // ✅ platforms which actually have posts
   const platformsWithData = useMemo(() => {
     const set = new Set<Platform>();
     for (const p of allPosts) {
@@ -40,18 +38,14 @@ function RecentPosts({ post }: any) {
   const [selectedPlatform, setSelectedPlatform] =
     useState<Platform>("facebook");
 
-  // ✅ keep selected platform valid
   useEffect(() => {
-    // if selected has data => keep
     if (platformsWithDataSet.has(selectedPlatform)) return;
 
-    // else: if facebook has data => facebook
     if (platformsWithDataSet.has("facebook")) {
       setSelectedPlatform("facebook");
       return;
     }
 
-    // else: first available
     const first = platformsWithData[0];
     if (first) setSelectedPlatform(first);
   }, [platformsWithData, platformsWithDataSet, selectedPlatform]);
@@ -97,8 +91,8 @@ function RecentPosts({ post }: any) {
                     isActive && hasData
                       ? "ring-4 ring-blue-200 shadow-md"
                       : hasData
-                      ? "hover:shadow-md"
-                      : ""
+                        ? "hover:shadow-md"
+                        : ""
                   }
                   ${hasData ? "" : "opacity-30 cursor-not-allowed"}
                 `}
@@ -117,20 +111,20 @@ function RecentPosts({ post }: any) {
                       {platform === "facebook"
                         ? "FB"
                         : platform === "instagram"
-                        ? "IG"
-                        : platform === "linkedin"
-                        ? "IN"
-                        : platform === "youtube"
-                        ? "YT"
-                        : platform === "tiktok"
-                        ? "TT"
-                        : "P"}
+                          ? "IG"
+                          : platform === "linkedin"
+                            ? "IN"
+                            : platform === "youtube"
+                              ? "YT"
+                              : platform === "tiktok"
+                                ? "TT"
+                                : "P"}
                     </span>
                   )}
                 </div>
 
                 {isActive && hasData && (
-                  <div className="absolute inset-0 rounded-full border-2 border-blue-500 animate-pulse" />
+                  <div className="absolute inset-0 rounded-full border border-blue-500 animate-pulse" />
                 )}
               </button>
             );
@@ -208,7 +202,7 @@ function RecentPosts({ post }: any) {
 
       <button
         onClick={() => navigate("/content")}
-        className="w-full text-white py-2 px-4 rounded-md font-semibold text-md transition-all border-2 border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] mt-4"
+        className="w-full text-white py-2.5 text-base font-semibold px-4 rounded-md text-md transition-all border border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] mt-4"
       >
         {t("create_post")}
       </button>
