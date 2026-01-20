@@ -65,17 +65,23 @@ export const PostPreview = ({
     (() => void) | null
   >(null);
   const navigate = useNavigate();
-  
+
   // Check if there's unsaved content or active operations (including unpublished posts)
   const hasActiveOperation = useCallback(() => {
-    return hasUnsavedChanges || isRegenerating || editingMode || (posts?.length ?? 0) > 0;
+    return (
+      hasUnsavedChanges ||
+      isRegenerating ||
+      editingMode ||
+      (posts?.length ?? 0) > 0
+    );
   }, [hasUnsavedChanges, isRegenerating, editingMode, posts]);
 
   // Create a navigation wrapper that checks for unsaved content
   const navigateWithConfirm = (path: string) => {
     if (hasActiveOperation()) {
       const confirmLeave = window.confirm(
-        t("unsaved_changes_warning") || "You have unsaved changes. Are you sure you want to leave?"
+        t("unsaved_changes_warning") ||
+          "You have unsaved changes. Are you sure you want to leave?"
       );
       if (!confirmLeave) return;
     }
@@ -87,7 +93,9 @@ export const PostPreview = ({
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (hasActiveOperation()) {
         e.preventDefault();
-        e.returnValue = t("unsaved_changes_warning") || "You have unsaved changes. Are you sure you want to leave?";
+        e.returnValue =
+          t("unsaved_changes_warning") ||
+          "You have unsaved changes. Are you sure you want to leave?";
         return e.returnValue;
       }
     };
@@ -104,7 +112,7 @@ export const PostPreview = ({
       const target = e.target as HTMLElement;
       // Check for both regular links and React Router Link components
       const link = target.closest("a") as HTMLAnchorElement;
-      
+
       if (link) {
         // Only intercept internal links (not external URLs and not downloads)
         const href = link.getAttribute("href");
@@ -113,7 +121,8 @@ export const PostPreview = ({
             e.preventDefault();
             e.stopPropagation();
             const confirmLeave = window.confirm(
-              t("unsaved_changes_warning") || "You have unsaved changes. Are you sure you want to leave?"
+              t("unsaved_changes_warning") ||
+                "You have unsaved changes. Are you sure you want to leave?"
             );
             if (confirmLeave) {
               // Use navigate instead of click for React Router Links
@@ -140,7 +149,8 @@ export const PostPreview = ({
       if (previousPathname !== currentPathname && hasActiveOperation()) {
         // URL is changing, show confirmation
         const confirmLeave = window.confirm(
-          t("unsaved_changes_warning") || "You have unsaved changes. Are you sure you want to leave?"
+          t("unsaved_changes_warning") ||
+            "You have unsaved changes. Are you sure you want to leave?"
         );
         if (!confirmLeave) {
           // Revert to previous URL
@@ -165,7 +175,8 @@ export const PostPreview = ({
     const handlePopState = (e: PopStateEvent) => {
       if (hasActiveOperation()) {
         const confirmLeave = window.confirm(
-          t("unsaved_changes_warning") || "You have unsaved changes. Are you sure you want to leave?"
+          t("unsaved_changes_warning") ||
+            "You have unsaved changes. Are you sure you want to leave?"
         );
         if (!confirmLeave) {
           // Re-push current state to prevent navigation
@@ -179,7 +190,7 @@ export const PostPreview = ({
       window.removeEventListener("popstate", handlePopState);
     };
   }, [hasActiveOperation, t]);
-  
+
   // Calculate initial character counts for all posts
   useEffect(() => {
     const postsWithCharacterCount = generatedPosts.map((post) => ({
@@ -1171,7 +1182,7 @@ export const PostPreview = ({
                   )}
 
                   {selectedPlatform === post.platform && (
-                    <div className="absolute inset-0 rounded-full  animate-pulse"></div>
+                    <div className="absolute inset-0 rounded-full border border-blue-500 animate-pulse"></div>
                   )}
                 </button>
               );
@@ -1195,22 +1206,22 @@ export const PostPreview = ({
                   <div className="flex gap-3 justify-center">
                     <button
                       onClick={() => {
-                        saveChanges();
-                        setEditingMode(false);
-                      }}
-                      className="flex items-center w-auto gap-2 px-4 py-2.5 bg-purple-600 text-white rounded-md border border-transparent hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition-colors font-medium"
-                    >
-                      <Save className="w-4 h-4" />
-                      {t("save_changes")}
-                    </button>
-                    <button
-                      onClick={() => {
                         discardChanges();
                       }}
-                      className="flex items-center w-auto gap-2 px-4 py-2.5 border border-purple-600 text-purple-600 rounded-md hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition-colors font-medium"
+                      className="flex items-center justify-center w-full gap-2 px-4 py-2.5 border border-purple-600 text-purple-600 rounded-md hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition-colors font-medium"
                     >
                       <X className="w-4 h-4" />
                       {t("cancel")}
+                    </button>
+                    <button
+                      onClick={() => {
+                        saveChanges();
+                        setEditingMode(false);
+                      }}
+                      className="flex items-center justify-center w-full gap-2 px-4 py-2.5 bg-purple-600 text-white rounded-md border border-transparent hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition-colors font-medium"
+                    >
+                      <Save className="w-4 h-4" />
+                      {t("save_changes")}
                     </button>
                   </div>
                 ) : (

@@ -306,7 +306,7 @@ export const AIScheduleGenerator: React.FC<AIScheduleGeneratorProps> = ({
                 <button
                   key={platform.id}
                   onClick={() => handlePlatformToggle(platform.id)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-md border-2 transition-all ${
+                  className={`flex items-center gap-3 px-4 py-3 rounded-md border transition-all ${
                     isSelected
                       ? `${platform.bgColor} ${platform.borderColor} ${platform.color}`
                       : "bg-white text-slate-700 border-gray-300 hover:border-gray-400"

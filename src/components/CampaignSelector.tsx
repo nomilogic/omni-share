@@ -99,7 +99,7 @@ export const CampaignSelector: React.FC<CampaignSelectorProps> = ({
         {/* Create New Campaign Card */}
         <div
           onClick={onCreateNew}
-          className="border-2 border-dashed border-gray-300 rounded-md p-6 text-center cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all duration-200"
+          className="border border-dashed border-gray-300 rounded-md p-6 text-center cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all duration-200"
         >
           <Plus className="w-12 h-12 text-gray-400 mx-auto mb-4" />
           <h3 className="font-medium text-slate-900 mb-2">

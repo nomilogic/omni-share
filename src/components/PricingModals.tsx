@@ -113,7 +113,7 @@ export const PricingModals: React.FC = () => {
 
             <div>
               <button
-                className="w-full py-2.5 border border-purple-600 bg-purple-600 text-white text-[15px] font-semibold rounded-md hover:bg-purple-700 transition shadow-md flex items-center justify-center gap-2"
+                className="w-full py-2.5 border border-purple-600 bg-purple-600 text-white hover:text-[#7650e3] text-[15px] font-semibold rounded-md hover:bg-[#d7d7fc]   transition shadow-md flex items-center justify-center gap-2"
                 onClick={runConfirmHandler}
                 disabled={loadingPackage}
               >

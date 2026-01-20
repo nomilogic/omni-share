@@ -72,7 +72,7 @@ export default function AnalyticsPage() {
 
   useEffect(() => {
     if (loading) {
-      showLoading(t("loading_analytics") || "Loading analytics...");
+      showLoading("Loading analytics...");
     } else {
       hideLoading();
     }
