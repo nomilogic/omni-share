@@ -43,7 +43,7 @@ function ProfileCard() {
           onClick={() => setPasswordEditing(true)}
         >
           <Settings className="w-[15px] h-[15px]" />
-          <span>Account Setting</span>
+          <span>{t("account_setting")}</span>
         </button>
       </div>
     </div>

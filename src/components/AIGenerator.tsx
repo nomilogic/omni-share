@@ -62,16 +62,16 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
         industry:
           contentData?.industry ||
           contentData?.campaignInfo?.industry ||
-          "General",
+          t("general"),
         description:
           contentData?.description ||
           contentData?.campaignInfo?.description ||
-          "General content generation",
+          t("general_content_generation"),
         targetAudience:
           contentData?.targetAudience ||
           contentData?.campaignInfo?.target_audience ||
           contentData?.campaignInfo?.targetAudience ||
-          "General Audience",
+          t("general_audience"),
         brandTone:
           contentData?.tone ||
           contentData?.campaignInfo?.brand_tone ||

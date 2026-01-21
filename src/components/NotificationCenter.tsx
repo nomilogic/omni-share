@@ -383,7 +383,7 @@ const SettingsTab: React.FC<{
       {/* General Settings */}
       <div>
         <h3 className="text-sm font-medium text-slate-900 mb-3">
-          General Settings
+          {t("general_settings")}
         </h3>
         <div className="space-y-3">
           <div className="flex items-center justify-between">

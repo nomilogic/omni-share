@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Template } from "../types/templates";
 import { templates } from "../utils/templates";
 
@@ -11,6 +12,7 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
   onSelectTemplate,
   onCancel,
 }) => {
+  const { t } = useTranslation();
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-2">
       <div className="bg-white rounded-md shadow-md max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col">
@@ -18,7 +20,7 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
         <div className="p-3 border-b border-gray-200">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-semibold text-slate-900">
-              Choose Template
+              {t("choose_template")}
             </h2>
             <button
               onClick={onCancel}
@@ -51,7 +53,7 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
                     {template.name}
                   </h3>
                   <p className="text-xs text-gray-500 font-medium">
-                    {template.elements.length} items
+                    {template.elements.length} {t("items")}
                   </p>
                 </div>
               </div>
@@ -63,13 +65,13 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
         <div className="p-3 border-t border-gray-200">
           <div className="flex justify-between items-center">
             <p className="text-xs text-gray-500 font-medium">
-              {templates.length} templates
+              {templates.length} {t("templates")}
             </p>
             <button
               onClick={onCancel}
               className="px-3 py-1 text-slate-700 bg-gray-100 border border-gray-300 rounded hover:bg-gray-200 transition-colors text-xs"
             >
-              Cancel
+              {t("cancel")}
             </button>
           </div>
         </div>

@@ -11,6 +11,7 @@ import {
   AlertTriangle,
   Loader2,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useAppContext } from "../context/AppContext";
 import { useModal } from "../context2/ModalContext";
 import API from "@/services/api";
@@ -88,6 +89,7 @@ interface SecurityQuestion {
 }
 
 function AccountSecurityTabs() {
+  const { t } = useTranslation();
   const { setPasswordEditing, refreshUser, user, security_question }: any =
     useAppContext();
   const { openModal } = useModal();
@@ -211,7 +213,7 @@ function AccountSecurityTabs() {
 
       await API.securityAnswers(payload);
 
-      notify("success", "Security questions saved ");
+      notify("success", t("security_questions_saved") );
       refreshUser();
       setEditingQuestions(false);
       questionsForm.reset();
@@ -219,7 +221,7 @@ function AccountSecurityTabs() {
     } catch (err: any) {
       notify(
         "error",
-        err.response?.data?.message || "Failed to save security questions"
+        err.response?.data?.message || t("failed_to_save_security_questions")
       );
     } finally {
       setLoading(false);
@@ -235,9 +237,9 @@ function AccountSecurityTabs() {
     setDisabling2FA(true);
     try {
       await API.disable2FA(otp);
-      notify("success", "Two-factor authentication disabled");
+      notify("success", t("two_factor_authentication_disabled"));
     } catch (err: any) {
-      notify("error", err.response?.data?.message || "Failed to disable 2FA");
+      notify("error", err.response?.data?.message || t("failed_to_disable_2fa"));
     } finally {
       setDisabling2FA(false);
     }
@@ -252,8 +254,8 @@ function AccountSecurityTabs() {
   };
 
   const tabs = [
-    { id: "password", label: "Update Password", icon: Lock },
-    { id: "security", label: "Security & 2FA", icon: Shield },
+    { id: "password", label: t("update_password"), icon: Lock },
+    { id: "security", label: t("security_and_2fa"), icon: Shield },
   ];
 
   const start2FASetup = async () => {
@@ -264,7 +266,7 @@ function AccountSecurityTabs() {
       setQrCodeUrl(res.data.qrCode);
       setManualCode(res.data.manualCode);
     } catch (err: any) {
-      setError(err?.response?.data?.message || "Failed to prepare 2FA setup");
+      setError(err?.response?.data?.message || t("failed_to_prepare_2fa_setup"));
     } finally {
       setLoadingQr(false);
     }
@@ -308,7 +310,7 @@ function AccountSecurityTabs() {
 
       notify(
         "success",
-        "Security questions and 2FA have been successfully set up!"
+        t("security_questions_and_2fa_setup_successfully")
       );
       refreshUser();
 
@@ -319,7 +321,7 @@ function AccountSecurityTabs() {
       setManualCode(null);
     } catch (err: any) {
       const message =
-        err.response?.data?.message || "Setup failed. Please try again.";
+        err.response?.data?.message || t("setup_failed_try_again");
       notify("error", message);
     } finally {
       setLoading(false);
@@ -344,14 +346,14 @@ function AccountSecurityTabs() {
         <div className="mb-5 w-full">
           <div className="flex md:justify-between md:flex-row flex-col-reverse items-center gap-2 mb-2">
             <h1 className="text-3xl font-bold text-black w-full">
-              Account Security
+              {t("account_security")}
             </h1>
             <button
               onClick={() => setPasswordEditing?.(false)}
               className="flex gap-2 top-5 text-[#7650e3] hover:text-[#6540cc] font-semibold transition-colors w-full justify-end text-sm hover:underline"
             >
               <ArrowLeft className="w-5 h-5" />
-              Back to Dashboard
+              {t("back_to_dashboard")}
             </button>
           </div>
         </div>
@@ -392,7 +394,7 @@ function AccountSecurityTabs() {
             >
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Current Password
+                  {t("current_password")}
                 </label>
                 <input
                   type="password"
@@ -409,7 +411,7 @@ function AccountSecurityTabs() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  New Password
+                  {t("new_password")}
                 </label>
                 <input
                   type="password"
@@ -426,7 +428,7 @@ function AccountSecurityTabs() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Confirm New Password
+                  {t("confirm_new_password")}
                 </label>
                 <input
                   type="password"
@@ -446,7 +448,7 @@ function AccountSecurityTabs() {
                 disabled={loading}
                 className="w-full py-2.5 text-base font-semibold text-white px-4 rounded-md text-md  border border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition disabled:opacity-60"
               >
-                {loading ? "Updating..." : "Update Password"}
+                {loading ? t("updating") : t("update_password_button")}
               </button>
             </form>
           )}
@@ -456,20 +458,20 @@ function AccountSecurityTabs() {
               <div className="bg-white p-5 rounded-md border ">
                 <h3 className="text-xl font-bold text-gray-800 mb-3 flex items-center gap-3">
                   <Shield className="w-6 h-6 text-purple-700" />
-                  Security Status
+                  {t("security_status")}
                 </h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 ">
                   <div className="p-5 rounded-md border shadow-sm ">
                     <div className="flex justify-between items-start">
                       <div>
-                        <h4 className="font-semibold">Security Questions</h4>
+                        <h4 className="font-semibold">{t("security_questions")}</h4>
                         <p className="text-sm text-gray-600 mt-1">
-                          Account recovery
+                          {t("account_recovery")}
                         </p>
                       </div>
                       <span className="px-3 py-1 rounded-md text-xs font-medium bg-purple-100 ">
-                        {user?.isSecurityQuestions ? "SET" : "NOT SET"}
+                        {user?.isSecurityQuestions ? t("set") : t("not_set_badge")}
                       </span>
                     </div>
                   </div>
@@ -478,14 +480,14 @@ function AccountSecurityTabs() {
                     <div className="flex justify-between items-start">
                       <div>
                         <h4 className="font-semibold">
-                          Two-Factor Authentication
+                          {t("two_factor_authentication")}
                         </h4>
                         <p className="text-sm text-gray-600 mt-1">
-                          Authenticator App
+                          {t("authenticator_app")}
                         </p>
                       </div>
                       <span className="px-3 py-1 rounded-md bg-gray-100 text-xs font-medium">
-                        {user?.twoFactorEnabled ? "ENABLED" : "DISABLED"}
+                        {user?.twoFactorEnabled ? t("enabled") : t("disabled")}
                       </span>
                     </div>
                   </div>
@@ -498,13 +500,13 @@ function AccountSecurityTabs() {
                   <div className="text-center mb-8">
                     <h2 className="text-2xl font-bold text-gray-900">
                       {step === 1
-                        ? "Set Security Questions"
-                        : "Enable Two-Factor Authentication"}
+                        ? t("set_security_questions")
+                        : t("enable_two_factor_authentication")}
                     </h2>
                     <p className="mt-2 text-gray-600">
                       {step === 1
-                        ? "Choose two security questions — these help recover your account"
-                        : "Scan the QR code with your authenticator app"}
+                        ? t("choose_two_security_questions_description")
+                        : t("scan_qr_code_description")}
                     </p>
                   </div>
 
@@ -523,7 +525,7 @@ function AccountSecurityTabs() {
                           <div key={index} className="space-y-3 ">
                             <div>
                               <label className="block text-sm font-medium text-gray-700 mb-1.5  ">
-                                Question {index + 1}
+                                {t("question")} {index + 1}
                               </label>
                               <CustomSelect
                                 value={questionsForm.watch(
@@ -547,7 +549,7 @@ function AccountSecurityTabs() {
 
                             <div>
                               <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                                Your Answer
+                                {t("your_answer")}
                               </label>
                               <input
                                 {...questionsForm.register(
@@ -558,7 +560,7 @@ function AccountSecurityTabs() {
                                     ? "border-red-500"
                                     : "border-gray-300"
                                 }`}
-                                placeholder="Enter your answer here..."
+                                placeholder={t("enter_your_answer_here")}
                               />
                               {answerError && (
                                 <p className="mt-1.5 text-sm text-red-600">
@@ -579,7 +581,7 @@ function AccountSecurityTabs() {
                         <div className="flex flex-col items-center justify-center py-12">
                           <Loader2 className="h-10 w-10 animate-spin text-purple-600 mb-4" />
                           <p className="text-gray-600">
-                            Preparing 2FA setup...
+                            {t("preparing_2fa_setup")}
                           </p>
                         </div>
                       ) : qrCodeUrl ? (
@@ -587,8 +589,7 @@ function AccountSecurityTabs() {
                           {/* QR Code */}
                           <div className="text-center space-y-3">
                             <p className="text-sm text-gray-600">
-                              Scan this QR code with your authenticator app
-                              (Google Authenticator, Authy, etc.)
+                              {t("scan_qr_code_with_authenticator_app")}
                             </p>
                             <div className="inline-block p-4 bg-white rounded-xl shadow-inner border">
                               <img
@@ -603,7 +604,7 @@ function AccountSecurityTabs() {
                           {manualCode && (
                             <div className="text-center">
                               <p className="text-sm text-gray-500 mb-2">
-                                Can't scan? Use this manual code:
+                                {t("cannot_scan_manual_code")}
                               </p>
                               <div className="font-mono bg-gray-100 px-6 py-3 rounded-lg inline-block text-lg tracking-wider">
                                 {manualCode}
@@ -614,7 +615,7 @@ function AccountSecurityTabs() {
                           {/* OTP Input */}
                           <div className="space-y-3">
                             <label className="block text-center text-sm font-medium text-gray-700">
-                              Enter 6-digit code from your authenticator app
+                              {t("enter_6_digit_code_from_app")}
                             </label>
                             <input
                               type="text"
@@ -633,7 +634,7 @@ function AccountSecurityTabs() {
                         </>
                       ) : (
                         <p className="text-center text-red-600 py-8">
-                          Failed to load QR code. Please try again.
+                          {t("failed_to_load_qr_code")}
                         </p>
                       )}
                     </div>
@@ -648,7 +649,7 @@ function AccountSecurityTabs() {
                         disabled={loading}
                         className="flex-1 py-2.5 text-base font-semibold px-6 border  border-[#7650e3] rounded-md text-[#7650e3] hover:bg-[#d7d7fc] transition disabled:opacity-50"
                       >
-                        Back
+                        {t("back")}
                       </button>
                     )}
 
@@ -664,7 +665,7 @@ function AccountSecurityTabs() {
                         {loading ? (
                           <Loader2 className="h-5 w-5 animate-spin" />
                         ) : null}
-                        Continue
+                        {t("continue")}
                       </button>
                     ) : (
                       <button
@@ -676,7 +677,7 @@ function AccountSecurityTabs() {
                         {loading ? (
                           <Loader2 className="h-5 w-5 animate-spin" />
                         ) : null}
-                        Confirm & Secure Account
+                        {t("confirm_secure_account")}
                       </button>
                     )}
                   </div>
@@ -686,7 +687,7 @@ function AccountSecurityTabs() {
                   <div className="bg-white p-5 rounded-md border shadow-sm">
                     <div className="flex items-center justify-between mb-3">
                       <h3 className="text-xl font-bold text-gray-800">
-                        Security Questions
+                        {t("security_questions")}
                       </h3>
                       {user?.isSecurityQuestions ? (
                         <button
@@ -696,11 +697,11 @@ function AccountSecurityTabs() {
                           }}
                           className="px-4 py-2 rounded-md font-medium transition  text-white  border border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          Update
+                          {t("update")}
                         </button>
                       ) : (
                         <span className="text-amber-600 font-medium">
-                          Required
+                          {t("required")}
                         </span>
                       )}
                     </div>
@@ -756,7 +757,7 @@ function AccountSecurityTabs() {
                               {/* Answer */}
                               <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                  Your Answer
+                                  {t("your_answer")}
                                 </label>
                                 <input
                                   type="text"
@@ -768,7 +769,7 @@ function AccountSecurityTabs() {
                                       ? "border-red-500"
                                       : "border-gray-300"
                                   }`}
-                                  placeholder="Enter your answer"
+                                  placeholder={t("enter_your_answer_here")}
                                 />
                                 {answerError && (
                                   <p className="mt-1 text-sm text-red-600">
@@ -787,22 +788,22 @@ function AccountSecurityTabs() {
                             onClick={() => setEditingQuestions(false)}
                             className="flex-1 bg-transparent border-purple-600 border text-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] py-3 rounded-md font-medium"
                           >
-                            Cancel
+                            {t("cancel")}
                           </button>
                           <button
                             type="submit"
                             disabled={loading}
                             className="flex-1 text-white text-md transition-all border border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] py-3 rounded-md disabled:opacity-60 font-medium"
                           >
-                            {loading ? "Saving..." : "Save Security Questions"}
+                            {loading ? t("saving") : t("save_security_questions")}
                           </button>
                         </div>
                       </form>
                     ) : (
                       <div className="text-center py-12 text-gray-600">
                         {user?.isSecurityQuestions
-                          ? "Security questions are protected"
-                          : "Please set up security questions first"}
+                          ? t("security_questions_are_protected")
+                          : t("please_set_security_questions_first")}
                       </div>
                     )}
                   </div>
@@ -810,7 +811,7 @@ function AccountSecurityTabs() {
                   <div className="bg-white p-5 rounded-md border shadow-sm">
                     <div className="flex-1 flex-row md:flex items-center justify-between">
                       <h3 className="  text-xl font-bold text-gray-800  mb-2 ">
-                        Two-Factor Authentication
+                        {t("two_factor_authentication")}
                       </h3>
 
                       <button
@@ -818,7 +819,7 @@ function AccountSecurityTabs() {
                           if (!user?.isSecurityQuestions) {
                             notify(
                               "warning",
-                              "Please set security questions first"
+                              t("please_set_security_questions_first")
                             );
                             return;
                           }
@@ -843,26 +844,25 @@ function AccountSecurityTabs() {
                         } disabled:opacity-50 disabled:cursor-not-allowed`}
                       >
                         {disabling2FA
-                          ? "Processing..."
+                          ? t("processing")
                           : user?.twoFactorEnabled
-                            ? "Disable 2FA"
-                            : "Enable 2FA"}
+                            ? t("disable_2fa")
+                            : t("enable_2fa")}
                       </button>
                     </div>
 
                     {!user?.isSecurityQuestions && (
                       <div className="bg-amber-50 mt-5 border border-amber-200 p-5 rounded-md text-amber-800">
-                        You must set up security questions before enabling
-                        two-factor authentication.
+                        {t("must_set_security_questions_before_2fa")}
                       </div>
                     )}
 
                     {user?.twoFactorEnabled && (
                       <p className="text-sm text-gray-600 mt-4">
-                        2FA is active. You will be asked for a code when:
-                        <br />• Logging in from new devices
-                        <br />• Changing password
-                        <br />• Updating security questions
+                        {t("2fa_is_active_description")}
+                        <br />• {t("logging_from_new_devices")}
+                        <br />• {t("changing_password")}
+                        <br />• {t("updating_security_questions")}
                       </p>
                     )}
                   </div>
@@ -885,6 +885,7 @@ const TwoFAModal = ({
   setError,
   error,
 }: any) => {
+  const { t } = useTranslation();
   const { refreshUser } = useAppContext();
   const [otp, setOtp] = useState("");
   const [verifying, setVerifying] = useState(false);
@@ -933,16 +934,16 @@ const TwoFAModal = ({
       className="bg-white p-5 rounded-md border shadow-sm max-w-md w-full mx-auto"
     >
       <h2 className="text-xl font-bold text-gray-800 text-center mb-3">
-        Enable Two-Factor Authentication
+        {t("enable_two_factor_authentication")}
       </h2>
 
       {loadingQr && !qrCodeUrl ? (
-        <p className="text-center text-gray-500">Loading QR code...</p>
+        <p className="text-center text-gray-500">{t("loading_qr_code")}</p>
       ) : qrCodeUrl ? (
         <div className="space-y-3">
           <div className="text-center">
             <p className="text-sm text-gray-600 mb-4">
-              Scan this QR code using Authenticator app
+              {t("scan_qr_code_using_authenticator_app")}
             </p>
             <img
               src={qrCodeUrl}
@@ -951,7 +952,7 @@ const TwoFAModal = ({
           </div>
 
           <div className="text-center text-sm text-gray-500">
-            <p>Manual Code</p>
+            <p>{t("manual_code")}</p>
             <div className="mt-2 inline-flex items-center gap-2    font-mono bg-gray-100 px-4 py-2 rounded-md">
               {manualCode}
               <button
@@ -982,7 +983,7 @@ const TwoFAModal = ({
               disabled={verifying}
               className="flex-1 py-2 border text-[#7650e3] font-medium border-[#7650e3] rounded-md hover:bg-[#d7d7fc] transition"
             >
-              Cancel
+              {t("cancel")}
             </button>
 
             <button
@@ -990,13 +991,13 @@ const TwoFAModal = ({
               disabled={verifying || otp.length !== 6}
               className="flex-1 py-2 rounded-md text-white text-md transiton-all font-medium border border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]disabled:opacity-50  "
             >
-              {verifying ? "Verifying..." : "Enable 2FA"}
+              {verifying ? t("verifying") : t("enable_2fa")}
             </button>
           </div>
         </div>
       ) : (
         <p className="text-center text-red-600">
-          {error || "Failed to load 2FA setup"}
+          {error || t("failed_to_load_2fa_setup")}
         </p>
       )}
     </div>
@@ -1010,6 +1011,7 @@ export const CustomSelect: React.FC<{
   otherSelected: string[];
   error?: string;
 }> = ({ value, onChange, questions, otherSelected, error }) => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -1043,7 +1045,7 @@ export const CustomSelect: React.FC<{
         }`}
       >
         <span className={value ? "text-gray-900" : "text-gray-500"}>
-          {selectedQuestion?.question || "Select a question..."}
+          {selectedQuestion?.question || t("select_a_question")}
         </span>
         <svg
           className={`w-5 h-5 transition-transform ${
@@ -1087,7 +1089,7 @@ export const CustomSelect: React.FC<{
                 <br />
                 {isDisabled && (
                   <span className=" text-xs bg-gray-200 px-2 py-1 rounded-full">
-                    Already selected
+                    {t("already_selected")}
                   </span>
                 )}
               </button>

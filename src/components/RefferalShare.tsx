@@ -1,9 +1,11 @@
 import React from "react";
 import { ArrowLeft } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import logoText from "../assets/logo-text.svg";
 
 const ReferralRewards: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const handleBack = () => {
@@ -23,7 +25,7 @@ const ReferralRewards: React.FC = () => {
             className="flex items-center gap-2 text-[#7650e3] hover:text-[#6840c7] transition-colors font-semibold"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm">Back</span>
+            <span className="text-sm">{t("back_button")}</span>
           </button>
 
           {/* Center: Logo (true center) */}
@@ -44,37 +46,27 @@ const ReferralRewards: React.FC = () => {
           {/* Title block */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-[#7650e3] mb-2">
-              Referral Rewards & General Guidelines
+              {t("referral_rewards_title")}
             </h1>
           </div>
 
           {/* Content */}
           <ul className="list-disc pl-6 space-y-3 text-gray-700">
-            <li>Share your invite link with friends.</li>
+            <li>{t("referral_guideline_1")}</li>
+            <li>{t("referral_guideline_2")}</li>
+            <li>{t("referral_guideline_3")}</li>
+            <li>{t("referral_guideline_4")}</li>
+            <li>{t("referral_guideline_5")}</li>
+            <li>{t("referral_guideline_6")}</li>
+            <li>{t("referral_guideline_7")}</li>
+            <li>{t("referral_guideline_8")}</li>
+            <li>{t("referral_guideline_9")}</li>
+            <li>{t("referral_guideline_10")}</li>
+            <li>{t("referral_guideline_11")}</li>
             <li>
-              Friend signs up + creates account + generates a post → they get 10
-              Omni Coins.
-            </li>
-            <li>
-              Referred user purchases a package → both get 100 Omni Coins.
-            </li>
-            <li>Coins credited after purchase is completed and verified.</li>
-            <li>
-              Only new users signing up via your referral link are eligible.
-            </li>
-            <li>
-              No disposable/high-risk emails; verified by third-party reputation
-              service.
-            </li>
-            <li>Only one (1) referral reward per new user.</li>
-            <li>Referral coins are non-transferable.</li>
-            <li>No spamming; suspicious behavior is monitored.</li>
-            <li>Misuse may remove rewards or disable referral link.</li>
-            <li>OmniShare can update/pause/discontinue anytime.</li>
-            <li>
-              For full rules, see{" "}
+              {t("referral_guideline_12_part1")}{" "}
               <Link to="/terms" className="text-[#7650e3] hover:underline">
-                OmniShare Terms
+                {t("omnishare_terms")}
               </Link>
               .
             </li>
@@ -83,9 +75,7 @@ const ReferralRewards: React.FC = () => {
           {/* Footer */}
           <div className="mt-8 text-center">
             <p className="text-gray-500 font-medium text-sm">
-              This Referral Program is effective as of{" "}
-              {new Date().toLocaleDateString()} and applies to all users of
-              OmniShare.
+              {t("referral_program_effective")} {new Date().toLocaleDateString()} {t("and_applies_to_omnishare")}
             </p>
           </div>
         </div>

@@ -229,7 +229,7 @@ export function OtpModal({
               hover:opacity-95
               disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {verifying ? "Verifying…" : "Verify"}
+            {verifying ? t("verifying") : t("verify_and_login")}
           </button>
 
           <button
@@ -239,10 +239,10 @@ export function OtpModal({
             aria-live="polite"
           >
             {resending
-              ? "Resending…"
+              ? t("resending")
               : remaining > 0
               ? `Resend in ${remaining}s`
-              : "Resend OTP"}
+              : t("otp_resend_successfully")}
           </button>
         </div>
       </div>

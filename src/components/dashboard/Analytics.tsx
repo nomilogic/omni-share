@@ -217,7 +217,7 @@ export default function Analytics({ onHasAnalyticsChange }: Props) {
               </div>
               {current.performance?.avgViewsPerVideo && (
                 <div className="flex justify-between">
-                  <span>Avg Views/Video</span>
+                  <span>{t("average_views_per_video")}</span>
                   <span className="font-bold text-blue-700">
                     {current.performance.avgViewsPerVideo.toFixed(1)}
                   </span>
@@ -229,7 +229,7 @@ export default function Analytics({ onHasAnalyticsChange }: Props) {
           {current?.platform === "linkedin" &&
             current?.summary?.views !== undefined && (
               <div className="flex justify-between">
-                <span>Impressions</span>
+                <span>{t("impressions")}</span>
                 <span className="font-bold text-blue-700">
                   {current.summary.views.toLocaleString()}
                 </span>
@@ -239,7 +239,7 @@ export default function Analytics({ onHasAnalyticsChange }: Props) {
           {/* Common metrics - show only if they exist */}
           {current?.summary?.likes !== undefined && (
             <div className="flex justify-between">
-              <span>Likes</span>
+              <span>{t("likes")}</span>
               <span className="font-bold text-rose-600">
                 {current.summary.likes.toLocaleString()}
               </span>
@@ -248,7 +248,7 @@ export default function Analytics({ onHasAnalyticsChange }: Props) {
 
           {current?.summary?.comments !== undefined && (
             <div className="flex justify-between">
-              <span>Comments</span>
+              <span>{t("comments")}</span>
               <span className="font-bold text-orange-600">
                 {current.summary.comments.toLocaleString()}
               </span>
@@ -257,7 +257,7 @@ export default function Analytics({ onHasAnalyticsChange }: Props) {
 
           {current?.summary?.shares !== undefined && (
             <div className="flex justify-between">
-              <span>Shares</span>
+              <span>{t("shares")}</span>
               <span className="font-bold text-purple-600">
                 {current.summary.shares.toLocaleString()}
               </span>
@@ -268,7 +268,7 @@ export default function Analytics({ onHasAnalyticsChange }: Props) {
             current.platform !== "youtube" &&
             current.platform !== "linkedin" && (
               <div className="flex justify-between">
-                <span>Views</span>
+                <span>{t("views")}</span>
                 <span className="font-bold text-blue-600">
                   {current.summary.views.toLocaleString()}
                 </span>
@@ -277,7 +277,7 @@ export default function Analytics({ onHasAnalyticsChange }: Props) {
 
           {current?.performance?.engagementRate !== undefined && (
             <div className="flex justify-between">
-              <span>Engagement Rate</span>
+              <span>{t("engagement_rate")}</span>
               <span className="font-bold text-emerald-600">
                 {(current.performance.engagementRate * 100).toFixed(2)}%
               </span>
@@ -287,7 +287,7 @@ export default function Analytics({ onHasAnalyticsChange }: Props) {
 
         <hr className="my-2 border-gray-300" />
 
-        <h3 className="font-semibold text-lg mb-2">Recent Posts</h3>
+        <h3 className="font-semibold text-lg mb-2">{t("recent_posts")}</h3>
 
         {topPosts.length > 0 ? (
           <div className="space-y-2">
@@ -312,7 +312,7 @@ export default function Analytics({ onHasAnalyticsChange }: Props) {
 
       <button
         onClick={() => navigate(`/analytics?platform=${selectedPlatform}`)}
-        className="mt-4 w-full py-2.5 px-4 border border-purple-600 hover:text-purple-600 bg-purple-600 hover:bg-[#d7d7fc] text-white font-medium rounded-md transition-colors"
+        className="mt-4 w-full py-2 px-4 border border-purple-600 hover:text-purple-600 bg-purple-600 hover:bg-[#d7d7fc] text-white font-medium rounded-md transition-colors"
         disabled={!selectedPlatform}
       >
         {t("view_details") || "View Full Analytics"}

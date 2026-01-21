@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo, useEffect } from "react";
+import React, { useRef, useState, useCallback, useMemo, useEffect } from "react";
 import {
   Copy,
   Download,
@@ -60,6 +60,7 @@ export const PostPreview = ({
   const [isRegeneratingMode, setIsRegeneratingMode] = useState<boolean>(false);
   const [regenerationPrompt, setRegenerationPrompt] = useState<string>("");
   const [isRegenerating, setIsRegenerating] = useState<boolean>(false);
+  const scrollAnchorRef = useRef(null);
 
   const [pendingDiscardAction, setPendingDiscardAction] = useState<
     (() => void) | null
@@ -291,13 +292,22 @@ export const PostPreview = ({
   }, [generatedPosts]);
 
   const handleRegenerateClick = useCallback(() => {
-    setIsRegeneratingMode(true);
-    const currentPost = posts.find(
-      (post) => post.platform === selectedPlatform
-    );
-    const platformPrompt = currentPost?.generationPrompt || "";
-    setRegenerationPrompt(platformPrompt);
-  }, [posts, selectedPlatform]);
+  setIsRegeneratingMode(true);
+
+  const currentPost = posts.find((post) => post.platform === selectedPlatform);
+  const platformPrompt = currentPost?.generationPrompt || "";
+  setRegenerationPrompt(platformPrompt);
+
+  // ✅ Mobile only: auto scroll down
+  if (window.innerWidth <= 768) {
+  setTimeout(() => {
+    window.scrollTo({
+      top: document.documentElement.scrollHeight,
+      behavior: "smooth",
+    });
+  }, 200);
+}
+}, [posts, selectedPlatform]);
 
   // Handle regeneration submission
   const handleRegenerateSubmit = useCallback(async () => {
@@ -1228,9 +1238,9 @@ export const PostPreview = ({
                   // View Mode - Show edit button
                   <button
                     onClick={() => setEditingMode(true)}
-                    className="w-full py-2.5  text-md font-semibold rounded-md border flex items-center justify-center gap-2 transition  hover:bg-[#d7d7fc] text-[#7650e3] border-[#7650e3]"
+                    className="w-full py-2.5  text-base font-semibold rounded-md border flex items-center justify-center gap-2 transition  hover:bg-[#d7d7fc] text-[#7650e3] border-[#7650e3]"
                   >
-                    <Edit className="w-4 h-4" />
+                    <Edit className="w-5 h-5" />
                     {t("edit_post_text")}
                   </button>
                 )}
@@ -1254,6 +1264,7 @@ export const PostPreview = ({
                   <Edit className="w-5 h-5" />
                   {t("regenerate")}
                 </button>
+                <div ref={scrollAnchorRef} />
               </div>
             </div>
           )}
@@ -1484,7 +1495,7 @@ export const PostPreview = ({
             <div className="flex justify-center mt-4">
               <button
                 onClick={handleRegenerateCancel}
-                className="w-full py-2.5  text-md font-semibold rounded-md border flex items-center justify-center gap-2 transition  hover:bg-[#d7d7fc] text-[#7650e3] border-[#7650e3]"
+                className="w-full py-2.5  text-base font-semibold rounded-md border flex items-center justify-center gap-2 transition  hover:bg-[#d7d7fc] text-[#7650e3] border-[#7650e3]"
               >
                 {t("cancel")}
               </button>

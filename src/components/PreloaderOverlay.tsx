@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Loader, Zap, Brain, Sparkles } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import Icon from "./Icon";
 import logoText from "../assets/logo-text.svg";
 import { LoadingState } from "../context/LoadingContext";
@@ -11,6 +12,7 @@ interface PreloaderOverlayProps {
 export const PreloaderOverlay: React.FC<PreloaderOverlayProps> = ({
   loadingState,
 }) => {
+  const { t } = useTranslation();
   const [displayMessage, setDisplayMessage] = useState("");
   const [animationPhase, setAnimationPhase] = useState(0);
 
@@ -77,7 +79,7 @@ export const PreloaderOverlay: React.FC<PreloaderOverlayProps> = ({
           <div className="flex justify-center mb-3">
             <img src={logoText} alt="OmniShare" className="h-4" />
           </div>
-          <p className="text-purple-600 text-sm font-medium">AI-Powered Content Creation</p>
+          <p className="text-purple-600 text-sm font-medium">{t("ai_powered_content_creation")}</p>
         </div>
 
         {/* Animated loading indicator */}
@@ -113,7 +115,7 @@ export const PreloaderOverlay: React.FC<PreloaderOverlayProps> = ({
         {typeof loadingState.progress === "number" && (
           <div className="mb-6">
             <div className="flex justify-between text-sm text-purple-600 mb-2">
-              <span>Progress</span>
+              <span>{t("progress")}</span>
               <span>{Math.round(loadingState.progress)}%</span>
             </div>
             <div className="w-full bg-purple-100 rounded-full h-2 overflow-hidden">
@@ -145,8 +147,8 @@ export const PreloaderOverlay: React.FC<PreloaderOverlayProps> = ({
         <div className="text-center">
           <p className="text-purple-600 font-medium text-xs">
             {loadingState.canCancel
-              ? "You can cancel this operation at any time"
-              : "Please wait while we process your request"}
+              ? t("cancel_anytime")
+              : t("please_wait_process")}
           </p>
         </div>
       </div>

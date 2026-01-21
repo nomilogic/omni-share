@@ -460,15 +460,15 @@ export const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
     <div className="space-y-6">
       <div className="bg-white rounded-md shadow-md p-6">
         <h3 className="text-lg font-semibold text-slate-900 mb-4">
-          Performance Analytics
+          {t("performance_analytics")}
         </h3>
         <div className="text-center py-12">
           <BarChart3 className="w-16 h-16 text-gray-300 mx-auto mb-4" />
           <h4 className="text-lg font-medium text-slate-900 mb-2">
-            Advanced Analytics Coming Soon
+            {t("advanced_analytics_coming_soon")}
           </h4>
           <p className="text-gray-500 font-medium">
-            Detailed performance metrics and insights will be available here.
+            {t("detailed_performance_metrics_soon")}
           </p>
         </div>
       </div>

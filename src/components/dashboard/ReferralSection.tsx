@@ -27,8 +27,8 @@ const ReferralSection: FC<Props> = ({ close, className = "" }) => {
   const referralLink = `http://omnishare.ai/auth?referralId=${user.id}`;
 
   const shareText = useMemo(() => {
-    return `Join me on OmniShare! Use my referral link:`;
-  }, []);
+    return t("join_me_omnishare_referral");
+  }, [t]);
 
   // ✅ detect mobile screen (<= md)
   useEffect(() => {
@@ -121,16 +121,15 @@ const ReferralSection: FC<Props> = ({ close, className = "" }) => {
 
             <p className="text-black text-sm font-medium leading-relaxed flex gap-2 items-start mb-1">
               <Share2 className="w-[18px] h-[18px] text-[#7650e3]" />
-              Share your invite link with friends.
+              {t("share_invite_link")}
             </p>
             <p className="text-black text-sm font-medium leading-relaxed flex gap-2 items-start mb-1">
               <Icon name="manage-subs" size={18} />
-              They sign up and receive 10 Omni Coins.
+              {t("they_sign_up_receive_coins")}
             </p>
             <p className="text-black text-sm font-medium leading-relaxed flex gap-2 items-start mb-3">
               <Icon name="crown" size={18} />
-              When they purchase a package using your referral link, you both
-              earn 100 Omni Coins.
+              {t("purchase_package_earn_coins")}
             </p>
 
             {/* Conditionally render the input box or Share button based on screen size */}
@@ -139,18 +138,18 @@ const ReferralSection: FC<Props> = ({ close, className = "" }) => {
               <div className="mb-3">
                 <button
                   onClick={handleNativeShare}
-                  className="flex w-full items-center justify-center rounded-md gap-2 font-bold transition-colors text-md font-semiboldtransition-all border text-white border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] py-2 px-3"
-                  title="Share referral link"
+                  className="flex w-full items-center justify-center rounded-md gap-2 font-bold transition-colors text-base font-semiboldtransition-all border text-white border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] py-2.5 px-3"
+                  title={t("share_referral_link")}
                 >
                   <Share2 className="w-[18px] h-[18px]" />
-                  Share
+                  {t("share")}
                 </button>
               </div>
             ) : (
               // Desktop view: Show the link and copy button
               <div className="mb-3">
                 <label className="text-xs text-gray-500 mb-2 block font-medium">
-                  Copy and share your referral link:
+                  {t("copy_share_referral_link")}
                 </label>
 
                 <div className="flex items-center gap-2 w-full border border-purple-600 bg-white rounded-md overflow-hidden pl-2">
@@ -175,11 +174,11 @@ const ReferralSection: FC<Props> = ({ close, className = "" }) => {
             {!isMobile && (
               <button
                 onClick={() => copyToClipboard(referralLink)}
-                className="flex w-full items-center justify-center rounded-md gap-2 font-bold transition-colors text-md font-semiboldtransition-all border text-white border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] py-2 px-3"
-                title="Copy referral link"
+                className="flex w-full items-center justify-center rounded-md gap-2 font-bold transition-colors text-base font-semiboldtransition-all border text-white border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] py-2.5 px-3"
+                title={t("copy_referral_link")}
               >
                 <Copy className="w-[18px] h-[18px]" />
-                Copy Link
+                {t("copy_link")}
               </button>
             )}
 
@@ -189,7 +188,7 @@ const ReferralSection: FC<Props> = ({ close, className = "" }) => {
                 onClick={handleTermsClick}
                 className="text-[#7650e3] "
               >
-                View terms and conditions
+                {t("view_terms_and_conditions")}
               </a>
             </div>
           </div>
@@ -212,7 +211,7 @@ const ReferralSection: FC<Props> = ({ close, className = "" }) => {
           <div className="mt-2">
             <p className="text-white text-sm  leading-relaxed flex gap-2 items-start mb-1">
               <Share2 className="w-[18px] h-[18px]" />
-              Share your invite link with friends.
+              {t("share_invite_link")}
             </p>
             <p className="text-white text-sm  leading-relaxed flex gap-2 items-start mb-1">
               <Icon
@@ -220,12 +219,11 @@ const ReferralSection: FC<Props> = ({ close, className = "" }) => {
                 size={18}
                 className="brightness-[1000]"
               />
-              They sign up and receive 10 Omni Coins.
+              {t("they_sign_up_receive_coins")}
             </p>
             <p className="text-white text-sm  leading-relaxed flex gap-2 items-start mb-2">
               <Icon name="crown" size={18} className="brightness-[1000]" />
-              When they purchase a package using your referral link, you both
-              earn 100 Omni Coins.
+              {t("purchase_package_earn_coins")}
             </p>
 
             {/* ✅ Desktop only: show link input */}
@@ -271,7 +269,7 @@ const ReferralSection: FC<Props> = ({ close, className = "" }) => {
                 
                 className="text-white "
               >
-                View terms and conditions
+                {t("view_terms_and_conditions")}
               </a>
             </div>
             </div>

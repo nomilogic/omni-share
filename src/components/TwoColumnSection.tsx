@@ -43,7 +43,7 @@ const TwoColumnSection: React.FC = () => {
             }}
             className="group px-6 py-2.5 border border-purple-600 text-purple-600 font-semibold rounded-md hover:bg-purple-100 transition"
           >
-            <span>{user ? "Create Post" : t("get_started_free")}</span>&nbsp;
+            <span>{user ? t("create_post") : t("get_started_free")}</span>&nbsp;
             <span className="inline-block transform transition-transform duration-300 group-hover:translate-x-1">
               →
             </span>

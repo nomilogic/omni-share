@@ -110,7 +110,7 @@ export const ProfilePage: React.FC = () => {
                             profile.plan ||
                             "free"
                         ).toUpperCase()}
-                        Plan
+                        {t("plan")}
                       </span>
                       <span
                         className={`px-3 py-1 rounded-full text-sm font-medium ${
@@ -154,7 +154,7 @@ export const ProfilePage: React.FC = () => {
                         {state.user.wallet?.coins ?? profile.coins ?? 0}
                       </div>
                       <div className="text-sm text-muted-foreground">
-                        Coins Available
+                        {t("coins_available")}
                       </div>
                     </div>
                   </div>
@@ -171,7 +171,7 @@ export const ProfilePage: React.FC = () => {
                         {state.user.wallet?.package?.name || "Free"}
                       </div>
                       <div className="text-sm text-muted-foreground">
-                        Current Package
+                        {t("current_package")}
                       </div>
                     </div>
                   </div>
@@ -198,7 +198,7 @@ export const ProfilePage: React.FC = () => {
                             : "-"}
                         </div>
                         <div className="text-sm text-muted-foreground">
-                          Package Expires
+                          {t("package_expires")}
                         </div>
                       </div>
                     </div>
@@ -220,10 +220,10 @@ export const ProfilePage: React.FC = () => {
                   )}
                   <div>
                     <div className="font-medium">
-                      {profile.brandName || "Not set"}
+                      {profile.brandName || t("not_set")}
                     </div>
                     <div className="text-sm text-gray-500 font-medium">
-                      {profile.brandTone || "Tone not set"}
+                      {profile.brandTone || t("tone_not_set")}
                     </div>
                     <div className="text-sm mt-2">
                       <a
@@ -232,7 +232,7 @@ export const ProfilePage: React.FC = () => {
                         rel="noreferrer"
                         className="text-purple-600 hover:underline"
                       >
-                        {profile.publicUrl || "Add public URL"}
+                        {profile.publicUrl || t("add_public_url")}
                       </a>
                     </div>
                   </div>
@@ -240,7 +240,7 @@ export const ProfilePage: React.FC = () => {
                 {
                   <div>
                     <label className=" text-lg font-medium theme-text-secondary mt-3 ">
-                      Invite Friends for Rewards
+                      {t("invite_friends_rewards")}
                     </label>
                     <div className="flex items-center gap-2">
                       <input

@@ -9,8 +9,10 @@ import {
 import { User, Shield, Bell, Palette, Save, Check } from "lucide-react";
 import { useAppContext } from "../context/AppContext";
 import { useTheme } from "../hooks/useTheme";
+import { useTranslation } from "react-i18next";
 
 export const SettingsPage: React.FC = () => {
+  const { t } = useTranslation();
   const { state, dispatch } = useAppContext();
   const location = useLocation();
   const navigate = useNavigate();
@@ -48,10 +50,10 @@ export const SettingsPage: React.FC = () => {
   const [message, setMessage] = useState({ type: "", text: "" });
 
   const settingsNavItems = [
-    { path: "/settings/profile", icon: User, label: "Profile" },
-    // { path: "/settings/security", icon: Shield, label: "Security" },
-    { path: "/settings/notifications", icon: Bell, label: "Notifications" },
-    { path: "/settings/appearance", icon: Palette, label: "Appearance" },
+    { path: "/settings/profile", icon: User, label: t("profile") },
+    // { path: "/settings/security", icon: Shield, label: t("security_settings") },
+    { path: "/settings/notifications", icon: Bell, label: t("notifications") },
+    { path: "/settings/appearance", icon: Palette, label: t("appearance") },
   ];
 
   const isActivePath = (path: string) => location.pathname === path;
@@ -118,10 +120,10 @@ export const SettingsPage: React.FC = () => {
                   element={
                     <div className="text-center py-8">
                       <h3 className="text-lg font-semibold theme-text-primary mb-2">
-                        Settings
+                        {t("settings")}
                       </h3>
                       <p className="theme-text-secondary">
-                        Select a category from the left to manage your settings.
+                        {t("select_category")}
                       </p>
                     </div>
                   }
@@ -131,12 +133,12 @@ export const SettingsPage: React.FC = () => {
                   element={
                     <div>
                       <h3 className="text-xl font-semibold theme-text-primary mb-6">
-                        Profile
+                        {t("profile")}
                       </h3>
                       <div className="space-y-6">
                         <div>
                           <label className="block text-sm font-medium theme-text-secondary mb-2">
-                            Email
+                            {t("email")}
                           </label>
                           <input
                             type="email"
@@ -145,7 +147,7 @@ export const SettingsPage: React.FC = () => {
                             className="w-full px-4 py-2.5 border border-white/20 rounded-md theme-bg-primary theme-text-primary font-normal"
                           />
                           <p className="text-xs theme-text-light mt-1">
-                            Email cannot be changed
+                            {t("email_cannot_be_changed")}
                           </p>
                         </div>
                         <div>
@@ -167,11 +169,11 @@ export const SettingsPage: React.FC = () => {
                         </div>
                         <div>
                           <label className="block text-sm font-medium theme-text-secondary mb-2">
-                            Current Plan
+                            {t("current_plan")}
                           </label>
                           <div className="px-4 py-2.5 theme-bg-primary rounded-md border border-white/20">
                             <span className="theme-text-primary font-normal ">
-                              {profileData.planName || "No plan selected"}
+                              {profileData.planName || t("no_plan_selected")}
                             </span>
                           </div>
                         </div>
@@ -195,7 +197,7 @@ export const SettingsPage: React.FC = () => {
                                 }}
                                 className="theme-button-primary px-3 py-2.5 rounded-md text-white hover:theme-button-hover transition"
                               >
-                                Copy
+                                {t("copy_button")}
                               </button>
                               <button
                                 onClick={() => {
@@ -223,14 +225,14 @@ export const SettingsPage: React.FC = () => {
                             </p>
                           </div>
                         )}
-                        <button
-                          onClick={handleProfileSave}
-                          disabled={loading}
-                          className="flex items-center gap-2 theme-button-primary text-white px-6 py-2.5 rounded-md hover:theme-button-hover transition-colors duration-200 disabled:opacity-50"
-                        >
-                          <Save className="w-4 h-4" />
-                          {loading ? "Saving..." : "Save Changes"}
-                        </button>
+                              <button
+                                onClick={handleProfileSave}
+                                disabled={loading}
+                                className="flex items-center gap-2 theme-button-primary text-white px-6 py-2.5 rounded-md hover:theme-button-hover transition-colors duration-200 disabled:opacity-50"
+                              >
+                                <Save className="w-4 h-4" />
+                                {loading ? t("saving") : t("save_changes")}
+                              </button>
                       </div>
                     </div>
                   }
@@ -240,28 +242,27 @@ export const SettingsPage: React.FC = () => {
                   element={
                     <div>
                       <h3 className="text-xl font-semibold theme-text-primary mb-6">
-                        Security Settings
+                        {t("security_settings")}
                       </h3>
                       <div className="space-y-6">
                         <div className="theme-bg-primary p-6 rounded-md border border-white/20">
                           <h4 className="text-lg font-medium theme-text-primary mb-4 flex items-center gap-2">
                             <Shield className="w-5 h-5" />
-                            Password
+                            {t("password")}
                           </h4>
                           <p className="theme-text-secondary text-sm mb-4">
-                            Update your password to keep your account secure.
+                            {t("update_password_secure")}
                           </p>
                           <button className="theme-button-secondary text-white px-6 py-2.5 rounded-md hover:theme-button-hover transition-colors duration-200">
-                            Change Password
+                            {t("change_password")}
                           </button>
                         </div>
                         <div className="theme-bg-primary p-6 rounded-md border border-white/20">
                           <h4 className="text-lg font-medium theme-text-primary mb-4">
-                            Two-Factor Authentication
+                            {t("two_factor_authentication")}
                           </h4>
                           <p className="theme-text-secondary text-sm mb-4">
-                            Add an extra layer of security to your account with
-                            2FA.
+                            {t("enable_2fa_security")}
                           </p>
                           <div className="flex items-center justify-between">
                             <div>
@@ -279,13 +280,13 @@ export const SettingsPage: React.FC = () => {
                         </div>
                         <div className="theme-bg-primary p-6 rounded-md border border-white/20">
                           <h4 className="text-lg font-medium theme-text-primary mb-4">
-                            Account Deletion
+                            {t("account_deletion")}
                           </h4>
                           <p className="theme-text-secondary text-sm mb-4">
-                            Permanently delete your account and all data.
+                            {t("delete_account_permanently")}
                           </p>
                           <button className="bg-red-600 text-white px-6 py-2.5 rounded-md hover:bg-purple-700 transition-colors duration-200">
-                            Delete Account
+                            {t("delete_account")}
                           </button>
                         </div>
                       </div>
@@ -297,23 +298,23 @@ export const SettingsPage: React.FC = () => {
                   element={
                     <div>
                       <h3 className="text-xl font-semibold theme-text-primary mb-6">
-                        Notification Preferences
+                        {t("notifications")}
                       </h3>
                       <div className="space-y-4">
                         {[
                           {
                             key: "email",
-                            title: "Email Notifications",
+                            title: t("email_notifications"),
                             desc: "Receive updates about your posts and content.",
                           },
                           {
                             key: "push",
-                            title: "Push Notifications",
+                            title: t("push_notifications"),
                             desc: "Get instant alerts in your browser.",
                           },
                           {
                             key: "marketing",
-                            title: "Marketing Emails",
+                            title: t("marketing_emails"),
                             desc: "Receive news about features and updates.",
                           },
                           {
@@ -379,17 +380,16 @@ export const SettingsPage: React.FC = () => {
                   element={
                     <div>
                       <h3 className="text-xl font-semibold theme-text-primary mb-6">
-                        Appearance
+                        {t("appearance")}
                       </h3>
                       <div className="space-y-6">
                         <div>
                           <h4 className="text-lg font-medium theme-text-primary mb-4 flex items-center gap-2">
                             <Palette className="w-5 h-5" />
-                            App Themes
+                            {t("select_theme")}
                           </h4>
                           <p className="theme-text-secondary text-sm mb-6">
-                            Choose from our collection of beautiful themes based
-                            on the app's features.
+                            {t("theme_customization")}
                           </p>
                           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                             {availableThemes.map((theme) => (

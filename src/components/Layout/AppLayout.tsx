@@ -145,7 +145,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       icon: CreditCard,
     },
     {
-      key: "Analytics",
+      key: t("analytics"),
       name: "Analytics",
       path: "/analytics",
       icon: BarChart3,
@@ -361,9 +361,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                   <div className="text-left">
                     <p className="text-lg font-semibold text-[#7650e3] leading-tight">
                       Refer & Earn!
+                      {/* {t("refer_and_earn")} */}
                     </p>
                     <p className="text-sm text-gray-500 leading-tight mt-1">
                       Refer & earn 100 omni coins!
+                      {/* {t("refer_and_earn_message")} */}
                     </p>
                   </div>
 
