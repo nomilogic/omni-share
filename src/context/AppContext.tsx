@@ -541,7 +541,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     loadSecurityQuestion();
-  }, []);
+  }, [state?.user?.id, logout]);
 
   useEffect(() => {
     const userId = state.user?.id;

@@ -1755,6 +1755,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         setFormData((prev) => ({
                           ...prev,
                           media: undefined,
+                          prompt: "",
                           mediaUrl: undefined,
                         }));
                         setTemplatedImageUrl("");
@@ -1861,9 +1862,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             setFormData((prev) => ({
                               ...prev,
                               media: undefined,
+                              prompt: "",
                               mediaUrl: undefined,
                             }));
-
                             setOriginalVideoFile(null);
                             setVideoAspectRatio(null);
                             setVideoThumbnailUrl("");
@@ -1916,6 +1917,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             setFormData((prev) => ({
                               ...prev,
                               media: undefined,
+                              prompt: "",
                               mediaUrl: undefined,
                             }));
                             setTemplatedImageUrl("");

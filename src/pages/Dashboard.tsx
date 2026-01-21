@@ -7,26 +7,24 @@ import NewsUpdates from "../components/dashboard/NewsUpdates";
 import ReferralSection from "../components/dashboard/ReferralSection";
 import { useAppContext } from "../context/AppContext";
 import { useTranslation } from "react-i18next";
-import { PreloaderOverlay } from "../components/PreloaderOverlay";
-import { useLayoutEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLoading } from "@/context/LoadingContext";
 
 function Dashboard() {
   const { state } = useAppContext();
   const { t } = useTranslation();
-const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { showLoading, hideLoading } = useLoading();
- const isLoading =true; 
-    useEffect(() => {
-      // Show preloader while platforms are being fetched
-      if (isLoading) {
-        showLoading(t("loading_accounts") || "Loading accounts...");
-      } else {
-        hideLoading();
-      }
-    }, [isLoading, showLoading, hideLoading, t]);
+  const isLoading = true;
+  useEffect(() => {
+    // Show preloader while platforms are being fetched
+    if (isLoading) {
+      showLoading(t("loading_accounts") || "Loading accounts...");
+    } else {
+      hideLoading();
+    }
+  }, [isLoading, showLoading, hideLoading, t]);
   return (
-    
     <div className="min-h-screen bg-stone-100">
       <header className="bg-white border-b border-stone-200 py-6 px-8">
         <div className="max-w-7xl mx-auto flex justify-between items-center">

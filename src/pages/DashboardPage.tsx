@@ -36,17 +36,19 @@ export const DashboardPage: React.FC = () => {
   useLayoutEffect(() => {
     setPasswordEditing(false);
     if (!profileMode) setProfileEditing(false);
-    else setProfileEditing(true);
+    else {
+      setProfileEditing(true);
+    }
   }, []);
 
-  // Show loading while analytics data is being fetched
-  useEffect(() => {
-    if (hasAnalytics === null) {
-      showLoading(t("loading_dashboard") || "Loading dashboard...");
-    } else {
-      hideLoading();
-    }
-  }, [hasAnalytics, showLoading, hideLoading, t]);
+  // // Show loading while analytics data is being fetched
+  // useEffect(() => {
+  //   if (hasAnalytics === null) {
+  //     showLoading(t("loading_dashboard") || "Loading dashboard...");
+  //   } else {
+  //     hideLoading();
+  //   }
+  // }, [hasAnalytics, showLoading, hideLoading, t]);
 
   const handleReferralClick = () => {
     openModal(ReferralSection, {});
