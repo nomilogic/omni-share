@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Icon from "./Icon";
+import { useConfirmDialog } from "../context/ConfirmDialogContext";
+import { useNavigationGuard } from "../hooks/useNavigationGuard";
 
 export default function ImageRegenerationModal({
   imageUrl,
@@ -25,31 +27,23 @@ export default function ImageRegenerationModal({
 }: any) {
   const [activeImage, setActiveImage] = useState(imageUrl);
   const { t } = useTranslation();
+  const { showConfirm, closeConfirm } = useConfirmDialog();
 
   // Check if there's active regeneration or unsaved changes
   const hasActiveOperation = () => {
     return isLoading || prompt.trim().length > 0 || allGeneration?.length > 0;
   };
 
-  // Add beforeunload listener for page refresh
-  useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (hasActiveOperation()) {
-        e.preventDefault();
-        e.returnValue = isLoading
-          ? t("image_regeneration_in_progress") ||
-            "Image regeneration in progress. Are you sure you want to leave?"
-          : t("unsaved_changes_warning") ||
-            "You have unsaved changes. Are you sure you want to leave?";
-        return e.returnValue;
-      }
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, [isLoading, prompt, t]);
+  // Guard navigation when there are unsaved changes or regeneration in progress
+  useNavigationGuard({
+    isActive: hasActiveOperation(),
+    title: t("confirm_navigation") || "Confirm Navigation",
+    message: isLoading
+      ? (t("image_regeneration_in_progress") ||
+          "Image regeneration in progress. Are you sure you want to leave?")
+      : (t("unsaved_changes_warning") ||
+          "You have unsaved changes. Are you sure you want to leave?"),
+  });
 
   // Intercept all navigation attempts (including link clicks and React Router links)
   useEffect(() => {
@@ -65,17 +59,18 @@ export default function ImageRegenerationModal({
           if (hasActiveOperation()) {
             e.preventDefault();
             e.stopPropagation();
-            const confirmLeave = window.confirm(
+            showConfirm(
+              t("confirm_navigation") || "Confirm",
               isLoading
                 ? t("image_regeneration_in_progress") ||
                     "Image regeneration in progress. Are you sure you want to leave?"
                 : t("unsaved_changes_warning") ||
-                    "You have unsaved changes. Are you sure you want to leave?"
+                    "You have unsaved changes. Are you sure you want to leave?",
+              () => {
+                closeConfirm();
+                onClose();
+              }
             );
-            if (confirmLeave) {
-              // Close modal and let parent handle navigation
-              onClose();
-            }
           }
         }
       }
@@ -86,64 +81,7 @@ export default function ImageRegenerationModal({
     return () => {
       document.removeEventListener("click", handleClickCapture, true);
     };
-  }, [hasActiveOperation, isLoading, t]);
-
-  // Monitor URL changes and show confirmation for React Router navigation
-  useEffect(() => {
-    let previousPathname = window.location.pathname;
-
-    const handleLocationChange = () => {
-      const currentPathname = window.location.pathname;
-      if (previousPathname !== currentPathname && hasActiveOperation()) {
-        // URL is changing, show confirmation
-        const confirmLeave = window.confirm(
-          isLoading
-            ? t("image_regeneration_in_progress") ||
-                "Image regeneration in progress. Are you sure you want to leave?"
-            : t("unsaved_changes_warning") ||
-                "You have unsaved changes. Are you sure you want to leave?"
-        );
-        if (!confirmLeave) {
-          // Revert to previous URL
-          window.history.replaceState(null, "", previousPathname);
-          window.history.back();
-        } else {
-          previousPathname = currentPathname;
-        }
-      } else {
-        previousPathname = currentPathname;
-      }
-    };
-
-    window.addEventListener("popstate", handleLocationChange);
-    return () => {
-      window.removeEventListener("popstate", handleLocationChange);
-    };
-  }, [hasActiveOperation, isLoading, t]);
-
-  // Override navigation to show confirmation for back button
-  useEffect(() => {
-    const handlePopState = (e: PopStateEvent) => {
-      if (hasActiveOperation()) {
-        const confirmLeave = window.confirm(
-          isLoading
-            ? t("image_regeneration_in_progress") ||
-                "Image regeneration in progress. Are you sure you want to leave?"
-            : t("unsaved_changes_warning") ||
-                "You have unsaved changes. Are you sure you want to leave?"
-        );
-        if (!confirmLeave) {
-          // Re-push current state to prevent navigation
-          window.history.pushState(null, "", window.location.href);
-        }
-      }
-    };
-
-    window.addEventListener("popstate", handlePopState);
-    return () => {
-      window.removeEventListener("popstate", handlePopState);
-    };
-  }, [hasActiveOperation, isLoading, t]);
+  }, [hasActiveOperation, isLoading, showConfirm, closeConfirm, t]);
 
   useEffect(() => {
     if (imageUrl) setActiveImage(imageUrl);
@@ -219,16 +157,20 @@ export default function ImageRegenerationModal({
           <button
             onClick={() => {
               if (hasActiveOperation()) {
-                const confirmLeave = window.confirm(
-                  isLoading
-                    ? t("image_regeneration_in_progress") ||
-                        "Image regeneration in progress. Are you sure you want to leave?"
-                    : t("unsaved_changes_warning") ||
-                        "You have unsaved changes. Are you sure you want to leave?"
+                const message = isLoading
+                  ? t("image_regeneration_in_progress") ||
+                      "Image regeneration in progress. Are you sure you want to leave?"
+                  : t("unsaved_changes_warning") ||
+                      "You have unsaved changes. Are you sure you want to leave?";
+                
+                showConfirm(
+                  t("confirm_navigation") || "Confirm Navigation",
+                  message,
+                  () => {
+                    closeConfirm();
+                    onClose();
+                  }
                 );
-                if (confirmLeave) {
-                  onClose();
-                }
               } else {
                 onClose();
               }

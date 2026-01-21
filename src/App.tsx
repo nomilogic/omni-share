@@ -5,6 +5,7 @@ import { AppProvider, useAppContext } from "./context/AppContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import { SubscriptionModalProvider } from "./context/SubscriptionModalContext";
 import { PricingModalProvider } from "./context/PricingModalContext";
+import { ConfirmDialogProvider } from "./context/ConfirmDialogContext";
 import { AppLayout } from "./components/Layout/AppLayout";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AuthPage } from "./pages/AuthPage";
@@ -106,11 +107,12 @@ function App() {
         transition={Bounce}
       />
       <AppProvider>
-        <ModalProvider>
-          <AuthProvider>
-            <SubscriptionModalProvider>
-              <PricingModalProvider>
-                <Routes>
+        <ConfirmDialogProvider>
+          <ModalProvider>
+            <AuthProvider>
+              <SubscriptionModalProvider>
+                <PricingModalProvider>
+                  <Routes>
                   <Route path="/" element={<HomePage />} />
 
                   <Route path="/auth" element={<AuthPage />} />
@@ -317,6 +319,7 @@ function App() {
             </SubscriptionModalProvider>
           </AuthProvider>
         </ModalProvider>
+        </ConfirmDialogProvider>
       </AppProvider>
       <CookieBanner />
     </>

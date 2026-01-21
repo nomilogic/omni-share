@@ -20,6 +20,8 @@ import { useModal } from "../context2/ModalContext";
 import DiscardWarningModal from "../components/modals/DiscardWarningModal";
 import { useAppContext } from "@/context/AppContext";
 import { useLoading } from "@/context/LoadingContext";
+import { useConfirmDialog } from "@/context/ConfirmDialogContext";
+import { useNavigationGuard } from "@/hooks/useNavigationGuard";
 import Cookies from "js-cookie";
 
 type TikTokPrivacyLevel = string; // e.g. "SELF_ONLY", "FRIENDS", "PUBLIC" – comes from creator_info
@@ -59,6 +61,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
 }) => {
   const { t } = useTranslation();
   const { showLoading, hideLoading } = useLoading();
+  const { showConfirm, closeConfirm } = useConfirmDialog();
 
   const {
     connectedPlatforms,
@@ -123,33 +126,31 @@ export const PublishPosts: React.FC<PublishProps> = ({
   // Create a navigation wrapper that checks for unsaved content
   const navigateWithConfirm = (path: string) => {
     if (hasActiveOperation()) {
-      const confirmLeave = window.confirm(
-        publishing
-          ? (t("publishing_in_progress") || "Publishing is in progress. Are you sure you want to leave?")
-          : (t("unsaved_changes_warning") || "You have unsaved changes. Are you sure you want to leave?")
+      const message = publishing
+        ? (t("publishing_in_progress") || "Publishing is in progress. Are you sure you want to leave?")
+        : (t("unsaved_changes_warning") || "You have unsaved changes. Are you sure you want to leave?");
+      
+      showConfirm(
+        t("confirm_navigation") || "Confirm Navigation",
+        message,
+        () => {
+          closeConfirm();
+          navigate(path);
+        }
       );
-      if (!confirmLeave) return;
+      return;
     }
     navigate(path);
   };
 
-  // Add beforeunload listener for page refresh
-  useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (hasActiveOperation()) {
-        e.preventDefault();
-        e.returnValue = publishing
-          ? (t("publishing_in_progress") || "Publishing is in progress. Are you sure you want to leave?")
-          : (t("unsaved_changes_warning") || "You have unsaved changes. Are you sure you want to leave?");
-        return e.returnValue;
-      }
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, [publishing, selectedPlatforms, t]);
+  // Guard navigation when there are active publishing operations or unsaved changes
+  useNavigationGuard({
+    isActive: hasActiveOperation(),
+    title: t("confirm_navigation") || "Confirm Navigation",
+    message: publishing
+      ? (t("publishing_in_progress") || "Publishing is in progress. Are you sure you want to leave?")
+      : (t("unsaved_changes_warning") || "You have unsaved changes. Are you sure you want to leave?"),
+  });
 
   // Intercept all navigation attempts (including link clicks and React Router links)
   useEffect(() => {
@@ -165,15 +166,18 @@ export const PublishPosts: React.FC<PublishProps> = ({
           if (hasActiveOperation()) {
             e.preventDefault();
             e.stopPropagation();
-            const confirmLeave = window.confirm(
-              publishing
-                ? (t("publishing_in_progress") || "Publishing is in progress. Are you sure you want to leave?")
-                : (t("unsaved_changes_warning") || "You have unsaved changes. Are you sure you want to leave?")
+            const message = publishing
+              ? (t("publishing_in_progress") || "Publishing is in progress. Are you sure you want to leave?")
+              : (t("unsaved_changes_warning") || "You have unsaved changes. Are you sure you want to leave?");
+            
+            showConfirm(
+              t("confirm_navigation") || "Confirm Navigation",
+              message,
+              () => {
+                closeConfirm();
+                navigate(href);
+              }
             );
-            if (confirmLeave) {
-              // Use navigate instead of click for React Router Links
-              navigate(href);
-            }
           }
         }
       }
@@ -184,60 +188,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
     return () => {
       document.removeEventListener("click", handleClickCapture, true);
     };
-  }, [hasActiveOperation, publishing, t, navigate]);
-
-  // Monitor URL changes and show confirmation for React Router navigation
-  useEffect(() => {
-    let previousPathname = window.location.pathname;
-
-    const handleLocationChange = () => {
-      const currentPathname = window.location.pathname;
-      if (previousPathname !== currentPathname && hasActiveOperation()) {
-        // URL is changing, show confirmation
-        const confirmLeave = window.confirm(
-          publishing
-            ? (t("publishing_in_progress") || "Publishing is in progress. Are you sure you want to leave?")
-            : (t("unsaved_changes_warning") || "You have unsaved changes. Are you sure you want to leave?")
-        );
-        if (!confirmLeave) {
-          // Revert to previous URL
-          window.history.replaceState(null, "", previousPathname);
-          window.history.back();
-        } else {
-          previousPathname = currentPathname;
-        }
-      } else {
-        previousPathname = currentPathname;
-      }
-    };
-
-    window.addEventListener("popstate", handleLocationChange);
-    return () => {
-      window.removeEventListener("popstate", handleLocationChange);
-    };
-  }, [hasActiveOperation, publishing, t]);
-
-  // Override navigation to show confirmation for back button
-  useEffect(() => {
-    const handlePopState = (e: PopStateEvent) => {
-      if (hasActiveOperation()) {
-        const confirmLeave = window.confirm(
-          publishing
-            ? (t("publishing_in_progress") || "Publishing is in progress. Are you sure you want to leave?")
-            : (t("unsaved_changes_warning") || "You have unsaved changes. Are you sure you want to leave?")
-        );
-        if (!confirmLeave) {
-          // Re-push current state to prevent navigation
-          window.history.pushState(null, "", window.location.href);
-        }
-      }
-    };
-
-    window.addEventListener("popstate", handlePopState);
-    return () => {
-      window.removeEventListener("popstate", handlePopState);
-    };
-  }, [hasActiveOperation, publishing, t]);
+  }, [hasActiveOperation, publishing, t, navigate, showConfirm, closeConfirm]);
 
   useEffect(() => {
     const hasTikTokPost = posts.some((p) => p.platform === "tiktok");
