@@ -27,6 +27,8 @@ import { useAppContext } from "@/context/AppContext";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useModal } from "../context2/ModalContext";
+import { useConfirmDialog } from "../context/ConfirmDialogContext";
+import { useNavigationGuard } from "../hooks/useNavigationGuard";
 import DiscardPostModal from "../components/modals/DiscardPostModal";
 
 interface PostPreviewProps {
@@ -53,6 +55,7 @@ export const PostPreview = ({
   );
   const { openModal } = useModal();
   const { generationAmounts } = useAppContext();
+  const { showConfirm, closeConfirm } = useConfirmDialog();
   const [copiedPost, setCopiedPost] = useState<string | null>(null);
   const [editingMode, setEditingMode] = useState<boolean>(false);
   const [posts, setPosts] = useState<GeneratedPost[]>(generatedPosts);
@@ -76,35 +79,32 @@ export const PostPreview = ({
     );
   }, [hasUnsavedChanges, isRegenerating, editingMode, posts]);
 
+  // Guard navigation when there are unsaved changes or active operations
+  useNavigationGuard({
+    isActive: hasActiveOperation(),
+    title: t("confirm_navigation") || "Confirm Navigation",
+    message: t("unsaved_changes_warning") ||
+      "You have unsaved changes. Are you sure you want to leave?",
+  });
+
   // Create a navigation wrapper that checks for unsaved content
   const navigateWithConfirm = (path: string) => {
     if (hasActiveOperation()) {
-      const confirmLeave = window.confirm(
+      showConfirm(
+        t("confirm_navigation") || "Confirm",
         t("unsaved_changes_warning") ||
-          "You have unsaved changes. Are you sure you want to leave?"
+          "You have unsaved changes. Are you sure you want to leave?",
+        () => {
+          closeConfirm();
+          navigate(path);
+        }
       );
-      if (!confirmLeave) return;
+    } else {
+      navigate(path);
     }
-    navigate(path);
   };
 
-  // Add beforeunload listener for page refresh
-  useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (hasActiveOperation()) {
-        e.preventDefault();
-        e.returnValue =
-          t("unsaved_changes_warning") ||
-          "You have unsaved changes. Are you sure you want to leave?";
-        return e.returnValue;
-      }
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, [hasActiveOperation, t]);
+  // Note: Browser's beforeunload dialog cannot be customized due to security restrictions
 
   // Intercept all navigation attempts (including link clicks and React Router links)
   useEffect(() => {
@@ -113,22 +113,21 @@ export const PostPreview = ({
       // Check for both regular links and React Router Link components
       const link = target.closest("a") as HTMLAnchorElement;
 
-      if (link) {
+      if (link && hasActiveOperation()) {
         // Only intercept internal links (not external URLs and not downloads)
         const href = link.getAttribute("href");
         if (href && !href.includes("://") && !link.download) {
-          if (hasActiveOperation()) {
-            e.preventDefault();
-            e.stopPropagation();
-            const confirmLeave = window.confirm(
-              t("unsaved_changes_warning") ||
-                "You have unsaved changes. Are you sure you want to leave?"
-            );
-            if (confirmLeave) {
-              // Use navigate instead of click for React Router Links
+          e.preventDefault();
+          e.stopPropagation();
+          showConfirm(
+            t("confirm_navigation") || "Confirm",
+            t("unsaved_changes_warning") ||
+              "You have unsaved changes. Are you sure you want to leave?",
+            () => {
+              closeConfirm();
               navigate(href);
             }
-          }
+          );
         }
       }
     };
@@ -138,58 +137,7 @@ export const PostPreview = ({
     return () => {
       document.removeEventListener("click", handleClickCapture, true);
     };
-  }, [hasActiveOperation, t, navigate]);
-
-  // Monitor URL changes and show confirmation for React Router navigation
-  useEffect(() => {
-    let previousPathname = window.location.pathname;
-
-    const handleLocationChange = () => {
-      const currentPathname = window.location.pathname;
-      if (previousPathname !== currentPathname && hasActiveOperation()) {
-        // URL is changing, show confirmation
-        const confirmLeave = window.confirm(
-          t("unsaved_changes_warning") ||
-            "You have unsaved changes. Are you sure you want to leave?"
-        );
-        if (!confirmLeave) {
-          // Revert to previous URL
-          window.history.replaceState(null, "", previousPathname);
-          window.history.back();
-        } else {
-          previousPathname = currentPathname;
-        }
-      } else {
-        previousPathname = currentPathname;
-      }
-    };
-
-    window.addEventListener("popstate", handleLocationChange);
-    return () => {
-      window.removeEventListener("popstate", handleLocationChange);
-    };
-  }, [hasActiveOperation, t]);
-
-  // Override navigation to show confirmation for back button
-  useEffect(() => {
-    const handlePopState = (e: PopStateEvent) => {
-      if (hasActiveOperation()) {
-        const confirmLeave = window.confirm(
-          t("unsaved_changes_warning") ||
-            "You have unsaved changes. Are you sure you want to leave?"
-        );
-        if (!confirmLeave) {
-          // Re-push current state to prevent navigation
-          window.history.pushState(null, "", window.location.href);
-        }
-      }
-    };
-
-    window.addEventListener("popstate", handlePopState);
-    return () => {
-      window.removeEventListener("popstate", handlePopState);
-    };
-  }, [hasActiveOperation, t]);
+  }, [hasActiveOperation, showConfirm, closeConfirm, t, navigate]);
 
   // Calculate initial character counts for all posts
   useEffect(() => {

@@ -692,5 +692,8 @@
   "publishing_in_progress": "Publishing is in progress. Are you sure you want to leave?",
   "image_regeneration_in_progress": "Image regeneration in progress. Are you sure you want to leave?",
   "loading_dashboard": "Loading dashboard...",
-  "loading_accounts": "Loading accounts..."
+  "loading_accounts": "Loading accounts...",
+  "confirm_navigation": "Confirm Navigation",
+  "leave": "Leave",
+  "stay": "Stay"
 }

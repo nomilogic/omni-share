@@ -15,6 +15,8 @@ import {
   type GeneratedImage,
 } from "../lib/imageGeneration";
 import { Platform } from "../types";
+import { useNavigationGuard } from "../hooks/useNavigationGuard";
+import { useTranslation } from "react-i18next";
 
 interface AIImageGeneratorProps {
   onImageGenerated: (imageUrl: string) => void;
@@ -42,11 +44,23 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
   const [isGenerating, setIsGenerating] = useState(false);
   const [currentImage, setCurrentImage] = useState<GeneratedImage | null>(null);
   const [hasError, setHasError] = useState(false);
+  const { t } = useTranslation();
   const [imageRequest, setImageRequest] = useState<ImageGenerationRequest>({
     prompt: "",
     style: "professional",
     aspectRatio: "1:1",
     quality: "standard",
+  });
+
+  // Guard navigation when there's an image being generated or unsaved changes
+  useNavigationGuard({
+    isActive: isGenerating || !!currentImage,
+    title: t("confirm_navigation") || "Confirm Navigation",
+    message: isGenerating
+      ? (t("image_regeneration_in_progress") ||
+          "Image generation in progress. Are you sure you want to leave?")
+      : (t("unsaved_changes_warning") ||
+          "You have unsaved changes. Are you sure you want to leave?"),
   });
   const [selectedModel, setSelectedModel] = useState(
     "stabilityai/stable-diffusion-xl-base-1.0"

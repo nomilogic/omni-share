@@ -652,5 +652,8 @@
   "publishing_in_progress": "发布进行中。您确定要离开吗？",
   "image_regeneration_in_progress": "图像重新生成进行中。您确定要离开吗？",
   "loading_dashboard": "正在加载仪表板...",
-  "loading_accounts": "正在加载帐户..."
+  "loading_accounts": "正在加载帐户...",
+  "confirm_navigation": "确认导航",
+  "leave": "离开",
+  "stay": "留下"
 }

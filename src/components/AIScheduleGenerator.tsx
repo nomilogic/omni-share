@@ -15,6 +15,8 @@ import {
   getPlatformIcon,
   getPlatformDisplayName,
 } from "../utils/platformIcons";
+import { useNavigationGuard } from "../hooks/useNavigationGuard";
+import { useTranslation } from "react-i18next";
 
 interface ScheduleRequest {
   prompt: string;
@@ -61,6 +63,7 @@ export const AIScheduleGenerator: React.FC<AIScheduleGeneratorProps> = ({
   campaignData,
   isGenerating = false,
 }) => {
+  const { t } = useTranslation();
   const [prompt, setPrompt] = useState("");
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([
     "linkedin",
@@ -76,6 +79,17 @@ export const AIScheduleGenerator: React.FC<AIScheduleGeneratorProps> = ({
     GeneratedSchedule[]
   >([]);
   const [showPreview, setShowPreview] = useState(false);
+
+  // Guard navigation when there's schedule generation in progress or unsaved schedule
+  useNavigationGuard({
+    isActive: isGenerating || generatedSchedule.length > 0,
+    title: t("confirm_navigation") || "Confirm Navigation",
+    message: isGenerating
+      ? (t("publishing_in_progress") ||
+          "Schedule generation in progress. Are you sure you want to leave?")
+      : (t("unsaved_changes_warning") ||
+          "You have unsaved changes. Are you sure you want to leave?"),
+  });
 
   const handlePlatformToggle = (platformId: string) => {
     setSelectedPlatforms((prev) =>

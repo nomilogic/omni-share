@@ -41,6 +41,8 @@ import { notify } from "@/utils/toast";
 import { useTranslation } from "react-i18next";
 import ImageRegenerationModal from "./ImageRegenerationModal";
 import { Link, useNavigate } from "react-router-dom";
+import { useConfirmDialog } from "../context/ConfirmDialogContext";
+import { useNavigationGuard } from "../hooks/useNavigationGuard";
 
 const fileToBase64 = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -83,6 +85,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     hideLoading,
   } = useLoadingAPI();
   const { t } = useTranslation();
+
+  // Get confirm dialog from context
+  const { showConfirm, closeConfirm } = useConfirmDialog();
 
   const [formData, setFormData] = useState<any>({
     prompt: initialData?.prompt || "",
@@ -136,6 +141,13 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   const [isGeneratingThumbnail, setIsGeneratingThumbnail] = useState(false);
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
 
+  // Guard navigation when there are unsaved changes or active generation
+  const hasUnsavedChanges = formData.prompt.trim() || formData.media || formData.mediaUrl;
+  const isProcessing = isGeneratingBoth || isGeneratingThumbnail || isGeneratingImage;
+  useNavigationGuard({
+    isActive: isProcessing || (hasUnsavedChanges && showPreview && generatedResults && generatedResults.length > 0),
+  });
+
   // Brand Logo and Theme states
   const [useLogo, setUseLogo] = useState(false);
   const [useTheme, setUseTheme] = useState(false);
@@ -162,6 +174,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   const [pendingPostGeneration, setPendingPostGeneration] = useState<any>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
   const isValidUrl = (u?: string | null) => {
     if (!u) return false;
     const s = u.trim();
@@ -178,6 +191,62 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   useEffect(() => {
     if (!hasTheme && useTheme) setUseTheme(false);
   }, [hasTheme, useTheme, setUseTheme]);
+
+  // Check if there's unsaved content
+  const hasUnsavedContent = () => {
+    return (
+      (formData?.prompt?.trim?.()?.length ?? 0) > 0 ||
+      !!formData?.media ||
+      !!formData?.mediaUrl ||
+      !!selectedTemplate ||
+      !!selectedPostType ||
+      (generatedResults?.length ?? 0) > 0 ||
+      showPreview
+    );
+  };
+
+  // Helper to show confirm dialog and navigate
+  const showConfirmAndNavigate = (path: string, isDangerous = false) => {
+    if (hasUnsavedContent()) {
+      showConfirm(
+        t("confirm_navigation") || "Confirm",
+        t("unsaved_changes_warning") ||
+          "You have unsaved changes. Are you sure you want to leave?",
+        () => {
+          closeConfirm();
+          setTimeout(() => navigate(path), 100);
+        },
+        isDangerous
+      );
+    } else {
+      navigate(path);
+    }
+  };
+
+  // Note: Browser's beforeunload dialog cannot be customized due to security restrictions
+  // Our custom ConfirmDialog handles all navigation within the app
+
+  // Intercept link clicks
+  useEffect(() => {
+    const handleClickCapture = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const link = target.closest("a") as HTMLAnchorElement;
+      
+      if (link && hasUnsavedContent()) {
+        const href = link.getAttribute("href");
+        if (href && !href.includes("://") && !href.startsWith("mailto:") && !link.download) {
+          e.preventDefault();
+          e.stopPropagation();
+          showConfirmAndNavigate(href);
+        }
+      }
+    };
+
+    document.addEventListener("click", handleClickCapture, true);
+    return () => {
+      document.removeEventListener("click", handleClickCapture, true);
+    };
+  }, [hasUnsavedContent, navigate, t]);
 
   const getAppropiatePlatforms = (
     postType: "text" | "image" | "video",

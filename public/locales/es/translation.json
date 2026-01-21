@@ -652,5 +652,8 @@
   "publishing_in_progress": "La publicación está en progreso. ¿Estás seguro de que quieres irte?",
   "image_regeneration_in_progress": "La regeneración de imagen está en progreso. ¿Estás seguro de que quieres irte?",
   "loading_dashboard": "Cargando panel...",
-  "loading_accounts": "Cargando cuentas..."
+  "loading_accounts": "Cargando cuentas...",
+  "confirm_navigation": "Confirmar Navegación",
+  "leave": "Salir",
+  "stay": "Quedarme"
 }
