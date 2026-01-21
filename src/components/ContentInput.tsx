@@ -2734,7 +2734,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                     {selectedImageMode === "textToImage" && (
                       <div>
                         <label className="text-sm font-medium theme-text-primary  mb-2 flex items-center">
-                          Use for generation
+                          {t("use_for_generation")}
                         </label>
                         <div className=" p-3 theme-bg-primary   rounded-md border shadow-md backdrop-blur-md">
                           <div className=" flex flex-row justify-start gap-10">
@@ -2757,12 +2757,12 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                       : "cursor-not-allowed opacity-60"
                                   }`}
                                 >
-                                  Brand Logo
+                                  {t("brand_logo")}
                                 </label>
                                 <p className="text-xs theme-text-secondary mt-0.5">
                                   {hasLogo
-                                    ? "Include your brand logo in the image generation"
-                                    : "No brand logo set in profile"}
+                                    ? t("include_brand_logo_generation")
+                                : t("no_brand_logo_set_profile")}
                                 </p>
                               </div>
                             </div>
@@ -2786,12 +2786,12 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                       : "cursor-not-allowed opacity-60"
                                   }`}
                                 >
-                                  Brand Theme
+                                  {t("brand_theme")}
                                 </label>
                                 <p className="text-xs theme-text-secondary mt-0.5">
                                   {hasTheme
-                                    ? `Use your website theme: ${themeUrl}`
-                                    : "No website URL set in profile"}
+                                    ? t("use_website_theme") + ": " + themeUrl
+                                : t("no_website_url_set_profile")}
                                 </p>
                               </div>
                             </div>
