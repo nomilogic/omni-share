@@ -142,10 +142,17 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
 
   // Guard navigation when there are unsaved changes or active generation
-  const hasUnsavedChanges = formData.prompt.trim() || formData.media || formData.mediaUrl;
-  const isProcessing = isGeneratingBoth || isGeneratingThumbnail || isGeneratingImage;
+  const hasUnsavedChanges =
+    formData.prompt.trim() || formData.media || formData.mediaUrl;
+  const isProcessing =
+    isGeneratingBoth || isGeneratingThumbnail || isGeneratingImage;
   useNavigationGuard({
-    isActive: isProcessing || (hasUnsavedChanges && showPreview && generatedResults && generatedResults.length > 0),
+    isActive:
+      isProcessing ||
+      (hasUnsavedChanges &&
+        showPreview &&
+        generatedResults &&
+        generatedResults.length > 0),
   });
 
   // Brand Logo and Theme states
@@ -231,10 +238,15 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     const handleClickCapture = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       const link = target.closest("a") as HTMLAnchorElement;
-      
+
       if (link && hasUnsavedContent()) {
         const href = link.getAttribute("href");
-        if (href && !href.includes("://") && !href.startsWith("mailto:") && !link.download) {
+        if (
+          href &&
+          !href.includes("://") &&
+          !href.startsWith("mailto:") &&
+          !link.download
+        ) {
           e.preventDefault();
           e.stopPropagation();
           showConfirmAndNavigate(href);
@@ -723,8 +735,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                 industry: t("general"),
                 brand_tone: "professional",
                 target_audience: t("general"),
-                description:
-                  t("general_content_generation"),
+                description: t("general_content_generation"),
               };
 
               const postGenerationData = {
@@ -754,8 +765,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         industry: t("general"),
         brand_tone: "professional",
         target_audience: t("general"),
-        description:
-          t("general_content_generation"),
+        description: t("general_content_generation"),
       };
 
       const isVideoContent = !!(
@@ -1107,8 +1117,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           industry: t("general"),
           brand_tone: "professional",
           target_audience: t("general"),
-          description:
-            t("general_content_generation"),
+          description: t("general_content_generation"),
         };
 
         const isCurrentVideoContent = originalVideoFile && videoThumbnailUrl;
@@ -1353,8 +1362,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           industry: t("general"),
           brand_tone: "professional",
           target_audience: t("general"),
-          description:
-            t("general_content_generation"),
+          description: t("general_content_generation"),
         };
 
         const postGenerationData = {
@@ -1469,8 +1477,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         industry: t("general"),
         brand_tone: "professional",
         target_audience: t("general"),
-        description:
-          t("general_content_generation"),
+        description: t("general_content_generation"),
       };
 
       let finalImageUrl: string | null = null;
@@ -1607,8 +1614,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
             industry: t("general"),
             brand_tone: "professional",
             target_audience: t("general"),
-            description:
-              t("general_content_generation"),
+            description: t("general_content_generation"),
           };
 
           const postGenerationData = {
@@ -2833,7 +2839,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                 <p className="text-xs theme-text-secondary mt-0.5">
                                   {hasLogo
                                     ? t("include_brand_logo_generation")
-                                : t("no_brand_logo_set_profile")}
+                                    : t("no_brand_logo_set_profile")}
                                 </p>
                               </div>
                             </div>
@@ -2850,9 +2856,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               />
                               <div className="flex-1">
                                 <label
-                                  htmlFor="useBrandLogo"
+                                  htmlFor="useBrandTheme"
                                   className={`text-sm font-medium theme-text-primary ${
-                                    hasLogo
+                                    hasTheme
                                       ? "cursor-pointer"
                                       : "cursor-not-allowed opacity-60"
                                   }`}
@@ -2862,7 +2868,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                 <p className="text-xs theme-text-secondary mt-0.5">
                                   {hasTheme
                                     ? t("use_website_theme") + ": " + themeUrl
-                                : t("no_website_url_set_profile")}
+                                    : t("no_website_url_set_profile")}
                                 </p>
                               </div>
                             </div>

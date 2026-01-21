@@ -1,21 +1,7 @@
 import React, { useState } from "react";
-import {
-  Calendar,
-  Clock,
-  Sparkles,
-  Plus,
-  RefreshCw,
-  Send,
-  Brain,
-} from "lucide-react";
-import { useTranslation } from "react-i18next";
+import { Sparkles, Plus, RefreshCw, Send } from "lucide-react";
 import { AIModelSelector } from "./AIModelSelector";
-import { aiService } from "../lib/aiService";
-import {
-  platformOptions,
-  getPlatformIcon,
-  getPlatformDisplayName,
-} from "../utils/platformIcons";
+import { platformOptions } from "../utils/platformIcons";
 import { useNavigationGuard } from "../hooks/useNavigationGuard";
 import { useTranslation } from "react-i18next";
 
@@ -86,10 +72,10 @@ export const AIScheduleGenerator: React.FC<AIScheduleGeneratorProps> = ({
     isActive: isGenerating || generatedSchedule.length > 0,
     title: t("confirm_navigation") || "Confirm Navigation",
     message: isGenerating
-      ? (t("publishing_in_progress") ||
-          "Schedule generation in progress. Are you sure you want to leave?")
-      : (t("unsaved_changes_warning") ||
-          "You have unsaved changes. Are you sure you want to leave?"),
+      ? t("publishing_in_progress") ||
+        "Schedule generation in progress. Are you sure you want to leave?"
+      : t("unsaved_changes_warning") ||
+        "You have unsaved changes. Are you sure you want to leave?",
   });
 
   const handlePlatformToggle = (platformId: string) => {
@@ -442,7 +428,8 @@ export const AIScheduleGenerator: React.FC<AIScheduleGeneratorProps> = ({
           <h4 className="font-medium text-slate-900 mb-2">Current Settings:</h4>
           <div className="grid grid-cols-2 gap-4 text-sm text-gray-500 font-medium">
             <div>
-              <strong>Platforms:</strong> {selectedPlatforms.join(", ") || "None selected"}
+              <strong>Platforms:</strong>{" "}
+              {selectedPlatforms.join(", ") || "None selected"}
             </div>
             <div>
               <strong>Time:</strong> {getTimeRangeDisplay()}
