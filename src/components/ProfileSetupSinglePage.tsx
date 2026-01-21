@@ -1109,7 +1109,7 @@ const ProfileSetupSinglePage: React.FC = () => {
                 disabled={loading}
                 className="w-full theme-bg-trinary disabled:bg-purple-600/50 disabled:cursor-not-allowed text-white py-2.5 px-6 rounded-md text-base font-semibold shadow-md disabled:opacity-50 border border-transparent hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition-colors"
               >
-                {loading ? t("saving") : t("Save and Continue")}
+                {loading ? t("saving") : t("save_and_continue")}
               </button>
             </form>
           </div>

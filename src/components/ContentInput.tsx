@@ -651,11 +651,11 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
               const currentCampaignInfo = campaignInfo || {
                 name: "Default Campaign",
-                industry: "General",
+                industry: t("general"),
                 brand_tone: "professional",
-                target_audience: "General",
+                target_audience: t("general"),
                 description:
-                  "General content generation without specific campaign context",
+                  t("general_content_generation"),
               };
 
               const postGenerationData = {
@@ -682,11 +682,11 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
       const currentCampaignInfo = campaignInfo || {
         name: "Default Campaign",
-        industry: "General",
+        industry: t("general"),
         brand_tone: "professional",
-        target_audience: "General",
+        target_audience: t("general"),
         description:
-          "General content generation without specific campaign context",
+          t("general_content_generation"),
       };
 
       const isVideoContent = !!(
@@ -997,7 +997,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         targetAudience:
           currentCampaignInfo?.target_audience ||
           currentCampaignInfo?.targetAudience ||
-          "General",
+          t("general"),
         description: currentCampaignInfo?.description || "something nice",
         imageAnalysis: imageAnalysis,
         website: currentCampaignInfo?.website || "",
@@ -1035,11 +1035,11 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       if (formData?.prompt && formData?.prompt?.trim()) {
         const currentCampaignInfo = campaignInfo || {
           name: "Default Campaign",
-          industry: "General",
+          industry: t("general"),
           brand_tone: "professional",
-          target_audience: "General",
+          target_audience: t("general"),
           description:
-            "General content generation without specific campaign context",
+            t("general_content_generation"),
         };
 
         const isCurrentVideoContent = originalVideoFile && videoThumbnailUrl;
@@ -1281,11 +1281,11 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
         const currentCampaignInfo = campaignInfo || {
           name: "Default Campaign",
-          industry: "General",
+          industry: t("general"),
           brand_tone: "professional",
-          target_audience: "General",
+          target_audience: t("general"),
           description:
-            "General content generation without specific campaign context",
+            t("general_content_generation"),
         };
 
         const postGenerationData = {
@@ -1397,11 +1397,11 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
       const currentCampaignInfo = campaignInfo || {
         name: "Default Campaign",
-        industry: "General",
+        industry: t("general"),
         brand_tone: "professional",
-        target_audience: "General",
+        target_audience: t("general"),
         description:
-          "General content generation without specific campaign context",
+          t("general_content_generation"),
       };
 
       let finalImageUrl: string | null = null;
@@ -1535,11 +1535,11 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           // Store post generation data for template editor
           const currentCampaignInfo = campaignInfo || {
             name: "Default Campaign",
-            industry: "General",
+            industry: t("general"),
             brand_tone: "professional",
-            target_audience: "General",
+            target_audience: t("general"),
             description:
-              "General content generation without specific campaign context",
+              t("general_content_generation"),
           };
 
           const postGenerationData = {

@@ -7,6 +7,7 @@ import {
   Eye,
   RefreshCw,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import {
   generateImage,
   generateImageVariations,
@@ -39,6 +40,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
   campaignInfo,
   onClose,
 }) => {
+  const { t } = useTranslation();
   const [isGenerating, setIsGenerating] = useState(false);
   const [currentImage, setCurrentImage] = useState<GeneratedImage | null>(null);
   const [hasError, setHasError] = useState(false);
@@ -198,10 +200,10 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
               </div>
               <div>
                 <h2 className="text-2xl font-bold text-slate-900">
-                  AI Image Generator
+                  {t("image_generation")}
                 </h2>
                 <p className="text-gray-500 font-medium">
-                  Create stunning visuals for your social media posts
+                  {t("describe_image_generate")}
                 </p>
               </div>
             </div>
@@ -226,9 +228,9 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
               {!currentImage && !hasError && !isGenerating && (
                 <div className="text-center py-12 text-gray-500 font-medium">
                   <Wand2 className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                  <p>No image generated yet</p>
+                  <p>{t("image_generation")}</p>
                   <p className="text-sm">
-                    Start by describing your desired image
+                    {t("describe_image_generate")}
                   </p>
                 </div>
               )}
@@ -238,16 +240,16 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
                   <div className="w-12 h-12 mx-auto mb-4 bg-red-100 rounded-md flex items-center justify-center">
                     <RefreshCw className="w-6 h-6 text-red-600" />
                   </div>
-                  <p>Failed to generate image</p>
+                  <p>{t("error_generating_image")}</p>
                   <p className="text-sm text-gray-500 font-medium mb-4">
-                    Please try again with a different prompt or model
+                    {t("try_different_prompt")}
                   </p>
                   <button
                     onClick={handleRetryGeneration}
                     className="bg-red-600 text-white px-4 py-2.5 rounded-md text-sm hover:bg-purple-700 transition-colors flex items-center justify-center space-x-1 mx-auto"
                   >
                     <RefreshCw className="w-4 h-4" />
-                    <span>Retry</span>
+                    <span>{t("retry_button")}</span>
                   </button>
                 </div>
               )}
@@ -257,9 +259,9 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
                   <div className="w-12 h-12 mx-auto mb-4 bg-purple-100 rounded-md flex items-center justify-center">
                     <Loader className="w-6 h-6 text-purple-600 animate-spin" />
                   </div>
-                  <p>Generating image...</p>
+                  <p>{t("generating")}</p>
                   <p className="text-sm text-gray-500 font-medium">
-                    This may take a few moments
+                    {t("may_take_moment")}
                   </p>
                 </div>
               )}
@@ -285,7 +287,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
                       className="flex-1 bg-purple-600 text-white px-3 py-2.5 rounded-md text-sm hover:bg-purple-700 transition-colors flex items-center justify-center space-x-1"
                     >
                       <Eye className="w-4 h-4" />
-                      <span>Use This Image</span>
+                      <span>{t("use_this_image")}</span>
                     </button>
 
                     <button
@@ -294,7 +296,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
                       className="bg-gray-100 text-slate-700 px-3 py-2.5 rounded-md text-sm hover:bg-gray-200 transition-colors flex items-center justify-center space-x-1"
                     >
                       <RefreshCw className="w-4 h-4" />
-                      <span>Generate New</span>
+                      <span>{t("regenerate_image")}</span>
                     </button>
 
                     {currentImage.url && (
@@ -314,7 +316,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
             <div className="lg:col-span-2 space-y-6">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-3">
-                  Image Description
+                  {t("image_description")}
                 </label>
                 <textarea
                   value={imageRequest.prompt}
@@ -324,7 +326,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
                       prompt: e.target.value,
                     }))
                   }
-                  placeholder="Describe the image you want to generate..."
+                  placeholder={t("describe_image_generate")}
                   className="w-full p-4 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none h-24"
                 />
               </div>
@@ -334,7 +336,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
                 <div>
                   <div className="flex items-center justify-between mb-3">
                     <label className="text-sm font-medium text-slate-700">
-                      AI Suggestions Based on Your Content
+                      {t("ai_suggestions_content")}
                     </label>
                     <button
                       onClick={handleGetSuggestions}
@@ -348,8 +350,8 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
                       )}
                       <span>
                         {loadingSuggestions
-                          ? "Getting suggestions..."
-                          : "Get AI Suggestions"}
+                          ? t("getting_suggestions")
+                          : t("get_ai_suggestions")}
                       </span>
                     </button>
                   </div>
@@ -376,10 +378,10 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
               {/* AI Model Selection */}
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                  AI Model{" "}
+                  {t("select_image_model")}{" "}
                   {loadingModels && (
                     <span className="text-xs text-gray-500 font-medium">
-                      (Loading...)
+                      ({t("loading")}...)
                     </span>
                   )}
                 </label>
@@ -390,7 +392,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
                   className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:opacity-50"
                 >
                   {loadingModels ? (
-                    <option>Loading models...</option>
+                    <option>{t("loading_models")}</option>
                   ) : (
                     <>
                       {availableModels.filter(
@@ -406,7 +408,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
                                 disabled={!model.isAvailable}
                               >
                                 {model.name} - {model.description}{" "}
-                                {!model.isAvailable && "(API Key Required)"}
+                                {!model.isAvailable && `(${t("api_key_required")})`}
                               </option>
                             ))}
                         </optgroup>
@@ -439,7 +441,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
                                 disabled={!model.isAvailable}
                               >
                                 {model.name} - {model.description}{" "}
-                                {!model.isAvailable && "(API Key Required)"}
+                                {!model.isAvailable && `(${t("api_key_required")})`}
                               </option>
                             ))}
                         </optgroup>
@@ -547,7 +549,7 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
                     <option value="9:16">
                       Portrait (9:16) - TikTok, Stories
                     </option>
-                    <option value="4:3">Standard (4:3) - General</option>
+                    <option value="4:3">{t("standard_4_3")}</option>
                   </select>
                 </div>
               </div>

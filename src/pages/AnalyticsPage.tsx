@@ -118,17 +118,17 @@ export default function AnalyticsPage() {
   }, [loading, selectedPlatform, searchParams, setSearchParams]);
 
   const getAudienceInfo = () => {
-    if (!analytics?.page) return { count: 0, label: "Followers" };
+    if (!analytics?.page) return { count: 0, label: t("followers") };
 
     switch (selectedPlatform) {
       case "youtube":
-        return { count: analytics.page.subscribers ?? 0, label: "Subscribers" };
+        return { count: analytics.page.subscribers ?? 0, label: t("subscribers") };
       case "tiktok":
       case "instagram":
       case "facebook":
-        return { count: analytics.page.followers ?? 0, label: "Followers" };
+        return { count: analytics.page.followers ?? 0, label: t("followers") };
       default:
-        return { count: 0, label: "Audience" };
+        return { count: 0, label: t("audience") };
     }
   };
 
@@ -140,7 +140,7 @@ export default function AnalyticsPage() {
         <div className="flex items-center justify-between gap-3 px-3">
           <div className="flex items-center gap-3">
             <h1 className="text-3xl font-bold text-gray-900">
-              {selectedPost ? "Post Details" : "Analytics"}
+              {selectedPost ? t("post_details") : t("analytics")}
             </h1>
             {selectedPlatform && (
               <span className="hidden sm:inline-flex px-3 py-1 rounded-md text-xs font-semibold bg-purple-100 text-purple-700">
@@ -158,7 +158,7 @@ export default function AnalyticsPage() {
             <RefreshCcw
               className={`w-4 h-4 ${loading ? "animate-spin" : ""}`}
             />
-            Refresh
+            {t("refresh")}
           </button>
         </div>
 
@@ -199,7 +199,7 @@ export default function AnalyticsPage() {
         <div className="md:px-4 px-3 py-5 rounded-md">
           {!analytics && !loading && (
             <div className="bg-white p-8 rounded text-center text-gray-600">
-              No analytics data available for this platform yet.
+              {t("no_analytics_data_available")}
             </div>
           )}
 
@@ -235,7 +235,7 @@ export default function AnalyticsPage() {
                       {selectedPlatform === "youtube" &&
                         analytics.page.totalViews !== undefined && (
                           <StatCard
-                            title="Total Views"
+                            title={t("total_views")}
                             value={analytics.page.totalViews}
                           />
                         )}
@@ -243,7 +243,7 @@ export default function AnalyticsPage() {
                       {selectedPlatform === "linkedin" &&
                         analytics.summary.views !== undefined && (
                           <StatCard
-                            title="Impressions"
+                            title={t("impressions")}
                             value={analytics.summary.views}
                           />
                         )}
@@ -251,52 +251,52 @@ export default function AnalyticsPage() {
                       {selectedPlatform === "tiktok" &&
                         analytics.summary.video_count !== undefined && (
                           <StatCard
-                            title="Videos"
+                            title={t("videos")}
                             value={analytics.summary.video_count}
                           />
                         )}
 
                       {analytics.summary.views !== undefined &&
-                        !["youtube", "linkedin"].includes(
-                          selectedPlatform || ""
+                        !['youtube', 'linkedin'].includes(
+                          selectedPlatform || ''
                         ) && (
                           <StatCard
-                            title="Views"
+                            title={t("views")}
                             value={analytics.summary.views}
                           />
                         )}
 
                       {analytics.summary.likes !== undefined && (
                         <StatCard
-                          title="Likes"
+                          title={t("likes")}
                           value={analytics.summary.likes}
                         />
                       )}
 
                       {analytics.summary.comments !== undefined && (
                         <StatCard
-                          title="Comments"
+                          title={t("comments")}
                           value={analytics.summary.comments}
                         />
                       )}
 
                       {analytics.summary.shares !== undefined && (
                         <StatCard
-                          title="Shares"
+                          title={t("shares")}
                           value={analytics.summary.shares}
                         />
                       )}
 
                       {analytics.summary.clicks !== undefined && (
                         <StatCard
-                          title="Clicks"
+                          title={t("clicks")}
                           value={analytics.summary.clicks}
                         />
                       )}
 
                       {analytics.performance?.engagementRate !== undefined && (
                         <StatCard
-                          title="Engagement Rate"
+                          title={t("engagement_rate")}
                           value={`${(analytics.performance.engagementRate * 100).toFixed(2)}%`}
                         />
                       )}
@@ -310,7 +310,7 @@ export default function AnalyticsPage() {
                 <div className="bg-white rounded-md border p-5 h-full flex flex-col">
                   <div className="flex items-center justify-between mb-4">
                     <h4 className="font-semibold text-gray-900">
-                      Recent Posts
+                      {t("recent_posts")}
                     </h4>
                     {topPosts.length > 0 && (
                       <span className="text-xs text-gray-500">
@@ -321,7 +321,7 @@ export default function AnalyticsPage() {
 
                   {topPosts.length === 0 ? (
                     <p className="text-sm text-gray-500 italic flex-1 flex items-center justify-center">
-                      No posts available yet
+                      {t("no_posts_available_yet")}
                     </p>
                   ) : (
                     <div className="space-y-3 overflow-y-auto flex-1">
@@ -332,7 +332,7 @@ export default function AnalyticsPage() {
                           className="w-full text-left p-3.5 rounded border hover:bg-gray-50 transition-colors"
                         >
                           <p className="text-sm font-medium line-clamp-2">
-                            {post.title || "(no caption)"}
+                            {post.title || `(${t("no_caption")})`}
                           </p>
                           <div className="mt-2 text-xs text-gray-500 flex flex-wrap gap-3">
                             {post.views !== undefined && (
@@ -384,7 +384,7 @@ function PostDetailsCard({ post, onBack }: { post: any; onBack: () => void }) {
     <div className="bg-white rounded-md border p-6">
       <div className="flex items-start justify-between mb-4">
         <div>
-          <h3 className="text-xl font-bold text-gray-900">Post Details</h3>
+          <h3 className="text-xl font-bold text-gray-900">{t("post_details")}</h3>
           <p className="text-sm text-gray-500 mt-1">
             {post.created_time
               ? new Date(post.created_time).toLocaleString()
@@ -395,29 +395,29 @@ function PostDetailsCard({ post, onBack }: { post: any; onBack: () => void }) {
           onClick={onBack}
           className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded"
         >
-          ← Back
+          ← {t("back")}
         </button>
       </div>
 
       <div className="bg-gray-50 p-5 rounded-md text-gray-800 leading-relaxed whitespace-pre-wrap">
-        {post.title || "(No caption provided)"}
+        {post.title || `(${t("no_caption_provided")})`}
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6">
         {post.views !== undefined && (
-          <StatCard title="Views" value={post.views} />
+          <StatCard title={t("views")} value={post.views} />
         )}
         {post.likes !== undefined && (
-          <StatCard title="Likes" value={post.likes} />
+          <StatCard title={t("likes")} value={post.likes} />
         )}
         {post.comments !== undefined && (
-          <StatCard title="Comments" value={post.comments} />
+          <StatCard title={t("comments")} value={post.comments} />
         )}
         {post.shares !== undefined && (
-          <StatCard title="Shares" value={post.shares} />
+          <StatCard title={t("shares")} value={post.shares} />
         )}
         {post.engagement !== undefined && (
-          <StatCard title="Engagement" value={post.engagement} />
+          <StatCard title={t("engagement")} value={post.engagement} />
         )}
       </div>
     </div>

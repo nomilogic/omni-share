@@ -455,7 +455,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
 
   useEffect(() => {
     showLoading(
-      t("loading_publishing_options") || "Loading publishing options..."
+      t("Loading publishing options...")
     );
     Promise.all([
       fetchFacebookPages(),

@@ -523,7 +523,7 @@ function HomePage() {
                       whileTap={{ scale: 0.95 }}
                     >
                       <span>
-                        {user ? "Create Post" : t("get_started_free")}
+                        {user ? t("create_post") : t("get_started_free")}
                       </span>
                     </motion.button>
                     <motion.button
@@ -911,7 +911,7 @@ function HomePage() {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
-                      {t("Login")}
+                      {t("login")}
                     </motion.button>
                   )}
                 </AnimatePresence>
@@ -1085,7 +1085,7 @@ function HomePage() {
                 transition={{ duration: 0.2 }}
                 className="flex items-center space-x-2"
               >
-                <span>{user ? "Create Post" : t("get_started_free")}</span>
+                <span>{user ? t("create_post") : t("get_started_free")}</span>
               </motion.span>
             </AnimatePresence>
           </motion.button>
@@ -1635,7 +1635,7 @@ function HomePage() {
                   }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  {isSubmitting ? "Sending..." : t("send_message")}
+                  {isSubmitting ? t("sending") : t("send_message")}
                 </motion.button>
               </motion.form>
             )}

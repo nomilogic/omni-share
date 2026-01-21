@@ -206,12 +206,12 @@ export default function ImageRegenerationModal({
           <div className="flex items-center gap-3">
             <div>
               <h2 className="text-base sm:text-lg font-semibold text-gray-900">
-                Image Generator
+                {t("image_generator")}
               </h2>
               <p className="text-xs text-gray-500">
                 {modifyMode
-                  ? "Modify the selected image"
-                  : "Generate a new image"}
+                  ? t("modify_selected_image")
+                  : t("generate_new_image")}
               </p>
             </div>
           </div>
@@ -234,8 +234,8 @@ export default function ImageRegenerationModal({
               }
             }}
             className="rounded-lg px-3 py-2 text-gray-600 hover:bg-gray-100 active:bg-gray-200 transition"
-            aria-label="Close"
-            title="Close"
+            aria-label={t("close")}
+            title={t("close")}
           >
             <span className="text-2xl leading-none">×</span>
           </button>
@@ -263,7 +263,7 @@ export default function ImageRegenerationModal({
                       <div className="block sm:hidden absolute left-0 right-0 bottom-0 border-t border-gray-200 bg-white/85 backdrop-blur px-3 py-2">
                         <div className="flex items-center justify-between mb-1">
                           <p className="text-xs font-semibold text-gray-900">
-                            Images
+                            {t("images")}
                           </p>
                         </div>
 
@@ -302,10 +302,10 @@ export default function ImageRegenerationModal({
                       <span className="text-purple-700 text-xl">🖼️</span>
                     </div>
                     <p className="text-sm font-medium text-gray-900">
-                      No image selected yet
+                      {t("no_image_selected_yet")}
                     </p>
                     <p className="text-xs text-gray-500 mt-1">
-                      Generate an image or select one from previous generations.
+                      {t("generate_image_or_select_previous")}
                     </p>
                   </div>
                 )}
@@ -319,9 +319,9 @@ export default function ImageRegenerationModal({
                 <div className=" hidden sm:block rounded-md border border-gray-200 p-4">
                   <div className="flex items-center justify-between mb-3">
                     <p className="text-sm font-semibold text-gray-900">
-                      Images
+                      {t("images")}
                     </p>
-                    <p className="text-xs text-gray-500">Tap to preview</p>
+                    <p className="text-xs text-gray-500">{t("tap_to_preview")}</p>
                   </div>
 
                   <div className="flex gap-2 overflow-x-auto pb-2">
@@ -363,10 +363,10 @@ export default function ImageRegenerationModal({
                   />
                   <div>
                     <p className="text-sm font-semibold text-gray-900">
-                      Modify Selected Image
+                      {t("modify_selected_image_label")}
                     </p>
                     <p className="text-xs text-gray-500 mt-0.5">
-                      Uncheck to generate a completely new image.
+                      {t("uncheck_to_generate_new")}
                     </p>
                   </div>
                 </label>
@@ -374,7 +374,7 @@ export default function ImageRegenerationModal({
                 {/* Prompt */}
                 <div>
                   <label className="block text-sm font-medium text-gray-900 mb-2">
-                    Prompt
+                    {t("prompt")}
                   </label>
                   <textarea
                     value={prompt}
@@ -383,14 +383,14 @@ export default function ImageRegenerationModal({
                     rows={5}
                     placeholder={
                       modifyMode
-                        ? "Describe the changes you want to make..."
-                        : "Describe the image you want to create..."
+                        ? t("describe_changes_to_make")
+                        : t("describe_image_to_create")
                     }
                     className="w-full resize-none rounded-md border border-gray-300 px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                   <div className="mt-2 flex items-center justify-between text-xs text-gray-500">
                     <span>
-                      Tip: Be specific (style, lighting, background, etc.)
+                      {t("be_specific_prompt_tip")}
                     </span>
                     <span>{prompt?.length ?? 0}</span>
                   </div>
@@ -398,7 +398,7 @@ export default function ImageRegenerationModal({
                   {/* Use for Generation Section */}
                   <div className="mt-2">
                     <label className="text-sm font-medium theme-text-primary  mb-2 flex items-center">
-                      Use for generation
+                      {t("use_for_generation")}
                     </label>
                     <div className="p-3 theme-bg-primary shadow-md  rounded-md">
                       <div className="space-y-2">
@@ -417,12 +417,12 @@ export default function ImageRegenerationModal({
                               htmlFor="modalUseBrandLogo"
                               className="text-sm font-medium text-gray-900 cursor-pointer"
                             >
-                              Brand Logo
+                              {t("brand_logo")}
                             </label>
                             <p className="text-xs text-gray-500 mt-0.5">
                               {logoUrl
-                                ? "Include your brand logo in the image generation"
-                                : "No brand logo set in profile"}
+                                ? t("include_brand_logo_generation")
+                                : t("no_brand_logo_set_profile")}
                             </p>
                           </div>
                         </div>
@@ -442,12 +442,12 @@ export default function ImageRegenerationModal({
                               htmlFor="modalUseBrandTheme"
                               className="text-sm font-medium text-gray-900 cursor-pointer"
                             >
-                              Brand Theme
+                              {t("brand_theme")}
                             </label>
                             <p className="text-xs text-gray-500 mt-0.5">
                               {themeUrl
-                                ? `Use your website theme: ${themeUrl}`
-                                : "No website URL set in profile"}
+                                ? t("use_website_theme") + ": " + themeUrl
+                                : t("no_website_url_set_profile")}
                             </p>
                           </div>
                         </div>
@@ -461,15 +461,15 @@ export default function ImageRegenerationModal({
                   <button
                     onClick={handleSubmit}
                     disabled={isLoading || !prompt.trim()}
-                    className="group w-full rounded-md hover:bg-[#d7d7fc] border border-purple-600 flex items-center justify-between text-base font-semibold  text-[#7650e3] transition-colors duration-200 py-2.5 px-4 disabled:opacity-50 disabled:cursor-not-allowed text-md"
+                    className="group w-full rounded-md  hover:bg-[#d7d7fc] border border-purple-600 flex items-center justify-between text-base font-semibold  text-[#7650e3] transition-colors duration-200 py-2.5 px-4 disabled:opacity-50 disabled:cursor-not-allowed text-md"
                   >
                     {isLoading
-                      ? "Generating..."
+                      ? t("generating")
                       : modifyMode
-                        ? "Modify"
-                        : "Regenerate"}
+                        ? t("modify")
+                        : t("regenerate")}
 
-                    <div className="px-2.5 py-1.5 flex items-center gap-2">
+                    <div className="px-2.5  flex items-center gap-2">
                       <Icon name="spiral-logo" size={20} />
                       <span>{generationAmounts}</span>
                     </div>
@@ -480,7 +480,7 @@ export default function ImageRegenerationModal({
                     disabled={isLoading || !activeImage}
                     className="px-4 rounded-md w-full text-base font-semibold  py-2.5  text-purple-700 border border-[#7650e3] theme-bg-trinary theme-text-light hover:bg-[#d7d7fc] hover:text-[#7650e3]  disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Continue
+                    {t("continue")}
                   </button>
                 </div>
               </div>
@@ -494,14 +494,14 @@ export default function ImageRegenerationModal({
             <button
               onClick={handleSubmit}
               disabled={isLoading || !prompt.trim()}
-              className=" group w-full py-2 rounded-md border border-purple-600 hover:bg-gray-50 transition  flex items-center justify-between   text-[#7650e3]  duration-200  px-4 font-medium disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+              className=" group w-full py-2.5 rounded-md border font-semibold border-purple-600 hover:bg-gray-50 transition  flex items-center justify-between   text-[#7650e3]  duration-200  px-3 disabled:opacity-50 disabled:cursor-not-allowed text-base"
             >
               {isLoading
-                ? "Generating..."
+                ? t("generating")
                 : modifyMode
-                  ? "Modify"
-                  : "Regenerate"}
-              <div className="px-2.5 py-1.5 flex items-center gap-2">
+                  ? t("modify")
+                  : t("regenerate")}
+              <div className="px-2.5  flex items-center gap-2">
                 <Icon name="spiral-logo" size={16} />
                 <span>{generationAmounts}</span>
               </div>
@@ -510,9 +510,9 @@ export default function ImageRegenerationModal({
             <button
               onClick={selectedFile ? onFileSave : confirmImage}
               disabled={isLoading || !activeImage}
-              className="px-5 rounded-md w-full bg-purple-600/10  py-2 text-md font-medium text-purple-700 hover:border-gray-400  border border-[#7650e3] theme-bg-trinary theme-text-light hover:bg-[#d7d7fc] hover:text-[#7650e3] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className=" rounded-md w-full text-base px-3 bg-purple-600/10  py-2.5 font-semibold text-purple-700 hover:border-gray-400  border border-[#7650e3] theme-bg-trinary theme-text-light hover:bg-[#d7d7fc] hover:text-[#7650e3] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Continue
+              {t("continue")}
             </button>
           </div>
         </div>

@@ -6,6 +6,7 @@ import {
   useLocation,
   Navigate,
 } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { ContentInput } from "../components/ContentInput";
 import { AIGenerator } from "../components/AIGenerator";
 import { PostPreview } from "../components/PostPreview";
@@ -17,6 +18,7 @@ import { Platform, CampaignInfo } from "../types";
 
 export const ContentPage: React.FC = () => {
   const { state, dispatch } = useAppContext();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [showPublishModal, setShowPublishModal] = useState(false);
   const [showGenerateModal, setShowGenerateModal] = useState(false);
@@ -100,7 +102,7 @@ export const ContentPage: React.FC = () => {
           state.selectedProfile?.brandVoice ||
           "professional",
         targetAudience:
-          state.selectedProfile?.target_audience || "General audience",
+          state.selectedProfile?.target_audience || t("general_audience"),
         tags: existingPost?.hashtags?.map((tag: any) =>
           tag.replace("#", "")
         ) || ["social", "content"],
@@ -125,7 +127,7 @@ export const ContentPage: React.FC = () => {
         industry: state.selectedProfile?.industry || "",
         description: state.selectedProfile?.description || "",
         targetAudience:
-          state.selectedProfile?.target_audience || "General audience",
+          state.selectedProfile?.target_audience || t("general_audience"),
         brandTone:
           state.selectedProfile?.tone ||
           state.selectedProfile?.brandVoice ||

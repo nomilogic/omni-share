@@ -2288,7 +2288,7 @@ export const ImageTemplateEditor = ({
                     }}
                     className="h-4 w-4"
                   />
-                  Show Grid
+                  {t("show_grid")}
                 </label>
                 {showGrid && (
                   <div className="flex items-center gap-1 flex-1">
@@ -2316,7 +2316,7 @@ export const ImageTemplateEditor = ({
                   type="button"
                 >
                   <Trash className="w-3 h-3" />
-                  <span>Clear All</span>
+                  <span>{t("clear_all")}</span>
                 </button>
               </div>
             }
@@ -2329,7 +2329,7 @@ export const ImageTemplateEditor = ({
                 className="w-full flex items-center justify-between flex-shrink-0"
               >
                 <h4 className="text-xs md:text-sm font-semibold text-slate-700">
-                  Templates
+                  {t("templates")}
                 </h4>
                 {templatesOpen ? (
                   <ChevronUp className="w-4 h-4 text-slate-600" />
@@ -2345,7 +2345,7 @@ export const ImageTemplateEditor = ({
       <div className="absolute inset-0 z-10 bg-white/70 backdrop-blur-[1px] rounded-md flex items-center justify-center">
         <div className="flex items-center gap-2 text-sm text-slate-700">
           <span className="h-4 w-4 rounded-full border border-slate-300 border-t-purple-600 animate-spin" />
-          Loading templates...
+          {t("loading_templates")}
         </div>
       </div>
     )}
@@ -2354,7 +2354,7 @@ export const ImageTemplateEditor = ({
       <input
         value={templateName}
         onChange={(e) => setTemplateName(e.target.value)}
-        placeholder="Template name"
+        placeholder={t("template_name")}
         className="w-full min-w-0 px-3 h-8 border border-gray-300 rounded-md text-sm"
         disabled={isTemplatesLoading}
       />
@@ -2366,7 +2366,7 @@ export const ImageTemplateEditor = ({
         disabled={isTemplatesLoading}
       >
         <Download className="w-4 h-4" />
-        <span className="text-sm">Save</span>
+        <span className="text-sm">{t("Save")}</span>
       </button>
     </div>
 
@@ -2382,7 +2382,7 @@ export const ImageTemplateEditor = ({
     </label> */}
 
     <div className="flex items-center justify-between flex-shrink-0">
-      <p className="text-xs text-gray-600 font-medium">Saved templates</p>
+      <p className="text-xs text-gray-600 font-medium">{t("saved_templates")}</p>
       <div className="flex items-center gap-2">
         <button
           onClick={() => void refreshSavedTemplates()}
@@ -2390,7 +2390,7 @@ export const ImageTemplateEditor = ({
           type="button"
           disabled={isTemplatesLoading}
         >
-          Refresh
+          {t("refresh")}
         </button>
         <button
           onClick={() =>
@@ -3393,7 +3393,7 @@ export const ImageTemplateEditor = ({
             <button
               onClick={exportImage}
               disabled={isSaving}
-              className="bg-purple-600  text-white font-medium w-full flex items-center gap-2 justify-center px-3 py-2.5  mx-1 rounded-md border border-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3]"
+              className="bg-purple-600 text-base text-white font-semibold w-full flex items-center gap-2 justify-center px-3 py-2.5  mx-1 rounded-md border border-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3]"
             >
               {isSaving ? (
                 <>
@@ -3412,7 +3412,7 @@ export const ImageTemplateEditor = ({
 
             <button
               onClick={handleDiscardClick}
-              className="text-purple-600 flex justify-center items-center gap-2  font-medium w-full px-3 py-2.5  mx-1 rounded-md border border-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3]"
+              className="text-purple-600 flex  text-base font-semibold justify-center items-center gap-2 w-full px-3 py-2.5  mx-1 rounded-md border border-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3]"
             >
               {t("discard_image")}
             </button>

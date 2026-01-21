@@ -12,6 +12,7 @@ import {
   Search,
   Sparkles,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { AIModel, aiService, AI_MODELS, IMAGE_MODELS } from "../lib/aiService";
 
 interface AIModelSelectorProps {
@@ -26,7 +27,7 @@ interface AIModelSelectorProps {
 }
 
 const TASK_DESCRIPTIONS = {
-  "content-generation": "General content creation and writing",
+  "content-generation": () => t("content_generation"),
   scheduling: "AI-powered post scheduling and calendar generation",
   "image-generation": "AI image and visual content creation",
   "social-content": "Social media post and caption generation",
@@ -45,6 +46,7 @@ export const AIModelSelector: React.FC<AIModelSelectorProps> = ({
   onModelSelect,
   showAdvanced = false,
 }) => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [userPreferences, setUserPreferences] = useState<{

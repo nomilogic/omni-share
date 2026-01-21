@@ -316,7 +316,7 @@ export const PostScheduleDashboard: React.FC<PostScheduleDashboardProps> = ({
                     className="flex justify-between items-center"
                   >
                     <span className=" theme-text-light">
-                      {category || "General"}
+                      {category || t("general")}
                     </span>
                     <span className="font-semibold theme-text-primary">
                       {count as number}
@@ -478,21 +478,21 @@ export const PostScheduleDashboard: React.FC<PostScheduleDashboardProps> = ({
                 onChange={(e) => setFilter(e.target.value)}
                 className="theme-input rounded-md px-3 py-1 text-sm focus:outline-none"
               >
-                <option value="all">All Posts</option>
-                <option value="scheduled">Scheduled</option>
-                <option value="published">Published</option>
-                <option value="failed">Failed</option>
+                <option value="all">{t("all_posts")}</option>
+                <option value="scheduled">{t("scheduled_option")}</option>
+                <option value="published">{t("published_option")}</option>
+                <option value="failed">{t("failed_option")}</option>
               </select>
             </div>
           </div>
           <div style={{ borderColor: "var(--theme-border)" }}>
             {isLoading ? (
               <div className="p-6 text-center">
-                <p className="theme-text-light">Loading scheduled posts...</p>
+                <p className="theme-text-light">{t("loading_scheduled_posts")}</p>
               </div>
             ) : filteredPosts.length === 0 ? (
               <div className="p-6 text-center">
-                <p className="theme-text-light">No scheduled posts found.</p>
+                <p className="theme-text-light">{t("no_scheduled_posts_found")}</p>
               </div>
             ) : (
               filteredPosts.map((post) => (

@@ -91,12 +91,11 @@ const SubscriptionPauseModal = ({
         downgradeModal ? (
           <div className="w-full px-4 py-5 md:px-8 flex flex-col gap-3 overflow-y-auto">
             <h2 className="text-2xl font-semibold text-[#7650e3] text-left">
-              Downgrade Request Pending
+              {t("downgrade_request_pending")}
             </h2>
 
             <p className="text-sm text-gray-700 text-left">
-              You have already requested a downgrade. It will be applied in your
-              next billing cycle.
+              {t("already_requested_downgrade_message")}
             </p>
 
             <ul className=" space-y-2">
@@ -149,7 +148,7 @@ const SubscriptionPauseModal = ({
                 className="w-full   text-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3] 
            font-semibold py-2.5 rounded-md border border-[#7F56D9] transition"
               >
-                Back
+                {t("back")}
               </button>
               <button
                 disabled={downgradeLoading}
@@ -157,7 +156,7 @@ const SubscriptionPauseModal = ({
                 className="w-full bg-purple-600 disabled:cursor-not-allowed hover:bg-[#d7d7fc] hover:text-[#7650e3] 
           text-white font-semibold py-2.5 rounded-md border border-[#7F56D9] transition"
               >
-                {downgradeLoading ? "Processing..." : " Cancel Request"}
+                {downgradeLoading ? t("processing") : t("cancel_request")}
               </button>
             </div>
           </div>
@@ -165,13 +164,13 @@ const SubscriptionPauseModal = ({
           <div className="w-full px-4 py-5 md:px-8 flex flex-col gap-5 overflow-y-auto">
             <div className="flex items-center gap-1 relative">
               <h2 className="text-2xl font-semibold text-[#7650e3]">
-                Downgrade Your Subscription
+                {t("downgrade_your_subscription")}
               </h2>
             </div>
 
             {downgradePackages.length === 0 && (
               <p className="text-sm text-gray-700">
-                You are already on the lowest available package.
+                {t("already_on_lowest_package")}
               </p>
             )}
 
@@ -217,7 +216,7 @@ const SubscriptionPauseModal = ({
                         className="w-full mt-2  text-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3] 
            font-semibold py-2.5 rounded-md border border-[#7F56D9] transition"
                       >
-                        Back
+                        {t("back")}
                       </button>
                       <button
                         onClick={() => handleRequestDowngrade(pkg)}
@@ -225,7 +224,7 @@ const SubscriptionPauseModal = ({
                         className="w-full mt-2 bg-purple-600 disabled:cursor-not-allowed hover:bg-[#d7d7fc] hover:text-[#7650e3] 
           text-white font-semibold py-2.5 rounded-md border border-[#7F56D9] transition"
                       >
-                        {downgradeLoading ? "Processing..." : "Downgrade"}
+                        {downgradeLoading ? t("processing") : t("downgrade")}
                       </button>
                     </div>
                   </>
@@ -338,7 +337,7 @@ const SubscriptionPauseModal = ({
                   onClick={openDowngradeModel}
                   className=" w-full hover:bg-[#d7d7fc] disabled:cursor-not-allowed hover:text-[#7650e3]  text-[#7650e3] font-semibold py-2.5  px-3  text-sm sm:text-base rounded-md transition disabled:opacity-50 flex justify-between items-center  border border-[#7F56D9]"
                 >
-                  <span>Downgrade Subscription</span>
+                  <span>{t("downgrade_subscription_button")}</span>
                   <ArrowRightIcon className="w-5 h-5" />
                 </button>
               )}

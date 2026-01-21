@@ -8,6 +8,7 @@ import {
   Send,
   Brain,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { AIModelSelector } from "./AIModelSelector";
 import { aiService } from "../lib/aiService";
 import {
@@ -61,6 +62,7 @@ export const AIScheduleGenerator: React.FC<AIScheduleGeneratorProps> = ({
   campaignData,
   isGenerating = false,
 }) => {
+  const { t } = useTranslation();
   const [prompt, setPrompt] = useState("");
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([
     "linkedin",
@@ -433,7 +435,7 @@ export const AIScheduleGenerator: React.FC<AIScheduleGeneratorProps> = ({
               <strong>Time:</strong> {getTimeRangeDisplay()}
             </div>
             <div>
-              <strong>Category:</strong> {category || "General"}
+              <strong>Category:</strong> {category || t("general")}
             </div>
             <div>
               <strong>Keywords:</strong> {keywords || "None"}
