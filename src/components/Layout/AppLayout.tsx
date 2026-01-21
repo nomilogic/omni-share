@@ -360,12 +360,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 <div className="w-full  flex items-center justify-between bg-white rounded-md px-4 py-3 border border-black/10 shadow-sm">
                   <div className="text-left">
                     <p className="text-lg font-semibold text-[#7650e3] leading-tight">
-                      Refer & Earn!
-                      {/* {t("refer_and_earn")} */}
+                      {t("refer_and_earn")}
+                      
                     </p>
                     <p className="text-sm text-gray-500 leading-tight mt-1">
-                      Refer & earn 100 omni coins!
-                      {/* {t("refer_and_earn_message")} */}
+                      
+                      {t("refer_and_earn_message")}
                     </p>
                   </div>
 
