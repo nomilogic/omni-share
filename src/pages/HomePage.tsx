@@ -10,21 +10,13 @@ import {
   Menu,
   X,
   ChevronDown,
-  Share2,
-  Zap,
-  BarChart3,
-  Calendar,
-  Sparkles,
   Star,
   ChevronLeft,
   ChevronRight,
-  Users,
-  TrendingUp,
   Home,
   Plus,
   Building2,
   History,
-  Video,
   LogOut,
   LogIn,
 } from "lucide-react";
@@ -32,13 +24,11 @@ import Icon from "../components/Icon";
 import { Link, useNavigate } from "react-router-dom";
 import LogoWhiteText from "../assets/logo-white-text.svg";
 import API from "@/services/api";
-import { Counter } from "./counter";
 import TwoColumnSection2 from "@/components/TwoColumnSection2";
 import FeaturesPage from "@/components/FeaturesPage";
 import CommunitySignup from "@/components/CommunitySignup";
 import TwoColumnSection from "@/components/TwoColumnSection";
 import IntroVideo from "../assets/Omnishare Ad.00.mp4";
-import { Platform } from "@/types";
 import { notify } from "@/utils/toast";
 import z from "zod";
 import { useForm } from "react-hook-form";
@@ -59,10 +49,8 @@ function HomePage() {
     null
   );
   const [showContactForm, setShowContactForm] = useState(false);
-  const [forceShow, setForceShow] = useState(false);
   const isInitialMount = useRef(true);
   const navigate = useNavigate();
-  const profile = user?.profile;
   const { scrollYProgress } = useScroll();
   const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
   const heroScale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95]);
@@ -79,13 +67,6 @@ function HomePage() {
 
   useEffect(() => {
     isInitialMount.current = false;
-  }, []);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setForceShow(true);
-    }, 1000);
-    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -355,7 +336,6 @@ function HomePage() {
             transition={{ duration: 0.3, ease: "easeInOut" }}
             className="fixed inset-y-0 left-0 z-50 w-full sm:w-[60%] bg-[#7650e3] transform lg:hidden overflow-y-auto"
           >
-            {/* Header with Logo and Close Button */}
             <div className="flex items-center justify-between border-b border-white/20 p-2 py-3">
               <span className="flex items-center">
                 <Icon
@@ -382,7 +362,6 @@ function HomePage() {
               </button>
             </div>
 
-            {/* User Profile Section - shown when logged in */}
             <AnimatePresence>
               {Cookies.get("auth_token") && (
                 <motion.div
@@ -523,7 +502,9 @@ function HomePage() {
                       whileTap={{ scale: 0.95 }}
                     >
                       <span>
-                        {user ? t("create_post") : t("get_started_free")}
+                        {Cookies.get("auth_token")
+                          ? t("create_post")
+                          : t("get_started_free")}
                       </span>
                     </motion.button>
                     <motion.button
@@ -557,7 +538,6 @@ function HomePage() {
                 />
               </div>
             </div>
-            {/* Footer */}
             <div className="absolute bottom-0 left-0 right-0">
               <div className="w-full mx-auto">
                 <div className="text-center flex flex-col items-center justify-center border-y gap-3 border-white/20 relative p-2">
@@ -766,10 +746,8 @@ function HomePage() {
       >
         <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-[10%]">
           <div className="relative flex justify-between lg:justify-between items-center h-20 flex-row-reverse lg:flex-row">
-            {/* 🔹 MOBILE: Invisible box on right to balance hamburger */}
             <div className="lg:hidden w-6 h-6"></div>
 
-            {/* 🔹 CENTERED LOGO */}
             <Link to="/">
               <motion.div
                 className=" flex items-center space-x-2 lg:static lg:translate-x-0"
@@ -792,7 +770,6 @@ function HomePage() {
               </motion.div>
             </Link>
 
-            {/* 🔹 MOBILE HAMBURGER (LEFT) — behaves EXACTLY as before */}
             <motion.button
               className={`lg:hidden transition-colors ${
                 scrollY > 50 ? "text-white" : "text-white"
@@ -807,7 +784,6 @@ function HomePage() {
               )}
             </motion.button>
 
-            {/* 🔹 DESKTOP MENU — UNTOUCHED */}
             <div className="hidden lg:flex items-center space-x-8">
               {[t("home"), t("features"), t("faq"), t("contact")].map(
                 (section, index) => (
@@ -885,7 +861,7 @@ function HomePage() {
                 </AnimatePresence>
 
                 <AnimatePresence mode="wait">
-                  {user ? (
+                  {Cookies.get("auth_token") ? (
                     <motion.button
                       key="logout-btn"
                       initial={{ opacity: 0, x: 10 }}
@@ -1078,14 +1054,18 @@ function HomePage() {
           >
             <AnimatePresence mode="wait">
               <motion.span
-                key={user ? "create" : "signup"}
+                key={Cookies.get("auth_token") ? "create" : "signup"}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.2 }}
                 className="flex items-center space-x-2"
               >
-                <span>{user ? t("create_post") : t("get_started_free")}</span>
+                <span>
+                  {Cookies.get("auth_token")
+                    ? t("create_post")
+                    : t("get_started_free")}
+                </span>
               </motion.span>
             </AnimatePresence>
           </motion.button>
@@ -1160,49 +1140,6 @@ function HomePage() {
       </section>
       <TwoColumnSection />
       <TwoColumnSection2 />
-      {/* Active Users Stats Section */}
-      {/* <section className="py-16 bg-white border-y border-gray-200">
-        <div className=" max-w-full mx-auto px-4 sm:px-6 lg:px-[10%] w-full">
-          <motion.div
-            className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={containerVariants}
-          >
-            {[
-              { icon: Users, end: 1000, suffix: "+", label: t("active_users") },
-              {
-                icon: TrendingUp,
-                end: 99.9,
-                suffix: "+",
-                label: t("posts_created"),
-              },
-              {
-                icon: Share2,
-                end: 5,
-                suffix: "",
-                label: t("platforms_supported"),
-              },
-              { icon: Sparkles, end: 99.9, suffix: "%", label: t("uptime") },
-            ].map((stat, index) => (
-              <motion.div key={index} className="group" variants={itemVariants}>
-                <motion.div
-                  className="flex items-center justify-center mb-3"
-                  whileHover={{ scale: 1.2, rotate: 10 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                >
-                  <stat.icon className="w-8 h-8 text-[#7650e3]" />
-                </motion.div>
-                <div className="text-4xl md:text-5xl font-bold text-[#000] mb-2">
-                  <Counter end={stat.end} suffix={stat.suffix} />
-                </div>
-                <div className="text-gray-500 font-medium">{stat.label}</div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section> */}
 
       <section className=" bg-gray-50 relative overflow-hidden ">
         <motion.div
@@ -1334,7 +1271,6 @@ function HomePage() {
               <ChevronRight className="w-6 h-6 text-black" />
             </motion.button>
 
-            {/* Carousel Indicators */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -1388,7 +1324,6 @@ function HomePage() {
             </p>
           </motion.div>
 
-          {/* ---------------- FIXED FAQ LOOP ---------------- */}
           <motion.div
             className="space-y-4"
             whileInView="visible"
@@ -1516,7 +1451,7 @@ function HomePage() {
           <AnimatePresence>
             {showContactForm && (
               <motion.form
-                onSubmit={handleSubmit(onSubmit)} // ❗ remove onError here
+                onSubmit={handleSubmit(onSubmit)}
                 className="space-y-6 pt-2"
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
@@ -1524,7 +1459,6 @@ function HomePage() {
                 transition={{ duration: 0.3 }}
               >
                 <div className="grid md:grid-cols-2 gap-6">
-                  {/* First Name */}
                   <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -1548,7 +1482,6 @@ function HomePage() {
                     )}
                   </motion.div>
 
-                  {/* Last Name */}
                   <motion.div
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -1564,7 +1497,6 @@ function HomePage() {
                       placeholder={t("last_name")}
                     />
 
-                    {/* ❗ Zod Error Here */}
                     {errors.lastName && (
                       <p className="text-red-500 text-sm mt-1">
                         {errors.lastName.message}
@@ -1573,7 +1505,6 @@ function HomePage() {
                   </motion.div>
                 </div>
 
-                {/* Email */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -1589,7 +1520,6 @@ function HomePage() {
                     placeholder={t("email_address")}
                   />
 
-                  {/* ❗ Zod Error Here */}
                   {errors.email && (
                     <p className="text-red-500 text-sm mt-1">
                       {errors.email.message}
@@ -1597,7 +1527,6 @@ function HomePage() {
                   )}
                 </motion.div>
 
-                {/* Message */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -1613,7 +1542,6 @@ function HomePage() {
                     placeholder={t("message_placeholder")}
                   />
 
-                  {/* ❗ Zod Error Here */}
                   {errors.message && (
                     <p className="text-red-500 text-sm mt-1">
                       {errors.message.message}
@@ -1621,7 +1549,6 @@ function HomePage() {
                   )}
                 </motion.div>
 
-                {/* Submit Button */}
                 <motion.button
                   type="submit"
                   disabled={isSubmitting}
