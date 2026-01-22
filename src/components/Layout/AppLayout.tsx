@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   Home,
   Plus,
@@ -22,6 +22,7 @@ import LogoWhiteText from "../../assets/logo-white-text.svg";
 import { useTranslation } from "react-i18next";
 import Sidebar from "./LayoutSideBar";
 import AppInitializer from "../AppLayoutLoader";
+import { ResizeContext } from "@/context/ResizeContext";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -85,6 +86,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       icon: BarChart3,
     },
   ];
+  const [zoom, setZoom] = useState(1);
 
   const handleLogout = () => {
     logout();
@@ -98,9 +100,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       await API.readAllHistory();
       setUnreadCount(0);
       fetchUnreadCount();
-    } catch (error) {
-      console.error("Error marking all posts as read:", error);
-    }
+    } catch (error) {}
   };
 
   const handleReferShareClick = async () => {
@@ -142,11 +142,42 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+  const handleResizeMainToFullScreen = (isFullScreen: boolean) => {
+    const mainContent = mainContentRef.current;
+
+    if (mainContent && isFullScreen) {
+      mainContent.style.position = "fixed";
+      mainContent.style.top = "0";
+      mainContent.style.left = "0";
+      mainContent.style.right = "0";
+      mainContent.style.bottom = "0";
+      mainContent.style.height = "98vh";
+      mainContent.style.zIndex = "1000";
+    }
+    if (mainContent && !isFullScreen) {
+      mainContent.style = "";
+    }
+  };
+
+  useEffect(() => {
+    const handleWindowResize = () => {
+      if (window.innerHeight < 800) {
+        setZoom(window.innerHeight / 800);
+      }
+    };
+    handleWindowResize();
+    window.addEventListener("resize", handleWindowResize);
+    window.addEventListener("load", handleWindowResize);
+    return () => {
+      window.removeEventListener("resize", handleWindowResize);
+    };
+  }, []);
 
   return (
-    <>
+    <ResizeContext.Provider value={{ handleResizeMainToFullScreen }}>
       <div>
         <Sidebar
+          zoom={zoom}
           isMobileMenuOpen={isMobileMenuOpen}
           setIsMobileMenuOpen={setIsMobileMenuOpen}
           user={user}
@@ -178,7 +209,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         <main
           id="mainContent"
           ref={mainContentRef}
-          className="py-0 h-full-dec-hf w-full overflow-auto theme-bg-card  pt-[60px] "
+          className="py-0 h-full-dec-hf w-full overflow-auto theme-bg-card  mt-[60px] "
         >
           <div className="w-full mx-auto overflow-fit max-w-5xl ">
             {children}
@@ -217,6 +248,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       />
       <PricingModals />
       <PreloaderOverlay loadingState={loadingState} />
-    </>
+    </ResizeContext.Provider>
   );
 };

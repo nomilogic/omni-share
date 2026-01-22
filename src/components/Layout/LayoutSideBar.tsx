@@ -33,15 +33,15 @@ const Sidebar = ({
   planRef,
   coinsRef,
   referralRef,
+  zoom,
 }: any) => {
   const location = useLocation();
-  const navigate = useNavigate();
 
   return (
-    <div>
-      {/* Sidebar Drawer */}
+    <div className="overflow-hidden">
       <div
-        className={`fixed inset-y-0 left-0 z-50 w-full sm:w-2/5 xl:w-1/5 theme-bg-trinary border-r border-white/10 transform transition-transform duration-300 ease-in-out
+        style={{ zoom: zoom }}
+        className={`fixed inset-y-0 left-0 z-50 w-full overflow-hidden sm:w-2/5 xl:w-1/5 theme-bg-trinary border-r border-white/10 transform transition-transform duration-300 ease-in-out
     ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}
   `}
       >
@@ -368,7 +368,7 @@ const Sidebar = ({
         </div>
       </div>
 
-      <div className="fixed top-0 z-10 w-full  border-b border-white/20 md:px-4 py-4  px-3 bg-white h-[60px]">
+      <div className="fixed top-0 z-10 w-full overflow-hidden border-b border-white/20 md:px-4 py-4  px-3 bg-white h-[60px]">
         <div className=" flex items-center justify-between mt-0 ">
           <div className="flex gap-3 items-center">
             <button
@@ -479,7 +479,7 @@ const Sidebar = ({
                                 <span className="text-black font-medium">
                                   {user.wallet?.expiresAt
                                     ? new Date(
-                                        user.wallet.expiresAt,
+                                        user.wallet.expiresAt
                                       ).toLocaleDateString("en-GB", {
                                         day: "2-digit",
                                         month: "short",

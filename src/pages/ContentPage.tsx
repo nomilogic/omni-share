@@ -1,11 +1,5 @@
-import React, { useState, useEffect } from "react";
-import {
-  Routes,
-  Route,
-  useNavigate,
-  useLocation,
-  Navigate,
-} from "react-router-dom";
+import React, { useState } from "react";
+import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ContentInput } from "../components/ContentInput";
 import { AIGenerator } from "../components/AIGenerator";
@@ -29,11 +23,6 @@ export const ContentPage: React.FC = () => {
   };
 
   const handleGenerationComplete = async (posts: any[]) => {
-    console.log(
-      "Processing generated posts for publishing compatibility:",
-      posts
-    );
-
     const processedPosts = posts.map((post) => {
       const processedPost = { ...post };
 
