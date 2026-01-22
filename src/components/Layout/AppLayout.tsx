@@ -764,12 +764,13 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                                         <div className="absolute right-[-112px] m-auto  top-full mt-1 w-56 p-2 bg-gray-50 border rounded-md shadow-lg z-50 text-xs text-black">
                                           {t("tooltip_referral_part1")}
                                           {" "}
-                                          {t("tooltip_referral_part2")}{" "}
                                           <span className="font-semibold text-purple-600">
                                             {user?.wallet?.referralCoin?.toLocaleString() ??
                                               0}
                                           </span>{" "}
-                                          {t("tooltip_referral_part3")}
+                                          {t("tooltip_referral_part2")}{" "}
+                                          
+                                          
                                         </div>
                                       )}
                                     </div>
