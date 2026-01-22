@@ -2261,7 +2261,7 @@ export const ImageTemplateEditor = ({
                     setSelectedElement(null);
                   }}
                   className="inline-flex items-center justify-center gap-1 px-1.5 py-1 bg-red-50 text-red-700 rounded-md hover:bg-red-100 transition-colors text-xs font-medium"
-                  title="Delete all elements"
+                  title={t("delete_all_elements")}
                   type="button"
                 >
                   <Trash className="w-3 h-3" />
@@ -2310,12 +2310,12 @@ export const ImageTemplateEditor = ({
       <button
         onClick={() => void saveCurrentTemplate()}
         className="h-8 bg-purple-600 text-white font-medium flex items-center gap-2 justify-center px-3 rounded-md border border-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3] whitespace-nowrap disabled:opacity-60"
-        title={saveAsGlobal ? "Save as global template" : "Save as my template"}
+        title={saveAsGlobal ? t("save_template_global") : t("save_template_personal")}
         type="button"
         disabled={isTemplatesLoading}
       >
         <Download className="w-4 h-4" />
-        <span className="text-sm">{t("Save")}</span>
+        <span className="text-sm">{t("save")}</span>
       </button>
     </div>
 
@@ -2353,7 +2353,7 @@ export const ImageTemplateEditor = ({
             )
           }
           className="h-8 px-2 flex items-center justify-center rounded-md bg-red-100 hover:bg-red-200 disabled:opacity-50 text-xs text-red-700"
-          title="Delete (local and user templates only)"
+          title={t("delete_template_tooltip")}
           type="button"
         >
           <Trash className="w-3 h-3" />
@@ -2362,7 +2362,7 @@ export const ImageTemplateEditor = ({
     </div>
 
     {templatesForCurrentRatio.length === 0 ? (
-      <p className="text-xs text-gray-400">No templates saved for {aspectRatio} aspect ratio.</p>
+      <p className="text-xs text-gray-400">{t("no_templates_saved_for", { aspectRatio })}</p>
     ) : (
       <div className="space-y-2 overflow-y-auto min-h-0 flex-1">
         <div className="grid grid-cols-2 gap-2">
@@ -2391,9 +2391,9 @@ export const ImageTemplateEditor = ({
                 } ${isTemplatesLoading ? "pointer-events-none opacity-60" : ""}`}
                 title={`${
                   tpl.source === "global"
-                    ? "Global - "
+                    ? t("template_label_global") + " - "
                     : tpl.source === "user"
-                    ? "My - "
+                    ? t("template_label_my") + " - "
                     : ""
                 }${tpl.name}`}
               >
@@ -2405,7 +2405,7 @@ export const ImageTemplateEditor = ({
                   />
                 ) : (
                   <div className="w-full h-20 bg-gray-200 flex items-center justify-center text-xs text-gray-400">
-                    No preview
+                    {t("no_preview")}
                   </div>
                 )}
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-1.5">
@@ -2568,28 +2568,28 @@ export const ImageTemplateEditor = ({
                         <button
                           onClick={bringToFront}
                           className="w-full p-2 bg-gray-100 text-gray-500 font-medium rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors text-xs"
-                          title="Bring to Front"
+                          title={t("bring_to_front")}
                         >
                           <ChevronUp className="w-3.5 h-3.5" />
                         </button>
                         <button
                           onClick={moveUp}
                           className="w-full p-2 bg-gray-100 text-gray-500 font-medium rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors text-xs"
-                          title="Move Up"
+                          title={t("move_up")}
                         >
                           <ArrowUp className="w-3.5 h-3.5" />
                         </button>
                         <button
                           onClick={moveDown}
                           className="w-full p-2 bg-gray-100 text-gray-500 font-medium rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors text-xs"
-                          title="Move Down"
+                          title={t("move_down")}
                         >
                           <ArrowDown className="w-3.5 h-3.5" />
                         </button>
                         <button
                           onClick={sendToBack}
                           className="w-full p-2 bg-gray-100 text-gray-500 font-medium rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors text-xs"
-                          title="Send to Back"
+                          title={t("send_to_back")}
                         >
                           <ChevronDown className="w-3.5 h-3.5" />
                         </button>
@@ -2820,12 +2820,12 @@ export const ImageTemplateEditor = ({
                             {logoUploading ? (
                               <>
                                 <Loader className="w-4 h-4 animate-spin" />
-                                <span>Uploading...</span>
+                                <span>{t("uploading")}</span>
                               </>
                             ) : (
                               <>
                                 <Upload className="w-4 h-4" />
-                                <span>Upload Image</span>
+                                <span>{t("upload_image")}</span>
                               </>
                             )}
                           </button>

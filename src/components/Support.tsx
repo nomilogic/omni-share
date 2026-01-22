@@ -1,5 +1,6 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   ArrowLeft,
   Mail,
@@ -12,6 +13,7 @@ import {
 import logoText from ".././assets/logo-text.svg"; // ✅ apne path ke hisaab se change
 
 const Support: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const handleBack = () => {
@@ -30,7 +32,7 @@ const Support: React.FC = () => {
             className="flex items-center gap-2 text-[#7650e3] hover:text-[#6840c7] transition-colors font-semibold"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm">Back</span>
+            <span className="text-sm">{t("back")}</span>
           </button>
 
           {/* Center: Logo */}
@@ -50,25 +52,22 @@ const Support: React.FC = () => {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Title */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-[#7650e3] mb-2">Support</h1>
+            <h1 className="text-3xl font-bold text-[#7650e3] mb-2">{t("support_title")}</h1>
             <p className="text-gray-500 font-medium">
-              <strong>OmniShare</strong> – Social Media Management Platform
+              <strong>OmniShare</strong> – {t("support_subtitle")}
             </p>
             <p className="text-gray-500 font-medium">
-              <strong>Last Updated:</strong> November 17, 2025
+              <strong>{t("support_last_updated")}:</strong> {t("support_date")}
             </p>
             <p className="text-gray-500 font-medium">
-              <strong>Company Location:</strong> United Arab Emirates (UAE)
+              <strong>{t("support_company_location")}:</strong> {t("support_location_uae")}
             </p>
           </div>
 
           {/* Content */}
           <section>
             <p className="mb-4">
-              Welcome to <strong>OmniShare Support</strong>. We're here to help
-              you get the most out of our platform. Whether you have questions,
-              need technical assistance, or want to provide feedback, our support
-              team is ready to assist you.
+              {t("support_welcome_intro")}
             </p>
           </section>
 
@@ -76,17 +75,13 @@ const Support: React.FC = () => {
 
           <section>
             <h2 className="text-xl font-bold mb-2 text-[#7650e3]">
-              1. Getting Started with Support
+              1. {t("support_section_1_title")}
             </h2>
             <p className="mb-2">
-              <strong>Multiple Support Channels:</strong> We offer support through
-              email, live chat, and a comprehensive knowledge base to ensure you
-              can reach us in the way that's most convenient for you.
+              <strong>{t("support_section_1_subtitle")}:</strong> {t("support_section_1_content")}
             </p>
             <p>
-              <strong>Response Time:</strong> Our support team aims to respond to
-              all inquiries within 24 business hours. For urgent issues, please
-              mark your request as "Priority."
+              <strong>{t("support_response_time")}:</strong> {t("support_response_time_content")}
             </p>
           </section>
 
@@ -94,49 +89,49 @@ const Support: React.FC = () => {
 
           <section>
             <h2 className="text-xl font-bold mb-2 text-[#7650e3]">
-              2. Frequently Asked Questions (FAQ)
+              2. {t("support_section_2_title")}
             </h2>
-            <p className="mb-2">Find answers to common questions about:</p>
+            <p className="mb-2">{t("support_section_2_intro")}:</p>
             <ul className="list-disc pl-6 mb-2">
-              <li><strong>Account Setup:</strong> Creating and managing your OmniShare account</li>
-              <li><strong>Platform Integration:</strong> Connecting social media profiles</li>
-              <li><strong>Content Creation:</strong> Using AI-powered content generation features</li>
-              <li><strong>Scheduling & Publishing:</strong> Planning and scheduling posts across platforms</li>
-              <li><strong>Analytics & Reporting:</strong> Understanding performance metrics and analytics</li>
-              <li><strong>Subscription Management:</strong> Billing, upgrades, and cancellations</li>
+              <li><strong>{t("support_section_2_item_1")}:</strong> {t("support_section_2_item_1_desc")}</li>
+              <li><strong>{t("support_section_2_item_2")}:</strong> {t("support_section_2_item_2_desc")}</li>
+              <li><strong>{t("support_section_2_item_3")}:</strong> {t("support_section_2_item_3_desc")}</li>
+              <li><strong>{t("support_section_2_item_4")}:</strong> {t("support_section_2_item_4_desc")}</li>
+              <li><strong>{t("support_section_2_item_5")}:</strong> {t("support_section_2_item_5_desc")}</li>
+              <li><strong>{t("support_section_2_item_6")}:</strong> {t("support_section_2_item_6_desc")}</li>
             </ul>
           </section>
 
           <hr className="my-4" />
 
           <section>
-            <h2 className="text-xl font-bold mb-2 text-[#7650e3]">3. Knowledge Base</h2>
-            <p className="mb-2">Our comprehensive knowledge base includes:</p>
+            <h2 className="text-xl font-bold mb-2 text-[#7650e3]">3. {t("support_section_3_title")}</h2>
+            <p className="mb-2">{t("support_section_3_intro")}:</p>
             <ul className="list-disc pl-6 mb-3">
-              <li><strong>Step-by-Step Guides:</strong> Detailed tutorials for every feature</li>
-              <li><strong>Video Tutorials:</strong> Visual walkthroughs of key functionalities</li>
-              <li><strong>Best Practices:</strong> Tips and strategies for maximizing your social media presence</li>
-              <li><strong>Troubleshooting:</strong> Solutions for common issues and errors</li>
+              <li><strong>{t("support_section_3_item_1")}:</strong> {t("support_section_3_item_1_desc")}</li>
+              <li><strong>{t("support_section_3_item_2")}:</strong> {t("support_section_3_item_2_desc")}</li>
+              <li><strong>{t("support_section_3_item_3")}:</strong> {t("support_section_3_item_3_desc")}</li>
+              <li><strong>{t("support_section_3_item_4")}:</strong> {t("support_section_3_item_4_desc")}</li>
             </ul>
           </section>
 
           <hr className="my-4" />
 
           <section>
-            <h2 className="text-xl font-bold mb-2 text-[#7650e3]">4. Contact Support</h2>
-            <p className="mb-2">Reach out to our support team through any of these channels:</p>
+            <h2 className="text-xl font-bold mb-2 text-[#7650e3]">4. {t("support_section_4_title")}</h2>
+            <p className="mb-2">{t("support_section_4_intro")}:</p>
             <ul className="space-y-2">
               <li>
                 <Mail className="w-4 h-4 inline mr-2 text-[#7650e3]" />
-                <strong className="text-black">Email:</strong>{" "}
+                <strong className="text-black">{t("email")}:</strong>{" "}
                 <a href="mailto:support@omnishare.ai" className="text-[#7650e3] hover:underline">
                   support@omnishare.ai
                 </a>
               </li>
               <li>
                 <MessageCircle className="w-4 h-4 inline mr-2 text-[#7650e3]" />
-                <strong className="text-black">Live Chat:</strong>{" "}
-                <span className="text-gray-700">Available on our website (9 AM - 6 PM UAE time)</span>
+                <strong className="text-black">{t("support_live_chat")}:</strong>{" "}
+                <span className="text-gray-700">{t("support_live_chat_desc")}</span>
               </li>
             </ul>
           </section>
@@ -145,28 +140,28 @@ const Support: React.FC = () => {
 
           <section>
             <h2 className="text-xl font-bold mb-2 text-[#7650e3]">
-              5. Common Issues & Solutions
+              5. {t("support_section_5_title")}
             </h2>
 
-            <h3 className="font-semibold mb-2">5.1 Account & Login Issues</h3>
+            <h3 className="font-semibold mb-2">5.1 {t("support_section_5_1_title")}</h3>
             <ul className="list-disc pl-6 mb-2">
-              <li><strong>Forgot Password:</strong> Use the "Forgot Password" link on the login page to reset your password.</li>
-              <li><strong>Account Locked:</strong> If your account is locked after multiple failed login attempts, contact support.</li>
-              <li><strong>Two-Factor Authentication:</strong> Ensure you're using the correct code generated by your authenticator app.</li>
+              <li><strong>{t("support_section_5_1_item_1")}:</strong> {t("support_section_5_1_item_1_desc")}</li>
+              <li><strong>{t("support_section_5_1_item_2")}:</strong> {t("support_section_5_1_item_2_desc")}</li>
+              <li><strong>{t("support_section_5_1_item_3")}:</strong> {t("support_section_5_1_item_3_desc")}</li>
             </ul>
 
-            <h3 className="font-semibold mb-2">5.2 Social Media Integration</h3>
+            <h3 className="font-semibold mb-2">5.2 {t("support_section_5_2_title")}</h3>
             <ul className="list-disc pl-6 mb-2">
-              <li><strong>Connection Failed:</strong> Ensure you have admin access and re-authorize OmniShare.</li>
-              <li><strong>Posts Not Publishing:</strong> Check platform guidelines and permissions.</li>
-              <li><strong>Analytics Not Loading:</strong> Wait up to 24 hours for data sync.</li>
+              <li><strong>{t("support_section_5_2_item_1")}:</strong> {t("support_section_5_2_item_1_desc")}</li>
+              <li><strong>{t("support_section_5_2_item_2")}:</strong> {t("support_section_5_2_item_2_desc")}</li>
+              <li><strong>{t("support_section_5_2_item_3")}:</strong> {t("support_section_5_2_item_3_desc")}</li>
             </ul>
 
-            <h3 className="font-semibold mb-2">5.3 Content & Scheduling</h3>
+            <h3 className="font-semibold mb-2">5.3 {t("support_section_5_3_title")}</h3>
             <ul className="list-disc pl-6 mb-2">
-              <li><strong>AI Generation Issues:</strong> Ensure your prompt is clear and relevant to your brand.</li>
-              <li><strong>Scheduled Posts Not Published:</strong> Verify posting permissions on the platform.</li>
-              <li><strong>Media Upload Errors:</strong> Check file size and format (JPG, PNG, MP4 supported).</li>
+              <li><strong>{t("support_section_5_3_item_1")}:</strong> {t("support_section_5_3_item_1_desc")}</li>
+              <li><strong>{t("support_section_5_3_item_2")}:</strong> {t("support_section_5_3_item_2_desc")}</li>
+              <li><strong>{t("support_section_5_3_item_3")}:</strong> {t("support_section_5_3_item_3_desc")}</li>
             </ul>
           </section>
 
@@ -174,14 +169,14 @@ const Support: React.FC = () => {
 
           <section>
             <h2 className="text-xl font-bold mb-2 text-[#7650e3]">
-              6. Billing & Subscription Support
+              6. {t("support_section_6_title")}
             </h2>
-            <p className="mb-2">Questions about your subscription? We can help with:</p>
+            <p className="mb-2">{t("support_section_6_intro")}:</p>
             <ul className="list-disc pl-6 mb-2">
-              <li><strong>Upgrade/Downgrade Plans:</strong> Change your tier anytime from account settings.</li>
-              <li><strong>Billing Issues:</strong> If you're experiencing payment problems, contact our billing team.</li>
-              <li><strong>Refunds & Credits:</strong> Policy information and refund requests can be submitted through support.</li>
-              <li><strong>Invoice & Receipts:</strong> Download invoices from the "Billing" section of your account.</li>
+              <li><strong>{t("support_section_6_item_1")}:</strong> {t("support_section_6_item_1_desc")}</li>
+              <li><strong>{t("support_section_6_item_2")}:</strong> {t("support_section_6_item_2_desc")}</li>
+              <li><strong>{t("support_section_6_item_3")}:</strong> {t("support_section_6_item_3_desc")}</li>
+              <li><strong>{t("support_section_6_item_4")}:</strong> {t("support_section_6_item_4_desc")}</li>
             </ul>
           </section>
 
@@ -189,35 +184,35 @@ const Support: React.FC = () => {
 
           <section>
             <h2 className="text-xl font-bold mb-2 text-[#7650e3]">
-              7. Feature Requests & Feedback
+              7. {t("support_section_7_title")}
             </h2>
             <p className="mb-2">
-              Send your suggestions to:{" "}
+              {t("support_section_7_intro")}{" "}
               <a href="mailto:feedback@omnishare.ai" className="text-[#7650e3] hover:underline">
                 <Lightbulb className="w-4 h-4 inline mr-2" />
                 feedback@omnishare.ai
               </a>
             </p>
             <ul className="list-disc pl-6 mb-2">
-              <li><strong>Submitting Feature Requests:</strong> Tell us what features you'd like to see.</li>
-              <li><strong>Reporting Bugs:</strong> Report technical issues you encounter.</li>
-              <li><strong>Sharing Feedback:</strong> Let us know what you think about OmniShare.</li>
+              <li><strong>{t("support_section_7_item_1")}:</strong> {t("support_section_7_item_1_desc")}</li>
+              <li><strong>{t("support_section_7_item_2")}:</strong> {t("support_section_7_item_2_desc")}</li>
+              <li><strong>{t("support_section_7_item_3")}:</strong> {t("support_section_7_item_3_desc")}</li>
             </ul>
-            <p>Send your suggestions to: 💡 feedback@omnishare.ai</p>
+            <p>{t("support_section_7_outro")} 💡 feedback@omnishare.ai</p>
           </section>
 
           <hr className="my-4" />
 
           <section>
             <h2 className="text-xl font-bold mb-2 text-[#7650e3]">
-              8. Security & Privacy Support
+              8. {t("support_section_8_title")}
             </h2>
-            <p className="mb-2">Security and privacy are our top priorities. If you have concerns:</p>
+            <p className="mb-2">{t("support_section_8_intro")}:</p>
             <ul className="list-disc pl-6 mb-2">
-              <li><strong>Data Protection:</strong> Learn how we protect your data in our Privacy Policy.</li>
-              <li><strong>Account Security:</strong> Enable two-factor authentication for added protection.</li>
+              <li><strong>{t("support_section_8_item_1")}:</strong> {t("support_section_8_item_1_desc")}</li>
+              <li><strong>{t("support_section_8_item_2")}:</strong> {t("support_section_8_item_2_desc")}</li>
               <li>
-                <strong>Report Security Issues:</strong>{" "}
+                <strong>{t("support_section_8_item_3")}:</strong>{" "}
                 <a href="mailto:security@omnishare.ai" className="text-[#7650e3] hover:underline">
                   security@omnishare.ai
                 </a>
@@ -229,13 +224,13 @@ const Support: React.FC = () => {
 
           <section>
             <h2 className="text-xl font-bold mb-2 text-[#7650e3]">
-              9. Training & Webinars
+              9. {t("support_section_9_title")}
             </h2>
-            <p className="mb-2">Enhance your skills with our training resources:</p>
+            <p className="mb-2">{t("support_section_9_intro")}:</p>
             <ul className="list-disc pl-6 mb-2">
-              <li><strong>Live Webinars:</strong> Weekly sessions on platform features and best practices</li>
-              <li><strong>On-Demand Videos:</strong> Access recorded training sessions anytime</li>
-              <li><strong>Certification Program:</strong> Become an OmniShare certified user</li>
+              <li><strong>{t("support_section_9_item_1")}:</strong> {t("support_section_9_item_1_desc")}</li>
+              <li><strong>{t("support_section_9_item_2")}:</strong> {t("support_section_9_item_2_desc")}</li>
+              <li><strong>{t("support_section_9_item_3")}:</strong> {t("support_section_9_item_3_desc")}</li>
             </ul>
           </section>
 
@@ -243,12 +238,12 @@ const Support: React.FC = () => {
 
           <section>
             <h2 className="text-xl font-bold mb-2 text-[#7650e3]">
-              10. System Status & Maintenance
+              10. {t("support_section_10_title")}
             </h2>
-            <p className="mb-2">Stay informed about platform status:</p>
+            <p className="mb-2">{t("support_section_10_intro")}:</p>
             <ul className="list-disc pl-6 mb-2">
-              <li><strong>Maintenance Alerts:</strong> Scheduled maintenance notifications are sent via email</li>
-              <li><strong>Incident Reports:</strong> Detailed information about service disruptions and resolutions</li>
+              <li><strong>{t("support_section_10_item_1")}:</strong> {t("support_section_10_item_1_desc")}</li>
+              <li><strong>{t("support_section_10_item_2")}:</strong> {t("support_section_10_item_2_desc")}</li>
             </ul>
           </section>
 
@@ -256,13 +251,13 @@ const Support: React.FC = () => {
 
           <section>
             <h2 className="text-xl font-bold mb-2 text-[#7650e3]">
-              11. Community & User Groups
+              11. {t("support_section_11_title")}
             </h2>
-            <p className="mb-2">Connect with other OmniShare users:</p>
+            <p className="mb-2">{t("support_section_11_intro")}:</p>
             <ul className="list-disc pl-6 mb-2">
               <li>
-                <strong className="text-black">Social Media Groups:</strong>{" "}
-                <span className="text-gray-700">Follow us on </span>
+                <strong className="text-black">{t("support_section_11_item_1")}:</strong>{" "}
+                <span className="text-gray-700">{t("support_section_11_item_1_prefix")} </span>
                 <a
                   href="https://www.linkedin.com/company/omnishare-ai"
                   target="_blank"
@@ -280,7 +275,7 @@ const Support: React.FC = () => {
                 >
                   Facebook
                 </a>
-                <span className="text-gray-700">, and </span>
+                <span className="text-gray-700"> {t("support_section_11_item_1_and")} </span>
                 <a
                   href="https://www.instagram.com/omnishare.ai/"
                   target="_blank"
@@ -289,11 +284,11 @@ const Support: React.FC = () => {
                 >
                   Instagram
                 </a>
-                <span className="text-gray-700"> for updates and tips</span>
+                <span className="text-gray-700"> {t("support_section_11_item_1_suffix")}</span>
               </li>
 
               <li>
-                <strong>User Events:</strong> Attend our annual OmniShare Summit and local meetups
+                <strong>{t("support_section_11_item_2")}:</strong> {t("support_section_11_item_2_desc")}
               </li>
             </ul>
           </section>
@@ -302,20 +297,20 @@ const Support: React.FC = () => {
 
           <section>
             <h2 className="text-xl font-bold mb-2 text-[#7650e3]">
-              12. Contact Information
+              12. {t("support_section_12_title")}
             </h2>
-            <p className="mb-3">Get in touch with us using any of these methods:</p>
+            <p className="mb-3">{t("support_section_12_intro")}:</p>
             <ul className="space-y-2">
               <li>
                 <Mail className="w-4 h-4 inline mr-2 text-[#7650e3]" />
-                <strong className="text-black">Email:</strong>{" "}
+                <strong className="text-black">{t("email")}:</strong>{" "}
                 <a href="mailto:support@omnishare.ai" className="text-[#7650e3] hover:underline">
                   support@omnishare.ai
                 </a>
               </li>
               <li>
                 <Globe className="w-4 h-4 inline mr-2 text-[#7650e3]" />
-                <strong className="text-black">Website:</strong>{" "}
+                <strong className="text-black">{t("support_website")}:</strong>{" "}
                 <a
                   href="https://www.omnishare.ai"
                   target="_blank"
@@ -327,26 +322,26 @@ const Support: React.FC = () => {
               </li>
               <li>
                 <MessageCircle className="w-4 h-4 inline mr-2 text-[#7650e3]" />
-                <strong className="text-black">Live Chat:</strong>{" "}
-                <span className="text-gray-700">Available on our website</span>
+                <strong className="text-black">{t("support_live_chat")}:</strong>{" "}
+                <span className="text-gray-700">{t("support_live_chat_available")}</span>
               </li>
               <li>
                 <MapPin className="w-4 h-4 inline mr-2 text-[#7650e3]" />
-                <strong className="text-black">Location:</strong>{" "}
+                <strong className="text-black">{t("location")}:</strong>{" "}
                 <a
                   href="https://maps.google.com/?q=United+Arab+Emirates"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-[#7650e3] hover:underline"
                 >
-                  United Arab Emirates
+                  {t("support_location_uae")}
                 </a>
               </li>
               <li>
                 <Clock className="w-4 h-4 inline mr-2 text-[#7650e3]" />
-                <strong className="text-black">Business Hours:</strong>{" "}
+                <strong className="text-black">{t("support_business_hours")}:</strong>{" "}
                 <span className="text-gray-700">
-                  9 AM - 6 PM (Sunday to Thursday, UAE Time)
+                  {t("support_business_hours_content")}
                 </span>
               </li>
             </ul>
@@ -355,8 +350,8 @@ const Support: React.FC = () => {
           {/* Footer */}
           <div className="mt-8 text-center">
             <p className="text-gray-500 font-medium text-sm">
-              This Support page is effective as of{" "}
-              {new Date().toLocaleDateString()} and applies to all users of OmniShare.
+              {t("support_footer_text")}{" "}
+              {new Date().toLocaleDateString()} {t("support_footer_suffix")}.
             </p>
           </div>
         </div>
