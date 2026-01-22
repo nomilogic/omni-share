@@ -101,7 +101,7 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
         campaignInfo,
         {
           ...contentData,
-          prompt: ` Please write the content strictly in ${languageName}. ${contentData?.prompt}`,
+          prompt: `${contentData?.prompt}`,
         },
         (platform, progress) => {
           setCurrentPlatform(platform);

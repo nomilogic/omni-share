@@ -205,8 +205,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       (formData?.prompt?.trim?.()?.length ?? 0) > 0 ||
       !!formData?.media ||
       !!formData?.mediaUrl ||
-      !!selectedTemplate ||
-      !!selectedPostType ||
       (generatedResults?.length ?? 0) > 0 ||
       showPreview
     );

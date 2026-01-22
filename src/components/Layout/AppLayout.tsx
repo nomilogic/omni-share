@@ -267,7 +267,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               className="border-b border-white/20 relative"
               ref={userMenuRef}
             >
-              <button
+              <Link
+              to="/dashboard?edit-profile=true"
                 onClick={() => {
                   setIsMobileMenuOpen(false);
                   navigate("/dashboard?edit-profile=true");
@@ -289,7 +290,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                     {user?.email}
                   </div>
                 </div>
-              </button>
+              </Link>
             </div>
 
             <nav className="flex-1 px-1 py-2.5 flex flex-col mx-2 gap-y-2">

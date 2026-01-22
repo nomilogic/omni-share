@@ -31,7 +31,7 @@ export default function ImageRegenerationModal({
 
   // Check if there's active regeneration or unsaved changes
   const hasActiveOperation = () => {
-    return isLoading || prompt.trim().length > 0 || allGeneration?.length > 0;
+    return isLoading || (prompt && prompt.trim().length > 0) || allGeneration?.length > 0;
   };
 
   // Guard navigation when there are unsaved changes or regeneration in progress
@@ -402,7 +402,7 @@ export default function ImageRegenerationModal({
                 <div className="hidden sm:flex gap-3 pt-1 justify-between">
                   <button
                     onClick={handleSubmit}
-                    disabled={isLoading || !prompt.trim()}
+                    disabled={isLoading || !prompt?.trim()}
                     className="group w-full rounded-md  hover:bg-[#d7d7fc] border border-purple-600 flex items-center justify-between text-base font-semibold  text-[#7650e3] transition-colors duration-200 py-2.5 px-4 disabled:opacity-50 disabled:cursor-not-allowed text-md"
                   >
                     {isLoading
@@ -435,7 +435,7 @@ export default function ImageRegenerationModal({
           <div className="flex gap-3">
             <button
               onClick={handleSubmit}
-              disabled={isLoading || !prompt.trim()}
+              disabled={isLoading || !prompt?.trim()}
               className=" group w-full py-2.5 rounded-md border font-semibold border-purple-600 hover:bg-gray-50 transition  flex items-center justify-between   text-[#7650e3]  duration-200  px-3 disabled:opacity-50 disabled:cursor-not-allowed text-base"
             >
               {isLoading
