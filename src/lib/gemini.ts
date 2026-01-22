@@ -1,5 +1,7 @@
 import { Platform, CampaignInfo, PostContent, GeneratedPost } from "../types";
 import API from "../services/api";
+import { useAppContext } from "@/context/AppContext";
+
 
 // Only initialize if we have a valid API key
 
@@ -237,7 +239,53 @@ function generateFallbackContent(
     engagement: "medium" as const,
   };
 }
+const getHashtags = (user) => {
+  const brandTag = user.profile.brandName
+    ? `#${user.profile.brandName.replace(/\s+/g, "").toLowerCase()}`
+    : null;
 
+  const categoryTag = user.profile.contentCategories
+    ? `#${user.profile.contentCategories.replace(/\s+/g, "").toLowerCase()}`
+    : null;
+
+  // 20 general-purpose hashtags (works for almost any post)
+  const generalTags = [
+    "#business",
+    "#marketing",
+    "#socialmedia",
+    "#digitalmarketing",
+    "#entrepreneur",
+    "#startup",
+    "#innovation",
+    "#branding",
+    "#contentcreator",
+    "#growth",
+    "#success",
+    "#motivation",
+    "#inspiration",
+    "#strategy",
+    "#onlinebusiness",
+    "#creatoreconomy",
+    "#personalbrand",
+    "#leadership",
+    "#tech",
+    "#trending"
+  ];
+
+  // Pick 1–3 general hashtags randomly
+  const shuffledGeneral = generalTags
+    .sort(() => 0.5 - Math.random())
+    .slice(0, Math.floor(Math.random() * 3) + 1);
+
+  const hashtags = [
+    brandTag,
+    categoryTag,
+    ...shuffledGeneral
+  ].filter(Boolean);
+
+  // Ensure 2–5 hashtags total
+  return hashtags.slice(0, 5);
+};
 export async function generateSinglePlatformPost(
   platform: any,
   campaignInfo: any,
@@ -289,19 +337,16 @@ export async function generateSinglePlatformPost(
       // Extract hashtags from content
       const hashtagMatches = caption.match(/#\w+/g);
       if (hashtagMatches) {
-        hashtags = [...new Set(hashtagMatches)].slice(0, 5); // Remove duplicates
+        hashtags = [...new Set(hashtagMatches)].slice(0, 5) as string[]; // Remove duplicates
         // Clean hashtags from caption
         caption = caption.replace(/#\w+(\s+#\w+)*/g, "").trim();
       }
-
+    
       // Add default hashtags if none found
       if (hashtags.length === 0) {
-        hashtags = [
-          `#${
-            campaignInfo.name?.replace(/\s+/g, "")?.toLowerCase() || "business"
-          }`,
-          "#socialmedia",
-        ];
+         const {  user }: any =
+    useAppContext();
+        hashtags =getHashtags(user) as string[];
       }
 
       // Use server URL if available, fallback to mediaUrl
@@ -425,15 +470,11 @@ export async function generateAllPosts(
           }
 
           // Add default hashtags if none found
-          if (hashtags.length === 0) {
-            hashtags = [
-              `#${
-                campaignInfo.name?.replace(/\s+/g, "")?.toLowerCase() ||
-                "business"
-              }`,
-              "#socialmedia",
-            ];
-          }
+           if (hashtags.length === 0) {
+         const {  user }: any =
+    useAppContext();
+        hashtags =getHashtags(user) as string[];
+      }
 
           // Use server URL if available, fallback to mediaUrl
           const serverMediaUrl =
@@ -562,7 +603,8 @@ export async function analyzeImageWithGemini(imageFile: File): Promise<string> {
   }
 
   //const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
-  //const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+  //const model = genAI.getGenerativeModeimport { User } from './../context/AppContext';
+l({ model: "gemini-2.5-flash" });
 
   try {
     // Convert file to base64

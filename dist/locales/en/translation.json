@@ -688,7 +688,7 @@
   "engagement": "Engagement",
   "close": "Close",
 
-  "unsaved_changes_warning": "You have unsaved changes. Are you sure you want to leave?",
+  "unsaved_changes_warning": "Changes you made may not be saved.",
   "publishing_in_progress": "Publishing is in progress. Are you sure you want to leave?",
   "image_regeneration_in_progress": "Image regeneration in progress. Are you sure you want to leave?",
   "loading_dashboard": "Loading dashboard...",

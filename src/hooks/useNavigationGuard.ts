@@ -1,7 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useConfirmDialog } from "@/context/ConfirmDialogContext";
+
+// Global flag to prevent dialogs during navigation
+let isNavigatingAway = false;
 
 interface UseNavigationGuardOptions {
   isActive: boolean;
@@ -32,12 +35,15 @@ export const useNavigationGuard = ({
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { showConfirm, closeConfirm } = useConfirmDialog();
+  const guardSetupRef = useRef(false);
+  const dialogOpenRef = useRef(false);
+  const listenerRef = useRef<((e: PopStateEvent) => void) | null>(null);
 
   // Guard for page refresh and close
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (isActive) {
-        e.preventDefault();
+        e.preventDefault(); 
         // Modern browsers require a non-empty string to show the dialog
         e.returnValue =
           message ||
@@ -55,13 +61,33 @@ export const useNavigationGuard = ({
 
   // Guard for back button
   useEffect(() => {
-    let isConfirmDialogOpen = false;
+    // Only set up guard if active
+    if (!isActive) {
+      guardSetupRef.current = false;
+      // Remove listener when guard is deactivated
+      if (listenerRef.current) {
+        window.removeEventListener("popstate", listenerRef.current);
+        listenerRef.current = null;
+      }
+      return;
+    }
+
+    // Only set up once per component mount
+    if (guardSetupRef.current) {
+      return;
+    }
+
+    guardSetupRef.current = true;
 
     const handlePopState = (e: PopStateEvent) => {
-      if (isActive && !isConfirmDialogOpen) {
-        // Prevent the back navigation
-        e.preventDefault();
-        isConfirmDialogOpen = true;
+      // Skip dialog if already navigating away from another page
+      if (isNavigatingAway) {
+        return;
+      }
+
+      // Only show dialog once
+      if (!dialogOpenRef.current) {
+        dialogOpenRef.current = true;
 
         const dialogTitle =
           title || (t("confirm_navigation") || "Confirm Navigation");
@@ -74,31 +100,54 @@ export const useNavigationGuard = ({
           dialogTitle,
           dialogMessage,
           () => {
+            // Set flag to prevent dialogs on other pages
+            isNavigatingAway = true;
+            
+            // Remove listener before navigating away
+            if (listenerRef.current) {
+              window.removeEventListener("popstate", listenerRef.current);
+              listenerRef.current = null;
+            }
+            
+            // User confirmed navigation
             closeConfirm();
-            isConfirmDialogOpen = false;
-            // User confirmed - actually navigate back
+            dialogOpenRef.current = false;
+            guardSetupRef.current = false;
             if (onConfirm) {
               onConfirm();
             }
-            window.history.back();
+            
+            // Navigate back using React Router
+            navigate(-1);
+            
+            // Clear flag after navigation completes
+            setTimeout(() => {
+              isNavigatingAway = false;
+            }, 100);
           },
           isDangerous,
           () => {
-            // Cancel callback - user clicked cancel, re-push state
+            // User cancelled - stay on page
             closeConfirm();
-            isConfirmDialogOpen = false;
+            dialogOpenRef.current = false;
+            // Push state to restore page position
             window.history.pushState(null, "", window.location.href);
           }
         );
       }
     };
 
-    // Push initial state to allow back button detection
+    // Push initial state to detect back button
     window.history.pushState(null, "", window.location.href);
 
+    listenerRef.current = handlePopState;
     window.addEventListener("popstate", handlePopState);
+
     return () => {
-      window.removeEventListener("popstate", handlePopState);
+      if (listenerRef.current) {
+        window.removeEventListener("popstate", listenerRef.current);
+        listenerRef.current = null;
+      }
     };
-  }, [isActive, title, message, isDangerous, t, showConfirm, closeConfirm, onConfirm]);
+  }, [isActive, title, message, isDangerous, t, showConfirm, closeConfirm, onConfirm, navigate]);
 };

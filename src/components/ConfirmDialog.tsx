@@ -66,21 +66,23 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 
         {/* Action buttons */}
         <div className="flex gap-3">
-          <button
-            onClick={onCancel}
-            className="flex-1 px-4 py-2.5 border border-[#7650e3] text-[#7650e3] bg-white font-semibold rounded-md transition-all duration-200 hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
-          >
-            {cancelText}
-          </button>
+      
           <button
             onClick={onConfirm}
-            className={`flex-1 px-4 py-2.5 font-semibold rounded-md transition-all duration-200 ${
+            className="flex-1 px-4 py-2.5 border border-[#7650e3] text-[#7650e3] bg-white font-semibold rounded-md transition-all duration-200 hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
+          >
+            {confirmText}
+          </button>
+              <button
+            onClick={onCancel}
+             className={`flex-1 px-4 py-2.5 font-semibold rounded-md transition-all duration-200 ${
               isDangerous
                 ? "bg-red-500 text-white border border-red-500 hover:bg-red-600 hover:border-red-600"
                 : "bg-[#7650e3] text-white border border-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"
             }`}
+           
           >
-            {confirmText}
+            {cancelText}
           </button>
         </div>
 

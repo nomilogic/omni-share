@@ -152,7 +152,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
       : (t("unsaved_changes_warning") || "You have unsaved changes. Are you sure you want to leave?"),
   });
 
-  // Intercept all navigation attempts (including link clicks and React Router links)
+  // Intercept all navigatiChanges you made may not be saved.on attempts (including link clicks and React Router links)
   useEffect(() => {
     const handleClickCapture = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
@@ -178,7 +178,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
                 navigate(href);
               }
             );
-          }
+          } 
         }
       }
     };
