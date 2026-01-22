@@ -42,7 +42,7 @@ export const ProfilePage: React.FC = () => {
 
   useEffect(() => {
     if (state?.user) {
-      const merged = { ...state.user, ...(state.user.profile || {}) };
+      const merged = { ...state.user, ...(state?.user?.profile || {}) };
       setProfile(merged);
     }
   }, [state?.user]);
@@ -98,15 +98,15 @@ export const ProfilePage: React.FC = () => {
                     <div className="flex items-center space-x-4 mt-2">
                       <span
                         className={`px-3 py-1 rounded-full text-sm font-medium ${
-                          state.user.wallet?.package?.tier === "business"
+                          state?.user?.wallet?.package?.tier === "business"
                             ? "bg-purple-100 text-purple-700"
-                            : state.user.wallet?.package?.tier === "ipro"
-                            ? "bg-purple-100 text-purple-700"
-                            : "bg-purple-600 text-white"
+                            : state?.user?.wallet?.package?.tier === "ipro"
+                              ? "bg-purple-100 text-purple-700"
+                              : "bg-purple-600 text-white"
                         }`}
                       >
                         {String(
-                          state.user.wallet?.package?.tier ||
+                          state?.user?.wallet?.package?.tier ||
                             profile.plan ||
                             "free"
                         ).toUpperCase()}
@@ -151,7 +151,7 @@ export const ProfilePage: React.FC = () => {
                     </div>
                     <div>
                       <div className="text-2xl font-bold theme-text-secondary">
-                        {state.user.wallet?.coins ?? profile.coins ?? 0}
+                        {state?.user?.wallet?.coins ?? profile.coins ?? 0}
                       </div>
                       <div className="text-sm text-muted-foreground">
                         {t("coins_available")}
@@ -168,7 +168,7 @@ export const ProfilePage: React.FC = () => {
                     </div>
                     <div>
                       <div className="text-2xl font-bold theme-text-secondary">
-                        {state.user.wallet?.package?.name || "Free"}
+                        {state?.user?.wallet?.package?.name || "Free"}
                       </div>
                       <div className="text-sm text-muted-foreground">
                         {t("current_package")}
@@ -188,14 +188,14 @@ export const ProfilePage: React.FC = () => {
                         <div className="text-2xl font-bold theme-text-secondary">
                           {state?.user?.wallet?.package?.tier == "free"
                             ? "No Expire"
-                            : state.user.wallet?.expiresAt
-                            ? new Date(
-                                state.user.wallet.expiresAt
-                              ).toLocaleDateString("en-US", {
-                                month: "short",
-                                day: "numeric",
-                              })
-                            : "-"}
+                            : state?.user?.wallet?.expiresAt
+                              ? new Date(
+                                  state?.user?.wallet.expiresAt
+                                ).toLocaleDateString("en-US", {
+                                  month: "short",
+                                  day: "numeric",
+                                })
+                              : "-"}
                         </div>
                         <div className="text-sm text-muted-foreground">
                           {t("package_expires")}
@@ -246,13 +246,13 @@ export const ProfilePage: React.FC = () => {
                       <input
                         type="text"
                         readOnly
-                        value={`${window.location.origin}/auth?referralId=${state.user.id}`}
+                        value={`${window.location.origin}/auth?referralId=${state.user?.id}`}
                         className="w-full px-4 py-2.5 border border-white/20 rounded-md theme-bg-primary theme-text-primary font-mono"
                       />
                       <button
                         onClick={() => {
                           navigator.clipboard.writeText(
-                            `${window.location.origin}/auth?referralId=${state.user.id}`
+                            `${window.location.origin}/auth?referralId=${state.user?.id}`
                           );
                         }}
                         className="px-3 py-2.5 bg-purple-600 text-white rounded-md"
@@ -264,7 +264,7 @@ export const ProfilePage: React.FC = () => {
                           // lazy import to avoid bundling modal everywhere
                           import("../components/InviteShare").then((m) => {
                             m.openInviteModal(
-                              `${window.location.origin}/auth?referralId=${state.user.id}`,
+                              `${window.location.origin}/auth?referralId=${state.user?.id}`,
                               {
                                 title: "Invite a friend",
                                 description:

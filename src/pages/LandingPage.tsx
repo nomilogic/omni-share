@@ -6,37 +6,18 @@ import { useNavigate } from "react-router-dom";
 
 export const LandingPage: React.FC = () => {
   const [showAuth, setShowAuth] = useState(false);
-  const { dispatch } = useAppContext();
+  const { dispatch, initUser } = useAppContext();
   const navigate = useNavigate();
 
   useEffect(() => {
-    localStorage.setItem('hasLanded', 'true');
-  })
+    localStorage.setItem("hasLanded", "true");
+  });
   const handleGetStarted = () => {
     setShowAuth(true);
   };
 
   const handleAuthSuccess = (user: any) => {
-    // Cache user to localStorage on login
-    localStorage.setItem("cached_user", JSON.stringify(user));
-    
-    dispatch({ type: "SET_USER", payload: user });
-    try {
-      const profile = user?.profile;
-      if (profile) {
-        dispatch({ type: "SET_SELECTED_PROFILE", payload: profile });
-        if (typeof (profile as any).isOnboarding !== 'undefined') {
-          dispatch({ type: 'SET_ONBOARDING_COMPLETE', payload: (profile as any).isOnboarding });
-        }
-        if ((profile as any).isOnboarding === false) {
-          navigate('/dashboard?profile=true');
-          return;
-        }
-      }
-    } catch (e) {
-      console.error('Error applying login profile to app state', e);
-    }
-    navigate("/content");
+    initUser();
   };
 
   const handleBackToCarousel = () => {

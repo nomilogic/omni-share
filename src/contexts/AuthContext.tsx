@@ -36,10 +36,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       if (updatedProfile.type === "business") {
         dispatch({ type: "SET_BUSINESS_ACCOUNT", payload: true });
       }
-
-      console.log("✅ Profile successfully updated:", updatedProfile);
     } catch (error) {
-      console.error("Failed to update profile:", error);
       throw error;
     }
   };

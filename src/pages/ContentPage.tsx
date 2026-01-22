@@ -65,7 +65,7 @@ export const ContentPage: React.FC = () => {
           state.selectedProfile.id,
           state.contentData,
           processedPosts,
-          state.user.id
+          state.user?.id
         );
       } catch (error) {
         console.error("Error saving post:", error);

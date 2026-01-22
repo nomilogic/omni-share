@@ -16,8 +16,6 @@ import API from "../services/api";
 import Cookies from "js-cookie";
 import { oauthManagerClient } from "@/lib/oauthManagerClient";
 
-// --- Types ---
-
 export interface User {
   id: string;
   email: string;
@@ -151,7 +149,7 @@ const initialState: AppState & {
   packages: [],
   security_question: [],
   addons: [],
-  loader: false,
+  loader: true,
   unreadCount: 0,
   connectedPlatforms: null,
   connectingPlatforms: [],
@@ -265,6 +263,7 @@ interface AppContextType {
   setGenerationAmounts: React.Dispatch<React.SetStateAction<any>>;
   fetchBalance: () => Promise<void>;
   fetchPostHistory: () => Promise<void>;
+  initUser: () => Promise<void>;
   refreshUser: () => Promise<void>;
   selectCampaign: (campaign: null) => void;
   logout: () => void;
@@ -318,7 +317,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const logout = useCallback(() => {
+  const logout = () => {
     Cookies.remove("auth_token");
     Cookies.remove("refresh_token");
     localStorage.removeItem("pusherTransportTLS");
@@ -326,7 +325,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     localStorage.removeItem("forgot_token_time");
     localStorage.removeItem("cached_user");
     dispatch({ type: "RESET_STATE" });
-  }, []);
+    dispatch({ type: "SET_LOADER", payload: false });
+  };
 
   const refreshToken = useCallback(async () => {
     const refToken = Cookies.get("refresh_token");
@@ -388,6 +388,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       if (res?.user) dispatch({ type: "SET_USER", payload: res.user });
     } catch (error) {
       console.error("User refresh failed:", error);
+    } finally {
     }
   }, []);
 
@@ -419,95 +420,54 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     return basic;
   };
 
-  useLayoutEffect(() => {
-    const init = async () => {
-      const token = Cookies.get("auth_token");
-      if (!token) {
-        dispatch({ type: "SET_LOADING", payload: false });
-        return;
-      }
+  const initUser = async () => {
+    dispatch({ type: "SET_LOADER", payload: true });
+    const token = Cookies.get("auth_token");
+    if (!token) {
+      dispatch({ type: "SET_LOADER", payload: false });
+      return;
+    }
 
-      const cachedUser = localStorage.getItem("cached_user");
-      if (cachedUser) {
-        try {
-          const user = JSON.parse(cachedUser);
-          dispatch({ type: "SET_USER", payload: user });
-          dispatch({
-            type: "SET_BALANCE",
-            payload: user.wallet.coins + user.wallet.referralCoin,
-          });
+    try {
+      const res: any = await getCurrentUser();
+      const user = res?.user;
 
-          const profile = user.profile as Profile | null;
-          if (profile) {
-            dispatch({ type: "SET_SELECTED_PROFILE", payload: profile });
-            dispatch({
-              type: "SET_USER_PLAN",
-              payload: profile.plan || "free",
-            });
-            dispatch({
-              type: "SET_BUSINESS_ACCOUNT",
-              payload: profile.type === "business",
-            });
-            const complete = checkProfileCompletion(profile);
-            dispatch({ type: "SET_TIER_SELECTED", payload: true });
-            dispatch({ type: "SET_PROFILE_SETUP", payload: complete });
-            dispatch({ type: "SET_ONBOARDING_COMPLETE", payload: complete });
-          }
-          // Set loading to false to show page immediately
-          dispatch({ type: "SET_LOADING", payload: false });
-        } catch (error) {
-          console.error("Failed to parse cached user:", error);
-        }
-      }
+      dispatch({ type: "SET_USER", payload: user });
+      dispatch({
+        type: "SET_BALANCE",
+        payload: user.wallet.coins + user.wallet.referralCoin,
+      });
 
-      // Fetch fresh data in background
-      try {
-        const res: any = await getCurrentUser();
-        const user = res?.user || null;
-        if (!user) {
-          if (!cachedUser) {
-            dispatch({ type: "SET_LOADING", payload: false });
-          }
-          return;
-        }
-
-        // Update cache
-        localStorage.setItem("cached_user", JSON.stringify(user));
-
-        dispatch({ type: "SET_USER", payload: user });
+      const profile = user.profile as Profile | null;
+      if (profile) {
+        dispatch({ type: "SET_SELECTED_PROFILE", payload: profile });
         dispatch({
-          type: "SET_BALANCE",
-          payload: user.wallet.coins + user.wallet.referralCoin,
+          type: "SET_USER_PLAN",
+          payload: profile.plan || "free",
         });
-
-        const profile = user.profile as Profile | null;
-        if (profile) {
-          dispatch({ type: "SET_SELECTED_PROFILE", payload: profile });
-          dispatch({ type: "SET_USER_PLAN", payload: profile.plan || "free" });
-          dispatch({
-            type: "SET_BUSINESS_ACCOUNT",
-            payload: profile.type === "business",
-          });
-          const complete = checkProfileCompletion(profile);
-          dispatch({ type: "SET_TIER_SELECTED", payload: true });
-          dispatch({ type: "SET_PROFILE_SETUP", payload: complete });
-          dispatch({ type: "SET_ONBOARDING_COMPLETE", payload: complete });
-        }
-
-        // Ensure loading is off
-        dispatch({ type: "SET_LOADING", payload: false });
-      } catch (error) {
-        console.error("Auth init failed:", error);
-        dispatch({ type: "SET_LOADING", payload: false });
+        dispatch({
+          type: "SET_BUSINESS_ACCOUNT",
+          payload: profile.type === "business",
+        });
+        const complete = checkProfileCompletion(profile);
+        dispatch({ type: "SET_TIER_SELECTED", payload: true });
+        dispatch({ type: "SET_PROFILE_SETUP", payload: complete });
+        dispatch({ type: "SET_ONBOARDING_COMPLETE", payload: complete });
       }
-    };
+    } catch (error) {
+    } finally {
+      setTimeout(() => {
+        dispatch({ type: "SET_LOADER", payload: false });
+      }, 1000);
+    }
+  };
 
-    init();
+  useLayoutEffect(() => {
+    initUser();
   }, []);
 
   useEffect(() => {
     const loadExtras = async () => {
-      dispatch({ type: "SET_LOADER", payload: true });
       try {
         const [pkgRes, addRes] = await Promise.all([
           API.listPackages(),
@@ -518,7 +478,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       } catch (error) {
         console.error("Load packages/addons failed:", error);
       } finally {
-        dispatch({ type: "SET_LOADER", payload: false });
       }
     };
 
@@ -647,6 +606,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       refreshBalance: fetchBalance,
       fetchAnalytics,
       fetchPostHistory,
+      initUser,
     }),
     [
       state,
@@ -691,6 +651,7 @@ export const useAppContext = () => {
     checkConnectedPlatforms,
     fetchAnalytics,
     fetchPostHistory,
+    initUser,
   } = context;
 
   const setUnreadCount = useCallback(
@@ -790,7 +751,7 @@ export const useAppContext = () => {
     packages: state.packages,
     unreadCount: state.unreadCount,
     setUnreadCount,
-
+    initUser: initUser,
     dispatch: dispatch,
     fetchUnreadCount,
     paymentProcessing: processing,

@@ -31,7 +31,6 @@ export const DashboardPage: React.FC = () => {
   const { openModal } = useModal();
   const profileMode = searchParams.get("edit-profile");
   const profile = searchParams.get("edit-profile");
-  //alert(profileMode)
 
   useLayoutEffect(() => {
     setPasswordEditing(false);
@@ -40,15 +39,6 @@ export const DashboardPage: React.FC = () => {
       setProfileEditing(true);
     }
   }, []);
-
-  // // Show loading while analytics data is being fetched
-  // useEffect(() => {
-  //   if (hasAnalytics === null) {
-  //     showLoading(t("loading_dashboard") || "Loading dashboard...");
-  //   } else {
-  //     hideLoading();
-  //   }
-  // }, [hasAnalytics, showLoading, hideLoading, t]);
 
   const handleReferralClick = () => {
     openModal(ReferralSection, {});
@@ -69,7 +59,7 @@ export const DashboardPage: React.FC = () => {
 
   const posts = state.postHistory;
   const isFreePlan = userPlan?.toLowerCase() === "free";
-  const hasLowCoins = (user.wallet?.coins ?? 0) < 6;
+  const hasLowCoins = (user?.wallet?.coins ?? 0) < 6;
   const shouldShowUpgrade = isFreePlan || hasLowCoins;
 
   const getProgressTitle = (progress: number) => {
@@ -241,11 +231,9 @@ export const DashboardPage: React.FC = () => {
               <Analytics onHasAnalyticsChange={setHasAnalytics} />
               <NewsUpdates />
             </div>
-            {hasAnalytics !== false && (
-              <div className="hidden md:block">
-                <ReferralSection />
-              </div>
-            )}
+            <div className="hidden md:block">
+              <ReferralSection />
+            </div>
           </main>
         </div>
       )}

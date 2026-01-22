@@ -31,7 +31,7 @@ export default function ImageRegenerationModal({
 
   // Check if there's active regeneration or unsaved changes
   const hasActiveOperation = () => {
-    return isLoading || prompt.trim().length > 0 || allGeneration?.length > 0;
+    return isLoading || (prompt && prompt.trim().length > 0) || allGeneration?.length > 0;
   };
 
   // Guard navigation when there are unsaved changes or regeneration in progress
@@ -39,10 +39,10 @@ export default function ImageRegenerationModal({
     isActive: hasActiveOperation(),
     title: t("confirm_navigation") || "Confirm Navigation",
     message: isLoading
-      ? (t("image_regeneration_in_progress") ||
-          "Image regeneration in progress. Are you sure you want to leave?")
-      : (t("unsaved_changes_warning") ||
-          "You have unsaved changes. Are you sure you want to leave?"),
+      ? t("image_regeneration_in_progress") ||
+        "Image regeneration in progress. Are you sure you want to leave?"
+      : t("unsaved_changes_warning") ||
+        "You have unsaved changes. Are you sure you want to leave?",
   });
 
   // Intercept all navigation attempts (including link clicks and React Router links)
@@ -159,10 +159,10 @@ export default function ImageRegenerationModal({
               if (hasActiveOperation()) {
                 const message = isLoading
                   ? t("image_regeneration_in_progress") ||
-                      "Image regeneration in progress. Are you sure you want to leave?"
+                    "Image regeneration in progress. Are you sure you want to leave?"
                   : t("unsaved_changes_warning") ||
-                      "You have unsaved changes. Are you sure you want to leave?";
-                
+                    "You have unsaved changes. Are you sure you want to leave?";
+
                 showConfirm(
                   t("confirm_navigation") || "Confirm Navigation",
                   message,
@@ -263,7 +263,9 @@ export default function ImageRegenerationModal({
                     <p className="text-sm font-semibold text-gray-900">
                       {t("images")}
                     </p>
-                    <p className="text-xs text-gray-500">{t("tap_to_preview")}</p>
+                    <p className="text-xs text-gray-500">
+                      {t("tap_to_preview")}
+                    </p>
                   </div>
 
                   <div className="flex gap-2 overflow-x-auto pb-2">
@@ -331,9 +333,7 @@ export default function ImageRegenerationModal({
                     className="w-full resize-none rounded-md border border-gray-300 px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                   <div className="mt-2 flex items-center justify-between text-xs text-gray-500">
-                    <span>
-                      {t("be_specific_prompt_tip")}
-                    </span>
+                    <span>{t("be_specific_prompt_tip")}</span>
                     <span>{prompt?.length ?? 0}</span>
                   </div>
 
@@ -344,7 +344,6 @@ export default function ImageRegenerationModal({
                     </label>
                     <div className="p-3 theme-bg-primary shadow-md  rounded-md">
                       <div className="space-y-2">
-                        {/* Brand Logo Checkbox */}
                         <div className="flex items-start gap-3">
                           <input
                             type="checkbox"
@@ -352,7 +351,7 @@ export default function ImageRegenerationModal({
                             checked={useLogo}
                             onChange={(e) => setUseLogo(e.target.checked)}
                             disabled={!logoUrl}
-                            className="w-4 h-4 mt-0.5 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-4 h-4 mt-1 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
                           />
                           <div className="flex-1">
                             <label
@@ -369,7 +368,6 @@ export default function ImageRegenerationModal({
                           </div>
                         </div>
 
-                        {/* Theme/Website Checkbox */}
                         <div className="flex items-start gap-3">
                           <input
                             type="checkbox"
@@ -377,7 +375,7 @@ export default function ImageRegenerationModal({
                             checked={useTheme}
                             onChange={(e) => setUseTheme(e.target.checked)}
                             disabled={!themeUrl}
-                            className="w-4 h-4 mt-0.5 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-4 h-4 mt-1 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
                           />
                           <div className="flex-1">
                             <label
@@ -402,7 +400,7 @@ export default function ImageRegenerationModal({
                 <div className="hidden sm:flex gap-3 pt-1 justify-between">
                   <button
                     onClick={handleSubmit}
-                    disabled={isLoading || !prompt.trim()}
+                    disabled={isLoading || !prompt?.trim()}
                     className="group w-full rounded-md  hover:bg-[#d7d7fc] border border-purple-600 flex items-center justify-between text-base font-semibold  text-[#7650e3] transition-colors duration-200 py-2.5 px-4 disabled:opacity-50 disabled:cursor-not-allowed text-md"
                   >
                     {isLoading
@@ -435,7 +433,7 @@ export default function ImageRegenerationModal({
           <div className="flex gap-3">
             <button
               onClick={handleSubmit}
-              disabled={isLoading || !prompt.trim()}
+              disabled={isLoading || !prompt?.trim()}
               className=" group w-full py-2.5 rounded-md border font-semibold border-purple-600 hover:bg-gray-50 transition  flex items-center justify-between   text-[#7650e3]  duration-200  px-3 disabled:opacity-50 disabled:cursor-not-allowed text-base"
             >
               {isLoading

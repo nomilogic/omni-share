@@ -1,5 +1,5 @@
-import { useModal } from '../context2/ModalContext';
-import DiscardImageModal from '../components/modals/DiscardImageModal';
+import { useModal } from "../context2/ModalContext";
+import DiscardImageModal from "../components/modals/DiscardImageModal";
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import Konva from "konva";
 import {
@@ -119,7 +119,9 @@ export const ImageTemplateEditor = ({
   }>({ width: 800, height: 800 });
   const [zoomLevel, setZoomLevel] = useState<number>(1);
   const [maxZoom, setMaxZoom] = useState<number>(1);
-  const [profileBindingData, setProfileBindingData] = useState<any>(externalProfileData || {});
+  const [profileBindingData, setProfileBindingData] = useState<any>(
+    externalProfileData || {}
+  );
 
   // Load profile data on mount if not provided
   useEffect(() => {
@@ -128,15 +130,15 @@ export const ImageTemplateEditor = ({
         // Use profile data from props/context
         const profile = externalProfileData.profile || externalProfileData;
         setProfileBindingData({
-          email: profile.email || externalProfileData.email || '',
-          website: profile.publicUrl || profile.website || '',
-          companyName: profile.companyName || profile.name || '',
-          brandName: profile.brandName || '',
-          fullName: profile.fullName || profile.name || '',
-          phoneNumber: profile.phoneNumber || '',
-          logo: profile.brandLogo || profile.logo || profile.profileImage || '',
+          email: profile.email || externalProfileData.email || "",
+          website: profile.publicUrl || profile.website || "",
+          companyName: profile.companyName || profile.name || "",
+          brandName: profile.brandName || "",
+          fullName: profile.fullName || profile.name || "",
+          phoneNumber: profile.phoneNumber || "",
+          logo: profile.brandLogo || profile.logo || profile.profileImage || "",
         });
-        console.log('✅ Profile data from context:', profile);
+        console.log("✅ Profile data from context:", profile);
       } else {
         // Fallback: fetch from database
         try {
@@ -144,18 +146,19 @@ export const ImageTemplateEditor = ({
           if (result?.user?.profile) {
             const profile = result.user.profile as any;
             setProfileBindingData({
-              email: profile.email || result.user?.email || '',
-              website: profile.publicUrl || profile.website || '',
-              companyName: profile.companyName || profile.name || '',
-              brandName: profile.brandName || '',
-              fullName: profile.fullName || profile.name || '',
-              phoneNumber: profile.phoneNumber || '',
-              logo: profile.brandLogo || profile.logo || profile.profileImage || '',
+              email: profile.email || result.user?.email || "",
+              website: profile.publicUrl || profile.website || "",
+              companyName: profile.companyName || profile.name || "",
+              brandName: profile.brandName || "",
+              fullName: profile.fullName || profile.name || "",
+              phoneNumber: profile.phoneNumber || "",
+              logo:
+                profile.brandLogo || profile.logo || profile.profileImage || "",
             });
-            console.log('✅ Profile data loaded from DB:', profile);
+            console.log("✅ Profile data loaded from DB:", profile);
           }
         } catch (error) {
-          console.warn('Failed to load profile data:', error);
+          console.warn("Failed to load profile data:", error);
         }
       }
     };
@@ -288,14 +291,20 @@ export const ImageTemplateEditor = ({
 
   const normalizeSavedTemplate = (
     raw: any,
-    opts: { fallbackName?: string; fallbackId?: string; source: SavedTemplateV1["source"] }
+    opts: {
+      fallbackName?: string;
+      fallbackId?: string;
+      source: SavedTemplateV1["source"];
+    }
   ): SavedTemplateV1 | null => {
     try {
       const parsed = parseTemplateJson(raw?.json ?? raw);
 
       // If parsed is already our structure
       const base =
-        parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+        parsed && typeof parsed === "object" && !Array.isArray(parsed)
+          ? parsed
+          : {};
 
       // If parsed is an array, treat as elements
       const elementsFromParsed = Array.isArray(parsed) ? parsed : base.elements;
@@ -325,7 +334,9 @@ export const ImageTemplateEditor = ({
         savedAt,
         aspectRatio: (base.aspectRatio as string) || aspectRatio,
         canvasDimensions: (base.canvasDimensions as any) || canvasDimensions,
-        elements: Array.isArray(elementsFromParsed) ? (elementsFromParsed as any) : [],
+        elements: Array.isArray(elementsFromParsed)
+          ? (elementsFromParsed as any)
+          : [],
         lockedElementIds: Array.isArray(base.lockedElementIds)
           ? (base.lockedElementIds as any)
           : [],
@@ -343,14 +354,14 @@ export const ImageTemplateEditor = ({
     // Try to match dimensions pattern like "1280x720"
     const match = name.match(/(\d+)x(\d+)/);
     if (!match) return null;
-    
+
     const width = parseInt(match[1], 10);
     const height = parseInt(match[2], 10);
-    
+
     // Calculate GCD to simplify ratio
-    const gcd = (a: number, b: number): number => b === 0 ? a : gcd(b, a % b);
+    const gcd = (a: number, b: number): number => (b === 0 ? a : gcd(b, a % b));
     const divisor = gcd(width, height);
-    
+
     return `${width / divisor}:${height / divisor}`;
   };
 
@@ -360,91 +371,93 @@ export const ImageTemplateEditor = ({
   });
 
   const refreshSavedTemplates = async () => {
-  setIsTemplatesLoading(true);
-  try {
-    // 1) Local templates (fallback/offline)
-    const localTemplates: SavedTemplateV1[] = readTemplatesFromLocalStorage().map(
-      (t) => ({
-        ...t,
-        source: "local",
-      })
-    );
-
-    // One-time legacy migration (from single-template key) if local list is empty
-    if (localTemplates.length === 0) {
-      try {
-        const legacyRaw = localStorage.getItem(LEGACY_TEMPLATE_STORAGE_KEY);
-        if (legacyRaw) {
-          const legacyParsed = JSON.parse(legacyRaw) as any;
-          if (legacyParsed && Array.isArray(legacyParsed.elements)) {
-            const migrated: SavedTemplateV1 = {
-              version: 1,
-              id: generateTemplateId(),
-              name: "Legacy Template",
-              savedAt: legacyParsed.savedAt || new Date().toISOString(),
-              aspectRatio: legacyParsed.aspectRatio || aspectRatio,
-              canvasDimensions: legacyParsed.canvasDimensions || canvasDimensions,
-              elements: legacyParsed.elements,
-              lockedElementIds: legacyParsed.lockedElementIds || [],
-              thumbnailDataUrl: legacyParsed.thumbnailDataUrl,
-              source: "local",
-            };
-            const migratedList = [migrated];
-            writeTemplatesToLocalStorage(migratedList);
-            localTemplates.push(...migratedList);
-          }
-        }
-      } catch (e) {
-        // ignore legacy parse errors
-      }
-    }
-
-    // 2) Remote templates
-    let remoteUser: SavedTemplateV1[] = [];
-    let remoteGlobal: SavedTemplateV1[] = [];
-
+    setIsTemplatesLoading(true);
     try {
-      const [userRaw, globalRaw] = await Promise.all([
-        templateService.getTemplates(),
-        templateService.getGlobalTemplates(),
-      ]);
+      // 1) Local templates (fallback/offline)
+      const localTemplates: SavedTemplateV1[] =
+        readTemplatesFromLocalStorage().map((t) => ({
+          ...t,
+          source: "local",
+        }));
 
-      remoteUser = userRaw
-        .map((item: any) =>
-          normalizeSavedTemplate(item, {
-            fallbackName: (item?.name as string) || "My Template",
-            fallbackId: item?.id as string,
-            source: "user",
-          })
-        )
-        .filter(Boolean) as SavedTemplateV1[];
+      // One-time legacy migration (from single-template key) if local list is empty
+      if (localTemplates.length === 0) {
+        try {
+          const legacyRaw = localStorage.getItem(LEGACY_TEMPLATE_STORAGE_KEY);
+          if (legacyRaw) {
+            const legacyParsed = JSON.parse(legacyRaw) as any;
+            if (legacyParsed && Array.isArray(legacyParsed.elements)) {
+              const migrated: SavedTemplateV1 = {
+                version: 1,
+                id: generateTemplateId(),
+                name: "Legacy Template",
+                savedAt: legacyParsed.savedAt || new Date().toISOString(),
+                aspectRatio: legacyParsed.aspectRatio || aspectRatio,
+                canvasDimensions:
+                  legacyParsed.canvasDimensions || canvasDimensions,
+                elements: legacyParsed.elements,
+                lockedElementIds: legacyParsed.lockedElementIds || [],
+                thumbnailDataUrl: legacyParsed.thumbnailDataUrl,
+                source: "local",
+              };
+              const migratedList = [migrated];
+              writeTemplatesToLocalStorage(migratedList);
+              localTemplates.push(...migratedList);
+            }
+          }
+        } catch (e) {
+          // ignore legacy parse errors
+        }
+      }
 
-      remoteGlobal = globalRaw
-        .map((item: any) =>
-          normalizeSavedTemplate(item, {
-            fallbackName: (item?.name as string) || "Global Template",
-            fallbackId: item?.id as string,
-            source: "global",
-          })
-        )
-        .filter(Boolean) as SavedTemplateV1[];
-    } catch (error) {
-      console.warn("⚠️ Failed to fetch templates from server, using local only", error);
+      // 2) Remote templates
+      let remoteUser: SavedTemplateV1[] = [];
+      let remoteGlobal: SavedTemplateV1[] = [];
+
+      try {
+        const [userRaw, globalRaw] = await Promise.all([
+          templateService.getTemplates(),
+          templateService.getGlobalTemplates(),
+        ]);
+
+        remoteUser = userRaw
+          .map((item: any) =>
+            normalizeSavedTemplate(item, {
+              fallbackName: (item?.name as string) || "My Template",
+              fallbackId: item?.id as string,
+              source: "user",
+            })
+          )
+          .filter(Boolean) as SavedTemplateV1[];
+
+        remoteGlobal = globalRaw
+          .map((item: any) =>
+            normalizeSavedTemplate(item, {
+              fallbackName: (item?.name as string) || "Global Template",
+              fallbackId: item?.id as string,
+              source: "global",
+            })
+          )
+          .filter(Boolean) as SavedTemplateV1[];
+      } catch (error) {
+        console.warn(
+          "⚠️ Failed to fetch templates from server, using local only",
+          error
+        );
+      }
+
+      const merged = [...remoteUser, ...remoteGlobal, ...localTemplates];
+
+      setSavedTemplates(merged);
+      setSelectedTemplateId((prev) => {
+        if (merged.length === 0) return "";
+        if (prev && merged.some((t) => t.id === prev)) return prev;
+        return merged[0].id;
+      });
+    } finally {
+      setIsTemplatesLoading(false);
     }
-
-    const merged = [...remoteUser, ...remoteGlobal, ...localTemplates];
-
-    setSavedTemplates(merged);
-    setSelectedTemplateId((prev) => {
-      if (merged.length === 0) return "";
-      if (prev && merged.some((t) => t.id === prev)) return prev;
-      return merged[0].id;
-    });
-  } finally {
-    setIsTemplatesLoading(false);
-  }
-};
-
+  };
 
   useEffect(() => {
     refreshSavedTemplates();
@@ -459,7 +472,10 @@ export const ImageTemplateEditor = ({
       }
 
       const THUMBNAIL_WIDTH = 320;
-      const pixelRatio = Math.max(0.05, THUMBNAIL_WIDTH / canvasDimensions.width);
+      const pixelRatio = Math.max(
+        0.05,
+        THUMBNAIL_WIDTH / canvasDimensions.width
+      );
 
       // Hide transformer/selection UI from thumbnail
       const tr = transformerRef.current;
@@ -513,7 +529,10 @@ export const ImageTemplateEditor = ({
       await refreshSavedTemplates();
       return;
     } catch (error) {
-      console.warn("⚠️ Failed to save template to server, saving locally", error);
+      console.warn(
+        "⚠️ Failed to save template to server, saving locally",
+        error
+      );
     }
 
     // Fallback: save locally
@@ -526,8 +545,13 @@ export const ImageTemplateEditor = ({
       setTemplateName(name);
       setSavedTemplates((prev) => {
         // keep any remote templates already loaded
-        const remote = prev.filter((t) => t.source === "user" || t.source === "global");
-        return [...remote, ...next.map((t) => ({ ...t, source: "local" as const }))];
+        const remote = prev.filter(
+          (t) => t.source === "user" || t.source === "global"
+        );
+        return [
+          ...remote,
+          ...next.map((t) => ({ ...t, source: "local" as const })),
+        ];
       });
       setSelectedTemplateId(payload.id);
 
@@ -554,7 +578,7 @@ export const ImageTemplateEditor = ({
 
       if (el.name) {
         console.log(`Processing binding: name="${el.name}", type="${el.type}"`);
-        
+
         if (el.name === "logo" && el.type === "logo") {
           if (profileBindingData.logo) {
             (updated as any).src = profileBindingData.logo;
@@ -562,7 +586,10 @@ export const ImageTemplateEditor = ({
           }
         } else if (el.type === "text" && profileBindingData[el.name]) {
           updated.content = profileBindingData[el.name];
-          console.log(`✅ Applied text binding for ${el.name}:`, profileBindingData[el.name]);
+          console.log(
+            `✅ Applied text binding for ${el.name}:`,
+            profileBindingData[el.name]
+          );
         }
       }
 
@@ -590,9 +617,13 @@ export const ImageTemplateEditor = ({
       const elementsWithBindings = applyProfileBindings(normalizedElements);
 
       // Preserve background image if it exists
-      setElements(prevElements => {
-        const backgroundElement = prevElements.find(el => el.id === "background-image");
-        const newElements = backgroundElement ? [backgroundElement, ...elementsWithBindings] : elementsWithBindings;
+      setElements((prevElements) => {
+        const backgroundElement = prevElements.find(
+          (el) => el.id === "background-image"
+        );
+        const newElements = backgroundElement
+          ? [backgroundElement, ...elementsWithBindings]
+          : elementsWithBindings;
         return newElements;
       });
 
@@ -666,7 +697,8 @@ export const ImageTemplateEditor = ({
     if (hasUnsavedChanges()) {
       showConfirm(
         t("confirm_navigation") || "Confirm",
-        t("unsaved_changes_warning") || "You have unsaved changes. Are you sure you want to leave?",
+        t("unsaved_changes_warning") ||
+          "You have unsaved changes. Are you sure you want to leave?",
         () => {
           closeConfirm();
           navigate(path);
@@ -681,7 +713,9 @@ export const ImageTemplateEditor = ({
   useNavigationGuard({
     isActive: hasUnsavedChanges(),
     title: t("confirm_navigation") || "Confirm Navigation",
-    message: t("unsaved_changes_warning") || "You have unsaved changes. Are you sure you want to leave?",
+    message:
+      t("unsaved_changes_warning") ||
+      "You have unsaved changes. Are you sure you want to leave?",
   });
 
   // Intercept all navigation attempts (including link clicks and React Router links)
@@ -690,7 +724,7 @@ export const ImageTemplateEditor = ({
       const target = e.target as HTMLElement;
       // Check for both regular links and React Router Link components
       const link = target.closest("a") as HTMLAnchorElement;
-      
+
       if (link && hasUnsavedChanges()) {
         // Only intercept internal links (not external URLs and not downloads)
         const href = link.getAttribute("href");
@@ -699,7 +733,8 @@ export const ImageTemplateEditor = ({
           e.stopPropagation();
           showConfirm(
             t("confirm_navigation") || "Confirm",
-            t("unsaved_changes_warning") || "You have unsaved changes. Are you sure you want to leave?",
+            t("unsaved_changes_warning") ||
+              "You have unsaved changes. Are you sure you want to leave?",
             () => {
               closeConfirm();
               navigate(href);
@@ -785,7 +820,12 @@ export const ImageTemplateEditor = ({
   };
 
   // Calculate scaled dimensions to fit image inside canvas while maintaining aspect ratio
-  const getScaledDimensions = (imgWidth: number, imgHeight: number, canvasWidth: number, canvasHeight: number) => {
+  const getScaledDimensions = (
+    imgWidth: number,
+    imgHeight: number,
+    canvasWidth: number,
+    canvasHeight: number
+  ) => {
     // If image is smaller than canvas in both dimensions, keep original size
     if (imgWidth <= canvasWidth && imgHeight <= canvasHeight) {
       return { width: imgWidth, height: imgHeight };
@@ -877,7 +917,9 @@ export const ImageTemplateEditor = ({
     if (stage) {
       const layer = stage.children?.[0];
       if (layer) {
-        const node = layer.children?.find((child: any) => child.id() === selectedElement);
+        const node = layer.children?.find(
+          (child: any) => child.id() === selectedElement
+        );
         if (node) {
           selectedNodeRef.current = node;
           tr.nodes([node]);
@@ -944,9 +986,18 @@ export const ImageTemplateEditor = ({
   useEffect(() => {
     if (!imageDimensions) return;
 
-    const { width, height } = getScaledDimensions(imageDimensions.width, imageDimensions.height, canvasDimensions.width, canvasDimensions.height);
+    const { width, height } = getScaledDimensions(
+      imageDimensions.width,
+      imageDimensions.height,
+      canvasDimensions.width,
+      canvasDimensions.height
+    );
 
-    setElements(prev => prev.map(el => el.id === "background-image" ? { ...el, width, height } : el));
+    setElements((prev) =>
+      prev.map((el) =>
+        el.id === "background-image" ? { ...el, width, height } : el
+      )
+    );
   }, [imageDimensions, canvasDimensions]);
 
   useEffect(() => {
@@ -1500,8 +1551,13 @@ export const ImageTemplateEditor = ({
   const resetElementDimensions = () => {
     if (!selectedElement) return;
 
-    const element = elements.find(el => el.id === selectedElement);
-    if (!element || element.type !== "logo" || element.id === "background-image") return;
+    const element = elements.find((el) => el.id === selectedElement);
+    if (
+      !element ||
+      element.type !== "logo" ||
+      element.id === "background-image"
+    )
+      return;
 
     const logoElement = element as LogoElement;
     if (!logoElement.src) return;
@@ -1510,7 +1566,12 @@ export const ImageTemplateEditor = ({
     if (!img) return;
 
     // Use scaled dimensions to fit inside canvas while maintaining aspect ratio
-    const { width: newWidth, height: newHeight } = getScaledDimensions(img.width, img.height, canvasDimensions.width, canvasDimensions.height);
+    const { width: newWidth, height: newHeight } = getScaledDimensions(
+      img.width,
+      img.height,
+      canvasDimensions.width,
+      canvasDimensions.height
+    );
 
     updateSelectedElement({
       width: newWidth,
@@ -1559,7 +1620,14 @@ export const ImageTemplateEditor = ({
     return () => {
       window.removeEventListener("keydown", handleKeyboardMove);
     };
-  }, [selectedElement, elements, gridSize, snapToGridValue, updateElementById, isElementLocked]);
+  }, [
+    selectedElement,
+    elements,
+    gridSize,
+    snapToGridValue,
+    updateElementById,
+    isElementLocked,
+  ]);
 
   // Generic function to get coordinates from mouse or touch events (accounting for zoom)
   const getEventCoordinates = (
@@ -1778,27 +1846,31 @@ export const ImageTemplateEditor = ({
       prev.map((element) => {
         if (element.id === selectedElement) {
           let updatedElement = { ...element, ...updates };
-          
+
           // If name/binding was changed, auto-populate with profile data
-          if (updates.name && element.type === 'text') {
+          if (updates.name && element.type === "text") {
             const fieldValue = profileBindingData[updates.name];
             if (fieldValue) {
               updatedElement = { ...updatedElement, content: fieldValue };
-              console.log(`✅ Auto-populated text with profile field '${updates.name}': ${fieldValue}`);
+              console.log(
+                `✅ Auto-populated text with profile field '${updates.name}': ${fieldValue}`
+              );
             }
           }
-          
+
           // If binding logo element to logo field, set the src to the image URL
-          if (updates.name === 'logo' && element.type === 'logo') {
+          if (updates.name === "logo" && element.type === "logo") {
             const logoUrl = profileBindingData.logo;
             if (logoUrl) {
               updatedElement = { ...updatedElement, src: logoUrl };
-              console.log(`✅ Auto-populated logo element with brandLogo URL: ${logoUrl}`);
+              console.log(
+                `✅ Auto-populated logo element with brandLogo URL: ${logoUrl}`
+              );
             } else {
-              console.warn('⚠️ No logo URL found in profile data');
+              console.warn("⚠️ No logo URL found in profile data");
             }
           }
-          
+
           console.log("✅ Element updated:", updatedElement);
           return updatedElement;
         }
@@ -1974,7 +2046,7 @@ export const ImageTemplateEditor = ({
       const user = await getCurrentUser();
       if (user?.user?.id) {
         console.log("📤 Uploading logo to server...");
-        const logoUrl = await uploadMedia(file, user.user.id);
+        const logoUrl = await uploadMedia(file, user.user?.id);
         console.log("✅ Logo uploaded successfully:", logoUrl);
         updateSelectedElement({ src: logoUrl });
       } else {
@@ -2001,8 +2073,10 @@ export const ImageTemplateEditor = ({
     const file = e.target.files?.[0];
     if (file && file.type.startsWith("image/")) {
       // Check if there's a selected logo element - if so, update it instead of creating new
-      const selectedLogoElement = selectedElement && elements.find((el) => el.id === selectedElement && el.type === "logo");
-      
+      const selectedLogoElement =
+        selectedElement &&
+        elements.find((el) => el.id === selectedElement && el.type === "logo");
+
       if (selectedLogoElement) {
         // Update existing selected logo element - do not scale
         handleLogoUploadWithId(file, selectedElement, false);
@@ -2044,8 +2118,19 @@ export const ImageTemplateEditor = ({
     if (e.target) e.target.value = "";
   };
 
-  const handleLogoUploadWithId = async (file: File, elementId: string, isNewElement: boolean = true) => {
-    console.log("🚀 Starting logo upload for element:", elementId, "File:", file.name, "Is new element:", isNewElement);
+  const handleLogoUploadWithId = async (
+    file: File,
+    elementId: string,
+    isNewElement: boolean = true
+  ) => {
+    console.log(
+      "🚀 Starting logo upload for element:",
+      elementId,
+      "File:",
+      file.name,
+      "Is new element:",
+      isNewElement
+    );
     setLogoUploading(true);
 
     // First, load the image to get its dimensions
@@ -2059,22 +2144,43 @@ export const ImageTemplateEditor = ({
 
       if (isNewElement) {
         // For new elements (from toolbar), scale to fit within canvas
-        const { width: scaledWidth, height: scaledHeight } = getScaledDimensions(img.width, img.height, canvasDimensions.width, canvasDimensions.height);
+        const { width: scaledWidth, height: scaledHeight } =
+          getScaledDimensions(
+            img.width,
+            img.height,
+            canvasDimensions.width,
+            canvasDimensions.height
+          );
         finalWidth = scaledWidth;
         finalHeight = scaledHeight;
-        console.log("📐 Scaled dimensions for new element:", finalWidth, "x", finalHeight);
+        console.log(
+          "📐 Scaled dimensions for new element:",
+          finalWidth,
+          "x",
+          finalHeight
+        );
       } else {
         // For existing elements (from properties panel), retain current scale/dimensions
-        const currentElement = elements.find(el => el.id === elementId);
+        const currentElement = elements.find((el) => el.id === elementId);
         if (currentElement) {
           finalWidth = currentElement.width;
           finalHeight = currentElement.height;
-          console.log("📐 Retained current dimensions for existing element:", finalWidth, "x", finalHeight);
+          console.log(
+            "📐 Retained current dimensions for existing element:",
+            finalWidth,
+            "x",
+            finalHeight
+          );
         } else {
           // Fallback to original dimensions if element not found
           finalWidth = img.width;
           finalHeight = img.height;
-          console.log("📐 Fallback to original dimensions:", finalWidth, "x", finalHeight);
+          console.log(
+            "📐 Fallback to original dimensions:",
+            finalWidth,
+            "x",
+            finalHeight
+          );
         }
       }
 
@@ -2082,11 +2188,18 @@ export const ImageTemplateEditor = ({
         const user = await getCurrentUser();
         if (user?.user?.id) {
           console.log("📤 Uploading logo to server...");
-          const logoUrl = await uploadMedia(file, user.user.id);
+          const logoUrl = await uploadMedia(file, user.user?.id);
           console.log("✅ Logo uploaded successfully:", logoUrl);
           setElements((prev) =>
             prev.map((el) =>
-              el.id === elementId ? { ...el, src: logoUrl, width: finalWidth, height: finalHeight } : el
+              el.id === elementId
+                ? {
+                    ...el,
+                    src: logoUrl,
+                    width: finalWidth,
+                    height: finalHeight,
+                  }
+                : el
             )
           );
         } else {
@@ -2096,7 +2209,14 @@ export const ImageTemplateEditor = ({
           console.log("📎 Created local URL:", localUrl);
           setElements((prev) =>
             prev.map((el) =>
-              el.id === elementId ? { ...el, src: localUrl, width: finalWidth, height: finalHeight } : el
+              el.id === elementId
+                ? {
+                    ...el,
+                    src: localUrl,
+                    width: finalWidth,
+                    height: finalHeight,
+                  }
+                : el
             )
           );
         }
@@ -2108,7 +2228,9 @@ export const ImageTemplateEditor = ({
         console.log("📎 Created fallback local URL:", localUrl);
         setElements((prev) =>
           prev.map((el) =>
-            el.id === elementId ? { ...el, src: localUrl, width: finalWidth, height: finalHeight } : el
+            el.id === elementId
+              ? { ...el, src: localUrl, width: finalWidth, height: finalHeight }
+              : el
           )
         );
       } finally {
@@ -2144,10 +2266,10 @@ export const ImageTemplateEditor = ({
       selectedNodeRef.current = null;
       setShowGrid(false);
       tr?.hide();
-      
+
       // Force a render cycle to ensure grid is hidden and transformer is gone
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
       const exportCanvas = stage.toCanvas({ pixelRatio: 2 });
       const blob = await new Promise<Blob | null>((resolve) => {
         exportCanvas.toBlob((b) => resolve(b), "image/png");
@@ -2167,7 +2289,7 @@ export const ImageTemplateEditor = ({
             lastModified: Date.now(),
           });
 
-          const uploadedUrl = await uploadMedia(file, user.user.id);
+          const uploadedUrl = await uploadMedia(file, user.user?.id);
           onSave(uploadedUrl);
         } catch (uploadError) {
           console.warn(
@@ -2257,7 +2379,9 @@ export const ImageTemplateEditor = ({
                 )}
                 <button
                   onClick={() => {
-                    setElements(prevElements => prevElements.filter(el => el.id === "background-image"));
+                    setElements((prevElements) =>
+                      prevElements.filter((el) => el.id === "background-image")
+                    );
                     setSelectedElement(null);
                   }}
                   className="inline-flex items-center justify-center gap-1 px-1.5 py-1 bg-red-50 text-red-700 rounded-md hover:bg-red-100 transition-colors text-xs font-medium"
@@ -2288,38 +2412,42 @@ export const ImageTemplateEditor = ({
               </button>
 
               {templatesOpen && (
-  <div className="mt-2 space-y-2 flex flex-col min-h-0 flex-1 relative">
-    {/* Loader overlay */}
-    {isTemplatesLoading && (
-      <div className="absolute inset-0 z-10 bg-white/70 backdrop-blur-[1px] rounded-md flex items-center justify-center">
-        <div className="flex items-center gap-2 text-sm text-slate-700">
-          <span className="h-4 w-4 rounded-full border border-slate-300 border-t-purple-600 animate-spin" />
-          {t("loading_templates")}
-        </div>
-      </div>
-    )}
+                <div className="mt-2 space-y-2 flex flex-col min-h-0 flex-1 relative">
+                  {/* Loader overlay */}
+                  {isTemplatesLoading && (
+                    <div className="absolute inset-0 z-10 bg-white/70 backdrop-blur-[1px] rounded-md flex items-center justify-center">
+                      <div className="flex items-center gap-2 text-sm text-slate-700">
+                        <span className="h-4 w-4 rounded-full border border-slate-300 border-t-purple-600 animate-spin" />
+                        {t("loading_templates")}
+                      </div>
+                    </div>
+                  )}
 
-    <div className="grid grid-cols-[1fr_auto] items-center gap-2 flex-shrink-0">
-      <input
-        value={templateName}
-        onChange={(e) => setTemplateName(e.target.value)}
-        placeholder={t("template_name")}
-        className="w-full min-w-0 px-3 h-8 border border-gray-300 rounded-md text-sm"
-        disabled={isTemplatesLoading}
-      />
-      <button
-        onClick={() => void saveCurrentTemplate()}
-        className="h-8 bg-purple-600 text-white font-medium flex items-center gap-2 justify-center px-3 rounded-md border border-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3] whitespace-nowrap disabled:opacity-60"
-        title={saveAsGlobal ? t("save_template_global") : t("save_template_personal")}
-        type="button"
-        disabled={isTemplatesLoading}
-      >
-        <Download className="w-4 h-4" />
-        <span className="text-sm">{t("save")}</span>
-      </button>
-    </div>
+                  <div className="grid grid-cols-[1fr_auto] items-center gap-2 flex-shrink-0">
+                    <input
+                      value={templateName}
+                      onChange={(e) => setTemplateName(e.target.value)}
+                      placeholder={t("template_name")}
+                      className="w-full min-w-0 px-3 h-8 border border-gray-300 rounded-md text-sm"
+                      disabled={isTemplatesLoading}
+                    />
+                    <button
+                      onClick={() => void saveCurrentTemplate()}
+                      className="h-8 bg-purple-600 text-white font-medium flex items-center gap-2 justify-center px-3 rounded-md border border-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3] whitespace-nowrap disabled:opacity-60"
+                      title={
+                        saveAsGlobal
+                          ? "Save as global template"
+                          : "Save as my template"
+                      }
+                      type="button"
+                      disabled={isTemplatesLoading}
+                    >
+                      <Download className="w-4 h-4" />
+                      <span className="text-sm">{t("Save")}</span>
+                    </button>
+                  </div>
 
-    {/* <label className="flex items-center gap-2 text-xs text-slate-700 select-none flex-shrink-0">
+                  {/* <label className="flex items-center gap-2 text-xs text-slate-700 select-none flex-shrink-0">
       <input
         type="checkbox"
         checked={saveAsGlobal}
@@ -2330,96 +2458,111 @@ export const ImageTemplateEditor = ({
       Save as global (isPublic)
     </label> */}
 
-    <div className="flex items-center justify-between flex-shrink-0">
-      <p className="text-xs text-gray-600 font-medium">{t("saved_templates")}</p>
-      <div className="flex items-center gap-2">
-        <button
-          onClick={() => void refreshSavedTemplates()}
-          className="text-xs text-purple-600 font-medium hover:underline disabled:opacity-60"
-          type="button"
-          disabled={isTemplatesLoading}
-        >
-          {t("refresh")}
-        </button>
-        <button
-          onClick={() =>
-            selectedTemplateId && deleteTemplateById(selectedTemplateId)
-          }
-          disabled={
-            isTemplatesLoading ||
-            !selectedTemplateId ||
-            !["local", "user"].includes(
-              savedTemplates.find((t) => t.id === selectedTemplateId)?.source || ""
-            )
-          }
-          className="h-8 px-2 flex items-center justify-center rounded-md bg-red-100 hover:bg-red-200 disabled:opacity-50 text-xs text-red-700"
-          title={t("delete_template_tooltip")}
-          type="button"
-        >
-          <Trash className="w-3 h-3" />
-        </button>
-      </div>
-    </div>
-
-    {templatesForCurrentRatio.length === 0 ? (
-      <p className="text-xs text-gray-400">{t("no_templates_saved_for", { aspectRatio })}</p>
-    ) : (
-      <div className="space-y-2 overflow-y-auto min-h-0 flex-1">
-        <div className="grid grid-cols-2 gap-2">
-          {[...templatesForCurrentRatio]
-            .sort((a, b) => {
-              // Priority: user > global > local
-              const sourcePriority = { user: 3, global: 2, local: 1 };
-              const aPriority = sourcePriority[a.source] || 0;
-              const bPriority = sourcePriority[b.source] || 0;
-              if (aPriority !== bPriority) {
-                return bPriority - aPriority;
-              }
-              // Then sort by savedAt descending
-              return (b.savedAt || "").localeCompare(a.savedAt || "");
-            })
-            .map((tpl) => (
-              <div
-                key={tpl.id}
-                onClick={() => !isTemplatesLoading && loadTemplateById(tpl.id)}
-                className={`relative cursor-pointer rounded-md overflow-hidden border transition-all ${
-                  selectedTemplateId === tpl.id
-                    ? "border-purple-600 bg-purple-50"
-                    : tpl.source === "global"
-                    ? "border-green-500 bg-green-50 hover:border-green-600"
-                    : "border-gray-200 bg-gray-50 hover:border-gray-300"
-                } ${isTemplatesLoading ? "pointer-events-none opacity-60" : ""}`}
-                title={`${
-                  tpl.source === "global"
-                    ? t("template_label_global") + " - "
-                    : tpl.source === "user"
-                    ? t("template_label_my") + " - "
-                    : ""
-                }${tpl.name}`}
-              >
-                {tpl.thumbnailDataUrl ? (
-                  <img
-                    src={tpl.thumbnailDataUrl}
-                    alt={tpl.name}
-                    className="w-full h-20 object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-20 bg-gray-200 flex items-center justify-center text-xs text-gray-400">
-                    {t("no_preview")}
+                  <div className="flex items-center justify-between flex-shrink-0">
+                    <p className="text-xs text-gray-600 font-medium">
+                      {t("saved_templates")}
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => void refreshSavedTemplates()}
+                        className="text-xs text-purple-600 font-medium hover:underline disabled:opacity-60"
+                        type="button"
+                        disabled={isTemplatesLoading}
+                      >
+                        {t("refresh")}
+                      </button>
+                      <button
+                        onClick={() =>
+                          selectedTemplateId &&
+                          deleteTemplateById(selectedTemplateId)
+                        }
+                        disabled={
+                          isTemplatesLoading ||
+                          !selectedTemplateId ||
+                          !["local", "user"].includes(
+                            savedTemplates.find(
+                              (t) => t.id === selectedTemplateId
+                            )?.source || ""
+                          )
+                        }
+                        className="h-8 px-2 flex items-center justify-center rounded-md bg-red-100 hover:bg-red-200 disabled:opacity-50 text-xs text-red-700"
+                        title="Delete (local and user templates only)"
+                        type="button"
+                      >
+                        <Trash className="w-3 h-3" />
+                      </button>
+                    </div>
                   </div>
-                )}
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-1.5">
-                  <p className="text-xs text-white font-semibold truncate drop-shadow-lg">
-                    {tpl.name}
-                  </p>
+
+                  {templatesForCurrentRatio.length === 0 ? (
+                    <p className="text-xs text-gray-400">
+                      No templates saved for {aspectRatio} aspect ratio.
+                    </p>
+                  ) : (
+                    <div className="space-y-2 overflow-y-auto min-h-0 flex-1">
+                      <div className="grid grid-cols-2 gap-2">
+                        {[...templatesForCurrentRatio]
+                          .sort((a, b) => {
+                            // Priority: user > global > local
+                            const sourcePriority = {
+                              user: 3,
+                              global: 2,
+                              local: 1,
+                            };
+                            const aPriority = sourcePriority[a.source] || 0;
+                            const bPriority = sourcePriority[b.source] || 0;
+                            if (aPriority !== bPriority) {
+                              return bPriority - aPriority;
+                            }
+                            // Then sort by savedAt descending
+                            return (b.savedAt || "").localeCompare(
+                              a.savedAt || ""
+                            );
+                          })
+                          .map((tpl) => (
+                            <div
+                              key={tpl.id}
+                              onClick={() =>
+                                !isTemplatesLoading && loadTemplateById(tpl.id)
+                              }
+                              className={`relative cursor-pointer rounded-md overflow-hidden border transition-all ${
+                                selectedTemplateId === tpl.id
+                                  ? "border-purple-600 bg-purple-50"
+                                  : tpl.source === "global"
+                                    ? "border-green-500 bg-green-50 hover:border-green-600"
+                                    : "border-gray-200 bg-gray-50 hover:border-gray-300"
+                              } ${isTemplatesLoading ? "pointer-events-none opacity-60" : ""}`}
+                              title={`${
+                                tpl.source === "global"
+                                  ? "Global - "
+                                  : tpl.source === "user"
+                                    ? "My - "
+                                    : ""
+                              }${tpl.name}`}
+                            >
+                              {tpl.thumbnailDataUrl ? (
+                                <img
+                                  src={tpl.thumbnailDataUrl}
+                                  alt={tpl.name}
+                                  className="w-full h-20 object-cover"
+                                />
+                              ) : (
+                                <div className="w-full h-20 bg-gray-200 flex items-center justify-center text-xs text-gray-400">
+                                  No preview
+                                </div>
+                              )}
+                              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-1.5">
+                                <p className="text-xs text-white font-semibold truncate drop-shadow-lg">
+                                  {tpl.name}
+                                </p>
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </div>
-            ))}
-        </div>
-      </div>
-    )}
-  </div>
-)}
+              )}
             </div>
 
             {/* Element Creation Toolbar */}
@@ -2504,9 +2647,9 @@ export const ImageTemplateEditor = ({
                     {selectedElement === "background-image"
                       ? "Background "
                       : selectedElementData.type === "logo"
-                      ? "Image"
-                      : selectedElementData.type.charAt(0).toUpperCase() +
-                        selectedElementData.type.slice(1)}{" "}
+                        ? "Image"
+                        : selectedElementData.type.charAt(0).toUpperCase() +
+                          selectedElementData.type.slice(1)}{" "}
                     Element
                   </h4>
                   {propertiesOpen ? (
@@ -2598,123 +2741,119 @@ export const ImageTemplateEditor = ({
 
                     {/* Profile Field Binding - Logo elements only (excluding background) */}
                     {
-                    // selectedElementData.type === "logo" && selectedElement !== "background-image" && (
-                    //   <div className="mb-2 md:mb-3">
-                    //     <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5 md:mb-2">
-                    //       Bind to Profile Field
-                    //     </label>
-                    //     <select
-                    //       value={selectedElementData.name || ""}
-                    //       onChange={(e) =>
-                    //         updateSelectedElement({
-                    //           name: e.target.value || undefined,
-                    //         })
-                    //       }
-                    //       className="w-full px-3 py-2 border border-gray-300 rounded-md text-xs md:text-sm"
-                    //     >
-                    //       <option value="">No binding</option>
-                    //       <option value="logo">Logo</option>
-                    //     </select>
-
-                    //     {/* Show preview of bound data */}
-                    //     {selectedElementData.name && (
-                    //       <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded text-xs">
-                    //         <p className="font-medium text-blue-900 mb-1">
-                    //           Preview:
-                    //         </p>
-                    //         {selectedElementData.type === "logo" && (
-                    //           <div>
-                    //             {profileBindingData.logo ? (
-                    //               <>
-                    //                 <p className="text-blue-700 mb-1">
-                    //                   Logo URL:
-                    //                 </p>
-                    //                 <p className="text-blue-600 break-all text-xs font-mono max-h-12 overflow-y-auto">
-                    //                   {profileBindingData.logo}
-                    //                 </p>
-                    //               </>
-                    //             ) : (
-                    //               <p className="text-blue-700">
-                    //                 (no logo in profile)
-                    //               </p>
-                    //             )}
-                    //           </div>
-                    //         )}
-                    //       </div>
-                    //     )}
-
-                    //     <p className="text-xs text-gray-500 mt-1">
-                    //       Logo will auto-populate from profile
-                    //     </p>
-                    //   </div>
-                    // )
+                      // selectedElementData.type === "logo" && selectedElement !== "background-image" && (
+                      //   <div className="mb-2 md:mb-3">
+                      //     <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5 md:mb-2">
+                      //       Bind to Profile Field
+                      //     </label>
+                      //     <select
+                      //       value={selectedElementData.name || ""}
+                      //       onChange={(e) =>
+                      //         updateSelectedElement({
+                      //           name: e.target.value || undefined,
+                      //         })
+                      //       }
+                      //       className="w-full px-3 py-2 border border-gray-300 rounded-md text-xs md:text-sm"
+                      //     >
+                      //       <option value="">No binding</option>
+                      //       <option value="logo">Logo</option>
+                      //     </select>
+                      //     {/* Show preview of bound data */}
+                      //     {selectedElementData.name && (
+                      //       <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded text-xs">
+                      //         <p className="font-medium text-blue-900 mb-1">
+                      //           Preview:
+                      //         </p>
+                      //         {selectedElementData.type === "logo" && (
+                      //           <div>
+                      //             {profileBindingData.logo ? (
+                      //               <>
+                      //                 <p className="text-blue-700 mb-1">
+                      //                   Logo URL:
+                      //                 </p>
+                      //                 <p className="text-blue-600 break-all text-xs font-mono max-h-12 overflow-y-auto">
+                      //                   {profileBindingData.logo}
+                      //                 </p>
+                      //               </>
+                      //             ) : (
+                      //               <p className="text-blue-700">
+                      //                 (no logo in profile)
+                      //               </p>
+                      //             )}
+                      //           </div>
+                      //         )}
+                      //       </div>
+                      //     )}
+                      //     <p className="text-xs text-gray-500 mt-1">
+                      //       Logo will auto-populate from profile
+                      //     </p>
+                      //   </div>
+                      // )
                     }
                     {/* Text Content last */}
-                   {selectedElementData.type === "text" && <div>
-                      <label className="block text-sm font-medium text-yellow-500-700 mb-1.5">
-                        Text Content
-                      </label>
-                      <textarea
-                        value={
-                          (selectedElementData as TextElement).content ?? ""
-                        }
-                        onChange={(e) =>
-                          updateSelectedElement({
-                            content:
-                              e.target.value === undefined
-                                ? ""
-                                : e.target.value,
-                          })
-                        }
-                        className="w-full px-3 py-2.5 border border-gray-300 rounded-md text-sm"
-                        rows={2}
-                        placeholder="Enter your text..."
-                      />
-                    </div>}
+                    {selectedElementData.type === "text" && (
+                      <div>
+                        <label className="block text-sm font-medium text-yellow-500-700 mb-1.5">
+                          Text Content
+                        </label>
+                        <textarea
+                          value={
+                            (selectedElementData as TextElement).content ?? ""
+                          }
+                          onChange={(e) =>
+                            updateSelectedElement({
+                              content:
+                                e.target.value === undefined
+                                  ? ""
+                                  : e.target.value,
+                            })
+                          }
+                          className="w-full px-3 py-2.5 border border-gray-300 rounded-md text-sm"
+                          rows={2}
+                          placeholder="Enter your text..."
+                        />
+                      </div>
+                    )}
                     {/* Profile Field Binding - Text elements */}
                     {
-                    
-                    // selectedElementData.type === "text" && (
-                    //   <div className="mb-2 md:mb-3">
-                    //     <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5 md:mb-2">
-                    //       Bind to Profile Field
-                    //     </label>
-                    //     <select
-                    //       value={selectedElementData.name || ""}
-                    //       onChange={(e) =>
-                    //         updateSelectedElement({
-                    //           name: e.target.value || undefined,
-                    //         })
-                    //       }
-                    //       className="w-full px-3 py-2 border border-gray-300 rounded-md text-xs md:text-sm"
-                    //     >
-                    //       <option value="">No binding</option>
-                    //       <option value="email">Email</option>
-                    //       <option value="website">Website</option>
-                    //       <option value="brandName">Brand Name</option>
-                    //       <option value="fullName">Full Name</option>
-                    //       <option value="phoneNumber">Phone Number</option>
-                    //     </select>
-
-                    //     {/* Show preview of bound data */}
-                    //     {selectedElementData.name && (
-                    //       <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded text-xs">
-                    //         <p className="font-medium text-blue-900 mb-1">
-                    //           Preview:
-                    //         </p>
-                    //         <p className="text-blue-700 break-words truncate max-w-xs">
-                    //           {profileBindingData[selectedElementData.name] ||
-                    //             "(empty)"}
-                    //         </p>
-                    //       </div>
-                    //     )}
-
-                    //     <p className="text-xs text-gray-500 mt-1">
-                    //       Element will auto-populate with profile data
-                    //     </p>
-                    //   </div>
-                    // )
-                    
+                      // selectedElementData.type === "text" && (
+                      //   <div className="mb-2 md:mb-3">
+                      //     <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5 md:mb-2">
+                      //       Bind to Profile Field
+                      //     </label>
+                      //     <select
+                      //       value={selectedElementData.name || ""}
+                      //       onChange={(e) =>
+                      //         updateSelectedElement({
+                      //           name: e.target.value || undefined,
+                      //         })
+                      //       }
+                      //       className="w-full px-3 py-2 border border-gray-300 rounded-md text-xs md:text-sm"
+                      //     >
+                      //       <option value="">No binding</option>
+                      //       <option value="email">Email</option>
+                      //       <option value="website">Website</option>
+                      //       <option value="brandName">Brand Name</option>
+                      //       <option value="fullName">Full Name</option>
+                      //       <option value="phoneNumber">Phone Number</option>
+                      //     </select>
+                      //     {/* Show preview of bound data */}
+                      //     {selectedElementData.name && (
+                      //       <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded text-xs">
+                      //         <p className="font-medium text-blue-900 mb-1">
+                      //           Preview:
+                      //         </p>
+                      //         <p className="text-blue-700 break-words truncate max-w-xs">
+                      //           {profileBindingData[selectedElementData.name] ||
+                      //             "(empty)"}
+                      //         </p>
+                      //       </div>
+                      //     )}
+                      //     <p className="text-xs text-gray-500 mt-1">
+                      //       Element will auto-populate with profile data
+                      //     </p>
+                      //   </div>
+                      // )
                     }
 
                     {/* W H X Y Controls in one row */}
@@ -2799,90 +2938,91 @@ export const ImageTemplateEditor = ({
                       </div>
                     </div>
 
-                    {selectedElementData.type === "logo" && selectedElement !== "background-image" && (
-                      <div className="space-y-4">
-                        <div>
-                          <label className="block text-sm font-medium text-slate-700 mb-2">
-                            Image Upload
-                          </label>
-                          <input
-                            ref={logoInputRef}
-                            type="file"
-                            accept="image/*"
-                            onChange={handleLogoFileChange}
-                            className="hidden"
-                          />
-                          <button
-                            onClick={() => logoInputRef.current?.click()}
-                            disabled={logoUploading}
-                            className="w-full bg-blue-600 text-white px-4 py-3 rounded-md text-sm flex items-center justify-center space-x-2 hover:bg-blue-700 disabled:opacity-50 transition-colors"
-                          >
-                            {logoUploading ? (
-                              <>
-                                <Loader className="w-4 h-4 animate-spin" />
-                                <span>{t("uploading")}</span>
-                              </>
-                            ) : (
-                              <>
-                                <Upload className="w-4 h-4" />
-                                <span>{t("upload_image")}</span>
-                              </>
-                            )}
-                          </button>
-                        </div>
-                        <div className="grid grid-cols-2 gap-2.5">
+                    {selectedElementData.type === "logo" &&
+                      selectedElement !== "background-image" && (
+                        <div className="space-y-4">
                           <div>
-                            <label className="block text-sm font-medium text-slate-700">
-                              Rotation
+                            <label className="block text-sm font-medium text-slate-700 mb-2">
+                              Image Upload
                             </label>
                             <input
-                              type="range"
-                              min="0"
-                              max="360"
-                              value={selectedElementData.rotation ?? 0}
-                              onChange={(e) =>
-                                updateSelectedElement({
-                                  rotation: parseInt(e.target.value),
-                                })
-                              }
-                              className="w-full template-range"
-                              disabled={isElementLocked(selectedElement)}
+                              ref={logoInputRef}
+                              type="file"
+                              accept="image/*"
+                              onChange={handleLogoFileChange}
+                              className="hidden"
                             />
-                            <span className="text-sm text-gray-500 font-medium text-center block">
-                              {selectedElementData.rotation || 0}°
-                            </span>
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-slate-700">
-                              Opacity
-                            </label>
-                            <input
-                              type="range"
-                              min="0"
-                              max="1"
-                              step="0.01"
-                              value={
-                                (selectedElementData as LogoElement).opacity ??
-                                1
-                              }
-                              onChange={(e) =>
-                                updateSelectedElement({
-                                  opacity: parseFloat(e.target.value),
-                                })
-                              }
-                              className="w-full template-range"
-                            />
-                            <span className="text-sm text-gray-500 font-medium text-center block">
-                              {Math.round(
-                                ((selectedElementData as LogoElement).opacity ??
-                                  1) * 100
+                            <button
+                              onClick={() => logoInputRef.current?.click()}
+                              disabled={logoUploading}
+                              className="w-full bg-blue-600 text-white px-4 py-3 rounded-md text-sm flex items-center justify-center space-x-2 hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                            >
+                              {logoUploading ? (
+                                <>
+                                  <Loader className="w-4 h-4 animate-spin" />
+                                  <span>Uploading...</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Upload className="w-4 h-4" />
+                                  <span>Upload Image</span>
+                                </>
                               )}
-                              %
-                            </span>
+                            </button>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2.5">
+                            <div>
+                              <label className="block text-sm font-medium text-slate-700">
+                                Rotation
+                              </label>
+                              <input
+                                type="range"
+                                min="0"
+                                max="360"
+                                value={selectedElementData.rotation ?? 0}
+                                onChange={(e) =>
+                                  updateSelectedElement({
+                                    rotation: parseInt(e.target.value),
+                                  })
+                                }
+                                className="w-full template-range"
+                                disabled={isElementLocked(selectedElement)}
+                              />
+                              <span className="text-sm text-gray-500 font-medium text-center block">
+                                {selectedElementData.rotation || 0}°
+                              </span>
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium text-slate-700">
+                                Opacity
+                              </label>
+                              <input
+                                type="range"
+                                min="0"
+                                max="1"
+                                step="0.01"
+                                value={
+                                  (selectedElementData as LogoElement)
+                                    .opacity ?? 1
+                                }
+                                onChange={(e) =>
+                                  updateSelectedElement({
+                                    opacity: parseFloat(e.target.value),
+                                  })
+                                }
+                                className="w-full template-range"
+                              />
+                              <span className="text-sm text-gray-500 font-medium text-center block">
+                                {Math.round(
+                                  ((selectedElementData as LogoElement)
+                                    .opacity ?? 1) * 100
+                                )}
+                                %
+                              </span>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    )}
+                      )}
 
                     {/* Background Image Controls - Rotation and Opacity only */}
                     {selectedElement === "background-image" && (
@@ -2951,8 +3091,8 @@ export const ImageTemplateEditor = ({
                             </label>
                             <select
                               value={
-                                (selectedElementData as TextElement).fontFamily ??
-                                ""
+                                (selectedElementData as TextElement)
+                                  .fontFamily ?? ""
                               }
                               onChange={(e) =>
                                 updateSelectedElement({
@@ -3012,12 +3152,10 @@ export const ImageTemplateEditor = ({
                             </label>
                             <input
                               type="number"
-                              value={
-                                Math.round(
-                                  (selectedElementData as TextElement).fontSize ??
-                                    0
-                                )
-                              }
+                              value={Math.round(
+                                (selectedElementData as TextElement).fontSize ??
+                                  0
+                              )}
                               onChange={(e) =>
                                 updateSelectedElement({
                                   fontSize:

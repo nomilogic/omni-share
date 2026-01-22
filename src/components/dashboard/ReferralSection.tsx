@@ -24,7 +24,7 @@ const ReferralSection: FC<Props> = ({ close, className = "" }) => {
   const navigate = useNavigate();
   const { openModal } = useModal();
 
-  const referralLink = `http://omnishare.ai/auth?referralId=${user.id}`;
+  const referralLink = `http://omnishare.ai/auth?referralId=${user?.id}`;
 
   const shareText = useMemo(() => {
     return t("join_me_omnishare_referral");
@@ -197,7 +197,6 @@ const ReferralSection: FC<Props> = ({ close, className = "" }) => {
     );
   }
 
-  // -------------------- DASHBOARD / INLINE VERSION --------------------
   return (
     <div
       className={`bg-purple-600 rounded-md px-4 sm:px-5 py-4 overflow-hidden ${className}`}
@@ -226,7 +225,6 @@ const ReferralSection: FC<Props> = ({ close, className = "" }) => {
               {t("purchase_package_earn_coins")}
             </p>
 
-            {/* ✅ Desktop only: show link input */}
             {!isMobile && (
               <div className="mt-3">
                 <div className="flex items-center gap-2 w-full border border-purple-600 bg-white rounded-md overflow-hidden">
@@ -254,38 +252,29 @@ const ReferralSection: FC<Props> = ({ close, className = "" }) => {
             )}
           </div>
 
-          {/* ✅ Share: Desktop modal / Mobile native */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-5 items-center">
-          <button
-            onClick={handleInlineShareClick}
-            className="mt-3 flex w-full sm:w-fit items-center justify-center rounded-md gap-2 transition-colors text-md font-semibold text-[#7650e3] border border-[#7650e3] bg-white hover:bg-[#d7d7fc] py-2 px-3"
-          >
-            <Share2 className="w-[18px] h-[18px]" />
-            {t("share")}
-          </button>
-          <div className=" text-sm mt-4  md:mt-2 flex justify-center md:justify-end ">
-              <a
-                href="/conditions"
-                
-                className="text-white "
-              >
+            <button
+              onClick={handleInlineShareClick}
+              className="mt-3 flex w-full sm:w-fit items-center justify-center rounded-md gap-2 transition-colors text-md font-semibold text-[#7650e3] border border-[#7650e3] bg-white hover:bg-[#d7d7fc] py-2 px-3"
+            >
+              <Share2 className="w-[18px] h-[18px]" />
+              {t("share")}
+            </button>
+            <div className=" text-sm mt-4  md:mt-2 flex justify-center md:justify-end ">
+              <a href="/conditions" className="text-white ">
                 {t("view_terms_and_conditions")}
               </a>
             </div>
-            </div>
-        
+          </div>
         </div>
-        
 
-        {/* ✅ Image fully contained inside card (no overflow) */}
         <div className="w-full flex justify-center md:justify-end order-1 md:order-2">
           <div className="w-full max-w-[340px] md:max-w-none  overflow-hidden rounded-md -mt-2 md:mt-0">
             <img
               src={Referal}
               alt="Referral"
               className="w-full h-[220px] sm:h-[210px] md:h-[220px] object-contain md:object-cover object-center"
-      />
-
+            />
           </div>
         </div>
       </div>

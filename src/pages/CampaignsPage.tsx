@@ -21,7 +21,7 @@ export const CampaignsPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const { t, i18n } = useTranslation();
-    const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
+  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
 
   const handleSelectCampaign = (campaign: any) => {
     // Convert to proper Campaign format for context
@@ -53,22 +53,16 @@ export const CampaignsPage: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      console.log("Starting campaign save process...");
-      console.log("Saving campaign data:", campaignData);
-      console.log("User ID:", state.user.id);
 
-      const savedCampaign = await saveCampaign(campaignData, state.user.id);
-      console.log("Campaign saved successfully:", savedCampaign);
+      const savedCampaign = await saveCampaign(campaignData, state.user?.id);
 
-      // Update the context with the new campaign
       const campaignWithUserId = {
         ...savedCampaign,
-        userId: state.user.id,
+        userId: state.user?.id,
       };
 
       dispatch({ type: "SET_SELECTED_CAMPAIGN", payload: campaignWithUserId });
 
-      // Trigger refresh and navigate back to campaigns list
       setRefreshTrigger((prev) => prev + 1);
       console.log("Navigating back to campaigns list");
       navigate("/campaigns");
@@ -94,14 +88,14 @@ export const CampaignsPage: React.FC = () => {
       const updatedCampaign = await updateCampaign(
         state.selectedCampaign.id,
         campaignData,
-        state.user.id
+        state.user?.id
       );
       console.log("Campaign updated successfully:", updatedCampaign);
 
       // Update the context with the updated campaign
       const campaignWithUserId = {
         ...updatedCampaign,
-        userId: state.user.id,
+        userId: state.user?.id,
       };
 
       dispatch({ type: "SET_SELECTED_CAMPAIGN", payload: campaignWithUserId });

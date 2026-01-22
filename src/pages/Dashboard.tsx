@@ -13,17 +13,7 @@ import { useLoading } from "@/context/LoadingContext";
 function Dashboard() {
   const { state } = useAppContext();
   const { t } = useTranslation();
-  const [loading, setLoading] = useState(false);
-  const { showLoading, hideLoading } = useLoading();
-  const isLoading = true;
-  useEffect(() => {
-    // Show preloader while platforms are being fetched
-    if (isLoading) {
-      showLoading(t("loading_accounts") || "Loading accounts...");
-    } else {
-      hideLoading();
-    }
-  }, [isLoading, showLoading, hideLoading, t]);
+
   return (
     <div className="min-h-screen bg-stone-100">
       <header className="bg-white border-b border-stone-200 py-6 px-8">

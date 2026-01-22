@@ -3,26 +3,26 @@ export interface ThemeColors {
   bgGradient: string;
   primary: string;
   secondary: string;
-  trinary : string;
-    quaternary : string;
-    pantary : string;
+  trinary: string;
+  quaternary: string;
+  pantary: string;
   accent: string;
   text: {
     primary: string;
     secondary: string;
-    trinary : string;
-    quaternary : string;
-    pantary : string;
+    trinary: string;
+    quaternary: string;
+    pantary: string;
     light: string;
     dark: string;
   };
   background: {
     primary: string;
     secondary: string;
-    trinary : string;
-    quaternary : string;
-    pantary : string;
-  
+    trinary: string;
+    quaternary: string;
+    pantary: string;
+
     card: string;
     light: string;
     dark: string;
@@ -30,9 +30,9 @@ export interface ThemeColors {
   border: {
     primary: string;
     secondary: string;
-    trinary : string;
-        quaternary : string;
-    pantary : string;
+    trinary: string;
+    quaternary: string;
+    pantary: string;
     card: string;
     light: string;
     dark: string;
@@ -40,9 +40,9 @@ export interface ThemeColors {
   button: {
     primary: string;
     secondary: string;
-    trinary : string;
-    quaternary : string;
-    pantary : string;
+    trinary: string;
+    quaternary: string;
+    pantary: string;
     hover: string;
     dark: string;
     light: string;
@@ -100,7 +100,7 @@ export const themes: Record<string, ThemeColors> = {
       light: "rgba(255, 255, 255, 0.9)",
     },
   },
-  
+
   // ...repeat for other themes, adding trinary, quaternary, pantary to each section...
 };
 // ...existing code...
@@ -157,7 +157,10 @@ export class ThemeManager {
     root.style.setProperty("--theme-bg-primary", theme.background.primary);
     root.style.setProperty("--theme-bg-secondary", theme.background.secondary);
     root.style.setProperty("--theme-bg-trinary", theme.background.trinary);
-    root.style.setProperty("--theme-bg-quaternary", theme.background.quaternary);
+    root.style.setProperty(
+      "--theme-bg-quaternary",
+      theme.background.quaternary
+    );
     root.style.setProperty("--theme-bg-pantary", theme.background.pantary);
     root.style.setProperty("--theme-bg-card", theme.background.card);
     root.style.setProperty("--theme-bg-light", theme.background.light);
@@ -166,7 +169,10 @@ export class ThemeManager {
     root.style.setProperty("--theme-border-primary", theme.border.primary);
     root.style.setProperty("--theme-border-secondary", theme.border.secondary);
     root.style.setProperty("--theme-border-trinary", theme.border.trinary);
-    root.style.setProperty("--theme-border-quaternary", theme.border.quaternary);
+    root.style.setProperty(
+      "--theme-border-quaternary",
+      theme.border.quaternary
+    );
     root.style.setProperty("--theme-border-pantary", theme.border.pantary);
     root.style.setProperty("--theme-border-card", theme.border.card);
     root.style.setProperty("--theme-border-light", theme.border.light);
@@ -175,7 +181,10 @@ export class ThemeManager {
     root.style.setProperty("--theme-button-primary", theme.button.primary);
     root.style.setProperty("--theme-button-secondary", theme.button.secondary);
     root.style.setProperty("--theme-button-trinary", theme.button.trinary);
-    root.style.setProperty("--theme-button-quaternary", theme.button.quaternary);
+    root.style.setProperty(
+      "--theme-button-quaternary",
+      theme.button.quaternary
+    );
     root.style.setProperty("--theme-button-pantary", theme.button.pantary);
     root.style.setProperty("--theme-button-hover", theme.button.hover);
     root.style.setProperty("--theme-button-dark", theme.button.dark);
@@ -186,7 +195,7 @@ export class ThemeManager {
     this.listeners.push(callback);
     return () => {
       this.listeners = this.listeners.filter(
-        (listener) => listener !== callback,
+        (listener) => listener !== callback
       );
     };
   }

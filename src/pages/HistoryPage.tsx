@@ -56,49 +56,36 @@ type SortBy = "date_desc" | "date_asc" | "platform_asc" | "platform_desc";
 
 export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
   const { setUnreadCount, state } = useAppContext();
-  const { showLoading, hideLoading } = useLoading();
   const posts: any = state.postHistory;
-  const [error, setError] = useState<string | null>(null);
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   const [readFilter, setReadFilter] = useState<ReadFilter>("all");
   const [platformFilter, setPlatformFilter] = useState<PlatformFilter>("all");
   const [timePeriod, setTimePeriod] = useState<TimePeriod>("all");
   const [sortBy, setSortBy] = useState<SortBy>("date_desc");
   const [showFilters, setShowFilters] = useState(false);
-  useEffect(() => {
-    showLoading(t("loading_history") || "Loading history...");
-    markAllAsRead().then(() => hideLoading());
-  }, []);
 
   const markAsRead = async (postId: string) => {
     try {
       await API.readHistoryById(postId);
-
-      // setPosts((prevPosts) =>
-      //   prevPosts.map((post:any) =>
-      //     post.id === postId ? { ...post, isRead: true } : post
-      //   )
-      // );
-
+      setUnreadCount(0);
       historyRefreshService.refreshHistory();
-    } catch (error) {
-      console.error("Error marking post as read:", error);
-    }
+    } catch (error) {}
   };
 
   const markAllAsRead = async () => {
     try {
-      // setPosts((prevPosts) =>
-      //   prevPosts.map((post:any) => ({ ...post, isRead: true }))
-      // );
+      setUnreadCount(0);
       await API.readAllHistory();
       await historyRefreshService.refreshHistory();
-      setUnreadCount(0);
     } catch (error) {
       console.error("Error marking all posts as read:", error);
     }
   };
+  useEffect(() => {
+    markAllAsRead();
+  }, []);
+
   const resetFilters = () => {
     setReadFilter("all");
     setPlatformFilter("all");
@@ -432,8 +419,8 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
                   {timePeriod === "today"
                     ? "Today"
                     : timePeriod === "week"
-                    ? "Last 7 days"
-                    : "Last 30 days"}
+                      ? "Last 7 days"
+                      : "Last 30 days"}
                 </span>
               )}
               <span className="text-gray-500 font-medium">
@@ -445,20 +432,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
       </div>
 
       <div className="w-full  mx-auto ">
-        {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
-            <p className="text-red-800 text-sm">{error}</p>
-          </div>
-        )}
-
-        {state.postHistoryLoading ? (
-          <div className=" flex flex-col justify-center items-center min-h-[50vh]">
-            <Icon name="spiral-logo" size={45} className="animate-spin" />
-            <p className="mt-1 text-base font-medium text-gray-500">
-              {t("loading_history")}
-            </p>
-          </div>
-        ) : filteredPosts.length === 0 ? (
+        {filteredPosts?.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-purple-600 mb-4">
               <Clock className="w-16 h-16 mx-auto" />
