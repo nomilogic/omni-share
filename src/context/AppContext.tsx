@@ -422,7 +422,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const initUser = async () => {
     dispatch({ type: "SET_LOADER", payload: true });
-
     const token = Cookies.get("auth_token");
     if (!token) {
       dispatch({ type: "SET_LOADER", payload: false });
@@ -459,7 +458,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     } finally {
       setTimeout(() => {
         dispatch({ type: "SET_LOADER", payload: false });
-      }, 2000);
+      }, 1000);
     }
   };
 
