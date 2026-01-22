@@ -1,5 +1,5 @@
 import "./i18n";
-import React from "react";
+import React, { useEffect, useLayoutEffect } from "react";
 import { ModalProvider } from "./context2/ModalContext";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { AppProvider, useAppContext } from "./context/AppContext";
@@ -35,6 +35,7 @@ import CookieBanner from "./components/CookieBanner";
 import AnalyticsPage from "./pages/AnalyticsPage";
 import ReferralRewards from "./components/RefferalShare";
 import { PublicRoute } from "./components/PublicRoute";
+import { useTranslation } from "react-i18next";
 const OAuthCallbackWrapper = () => {
   const { initUser } = useAppContext();
 
@@ -46,6 +47,37 @@ const OAuthCallbackWrapper = () => {
 };
 
 function App() {
+  const { i18n } = useTranslation();
+  useLayoutEffect(() => {
+    const detectUserLanguage = async () => {
+      try {
+        const res = await fetch("https://api.country.is/");
+        const data = await res.json();
+
+        let lang = "en";
+
+        const chineseCountries = ["CN", "HK", "TW", "SG", "MO"];
+        const spanishCountries = ["ES", "MX", "AR", "CO", "PE"];
+        if (spanishCountries.includes(data.country)) {
+          lang = "es";
+        } else if (chineseCountries.includes(data.country)) {
+          lang = "zh";
+        }
+
+        i18n.changeLanguage(lang);
+
+        localStorage.setItem("siteLang", lang);
+      } catch (error) {}
+    };
+
+    const savedLang = localStorage.getItem("siteLang");
+    if (savedLang && savedLang.trim() !== "") {
+      i18n.changeLanguage(savedLang);
+    } else {
+      detectUserLanguage();
+    }
+  }, []);
+
   return (
     <>
       <ToastContainer

@@ -91,7 +91,7 @@ export const PricingModals: React.FC = () => {
               </p>
 
               <div className="flex justify-center items-end gap-4 mb-5">
-                <span className="text-[45px] text-purple-600 font-bold leading-none">
+                <span className="text-[45px]  text-[#7650e3]  font-bold leading-none">
                   ${selectedPlan.amount + ".00" || "25.00"}
                 </span>
 
@@ -102,8 +102,6 @@ export const PricingModals: React.FC = () => {
                   </span>
                 </div>
               </div>
-
-              
             </div>
 
             <div className="text-center text-[13px] text-gray-500 font-medium my-6">
@@ -164,7 +162,7 @@ export const PricingModals: React.FC = () => {
               </p>
 
               <div className="flex justify-center items-end gap-4">
-                <span className="text-[45px] text-purple-600 font-bold leading-none">
+                <span className="text-[45px]  text-[#7650e3]  font-bold leading-none">
                   ${selectedPlan.amount || "0.00"}
                 </span>
 
@@ -221,18 +219,22 @@ export const PricingModals: React.FC = () => {
 
             <div className="bg-white border text-gray-500 border-purple-600 rounded-md p-4 mb-6">
               <p className="text-sm font-semibold ">
-                <span className="">{t("active_plan")}</span> <span className="text-purple-600">
+                <span className="">{t("active_plan")}</span>{" "}
+                <span className="text-purple-600">
                   {cancelDowngradeData.currentPlanName}
                 </span>
               </p>
 
               <p className="text-sm font-semibold mt-2 border-b pb-3">
-                <span className="">{t("monthly_cost")}</span> <span className=" text-purple-600 ">
+                <span className="">{t("monthly_cost")}</span>{" "}
+                <span className=" text-purple-600 ">
                   ${cancelDowngradeData.currentPlanAmount}/month
-                </span> </p>
+                </span>{" "}
+              </p>
 
               <p className="text-sm  font-semibold mt-2">
-                <span className="">{t("planned_downgrade")}</span> <span className=" text-purple-600 ">
+                <span className="">{t("planned_downgrade")}</span>{" "}
+                <span className=" text-purple-600 ">
                   {cancelDowngradeData.downgradePlanName}
                 </span>
               </p>

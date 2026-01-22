@@ -44,7 +44,7 @@ export const AppInitializer = () => {
           <div className="h-full w-1/2 bg-gradient-to-r from-purple-500 to-purple-700 animate-loading" />
         </div>
 
-        <div className="text-purple-400/80 text-xs mt-1">
+        <div className="text-purple-500 text-xs mt-1">
           {import.meta.env.VITE_API_URL_FRONT || "1.0.0"} • ©{" "}
           {new Date().getFullYear()}
         </div>

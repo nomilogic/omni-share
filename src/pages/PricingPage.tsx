@@ -344,7 +344,7 @@ export const PricingPage: React.FC = () => {
                         {tier.name}
                       </h3>
                       <div className="flex items-baseline justify-center gap-1 mb-3">
-                        <span className="text-[43px] text-purple-600 font-bold">
+                        <span className="text-[43px]  text-[#7650e3]  font-bold">
                           <span className="text-[#7650e3] font-bold text-2xl mr-1">
                             {langToCurrencySymbol[selectedCurrency] || ""}
                           </span>
@@ -442,7 +442,7 @@ export const PricingPage: React.FC = () => {
 
                     <div className=" px-5 py-4">
                       <div className="mb-5 border-b-2 border-purple-600  h-[130px] text-center">
-                        <p className=" text-purple-600 font-bold text-2xl mb-1 ">
+                        <p className="  text-[#7650e3]  font-bold text-2xl mb-1 ">
                           {t("ideal_for")}
                         </p>
                         <p className="text-lg text-slate-800 font-medium">
