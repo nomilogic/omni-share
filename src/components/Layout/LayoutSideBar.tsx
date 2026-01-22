@@ -72,10 +72,10 @@ const Sidebar = ({
 
         {/* User Profile */}
         <div className="border-b border-white/20 relative" ref={userMenuRef}>
-          <button
+          <Link
+            to={"/dashboard?edit-profile=true"}
             onClick={() => {
               setIsMobileMenuOpen(false);
-              navigate("/dashboard?edit-profile=true");
             }}
             className="flex items-center gap-x-2 mb-0 w-full hover:theme-bg-secondary rounded-md p-2 transition-colors"
           >
@@ -94,7 +94,7 @@ const Sidebar = ({
                 {user?.email}
               </div>
             </div>
-          </button>
+          </Link>
         </div>
 
         {/* Navigation */}
