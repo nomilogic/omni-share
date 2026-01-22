@@ -1195,14 +1195,13 @@ export const PostPreview = ({
 
                 {editingMode && (
                   <p className="text-sm text-blue-600">
-                    💡 Click on the text above to edit it directly in the
-                    preview!
+                    💡 {t("tooltip_edit_hint")}
                   </p>
                 )}
 
                 {hasUnsavedChanges && (
                   <p className="text-sm text-orange-600">
-                    ⚠️ You have unsaved changes
+                    ⚠️ {t("unsaved_changes_warning")}
                   </p>
                 )}
                 <button
@@ -1324,24 +1323,24 @@ export const PostPreview = ({
                     return (
                       <div className="mt-4 pt-4 border-t border-gray-200">
                         <span className="text-gray-500 font-medium block mb-2">
-                          {isShorts ? "Shorts" : "Video"} Requirements for{" "}
+                          {isShorts ? t("shorts") : t("video")} {t("requirements_for")}{" "}
                           {getPlatformDisplayName(selectedPost.platform)}
                         </span>
                         <div className="space-y-2 text-xs text-gray-700">
                           <div className="flex justify-between">
-                            <span className="font-medium">Aspect Ratio:</span>
+                            <span className="font-medium">{t("aspect_ratio")}:</span>
                             <span>{videoLimits.aspectRatio}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="font-medium">Resolution:</span>
+                            <span className="font-medium">{t("resolution")}:</span>
                             <span>{videoLimits.resolution}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="font-medium">Max Duration:</span>
+                            <span className="font-medium">{t("max_duration")}:</span>
                             <span>{videoLimits.maxDuration}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="font-medium">Max File Size:</span>
+                            <span className="font-medium">{t("max_file_size")}:</span>
                             <span>{videoLimits.maxFileSize}</span>
                           </div>
                           {videoLimits.notes && (
@@ -1415,7 +1414,7 @@ export const PostPreview = ({
             <button
               onClick={handleRegenerateSubmit}
               disabled={isRegenerating}
-              className={`group rounded-md w-full flex-1 flex items-center justify-between theme-bg-trinary theme-text-light border border-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] transition-colors duration-200 py-2.5 px-3 font-medium text-sm ${
+              className={`group rounded-md w-full flex-1 flex items-center justify-between theme-bg-trinary theme-text-light border border-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] transition-colors duration-200 py-2.5 px-3 font-semibold text-base ${
                 isRegenerating
                   ? "opacity-70 cursor-not-allowed"
                   : "hover:opacity-90"
@@ -1427,7 +1426,7 @@ export const PostPreview = ({
                 ) : (
                   <Wand2 className="w-[23px] h-[23px] mr-1" />
                 )}
-                {isRegenerating ? "REGENERATING..." : t("generate_post_text")}
+                {isRegenerating ? t("regenerating") : t("generate_post_text")}
               </div>
               <div className="sm:inline-block px-2 py-1 flex items-center">
                 <Icon

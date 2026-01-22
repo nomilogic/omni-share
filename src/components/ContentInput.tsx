@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+﻿import React, { useState, useRef, useEffect } from "react";
 import {
   Wand2,
   Eye,
@@ -541,7 +541,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to analyze image");
+        throw new Error(errorData.error || t("failed_analyze_image"));
       }
 
       const result = await response.json();
@@ -550,7 +550,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         setImageAnalysis(result.analysis);
       } else {
         setImageAnalysis(
-          "Image uploaded successfully. Add a description for better content generation."
+          t("image_uploaded_successfully_description")
         );
       }
     } catch (error: any) {
@@ -609,7 +609,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to analyze image");
+        throw new Error(errorData.error || t("failed_analyze_image"));
       }
 
       const result = await response.json();
@@ -618,7 +618,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         setImageAnalysis(result.analysis);
       } else {
         setImageAnalysis(
-          "AI-generated image analyzed. Add a description for better content generation."
+          t("ai_image_analyzed_description")
         );
       }
     } catch (error: any) {
@@ -1301,7 +1301,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
         setVideoThumbnailUrl(result.imageUrl);
         return result.imageUrl;
-      }, "Generating video thumbnail from content description");
+      }, t("generating_video_thumbnail"));
     } catch (error) {
       return null;
     } finally {
@@ -1405,9 +1405,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           setImageDescription("");
           return result;
         } else {
-          throw new Error(result.error || "Image generation failed");
+          throw new Error(result.error || t("image_generation_failed"));
         }
-      }, "Creating your custom image");
+      }, t("creating_custom_image"));
     } catch (error) {
     } finally {
       setIsGeneratingImage(false);
@@ -1437,9 +1437,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         setImageDescription("");
         return result;
       } else {
-        throw new Error(result.error || "Image generation failed");
+        throw new Error(result.error || t("image_generation_failed"));
       }
-    }, "Creating your custom image");
+    }, t("creating_custom_image"));
   };
   const [isGeneratingImageUpload, setIsGeneratingImageUpload] = useState("");
   const isUrl = (value: string) => {
@@ -1523,7 +1523,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
         return newData;
       });
-      notify("error", "We couldn’t generate the image.");
+      notify("error", t("couldnt_generate_image"));
       setIsGeneratingBoth(false);
       setPrompt("");
     }
@@ -1569,7 +1569,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         } else {
           throw new Error(result.error || "Video thumbnail generation failed");
         }
-      }, "Regenerating video thumbnail");
+      }, t("regenerating_video_thumbnail"));
     } catch (error) {
       if (error instanceof Error) {
         notify("error", `Failed to regenerate thumbnail: ${error.message}`);

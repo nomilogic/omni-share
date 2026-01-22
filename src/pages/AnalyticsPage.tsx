@@ -360,7 +360,7 @@ export default function AnalyticsPage() {
 
 function StatCard({ title, value }: { title: string; value: number | string }) {
   return (
-    <div className="bg-gradient-to-br   rounded-md p-4 text-center border border-purple-100">
+    <div className="bg-gradient-to-br rounded-md p-4 text-center border-2 border-purple-100">
       <p className="text-2xl md:text-3xl font-bold text-purple-700">
         {typeof value === "number" ? value.toLocaleString() : value || "0"}
       </p>
