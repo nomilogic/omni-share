@@ -1,54 +1,18 @@
-import React from "react";
-import { Navigate, useLocation } from "react-router-dom";
-import { useAppContext } from "../context/AppContext";
-import { Sparkles } from "lucide-react";
-import Icon from "./Icon";
-import { useTranslation } from "react-i18next";
+import Cookies from "js-cookie";
+import React, { ReactNode, useMemo } from "react";
+import { Navigate } from "react-router-dom";
 
 interface ProtectedRouteProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
-export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { state } = useAppContext();
-  const location = useLocation();
-  const { t, i18n } = useTranslation();
-  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
+export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
+  const isAuthenticated = useMemo(() => {
+    return !!(Cookies.get("auth_token") || Cookies.get("refresh_token"));
+  }, []);
 
-  if (state.loading) {
-    return (
-      <div className="min-h-screen px-2 bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
-        <div className="text-center">
-          <Icon name="spiral-logo" size={50} className="animate-spin mb-2" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            {t("loading_omnishare")}
-          </h2>
-          <p className="text-gray-600">{t("setting_up_workspace")}</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!state.user) {
-    return <Navigate to="/auth" state={{ from: location }} replace />;
-  }
-
-  // If user is authenticated but on auth page, redirect based on setup status
-  if (location.pathname === "/auth") {
-    return <Navigate to="/content" replace />;
-    if (state.hasCompletedOnboarding) {
-      return <Navigate to="/content" replace />;
-    } else {
-      return <Navigate to="/pricing" replace />;
-    }
-  }
-
-  // Check if user needs to complete onboarding
-  if (
-    !state.hasCompletedOnboarding &&
-    !location.pathname.includes("/pricing")
-  ) {
-    // return <Navigate to="/pricing" replace />;
+  if (!isAuthenticated) {
+    return <Navigate to="/auth" replace />;
   }
 
   return <>{children}</>;

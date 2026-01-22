@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Platform } from "../types";
 import { RefreshCw, Trash2 } from "lucide-react";
 import {
@@ -8,7 +8,6 @@ import {
 } from "../utils/platformIcons";
 import { useTranslation } from "react-i18next";
 import { useAppContext } from "@/context/AppContext";
-import { useLoading } from "@/context/LoadingContext";
 
 const ALL_PLATFORMS: Platform[] = [
   "linkedin",
@@ -20,7 +19,6 @@ const ALL_PLATFORMS: Platform[] = [
 
 export const AccountsPage: React.FC = () => {
   const { t } = useTranslation();
-  const { showLoading, hideLoading } = useLoading();
 
   const {
     connectedPlatforms,
@@ -28,24 +26,6 @@ export const AccountsPage: React.FC = () => {
     handleConnectPlatform,
     handleDisconnectPlatform,
   } = useAppContext();
-
-  // Only show loading if connectedPlatforms is null/undefined (data hasn't been fetched yet)
-  // Empty array means data is loaded but no platforms are connected
-  const isLoading = connectedPlatforms === null || connectedPlatforms === undefined;
-
-  useEffect(() => {
-    // Show preloader while platforms are being fetched
-    if (isLoading) {
-      showLoading("Loading accounts...");
-    } else {
-      hideLoading();
-    }
-  }, [isLoading, showLoading, hideLoading, t]);
-
-  // Don't render UI until data is loaded
-  // if (isLoading) {
-  //   return null;
-  // }
 
   const renderPlatformIcon = (platform: Platform) => {
     const IconComponent = getPlatformIcon(platform);
@@ -68,8 +48,10 @@ export const AccountsPage: React.FC = () => {
 
         <div className="p-2 bg-blue-50 border border-blue-200 rounded-md">
           <p className="text-sm text-blue-800">
-            <span className="font-medium">{connectedPlatforms?.length ?? 0}</span> of{" "}
-            <span className="font-medium">{ALL_PLATFORMS.length}</span>{" "}
+            <span className="font-medium">
+              {connectedPlatforms?.length ?? 0}
+            </span>{" "}
+            of <span className="font-medium">{ALL_PLATFORMS.length}</span>{" "}
             {t("platforms_connected")}
           </p>
         </div>

@@ -8,52 +8,17 @@ import { useTranslation } from "react-i18next";
 import Cookies from "js-cookie";
 
 export const AuthPage: React.FC = () => {
-  const { state, dispatch } = useAppContext();
+  const { state, dispatch, initUser } = useAppContext();
   const navigate = useNavigate();
   const location = useLocation();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { t } = useTranslation();
 
-  useLayoutEffect(() => {
-    if (Cookies.get("auth_token")) {
-      navigate("/content", { replace: true });
-    } else {
-    }
-  }, [Cookies.get("auth_token")]);
-
-  const handleAuthSuccess = (user: any) => {
-    // Cache user to localStorage on login
-    localStorage.setItem("cached_user", JSON.stringify(user));
-
-    dispatch({ type: "SET_USER", payload: user });
-    dispatch({
-      type: "SET_BALANCE",
-      payload: user?.wallet?.coins + user?.wallet?.referralCoin,
-    });
-    if (user.plan) {
-      dispatch({ type: "SET_USER_PLAN", payload: user.plan });
-    } else {
-      // Auto-set new users to free plan and skip onboarding
-      dispatch({ type: "SET_USER_PLAN", payload: "free" });
-    }
-
-    if (user.profile_type === "business") {
-      dispatch({ type: "SET_BUSINESS_ACCOUNT", payload: true });
-    }
-
-    // Auto-complete onboarding for all users
-    dispatch({ type: "SET_TIER_SELECTED", payload: true });
-    dispatch({ type: "SET_PROFILE_SETUP", payload: true });
-    dispatch({ type: "SET_ONBOARDING_COMPLETE", payload: true });
-
-    const from = (location.state as any)?.from?.pathname || "/content";
-    navigate(from, { replace: true });
+  const handleAuthSuccess = () => {
+    initUser();
   };
 
-  // Send forget-password link
-
-  // This handler is for in-page reset (optional) — Reset via ResetPasswordPage will call API directly
   const handleResetPassword = async (token: string, new_password: string) => {
     setLoading(true);
     setError(null);

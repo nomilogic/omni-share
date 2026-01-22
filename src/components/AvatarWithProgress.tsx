@@ -19,24 +19,20 @@ const PROFILE_FIELDS = [
   "postingStyle",
 ];
 
-
-
-
 const getProgressColor = (progress: number) => {
   if (progress < 50) {
     const ratio = progress / 50;
 
     const red = 255;
-    const green = Math.floor(80 + ratio * 120); // 80 → 200
+    const green = Math.floor(80 + ratio * 120);
     const blue = 0;
 
     return `rgb(${red}, ${green}, ${blue})`;
   } else {
-    // Orange → Dark Green
     const ratio = (progress - 50) / 50;
 
-    const red = Math.floor(255 - ratio * 200); // 255 → 55
-    const green = Math.floor(200 - ratio * 40); // 200 → 160
+    const red = Math.floor(255 - ratio * 200);
+    const green = Math.floor(200 - ratio * 40);
     const blue = 0;
 
     return `rgb(${red}, ${green}, ${blue})`;
@@ -75,7 +71,7 @@ export function AvatarWithProgress({
   const strokeDashoffset = circumference - (progress / 100) * circumference;
 
   const [isHovered, setIsHovered] = useState(false);
-  const {  setProfileEditing } = useAppContext();
+  const { setProfileEditing } = useAppContext();
 
   return (
     <div

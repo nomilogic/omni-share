@@ -30,9 +30,9 @@ export const SchedulePage: React.FC = () => {
       if (!state.selectedProfile?.id) return;
 
       try {
-        showLoading(t("loading_scheduled_posts") || "Loading scheduled posts...");
+        // showLoading(t("loading_scheduled_posts") || "Loading scheduled posts...");
         const response = await fetch(
-          `/api/schedule/posts?campaignId=${state.selectedProfile.id}`,
+          `/api/schedule/posts?campaignId=${state.selectedProfile.id}`
         );
 
         if (!response.ok) {

@@ -86,7 +86,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   } = useLoadingAPI();
   const { t } = useTranslation();
 
-  // Get confirm dialog from context
   const { showConfirm, closeConfirm } = useConfirmDialog();
 
   const [formData, setFormData] = useState<any>({
@@ -199,7 +198,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     if (!hasTheme && useTheme) setUseTheme(false);
   }, [hasTheme, useTheme, setUseTheme]);
 
-  // Check if there's unsaved content
   const hasUnsavedContent = () => {
     return (
       (formData?.prompt?.trim?.()?.length ?? 0) > 0 ||
@@ -350,7 +348,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
           const campaign = await getCampaignById(
             state.selectedCampaign.id,
-            state.user.id
+            state.user?.id
           );
           setCampaignInfo(campaign);
 
@@ -445,7 +443,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       try {
         const mediaUrl = await executeFileUpload(
           async () => {
-            return await uploadMedia(file, userResult.user.id);
+            return await uploadMedia(file, userResult.user?.id);
           },
           file.name,
           file.size,
@@ -997,7 +995,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
             `templated-image-${Date.now()}.${ext}`,
             { type: blob.type || "image/png" }
           );
-          const uploadedUrl = await uploadMedia(file, user.user.id);
+          const uploadedUrl = await uploadMedia(file, user.user?.id);
           if (uploadedUrl) {
             finalTemplatedUrl = uploadedUrl;
           }
@@ -1006,7 +1004,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     } catch (uploadErr) {}
 
     setTemplatedImageUrl(finalTemplatedUrl);
-    setFormData((prev) => ({
+    setFormData((prev: any) => ({
       ...prev,
       mediaUrl: finalTemplatedUrl,
       imageUrl: finalTemplatedUrl,
@@ -1292,7 +1290,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
             const file = new File([blob], `video-thumbnail-${Date.now()}.png`, {
               type: "image/png",
             });
-            const uploadedUrl = await uploadMedia(file, user.user.id);
+            const uploadedUrl = await uploadMedia(file, user.user?.id);
             setVideoThumbnailUrl(uploadedUrl);
             return uploadedUrl;
           }
@@ -1332,7 +1330,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       uploadAbortControllerRef.current = thumbnailAbortController;
 
       const mediaUrl = await executeFileUpload(
-        async () => await uploadMedia(file, userResult.user.id),
+        async () => await uploadMedia(file, userResult.user?.id),
         file.name,
         file.size,
         {
@@ -2814,17 +2812,39 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                           {t("use_for_generation")}
                         </label>
                         <div className=" p-3 theme-bg-primary   rounded-md border shadow-md backdrop-blur-md">
-                          <div className=" flex flex-row justify-start gap-10">
+                          <div className="flex flex-row justify-start gap-10">
                             {/* Brand Logo Checkbox */}
-                            <div className="flex items-start gap-3">
+                            <div className="flex items-start gap-x-3 cursor-pointer">
                               <input
                                 type="checkbox"
                                 id="useBrandLogo"
                                 checked={useLogo}
                                 onChange={(e) => setUseLogo(e.target.checked)}
+                                className="peer hidden "
                                 disabled={!hasLogo}
-                                className="w-4 h-4 mt-0.5 text-purple-600  bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
                               />
+
+                              <label
+                                htmlFor="useBrandLogo"
+                                className={`w-5 h-5 mt-1 border-2 border-purple-500 rounded flex items-center justify-center 
+  peer-checked:bg-purple-600 peer-checked:border-purple-600 transition
+  ${!hasLogo ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+                              >
+                                <svg
+                                  className="w-3 h-3 text-white peer-checked:block"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="3"
+                                    d="M5 13l4 4L19 7"
+                                  />
+                                </svg>
+                              </label>
+
                               <div className="flex-1">
                                 <label
                                   htmlFor="useBrandLogo"
@@ -2844,16 +2864,38 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               </div>
                             </div>
 
-                            {/* Theme/Website Checkbox */}
-                            <div className="flex items-start gap-3 ">
+                            {/* Theme Checkbox */}
+                            <div className="flex items-start gap-x-3 cursor-pointer">
                               <input
                                 type="checkbox"
                                 id="useBrandTheme"
                                 checked={useTheme}
                                 onChange={(e) => setUseTheme(e.target.checked)}
+                                className="peer hidden"
                                 disabled={!hasTheme}
-                                className="w-4 h-4 mt-0.5 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
                               />
+
+                              <label
+                                htmlFor="useBrandTheme"
+                                className={`w-5 h-5 mt-1 border-2 border-purple-500 rounded flex items-center justify-center 
+  peer-checked:bg-purple-600 peer-checked:border-purple-600 transition
+  ${!hasTheme ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+                              >
+                                <svg
+                                  className="w-3 h-3 text-white peer-checked:block"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="3"
+                                    d="M5 13l4 4L19 7"
+                                  />
+                                </svg>
+                              </label>
+
                               <div className="flex-1">
                                 <label
                                   htmlFor="useBrandTheme"

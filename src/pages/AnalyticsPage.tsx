@@ -61,7 +61,6 @@ interface AnalyticsItem {
 
 export default function AnalyticsPage() {
   const { t } = useTranslation();
-  const { showLoading, hideLoading } = useLoading();
   const [searchParams, setSearchParams] = useSearchParams();
   const { state, fetchAnalytics } = useAppContext();
 
@@ -69,14 +68,6 @@ export default function AnalyticsPage() {
   const loading = state.analyticsLoading;
 
   const [selectedPost, setSelectedPost] = useState<any>(null);
-
-  useEffect(() => {
-    if (loading) {
-      showLoading("Loading analytics...");
-    } else {
-      hideLoading();
-    }
-  }, [loading, showLoading, hideLoading, t]);
 
   const platforms: Platform[] = [
     "facebook",
@@ -122,7 +113,10 @@ export default function AnalyticsPage() {
 
     switch (selectedPlatform) {
       case "youtube":
-        return { count: analytics.page.subscribers ?? 0, label: t("subscribers") };
+        return {
+          count: analytics.page.subscribers ?? 0,
+          label: t("subscribers"),
+        };
       case "tiktok":
       case "instagram":
       case "facebook":
@@ -257,8 +251,8 @@ export default function AnalyticsPage() {
                         )}
 
                       {analytics.summary.views !== undefined &&
-                        !['youtube', 'linkedin'].includes(
-                          selectedPlatform || ''
+                        !["youtube", "linkedin"].includes(
+                          selectedPlatform || ""
                         ) && (
                           <StatCard
                             title={t("views")}
@@ -384,7 +378,9 @@ function PostDetailsCard({ post, onBack }: { post: any; onBack: () => void }) {
     <div className="bg-white rounded-md border p-6">
       <div className="flex items-start justify-between mb-4">
         <div>
-          <h3 className="text-xl font-bold text-gray-900">{t("post_details")}</h3>
+          <h3 className="text-xl font-bold text-gray-900">
+            {t("post_details")}
+          </h3>
           <p className="text-sm text-gray-500 mt-1">
             {post.created_time
               ? new Date(post.created_time).toLocaleString()

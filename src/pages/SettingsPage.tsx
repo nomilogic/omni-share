@@ -186,13 +186,13 @@ export const SettingsPage: React.FC = () => {
                               <input
                                 type="text"
                                 readOnly
-                                value={`${window.location.origin}/auth?referralId=${user.id}`}
+                                value={`${window.location.origin}/auth?referralId=${user?.id}`}
                                 className="w-full px-4 py-2.5 border border-white/20 rounded-md theme-bg-primary theme-text-primary font-mono"
                               />
                               <button
                                 onClick={() => {
                                   navigator.clipboard.writeText(
-                                    `${window.location.origin}/auth?referralId=${user.id}`
+                                    `${window.location.origin}/auth?referralId=${user?.id}`
                                   );
                                 }}
                                 className="theme-button-primary px-3 py-2.5 rounded-md text-white hover:theme-button-hover transition"
@@ -205,7 +205,7 @@ export const SettingsPage: React.FC = () => {
                                   import("../components/InviteShare").then(
                                     (m) => {
                                       m.openInviteModal(
-                                        `${window.location.origin}/auth?referralId=${user.id}`,
+                                        `${window.location.origin}/auth?referralId=${user?.id}`,
                                         {
                                           title: "Invite a friend",
                                           description:
@@ -225,14 +225,14 @@ export const SettingsPage: React.FC = () => {
                             </p>
                           </div>
                         )}
-                              <button
-                                onClick={handleProfileSave}
-                                disabled={loading}
-                                className="flex items-center gap-2 theme-button-primary text-white px-6 py-2.5 rounded-md hover:theme-button-hover transition-colors duration-200 disabled:opacity-50"
-                              >
-                                <Save className="w-4 h-4" />
-                                {loading ? t("saving") : t("save_changes")}
-                              </button>
+                        <button
+                          onClick={handleProfileSave}
+                          disabled={loading}
+                          className="flex items-center gap-2 theme-button-primary text-white px-6 py-2.5 rounded-md hover:theme-button-hover transition-colors duration-200 disabled:opacity-50"
+                        >
+                          <Save className="w-4 h-4" />
+                          {loading ? t("saving") : t("save_changes")}
+                        </button>
                       </div>
                     </div>
                   }
