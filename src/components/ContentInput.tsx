@@ -86,6 +86,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   } = useLoadingAPI();
   const { t } = useTranslation();
 
+  // Get confirm dialog from context
   const { showConfirm, closeConfirm } = useConfirmDialog();
 
   const [formData, setFormData] = useState<any>({
@@ -145,13 +146,20 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     formData.prompt.trim() || formData.media || formData.mediaUrl;
   const isProcessing =
     isGeneratingBoth || isGeneratingThumbnail || isGeneratingImage;
+  
+  // Check if there's unsaved content (moved before useNavigationGuard)
+  const checkUnsavedContent = () => {
+    return (
+      (formData?.prompt?.trim?.()?.length ?? 0) > 0 ||
+      !!formData?.media ||
+      !!formData?.mediaUrl ||
+      (generatedResults?.length ?? 0) > 0 ||
+      showPreview
+    );
+  };
+  
   useNavigationGuard({
-    isActive:
-      isProcessing ||
-      (hasUnsavedChanges &&
-        showPreview &&
-        generatedResults &&
-        generatedResults.length > 0),
+    isActive: isProcessing || checkUnsavedContent(),
   });
 
   // Brand Logo and Theme states
@@ -198,6 +206,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     if (!hasTheme && useTheme) setUseTheme(false);
   }, [hasTheme, useTheme, setUseTheme]);
 
+  // Check if there's unsaved content
   const hasUnsavedContent = () => {
     return (
       (formData?.prompt?.trim?.()?.length ?? 0) > 0 ||
@@ -346,7 +355,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
           const campaign = await getCampaignById(
             state.selectedCampaign.id,
-            state.user?.id
+            state.user.id
           );
           setCampaignInfo(campaign);
 
@@ -441,7 +450,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       try {
         const mediaUrl = await executeFileUpload(
           async () => {
-            return await uploadMedia(file, userResult.user?.id);
+            return await uploadMedia(file, userResult.user.id);
           },
           file.name,
           file.size,
@@ -541,7 +550,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || t("failed_analyze_image"));
+        throw new Error(errorData.error || "Failed to analyze image");
       }
 
       const result = await response.json();
@@ -550,7 +559,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         setImageAnalysis(result.analysis);
       } else {
         setImageAnalysis(
-          t("image_uploaded_successfully_description")
+          "Image uploaded successfully. Add a description for better content generation."
         );
       }
     } catch (error: any) {
@@ -609,7 +618,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || t("failed_analyze_image"));
+        throw new Error(errorData.error || "Failed to analyze image");
       }
 
       const result = await response.json();
@@ -618,7 +627,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         setImageAnalysis(result.analysis);
       } else {
         setImageAnalysis(
-          t("ai_image_analyzed_description")
+          "AI-generated image analyzed. Add a description for better content generation."
         );
       }
     } catch (error: any) {
@@ -993,7 +1002,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
             `templated-image-${Date.now()}.${ext}`,
             { type: blob.type || "image/png" }
           );
-          const uploadedUrl = await uploadMedia(file, user.user?.id);
+          const uploadedUrl = await uploadMedia(file, user.user.id);
           if (uploadedUrl) {
             finalTemplatedUrl = uploadedUrl;
           }
@@ -1002,7 +1011,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     } catch (uploadErr) {}
 
     setTemplatedImageUrl(finalTemplatedUrl);
-    setFormData((prev: any) => ({
+    setFormData((prev) => ({
       ...prev,
       mediaUrl: finalTemplatedUrl,
       imageUrl: finalTemplatedUrl,
@@ -1288,7 +1297,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
             const file = new File([blob], `video-thumbnail-${Date.now()}.png`, {
               type: "image/png",
             });
-            const uploadedUrl = await uploadMedia(file, user.user?.id);
+            const uploadedUrl = await uploadMedia(file, user.user.id);
             setVideoThumbnailUrl(uploadedUrl);
             return uploadedUrl;
           }
@@ -1301,7 +1310,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
         setVideoThumbnailUrl(result.imageUrl);
         return result.imageUrl;
-      }, t("generating_video_thumbnail"));
+      }, "Generating video thumbnail from content description");
     } catch (error) {
       return null;
     } finally {
@@ -1328,7 +1337,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       uploadAbortControllerRef.current = thumbnailAbortController;
 
       const mediaUrl = await executeFileUpload(
-        async () => await uploadMedia(file, userResult.user?.id),
+        async () => await uploadMedia(file, userResult.user.id),
         file.name,
         file.size,
         {
@@ -1405,9 +1414,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           setImageDescription("");
           return result;
         } else {
-          throw new Error(result.error || t("image_generation_failed"));
+          throw new Error(result.error || "Image generation failed");
         }
-      }, t("creating_custom_image"));
+      }, "Creating your custom image");
     } catch (error) {
     } finally {
       setIsGeneratingImage(false);
@@ -1437,9 +1446,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         setImageDescription("");
         return result;
       } else {
-        throw new Error(result.error || t("image_generation_failed"));
+        throw new Error(result.error || "Image generation failed");
       }
-    }, t("creating_custom_image"));
+    }, "Creating your custom image");
   };
   const [isGeneratingImageUpload, setIsGeneratingImageUpload] = useState("");
   const isUrl = (value: string) => {
@@ -1523,7 +1532,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
         return newData;
       });
-      notify("error", t("couldnt_generate_image"));
+      notify("error", "We couldn’t generate the image.");
       setIsGeneratingBoth(false);
       setPrompt("");
     }
@@ -1569,7 +1578,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         } else {
           throw new Error(result.error || "Video thumbnail generation failed");
         }
-      }, t("regenerating_video_thumbnail"));
+      }, "Regenerating video thumbnail");
     } catch (error) {
       if (error instanceof Error) {
         notify("error", `Failed to regenerate thumbnail: ${error.message}`);
@@ -1868,8 +1877,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                   </button>
 
                   {/* Image Post */}
-                  <button
-                    type="button"
+                  <div
                     onClick={() => {
                       if (selectedPostType !== "image") {
                         setSelectedFile(null);
@@ -1882,7 +1890,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
                       setSelectedPostType("image");
                     }}
-                    className={` relative  border shadow-md backdrop-blur-md border-slate-200/70 transition-all duration-200  text-center px-2 py-3 rounded-md ${
+                    className={` relative cursor-pointer border shadow-md backdrop-blur-md border-slate-200/70 transition-all duration-200  text-center px-2 py-3 rounded-md ${
                       selectedPostType === "image"
                         ? "selected-main-button"
                         : "unselected-main-button"
@@ -2028,11 +2036,10 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         </button>
                       </div>
                     </div>
-                  </button>
+                  </div>
 
                   {/* Video Post */}
-                  <button
-                    type="button"
+                  <div
                     onClick={() => {
                       if (selectedPostType !== "video") {
                         setShowVideoMenu(true);
@@ -2041,7 +2048,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         setShowVideoMenu(!showVideoMenu);
                       }
                     }}
-                    className={`relative border shadow-md backdrop-blur-md border-slate-200/70 transition-all duration-200 text-center px-2 py-3 rounded-md ${
+                    className={`relative cursor-pointer border shadow-md backdrop-blur-md border-slate-200/70 transition-all duration-200 text-center px-2 py-3 rounded-md ${
                       selectedPostType === "video"
                         ? "selected-main-button"
                         : "unselected-main-button"
@@ -2174,7 +2181,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         </button>
                       </div>
                     </div>
-                  </button>
+                  </div>
                 </div>
               </div>
 
@@ -2810,39 +2817,17 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                           {t("use_for_generation")}
                         </label>
                         <div className=" p-3 theme-bg-primary   rounded-md border shadow-md backdrop-blur-md">
-                          <div className="flex flex-row justify-start gap-10">
+                          <div className=" flex flex-row justify-start gap-10">
                             {/* Brand Logo Checkbox */}
-                            <div className="flex items-start gap-x-3 cursor-pointer">
+                            <div className="flex items-start gap-3">
                               <input
                                 type="checkbox"
                                 id="useBrandLogo"
                                 checked={useLogo}
                                 onChange={(e) => setUseLogo(e.target.checked)}
-                                className="peer hidden "
                                 disabled={!hasLogo}
+                                className="w-4 h-4 mt-0.5 text-purple-600  bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
                               />
-
-                              <label
-                                htmlFor="useBrandLogo"
-                                className={`w-5 h-5 mt-1 border-2 border-purple-500 rounded flex items-center justify-center 
-  peer-checked:bg-purple-600 peer-checked:border-purple-600 transition
-  ${!hasLogo ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
-                              >
-                                <svg
-                                  className="w-3 h-3 text-white peer-checked:block"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="3"
-                                    d="M5 13l4 4L19 7"
-                                  />
-                                </svg>
-                              </label>
-
                               <div className="flex-1">
                                 <label
                                   htmlFor="useBrandLogo"
@@ -2862,38 +2847,16 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               </div>
                             </div>
 
-                            {/* Theme Checkbox */}
-                            <div className="flex items-start gap-x-3 cursor-pointer">
+                            {/* Theme/Website Checkbox */}
+                            <div className="flex items-start gap-3 ">
                               <input
                                 type="checkbox"
                                 id="useBrandTheme"
                                 checked={useTheme}
                                 onChange={(e) => setUseTheme(e.target.checked)}
-                                className="peer hidden"
                                 disabled={!hasTheme}
+                                className="w-4 h-4 mt-0.5 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
                               />
-
-                              <label
-                                htmlFor="useBrandTheme"
-                                className={`w-5 h-5 mt-1 border-2 border-purple-500 rounded flex items-center justify-center 
-  peer-checked:bg-purple-600 peer-checked:border-purple-600 transition
-  ${!hasTheme ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
-                              >
-                                <svg
-                                  className="w-3 h-3 text-white peer-checked:block"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="3"
-                                    d="M5 13l4 4L19 7"
-                                  />
-                                </svg>
-                              </label>
-
                               <div className="flex-1">
                                 <label
                                   htmlFor="useBrandTheme"
