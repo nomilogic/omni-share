@@ -234,7 +234,7 @@ export const ContentPage: React.FC = () => {
       {showGenerateModal && state.contentData && (
         <div className="fixed inset-0 bg-[#fafafa] z-50 h-full">
           <div className="  w-full h-full overflow-y-auto modal-content">
-            <div className="max-w-5xl m-auto  ">
+            <div className="max-w-5xl m-auto  pt-14">
               <AIGenerator
                 contentData={state.contentData}
                 onComplete={(posts) => {

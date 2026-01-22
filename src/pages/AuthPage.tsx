@@ -5,18 +5,17 @@ import { useAppContext } from "../context/AppContext";
 import API from "../services/api";
 import { notify } from "@/utils/toast";
 import { useTranslation } from "react-i18next";
-import Cookies from "js-cookie";
 
 export const AuthPage: React.FC = () => {
-  const { state, dispatch, initUser } = useAppContext();
+  const { initUser } = useAppContext();
   const navigate = useNavigate();
-  const location = useLocation();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { t } = useTranslation();
 
   const handleAuthSuccess = () => {
     initUser();
+    navigate("/content");
   };
 
   const handleResetPassword = async (token: string, new_password: string) => {
@@ -35,10 +34,6 @@ export const AuthPage: React.FC = () => {
       setLoading(false);
     }
   };
-
-  if (state.user) {
-    return null;
-  }
 
   return (
     <div className="flex min-h-screen flex-col relative theme-bg-trinary">

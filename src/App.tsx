@@ -1,3 +1,4 @@
+import "./i18n";
 import React from "react";
 import { ModalProvider } from "./context2/ModalContext";
 import { Routes, Route, Navigate } from "react-router-dom";

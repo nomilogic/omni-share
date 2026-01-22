@@ -2,7 +2,7 @@
 
 import type React from "react";
 import { useState, useLayoutEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { data, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -186,24 +186,13 @@ export const AuthForm: React.FC<AuthFormProps> = ({
       localStorage.removeItem("forgot_token");
       localStorage.removeItem("forgot_token_time");
 
+      const profile = result.user?.profile;
+      if (profile?.isOnboarding === false) {
+        navigate("/dashboard?profile=true", { replace: true });
+      } else {
+        navigate("/content", { replace: true });
+      }
       onAuthSuccess(result.user);
-
-      try {
-        const profile = result.user?.profile;
-        if (profile && (profile as any).isOnboarding === false) {
-          import("../lib/navigation")
-            .then(({ navigateOnce }) => {
-              navigateOnce(navigate, "/dashboard?profile=true", {
-                replace: true,
-              });
-            })
-            .catch((err) => {
-              console.error("failed to load navigation helper", err);
-              navigate("/dashboard?profile=true", { replace: true });
-            });
-          return;
-        }
-      } catch (e) {}
     } catch (error: any) {
       const message =
         error.response?.data?.message || t("authentication_failed");
@@ -281,9 +270,11 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         localStorage.removeItem("forgot_token_time");
         onAuthSuccess(result.user);
 
-        setTimeout(() => {
-          navigate("/content");
-        }, 0);
+        if (result?.user?.profile?.isOnboarding === false) {
+          navigate("/dashboard?profile=true", { replace: true });
+        } else {
+          navigate("/content", { replace: true });
+        }
       }
     } catch (error: any) {
       setError(error.message || "Google authentication failed");
@@ -323,25 +314,12 @@ export const AuthForm: React.FC<AuthFormProps> = ({
 
       localStorage.removeItem("forgot_token");
       localStorage.removeItem("forgot_token_time");
-      onAuthSuccess(result.user);
-      try {
-        const profile = result.user?.profile;
-        if (profile && (profile as any).isOnboarding === false) {
-          import("../lib/navigation")
-            .then(({ navigateOnce }) => {
-              navigateOnce(navigate, "/dashboard?profile=true", {
-                replace: true,
-              });
-            })
-            .catch((err) => {
-              console.error("failed to load navigation helper", err);
-              navigate("/dashboard?profile=true", { replace: true });
-            });
-          return;
-        }
-      } catch (e) {
-        notify("error", t("authform_facebook_fallback_failed"));
+      if (result?.user?.profile?.isOnboarding === false) {
+        navigate("/dashboard?profile=true", { replace: true });
+      } else {
+        navigate("/content", { replace: true });
       }
+      onAuthSuccess(result.user);
     } catch (error: any) {
       notify(
         "error",
@@ -386,21 +364,11 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         localStorage.removeItem("forgot_token_time");
         onAuthSuccess(result.user);
 
-        const profile = result.user?.profile;
-        if (profile && (profile as any).isOnboarding === false) {
-          import("../lib/navigation")
-            .then(({ navigateOnce }) => {
-              navigateOnce(navigate, "/dashboard?profile=true", {
-                replace: true,
-              });
-            })
-            .catch(() => {
-              navigate("/dashboard?profile=true", { replace: true });
-            });
-          return;
+        if (result?.user?.profile?.isOnboarding === false) {
+          navigate("/dashboard?profile=true", { replace: true });
+        } else {
+          navigate("/content", { replace: true });
         }
-
-        navigate("/content");
       }
     } catch (error: any) {
       notify(
@@ -824,7 +792,14 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                   localStorage.removeItem("email_token");
                 }}
                 emailHint={loginForm.getValues("email") || "user@example.com"}
-                onSuccess={(data: any) => onAuthSuccess(data)}
+                onSuccess={(data: any) => {
+                  if (data?.user?.profile?.isOnboarding === false) {
+                    navigate("/dashboard?profile=true", { replace: true });
+                  } else {
+                    navigate("/content", { replace: true });
+                  }
+                  onAuthSuccess(data);
+                }}
                 verifyOtp={async (otp) => {
                   const res = await API.otpVerification({ otp });
                   return res.data.data;
@@ -856,24 +831,12 @@ export const AuthForm: React.FC<AuthFormProps> = ({
               secure: true,
               sameSite: "strict",
             });
+            if (data?.user?.profile?.isOnboarding === false) {
+              navigate("/dashboard?profile=true", { replace: true });
+            } else {
+              navigate("/content", { replace: true });
+            }
             onAuthSuccess(data.user);
-
-            try {
-              const profile = data.user?.profile;
-              if (profile && (profile as any).isOnboarding === false) {
-                import("../lib/navigation")
-                  .then(({ navigateOnce }) => {
-                    navigateOnce(navigate, "/dashboard?profile=true", {
-                      replace: true,
-                    });
-                  })
-                  .catch((err) => {
-                    console.error("failed to load navigation helper", err);
-                    navigate("/dashboard?profile=true", { replace: true });
-                  });
-                return;
-              }
-            } catch (e) {}
           }}
           verifyOtp={async (otp: any) => {
             const session = localStorage.getItem("mfa_session_token");
