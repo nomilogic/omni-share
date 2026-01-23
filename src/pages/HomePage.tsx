@@ -405,14 +405,14 @@ function HomePage() {
 
             <nav className="flex-1 px-1 py-2.5 flex flex-col mx-2 gap-y-2">
               {[
-                { name: t("home"), icon: Home },
-                { name: t("features"), icon: Plus },
-                { name: t("faq"), icon: Building2 },
-                { name: t("contact"), icon: History },
+                { id: "Home", name: t("home"), icon: Home },
+                { id: "Features", name: t("features"), icon: Plus },
+                { id: "Faq", name: t("faq"), icon: Building2 },
+                { id: "Contact", name: t("contact"), icon: History },
               ].map((item, index) => (
                 <motion.button
-                  key={item.name}
-                  onClick={() => scrollToSection(item.name)}
+                  key={item.id}
+                  onClick={() => scrollToSection(item.id)}
                   className="flex items-center px-4 py-3 text-white font-medium rounded-md transition-colors hover:bg-[#d7d7fc] hover:text-[#7650e3]"
                   initial={{ x: -50, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
@@ -785,11 +785,16 @@ function HomePage() {
             </motion.button>
 
             <div className="hidden lg:flex items-center space-x-8">
-              {[t("home"), t("features"), t("faq"), t("contact")].map(
+              {[
+                { id: "Home", label: t("home") },
+                { id: "Features", label: t("features") },
+                { id: "Faq", label: t("faq") },
+                { id: "Contact", label: t("contact") },
+              ].map(
                 (section, index) => (
                   <motion.button
-                    key={section}
-                    onClick={() => scrollToSection(section)}
+                    key={section.id}
+                    onClick={() => scrollToSection(section.id)}
                     className="transition-colors relative text-white capitalize font-medium"
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -801,7 +806,7 @@ function HomePage() {
                     whileHover={{ scale: 1.05, y: -2 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    {section}
+                    {section.label}
                     <motion.span
                       className="absolute bottom-0 left-0 w-full h-0.5 bg-white origin-left"
                       initial={{ scaleX: 0 }}
