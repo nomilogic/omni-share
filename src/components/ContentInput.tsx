@@ -168,6 +168,10 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   const logoUrl = state.user?.profile?.brandLogo || "";
   const themeUrl = state.user?.profile?.publicUrl || "";
 
+  // Video thumbnail specific logo and theme states
+  const [videoUseLogo, setVideoUseLogo] = useState(false);
+  const [videoUseTheme, setVideoUseTheme] = useState(false);
+
   const [generateVideoThumbnailAI, setGenerateVideoThumbnailAI] =
     useState(true);
   const [showVideoThumbnailModal, setShowVideoThumbnailModal] = useState(false);
@@ -1565,6 +1569,10 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           ...(imageToProcess && { imageUrl: imageToProcess }),
           aspectRatio: String(videoAspectRatio || "16:9"),
           ...(isModifyMode && { modifyMode: true }),
+          ...(videoUseLogo && logoUrl && { logoUrl: logoUrl }),
+          ...(videoUseTheme && themeUrl && { useTheme: videoUseTheme }),
+          ...(videoUseLogo && logoUrl && { useLogo: videoUseLogo }),
+          ...(videoUseTheme && themeUrl && { themeUrl: themeUrl }),
         });
 
         const result = response.data;
@@ -1803,11 +1811,19 @@ export const ContentInput: React.FC<ContentInputProps> = ({
             setVideoThumbnailForRegeneration("");
             setVideoThumbnailGenerations([]);
             setVideoModify(false);
+            setVideoUseLogo(false);
+            setVideoUseTheme(false);
           }}
           onRegenerate={handleVideoThumbnailRegenerate}
           confirmImage={confirmVideoThumbnail}
           onFileSave={() => {}}
           selectedFile={null}
+          useLogo={videoUseLogo}
+          setUseLogo={setVideoUseLogo}
+          useTheme={videoUseTheme}
+          setUseTheme={setVideoUseTheme}
+          logoUrl={logoUrl}
+          themeUrl={themeUrl}
         />
       )}
       {!showTemplateEditor && (
