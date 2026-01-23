@@ -11,6 +11,7 @@ import {
 import { useAppContext } from "../../context/AppContext";
 import { useLoading } from "../../context/LoadingContext";
 import { useSubscriptionModal } from "../../context/SubscriptionModalContext";
+import { useConfirmDialog } from "../../context/ConfirmDialogContext";
 import { PricingModals } from "../PricingModals";
 import { useModal } from "../../context2/ModalContext";
 import ReferralSection from "../../components/dashboard/ReferralSection";
@@ -62,6 +63,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     openManageSubscription,
     closeManageSubscription,
   } = useSubscriptionModal();
+  const { setSidebarCloseFn } = useConfirmDialog();
 
   const navigation = [
     { key: "dashboard", name: "Dashboard", path: "/dashboard", icon: Home },
@@ -120,6 +122,13 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       setIsCanceled(false);
     }
   };
+
+  useEffect(() => {
+    // Set the sidebar close function so the confirmation dialog can close it
+    setSidebarCloseFn(() => {
+      return () => setIsMobileMenuOpen(false);
+    });
+  }, [setSidebarCloseFn]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

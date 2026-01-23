@@ -168,6 +168,10 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   const logoUrl = state.user?.profile?.brandLogo || "";
   const themeUrl = state.user?.profile?.publicUrl || "";
 
+  // Video thumbnail specific logo and theme states
+  const [videoUseLogo, setVideoUseLogo] = useState(false);
+  const [videoUseTheme, setVideoUseTheme] = useState(false);
+
   const [generateVideoThumbnailAI, setGenerateVideoThumbnailAI] =
     useState(true);
   const [showVideoThumbnailModal, setShowVideoThumbnailModal] = useState(false);
@@ -176,6 +180,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   const [videoThumbnailGenerations, setVideoThumbnailGenerations] = useState<
     string[]
   >([]);
+  const [videoThumbnailPrompt, setVideoThumbnailPrompt] = useState("");
   const [videoModifyMode, setVideoModify] = useState(false);
   const thumbnailInputRef = useRef<HTMLInputElement>(null);
   const [customThumbnailUploading, setCustomThumbnailUploading] =
@@ -1132,7 +1137,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           postData = {
             ...formData,
             mediaUrl: formData.mediaUrl, // Keep original video URL
-            thumbnailUrl: finalTemplatedUrl, // Use edited thumbnail
+            thumbnailUrl: videoThumbnailUrl, // Use videoThumbnailUrl state which has the uploaded URL
             videoFile: originalVideoFile,
             videoAspectRatio: videoAspectRatio,
             isVideoContent: true,
@@ -1142,7 +1147,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
               {
                 url: formData.mediaUrl,
                 type: "video",
-                thumbnailUrl: finalTemplatedUrl,
+                thumbnailUrl: videoThumbnailUrl,
                 aspectRatio: videoAspectRatio,
               },
             ],
@@ -1163,12 +1168,12 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         } else {
           postData = {
             ...formData,
-            mediaUrl: finalTemplatedUrl, // Use the templated image server URL
-            imageUrl: finalTemplatedUrl,
-            serverUrl: finalTemplatedUrl,
+            mediaUrl: templatedImageUrl, // Use templatedImageUrl state which has the uploaded URL
+            imageUrl: templatedImageUrl,
+            serverUrl: templatedImageUrl,
             campaignName: currentCampaignInfo.name,
             campaignInfo: currentCampaignInfo,
-            mediaAssets: [{ url: finalTemplatedUrl, type: "image" }],
+            mediaAssets: [{ url: templatedImageUrl, type: "image" }],
             industry: currentCampaignInfo.industry,
             tone:
               currentCampaignInfo.brand_tone || currentCampaignInfo.brandTone,
@@ -1565,6 +1570,10 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           ...(imageToProcess && { imageUrl: imageToProcess }),
           aspectRatio: String(videoAspectRatio || "16:9"),
           ...(isModifyMode && { modifyMode: true }),
+          ...(videoUseLogo && logoUrl && { logoUrl: logoUrl }),
+          ...(videoUseTheme && themeUrl && { useTheme: videoUseTheme }),
+          ...(videoUseLogo && logoUrl && { useLogo: videoUseLogo }),
+          ...(videoUseTheme && themeUrl && { themeUrl: themeUrl }),
         });
 
         const result = response.data;
@@ -1792,22 +1801,33 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       {showVideoThumbnailModal && videoThumbnailForRegeneration && (
         <ImageRegenerationModal
           imageUrl={videoThumbnailForRegeneration}
-          isLoading={false}
+          isLoading={isGeneratingThumbnail}
           allGeneration={videoThumbnailGenerations}
           setAllGeneration={setVideoThumbnailGenerations}
           setModify={setVideoModify}
           modifyMode={videoModifyMode}
           generationAmounts={generationAmounts["image"]}
+          prompt={videoThumbnailPrompt}
+          setPrompt={setVideoThumbnailPrompt}
           onClose={() => {
             setShowVideoThumbnailModal(false);
             setVideoThumbnailForRegeneration("");
             setVideoThumbnailGenerations([]);
             setVideoModify(false);
+            setVideoUseLogo(false);
+            setVideoUseTheme(false);
+            setVideoThumbnailPrompt("");
           }}
           onRegenerate={handleVideoThumbnailRegenerate}
           confirmImage={confirmVideoThumbnail}
           onFileSave={() => {}}
           selectedFile={null}
+          useLogo={videoUseLogo}
+          setUseLogo={setVideoUseLogo}
+          useTheme={videoUseTheme}
+          setUseTheme={setVideoUseTheme}
+          logoUrl={logoUrl}
+          themeUrl={themeUrl}
         />
       )}
       {!showTemplateEditor && (
