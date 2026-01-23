@@ -815,7 +815,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
 
                         {isConnected &&
                           publishedPlatforms.includes(post.platform) && (
-                            <div className="flex items-center gap-1 text-xs px-2 md:text-sm md:gap-2  py-1 rounded-md bg-purple-200 bg-green-100 text-purple-600  font-medium">
+                            <div className="flex items-center gap-1 text-xs px-2 md:text-sm md:gap-2  py-1 rounded-md bg-purple-200  text-purple-600  font-medium">
                               <svg
                                 className="w-4 h-4"
                                 fill="currentColor"
@@ -827,7 +827,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
                                   clipRule="evenodd"
                                 />
                               </svg>
-                              <span>PUBLISHED</span>
+                              <span>{t("published")}</span>
                             </div>
                           )}
 
