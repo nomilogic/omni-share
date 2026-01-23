@@ -240,12 +240,14 @@ function generateFallbackContent(
 }
 const getHashtags = (user: any) => {
   const brandTag = user?.profile?.brandName
-    ? `#${user?.profile?.brandName?.replace(/\s+/g, "").toLowerCase()}`
+    ? `#${user?.profile?.brandName.replace(/\s+/g, "").toLowerCase()}`
     : null;
 
-  const categoryTag = user.profile.contentCategories
-    ? `#${user?.profile?.contentCategories?.replace(/\s+/g, "").toLowerCase()}`
-    : null;
+  const categoryTag = Array.isArray(user?.profile?.contentCategories)
+    ? user?.profile?.contentCategories?.map(
+        (cat: string) => `#${cat.replace(/\s+/g, "").toLowerCase()}`
+      )
+    : [];
 
   const generalTags = [
     "#business",
@@ -271,13 +273,16 @@ const getHashtags = (user: any) => {
   ];
 
   const shuffledGeneral = generalTags
-    ?.sort(() => 0.5 - Math.random())
-    ?.slice(0, Math.floor(Math.random() * 3) + 1);
+    .sort(() => 0.5 - Math.random())
+    .slice(0, Math.floor(Math.random() * 3) + 1);
 
-  const hashtags = [brandTag, categoryTag, ...shuffledGeneral]?.filter(Boolean);
+  const hashtags = [brandTag, ...categoryTag, ...shuffledGeneral].filter(
+    Boolean
+  );
 
   return hashtags.slice(0, 5);
 };
+
 export async function generateSinglePlatformPost(
   platform: any,
   user: any,
