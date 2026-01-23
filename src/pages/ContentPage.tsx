@@ -46,6 +46,14 @@ export const ContentPage: React.FC = () => {
         processedPost.mediaUrl = state.contentData.mediaUrl;
       }
 
+      // Ensure thumbnailUrl is used for video content from template editor
+      if (
+        state.contentData?.isVideoContent &&
+        state.contentData?.thumbnailUrl
+      ) {
+        processedPost.thumbnailUrl = state.contentData.thumbnailUrl;
+      }
+
       return processedPost;
     });
 
