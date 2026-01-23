@@ -85,7 +85,7 @@ export const OAuthCallback: React.FC = () => {
           }, 100);
         } else {
           setTimeout(() => {
-            navigate("/settings");
+            navigate("/accounts");
           }, 2000);
         }
       } catch (error) {
@@ -111,7 +111,7 @@ export const OAuthCallback: React.FC = () => {
           }, 100);
         } else {
           setTimeout(() => {
-            navigate("/settings");
+            navigate("/accounts");
           }, 2000);
         }
       } finally {
