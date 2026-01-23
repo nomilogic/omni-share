@@ -64,6 +64,26 @@ export const PostPreview = ({
   const [regenerationPrompt, setRegenerationPrompt] = useState<string>("");
   const [isRegenerating, setIsRegenerating] = useState<boolean>(false);
   const scrollAnchorRef = useRef(null);
+  const wasRegenerating = useRef(false);
+  const isMobile = () =>
+    typeof window !== "undefined" &&
+    window.matchMedia("(max-width: 1024px)").matches;
+
+    useEffect(() => {
+    // detect transition: regenerating -> completed
+    if (wasRegenerating.current && !isRegenerating) {
+      // Optional: only scroll on success
+      // if (!regenerationSucceeded) return;
+
+      if (isMobile()) {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    }
+
+    wasRegenerating.current = isRegenerating;
+  }, [isRegenerating /*, regenerationSucceeded */]);
+
+  
 
   const [pendingDiscardAction, setPendingDiscardAction] = useState<
     (() => void) | null

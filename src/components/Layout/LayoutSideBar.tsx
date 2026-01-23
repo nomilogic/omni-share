@@ -411,7 +411,7 @@ const Sidebar = ({
                     {" "}
                   </div>
                   <div
-                    className="  left-0 right-0 ml-3 mr-3 md:mr-10   md:right-6  absolute bg-gray-50 z-50 md:left-auto top-5  mt-6 rounded-md shadow-md md:px-6 px-4 py-6 border md:w-[370px]"
+                    className=" z-100  left-0 right-0 ml-3 mr-3 md:mr-10   md:right-6  absolute bg-gray-50 md:left-auto top-5  mt-6 rounded-md shadow-md md:px-6 px-4 py-6 border md:w-[370px]"
                     onClick={(e) => e.stopPropagation()}
                   >
                     {user?.wallet?.package ? (

@@ -1411,7 +1411,7 @@ function HomePage() {
 
       <section
         id="Contact"
-        className="scroll-mt-20 py-8 md:pb-0 md:px-5 lg:px-0 md:py-14 bg-white"
+        className="scroll-mt-20 py-8  md:px-5 lg:px-0 md:pt-14 md:pb-8 bg-white"
       >
         <div className="max-w-4xl mx-4 md:mx-auto ">
           <motion.div
