@@ -100,7 +100,7 @@ export const ImageTemplateEditor = ({
   const [isResizing, setIsResizing] = useState(false);
   const [backgroundImageLoading, setBackgroundImageLoading] = useState(false);
   const [logoImageLoadingIds, setLogoImageLoadingIds] = useState<Set<string>>(
-    new Set()
+    new Set(),
   );
   const [resizeHandle, setResizeHandle] = useState<string | null>(null); // 'nw', 'ne', 'sw', 'se', 'n', 's', 'e', 'w'
   const [resizeStart, setResizeStart] = useState<{
@@ -120,7 +120,7 @@ export const ImageTemplateEditor = ({
   const [zoomLevel, setZoomLevel] = useState<number>(1);
   const [maxZoom, setMaxZoom] = useState<number>(1);
   const [profileBindingData, setProfileBindingData] = useState<any>(
-    externalProfileData || {}
+    externalProfileData || {},
   );
 
   // Load profile data on mount if not provided
@@ -295,7 +295,7 @@ export const ImageTemplateEditor = ({
       fallbackName?: string;
       fallbackId?: string;
       source: SavedTemplateV1["source"];
-    }
+    },
   ): SavedTemplateV1 | null => {
     try {
       const parsed = parseTemplateJson(raw?.json ?? raw);
@@ -426,7 +426,7 @@ export const ImageTemplateEditor = ({
               fallbackName: (item?.name as string) || "My Template",
               fallbackId: item?.id as string,
               source: "user",
-            })
+            }),
           )
           .filter(Boolean) as SavedTemplateV1[];
 
@@ -436,13 +436,13 @@ export const ImageTemplateEditor = ({
               fallbackName: (item?.name as string) || "Global Template",
               fallbackId: item?.id as string,
               source: "global",
-            })
+            }),
           )
           .filter(Boolean) as SavedTemplateV1[];
       } catch (error) {
         console.warn(
           "⚠️ Failed to fetch templates from server, using local only",
-          error
+          error,
         );
       }
 
@@ -474,7 +474,7 @@ export const ImageTemplateEditor = ({
       const THUMBNAIL_WIDTH = 320;
       const pixelRatio = Math.max(
         0.05,
-        THUMBNAIL_WIDTH / canvasDimensions.width
+        THUMBNAIL_WIDTH / canvasDimensions.width,
       );
 
       // Hide transformer/selection UI from thumbnail
@@ -502,7 +502,7 @@ export const ImageTemplateEditor = ({
 
     const templates = readTemplatesFromLocalStorage();
     const existing = templates.find(
-      (t) => t.name.toLowerCase() === name.toLowerCase()
+      (t) => t.name.toLowerCase() === name.toLowerCase(),
     );
 
     const payload: SavedTemplateV1 = {
@@ -531,7 +531,7 @@ export const ImageTemplateEditor = ({
     } catch (error) {
       console.warn(
         "⚠️ Failed to save template to server, saving locally",
-        error
+        error,
       );
     }
 
@@ -546,7 +546,7 @@ export const ImageTemplateEditor = ({
       setSavedTemplates((prev) => {
         // keep any remote templates already loaded
         const remote = prev.filter(
-          (t) => t.source === "user" || t.source === "global"
+          (t) => t.source === "user" || t.source === "global",
         );
         return [
           ...remote,
@@ -588,7 +588,7 @@ export const ImageTemplateEditor = ({
           updated.content = profileBindingData[el.name];
           console.log(
             `✅ Applied text binding for ${el.name}:`,
-            profileBindingData[el.name]
+            profileBindingData[el.name],
           );
         }
       }
@@ -619,7 +619,7 @@ export const ImageTemplateEditor = ({
       // Preserve background image if it exists
       setElements((prevElements) => {
         const backgroundElement = prevElements.find(
-          (el) => el.id === "background-image"
+          (el) => el.id === "background-image",
         );
         const newElements = backgroundElement
           ? [backgroundElement, ...elementsWithBindings]
@@ -702,7 +702,7 @@ export const ImageTemplateEditor = ({
         () => {
           closeConfirm();
           navigate(path);
-        }
+        },
       );
     } else {
       navigate(path);
@@ -738,7 +738,7 @@ export const ImageTemplateEditor = ({
             () => {
               closeConfirm();
               navigate(href);
-            }
+            },
           );
         }
       }
@@ -770,7 +770,7 @@ export const ImageTemplateEditor = ({
 
   // Calculate canvas dimensions based on aspect ratio
   const calculateCanvasDimensions = (
-    aspectRatioString: string
+    aspectRatioString: string,
   ): { width: number; height: number } => {
     const aspectRatioMap: { [key: string]: { width: number; height: number } } =
       {
@@ -824,7 +824,7 @@ export const ImageTemplateEditor = ({
     imgWidth: number,
     imgHeight: number,
     canvasWidth: number,
-    canvasHeight: number
+    canvasHeight: number,
   ) => {
     // If image is smaller than canvas in both dimensions, keep original size
     if (imgWidth <= canvasWidth && imgHeight <= canvasHeight) {
@@ -852,10 +852,10 @@ export const ImageTemplateEditor = ({
   const updateElementById = useCallback(
     (id: string, updates: Partial<AnyElement>) => {
       setElements((prev) =>
-        prev.map((el) => (el.id === id ? ({ ...el, ...updates } as any) : el))
+        prev.map((el) => (el.id === id ? ({ ...el, ...updates } as any) : el)),
       );
     },
-    []
+    [],
   );
 
   const getCoverCrop = useCallback(
@@ -884,7 +884,7 @@ export const ImageTemplateEditor = ({
 
       return { cropX, cropY, cropWidth, cropHeight };
     },
-    []
+    [],
   );
 
   // Snap value to grid
@@ -893,7 +893,7 @@ export const ImageTemplateEditor = ({
       if (!snapToGrid || gridSize <= 0) return value;
       return Math.floor(value / gridSize) * gridSize;
     },
-    [snapToGrid, gridSize]
+    [snapToGrid, gridSize],
   );
 
   useEffect(() => {
@@ -918,7 +918,7 @@ export const ImageTemplateEditor = ({
       const layer = stage.children?.[0];
       if (layer) {
         const node = layer.children?.find(
-          (child: any) => child.id() === selectedElement
+          (child: any) => child.id() === selectedElement,
         );
         if (node) {
           selectedNodeRef.current = node;
@@ -941,7 +941,7 @@ export const ImageTemplateEditor = ({
 
     const { zoom, maxZoom: maxZoomLevel } = calculateZoomLevel(
       targetDimensions.width,
-      targetDimensions.height
+      targetDimensions.height,
     );
     setZoomLevel(zoom);
     setMaxZoom(maxZoomLevel);
@@ -990,13 +990,13 @@ export const ImageTemplateEditor = ({
       imageDimensions.width,
       imageDimensions.height,
       canvasDimensions.width,
-      canvasDimensions.height
+      canvasDimensions.height,
     );
 
     setElements((prev) =>
       prev.map((el) =>
-        el.id === "background-image" ? { ...el, width, height } : el
-      )
+        el.id === "background-image" ? { ...el, width, height } : el,
+      ),
     );
   }, [imageDimensions, canvasDimensions]);
 
@@ -1050,7 +1050,7 @@ export const ImageTemplateEditor = ({
     context: CanvasRenderingContext2D,
     bgImage: HTMLImageElement,
     currentElements: TemplateElement[],
-    showSelection: boolean = true
+    showSelection: boolean = true,
   ) => {
     if (!context.canvas) return;
 
@@ -1092,12 +1092,12 @@ export const ImageTemplateEditor = ({
       0,
       0,
       drawWidth,
-      drawHeight // Destination rectangle (on canvas)
+      drawHeight, // Destination rectangle (on canvas)
     );
 
     // Draw elements sorted by zIndex
     const sortedElements = [...currentElements].sort(
-      (a, b) => (a.zIndex || 0) - (b.zIndex || 0)
+      (a, b) => (a.zIndex || 0) - (b.zIndex || 0),
     );
 
     sortedElements.forEach((element) => {
@@ -1108,7 +1108,7 @@ export const ImageTemplateEditor = ({
   const redrawCanvasWithoutBackground = (
     context: CanvasRenderingContext2D,
     currentElements: TemplateElement[],
-    showSelection: boolean = true
+    showSelection: boolean = true,
   ) => {
     if (!canvas) return;
 
@@ -1139,7 +1139,7 @@ export const ImageTemplateEditor = ({
   const drawElement = (
     context: CanvasRenderingContext2D,
     element: TemplateElement,
-    showSelection: boolean = true
+    showSelection: boolean = true,
   ) => {
     context.save();
 
@@ -1182,7 +1182,7 @@ export const ImageTemplateEditor = ({
         element.x - element.width / 2,
         element.y - element.height / 2,
         element.width,
-        element.height
+        element.height,
       );
       context.setLineDash([]);
 
@@ -1192,7 +1192,7 @@ export const ImageTemplateEditor = ({
 
   const drawTextElement = (
     context: CanvasRenderingContext2D,
-    element: TextElement
+    element: TextElement,
   ) => {
     if (!element.content) return;
 
@@ -1216,14 +1216,14 @@ export const ImageTemplateEditor = ({
           element.y - element.height / 2 - padding,
           element.width + padding * 2,
           element.height + padding * 2,
-          borderRadius
+          borderRadius,
         );
       } else {
         context.fillRect(
           element.x - element.width / 2 - padding,
           element.y - element.height / 2 - padding,
           element.width + padding * 2,
-          element.height + padding * 2
+          element.height + padding * 2,
         );
       }
     }
@@ -1244,7 +1244,7 @@ export const ImageTemplateEditor = ({
 
   const drawLogoElement = (
     context: CanvasRenderingContext2D,
-    element: LogoElement
+    element: LogoElement,
   ) => {
     console.log("🇺 Logo Element Debug:", {
       id: element.id,
@@ -1268,7 +1268,7 @@ export const ImageTemplateEditor = ({
         element.x - element.width / 2,
         element.y - element.height / 2,
         element.width,
-        element.height
+        element.height,
       );
 
       // Draw placeholder border
@@ -1283,7 +1283,7 @@ export const ImageTemplateEditor = ({
           element.y - element.height / 2,
           element.width,
           element.height,
-          element.borderRadius
+          element.borderRadius,
         );
         context.stroke();
       } else {
@@ -1291,7 +1291,7 @@ export const ImageTemplateEditor = ({
           element.x - element.width / 2,
           element.y - element.height / 2,
           element.width,
-          element.height
+          element.height,
         );
       }
 
@@ -1327,21 +1327,21 @@ export const ImageTemplateEditor = ({
             x + element.width,
             y,
             x + element.width,
-            y + radius
+            y + radius,
           );
           context.lineTo(x + element.width, y + element.height - radius);
           context.quadraticCurveTo(
             x + element.width,
             y + element.height,
             x + element.width - radius,
-            y + element.height
+            y + element.height,
           );
           context.lineTo(x + radius, y + element.height);
           context.quadraticCurveTo(
             x,
             y + element.height,
             x,
-            y + element.height - radius
+            y + element.height - radius,
           );
           context.lineTo(x, y + radius);
           context.quadraticCurveTo(x, y, x + radius, y);
@@ -1355,12 +1355,12 @@ export const ImageTemplateEditor = ({
           element.x - element.width / 2,
           element.y - element.height / 2,
           element.width,
-          element.height
+          element.height,
         );
       } else {
         console.log(
           "🔄 Logo image not in cache, attempting to load:",
-          element.src
+          element.src,
         );
 
         // Check if we're already trying to load this image
@@ -1376,7 +1376,7 @@ export const ImageTemplateEditor = ({
           img.onload = () => {
             console.log(
               "✅ Logo image loaded successfully, adding to cache:",
-              element.src
+              element.src,
             );
             setLogoImages((prev) => {
               const newLogoImages = { ...prev };
@@ -1385,7 +1385,7 @@ export const ImageTemplateEditor = ({
               newLogoImages[element.src!] = img;
               console.log(
                 "📊 Updated logoImages cache:",
-                Object.keys(newLogoImages)
+                Object.keys(newLogoImages),
               );
               return newLogoImages;
             });
@@ -1431,7 +1431,7 @@ export const ImageTemplateEditor = ({
           element.x - element.width / 2,
           element.y - element.height / 2,
           element.width,
-          element.height
+          element.height,
         );
 
         // Draw loading border
@@ -1442,7 +1442,7 @@ export const ImageTemplateEditor = ({
           element.x - element.width / 2,
           element.y - element.height / 2,
           element.width,
-          element.height
+          element.height,
         );
         context.setLineDash([]);
 
@@ -1460,7 +1460,7 @@ export const ImageTemplateEditor = ({
 
   const drawShapeElement = (
     context: CanvasRenderingContext2D,
-    element: ShapeElement
+    element: ShapeElement,
   ) => {
     context.fillStyle = element.color || "#000000";
     context.globalAlpha = element.opacity || 1;
@@ -1474,14 +1474,14 @@ export const ImageTemplateEditor = ({
             element.y - element.height / 2,
             element.width,
             element.height,
-            element.borderRadius
+            element.borderRadius,
           );
         } else {
           context.fillRect(
             element.x - element.width / 2,
             element.y - element.height / 2,
             element.width,
-            element.height
+            element.height,
           );
         }
         break;
@@ -1492,7 +1492,7 @@ export const ImageTemplateEditor = ({
           element.y,
           Math.min(element.width, element.height) / 2,
           0,
-          Math.PI * 2
+          Math.PI * 2,
         );
         context.fill();
         break;
@@ -1507,7 +1507,7 @@ export const ImageTemplateEditor = ({
     y: number,
     width: number,
     height: number,
-    radius: number
+    radius: number,
   ) => {
     context.beginPath();
     context.moveTo(x + radius, y);
@@ -1518,7 +1518,7 @@ export const ImageTemplateEditor = ({
       x + width,
       y + height,
       x + width - radius,
-      y + height
+      y + height,
     );
     context.lineTo(x + radius, y + height);
     context.quadraticCurveTo(x, y + height, x, y + height - radius);
@@ -1570,7 +1570,7 @@ export const ImageTemplateEditor = ({
       img.width,
       img.height,
       canvasDimensions.width,
-      canvasDimensions.height
+      canvasDimensions.height,
     );
 
     updateSelectedElement({
@@ -1631,7 +1631,9 @@ export const ImageTemplateEditor = ({
 
   // Generic function to get coordinates from mouse or touch events (accounting for zoom)
   const getEventCoordinates = (
-    e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>
+    e:
+      | React.MouseEvent<HTMLCanvasElement>
+      | React.TouchEvent<HTMLCanvasElement>,
   ) => {
     if (!canvas) return { x: 0, y: 0 };
 
@@ -1695,7 +1697,7 @@ export const ImageTemplateEditor = ({
     if (matchingElements.length > 0) {
       // Sort by zIndex and pick the highest one
       const sortedByZIndex = [...matchingElements].sort(
-        (a, b) => (b.zIndex || 0) - (a.zIndex || 0)
+        (a, b) => (b.zIndex || 0) - (a.zIndex || 0),
       );
       const clickedElement = sortedByZIndex[0];
 
@@ -1711,7 +1713,7 @@ export const ImageTemplateEditor = ({
           id: el.id,
           type: el.type,
           zIndex: el.zIndex || 0,
-        }))
+        })),
       );
 
       setSelectedElement(clickedElement.id);
@@ -1743,7 +1745,7 @@ export const ImageTemplateEditor = ({
           };
         }
         return element;
-      })
+      }),
     );
   };
 
@@ -1853,7 +1855,7 @@ export const ImageTemplateEditor = ({
             if (fieldValue) {
               updatedElement = { ...updatedElement, content: fieldValue };
               console.log(
-                `✅ Auto-populated text with profile field '${updates.name}': ${fieldValue}`
+                `✅ Auto-populated text with profile field '${updates.name}': ${fieldValue}`,
               );
             }
           }
@@ -1864,7 +1866,7 @@ export const ImageTemplateEditor = ({
             if (logoUrl) {
               updatedElement = { ...updatedElement, src: logoUrl };
               console.log(
-                `✅ Auto-populated logo element with brandLogo URL: ${logoUrl}`
+                `✅ Auto-populated logo element with brandLogo URL: ${logoUrl}`,
               );
             } else {
               console.warn("⚠️ No logo URL found in profile data");
@@ -1875,7 +1877,7 @@ export const ImageTemplateEditor = ({
           return updatedElement;
         }
         return element;
-      })
+      }),
     );
   };
 
@@ -1884,7 +1886,7 @@ export const ImageTemplateEditor = ({
     if (!selectedElement) return;
     // Sort elements by zIndex
     const sorted = [...elements].sort(
-      (a, b) => (a.zIndex || 0) - (b.zIndex || 0)
+      (a, b) => (a.zIndex || 0) - (b.zIndex || 0),
     );
     // Remove selected element
     const idx = sorted.findIndex((el) => el.id === selectedElement);
@@ -1900,7 +1902,7 @@ export const ImageTemplateEditor = ({
     if (!selectedElement) return;
     // Sort elements by zIndex
     const sorted = [...elements].sort(
-      (a, b) => (a.zIndex || 0) - (b.zIndex || 0)
+      (a, b) => (a.zIndex || 0) - (b.zIndex || 0),
     );
     // Remove selected element
     const idx = sorted.findIndex((el) => el.id === selectedElement);
@@ -2039,7 +2041,7 @@ export const ImageTemplateEditor = ({
       "🚀 Starting logo upload for element:",
       selectedElement,
       "File:",
-      file.name
+      file.name,
     );
     setLogoUploading(true);
     try {
@@ -2121,7 +2123,7 @@ export const ImageTemplateEditor = ({
   const handleLogoUploadWithId = async (
     file: File,
     elementId: string,
-    isNewElement: boolean = true
+    isNewElement: boolean = true,
   ) => {
     console.log(
       "🚀 Starting logo upload for element:",
@@ -2129,7 +2131,7 @@ export const ImageTemplateEditor = ({
       "File:",
       file.name,
       "Is new element:",
-      isNewElement
+      isNewElement,
     );
     setLogoUploading(true);
 
@@ -2149,7 +2151,7 @@ export const ImageTemplateEditor = ({
             img.width,
             img.height,
             canvasDimensions.width,
-            canvasDimensions.height
+            canvasDimensions.height,
           );
         finalWidth = scaledWidth;
         finalHeight = scaledHeight;
@@ -2157,7 +2159,7 @@ export const ImageTemplateEditor = ({
           "📐 Scaled dimensions for new element:",
           finalWidth,
           "x",
-          finalHeight
+          finalHeight,
         );
       } else {
         // For existing elements (from properties panel), retain current scale/dimensions
@@ -2169,7 +2171,7 @@ export const ImageTemplateEditor = ({
             "📐 Retained current dimensions for existing element:",
             finalWidth,
             "x",
-            finalHeight
+            finalHeight,
           );
         } else {
           // Fallback to original dimensions if element not found
@@ -2179,7 +2181,7 @@ export const ImageTemplateEditor = ({
             "📐 Fallback to original dimensions:",
             finalWidth,
             "x",
-            finalHeight
+            finalHeight,
           );
         }
       }
@@ -2199,8 +2201,8 @@ export const ImageTemplateEditor = ({
                     width: finalWidth,
                     height: finalHeight,
                   }
-                : el
-            )
+                : el,
+            ),
           );
         } else {
           // Fallback to local URL
@@ -2216,8 +2218,8 @@ export const ImageTemplateEditor = ({
                     width: finalWidth,
                     height: finalHeight,
                   }
-                : el
-            )
+                : el,
+            ),
           );
         }
       } catch (error) {
@@ -2230,8 +2232,8 @@ export const ImageTemplateEditor = ({
           prev.map((el) =>
             el.id === elementId
               ? { ...el, src: localUrl, width: finalWidth, height: finalHeight }
-              : el
-          )
+              : el,
+          ),
         );
       } finally {
         setLogoUploading(false);
@@ -2294,7 +2296,7 @@ export const ImageTemplateEditor = ({
         } catch (uploadError) {
           console.warn(
             "Failed to upload template image, using local URL:",
-            uploadError
+            uploadError,
           );
           onSave(localUrl);
         }
@@ -2330,14 +2332,14 @@ export const ImageTemplateEditor = ({
   return (
     <div className="fixed inset-0 bg-white z-50 flex flex-col-reverse md:flex-row md:w-[99vw]">
       <div
-        className={`w-full md:w-[25vw] md:min-w-[25vw] md:max-w-[25vw] ${
+        className={`w-full  md:w-[25vw] md:min-w-[25vw] md:max-w-[25vw] ${
           aspectRatio === "1:1" ? "h-[50vh]" : ""
         } ${aspectRatio === "16:9" ? "h-[60vh]" : ""} ${
           aspectRatio === "9:16" ? "h-[50vh]" : ""
         }  md:h-full bg-white border-b md:border-b-0 md:border-r border-gray-200 flex flex-col`}
       >
         <div className="flex w-full overflow-y-auto p-3 md:p-4 min-h-0">
-          <div className="space-y-3 md:space-y-4 w-full">
+          <div className="space-y-3 pb-20 overflow-y-auto h-[50vh] md:h-auto md:pb-2 md:overflow-hidden  md:space-y-4 w-full">
             {/* Clear All Elements */}
             {
               <div className="flex items-center justify-between gap-1">
@@ -2380,7 +2382,7 @@ export const ImageTemplateEditor = ({
                 <button
                   onClick={() => {
                     setElements((prevElements) =>
-                      prevElements.filter((el) => el.id === "background-image")
+                      prevElements.filter((el) => el.id === "background-image"),
                     );
                     setSelectedElement(null);
                   }}
@@ -2436,7 +2438,8 @@ export const ImageTemplateEditor = ({
                       className="h-8 bg-purple-600 text-white font-medium flex items-center gap-2 justify-center px-3 rounded-md border border-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3] whitespace-nowrap disabled:opacity-60"
                       title={
                         saveAsGlobal
-                          ? t("save_template_global") : t("save_template_personal")
+                          ? t("save_template_global")
+                          : t("save_template_personal")
                       }
                       type="button"
                       disabled={isTemplatesLoading}
@@ -2480,8 +2483,8 @@ export const ImageTemplateEditor = ({
                           !selectedTemplateId ||
                           !["local", "user"].includes(
                             savedTemplates.find(
-                              (t) => t.id === selectedTemplateId
-                            )?.source || ""
+                              (t) => t.id === selectedTemplateId,
+                            )?.source || "",
                           )
                         }
                         className="h-8 px-2 flex items-center justify-center rounded-md bg-red-100 hover:bg-red-200 disabled:opacity-50 text-xs text-red-700"
@@ -2494,7 +2497,9 @@ export const ImageTemplateEditor = ({
                   </div>
 
                   {templatesForCurrentRatio.length === 0 ? (
-                    <p className="text-xs text-gray-400">{t("no_templates_saved_for", {aspectRatio})}</p>
+                    <p className="text-xs text-gray-400">
+                      {t("no_templates_saved_for", { aspectRatio })}
+                    </p>
                   ) : (
                     <div className="space-y-2 overflow-y-auto min-h-0 flex-1">
                       <div className="grid grid-cols-2 gap-2">
@@ -2513,7 +2518,7 @@ export const ImageTemplateEditor = ({
                             }
                             // Then sort by savedAt descending
                             return (b.savedAt || "").localeCompare(
-                              a.savedAt || ""
+                              a.savedAt || "",
                             );
                           })
                           .map((tpl) => (
@@ -2532,9 +2537,9 @@ export const ImageTemplateEditor = ({
                               title={`${
                                 tpl.source === "global"
                                   ? t("template_label_global") + " - "
-                    : tpl.source === "user"
-                    ? t("template_label_my") + " - "
-                    : ""
+                                  : tpl.source === "user"
+                                    ? t("template_label_my") + " - "
+                                    : ""
                               }${tpl.name}`}
                             >
                               {tpl.thumbnailDataUrl ? (
@@ -2634,7 +2639,7 @@ export const ImageTemplateEditor = ({
 
             {/* Selected Element Properties */}
             {selectedElementData && (
-              <div className="border border-gray-200 rounded-md p-2 md:p-3 bg-gray-50">
+              <div className="border border-gray-200 rounded-md p-2 mb-36 md:p-3 bg-gray-50">
                 <button
                   type="button"
                   onClick={() => setPropertiesOpen((prev) => !prev)}
@@ -3012,7 +3017,7 @@ export const ImageTemplateEditor = ({
                               <span className="text-sm text-gray-500 font-medium text-center block">
                                 {Math.round(
                                   ((selectedElementData as LogoElement)
-                                    .opacity ?? 1) * 100
+                                    .opacity ?? 1) * 100,
                                 )}
                                 %
                               </span>
@@ -3069,7 +3074,7 @@ export const ImageTemplateEditor = ({
                             <span className="text-sm text-gray-500 font-medium text-center block">
                               {Math.round(
                                 ((selectedElementData as LogoElement).opacity ??
-                                  1) * 100
+                                  1) * 100,
                               )}
                               %
                             </span>
@@ -3151,7 +3156,7 @@ export const ImageTemplateEditor = ({
                               type="number"
                               value={Math.round(
                                 (selectedElementData as TextElement).fontSize ??
-                                  0
+                                  0,
                               )}
                               onChange={(e) =>
                                 updateSelectedElement({
@@ -3262,7 +3267,7 @@ export const ImageTemplateEditor = ({
                             <span className="text-xs text-gray-500 font-medium text-center block">
                               {Math.round(
                                 ((selectedElementData as TextElement)
-                                  .textOpacity ?? 1) * 100
+                                  .textOpacity ?? 1) * 100,
                               )}
                               %
                             </span>
@@ -3380,7 +3385,7 @@ export const ImageTemplateEditor = ({
                             <span className="text-sm text-gray-500 font-medium text-center block">
                               {Math.round(
                                 ((selectedElementData as ShapeElement)
-                                  .opacity ?? 1) * 100
+                                  .opacity ?? 1) * 100,
                               )}
                               %
                             </span>
@@ -3472,16 +3477,16 @@ export const ImageTemplateEditor = ({
           </div>
         </div>
 
-        <div className="p-3 md:p-4 ">
-          <div className="flex flex-row-reverse justify-center ">
+        <div className="fixed md:static bottom-0 left-0 right-0  bg-white p-3    ">
+          <div className="flex flex-row-reverse ">
             <button
               onClick={exportImage}
               disabled={isSaving}
-              className="bg-purple-600 text-base text-white font-semibold w-full flex items-center gap-2 justify-center px-3 py-2.5  mx-1 rounded-md border border-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3]"
+              className="bg-purple-600 text-base text-white font-semibold w-full flex items-center gap-2 justify-center px-3 py-2.5 mx-1 rounded-md border border-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3]"
             >
               {isSaving ? (
                 <>
-                  <Loader className="w-3 h-3 md:w-4 md:h-4 animate-spin " />
+                  <Loader className="w-3 h-3 md:w-4 md:h-4 animate-spin" />
                   <span className="hidden sm:inline text-sm">
                     {t("saving")}
                   </span>
@@ -3496,7 +3501,7 @@ export const ImageTemplateEditor = ({
 
             <button
               onClick={handleDiscardClick}
-              className="text-purple-600 flex  text-base font-semibold justify-center items-center gap-2 w-full px-3 py-2.5  mx-1 rounded-md border border-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3]"
+              className="text-purple-600 flex text-base font-semibold justify-center items-center gap-2 w-full px-3 py-2.5 mx-1 rounded-md border border-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3]"
             >
               {t("discard_image")}
             </button>
@@ -3544,7 +3549,7 @@ export const ImageTemplateEditor = ({
                   if (imageDimensions) {
                     const { zoom } = calculateZoomLevel(
                       imageDimensions.width,
-                      imageDimensions.height
+                      imageDimensions.height,
                     );
                     setZoomLevel(zoom * 0.82);
                   }
@@ -3805,7 +3810,7 @@ export const ImageTemplateEditor = ({
                     if (lockedElements.has(selectedElement)) return;
 
                     const base = elements.find(
-                      (e) => e.id === selectedElement
+                      (e) => e.id === selectedElement,
                     ) as any;
                     if (!base) return;
 
@@ -3847,7 +3852,7 @@ export const ImageTemplateEditor = ({
                           listening={false}
                           opacity={0.85}
                         />
-                      )
+                      ),
                     )}
                     {/* Horizontal grid lines */}
                     {Array.from(
@@ -3868,7 +3873,7 @@ export const ImageTemplateEditor = ({
                           listening={false}
                           opacity={0.85}
                         />
-                      )
+                      ),
                     )}
                   </>
                 )}

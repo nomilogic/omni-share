@@ -338,12 +338,12 @@ export default function ImageRegenerationModal({
                   </div>
 
                   {/* Use for Generation Section */}
-                  <div className="mt-2">
+                  <div className="mt-2 mb-16 md:mb-0">
                     <label className="text-sm font-medium theme-text-primary  mb-2 flex items-center">
                       {t("use_for_generation")}
                     </label>
                     <div className="p-3 theme-bg-primary shadow-md  rounded-md">
-                      <div className="space-y-2">
+                      <div className=" flex gap-3">
                         <div className="flex items-start gap-3">
                           <input
                             type="checkbox"
@@ -356,11 +356,11 @@ export default function ImageRegenerationModal({
                           <div className="flex-1">
                             <label
                               htmlFor="modalUseBrandLogo"
-                              className="text-sm font-medium text-gray-900 cursor-pointer"
+                              className=" text-xs md:text-sm font-medium text-gray-900 cursor-pointer"
                             >
                               {t("brand_logo")}
                             </label>
-                            <p className="text-xs text-gray-500 mt-0.5">
+                            <p className="hidden md:block text-xs text-gray-500 mt-0.5">
                               {logoUrl
                                 ? t("include_brand_logo_generation")
                                 : t("no_brand_logo_set_profile")}
@@ -380,11 +380,11 @@ export default function ImageRegenerationModal({
                           <div className="flex-1">
                             <label
                               htmlFor="modalUseBrandTheme"
-                              className="text-sm font-medium text-gray-900 cursor-pointer"
+                              className=" text-xs md:text-sm font-medium text-gray-900 cursor-pointer"
                             >
                               {t("brand_theme")}
                             </label>
-                            <p className="text-xs text-gray-500 mt-0.5">
+                            <p className="hidden md:block text-xs text-gray-500 mt-0.5">
                               {themeUrl
                                 ? t("use_website_theme") + ": " + themeUrl
                                 : t("no_website_url_set_profile")}
@@ -429,7 +429,7 @@ export default function ImageRegenerationModal({
         </div>
 
         {/* Mobile bottom action bar */}
-        <div className="sm:hidden sticky bottom-0 z-10 justify-between border-t border-gray-200 bg-white/90 backdrop-blur px-4 py-3">
+        <div className="sm:hidden fixed md:static bottom-0 left-0 right-0  bg-white p-3 ">
           <div className="flex gap-3">
             <button
               onClick={handleSubmit}
