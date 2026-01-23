@@ -1137,7 +1137,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           postData = {
             ...formData,
             mediaUrl: formData.mediaUrl, // Keep original video URL
-            thumbnailUrl: finalTemplatedUrl, // Use edited thumbnail
+            thumbnailUrl: videoThumbnailUrl, // Use videoThumbnailUrl state which has the uploaded URL
             videoFile: originalVideoFile,
             videoAspectRatio: videoAspectRatio,
             isVideoContent: true,
@@ -1147,7 +1147,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
               {
                 url: formData.mediaUrl,
                 type: "video",
-                thumbnailUrl: finalTemplatedUrl,
+                thumbnailUrl: videoThumbnailUrl,
                 aspectRatio: videoAspectRatio,
               },
             ],
@@ -1168,12 +1168,12 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         } else {
           postData = {
             ...formData,
-            mediaUrl: finalTemplatedUrl, // Use the templated image server URL
-            imageUrl: finalTemplatedUrl,
-            serverUrl: finalTemplatedUrl,
+            mediaUrl: templatedImageUrl, // Use templatedImageUrl state which has the uploaded URL
+            imageUrl: templatedImageUrl,
+            serverUrl: templatedImageUrl,
             campaignName: currentCampaignInfo.name,
             campaignInfo: currentCampaignInfo,
-            mediaAssets: [{ url: finalTemplatedUrl, type: "image" }],
+            mediaAssets: [{ url: templatedImageUrl, type: "image" }],
             industry: currentCampaignInfo.industry,
             tone:
               currentCampaignInfo.brand_tone || currentCampaignInfo.brandTone,
@@ -1800,7 +1800,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       )}
       {showVideoThumbnailModal && videoThumbnailForRegeneration && (
         <ImageRegenerationModal
-          imageUrl={videoThumbnailUrl || videoThumbnailForRegeneration}
+          imageUrl={videoThumbnailForRegeneration}
           isLoading={isGeneratingThumbnail}
           allGeneration={videoThumbnailGenerations}
           setAllGeneration={setVideoThumbnailGenerations}
