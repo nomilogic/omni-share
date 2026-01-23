@@ -141,6 +141,7 @@ interface APIInstance extends AxiosInstance {
   twitterPost: (data: any) => Promise<any>;
   tiktokPost: (data: any) => Promise<any>;
   youtubePost: (data: any) => Promise<any>;
+  youtubeSetThumbnail: (data: any) => Promise<any>;
   savePublishedUrls: (data: any) => Promise<any>;
   getHistory: () => Promise<any>;
   readAllHistory: () => Promise<any>;
@@ -332,6 +333,7 @@ API.linkedinPost = (data) => API.post("/client/linkedin/post", data);
 API.twitterPost = (data) => API.post("/client/twitter/post", data);
 API.tiktokPost = (data) => API.post("/client/tiktok/post", data);
 API.youtubePost = (data) => API.post("/client/youtube/post", data);
+API.youtubeSetThumbnail = (data) => API.post("/client/youtube/set-thumbnail", data);
 
 API.savePublishedUrls = (data) =>
   API.post("/client/post-history/save-published-urls", data);

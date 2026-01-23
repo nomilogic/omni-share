@@ -159,21 +159,18 @@ export async function postToYouTubeFromServer(
       videoUrl: videoUrlToUse,
     });
 
-    const videoId = response.data?.data?.videoId;
+    const videoId = response.data?.videoId;
     console.log("✅ YouTube video uploaded successfully, videoId:", videoId);
 
     // Step 2: Upload custom thumbnail if available and not already set
     if (optimizedThumbnailUrl && videoId) {
       console.log("🎨 Uploading custom thumbnail for YouTube video:", videoId);
       try {
-        const thumbnailResponse = await axios.post(
-          "/api/youtube/set-thumbnail",
-          {
-            accessToken,
-            videoId,
-            thumbnailUrl: optimizedThumbnailUrl,
-          }
-        );
+        const thumbnailResponse = await API.youtubeSetThumbnail({
+          accessToken,
+          videoId,
+          thumbnailUrl: optimizedThumbnailUrl,
+        });
 
         if (thumbnailResponse.data?.success) {
           console.log("✅ YouTube thumbnail uploaded successfully");
