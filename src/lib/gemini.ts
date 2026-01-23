@@ -419,14 +419,15 @@ export async function generateAllPosts(
             post.caption ||
             contentData.prompt ||
             "Check out our latest updates!";
-          let hashtags: string[] = [];
 
-          const hashtagMatches = caption.match(/#\w+/g);
-          if (hashtagMatches) {
-            hashtags = [...new Set(hashtagMatches)].slice(0, 5);
-            caption = caption.replace(/#\w+(\s+#\w+)*/g, "").trim();
-          }
-          if (hashtags.length === 0) {
+          let hashtags: string[] = post?.hashtags || [];
+
+          // const hashtagMatches = caption.match(/#\w+/g);
+          // if (hashtagMatches) {
+          //   hashtags = [...new Set(hashtagMatches)].slice(0, 5);
+          //   caption = caption.replace(/#\w+(\s+#\w+)*/g, "").trim();
+          // }
+          if (hashtags?.length === 0) {
             hashtags = getHashtags(user) as string[];
           }
 
