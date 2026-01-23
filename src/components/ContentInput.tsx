@@ -91,7 +91,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
   const [formData, setFormData] = useState<any>({
     prompt: initialData?.prompt || "",
-    tags: initialData?.tags || [],
+    tags: [],
     selectedPlatforms: initialData?.selectedPlatforms ||
       selectedPlatforms || ["linkedin"],
     media: initialData?.media || undefined,
@@ -146,7 +146,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     formData.prompt.trim() || formData.media || formData.mediaUrl;
   const isProcessing =
     isGeneratingBoth || isGeneratingThumbnail || isGeneratingImage;
-  
+
   // Check if there's unsaved content (moved before useNavigationGuard)
   const checkUnsavedContent = () => {
     return (
@@ -157,7 +157,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       showPreview
     );
   };
-  
+
   useNavigationGuard({
     isActive: isProcessing || checkUnsavedContent(),
   });
@@ -736,7 +736,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
               setShowTemplateEditor(true);
 
               const currentCampaignInfo = campaignInfo || {
-                name: "Default Campaign",
+                name: "",
                 industry: t("general"),
                 brand_tone: "professional",
                 target_audience: t("general"),
@@ -750,7 +750,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                 originalVideoFile: originalVideoFile,
                 videoAspectRatio: videoAspectRatio,
                 isVideoContent: true,
-                campaignInfo: currentCampaignInfo,
+                currentCampaignInfo: currentCampaignInfo,
                 selectedPlatforms: formData.selectedPlatforms,
                 imageAnalysis: `Custom thumbnail uploaded for video`,
                 formData,
@@ -766,7 +766,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       const currentFormData: any = formData;
 
       const currentCampaignInfo = campaignInfo || {
-        name: "Default Campaign",
+        name: "",
         industry: t("general"),
         brand_tone: "professional",
         target_audience: t("general"),
@@ -1118,7 +1118,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     } else {
       if (formData?.prompt && formData?.prompt?.trim()) {
         const currentCampaignInfo = campaignInfo || {
-          name: "Default Campaign",
+          name: "",
           industry: t("general"),
           brand_tone: "professional",
           target_audience: t("general"),
@@ -1363,7 +1363,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         setShowTemplateEditor(true);
 
         const currentCampaignInfo = campaignInfo || {
-          name: "Default Campaign",
+          name: "",
           industry: t("general"),
           brand_tone: "professional",
           target_audience: t("general"),
@@ -1478,7 +1478,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       setGeneratedImage(null);
 
       const currentCampaignInfo = campaignInfo || {
-        name: "Default Campaign",
+        name: "",
         industry: t("general"),
         brand_tone: "professional",
         target_audience: t("general"),
@@ -1615,7 +1615,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
           // Store post generation data for template editor
           const currentCampaignInfo = campaignInfo || {
-            name: "Default Campaign",
+            name: "",
             industry: t("general"),
             brand_tone: "professional",
             target_audience: t("general"),

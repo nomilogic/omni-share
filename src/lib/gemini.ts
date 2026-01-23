@@ -2,7 +2,6 @@ import { Platform, CampaignInfo, PostContent, GeneratedPost } from "../types";
 import API from "../services/api";
 import { useAppContext } from "@/context/AppContext";
 
-
 // Only initialize if we have a valid API key
 
 export interface PlatformConfig {
@@ -239,16 +238,15 @@ function generateFallbackContent(
     engagement: "medium" as const,
   };
 }
-const getHashtags = (user) => {
-  const brandTag = user.profile.brandName
-    ? `#${user.profile.brandName.replace(/\s+/g, "").toLowerCase()}`
+const getHashtags = (user: any) => {
+  const brandTag = user?.profile?.brandName
+    ? `#${user?.profile?.brandName?.replace(/\s+/g, "").toLowerCase()}`
     : null;
 
   const categoryTag = user.profile.contentCategories
-    ? `#${user.profile.contentCategories.replace(/\s+/g, "").toLowerCase()}`
+    ? `#${user?.profile?.contentCategories?.replace(/\s+/g, "").toLowerCase()}`
     : null;
 
-  // 20 general-purpose hashtags (works for almost any post)
   const generalTags = [
     "#business",
     "#marketing",
@@ -269,35 +267,23 @@ const getHashtags = (user) => {
     "#personalbrand",
     "#leadership",
     "#tech",
-    "#trending"
+    "#trending",
   ];
 
-  // Pick 1–3 general hashtags randomly
   const shuffledGeneral = generalTags
-    .sort(() => 0.5 - Math.random())
-    .slice(0, Math.floor(Math.random() * 3) + 1);
+    ?.sort(() => 0.5 - Math.random())
+    ?.slice(0, Math.floor(Math.random() * 3) + 1);
 
-  const hashtags = [
-    brandTag,
-    categoryTag,
-    ...shuffledGeneral
-  ].filter(Boolean);
+  const hashtags = [brandTag, categoryTag, ...shuffledGeneral]?.filter(Boolean);
 
-  // Ensure 2–5 hashtags total
   return hashtags.slice(0, 5);
 };
 export async function generateSinglePlatformPost(
   platform: any,
+  user: any,
   campaignInfo: any,
   contentData: any
 ): Promise<GeneratedPost> {
-  console.log(`🚀 generateSinglePlatformPost called for platform: ${platform}`);
-  console.log("📄 Content data:", {
-    prompt: contentData.prompt?.substring(0, 100) + "...",
-    platform: platform,
-    tags: contentData.tags,
-  });
-
   try {
     const payload: any = {
       campaign: {
@@ -315,11 +301,10 @@ export async function generateSinglePlatformPost(
           contentData.targetAudience || campaignInfo.targetAudience,
         tags: contentData.tags || [],
       },
-      platforms: [platform], // Send one platform per request
+      platforms: [platform],
     };
 
     const response = await API.generateAI(payload);
-    console.log("response", response.data);
 
     const data = response.data.data;
 
@@ -341,12 +326,10 @@ export async function generateSinglePlatformPost(
         // Clean hashtags from caption
         caption = caption.replace(/#\w+(\s+#\w+)*/g, "").trim();
       }
-    
+
       // Add default hashtags if none found
       if (hashtags.length === 0) {
-         const {  user }: any =
-    useAppContext();
-        hashtags =getHashtags(user) as string[];
+        hashtags = getHashtags(user) as string[];
       }
 
       // Use server URL if available, fallback to mediaUrl
@@ -372,38 +355,12 @@ export async function generateSinglePlatformPost(
       throw new Error("No content generated");
     }
   } catch (error) {
-    console.error(`Error generating for ${platform}:`, error);
-
-    // Use server URL if available, fallback to mediaUrl
-    const serverMediaUrl =
-      (contentData as any).serverUrl || contentData.mediaUrl;
-
-    // Return fallback post for this platform
-    return {
-      platform,
-      caption: contentData.prompt || "Check out our latest updates!",
-      hashtags: [
-        `#${
-          campaignInfo.name?.replace(/\s+/g, "")?.toLowerCase() || "business"
-        }`,
-        "#update",
-      ],
-      emojis: "✨ 🚀 💫",
-      characterCount:
-        (contentData.prompt || "Check out our latest updates!").length + 20, // rough estimate
-      engagement: "medium" as const,
-      imageUrl: serverMediaUrl || null,
-      mediaUrl: serverMediaUrl || null,
-      thumbnailUrl: (contentData as any).thumbnailUrl || null,
-      generationPrompt: contentData.prompt,
-      tiktokVideoDurationSec: (contentData as any).tiktokVideoDurationSec,
-      success: false,
-      error: error instanceof Error ? error.message : "Generation failed",
-    } as any;
+    console.error(`generation error:`, error);
   }
 }
 
 export async function generateAllPosts(
+  user: any,
   campaignInfo: any,
   contentData: any,
   onProgress?: (platform: Platform, progress: number) => void
@@ -417,7 +374,6 @@ export async function generateAllPosts(
       const platform = platforms[i] as Platform;
       const progress = ((i + 1) / platforms.length) * 100;
 
-      // Update progress
       if (onProgress) {
         onProgress(platform, progress);
       }
@@ -452,8 +408,7 @@ export async function generateAllPosts(
 
         if (data.posts.length > 0) {
           const post = data.posts[0];
-          console.log("post sdklasdkljasdkl", post);
-          // Parse the generated content to extract caption and hashtags
+
           let caption =
             post.content ||
             post.caption ||
@@ -461,22 +416,15 @@ export async function generateAllPosts(
             "Check out our latest updates!";
           let hashtags: string[] = [];
 
-          // Extract hashtags from content
           const hashtagMatches = caption.match(/#\w+/g);
           if (hashtagMatches) {
-            hashtags = [...new Set(hashtagMatches)].slice(0, 5); // Remove duplicates
-            // Clean hashtags from caption
+            hashtags = [...new Set(hashtagMatches)].slice(0, 5);
             caption = caption.replace(/#\w+(\s+#\w+)*/g, "").trim();
           }
+          if (hashtags.length === 0) {
+            hashtags = getHashtags(user) as string[];
+          }
 
-          // Add default hashtags if none found
-           if (hashtags.length === 0) {
-         const {  user }: any =
-    useAppContext();
-        hashtags =getHashtags(user) as string[];
-      }
-
-          // Use server URL if available, fallback to mediaUrl
           const serverMediaUrl =
             (contentData as any).serverUrl || contentData.mediaUrl;
 
@@ -496,104 +444,19 @@ export async function generateAllPosts(
         } else {
           throw new Error("No content generated");
         }
-      } catch (platformError) {
-        console.error(`Error generating for ${platform}:`, platformError);
-
-        // Use server URL if available, fallback to mediaUrl
-        const serverMediaUrl =
-          (contentData as any).serverUrl || contentData.mediaUrl;
-
-        // Add fallback post for this platform
-        posts.push({
-          platform,
-          caption: contentData.prompt || "Check out our latest updates!",
-          hashtags: [
-            `#${
-              campaignInfo.name?.replace(/\s+/g, "")?.toLowerCase() || "business"
-            }`,
-            "#update",
-          ],
-          emojis: "✨ 🚀 💫",
-          characterCount:
-            (contentData.prompt || "Check out our latest updates!").length + 20, // rough estimate
-          engagement: "medium" as const,
-          imageUrl: serverMediaUrl || null,
-          mediaUrl: serverMediaUrl || null,
-          thumbnailUrl: (contentData as any).thumbnailUrl || null,
-          generationPrompt: contentData.prompt,
-          tiktokVideoDurationSec: (contentData as any).tiktokVideoDurationSec,
-          error:
-            platformError instanceof Error
-              ? platformError.message
-              : "Generation failed",
-        } as any);
+      } catch (error) {
+        console.error(`generating`, error);
       }
 
-      // Small delay between platforms for better UX and to avoid rate limiting
-      if (i < platforms.length - 1) {
-        await new Promise((resolve) => setTimeout(resolve, 500));
+      if (i < platforms?.length - 1) {
+        await new Promise((resolve) => setTimeout(resolve, 1200));
       }
     }
 
-    console.log(
-      "Generated posts with mediaUrl debugging:",
-      posts.map((post) => ({
-        platform: post.platform,
-        caption: post.caption?.substring(0, 50) + "...",
-        imageUrl: post.imageUrl,
-        mediaUrl: post.mediaUrl,
-        hasImage: !!(post.imageUrl || post.mediaUrl),
-      }))
-    );
     return posts;
   } catch (error: any) {
-    console.error("Error in generateAllPosts:", error);
-
-    // Use server URL if available, fallback to mediaUrl
-    const serverMediaUrl =
-      (contentData as any).serverUrl || contentData.mediaUrl;
-
-    // Return fallback posts for all platforms
-    return platforms.map(
-      (platform: Platform) =>
-        ({
-          platform,
-          caption: contentData.prompt || "Check out our latest updates!",
-          hashtags: [
-            `#${
-              campaignInfo.name?.replace(/\s+/g, "")?.toLowerCase() ||
-              "business"
-            }`,
-          ],
-          emojis: "✨ 🚀 💫",
-          characterCount:
-            (contentData.prompt || "Check out our latest updates!").length + 20,
-          engagement: "medium" as const,
-          imageUrl: serverMediaUrl || null,
-          mediaUrl: serverMediaUrl || null,
-          thumbnailUrl: (contentData as any).thumbnailUrl || null,
-          generationPrompt: contentData.prompt,
-          success: false,
-          error: error.message || "AI generation failed",
-        } as any)
-    );
+    console.error("generation error:", error);
   }
-}
-
-function getDefaultHashtags(platform: Platform, industry: string): string[] {
-  const baseHashtags = ["#business", "#innovation"];
-  const industryHashtags = {
-    Technology: ["#tech", "#innovation", "#digital"],
-    Marketing: ["#marketing", "#branding", "#socialmedia"],
-    Finance: ["#finance", "#business", "#investment"],
-    Healthcare: ["#healthcare", "#wellness", "#medical"],
-    Education: ["#education", "#learning", "#knowledge"],
-  };
-
-  const specific = industryHashtags[
-    industry as keyof typeof industryHashtags
-  ] || ["#updates"];
-  return [...baseHashtags, ...specific].slice(0, 5);
 }
 
 export async function analyzeImageWithGemini(imageFile: File): Promise<string> {
@@ -604,7 +467,7 @@ export async function analyzeImageWithGemini(imageFile: File): Promise<string> {
 
   //const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
   //const model = genAI.getGenerativeModeimport { User } from './../context/AppContext';
-l({ model: "gemini-2.5-flash" });
+  l({ model: "gemini-2.5-flash" });
 
   try {
     // Convert file to base64

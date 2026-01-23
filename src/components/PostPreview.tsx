@@ -1,4 +1,10 @@
-import React, { useRef, useState, useCallback, useMemo, useEffect } from "react";
+import React, {
+  useRef,
+  useState,
+  useCallback,
+  useMemo,
+  useEffect,
+} from "react";
 import {
   Copy,
   Download,
@@ -69,7 +75,7 @@ export const PostPreview = ({
     typeof window !== "undefined" &&
     window.matchMedia("(max-width: 1024px)").matches;
 
-    useEffect(() => {
+  useEffect(() => {
     // detect transition: regenerating -> completed
     if (wasRegenerating.current && !isRegenerating) {
       // Optional: only scroll on success
@@ -82,8 +88,6 @@ export const PostPreview = ({
 
     wasRegenerating.current = isRegenerating;
   }, [isRegenerating /*, regenerationSucceeded */]);
-
-  
 
   const [pendingDiscardAction, setPendingDiscardAction] = useState<
     (() => void) | null
@@ -104,7 +108,8 @@ export const PostPreview = ({
   useNavigationGuard({
     isActive: hasActiveOperation(),
     title: t("confirm_navigation") || "Confirm Navigation",
-    message: t("unsaved_changes_warning") ||
+    message:
+      t("unsaved_changes_warning") ||
       "You have unsaved changes. Are you sure you want to leave?",
   });
 
@@ -260,22 +265,24 @@ export const PostPreview = ({
   }, [generatedPosts]);
 
   const handleRegenerateClick = useCallback(() => {
-  setIsRegeneratingMode(true);
+    setIsRegeneratingMode(true);
 
-  const currentPost = posts.find((post) => post.platform === selectedPlatform);
-  const platformPrompt = currentPost?.generationPrompt || "";
-  setRegenerationPrompt(platformPrompt);
+    const currentPost = posts.find(
+      (post) => post.platform === selectedPlatform
+    );
+    const platformPrompt = currentPost?.generationPrompt || "";
+    setRegenerationPrompt(platformPrompt);
 
-  // ✅ Mobile only: auto scroll down
-  if (window.innerWidth <= 768) {
-  setTimeout(() => {
-    window.scrollTo({
-      top: document.documentElement.scrollHeight,
-      behavior: "smooth",
-    });
-  }, 200);
-}
-}, [posts, selectedPlatform]);
+    // ✅ Mobile only: auto scroll down
+    if (window.innerWidth <= 768) {
+      setTimeout(() => {
+        window.scrollTo({
+          top: document.documentElement.scrollHeight,
+          behavior: "smooth",
+        });
+      }, 200);
+    }
+  }, [posts, selectedPlatform]);
 
   // Handle regeneration submission
   const handleRegenerateSubmit = useCallback(async () => {
@@ -487,20 +494,9 @@ export const PostPreview = ({
   );
 
   const renderPlatformPreview = (post: GeneratedPost) => {
-    console.log(
-      "DEBUG: Pre-fallback - imageUrl:",
-      post.imageUrl,
-      "mediaUrl:",
-      post.mediaUrl
-    );
-    // Ensure we have media URL - use mediaUrl first, then fallback to imageUrl
+    console.log("post", post);
     const mediaUrl = post.mediaUrl || post.imageUrl;
-    console.log(
-      "DEBUG: Final mediaUrl:",
-      mediaUrl,
-      "isVideo:",
-      isVideoUrl(mediaUrl || "")
-    );
+
     switch (post.platform) {
       case "facebook":
         return (
@@ -525,7 +521,6 @@ export const PostPreview = ({
                   <h3 className="font-medium text-slate-900">
                     {getPlatformDisplayName("facebook")}
                   </h3>
-                  {/* <p className="text-xs text-gray-500 font-medium">Just now · 🌍</p> */}
                 </div>
               </div>
             </div>
@@ -1120,7 +1115,7 @@ export const PostPreview = ({
   };
 
   const selectedPost = posts.find((post) => post.platform === selectedPlatform);
-  console.log("cost", cost);
+  console.log("selectedPost", selectedPost);
   return (
     <div className="preview w-full mx-auto bg-transparent  md:rounded-md p-4 md:shadow-md md:px-8  md:py-6 md:my-5 bg-white ">
       <h2 className="text-3xl font-semibold theme-text-primary mb-1">
@@ -1343,24 +1338,33 @@ export const PostPreview = ({
                     return (
                       <div className="mt-4 pt-4 border-t border-gray-200">
                         <span className="text-gray-500 font-medium block mb-2">
-                          {isShorts ? t("shorts") : t("video")} {t("requirements_for")}{" "}
+                          {isShorts ? t("shorts") : t("video")}{" "}
+                          {t("requirements_for")}{" "}
                           {getPlatformDisplayName(selectedPost.platform)}
                         </span>
                         <div className="space-y-2 text-xs text-gray-700">
                           <div className="flex justify-between">
-                            <span className="font-medium">{t("aspect_ratio")}:</span>
+                            <span className="font-medium">
+                              {t("aspect_ratio")}:
+                            </span>
                             <span>{videoLimits.aspectRatio}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="font-medium">{t("resolution")}:</span>
+                            <span className="font-medium">
+                              {t("resolution")}:
+                            </span>
                             <span>{videoLimits.resolution}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="font-medium">{t("max_duration")}:</span>
+                            <span className="font-medium">
+                              {t("max_duration")}:
+                            </span>
                             <span>{videoLimits.maxDuration}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="font-medium">{t("max_file_size")}:</span>
+                            <span className="font-medium">
+                              {t("max_file_size")}:
+                            </span>
                             <span>{videoLimits.maxFileSize}</span>
                           </div>
                           {videoLimits.notes && (

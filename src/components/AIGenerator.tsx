@@ -9,6 +9,7 @@ import {
 } from "../utils/platformIcons";
 import { useTranslation } from "react-i18next";
 import { useNavigationGuard } from "../hooks/useNavigationGuard";
+import { useAppContext } from "@/context/AppContext";
 
 interface AIGeneratorProps {
   contentData: any;
@@ -24,12 +25,12 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
   const [currentPlatform, setCurrentPlatform] = useState<Platform | null>(null);
   const [progress, setProgress] = useState(0);
   const { t, i18n } = useTranslation();
-
-  // Guard navigation when posts are being generated
+  const { user }: any = useAppContext();
   useNavigationGuard({
     isActive: isGenerating,
     title: t("confirm_navigation") || "Confirm Navigation",
-    message: t("publishing_in_progress") ||
+    message:
+      t("publishing_in_progress") ||
       "Post generation in progress. Are you sure you want to leave?",
   });
 
@@ -98,6 +99,7 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
       };
 
       const posts = await generateAllPosts(
+        user,
         campaignInfo,
         {
           ...contentData,

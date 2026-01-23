@@ -11,7 +11,7 @@ import { generateSinglePlatformPost } from "../lib/gemini";
 import { Platform, CampaignInfo } from "../types";
 
 export const ContentPage: React.FC = () => {
-  const { state, dispatch } = useAppContext();
+  const { state, dispatch, user } = useAppContext();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [showPublishModal, setShowPublishModal] = useState(false);
@@ -23,6 +23,7 @@ export const ContentPage: React.FC = () => {
   };
 
   const handleGenerationComplete = async (posts: any[]) => {
+    console.log("posts1231231", posts);
     const processedPosts = posts.map((post) => {
       const processedPost = { ...post };
 
@@ -127,6 +128,7 @@ export const ContentPage: React.FC = () => {
 
       const regeneratedPost = await generateSinglePlatformPost(
         platform,
+        user,
         campaignInfo as CampaignInfo,
         contentDataForRegeneration
       );
@@ -151,7 +153,7 @@ export const ContentPage: React.FC = () => {
 
     navigate("/content");
   };
-
+  console.log("state.contentData", state.contentData);
   return (
     <div className="w-full mx-auto">
       <Routes>
