@@ -455,7 +455,7 @@ export async function generateAllPosts(
       }
 
       if (i < platforms?.length - 1) {
-        await new Promise((resolve) => setTimeout(resolve, 1200));
+        await new Promise((resolve) => setTimeout(resolve, 500));
       }
     }
 
