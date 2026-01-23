@@ -368,7 +368,7 @@ const Sidebar = ({
         </div>
       </div>
 
-      <div className="fixed top-0 z-10 w-full overflow-hidden border-b border-white/20 md:px-4 py-4  px-3 bg-white h-[60px]">
+      <div className="fixed top-0 z-10 w-full  border-b border-white/20 md:px-4 py-4  px-3 bg-white h-[60px]">
         <div className=" flex items-center justify-between mt-0 ">
           <div className="flex gap-3 items-center">
             <button

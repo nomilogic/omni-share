@@ -93,23 +93,10 @@ export async function postToFacebookFromServer(
   pageId?: string
 ) {
   try {
-    console.log("Posting to Facebook with:", {
-      pageId,
-      hasImage: !!post.imageUrl,
-      caption: post.caption?.substring(0, 50) + "...",
-    });
-
     const response = await API.facebookPost({ accessToken, post, pageId });
-
-    console.log("📱 Facebook API response:", {
-      status: response.status,
-      data: response.data,
-      dataType: typeof response.data,
-    });
 
     return response.data;
   } catch (error: any) {
-    console.error("Facebook posting error:", error.response?.data);
     throw new Error(error.response?.data?.error || error.message);
   }
 }
@@ -685,10 +672,6 @@ export async function postToAllPlatforms(
           );
         }
       } catch (error) {
-        console.error(
-          `OAuth token retrieval failed for ${post.platform}:`,
-          error
-        );
         throw error;
       }
       if (realPostResult?.success) {
@@ -803,6 +786,7 @@ async function postWithRealOAuth(
           success: true,
           message: `Successfully posted to Facebook`,
           postId: fbPostId || "Unknown",
+          postUrl: fbResult?.data.postUrl,
         };
 
       case "youtube":
@@ -859,6 +843,7 @@ async function postWithRealOAuth(
             message: `Successfully posted to TikTok`,
             postId: result?.data?.data?.data?.publish_id,
             username: result?.data?.data?.username,
+            postUrl: result?.data?.data?.postUrl,
           };
         } catch (error: any) {
           throw new Error(`TikTok upload failed: ${error.message}`);
@@ -1105,7 +1090,9 @@ async function savePublishedPostToHistory(
           }
           break;
         case "facebook":
-          if (publishResult.postId?.includes("_")) {
+          if (publishResult?.postUrl) {
+            platformUrl = publishResult?.postUrl;
+          } else if (publishResult.postId?.includes("_")) {
             const [pageId, postIdOnly] = publishResult.postId.split("_");
             platformUrl = `https://www.facebook.com/${pageId}/posts/${postIdOnly}`;
           } else {
@@ -1123,7 +1110,11 @@ async function savePublishedPostToHistory(
           platformUrl = `https://twitter.com/user/status/${publishResult.postId}`;
           break;
         case "tiktok":
-          platformUrl = `https://www.tiktok.com/@${publishResult?.username}/video/${publishResult?.postId}`;
+          if (publishResult?.postUrl) {
+            platformUrl = publishResult.postUrl;
+          } else {
+            platformUrl = `https://www.tiktok.com/@${publishResult?.username}/video/${publishResult?.postId}`;
+          }
           break;
 
         default:
