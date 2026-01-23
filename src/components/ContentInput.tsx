@@ -1613,7 +1613,33 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
   const confirmVideoThumbnail = async () => {
     try {
-      setVideoThumbnailUrl(videoThumbnailForRegeneration);
+      let finalThumbnailUrl = videoThumbnailForRegeneration;
+      
+      // If the thumbnail is a blob URL, upload it to the server before using it
+      if (finalThumbnailUrl && finalThumbnailUrl.startsWith("blob:")) {
+        try {
+          const user = await getCurrentUser();
+          if (user?.user?.id) {
+            const response = await fetch(finalThumbnailUrl);
+            const blob = await response.blob();
+            const ext = blob.type && blob.type.includes("png") ? "png" : "jpg";
+            const file = new File(
+              [blob],
+              `thumbnail-${Date.now()}.${ext}`,
+              { type: blob.type || "image/png" }
+            );
+            const uploadedUrl = await uploadMedia(file, user.user.id);
+            if (uploadedUrl) {
+              finalThumbnailUrl = uploadedUrl;
+            }
+          }
+        } catch (uploadErr) {
+          console.warn("Failed to upload blob thumbnail, using blob URL:", uploadErr);
+          // Continue with blob URL as fallback
+        }
+      }
+
+      setVideoThumbnailUrl(finalThumbnailUrl);
 
       setShowVideoThumbnailModal(false);
       const blankTemplate = getTemplateById("blank-template");
@@ -1633,7 +1659,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
           const postGenerationData = {
             prompt: formData.prompt,
-            originalImageUrl: videoThumbnailForRegeneration, // Use confirmed video thumbnail
+            originalImageUrl: finalThumbnailUrl, // Use the uploaded URL, not the blob URL
             originalVideoUrl: formData.mediaUrl,
             originalVideoFile: originalVideoFile,
             videoAspectRatio: videoAspectRatio,
