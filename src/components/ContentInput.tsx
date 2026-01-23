@@ -1867,7 +1867,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         />
                       </div>
                       <div>
-                        <h3 className={`font-semibold leading-[1.2rem] mt-1  `}>
+                        <h3 className={` font-semibold text-xs md:text-base  md:leading-[1.2rem] mt-1  `}>
                           {t("create")}
                           <br />
                           {t("text_post")}
@@ -1906,7 +1906,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                       </div>
                       <div>
                         <h3
-                          className={`font-semibold text-md leading-[1.2rem] mt-1 text p-0 `}
+                          className={`font-semibold text-xs md:text-base  md:leading-[1.2rem] mt-1 text p-0 `}
                         >
                           {t("create")}
                           <br />
@@ -1969,7 +1969,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             </div>
                             <div>
                               <h3
-                                className={`font-semibold text-sm leading-[1.2rem] mt-1 text
+                                className={`font-semibold text-xs md:text-base  md:leading-[1.2rem] mt-1 text
                         
                        `}
                               >
@@ -2026,7 +2026,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             </div>
                             <div>
                               <h3
-                                className={`font-semibold text-sm leading-[1.2rem] mt-1 text`}
+                                className={`font-semibold text-xs md:text-base  md:leading-[1.2rem] mt-1 text`}
                               >
                                 {t("text")}
                                 <br /> {t("to_image")}
@@ -2064,7 +2064,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                       </div>
                       <div>
                         <h3
-                          className={`font-semibold text-md leading-[1.2rem] mt-1 text p-0 `}
+                          className={`font-semibold text-xs md:text-base  md:leading-[1.2rem] mt-1 text p-0 `}
                         >
                           {t("create")}
                           <br />
@@ -2117,12 +2117,12 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                           <div className="flex flex-col items-center space-y-0">
                             <div>
                               <div
-                                className={`w-10 h-6 border mx-auto mb-2  video-icon `}
+                                className={`w-10 h-6 border mx-auto md:mb-2  video-icon `}
                               ></div>
                             </div>
                             <div>
                               <h3
-                                className={`font-semibold text-sm leading-[1.2rem] mt-1 text `}
+                                className={`font-semibold text-xs md:text-base  md:leading-[1.2rem] mt-0.5 md:mt-1 text `}
                               >
                                 {t("upload")}
                                 <br />
@@ -2165,12 +2165,12 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                           <div className="flex flex-col items-center space-y-0">
                             <div>
                               <div
-                                className={`w-6 h-10 border mx-auto mb-2 video-icon `}
+                                className={`w-6 h-10 border mx-auto md:mb-2 video-icon `}
                               ></div>
                             </div>
                             <div>
                               <h3
-                                className={`font-semibold text-sm leading-[1.2rem] mt-1 text `}
+                                className={`font-semibold text-xs md:text-base  md:leading-[1.2rem] mt-0.5 md:mt-1 text `}
                               >
                                 {t("upload")}
                                 <br />
@@ -2831,7 +2831,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               <div className="flex-1">
                                 <label
                                   htmlFor="useBrandLogo"
-                                  className={`text-sm font-medium theme-text-primary ${
+                                  className={` text-xs  md:text-sm font-medium theme-text-primary ${
                                     hasLogo
                                       ? "cursor-pointer"
                                       : "cursor-not-allowed opacity-60"
@@ -2839,7 +2839,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                 >
                                   {t("brand_logo")}
                                 </label>
-                                <p className="text-xs theme-text-secondary mt-0.5">
+                                <p className=" hidden md:block  text-xs theme-text-secondary mt-0.5">
                                   {hasLogo
                                     ? t("include_brand_logo_generation")
                                     : t("no_brand_logo_set_profile")}
@@ -2860,7 +2860,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               <div className="flex-1">
                                 <label
                                   htmlFor="useBrandTheme"
-                                  className={`text-sm font-medium theme-text-primary ${
+                                  className={` text-xs  md:text-sm font-medium theme-text-primary ${
                                     hasTheme
                                       ? "cursor-pointer"
                                       : "cursor-not-allowed opacity-60"
@@ -2868,7 +2868,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                 >
                                   {t("brand_theme")}
                                 </label>
-                                <p className="text-xs theme-text-secondary mt-0.5">
+                                <p className=" hidden md:block text-xs theme-text-secondary mt-0.5">
                                   {hasTheme
                                     ? t("use_website_theme") + ": " + themeUrl
                                     : t("no_website_url_set_profile")}
