@@ -180,6 +180,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   const [videoThumbnailGenerations, setVideoThumbnailGenerations] = useState<
     string[]
   >([]);
+  const [videoThumbnailPrompt, setVideoThumbnailPrompt] = useState("");
   const [videoModifyMode, setVideoModify] = useState(false);
   const thumbnailInputRef = useRef<HTMLInputElement>(null);
   const [customThumbnailUploading, setCustomThumbnailUploading] =
@@ -1800,12 +1801,14 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       {showVideoThumbnailModal && videoThumbnailForRegeneration && (
         <ImageRegenerationModal
           imageUrl={videoThumbnailForRegeneration}
-          isLoading={false}
+          isLoading={isGeneratingThumbnail}
           allGeneration={videoThumbnailGenerations}
           setAllGeneration={setVideoThumbnailGenerations}
           setModify={setVideoModify}
           modifyMode={videoModifyMode}
           generationAmounts={generationAmounts["image"]}
+          prompt={videoThumbnailPrompt}
+          setPrompt={setVideoThumbnailPrompt}
           onClose={() => {
             setShowVideoThumbnailModal(false);
             setVideoThumbnailForRegeneration("");
@@ -1813,6 +1816,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
             setVideoModify(false);
             setVideoUseLogo(false);
             setVideoUseTheme(false);
+            setVideoThumbnailPrompt("");
           }}
           onRegenerate={handleVideoThumbnailRegenerate}
           confirmImage={confirmVideoThumbnail}
