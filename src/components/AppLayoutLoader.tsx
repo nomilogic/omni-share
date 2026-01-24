@@ -23,10 +23,10 @@ export const AppInitializer = () => {
   if (!visible) return null;
   return (
     <div
-      className={`fixed inset-0 z-[9999] flex items-center justify-center transition-opacity duration-400 ${loader ? "opacity-100" : "opacity-0"} bg-gradient-to-br bg-black/70 backdrop-blur-sm`}
+      className={`fixed inset-0 z-[9999] flex items-center justify-center transition-opacity duration-400 ${loader ? "opacity-100" : "opacity-0"} bg-gradient-to-br bg-black/80 backdrop-blur-sm`}
     >
-      <div className="relative flex flex-col items-center gap-4 px-12 py-10 bg-white border border-purple-100 backdrop-blur-sm  rounded-md shadow-md">
-        <div className="flex flex-col items-center gap-4">
+      <div className="relative flex flex-col items-center gap-5 px-12 py-12 bg-white border border-purple-100 backdrop-blur-sm  rounded-md shadow-md">
+        <div className="flex flex-col items-center gap-5">
           <Icon
             name="spiral-logo"
             size={45}

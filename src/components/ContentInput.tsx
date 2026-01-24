@@ -75,8 +75,18 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   selectedPlatforms,
   editMode,
 }) => {
-  const { state, generationAmounts, user, setCost, cost }: any =
-    useAppContext();
+  const {
+    state,
+    generationAmounts,
+    user,
+    setCost,
+    cost,
+    setUseLogo,
+    useLogo,
+    setUseTheme,
+    useTheme,
+  }: any = useAppContext();
+
   const {
     executeVideoThumbnailGeneration,
     executeImageGeneration,
@@ -162,9 +172,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     isActive: isProcessing || checkUnsavedContent(),
   });
 
-  // Brand Logo and Theme states
-  const [useLogo, setUseLogo] = useState(false);
-  const [useTheme, setUseTheme] = useState(false);
   const logoUrl = state.user?.profile?.brandLogo || "";
   const themeUrl = state.user?.profile?.publicUrl || "";
 
@@ -2832,75 +2839,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         required
                       />
                     </div>
-
-                    {selectedImageMode === "textToImage" && (
-                      <div>
-                        <label className="text-sm font-medium theme-text-primary  mb-2 flex items-center">
-                          {t("use_for_generation")}
-                        </label>
-                        <div className=" p-3 theme-bg-primary   rounded-md border shadow-md backdrop-blur-md">
-                          <div className=" flex flex-row justify-start gap-10">
-                            {/* Brand Logo Checkbox */}
-                            <div className="flex items-start gap-3">
-                              <input
-                                type="checkbox"
-                                id="useBrandLogo"
-                                checked={useLogo}
-                                onChange={(e) => setUseLogo(e.target.checked)}
-                                disabled={!hasLogo}
-                                className="w-4 h-4 mt-0.5 text-purple-600  bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                              />
-                              <div className="flex-1">
-                                <label
-                                  htmlFor="useBrandLogo"
-                                  className={` text-xs  md:text-sm font-medium theme-text-primary ${
-                                    hasLogo
-                                      ? "cursor-pointer"
-                                      : "cursor-not-allowed opacity-60"
-                                  }`}
-                                >
-                                  {t("brand_logo")}
-                                </label>
-                                <p className=" hidden md:block  text-xs theme-text-secondary mt-0.5">
-                                  {hasLogo
-                                    ? t("include_brand_logo_generation")
-                                    : t("no_brand_logo_set_profile")}
-                                </p>
-                              </div>
-                            </div>
-
-                            {/* Theme/Website Checkbox */}
-                            <div className="flex items-start gap-3 ">
-                              <input
-                                type="checkbox"
-                                id="useBrandTheme"
-                                checked={useTheme}
-                                onChange={(e) => setUseTheme(e.target.checked)}
-                                disabled={!hasTheme}
-                                className="w-4 h-4 mt-0.5 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                              />
-                              <div className="flex-1">
-                                <label
-                                  htmlFor="useBrandTheme"
-                                  className={` text-xs  md:text-sm font-medium theme-text-primary ${
-                                    hasTheme
-                                      ? "cursor-pointer"
-                                      : "cursor-not-allowed opacity-60"
-                                  }`}
-                                >
-                                  {t("brand_theme")}
-                                </label>
-                                <p className=" hidden md:block text-xs theme-text-secondary mt-0.5">
-                                  {hasTheme
-                                    ? t("use_website_theme") + ": " + themeUrl
-                                    : t("no_website_url_set_profile")}
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
 
                     {(selectedImageMode === "textToImage" ||
                       selectedImageMode === "upload") && (
