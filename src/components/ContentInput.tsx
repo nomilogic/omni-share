@@ -913,6 +913,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
   const [modelImage, setModelImage] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
+  const [selectedConfirmedImage, setSelectedConfirmedImage] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null); // For actual upload
   const [allGeneration, setAllGeneration] = useState<any>([]);
   const MAX_IMAGES = 3;
@@ -1011,6 +1012,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     } catch (uploadErr) {}
 
     setTemplatedImageUrl(finalTemplatedUrl);
+    setSelectedConfirmedImage(null);
     setFormData((prev) => ({
       ...prev,
       mediaUrl: finalTemplatedUrl,
@@ -1199,6 +1201,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     setImageDescription("");
 
     setGeneratedImage(null);
+    setSelectedConfirmedImage(null);
     setModify(false);
     setAllGeneration([]);
     setPendingPostGeneration(null);
@@ -1502,12 +1505,12 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         finalImageUrl = Url;
 
         setGeneratedImage(finalImageUrl);
-        setAllGeneration([finalImageUrl]);
+        setAllGeneration([...allGeneration, finalImageUrl]);
       } else {
         const result: any = await handleCombinedGeneration(newPrompt);
         finalImageUrl = result.imageUrl;
         setGeneratedImage(finalImageUrl);
-        setAllGeneration([finalImageUrl]);
+        setAllGeneration([...allGeneration, finalImageUrl]);
       }
 
       setModelImage(true);
@@ -1586,8 +1589,16 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     }
   };
 
-  const confirmImage = async () => {
+  const confirmImage = async (selectedImageUrl?: string) => {
     try {
+      // Use the selected image if provided, otherwise fall back to generatedImage
+      const imageToUse = selectedImageUrl || generatedImage;
+      
+      if (imageToUse) {
+        setGeneratedImage(imageToUse);
+        setSelectedConfirmedImage(imageToUse); // Store the confirmed image separately
+      }
+      
       const blankTemplate = getTemplateById("blank-template");
       if (blankTemplate) {
         setSelectedTemplate(blankTemplate);
@@ -1602,9 +1613,13 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     }
   };
 
-  const confirmVideoThumbnail = async () => {
+  const confirmVideoThumbnail = async (selectedImageUrl?: string) => {
     try {
-      setVideoThumbnailUrl(videoThumbnailForRegeneration);
+      // Use the selected image if provided, otherwise fall back to videoThumbnailForRegeneration
+      const thumbnailToUse = selectedImageUrl || videoThumbnailForRegeneration;
+      
+      setVideoThumbnailUrl(thumbnailToUse);
+      setSelectedConfirmedImage(thumbnailToUse); // Store the confirmed image separately
 
       setShowVideoThumbnailModal(false);
       const blankTemplate = getTemplateById("blank-template");
@@ -1624,7 +1639,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
           const postGenerationData = {
             prompt: formData.prompt,
-            originalImageUrl: videoThumbnailForRegeneration, // Use confirmed video thumbnail
+            originalImageUrl: thumbnailToUse, // Use confirmed video thumbnail
             originalVideoUrl: formData.mediaUrl,
             originalVideoFile: originalVideoFile,
             videoAspectRatio: videoAspectRatio,
@@ -3083,6 +3098,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         (formData.media || formData.mediaUrl || videoThumbnailUrl) && (
           <ImageTemplateEditor
             imageUrl={
+              selectedConfirmedImage ||
               templatedImageUrl ||
               videoThumbnailUrl ||
               (formData.media
