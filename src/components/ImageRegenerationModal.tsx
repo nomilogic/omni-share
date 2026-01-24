@@ -31,7 +31,11 @@ export default function ImageRegenerationModal({
 
   // Check if there's active regeneration or unsaved changes
   const hasActiveOperation = () => {
-    return isLoading || (prompt && prompt.trim().length > 0) || allGeneration?.length > 0;
+    return (
+      isLoading ||
+      (prompt && prompt.trim().length > 0) ||
+      allGeneration?.length > 0
+    );
   };
 
   // Guard navigation when there are unsaved changes or regeneration in progress
@@ -332,62 +336,6 @@ export default function ImageRegenerationModal({
                   </div>
 
                   {/* Use for Generation Section */}
-                  <div className="mt-2 mb-16 md:mb-0">
-                    <label className="text-sm font-medium theme-text-primary  mb-2 flex items-center">
-                      {t("use_for_generation")}
-                    </label>
-                    <div className="p-3 theme-bg-primary shadow-md  rounded-md">
-                      <div className=" flex gap-3">
-                        <div className="flex items-start gap-3">
-                          <input
-                            type="checkbox"
-                            id="modalUseBrandLogo"
-                            checked={useLogo}
-                            onChange={(e) => setUseLogo(e.target.checked)}
-                            disabled={!logoUrl}
-                            className="w-4 h-4 mt-1 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                          />
-                          <div className="flex-1">
-                            <label
-                              htmlFor="modalUseBrandLogo"
-                              className=" text-xs md:text-sm font-medium text-gray-900 cursor-pointer"
-                            >
-                              {t("brand_logo")}
-                            </label>
-                            <p className="hidden md:block text-xs text-gray-500 mt-0.5">
-                              {logoUrl
-                                ? t("include_brand_logo_generation")
-                                : t("no_brand_logo_set_profile")}
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="flex items-start gap-3">
-                          <input
-                            type="checkbox"
-                            id="modalUseBrandTheme"
-                            checked={useTheme}
-                            onChange={(e) => setUseTheme(e.target.checked)}
-                            disabled={!themeUrl}
-                            className="w-4 h-4 mt-1 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                          />
-                          <div className="flex-1">
-                            <label
-                              htmlFor="modalUseBrandTheme"
-                              className=" text-xs md:text-sm font-medium text-gray-900 cursor-pointer"
-                            >
-                              {t("brand_theme")}
-                            </label>
-                            <p className="hidden md:block text-xs text-gray-500 mt-0.5">
-                              {themeUrl
-                                ? t("use_website_theme") + ": " + themeUrl
-                                : t("no_website_url_set_profile")}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
                 </div>
 
                 {/* Desktop actions */}

@@ -9,6 +9,7 @@ export interface ConfirmDialogState {
   onConfirm: () => void;
   onCancel?: () => void;
   isDangerous?: boolean;
+  onClose?: () => void;
 }
 
 interface ConfirmDialogContextType {
@@ -19,9 +20,11 @@ interface ConfirmDialogContextType {
     message: string,
     onConfirm: () => void,
     isDangerous?: boolean,
-    onCancel?: () => void
+    onCancel?: () => void,
+    onClose?: () => void
   ) => void;
   closeConfirm: () => void;
+  setSidebarCloseFn: (fn: () => void) => void;
 }
 
 const ConfirmDialogContext = createContext<ConfirmDialogContextType | undefined>(
@@ -38,13 +41,16 @@ export const ConfirmDialogProvider: React.FC<{ children: React.ReactNode }> = ({
     onConfirm: () => {},
     isDangerous: false,
   });
+  const [sidebarCloseFn, setSidebarCloseFn] = useState<(() => void) | null>(null);
   const { t } = useTranslation();
 
   const showConfirm = (
     title: string,
     message: string,
     onConfirm: () => void,
-    isDangerous = false
+    isDangerous = false,
+    onCancel?: () => void,
+    onClose?: () => void
   ) => {
     setConfirmDialog({
       isOpen: true,
@@ -52,6 +58,7 @@ export const ConfirmDialogProvider: React.FC<{ children: React.ReactNode }> = ({
       message,
       onConfirm,
       isDangerous,
+      onClose,
     });
   };
 
@@ -61,16 +68,18 @@ export const ConfirmDialogProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const handleConfirm = () => {
     confirmDialog.onConfirm();
+    if (sidebarCloseFn) sidebarCloseFn();
     closeConfirm();
   };
 
   const handleCancel = () => {
+    if (sidebarCloseFn) sidebarCloseFn();
     closeConfirm();
   };
 
   return (
     <ConfirmDialogContext.Provider
-      value={{ confirmDialog, setConfirmDialog, showConfirm, closeConfirm }}
+      value={{ confirmDialog, setConfirmDialog, showConfirm, closeConfirm, setSidebarCloseFn }}
     >
       {children}
       <ConfirmDialog

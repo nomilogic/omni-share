@@ -635,6 +635,7 @@ export const useAppContext = () => {
     throw new Error("useAppContext must be used within AppProvider");
   }
   const [cost, setCost] = useState(0);
+
   const {
     state,
     dispatch,
@@ -738,9 +739,23 @@ export const useAppContext = () => {
     },
     [checkConnectedPlatforms]
   );
+  const [useLogo, setUseLogo] = useState(false);
+  const [useTheme, setUseTheme] = useState(false);
+
+  useEffect(() => {
+    const savedLogo = localStorage.getItem("useLogo");
+    const savedTheme = localStorage.getItem("useTheme");
+
+    setUseLogo(savedLogo === "true");
+    setUseTheme(savedTheme === "true");
+  }, []);
 
   return {
     state: state,
+    setUseLogo,
+    setUseTheme,
+    useLogo,
+    useTheme,
     security_question: state.security_question,
     user: state.user,
     balance: state.balance,

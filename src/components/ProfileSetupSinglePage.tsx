@@ -281,15 +281,32 @@ const ProfileSetupSinglePage: React.FC = () => {
   const [urlAnalysisLoading, setUrlAnalysisLoading] = useState(false);
   const [urlAnalysisError, setUrlAnalysisError] = useState<string | null>(null);
   const { user } = useAuth();
-  const { setProfileEditing, refreshUser } = useAppContext();
+  const {
+    setProfileEditing,
+    refreshUser,
+    setUseLogo,
+    useLogo,
+    setUseTheme,
+    useTheme,
+    state,
+  } = useAppContext();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [selectedFileName, setSelectedFileName] = useState("");
   const { t, i18n } = useTranslation();
   const schema = useProfileFormSchema();
+  const logoUrl = state.user?.profile?.brandLogo || "";
+  const themeUrl = state.user?.profile?.publicUrl || "";
 
   const { profileFormConfig } = useMemo(() => getProfileFormConfig(t), [t]);
+  const isValidUrlP = (u?: string | null) => {
+    if (!u) return false;
+    const s = u.trim();
+    return true;
+  };
 
+  const hasLogo = isValidUrlP(logoUrl);
+  const hasTheme = isValidUrlP(themeUrl);
   const getDefaultValues = (): ProfileFormData => {
     // Prefer live user profile first
     if (user?.profile) {
@@ -479,6 +496,8 @@ const ProfileSetupSinglePage: React.FC = () => {
 
   const onSubmit = async (data: ProfileFormData) => {
     setLoading(true);
+    localStorage.setItem("useLogo", useLogo ? "true" : "false");
+    localStorage.setItem("useTheme", useTheme ? "true" : "false");
     try {
       const submitData = { ...data };
 
@@ -1103,7 +1122,67 @@ const ProfileSetupSinglePage: React.FC = () => {
                   </div>
                 </section>
               ))}
+              <div>
+                <div className="space-y-4 bg-gray-100 p-4 rounded-lg shadow-md">
+                  <div className=" flex flex-row justify-start gap-10">
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        id="useBrandLogo"
+                        checked={useLogo}
+                        onChange={(e) => setUseLogo(e.target.checked)}
+                        disabled={!hasLogo}
+                        className="h-4 w-4 theme-checkbox rounded  m-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                      />
+                      <>
+                        <label
+                          htmlFor="useBrandLogo"
+                          className={` text-xs  md:text-sm font-medium theme-text-primary ${
+                            hasLogo
+                              ? "cursor-pointer"
+                              : "cursor-not-allowed opacity-60"
+                          }`}
+                        >
+                          {t("brand_logo")}
+                        </label>
+                        <p className=" hidden md:block  text-xs theme-text-secondary mt-0.5">
+                          {hasLogo
+                            ? t("include_brand_logo_generation")
+                            : t("no_brand_logo_set_profile")}
+                        </p>
+                      </>
+                    </div>
 
+                    <div className="flex items-center gap-2 ">
+                      <input
+                        type="checkbox"
+                        id="useBrandTheme"
+                        checked={useTheme}
+                        onChange={(e) => setUseTheme(e.target.checked)}
+                        disabled={!hasTheme}
+                        className="h-4 w-4 theme-checkbox rounded  m-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                      />
+                      <>
+                        <label
+                          htmlFor="useBrandTheme"
+                          className={` text-xs  md:text-sm font-medium theme-text-primary ${
+                            hasTheme
+                              ? "cursor-pointer"
+                              : "cursor-not-allowed opacity-60"
+                          }`}
+                        >
+                          {t("brand_theme")}
+                        </label>
+                        <p className=" hidden md:block text-xs theme-text-secondary mt-0.5">
+                          {hasTheme
+                            ? t("use_website_theme") + ": " + themeUrl
+                            : t("no_website_url_set_profile")}
+                        </p>
+                      </>
+                    </div>
+                  </div>
+                </div>
+              </div>
               <button
                 type="submit"
                 disabled={loading}

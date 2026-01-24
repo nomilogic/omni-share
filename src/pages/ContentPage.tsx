@@ -46,6 +46,14 @@ export const ContentPage: React.FC = () => {
         processedPost.mediaUrl = state.contentData.mediaUrl;
       }
 
+      // Ensure thumbnailUrl is used for video content from template editor
+      if (
+        state.contentData?.isVideoContent &&
+        state.contentData?.thumbnailUrl
+      ) {
+        processedPost.thumbnailUrl = state.contentData.thumbnailUrl;
+      }
+
       return processedPost;
     });
 
@@ -153,7 +161,6 @@ export const ContentPage: React.FC = () => {
 
     navigate("/content");
   };
-  console.log("state.contentData", state.contentData);
   return (
     <div className="w-full mx-auto">
       <Routes>

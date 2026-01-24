@@ -75,8 +75,18 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   selectedPlatforms,
   editMode,
 }) => {
-  const { state, generationAmounts, user, setCost, cost }: any =
-    useAppContext();
+  const {
+    state,
+    generationAmounts,
+    user,
+    setCost,
+    cost,
+    setUseLogo,
+    useLogo,
+    setUseTheme,
+    useTheme,
+  }: any = useAppContext();
+
   const {
     executeVideoThumbnailGeneration,
     executeImageGeneration,
@@ -162,11 +172,12 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     isActive: isProcessing || checkUnsavedContent(),
   });
 
-  // Brand Logo and Theme states
-  const [useLogo, setUseLogo] = useState(false);
-  const [useTheme, setUseTheme] = useState(false);
   const logoUrl = state.user?.profile?.brandLogo || "";
   const themeUrl = state.user?.profile?.publicUrl || "";
+
+  // Video thumbnail specific logo and theme states
+  const [videoUseLogo, setVideoUseLogo] = useState(false);
+  const [videoUseTheme, setVideoUseTheme] = useState(false);
 
   const [generateVideoThumbnailAI, setGenerateVideoThumbnailAI] =
     useState(true);
@@ -176,6 +187,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   const [videoThumbnailGenerations, setVideoThumbnailGenerations] = useState<
     string[]
   >([]);
+  const [videoThumbnailPrompt, setVideoThumbnailPrompt] = useState("");
   const [videoModifyMode, setVideoModify] = useState(false);
   const thumbnailInputRef = useRef<HTMLInputElement>(null);
   const [customThumbnailUploading, setCustomThumbnailUploading] =
@@ -1134,7 +1146,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           postData = {
             ...formData,
             mediaUrl: formData.mediaUrl, // Keep original video URL
-            thumbnailUrl: finalTemplatedUrl, // Use edited thumbnail
+            thumbnailUrl: videoThumbnailUrl, // Use videoThumbnailUrl state which has the uploaded URL
             videoFile: originalVideoFile,
             videoAspectRatio: videoAspectRatio,
             isVideoContent: true,
@@ -1144,7 +1156,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
               {
                 url: formData.mediaUrl,
                 type: "video",
-                thumbnailUrl: finalTemplatedUrl,
+                thumbnailUrl: videoThumbnailUrl,
                 aspectRatio: videoAspectRatio,
               },
             ],
@@ -1165,12 +1177,12 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         } else {
           postData = {
             ...formData,
-            mediaUrl: finalTemplatedUrl, // Use the templated image server URL
-            imageUrl: finalTemplatedUrl,
-            serverUrl: finalTemplatedUrl,
+            mediaUrl: templatedImageUrl, // Use templatedImageUrl state which has the uploaded URL
+            imageUrl: templatedImageUrl,
+            serverUrl: templatedImageUrl,
             campaignName: currentCampaignInfo.name,
             campaignInfo: currentCampaignInfo,
-            mediaAssets: [{ url: finalTemplatedUrl, type: "image" }],
+            mediaAssets: [{ url: templatedImageUrl, type: "image" }],
             industry: currentCampaignInfo.industry,
             tone:
               currentCampaignInfo.brand_tone || currentCampaignInfo.brandTone,
@@ -1568,6 +1580,10 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           ...(imageToProcess && { imageUrl: imageToProcess }),
           aspectRatio: String(videoAspectRatio || "16:9"),
           ...(isModifyMode && { modifyMode: true }),
+          ...(videoUseLogo && logoUrl && { logoUrl: logoUrl }),
+          ...(videoUseTheme && themeUrl && { useTheme: videoUseTheme }),
+          ...(videoUseLogo && logoUrl && { useLogo: videoUseLogo }),
+          ...(videoUseTheme && themeUrl && { themeUrl: themeUrl }),
         });
 
         const result = response.data;
@@ -1807,22 +1823,33 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       {showVideoThumbnailModal && videoThumbnailForRegeneration && (
         <ImageRegenerationModal
           imageUrl={videoThumbnailForRegeneration}
-          isLoading={false}
+          isLoading={isGeneratingThumbnail}
           allGeneration={videoThumbnailGenerations}
           setAllGeneration={setVideoThumbnailGenerations}
           setModify={setVideoModify}
           modifyMode={videoModifyMode}
           generationAmounts={generationAmounts["image"]}
+          prompt={videoThumbnailPrompt}
+          setPrompt={setVideoThumbnailPrompt}
           onClose={() => {
             setShowVideoThumbnailModal(false);
             setVideoThumbnailForRegeneration("");
             setVideoThumbnailGenerations([]);
             setVideoModify(false);
+            setVideoUseLogo(false);
+            setVideoUseTheme(false);
+            setVideoThumbnailPrompt("");
           }}
           onRegenerate={handleVideoThumbnailRegenerate}
           confirmImage={confirmVideoThumbnail}
           onFileSave={() => {}}
           selectedFile={null}
+          useLogo={videoUseLogo}
+          setUseLogo={setVideoUseLogo}
+          useTheme={videoUseTheme}
+          setUseTheme={setVideoUseTheme}
+          logoUrl={logoUrl}
+          themeUrl={themeUrl}
         />
       )}
       {!showTemplateEditor && (
@@ -1882,7 +1909,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         />
                       </div>
                       <div>
-                        <h3 className={` font-semibold text-xs md:text-base  md:leading-[1.2rem] mt-1  `}>
+                        <h3
+                          className={` font-semibold text-xs md:text-base  md:leading-[1.2rem] mt-1  `}
+                        >
                           {t("create")}
                           <br />
                           {t("text_post")}
@@ -2825,75 +2854,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         required
                       />
                     </div>
-
-                    {selectedImageMode === "textToImage" && (
-                      <div>
-                        <label className="text-sm font-medium theme-text-primary  mb-2 flex items-center">
-                          {t("use_for_generation")}
-                        </label>
-                        <div className=" p-3 theme-bg-primary   rounded-md border shadow-md backdrop-blur-md">
-                          <div className=" flex flex-row justify-start gap-10">
-                            {/* Brand Logo Checkbox */}
-                            <div className="flex items-start gap-3">
-                              <input
-                                type="checkbox"
-                                id="useBrandLogo"
-                                checked={useLogo}
-                                onChange={(e) => setUseLogo(e.target.checked)}
-                                disabled={!hasLogo}
-                                className="w-4 h-4 mt-0.5 text-purple-600  bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                              />
-                              <div className="flex-1">
-                                <label
-                                  htmlFor="useBrandLogo"
-                                  className={` text-xs  md:text-sm font-medium theme-text-primary ${
-                                    hasLogo
-                                      ? "cursor-pointer"
-                                      : "cursor-not-allowed opacity-60"
-                                  }`}
-                                >
-                                  {t("brand_logo")}
-                                </label>
-                                <p className=" hidden md:block  text-xs theme-text-secondary mt-0.5">
-                                  {hasLogo
-                                    ? t("include_brand_logo_generation")
-                                    : t("no_brand_logo_set_profile")}
-                                </p>
-                              </div>
-                            </div>
-
-                            {/* Theme/Website Checkbox */}
-                            <div className="flex items-start gap-3 ">
-                              <input
-                                type="checkbox"
-                                id="useBrandTheme"
-                                checked={useTheme}
-                                onChange={(e) => setUseTheme(e.target.checked)}
-                                disabled={!hasTheme}
-                                className="w-4 h-4 mt-0.5 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                              />
-                              <div className="flex-1">
-                                <label
-                                  htmlFor="useBrandTheme"
-                                  className={` text-xs  md:text-sm font-medium theme-text-primary ${
-                                    hasTheme
-                                      ? "cursor-pointer"
-                                      : "cursor-not-allowed opacity-60"
-                                  }`}
-                                >
-                                  {t("brand_theme")}
-                                </label>
-                                <p className=" hidden md:block text-xs theme-text-secondary mt-0.5">
-                                  {hasTheme
-                                    ? t("use_website_theme") + ": " + themeUrl
-                                    : t("no_website_url_set_profile")}
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
 
                     {(selectedImageMode === "textToImage" ||
                       selectedImageMode === "upload") && (

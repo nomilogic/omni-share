@@ -72,8 +72,8 @@ export default function AnalyticsPage() {
   const platforms: Platform[] = [
     "facebook",
     "instagram",
-    "tiktok",
     "linkedin",
+    "tiktok",
     "youtube",
   ];
 
@@ -177,7 +177,7 @@ export default function AnalyticsPage() {
                 `}
               >
                 <div
-                  className={`w-12 h-12 rounded-full flex items-center justify-center shadow-md ${getPlatformIconBackgroundColors(p)}`}
+                  className={`md:w-12 md:h-12 w-10 h-10 rounded-full flex items-center justify-center shadow-md ${getPlatformIconBackgroundColors(p)}`}
                 >
                   {IconComponent ? (
                     <IconComponent className="w-6 h-6 text-white" />
