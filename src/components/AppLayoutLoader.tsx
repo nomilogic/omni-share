@@ -25,28 +25,23 @@ export const AppInitializer = () => {
     <div
       className={`fixed inset-0 z-[9999] flex items-center justify-center transition-opacity duration-400 ${loader ? "opacity-100" : "opacity-0"} bg-gradient-to-br bg-black/70 backdrop-blur-sm`}
     >
-      <div className="relative flex flex-col items-center gap-6 px-12 py-10 bg-white/90 border border-purple-100 backdrop-blur-sm  rounded-md shadow-md">
-        <div className="flex flex-col items-center gap-3">
+      <div className="relative flex flex-col items-center gap-4 px-12 py-10 bg-white border border-purple-100 backdrop-blur-sm  rounded-md shadow-md">
+        <div className="flex flex-col items-center gap-4">
           <Icon
             name="spiral-logo"
             size={45}
-            className="text-purple-600 mb-2  animate-spin transition-all duration-500"
+            className="text-purple-600  animate-spin transition-all duration-500"
           />
 
           <img src={logoText} alt="App Name" className="h-4 opacity-95" />
 
           <p className="text-gray-600 text-sm font-medium tracking-wide">
-            Setting up your workspace...
+            Loading...
           </p>
         </div>
 
         <div className="w-60 h-[4px] bg-purple-100 rounded-full overflow-hidden">
           <div className="h-full w-1/2 bg-gradient-to-r from-purple-500 to-purple-700 animate-loading" />
-        </div>
-
-        <div className="text-purple-500 text-xs mt-1">
-          {import.meta.env.VITE_API_URL_FRONT || "1.0.0"} • ©{" "}
-          {new Date().getFullYear()}
         </div>
 
         <style>{`
@@ -55,7 +50,7 @@ export const AppInitializer = () => {
             100% { transform: translateX(320%); }
           }
           .animate-loading {
-            animation: loading 1.5s ease-in-out infinite;
+            animation: loading 1s ease-in-out infinite;
           }
         `}</style>
       </div>

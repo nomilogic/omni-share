@@ -17,10 +17,10 @@ function RecentPosts({ post }: any) {
   const allPosts = post || state?.generatedPosts || [];
   const socialPlatforms: Platform[] = [
     "facebook",
-    "linkedin",
     "instagram",
-    "youtube",
+    "linkedin",
     "tiktok",
+    "youtube",
   ];
 
   const platformsWithData = useMemo(() => {
@@ -28,7 +28,7 @@ function RecentPosts({ post }: any) {
     for (const p of allPosts) {
       if (p?.platform) set.add(p.platform as Platform);
     }
-    return socialPlatforms.filter((pl) => set.has(pl));
+    return set;
   }, [allPosts]);
 
   const platformsWithDataSet = useMemo(() => {
@@ -124,7 +124,7 @@ function RecentPosts({ post }: any) {
                 </div>
 
                 {isActive && hasData && (
-                  <div className="absolute inset-0 rounded-full border border-blue-500 animate-pulse" />
+                  <div className="absolute inset-0 rounded-full animate-pulse" />
                 )}
               </button>
             );

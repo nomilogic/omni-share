@@ -1887,7 +1887,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         />
                       </div>
                       <div>
-                        <h3 className={` font-semibold text-xs md:text-base  md:leading-[1.2rem] mt-1  `}>
+                        <h3
+                          className={` font-semibold text-xs md:text-base  md:leading-[1.2rem] mt-1  `}
+                        >
                           {t("create")}
                           <br />
                           {t("text_post")}

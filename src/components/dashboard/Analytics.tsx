@@ -79,19 +79,23 @@ export default function Analytics({ onHasAnalyticsChange }: Props) {
   const platforms: Platform[] = [
     "facebook",
     "instagram",
-    "youtube",
-    "tiktok",
     "linkedin",
+    "tiktok",
+    "youtube",
   ];
 
   // Platforms that actually have data
   const platformsWithData = useMemo(() => {
     const set = new Set<Platform>();
-    analyticsList.forEach((a) => {
-      if (a?.platform) set.add(a.platform);
-    });
+    for (const p of analyticsList) {
+      if (p?.platform) set.add(p.platform);
+    }
     return set;
   }, [analyticsList]);
+
+  const platformsWithDataSet = useMemo(() => {
+    return new Set<Platform>(platformsWithData);
+  }, [platformsWithData]);
 
   // Selected analytics data
   const current = useMemo(
@@ -127,8 +131,8 @@ export default function Analytics({ onHasAnalyticsChange }: Props) {
     if (!analyticsList.length) return;
 
     setSelectedPlatform((prev) => {
-      if (prev && platformsWithData.has(prev)) return prev;
-      if (platformsWithData.has("facebook")) return "facebook";
+      if (prev && platformsWithDataSet.has(prev)) return prev;
+      if (platformsWithDataSet.has("facebook")) return "facebook";
       return analyticsList[0]?.platform ?? null;
     });
   }, [analyticsList, platformsWithData]);
@@ -148,8 +152,7 @@ export default function Analytics({ onHasAnalyticsChange }: Props) {
         {platforms.map((p) => {
           const IconComponent = getPlatformIcon(p);
           const active = selectedPlatform === p;
-          const hasData = platformsWithData.has(p);
-
+          const hasData = platformsWithDataSet.has(p);
           return (
             <button
               key={p}
@@ -173,13 +176,13 @@ export default function Analytics({ onHasAnalyticsChange }: Props) {
               }
             >
               <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center text-white shadow
-                  ${getPlatformIconBackgroundColors(p)}
-                  ${!hasData ? "grayscale" : ""}
-                `}
+                className={`w-8 md:w-10 h-8 md:h-10 rounded-full flex items-center justify-center text-white shadow-md
+                    ${getPlatformIconBackgroundColors(p)}
+                    ${hasData ? "" : "grayscale"}
+                  `}
               >
                 {IconComponent ? (
-                  <IconComponent className="w-6 h-6" />
+                  <IconComponent className="w-4 md:w-5 h-4 md:h-5" />
                 ) : (
                   p.slice(0, 2).toUpperCase()
                 )}
