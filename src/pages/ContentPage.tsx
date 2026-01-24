@@ -161,7 +161,6 @@ export const ContentPage: React.FC = () => {
 
     navigate("/content");
   };
-  console.log("state.contentData", state.contentData);
   return (
     <div className="w-full mx-auto">
       <Routes>

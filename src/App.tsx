@@ -273,7 +273,7 @@ function App() {
                       }
                     />
 
-                    <Route
+                    {/* <Route
                       path="/settings/*"
                       element={
                         <ProtectedRoute>
@@ -282,7 +282,7 @@ function App() {
                           </AppLayout>
                         </ProtectedRoute>
                       }
-                    />
+                    /> */}
 
                     <Route
                       path="/accounts"

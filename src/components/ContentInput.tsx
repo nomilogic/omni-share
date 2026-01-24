@@ -75,8 +75,18 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   selectedPlatforms,
   editMode,
 }) => {
-  const { state, generationAmounts, user, setCost, cost }: any =
-    useAppContext();
+  const {
+    state,
+    generationAmounts,
+    user,
+    setCost,
+    cost,
+    setUseLogo,
+    useLogo,
+    setUseTheme,
+    useTheme,
+  }: any = useAppContext();
+
   const {
     executeVideoThumbnailGeneration,
     executeImageGeneration,
@@ -162,9 +172,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     isActive: isProcessing || checkUnsavedContent(),
   });
 
-  // Brand Logo and Theme states
-  const [useLogo, setUseLogo] = useState(false);
-  const [useTheme, setUseTheme] = useState(false);
   const logoUrl = state.user?.profile?.brandLogo || "";
   const themeUrl = state.user?.profile?.publicUrl || "";
 
@@ -918,6 +925,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
   const [modelImage, setModelImage] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
+  const [selectedConfirmedImage, setSelectedConfirmedImage] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null); // For actual upload
   const [allGeneration, setAllGeneration] = useState<any>([]);
   const MAX_IMAGES = 3;
@@ -1016,6 +1024,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     } catch (uploadErr) {}
 
     setTemplatedImageUrl(finalTemplatedUrl);
+    setSelectedConfirmedImage(null);
     setFormData((prev) => ({
       ...prev,
       mediaUrl: finalTemplatedUrl,
@@ -1204,6 +1213,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     setImageDescription("");
 
     setGeneratedImage(null);
+    setSelectedConfirmedImage(null);
     setModify(false);
     setAllGeneration([]);
     setPendingPostGeneration(null);
@@ -1507,12 +1517,12 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         finalImageUrl = Url;
 
         setGeneratedImage(finalImageUrl);
-        setAllGeneration([finalImageUrl]);
+        setAllGeneration([...allGeneration, finalImageUrl]);
       } else {
         const result: any = await handleCombinedGeneration(newPrompt);
         finalImageUrl = result.imageUrl;
         setGeneratedImage(finalImageUrl);
-        setAllGeneration([finalImageUrl]);
+        setAllGeneration([...allGeneration, finalImageUrl]);
       }
 
       setModelImage(true);
@@ -1595,8 +1605,16 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     }
   };
 
-  const confirmImage = async () => {
+  const confirmImage = async (selectedImageUrl?: string) => {
     try {
+      // Use the selected image if provided, otherwise fall back to generatedImage
+      const imageToUse = selectedImageUrl || generatedImage;
+      
+      if (imageToUse) {
+        setGeneratedImage(imageToUse);
+        setSelectedConfirmedImage(imageToUse); // Store the confirmed image separately
+      }
+      
       const blankTemplate = getTemplateById("blank-template");
       if (blankTemplate) {
         setSelectedTemplate(blankTemplate);
@@ -1611,9 +1629,13 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     }
   };
 
-  const confirmVideoThumbnail = async () => {
+  const confirmVideoThumbnail = async (selectedImageUrl?: string) => {
     try {
-      setVideoThumbnailUrl(videoThumbnailForRegeneration);
+      // Use the selected image if provided, otherwise fall back to videoThumbnailForRegeneration
+      const thumbnailToUse = selectedImageUrl || videoThumbnailForRegeneration;
+      
+      setVideoThumbnailUrl(thumbnailToUse);
+      setSelectedConfirmedImage(thumbnailToUse); // Store the confirmed image separately
 
       setShowVideoThumbnailModal(false);
       const blankTemplate = getTemplateById("blank-template");
@@ -1633,7 +1655,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
           const postGenerationData = {
             prompt: formData.prompt,
-            originalImageUrl: videoThumbnailForRegeneration, // Use confirmed video thumbnail
+            originalImageUrl: thumbnailToUse, // Use confirmed video thumbnail
             originalVideoUrl: formData.mediaUrl,
             originalVideoFile: originalVideoFile,
             videoAspectRatio: videoAspectRatio,
@@ -1887,7 +1909,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         />
                       </div>
                       <div>
-                        <h3 className={` font-semibold text-xs md:text-base  md:leading-[1.2rem] mt-1  `}>
+                        <h3
+                          className={` font-semibold text-xs md:text-base  md:leading-[1.2rem] mt-1  `}
+                        >
                           {t("create")}
                           <br />
                           {t("text_post")}
@@ -2831,75 +2855,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                       />
                     </div>
 
-                    {selectedImageMode === "textToImage" && (
-                      <div>
-                        <label className="text-sm font-medium theme-text-primary  mb-2 flex items-center">
-                          {t("use_for_generation")}
-                        </label>
-                        <div className=" p-3 theme-bg-primary   rounded-md border shadow-md backdrop-blur-md">
-                          <div className=" flex flex-row justify-start gap-10">
-                            {/* Brand Logo Checkbox */}
-                            <div className="flex items-start gap-3">
-                              <input
-                                type="checkbox"
-                                id="useBrandLogo"
-                                checked={useLogo}
-                                onChange={(e) => setUseLogo(e.target.checked)}
-                                disabled={!hasLogo}
-                                className="w-4 h-4 mt-0.5 text-purple-600  bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                              />
-                              <div className="flex-1">
-                                <label
-                                  htmlFor="useBrandLogo"
-                                  className={` text-xs  md:text-sm font-medium theme-text-primary ${
-                                    hasLogo
-                                      ? "cursor-pointer"
-                                      : "cursor-not-allowed opacity-60"
-                                  }`}
-                                >
-                                  {t("brand_logo")}
-                                </label>
-                                <p className=" hidden md:block  text-xs theme-text-secondary mt-0.5">
-                                  {hasLogo
-                                    ? t("include_brand_logo_generation")
-                                    : t("no_brand_logo_set_profile")}
-                                </p>
-                              </div>
-                            </div>
-
-                            {/* Theme/Website Checkbox */}
-                            <div className="flex items-start gap-3 ">
-                              <input
-                                type="checkbox"
-                                id="useBrandTheme"
-                                checked={useTheme}
-                                onChange={(e) => setUseTheme(e.target.checked)}
-                                disabled={!hasTheme}
-                                className="w-4 h-4 mt-0.5 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                              />
-                              <div className="flex-1">
-                                <label
-                                  htmlFor="useBrandTheme"
-                                  className={` text-xs  md:text-sm font-medium theme-text-primary ${
-                                    hasTheme
-                                      ? "cursor-pointer"
-                                      : "cursor-not-allowed opacity-60"
-                                  }`}
-                                >
-                                  {t("brand_theme")}
-                                </label>
-                                <p className=" hidden md:block text-xs theme-text-secondary mt-0.5">
-                                  {hasTheme
-                                    ? t("use_website_theme") + ": " + themeUrl
-                                    : t("no_website_url_set_profile")}
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
                     {(selectedImageMode === "textToImage" ||
                       selectedImageMode === "upload") && (
                       <div className="">
@@ -3103,6 +3058,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         (formData.media || formData.mediaUrl || videoThumbnailUrl) && (
           <ImageTemplateEditor
             imageUrl={
+              selectedConfirmedImage ||
               templatedImageUrl ||
               videoThumbnailUrl ||
               (formData.media

@@ -31,7 +31,11 @@ export default function ImageRegenerationModal({
 
   // Check if there's active regeneration or unsaved changes
   const hasActiveOperation = () => {
-    return isLoading || (prompt && prompt.trim().length > 0) || allGeneration?.length > 0;
+    return (
+      isLoading ||
+      (prompt && prompt.trim().length > 0) ||
+      allGeneration?.length > 0
+    );
   };
 
   // Guard navigation when there are unsaved changes or regeneration in progress
@@ -84,7 +88,9 @@ export default function ImageRegenerationModal({
   }, [hasActiveOperation, isLoading, showConfirm, closeConfirm, t]);
 
   useEffect(() => {
-    if (imageUrl) setActiveImage(imageUrl);
+    if (imageUrl) {
+      setActiveImage(imageUrl);
+    }
   }, [imageUrl]);
 
   const handleModifyToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -210,30 +216,26 @@ export default function ImageRegenerationModal({
                         </div>
 
                         <div className="flex gap-2 overflow-x-auto pb-1">
-                          {allGeneration.map((img: string, index: number) => (
-                            <button
-                              key={index}
-                              type="button"
-                              onClick={() => setActiveImage(img)}
-                              className="group relative h-12 w-12 flex-shrink-0 rounded-md overflow-hidden border"
-                              aria-label={`Select generation ${index + 1}`}
-                              title={`Generation ${index + 1}`}
-                            >
-                              <img
-                                src={img}
-                                className="h-full w-full object-cover"
-                                alt={`Generation ${index + 1}`}
-                              />
-                              <span
-                                className={`absolute inset-0 ring-2 transition
-                      ${
-                        activeImage === img
-                          ? "ring-blue-500"
-                          : "ring-transparent group-hover:ring-blue-300"
-                      }`}
-                              />
-                            </button>
-                          ))}
+                          {allGeneration.map((img: string, index: number) => {
+                            return (
+                              <button
+                                key={index}
+                                type="button"
+                                onClick={() => {
+                                  setActiveImage(img);
+                                }}
+                                className="group relative h-12 w-12 flex-shrink-0 rounded-md overflow-hidden border border-gray-200 hover:border-gray-300 transition"
+                                aria-label={`Select generation ${index + 1}`}
+                                title={`Generation ${index + 1}`}
+                              >
+                                <img
+                                  src={img}
+                                  className="h-full w-full object-cover"
+                                  alt={`Generation ${index + 1}`}
+                                />
+                              </button>
+                            );
+                          })}
                         </div>
                       </div>
                     )}
@@ -269,30 +271,26 @@ export default function ImageRegenerationModal({
                   </div>
 
                   <div className="flex gap-2 overflow-x-auto pb-2">
-                    {allGeneration.map((img: string, index: number) => (
-                      <button
-                        key={index}
-                        type="button"
-                        onClick={() => setActiveImage(img)}
-                        className="group relative h-16 w-16 flex-shrink-0 rounded-md overflow-hidden border"
-                        aria-label={`Select generation ${index + 1}`}
-                        title={`Generation ${index + 1}`}
-                      >
-                        <img
-                          src={img}
-                          className="h-full w-full object-cover"
-                          alt={`Generation ${index + 1}`}
-                        />
-                        <span
-                          className={`absolute inset-0 ring-2 transition
-                          ${
-                            activeImage === img
-                              ? "ring-blue-500"
-                              : "ring-transparent group-hover:ring-blue-300"
-                          }`}
-                        />
-                      </button>
-                    ))}
+                    {allGeneration.map((img: string, index: number) => {
+                      return (
+                        <button
+                          key={index}
+                          type="button"
+                          onClick={() => {
+                            setActiveImage(img);
+                          }}
+                          className="group relative h-16 w-16 flex-shrink-0 rounded-md overflow-hidden border border-gray-200 hover:border-gray-300 transition"
+                          aria-label={`Select generation ${index + 1}`}
+                          title={`Generation ${index + 1}`}
+                        >
+                          <img
+                            src={img}
+                            className="h-full w-full object-cover"
+                            alt={`Generation ${index + 1}`}
+                          />
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -338,62 +336,6 @@ export default function ImageRegenerationModal({
                   </div>
 
                   {/* Use for Generation Section */}
-                  <div className="mt-2 mb-16 md:mb-0">
-                    <label className="text-sm font-medium theme-text-primary  mb-2 flex items-center">
-                      {t("use_for_generation")}
-                    </label>
-                    <div className="p-3 theme-bg-primary shadow-md  rounded-md">
-                      <div className=" flex gap-3">
-                        <div className="flex items-start gap-3">
-                          <input
-                            type="checkbox"
-                            id="modalUseBrandLogo"
-                            checked={useLogo}
-                            onChange={(e) => setUseLogo(e.target.checked)}
-                            disabled={!logoUrl}
-                            className="w-4 h-4 mt-1 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                          />
-                          <div className="flex-1">
-                            <label
-                              htmlFor="modalUseBrandLogo"
-                              className=" text-xs md:text-sm font-medium text-gray-900 cursor-pointer"
-                            >
-                              {t("brand_logo")}
-                            </label>
-                            <p className="hidden md:block text-xs text-gray-500 mt-0.5">
-                              {logoUrl
-                                ? t("include_brand_logo_generation")
-                                : t("no_brand_logo_set_profile")}
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="flex items-start gap-3">
-                          <input
-                            type="checkbox"
-                            id="modalUseBrandTheme"
-                            checked={useTheme}
-                            onChange={(e) => setUseTheme(e.target.checked)}
-                            disabled={!themeUrl}
-                            className="w-4 h-4 mt-1 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                          />
-                          <div className="flex-1">
-                            <label
-                              htmlFor="modalUseBrandTheme"
-                              className=" text-xs md:text-sm font-medium text-gray-900 cursor-pointer"
-                            >
-                              {t("brand_theme")}
-                            </label>
-                            <p className="hidden md:block text-xs text-gray-500 mt-0.5">
-                              {themeUrl
-                                ? t("use_website_theme") + ": " + themeUrl
-                                : t("no_website_url_set_profile")}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
                 </div>
 
                 {/* Desktop actions */}
@@ -416,7 +358,9 @@ export default function ImageRegenerationModal({
                   </button>
 
                   <button
-                    onClick={selectedFile ? onFileSave : confirmImage}
+                    onClick={() => {
+                      selectedFile ? onFileSave() : confirmImage(activeImage);
+                    }}
                     disabled={isLoading || !activeImage}
                     className="px-4 rounded-md w-full text-base font-semibold  py-2.5  text-purple-700 border border-[#7650e3] theme-bg-trinary theme-text-light hover:bg-[#d7d7fc] hover:text-[#7650e3]  disabled:opacity-50 disabled:cursor-not-allowed"
                   >
@@ -448,7 +392,9 @@ export default function ImageRegenerationModal({
             </button>
 
             <button
-              onClick={selectedFile ? onFileSave : confirmImage}
+              onClick={() => {
+                selectedFile ? onFileSave() : confirmImage(activeImage);
+              }}
               disabled={isLoading || !activeImage}
               className=" rounded-md w-full text-base px-3 bg-purple-600/10  py-2.5 font-semibold text-purple-700 hover:border-gray-400  border border-[#7650e3] theme-bg-trinary theme-text-light hover:bg-[#d7d7fc] hover:text-[#7650e3] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >

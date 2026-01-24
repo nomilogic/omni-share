@@ -523,7 +523,7 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
                           </p>
                           <p className="text-xs text-gray-500 font-medium mb-2 ">
                             {post?.platform} •{" "}
-                            {post?.postUrl && new URL(post?.postUrl)?.hostname}
+                            {post?.postUrl && (post?.postUrl)?.hostname}
                           </p>
                         </div>
                       </div>

@@ -10,11 +10,11 @@ import { useTranslation } from "react-i18next";
 import { useAppContext } from "@/context/AppContext";
 
 const ALL_PLATFORMS: Platform[] = [
-  "linkedin",
   "facebook",
   "instagram",
-  "youtube",
+  "linkedin",
   "tiktok",
+  "youtube",
 ];
 
 export const AccountsPage: React.FC = () => {
