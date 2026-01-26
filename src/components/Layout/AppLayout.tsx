@@ -24,6 +24,7 @@ import { useTranslation } from "react-i18next";
 import Sidebar from "./LayoutSideBar";
 import AppInitializer from "../AppLayoutLoader";
 import { ResizeContext } from "@/context/ResizeContext";
+import { useUser } from "@/store/useUser";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -31,7 +32,6 @@ interface AppLayoutProps {
 
 export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const {
-    user,
     logout,
     balance,
     refreshUser,
@@ -39,6 +39,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     setUnreadCount,
     fetchUnreadCount,
   }: any = useAppContext();
+  const { user } = useUser();
   const { t } = useTranslation();
   const { loadingState } = useLoading();
   const navigate = useNavigate();

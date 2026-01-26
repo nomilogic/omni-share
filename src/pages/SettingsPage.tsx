@@ -7,28 +7,24 @@ import {
   useNavigate,
 } from "react-router-dom";
 import { User, Shield, Bell, Palette, Save, Check } from "lucide-react";
-import { useAppContext } from "../context/AppContext";
 import { useTheme } from "../hooks/useTheme";
 import { useTranslation } from "react-i18next";
+import { useUser } from "@/store/useUser";
 
 export const SettingsPage: React.FC = () => {
   const { t } = useTranslation();
-  const { state, dispatch } = useAppContext();
   const location = useLocation();
   const navigate = useNavigate();
-  const { currentTheme, changeTheme, availableThemes, currentThemeKey } =
-    useTheme();
+  const { changeTheme, availableThemes, currentThemeKey } = useTheme();
 
-  const user = state.user;
+  const { user } = useUser();
 
-  // Redirect to profile by default
   useEffect(() => {
     if (location.pathname === "/settings") {
       navigate("/settings/profile", { replace: true });
     }
   }, [location.pathname, navigate]);
 
-  // Profile form state
   const [profileData, setProfileData] = useState({
     displayName: user?.name || "",
     email: user?.email || "",

@@ -15,6 +15,7 @@ import Pusher from "pusher-js";
 import API from "../services/api";
 import Cookies from "js-cookie";
 import { oauthManagerClient } from "@/lib/oauthManagerClient";
+import { useUser } from "@/store/useUser";
 
 export interface User {
   id: string;
@@ -343,7 +344,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
         secure: true,
         sameSite: "strict",
       });
-    } catch (error) {}
+    } catch (error: any) {
+      if (error?.response?.data?.status?.code == 403) {
+        logout();
+      }
+    }
   }, []);
 
   const fetchAnalytics = useCallback(async () => {
@@ -367,6 +372,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     refreshToken();
   }, []);
 
+  const { setUser } = useUser();
+
   const fetchBalance = useCallback(async () => {
     try {
       const [balanceRes, userRes] = await Promise.all([
@@ -375,7 +382,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       ]);
       const balance = balanceRes.data?.data ?? 0;
       const user = (userRes as any)?.user;
-      if (user) dispatch({ type: "SET_USER", payload: user });
+      if (user) {
+        dispatch({ type: "SET_USER", payload: user });
+        setUser(user);
+      }
       dispatch({ type: "SET_BALANCE", payload: balance });
     } catch (error) {
       console.error("Balance fetch failed:", error);
@@ -385,7 +395,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   const refreshUser = useCallback(async () => {
     try {
       const res: any = await getCurrentUser();
-      if (res?.user) dispatch({ type: "SET_USER", payload: res.user });
+      if (res?.user) {
+        dispatch({ type: "SET_USER", payload: res.user });
+        setUser(res.user);
+      }
     } catch (error) {
       console.error("User refresh failed:", error);
     } finally {
@@ -433,6 +446,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       const user = res?.user;
 
       dispatch({ type: "SET_USER", payload: user });
+      setUser(user);
+
       dispatch({
         type: "SET_BALANCE",
         payload: user.wallet.coins + user.wallet.referralCoin,
@@ -488,18 +503,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const loadSecurityQuestion = async () => {
     try {
-      if (!state?.security_question?.length) {
-        const [question] = await Promise.all([API.securityQuestion()]);
-        dispatch({
-          type: "SET_SECURITY_QUESTIONS",
-          payload: question.data?.data || [],
-        });
-      }
+      const [question] = await Promise.all([API.securityQuestion()]);
+      dispatch({
+        type: "SET_SECURITY_QUESTIONS",
+        payload: question.data?.data || [],
+      });
     } catch (error) {}
   };
 
   useEffect(() => {
-    loadSecurityQuestion();
+    if (state?.security_question?.length == 0) {
+      loadSecurityQuestion();
+    }
   }, [state?.user?.id, logout]);
 
   useEffect(() => {

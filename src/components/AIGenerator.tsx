@@ -10,6 +10,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { useNavigationGuard } from "../hooks/useNavigationGuard";
 import { useAppContext } from "@/context/AppContext";
+import { useUser } from "@/store/useUser";
 
 interface AIGeneratorProps {
   contentData: any;
@@ -25,7 +26,7 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
   const [currentPlatform, setCurrentPlatform] = useState<Platform | null>(null);
   const [progress, setProgress] = useState(0);
   const { t, i18n } = useTranslation();
-  const { user }: any = useAppContext();
+  const { user } = useUser();
   useNavigationGuard({
     isActive: isGenerating,
     title: t("confirm_navigation") || "Confirm Navigation",

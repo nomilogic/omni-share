@@ -21,6 +21,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { notify } from "@/utils/toast";
 import { AuthenticatorModal } from "./AuthenticatorModal";
 import { FC } from "react";
+import { useUser } from "@/store/useUser";
 
 const AuthenticatorModalWrapper: FC<any> = ({
   close,
@@ -90,8 +91,9 @@ interface SecurityQuestion {
 
 function AccountSecurityTabs() {
   const { t } = useTranslation();
-  const { setPasswordEditing, refreshUser, user, security_question }: any =
+  const { setPasswordEditing, refreshUser, security_question }: any =
     useAppContext();
+  const { user } = useUser();
   const { openModal } = useModal();
 
   const [activeTab, setActiveTab] = useState<"password" | "security">(
@@ -213,7 +215,7 @@ function AccountSecurityTabs() {
 
       await API.securityAnswers(payload);
 
-      notify("success", t("security_questions_saved") );
+      notify("success", t("security_questions_saved"));
       refreshUser();
       setEditingQuestions(false);
       questionsForm.reset();
@@ -239,7 +241,10 @@ function AccountSecurityTabs() {
       await API.disable2FA(otp);
       notify("success", t("two_factor_authentication_disabled"));
     } catch (err: any) {
-      notify("error", err.response?.data?.message || t("failed_to_disable_2fa"));
+      notify(
+        "error",
+        err.response?.data?.message || t("failed_to_disable_2fa")
+      );
     } finally {
       setDisabling2FA(false);
     }
@@ -266,7 +271,9 @@ function AccountSecurityTabs() {
       setQrCodeUrl(res.data.qrCode);
       setManualCode(res.data.manualCode);
     } catch (err: any) {
-      setError(err?.response?.data?.message || t("failed_to_prepare_2fa_setup"));
+      setError(
+        err?.response?.data?.message || t("failed_to_prepare_2fa_setup")
+      );
     } finally {
       setLoadingQr(false);
     }
@@ -308,10 +315,7 @@ function AccountSecurityTabs() {
 
       await API.securityAnswers(payload);
 
-      notify(
-        "success",
-        t("security_questions_and_2fa_setup_successfully")
-      );
+      notify("success", t("security_questions_and_2fa_setup_successfully"));
       refreshUser();
 
       questionsForm.reset();
@@ -465,13 +469,17 @@ function AccountSecurityTabs() {
                   <div className="p-5 rounded-md border shadow-sm ">
                     <div className="flex justify-between items-start">
                       <div>
-                        <h4 className="font-semibold">{t("security_questions")}</h4>
+                        <h4 className="font-semibold">
+                          {t("security_questions")}
+                        </h4>
                         <p className="text-sm text-gray-600 mt-1">
                           {t("account_recovery")}
                         </p>
                       </div>
                       <span className="px-3 py-1 rounded-md text-xs font-medium bg-purple-100 ">
-                        {user?.isSecurityQuestions ? t("set") : t("not_set_badge")}
+                        {user?.isSecurityQuestions
+                          ? t("set")
+                          : t("not_set_badge")}
                       </span>
                     </div>
                   </div>
@@ -782,7 +790,6 @@ function AccountSecurityTabs() {
                         })}
 
                         <div className="flex gap-3  md:flex-row flex-col">
-                          
                           <button
                             type="button"
                             onClick={() => setEditingQuestions(false)}
@@ -795,7 +802,9 @@ function AccountSecurityTabs() {
                             disabled={loading}
                             className="flex-1 text-white text-md transition-all border border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] py-3 rounded-md disabled:opacity-60 font-medium"
                           >
-                            {loading ? t("saving") : t("save_security_questions")}
+                            {loading
+                              ? t("saving")
+                              : t("save_security_questions")}
                           </button>
                         </div>
                       </form>

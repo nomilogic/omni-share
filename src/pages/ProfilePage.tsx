@@ -17,6 +17,7 @@ import ProfileSetupSinglePage from "../components/ProfileSetupSinglePage";
 import { useAppContext } from "../context/AppContext";
 import API from "../services/api";
 import { useTranslation } from "react-i18next";
+import { useUser } from "@/store/useUser";
 
 interface UserProfile {
   id: string;
@@ -34,18 +35,18 @@ interface UserProfile {
 
 export const ProfilePage: React.FC = () => {
   const { state, dispatch, setProfileEditing } = useAppContext();
+  const { user } = useUser();
   const isEditing = !!state.isProfileEditing;
   const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState<any>({});
   const { t, i18n } = useTranslation();
-  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
 
   useEffect(() => {
-    if (state?.user) {
-      const merged = { ...state.user, ...(state?.user?.profile || {}) };
+    if (user) {
+      const merged = { ...user, ...(user?.profile || {}) };
       setProfile(merged);
     }
-  }, [state?.user]);
+  }, [user]);
 
   const handleSave = async () => {
     try {
@@ -98,17 +99,15 @@ export const ProfilePage: React.FC = () => {
                     <div className="flex items-center space-x-4 mt-2">
                       <span
                         className={`px-3 py-1 rounded-full text-sm font-medium ${
-                          state?.user?.wallet?.package?.tier === "business"
+                          user?.wallet?.package?.tier === "business"
                             ? "bg-purple-100 text-purple-700"
-                            : state?.user?.wallet?.package?.tier === "ipro"
+                            : user?.wallet?.package?.tier === "ipro"
                               ? "bg-purple-100 text-purple-700"
                               : "bg-purple-600 text-white"
                         }`}
                       >
                         {String(
-                          state?.user?.wallet?.package?.tier ||
-                            profile.plan ||
-                            "free"
+                          user?.wallet?.package?.tier || profile.plan || "free"
                         ).toUpperCase()}
                         {t("plan")}
                       </span>
@@ -151,7 +150,7 @@ export const ProfilePage: React.FC = () => {
                     </div>
                     <div>
                       <div className="text-2xl font-bold theme-text-secondary">
-                        {state?.user?.wallet?.coins ?? profile.coins ?? 0}
+                        {user?.wallet?.coins ?? profile.coins ?? 0}
                       </div>
                       <div className="text-sm text-muted-foreground">
                         {t("coins_available")}
@@ -168,7 +167,7 @@ export const ProfilePage: React.FC = () => {
                     </div>
                     <div>
                       <div className="text-2xl font-bold theme-text-secondary">
-                        {state?.user?.wallet?.package?.name || "Free"}
+                        {user?.wallet?.package?.name || "Free"}
                       </div>
                       <div className="text-sm text-muted-foreground">
                         {t("current_package")}
@@ -186,11 +185,11 @@ export const ProfilePage: React.FC = () => {
                       </div>
                       <div>
                         <div className="text-2xl font-bold theme-text-secondary">
-                          {state?.user?.wallet?.package?.tier == "free"
+                          {user?.wallet?.package?.tier == "free"
                             ? "No Expire"
-                            : state?.user?.wallet?.expiresAt
+                            : user?.wallet?.expiresAt
                               ? new Date(
-                                  state?.user?.wallet.expiresAt
+                                  user?.wallet.expiresAt
                                 ).toLocaleDateString("en-US", {
                                   month: "short",
                                   day: "numeric",
@@ -246,13 +245,13 @@ export const ProfilePage: React.FC = () => {
                       <input
                         type="text"
                         readOnly
-                        value={`${window.location.origin}/auth?referralId=${state.user?.id}`}
+                        value={`${window.location.origin}/auth?referralId=${user?.id}`}
                         className="w-full px-4 py-2.5 border border-white/20 rounded-md theme-bg-primary theme-text-primary font-mono"
                       />
                       <button
                         onClick={() => {
                           navigator.clipboard.writeText(
-                            `${window.location.origin}/auth?referralId=${state.user?.id}`
+                            `${window.location.origin}/auth?referralId=${user?.id}`
                           );
                         }}
                         className="px-3 py-2.5 bg-purple-600 text-white rounded-md"
@@ -264,7 +263,7 @@ export const ProfilePage: React.FC = () => {
                           // lazy import to avoid bundling modal everywhere
                           import("../components/InviteShare").then((m) => {
                             m.openInviteModal(
-                              `${window.location.origin}/auth?referralId=${state.user?.id}`,
+                              `${window.location.origin}/auth?referralId=${user?.id}`,
                               {
                                 title: "Invite a friend",
                                 description:

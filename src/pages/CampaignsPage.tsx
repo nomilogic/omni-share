@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
-import { Plus } from "lucide-react";
 import { CampaignSelector } from "../components/CampaignSelector";
 import { CampaignSetup } from "../components/CampaignSetup";
 import { CampaignDashboard } from "../components/CampaignDashboard";
@@ -11,7 +10,7 @@ import { saveCampaign, updateCampaign } from "../lib/database";
 import { CampaignInfo } from "../types";
 import { notify } from "@/utils/toast";
 import { useTranslation } from "react-i18next";
-import i18n from "@/i18n";
+import { useUser } from "@/store/useUser";
 
 export const CampaignsPage: React.FC = () => {
   const { state, dispatch } = useAppContext();
@@ -21,20 +20,19 @@ export const CampaignsPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const { t, i18n } = useTranslation();
-  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
+  const { user } = useUser();
 
   const handleSelectCampaign = (campaign: any) => {
-    // Convert to proper Campaign format for context
     const campaignData = {
       ...campaign,
-      userId: state.user?.id || campaign.userId || "",
+      userId: user?.id || campaign.userId || "",
     };
     dispatch({ type: "SET_SELECTED_CAMPAIGN", payload: campaignData });
     navigate(`/campaigns/${campaign.id}`);
   };
 
   const handleCreateCampaign = () => {
-    setError(null); // Clear any previous errors
+    setError(null);
 
     notify("error", t("creating_new_campaign"));
     navigate("/campaigns/new");
@@ -42,9 +40,9 @@ export const CampaignsPage: React.FC = () => {
 
   const handleCampaignCreated = async (campaignData: CampaignInfo) => {
     console.log("handleCampaignCreated called with:", campaignData);
-    console.log("Current user:", state.user);
+    console.log("Current user:", user);
 
-    if (!state.user?.id) {
+    if (!user?.id) {
       console.error("No user ID found");
       setError("User not found. Please log in again.");
       return;
@@ -54,11 +52,11 @@ export const CampaignsPage: React.FC = () => {
       setLoading(true);
       setError(null);
 
-      const savedCampaign = await saveCampaign(campaignData, state.user?.id);
+      const savedCampaign = await saveCampaign(campaignData, user?.id);
 
       const campaignWithUserId = {
         ...savedCampaign,
-        userId: state.user?.id,
+        userId: user?.id,
       };
 
       dispatch({ type: "SET_SELECTED_CAMPAIGN", payload: campaignWithUserId });
@@ -75,7 +73,7 @@ export const CampaignsPage: React.FC = () => {
   };
 
   const handleCampaignUpdated = async (campaignData: CampaignInfo) => {
-    if (!state.user?.id || !state.selectedCampaign?.id) {
+    if (!user?.id || !state.selectedCampaign?.id) {
       setError("User or campaign not found. Please try again.");
       return;
     }
@@ -88,14 +86,14 @@ export const CampaignsPage: React.FC = () => {
       const updatedCampaign = await updateCampaign(
         state.selectedCampaign.id,
         campaignData,
-        state.user?.id
+        user?.id
       );
       console.log("Campaign updated successfully:", updatedCampaign);
 
       // Update the context with the updated campaign
       const campaignWithUserId = {
         ...updatedCampaign,
-        userId: state.user?.id,
+        userId: user?.id,
       };
 
       dispatch({ type: "SET_SELECTED_CAMPAIGN", payload: campaignWithUserId });
@@ -149,14 +147,14 @@ export const CampaignsPage: React.FC = () => {
               </FeatureRestriction>
             ) : (
               <CampaignSelector
-                userId={state.user?.id || ""}
+                userId={user?.id || ""}
                 onSelectCampaign={handleSelectCampaign}
                 onCreateNew={handleCreateCampaign}
                 refreshTrigger={refreshTrigger}
                 onScheduleCampaign={(campaign) => {
                   const campaignData = {
                     ...campaign,
-                    userId: state.user?.id || campaign.userId || "",
+                    userId: user?.id || campaign.userId || "",
                   };
                   dispatch({
                     type: "SET_SELECTED_CAMPAIGN",
@@ -167,7 +165,7 @@ export const CampaignsPage: React.FC = () => {
                 onDashboardCampaign={(campaign) => {
                   const campaignData = {
                     ...campaign,
-                    userId: state.user?.id || campaign.userId || "",
+                    userId: user?.id || campaign.userId || "",
                   };
                   dispatch({
                     type: "SET_SELECTED_CAMPAIGN",

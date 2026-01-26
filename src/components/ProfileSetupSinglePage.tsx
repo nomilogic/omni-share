@@ -21,6 +21,7 @@ import API from "../services/api";
 import { useProfileFormSchema, ProfileFormData } from "./profileFormSchema";
 import { useAppContext } from "../context/AppContext";
 import { useTranslation } from "react-i18next";
+import { useUser } from "@/store/useUser";
 
 const STORAGE_KEY = "profile_form_data";
 
@@ -280,7 +281,6 @@ const ProfileSetupSinglePage: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [urlAnalysisLoading, setUrlAnalysisLoading] = useState(false);
   const [urlAnalysisError, setUrlAnalysisError] = useState<string | null>(null);
-  const { user } = useAuth();
   const {
     setProfileEditing,
     refreshUser,
@@ -288,15 +288,14 @@ const ProfileSetupSinglePage: React.FC = () => {
     useLogo,
     setUseTheme,
     useTheme,
-    state,
   } = useAppContext();
+  const { user } = useUser();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [selectedFileName, setSelectedFileName] = useState("");
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const schema = useProfileFormSchema();
-  const logoUrl = state.user?.profile?.brandLogo || "";
-  const themeUrl = state.user?.profile?.publicUrl || "";
+  const logoUrl = user?.profile?.brandLogo || "";
+  const themeUrl = user?.profile?.publicUrl || "";
 
   const { profileFormConfig } = useMemo(() => getProfileFormConfig(t), [t]);
   const isValidUrlP = (u?: string | null) => {
@@ -899,7 +898,6 @@ const ProfileSetupSinglePage: React.FC = () => {
                                       type="button"
                                       onClick={() => {
                                         setValue(fieldName, "" as any);
-                                        setSelectedFileName("");
                                       }}
                                       className="text-xs text-red-500 hover:underline"
                                     >
@@ -944,8 +942,6 @@ const ProfileSetupSinglePage: React.FC = () => {
                                   onChange={(e) => {
                                     const file = e.target.files?.[0];
                                     if (!file) return;
-
-                                    setSelectedFileName(file.name || "");
 
                                     const reader = new FileReader();
                                     reader.onloadend = () => {

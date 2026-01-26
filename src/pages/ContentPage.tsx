@@ -9,9 +9,12 @@ import { useAppContext } from "../context/AppContext";
 import { savePost } from "../lib/database";
 import { generateSinglePlatformPost } from "../lib/gemini";
 import { Platform, CampaignInfo } from "../types";
+import { useUser } from "@/store/useUser";
 
 export const ContentPage: React.FC = () => {
-  const { state, dispatch, user } = useAppContext();
+  const { state, dispatch } = useAppContext();
+  const { user } = useUser();
+
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [showPublishModal, setShowPublishModal] = useState(false);
@@ -57,13 +60,13 @@ export const ContentPage: React.FC = () => {
       return processedPost;
     });
 
-    if (state.user && state.selectedProfile && state.contentData) {
+    if (user?.id && state.selectedProfile && state.contentData) {
       try {
         await savePost(
           state.selectedProfile.id,
           state.contentData,
           processedPosts,
-          state.user?.id
+          user?.id
         );
       } catch (error) {
         console.error("Error saving post:", error);
@@ -168,6 +171,8 @@ export const ContentPage: React.FC = () => {
           index
           element={
             <ContentInput
+              setShowPublishModal={setShowPublishModal}
+              setShowGenerateModal={setShowGenerateModal}
               onNext={handleContentNext}
               onBack={() => navigate("/dashboard")}
               initialData={state.contentData}
@@ -216,7 +221,7 @@ export const ContentPage: React.FC = () => {
                           );
                         }}
                         onReset={handlePublishReset}
-                        userId={state.user?.id || ""}
+                        userId={user?.id || ""}
                       />
                     </div>
                   </div>

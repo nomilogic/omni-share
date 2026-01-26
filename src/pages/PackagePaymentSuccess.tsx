@@ -1,11 +1,13 @@
-import { useAppContext } from "@/context/AppContext";
+import { useAppContext, useAppContext } from "@/context/AppContext";
 import { getCurrentUser } from "@/lib/database";
 import API from "@/services/api";
+import { useUser } from "@/store/useUser";
 import React, { useEffect, useState } from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 
 export default function PackageSuccessPage() {
   const { dispatch } = useAppContext();
+  const { setUser } = useUser();
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -50,6 +52,8 @@ export default function PackageSuccessPage() {
         const authResult: any = await getCurrentUser();
         fetchBalance();
         dispatch({ type: "SET_USER", payload: authResult.user });
+        setUser(authResult.user);
+
         setLoading(false);
       }
     };
@@ -79,17 +83,17 @@ export default function PackageSuccessPage() {
             {loading
               ? "Confirming Purchase..."
               : confirmed
-              ? "Purchase Successful!"
-              : "Package Status"}
+                ? "Purchase Successful!"
+                : "Package Status"}
           </h1>
           <p className="text-gray-500 font-medium">
             {loading
               ? "Please wait while we confirm your package..."
               : confirmed
-              ? "Your package is now active. A receipt has been sent to your email."
-              : error
-              ? error
-              : "Your package could not be confirmed."}
+                ? "Your package is now active. A receipt has been sent to your email."
+                : error
+                  ? error
+                  : "Your package could not be confirmed."}
           </p>
         </div>
 

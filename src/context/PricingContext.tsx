@@ -11,6 +11,7 @@ import API from "../services/api";
 import { useAppContext } from "./AppContext";
 import { notify } from "@/utils/toast";
 import { useTranslation } from "react-i18next";
+import { useUser } from "@/store/useUser";
 
 interface PricingContextType {
   // Data
@@ -54,7 +55,8 @@ export const PricingProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const { state, refreshUser, packages, addons } = useAppContext();
-  const activePackage = state?.user?.wallet;
+  const { user } = useUser();
+  const activePackage = user?.wallet;
   const { t, i18n } = useTranslation();
 
   const [loadingPackage, setLoadingPackage] = useState(false);
