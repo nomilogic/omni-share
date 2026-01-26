@@ -431,7 +431,9 @@ export const HistoryPage = forwardRef<HistoryPageRef>((props, ref) => {
       </div>
 
       <div className="w-full  mx-auto ">
-        {filteredPosts && filteredPosts?.length === 0 ? (
+        {state.postHistoryLoading ? (
+          <></>
+        ) : filteredPosts?.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-purple-600 mb-4">
               <Clock className="w-16 h-16 mx-auto" />

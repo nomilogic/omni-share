@@ -54,6 +54,9 @@ export const ContentPage: React.FC = () => {
       return processedPost;
     });
 
+    dispatch({ type: "SET_GENERATED_POSTS", payload: processedPosts });
+    navigate("/content/preview");
+
     if (user?.id && state.selectedProfile && state.contentData) {
       try {
         await savePost(
@@ -66,9 +69,6 @@ export const ContentPage: React.FC = () => {
         console.error("Error saving post:", error);
       }
     }
-
-    dispatch({ type: "SET_GENERATED_POSTS", payload: processedPosts });
-    navigate("/content/preview");
   };
 
   const handleGoToPublish = () => {
@@ -240,7 +240,7 @@ export const ContentPage: React.FC = () => {
                     setShowGenerateModal(false);
                     document.body.classList.remove("modal-open");
                     document.documentElement.classList.remove("modal-open");
-                  }, 500);
+                  }, 1000);
                 }}
                 onBack={() => {
                   setShowGenerateModal(false);
