@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useMemo, useState } from "react";
+import React, { useLayoutEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
 import { useLoading } from "../context/LoadingContext";
@@ -11,17 +11,15 @@ import ReferralSection from "../components/dashboard/ReferralSection";
 import ProfileSetupSinglePage from "@/components/ProfileSetupSinglePage";
 import AccountSetting from "@/components/AccountSetting";
 import { useTranslation } from "react-i18next";
-import API from "@/services/api";
 import { useModal } from "../context2/ModalContext";
 import { ProfileFormData } from "@/components/profileFormSchema";
-import { useParams } from "react-router-dom";
-import { post } from "node_modules/axios/index.cjs";
+import { useUser } from "@/store/useUser";
 
 export const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { state, user, setPasswordEditing, setProfileEditing }: any =
-    useAppContext();
+  const { state, setPasswordEditing, setProfileEditing }: any = useAppContext();
+  const { user } = useUser();
   const { showLoading, hideLoading } = useLoading();
   const profileParam = searchParams.get("profile") === "true";
   const isEditing = profileParam || state?.isProfileEditing || false;
@@ -105,8 +103,8 @@ export const DashboardPage: React.FC = () => {
   };
 
   const progress = useMemo(
-    () => calculateProfileProgress(state?.user?.profile),
-    [state?.user]
+    () => calculateProfileProgress(user?.profile),
+    [user?.id]
   );
 
   const getProgressColor = (progress: number) => {

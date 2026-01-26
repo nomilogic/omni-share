@@ -3,11 +3,11 @@
 import React, { FC, useMemo, useState, useEffect } from "react";
 import { Share2, Copy, X, Link as LinkIcon } from "lucide-react";
 import Referal from "../../assets/referal.png";
-import { useAppContext } from "@/context/AppContext";
 import { useTranslation } from "react-i18next";
 import Icon from "../Icon";
 import { useNavigate } from "react-router-dom";
 import { useModal } from "../../context2/ModalContext";
+import { useUser } from "@/store/useUser";
 
 type Props = {
   close?: () => void;
@@ -18,7 +18,7 @@ const ReferralSection: FC<Props> = ({ close, className = "" }) => {
   const [copied, setCopied] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
-  const { user } = useAppContext();
+  const { user } = useUser();
   const { t } = useTranslation();
 
   const navigate = useNavigate();

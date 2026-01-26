@@ -12,17 +12,12 @@ import { usePricingModal } from "../context/PricingModalContext";
 import { notify } from "../utils/toast";
 import { useTranslation } from "react-i18next";
 import CustomCurrencySelector from "@/components/CustomCurrencySelector";
+import { useUser } from "@/store/useUser";
 
 export const PricingPage: React.FC = () => {
-  const {
-    state,
-    refreshUser,
-    setProcessing,
-    packages,
-    addons,
-    loader,
-    user,
-  }: any = useAppContext();
+  const { state, refreshUser, setProcessing, packages, addons, loader }: any =
+    useAppContext();
+  const { user } = useUser();
 
   const [searchParams, setSearchParams] = useSearchParams();
   const initialTab = (searchParams.get("tab") as "" | "addons") || "";
@@ -61,7 +56,7 @@ export const PricingPage: React.FC = () => {
 
   const [downgradeLoading, setDowngradeLoading] = useState(false);
 
-  const activePackage = state?.user?.wallet;
+  const activePackage = user?.wallet;
 
   useEffect(() => {
     if (initialTab === "addons") {

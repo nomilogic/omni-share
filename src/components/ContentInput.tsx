@@ -43,6 +43,7 @@ import ImageRegenerationModal from "./ImageRegenerationModal";
 import { Link, useNavigate } from "react-router-dom";
 import { useConfirmDialog } from "../context/ConfirmDialogContext";
 import { useNavigationGuard } from "../hooks/useNavigationGuard";
+import { useUser } from "@/store/useUser";
 
 const fileToBase64 = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -74,11 +75,12 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   initialData,
   selectedPlatforms,
   editMode,
+  setShowGenerateModal,
+  setShowPublishModal,
 }) => {
   const {
     state,
     generationAmounts,
-    user,
     setCost,
     cost,
     setUseLogo,
@@ -86,7 +88,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     setUseTheme,
     useTheme,
   }: any = useAppContext();
-
+  const { user } = useUser();
   const {
     executeVideoThumbnailGeneration,
     executeImageGeneration,
@@ -172,8 +174,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     isActive: isProcessing || checkUnsavedContent(),
   });
 
-  const logoUrl = state.user?.profile?.brandLogo || "";
-  const themeUrl = state.user?.profile?.publicUrl || "";
+  const logoUrl = user?.profile?.brandLogo || "";
+  const themeUrl = user?.profile?.publicUrl || "";
 
   // Video thumbnail specific logo and theme states
   const [videoUseLogo, setVideoUseLogo] = useState(false);
@@ -309,7 +311,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       ...prev,
       selectedPlatforms: appropriatePlatforms,
     }));
-
+    setShowPublishModal(false);
+    setShowGenerateModal(false);
     if (selectedPostType === "video") {
       if (videoAspectRatio) {
         let shouldClearWarning = false;
@@ -336,6 +339,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       }
     }
   }, [
+    selectedPostType,
     selectedImageMode,
     selectedVideoMode,
     videoAspectRatio,
@@ -361,13 +365,13 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
   useEffect(() => {
     const fetchCampaignInfo = async () => {
-      if (state.selectedCampaign && state.user?.id) {
+      if (state.selectedCampaign && user?.id) {
         try {
           setLoadingCampaign(true);
 
           const campaign = await getCampaignById(
             state.selectedCampaign.id,
-            state.user.id
+            user.id
           );
           setCampaignInfo(campaign);
 
@@ -392,7 +396,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     };
 
     fetchCampaignInfo();
-  }, [state.selectedCampaign, state.user?.id]);
+  }, [state.selectedCampaign, user?.id]);
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -479,6 +483,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                 return {
                   ...prev,
                   media: undefined,
+                  selectedPlatforms: [],
                   mediaUrl: undefined,
                   serverUrl: undefined,
                 };
@@ -925,7 +930,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
   const [modelImage, setModelImage] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
-  const [selectedConfirmedImage, setSelectedConfirmedImage] = useState<string | null>(null);
+  const [selectedConfirmedImage, setSelectedConfirmedImage] = useState<
+    string | null
+  >(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null); // For actual upload
   const [allGeneration, setAllGeneration] = useState<any>([]);
   const MAX_IMAGES = 3;
@@ -1226,6 +1233,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       ...prev,
       prompt: "",
       media: undefined,
+      selectedPlatforms: [],
       mediaUrl: undefined,
       serverUrl: undefined,
       imageUrl: undefined,
@@ -1244,6 +1252,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     setFormData((prev) => ({
       ...prev,
       media: undefined,
+      selectedPlatforms: [],
+
       mediaUrl: undefined,
     }));
     setSelectedFile(null);
@@ -1609,12 +1619,12 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     try {
       // Use the selected image if provided, otherwise fall back to generatedImage
       const imageToUse = selectedImageUrl || generatedImage;
-      
+
       if (imageToUse) {
         setGeneratedImage(imageToUse);
         setSelectedConfirmedImage(imageToUse); // Store the confirmed image separately
       }
-      
+
       const blankTemplate = getTemplateById("blank-template");
       if (blankTemplate) {
         setSelectedTemplate(blankTemplate);
@@ -1633,7 +1643,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     try {
       // Use the selected image if provided, otherwise fall back to videoThumbnailForRegeneration
       const thumbnailToUse = selectedImageUrl || videoThumbnailForRegeneration;
-      
+
       setVideoThumbnailUrl(thumbnailToUse);
       setSelectedConfirmedImage(thumbnailToUse); // Store the confirmed image separately
 
@@ -1877,6 +1887,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         setFormData((prev) => ({
                           ...prev,
                           media: undefined,
+                          selectedPlatforms: [],
                           prompt: "",
                           mediaUrl: undefined,
                         }));
@@ -1888,6 +1899,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         setVideoAspectRatio(null);
                         setSelectedImageMode("");
                         setSelectedVideoMode("");
+                        setShowPreview(false);
                         currentFileRef.current = null;
                       }
                       setSelectedPostType(
@@ -1931,7 +1943,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
                         setShowImageMenu(!showImageMenu);
                       }
-
+                      setShowPreview(false);
                       setSelectedPostType("image");
                     }}
                     className={` relative cursor-pointer border shadow-md backdrop-blur-md border-slate-200/70 transition-all duration-200  text-center px-2 py-3 rounded-md ${
@@ -1981,10 +1993,11 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             setShowImageMenu(false);
 
                             setSelectedFile(null);
-
+                            setShowPreview(false);
                             setFormData((prev) => ({
                               ...prev,
                               media: undefined,
+                              selectedPlatforms: [],
                               prompt: "",
                               mediaUrl: undefined,
                             }));
@@ -2034,12 +2047,13 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             }
                             hideLoading();
                             setSelectedFile(null);
-
+                            setShowPreview(false);
                             setSelectedImageMode("textToImage");
                             setShowImageMenu(false);
                             setFormData((prev) => ({
                               ...prev,
                               media: undefined,
+                              selectedPlatforms: [],
                               prompt: "",
                               mediaUrl: undefined,
                             }));
@@ -2091,6 +2105,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                       } else {
                         setShowVideoMenu(!showVideoMenu);
                       }
+                      setShowPreview(false);
                     }}
                     className={`relative cursor-pointer border shadow-md backdrop-blur-md border-slate-200/70 transition-all duration-200 text-center px-2 py-3 rounded-md ${
                       selectedPostType === "video"
@@ -2133,6 +2148,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               setFormData((prev) => ({
                                 ...prev,
                                 media: undefined,
+                                selectedPlatforms: [],
                                 mediaUrl: undefined,
                               }));
                               setOriginalVideoFile(null);
@@ -2182,6 +2198,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               setFormData((prev) => ({
                                 ...prev,
                                 media: undefined,
+                                selectedPlatforms: [],
                                 mediaUrl: undefined,
                               }));
                               setOriginalVideoFile(null);
@@ -2305,6 +2322,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                     setFormData((prev) => ({
                                       ...prev,
                                       media: undefined,
+                                      selectedPlatforms: [],
                                       mediaUrl: undefined,
                                     }));
                                     setSelectedFile(null);
@@ -2478,6 +2496,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                   setFormData((prev) => ({
                                     ...prev,
                                     media: undefined,
+                                    selectedPlatforms: [],
                                     mediaUrl: undefined,
                                   }));
                                   setTemplatedImageUrl("");
@@ -2500,6 +2519,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                   setFormData((prev) => ({
                                     ...prev,
                                     media: undefined,
+                                    selectedPlatforms: [],
                                     mediaUrl: undefined,
                                   }));
                                   setTemplatedImageUrl("");
@@ -2747,6 +2767,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             setFormData((prev) => ({
                               ...prev,
                               media: undefined,
+                              selectedPlatforms: [],
                               mediaUrl: undefined,
                             }));
                             setTemplatedImageUrl("");

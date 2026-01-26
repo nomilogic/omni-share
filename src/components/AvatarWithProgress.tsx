@@ -56,11 +56,11 @@ const calculateProfileProgress = (profile: any) => {
 };
 
 export function AvatarWithProgress({
-  state,
+  user,
   size = 65,
   className = "w-12 h-12",
 }: any) {
-  const profile = state?.profile;
+  const profile = user?.profile;
 
   const progress = useMemo(() => calculateProfileProgress(profile), [profile]);
 
@@ -119,16 +119,16 @@ export function AvatarWithProgress({
         <img
           className="w-full h-full object-cover rounded-full"
           src={
-            state?.user?.avatarUrl
-              ? state.user.avatarUrl
+            user?.avatarUrl
+              ? user?.avatarUrl
               : `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                  profile?.fullName || state?.user?.email || "U"
+                  profile?.fullName || user?.email || "U"
                 )}&background=00000000&color=fff`
           }
           alt={profile?.fullName}
           onError={(e) => {
             e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-              profile?.fullName || state?.user?.email || "U"
+              profile?.fullName || user?.email || "U"
             )}&background=00000000&color=fff`;
           }}
         />

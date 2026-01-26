@@ -2,14 +2,14 @@ import React from "react";
 import mainImage from "../assets/omni.jpg";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useAppContext } from "@/context/AppContext";
 import Cookies from "js-cookie";
+import { useUser } from "@/store/useUser";
 
 const TwoColumnSection: React.FC = () => {
-  const { t, i18n } = useTranslation();
-  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
+  const { t } = useTranslation();
   const navigate = useNavigate();
-  const { user } = useAppContext();
+  const { user } = useUser();
+
   return (
     <section
       className="relative w-full max-w-full mx-auto px-4 sm:px-6 lg:px-[10%]

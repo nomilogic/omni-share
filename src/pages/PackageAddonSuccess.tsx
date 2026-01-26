@@ -1,12 +1,13 @@
 import { useAppContext } from "@/context/AppContext";
 import { getCurrentUser } from "@/lib/database";
 import API from "@/services/api";
+import { useUser } from "@/store/useUser";
 import React, { useState, useEffect } from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 
 export default function AddonSuccessPage() {
   const { dispatch } = useAppContext();
-
+  const { setUser } = useUser();
   const location = useLocation();
   const navigate = useNavigate();
   const searchParams = new URLSearchParams(location.search);
@@ -49,6 +50,7 @@ export default function AddonSuccessPage() {
       } finally {
         const authResult: any = await getCurrentUser();
         dispatch({ type: "SET_USER", payload: authResult.user });
+        setUser(authResult.user);
         fetchBalance();
         setLoading(false);
       }
@@ -79,15 +81,15 @@ export default function AddonSuccessPage() {
             {loading
               ? "Confirming Add-on..."
               : confirmed
-              ? "Payment Successful!"
-              : "Payment Status"}
+                ? "Payment Successful!"
+                : "Payment Status"}
           </h1>
           <p className="text-gray-500 font-medium">
             {loading
               ? "Please wait while we confirm your add-on."
               : confirmed
-              ? "Your add-on is now active. A confirmation email has been sent to you."
-              : error || "Your add-on could not be confirmed."}
+                ? "Your add-on is now active. A confirmation email has been sent to you."
+                : error || "Your add-on could not be confirmed."}
           </p>
         </div>
 

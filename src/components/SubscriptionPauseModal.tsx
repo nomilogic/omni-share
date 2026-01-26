@@ -14,6 +14,7 @@ import ModalIllustrationPng from "../assets/cancle-popup.png";
 import { useTranslation } from "react-i18next";
 import API from "@/services/api";
 import { notify } from "@/utils/toast";
+import { useUser } from "@/store/useUser";
 /**
  * A modal component that displays a message to the user when they
  * are about to cancel their subscription. The component provides
@@ -38,7 +39,8 @@ const SubscriptionPauseModal = ({
   downgradeModal,
 }: any) => {
   if (!isVisible) return null;
-  const { user, refreshUser }: any = useAppContext();
+  const { refreshUser }: any = useAppContext();
+  const { user } = useUser();
   const { t, i18n } = useTranslation();
   const [downgradeLoading, setDowngradeLoading] = useState(false);
 
@@ -141,8 +143,6 @@ const SubscriptionPauseModal = ({
             </ul>
 
             <div className="flex gap-2">
-              
-
               <button
                 onClick={openDowngradeModel}
                 className="w-full   text-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3] 
@@ -210,7 +210,6 @@ const SubscriptionPauseModal = ({
                       </ul>
                     </div>
                     <div className="flex gap-2 justify-between">
-                      
                       <button
                         onClick={openDowngradeModel}
                         className="w-full mt-2  text-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3] 

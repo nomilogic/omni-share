@@ -80,11 +80,7 @@ const Sidebar = ({
             className="flex items-center gap-x-2 mb-0 w-full hover:theme-bg-secondary rounded-md p-2 transition-colors"
           >
             <div className="mx-2 py-4">
-              <AvatarWithProgress
-                state={user}
-                className="w-10 h-10"
-                size={55}
-              />
+              <AvatarWithProgress user={user} className="w-10 h-10" size={55} />
             </div>
             <div className="flex-1 min-w-0 text-left">
               <div className="text-md font-medium theme-text-light truncate">

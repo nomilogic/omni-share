@@ -9,6 +9,7 @@ import { useAppContext } from "@/context/AppContext";
 import API from "@/services/api";
 import { notify } from "@/utils/toast";
 import { useTranslation } from "react-i18next";
+import { useUser } from "@/store/useUser";
 
 export const ManageSubscriptionModal: React.FC<any> = ({
   isOpen,
@@ -20,11 +21,11 @@ export const ManageSubscriptionModal: React.FC<any> = ({
   setIsModalOpen,
 }) => {
   const { t, i18n } = useTranslation();
-  const changeLanguage = (lang: any) => i18n.changeLanguage(lang);
   const [showTransactions, setShowTransactions] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isReactive, setIsReactive] = useState(false);
-  const { user, refreshUser, packages } = useAppContext();
+  const { refreshUser, packages } = useAppContext();
+  const { user } = useUser();
   const [downgradeModal, setDowngrade] = useState(false);
   const openDowngradeModel = () => {
     setDowngrade(!downgradeModal);

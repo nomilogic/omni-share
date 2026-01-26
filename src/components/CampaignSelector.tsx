@@ -12,6 +12,7 @@ import { getCampaigns, deleteCampaign } from "../lib/database";
 import { CampaignInfo } from "../types";
 import { usePlanFeatures } from "../hooks/usePlanFeatures";
 import { useAppContext } from "../context/AppContext";
+import { useUser } from "@/store/useUser";
 
 interface CampaignSelectorProps {
   userId: string;
@@ -35,10 +36,12 @@ export const CampaignSelector: React.FC<CampaignSelectorProps> = ({
   const [campaigns, setCampaigns] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { state } = useAppContext();
+  const { user } = useUser();
+
   const { canSchedule, currentPlan } = usePlanFeatures();
   const isBusinessAccount =
     state.selectedProfile?.profile_type === "business" ||
-    state.user?.profile_type === "business" ||
+    user?.profile_type === "business" ||
     currentPlan === "business";
 
   useEffect(() => {

@@ -38,10 +38,13 @@ import LanguageDropdown from "../components/LanguageDropdown";
 import { Trans, useTranslation } from "react-i18next";
 import { useAppContext } from "../context/AppContext";
 import Cookies from "js-cookie";
+import { useUser } from "@/store/useUser";
+import user from "pusher-js/types/src/core/user";
 
 function HomePage() {
   const { t } = useTranslation();
-  const { user, logout }: any = useAppContext();
+  const { logout }: any = useAppContext();
+  const { user }: any = useUser();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrollY, setScrollY] = useState(0);
   const [currentReviewIndex, setCurrentReviewIndex] = useState(0);
@@ -379,16 +382,15 @@ function HomePage() {
                     className="flex items-center gap-x-3 w-full hover:bg-white/10 rounded-md p-2 transition-colors"
                   >
                     <img
-                      className="w-12 h-12 rounded-full object-cover border border-white/50"
-                      src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
-                        user?.name || "U"
-                      )}&background=7650e3&color=fff`}
-                      alt="User avatar"
-                      onError={(e) => {
-                        e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                          user?.name || "U"
-                        )}&background=7650e3&color=fff`;
-                      }}
+                      className="w-11 h-11 rounded-full object-cover border border-white/50"
+                      src={
+                        user?.avatarUrl
+                          ? user?.avatarUrl
+                          : `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                              user?.profile?.fullName || user?.email || "U"
+                            )}&background=00000000&color=fff`
+                      }
+                      alt={user?.profile?.fullName}
                     />
                     <div className="flex-1 min-w-0 text-left">
                       <div className="text-md font-medium text-white truncate">
@@ -790,36 +792,34 @@ function HomePage() {
                 { id: "Features", label: t("features") },
                 { id: "Faq", label: t("faq") },
                 { id: "Contact", label: t("contact") },
-              ].map(
-                (section, index) => (
-                  <motion.button
-                    key={section.id}
-                    onClick={() => scrollToSection(section.id)}
-                    className="transition-colors relative text-white capitalize font-medium"
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
+              ].map((section, index) => (
+                <motion.button
+                  key={section.id}
+                  onClick={() => scrollToSection(section.id)}
+                  className="transition-colors relative text-white capitalize font-medium"
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    delay: index * 0.1,
+                    type: "spring",
+                    stiffness: 100,
+                  }}
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {section.label}
+                  <motion.span
+                    className="absolute bottom-0 left-0 w-full h-0.5 bg-white origin-left"
+                    initial={{ scaleX: 0 }}
+                    whileHover={{ scaleX: 1 }}
                     transition={{
-                      delay: index * 0.1,
                       type: "spring",
-                      stiffness: 100,
+                      stiffness: 300,
+                      damping: 20,
                     }}
-                    whileHover={{ scale: 1.05, y: -2 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {section.label}
-                    <motion.span
-                      className="absolute bottom-0 left-0 w-full h-0.5 bg-white origin-left"
-                      initial={{ scaleX: 0 }}
-                      whileHover={{ scaleX: 1 }}
-                      transition={{
-                        type: "spring",
-                        stiffness: 300,
-                        damping: 20,
-                      }}
-                    />
-                  </motion.button>
-                )
-              )}
+                  />
+                </motion.button>
+              ))}
 
               <div className="flex items-center gap-3 w-auto">
                 <AnimatePresence mode="wait">
@@ -850,15 +850,19 @@ function HomePage() {
                       onClick={() => navigate("/dashboard")}
                     >
                       <img
-                        className="w-10 h-10 rounded-full object-cover border border-white/50 hover:border-white transition-colors"
-                        src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
-                          user?.name || "U"
-                        )}&background=7650e3&color=fff`}
-                        alt="User avatar"
+                        className="w-11 h-11 rounded-full object-cover border border-white/50 hover:border-white transition-colors"
+                        src={
+                          user?.avatarUrl
+                            ? user?.avatarUrl
+                            : `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                                user?.profile?.fullName || user?.email || "U"
+                              )}&background=00000000&color=fff`
+                        }
+                        alt={user?.profile?.fullName}
                         onError={(e) => {
                           e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                            user?.name || "U"
-                          )}&background=7650e3&color=fff`;
+                            user?.profile?.fullName || user?.email || "U"
+                          )}&background=00000000&color=fff`;
                         }}
                       />
                     </motion.div>
