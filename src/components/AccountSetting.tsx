@@ -695,7 +695,7 @@ function AccountSecurityTabs() {
                           onClick={() => {
                             setEditingQuestions(true);
                           }}
-                          className="px-4 py-2 rounded-md font-medium transition  text-white  border border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="px-2 py-2 w-28 rounded-md text-base font-medium transition  text-white  border border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {t("update")}
                         </button>
@@ -786,14 +786,14 @@ function AccountSecurityTabs() {
                           <button
                             type="button"
                             onClick={() => setEditingQuestions(false)}
-                            className="flex-1 bg-transparent border-purple-600 border text-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] py-3 rounded-md font-medium"
+                            className="flex-1 bg-transparent border-purple-600 border text-base text-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] py-2.5 rounded-md font-medium"
                           >
                             {t("cancel")}
                           </button>
                           <button
                             type="submit"
                             disabled={loading}
-                            className="flex-1 text-white text-md transition-all border border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] py-3 rounded-md disabled:opacity-60 font-medium"
+                            className="flex-1 text-white text-base transition-all border border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] py-2.5 rounded-md disabled:opacity-60 font-medium"
                           >
                             {loading ? t("saving") : t("save_security_questions")}
                           </button>
@@ -837,7 +837,7 @@ function AccountSecurityTabs() {
                           }
                         }}
                         disabled={disabling2FA || !user?.isSecurityQuestions}
-                        className={`px-2 py-2 w-full md:w-auto rounded-md font-medium transition ${
+                        className={`px-2 py-2.5 text-base w-full md:w-28 rounded-md font-medium transition ${
                           user?.twoFactorEnabled
                             ? "bg-red-600 hover:bg-red-700 text-white"
                             : "text-white text-md transition-all border border-[#7650e3] bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3]"

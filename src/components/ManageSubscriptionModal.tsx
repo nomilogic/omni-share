@@ -40,6 +40,8 @@ export const ManageSubscriptionModal: React.FC<any> = ({
 
   if (!isOpen) return null;
 
+  
+
   const handleAction = async (action: () => void | Promise<void>) => {
     try {
       setIsLoading(true);
@@ -104,7 +106,7 @@ export const ManageSubscriptionModal: React.FC<any> = ({
     <div className="fixed inset-0 z-10 flex items-center justify-center p-0">
       <div
         className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-        onClick={onClose}
+        onClick={_onClose}
         aria-hidden
       />
 
