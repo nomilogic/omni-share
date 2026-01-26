@@ -26,7 +26,6 @@ export const ContentPage: React.FC = () => {
   };
 
   const handleGenerationComplete = async (posts: any[]) => {
-    console.log("posts1231231", posts);
     const processedPosts = posts.map((post) => {
       const processedPost = { ...post };
 
@@ -41,15 +40,10 @@ export const ContentPage: React.FC = () => {
         !state.contentData?.mediaUrl.startsWith("blob:") &&
         (!processedPost.imageUrl || processedPost.imageUrl.startsWith("blob:"))
       ) {
-        console.log(
-          "Using media URL from content data:",
-          state.contentData.mediaUrl
-        );
         processedPost.imageUrl = state.contentData.mediaUrl;
         processedPost.mediaUrl = state.contentData.mediaUrl;
       }
 
-      // Ensure thumbnailUrl is used for video content from template editor
       if (
         state.contentData?.isVideoContent &&
         state.contentData?.thumbnailUrl
@@ -242,9 +236,11 @@ export const ContentPage: React.FC = () => {
                 contentData={state.contentData}
                 onComplete={(posts) => {
                   handleGenerationComplete(posts);
-                  setShowGenerateModal(false);
-                  document.body.classList.remove("modal-open");
-                  document.documentElement.classList.remove("modal-open");
+                  setTimeout(() => {
+                    setShowGenerateModal(false);
+                    document.body.classList.remove("modal-open");
+                    document.documentElement.classList.remove("modal-open");
+                  }, 500);
                 }}
                 onBack={() => {
                   setShowGenerateModal(false);
