@@ -749,8 +749,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           if (videoThumbnailUrl) {
             const blankTemplate = getTemplateById("blank-template");
             if (blankTemplate) {
-              setSelectedTemplate(blankTemplate);
-              setShowTemplateEditor(true);
+              setVideoThumbnailForRegeneration(videoThumbnailUrl);
+              setVideoThumbnailGenerations([videoThumbnailUrl]);
+              setShowVideoThumbnailModal(true);
 
               const currentCampaignInfo = campaignInfo || {
                 name: "",
@@ -1383,9 +1384,14 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       setVideoThumbnailUrl(mediaUrl);
 
       const blankTemplate = getTemplateById("blank-template");
+     setVideoThumbnailForRegeneration(mediaUrl);
+          setVideoThumbnailGenerations([
+            ...videoThumbnailGenerations,
+            mediaUrl,
+          ]);
       if (blankTemplate) {
-        setSelectedTemplate(blankTemplate);
-        setShowTemplateEditor(true);
+     //   setSelectedTemplate(blankTemplate);
+        //setShowTemplateEditor(true);
 
         const currentCampaignInfo = campaignInfo || {
           name: "",
@@ -1724,7 +1730,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       reader.onloadend = () => {
         const base64String = reader.result as string;
         setGeneratedImage(base64String);
-        setAllGeneration([base64String]);
+       // setAllGeneration([base64String]);
       };
       reader.readAsDataURL(file);
     }
@@ -1803,6 +1809,48 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     generateVideoThumbnailAI,
     generationAmounts,
   ]);
+const resetAll = () => {
+  // Abort upload if running
+  if (uploadAbortControllerRef.current) {
+    uploadAbortControllerRef.current.abort();
+    uploadAbortControllerRef.current = null;
+  }
+
+  hideLoading();
+
+  // File & refs
+  setSelectedFile(null);
+  setOriginalVideoFile(null);
+  currentFileRef.current = null;
+
+  // UI states
+  setShowPreview(false);
+  setShowImageMenu(false);
+  setShowVideoMenu(false);
+  setSelectedVideoMode("");
+
+  // Image states
+  setGeneratedImage(null);
+  setTemplatedImageUrl("");
+  setSelectedTemplate(undefined);
+  setImageAnalysis("");
+
+  // Video states
+  setVideoAspectRatio(null);
+  setVideoThumbnailUrl("");
+  setVideoAspectRatioWarning("");
+
+  // Form data (single update 👇)
+  setFormData((prev) => ({
+    ...prev,
+    media: undefined,
+    mediaUrl: undefined,
+    selectedPlatforms: [],
+    prompt: "",
+  }));
+  setModelImage(false);
+      setAllGeneration([]);
+};
 
   return (
     <div className="w-full mx-auto rounded-md border border-white/10  md:p-5 p-3 ">
@@ -1988,28 +2036,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               uploadAbortControllerRef.current.abort();
                               uploadAbortControllerRef.current = null;
                             }
-                            currentFileRef.current = null;
-                            hideLoading();
-                            setShowImageMenu(false);
-
-                            setSelectedFile(null);
-                            setShowPreview(false);
-                            setFormData((prev) => ({
-                              ...prev,
-                              media: undefined,
-                              selectedPlatforms: [],
-                              prompt: "",
-                              mediaUrl: undefined,
-                            }));
-                            setOriginalVideoFile(null);
-                            setVideoAspectRatio(null);
-                            setVideoThumbnailUrl("");
-                            setVideoAspectRatioWarning("");
-                            setSelectedVideoMode("");
-                            currentFileRef.current = null;
-                            setTemplatedImageUrl("");
-                            setSelectedTemplate(undefined);
-                            setImageAnalysis("");
+                           resetAll();
                             setSelectedImageMode("upload");
                           }}
                           className={`p-3 rounded-md border transition shadow-md backdrop-blur-md border-slate-200/70 transition-all duration-200 text-center 
@@ -2041,30 +2068,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         <button
                           type="button"
                           onClick={() => {
-                            if (uploadAbortControllerRef.current) {
-                              uploadAbortControllerRef.current.abort();
-                              uploadAbortControllerRef.current = null;
-                            }
-                            hideLoading();
-                            setSelectedFile(null);
-                            setShowPreview(false);
+                          resetAll();
                             setSelectedImageMode("textToImage");
-                            setShowImageMenu(false);
-                            setFormData((prev) => ({
-                              ...prev,
-                              media: undefined,
-                              selectedPlatforms: [],
-                              prompt: "",
-                              mediaUrl: undefined,
-                            }));
-                            setTemplatedImageUrl("");
-                            setSelectedTemplate(undefined);
-                            setImageAnalysis("");
-                            setOriginalVideoFile(null);
-                            setVideoAspectRatio(null);
-                            setVideoThumbnailUrl("");
-                            setVideoAspectRatioWarning("");
-                            setSelectedVideoMode("");
+                           
                           }}
                           className={`p-3   border rounded-md transition-all duration-200 text-center 
                         ${selectedPostType === "image" ? "" : "hidden"}
@@ -2100,9 +2106,20 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                   <div
                     onClick={() => {
                       if (selectedPostType !== "video") {
+                         setFormData((prev) => ({
+                                ...prev,
+                                media: undefined,
+                                selectedPlatforms: [],
+                                mediaUrl: undefined,
+                              }));
+                          setSelectedFile(null);
+                         currentFileRef.current = null;
                         setShowVideoMenu(true);
+                           setTemplatedImageUrl("");
+                            setSelectedTemplate(undefined);
                         setSelectedPostType("video");
                       } else {
+                            
                         setShowVideoMenu(!showVideoMenu);
                       }
                       setShowPreview(false);
@@ -2155,7 +2172,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               setVideoAspectRatio(null);
                               setVideoThumbnailUrl("");
                               setVideoAspectRatioWarning("");
-
+                              setSelectedFile(null);
+                              setGeneratedImage(null);
                               currentFileRef.current = null;
                             }
                             setSelectedVideoMode("upload");
@@ -2205,6 +2223,13 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               setVideoAspectRatio(null);
                               setVideoThumbnailUrl("");
                               setVideoAspectRatioWarning("");
+
+                          setSelectedFile(null);
+                         currentFileRef.current = null;
+                           setTemplatedImageUrl("");
+                            setSelectedTemplate(undefined);
+                              setSelectedFile(null);
+                              setGeneratedImage(null);
                               currentFileRef.current = null;
                             }
                             setSelectedVideoMode("uploadShorts");
@@ -2272,10 +2297,10 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             ref={fileInputRef}
                             type="file"
                             accept={
-                              selectedVideoMode === "uploadShorts" ||
+                              selectedImageMode === "upload" ? "image/*" : selectedVideoMode === "uploadShorts" ||
                               selectedVideoMode === "upload"
                                 ? "video/*"
-                                : "image/*,video/*"
+                                : "image/*"
                             }
                             onChange={handleFileChange}
                             className="hidden"
@@ -2298,7 +2323,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                       : selectedFile
                                         ? URL.createObjectURL(selectedFile)
                                         : "");
-
+                                    console.log( "formData.mediaUrl",formData.mediaUrl, "generatedImage", generatedImage, "formData.media", formData.media,
+                                    "selectedFile", selectedFile,  imageSrc, "imageSrc");
                                   return (
                                     <img
                                       src={imageSrc}
