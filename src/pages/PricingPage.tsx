@@ -85,7 +85,12 @@ export const PricingPage: React.FC = () => {
   const hasCancelRequested = !!activePackage?.cancelRequested;
   const langToCurrency: any = { en: "USD", es: "EUR", zh: "CNY" };
 
-  const { openManageSubscription } = useSubscriptionModal();
+  const { openManageSubscription, setIsModalOpen } = useSubscriptionModal() as any;
+
+const openManageSubscriptionFixed = () => {
+  setIsModalOpen?.(false); // ✅ child modal reset (agar available ho)
+  openManageSubscription();
+};
 
   const handleTabChange = (tab: "" | "addons") => {
     setActiveTab(tab);
@@ -354,7 +359,7 @@ export const PricingPage: React.FC = () => {
                         <button
                           onClick={() => {
                             if (hasCancelRequested && isCurrentPlan)
-                              openManageSubscription();
+                              openManageSubscriptionFixed();
                             else if (isPendingDowngradePackage) {
                               openCancelDowngrade({
                                 currentPlanName: currentTier?.name ?? "",
@@ -367,9 +372,9 @@ export const PricingPage: React.FC = () => {
                               setCancelDowngradeHandler(async () => {
                                 await handleCancelDowngradeRequest();
                               });
-                            } else if (isCurrentPlan) openManageSubscription();
+                            } else if (isCurrentPlan) openManageSubscriptionFixed();
                             else if (isCurrentPlan && !hasPendingDowngrade)
-                              openManageSubscription();
+                              openManageSubscriptionFixed();
                             else handleChoosePlan(tier);
                           }}
                           disabled={

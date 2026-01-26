@@ -17,7 +17,6 @@ import {
 } from "../lib/imageGeneration";
 import { Platform } from "../types";
 import { useNavigationGuard } from "../hooks/useNavigationGuard";
-import { useTranslation } from "react-i18next";
 
 interface AIImageGeneratorProps {
   onImageGenerated: (imageUrl: string) => void;
@@ -46,7 +45,6 @@ export const AIImageGenerator: React.FC<AIImageGeneratorProps> = ({
   const [isGenerating, setIsGenerating] = useState(false);
   const [currentImage, setCurrentImage] = useState<GeneratedImage | null>(null);
   const [hasError, setHasError] = useState(false);
-  const { t } = useTranslation();
   const [imageRequest, setImageRequest] = useState<ImageGenerationRequest>({
     prompt: "",
     style: "professional",
