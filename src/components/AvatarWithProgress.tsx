@@ -122,13 +122,13 @@ export function AvatarWithProgress({
             user?.avatarUrl
               ? user?.avatarUrl
               : `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                  profile?.fullName || user?.email || "U"
+                  profile?.fullName || user?.email
                 )}&background=00000000&color=fff`
           }
           alt={profile?.fullName}
           onError={(e) => {
             e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-              profile?.fullName || user?.email || "U"
+              profile?.fullName || user?.email
             )}&background=00000000&color=fff`;
           }}
         />

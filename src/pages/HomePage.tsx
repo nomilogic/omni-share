@@ -387,7 +387,7 @@ function HomePage() {
                         user?.avatarUrl
                           ? user?.avatarUrl
                           : `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                              user?.profile?.fullName || user?.email || "U"
+                              user?.profile?.fullName || user?.email
                             )}&background=00000000&color=fff`
                       }
                       alt={user?.profile?.fullName}
@@ -855,13 +855,13 @@ function HomePage() {
                           user?.avatarUrl
                             ? user?.avatarUrl
                             : `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                                user?.profile?.fullName || user?.email || "U"
+                                user?.profile?.fullName || user?.email
                               )}&background=00000000&color=fff`
                         }
                         alt={user?.profile?.fullName}
                         onError={(e) => {
                           e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                            user?.profile?.fullName || user?.email || "U"
+                            user?.profile?.fullName || user?.email
                           )}&background=00000000&color=fff`;
                         }}
                       />
