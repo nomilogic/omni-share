@@ -60,7 +60,7 @@ export const ContentPage: React.FC = () => {
       setShowGenerateModal(false);
       document.body.classList.remove("modal-open");
       document.documentElement.classList.remove("modal-open");
-    }, 1000);
+    }, 800);
     // if (user?.id && state.selectedProfile && state.contentData) {
     //   try {
     //     await savePost(
