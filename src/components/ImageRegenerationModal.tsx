@@ -328,7 +328,7 @@ export default function ImageRegenerationModal({
                         ? t("describe_changes_to_make")
                         : t("describe_image_to_create")
                     }
-                    className="w-full resize-none rounded-md border border-gray-300 px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full resize-none mb-10 md:mb-0 rounded-md border border-gray-300 px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                   <div className="mt-2 flex items-center justify-between text-xs text-gray-500">
                     <span>{t("be_specific_prompt_tip")}</span>
