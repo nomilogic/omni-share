@@ -477,7 +477,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     } finally {
       setTimeout(() => {
         dispatch({ type: "SET_LOADER", payload: false });
-      }, 1000);
+      }, 1500);
     }
   };
 
