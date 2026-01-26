@@ -53,6 +53,8 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useConfirmDialog } from "../context/ConfirmDialogContext";
 import { useNavigationGuard } from "../hooks/useNavigationGuard";
+import { optimizeThumbnailBlob } from "@/utils/thumbnailOptimizer";
+import { optimizeThumbnail } from "@/lib/socialPoster";
 
 interface ImageTemplateEditorProps {
   imageUrl: string;
@@ -2273,20 +2275,26 @@ export const ImageTemplateEditor = ({
       await new Promise((resolve) => setTimeout(resolve, 100));
 
       const exportCanvas = stage.toCanvas({ pixelRatio: 2 });
+      const targetWidth =  aspectRatio== "16:9" ? 1280 : aspectRatio== "9:16" ? 720 : 1024;
+      const targetHeight =  aspectRatio== "9:16" ? 1280 : aspectRatio== "16:9" ? 720 : 1024;
       const blob = await new Promise<Blob | null>((resolve) => {
-        exportCanvas.toBlob((b) => resolve(b), "image/png");
+        exportCanvas.toBlob((b) => resolve(b), "image/png", 1);
       });
 
+      console.log(blob)
       if (!blob) throw new Error("Failed to create image blob");
 
       // Create local URL for immediate preview
-      const localUrl = URL.createObjectURL(blob);
+     
+    
+    let newBlob = await optimizeThumbnail(blob, targetWidth, targetHeight, 1.98 * 1024 * 1024) as Blob;
+     let localUrl = URL.createObjectURL(newBlob);
 
       // Upload to server for persistent storage
       const user = await getCurrentUser();
       if (user?.user?.id) {
         try {
-          const file = new File([blob], `template-${Date.now()}.png`, {
+          const file = new File([newBlob], `template-${Date.now()}.png`, {
             type: "image/png",
             lastModified: Date.now(),
           });
