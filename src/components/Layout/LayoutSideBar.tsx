@@ -394,7 +394,13 @@ const Sidebar = ({
                   e.stopPropagation();
                   setShowPackage((prev: any) => !prev);
                 }}
-                balance={balance.toLocaleString()}
+                balance={
+                  balance
+                    ? balance?.toLocaleString()
+                    : Number(
+                        user?.wallet?.coins + user?.wallet?.referralCoin
+                      ).toLocaleString()
+                }
                 showPackage={showPackage}
               />
 
