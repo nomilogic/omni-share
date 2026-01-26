@@ -26,7 +26,7 @@ export const ContentPage: React.FC = () => {
   };
 
   const handleGenerationComplete = async (posts: any[]) => {
-    const processedPosts = posts.map((post) => {
+    const processedPosts = posts?.map((post) => {
       const processedPost = { ...post };
 
       if (
@@ -56,19 +56,23 @@ export const ContentPage: React.FC = () => {
 
     dispatch({ type: "SET_GENERATED_POSTS", payload: processedPosts });
     navigate("/content/preview");
-
-    if (user?.id && state.selectedProfile && state.contentData) {
-      try {
-        await savePost(
-          state.selectedProfile.id,
-          state.contentData,
-          processedPosts,
-          user?.id
-        );
-      } catch (error) {
-        console.error("Error saving post:", error);
-      }
-    }
+    setTimeout(() => {
+      setShowGenerateModal(false);
+      document.body.classList.remove("modal-open");
+      document.documentElement.classList.remove("modal-open");
+    }, 1000);
+    // if (user?.id && state.selectedProfile && state.contentData) {
+    //   try {
+    //     await savePost(
+    //       state.selectedProfile.id,
+    //       state.contentData,
+    //       processedPosts,
+    //       user?.id
+    //     );
+    //   } catch (error) {
+    //     console.error("Error saving post:", error);
+    //   }
+    // }
   };
 
   const handleGoToPublish = () => {
@@ -236,11 +240,6 @@ export const ContentPage: React.FC = () => {
                 contentData={state.contentData}
                 onComplete={(posts) => {
                   handleGenerationComplete(posts);
-                  setTimeout(() => {
-                    setShowGenerateModal(false);
-                    document.body.classList.remove("modal-open");
-                    document.documentElement.classList.remove("modal-open");
-                  }, 1000);
                 }}
                 onBack={() => {
                   setShowGenerateModal(false);
