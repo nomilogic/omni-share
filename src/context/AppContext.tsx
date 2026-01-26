@@ -16,6 +16,7 @@ import API from "../services/api";
 import Cookies from "js-cookie";
 import { oauthManagerClient } from "@/lib/oauthManagerClient";
 import { useUser } from "@/store/useUser";
+import { useNavigate } from "react-router-dom";
 
 export interface User {
   id: string;
@@ -292,6 +293,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 
   const apiKey = "80f18a670f8f17b074ee56f9";
+  const navigate = useNavigate();
 
   const fetchExchangeRates = async () => {
     const url = `https://v6.exchangerate-api.com/v6/${apiKey}/latest/USD`;
@@ -324,7 +326,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     localStorage.removeItem("pusherTransportTLS");
     localStorage.removeItem("forgot_token");
     localStorage.removeItem("forgot_token_time");
-    localStorage.removeItem("cached_user");
+    localStorage.removeItem("user-storage");
+    setUser(null);
     dispatch({ type: "RESET_STATE" });
     dispatch({ type: "SET_LOADER", payload: false });
   };
@@ -347,6 +350,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     } catch (error: any) {
       if (error?.response?.data?.status?.code == 403) {
         logout();
+        navigate("/auth", { replace: true });
       }
     }
   }, []);
