@@ -472,8 +472,7 @@ const ProfileSetupSinglePage: React.FC = () => {
         const updatedData: ProfileFormData = {
           email: formData.email,
           fullName: profile.fullName?.trim() || formData.fullName,
-          isBrandTheme: profile.isBrandTheme,
-          isBrandLogo: profile.isBrandLogo,
+
           phoneNumber: formData.phoneNumber,
           publicUrl: url,
           brandName: profile.brandName || formData.brandName,
