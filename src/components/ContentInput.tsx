@@ -45,28 +45,14 @@ import { useConfirmDialog } from "../context/ConfirmDialogContext";
 import { useNavigationGuard } from "../hooks/useNavigationGuard";
 import { useUser } from "@/store/useUser";
 
-const fileToBase64 = (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => {
-      const result = reader.result;
-      if (typeof result === "string") {
-        resolve(result.split(",")[1]);
-      } else {
-        reject(new Error("FileReader result is not a string"));
-      }
-    };
-    reader.onerror = (error) => reject(error);
-  });
-};
-
 interface ContentInputProps {
   onNext: (data: PostContent) => void;
   onBack: () => void;
   initialData?: Partial<PostContent>;
   selectedPlatforms?: Platform[];
   editMode?: boolean;
+  setShowGenerateModal: any;
+  setShowPublishModal: any;
 }
 
 export const ContentInput: React.FC<ContentInputProps> = ({
@@ -127,6 +113,72 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   const [templatedImageUrl, setTemplatedImageUrl] = useState<string>("");
   const [showImageMenu, setShowImageMenu] = useState(false);
   const [showVideoMenu, setShowVideoMenu] = useState(false);
+
+  type VideoMode = "upload" | "uploadShorts" | "";
+
+  const VIDEO_DIMENSIONS = {
+    upload: {
+      ratios: ["16:9", "1:1"],
+      minWidth: 640,
+      minHeight: 360,
+    },
+    uploadShorts: {
+      ratios: ["9:16"],
+      minWidth: 720,
+      minHeight: 1280,
+    },
+  };
+
+  const getVideoDimensions = (
+    file: File
+  ): Promise<{ width: number; height: number }> => {
+    return new Promise((resolve, reject) => {
+      const video = document.createElement("video");
+      video.preload = "metadata";
+
+      video.onloadedmetadata = () => {
+        resolve({
+          width: video.videoWidth,
+          height: video.videoHeight,
+        });
+        URL.revokeObjectURL(video.src);
+      };
+
+      video.onerror = reject;
+      video.src = URL.createObjectURL(file);
+    });
+  };
+
+  const getRatio = (w: number, h: number) => {
+    const gcd = (a: number, b: number): number => (b === 0 ? a : gcd(b, a % b));
+    const d = gcd(w, h);
+    return `${w / d}:${h / d}`;
+  };
+
+  const validateVideo = async (file: File, selectedVideoMode: VideoMode) => {
+    if (!selectedVideoMode) return { valid: true };
+
+    const { width, height } = await getVideoDimensions(file);
+    const ratio = getRatio(width, height);
+
+    const rules = VIDEO_DIMENSIONS[selectedVideoMode];
+
+    const validRatio = rules.ratios.includes(ratio);
+    const validSize = width >= rules.minWidth && height >= rules.minHeight;
+
+    if (!validRatio || !validSize) {
+      return {
+        valid: false,
+        message:
+          selectedVideoMode === "uploadShorts"
+            ? `❌ Shorts must be vertical (9:16). Your video: ${ratio}`
+            : `❌ Upload videos must be landscape (16:9) or square (1:1). Your video: ${ratio}`,
+      };
+    }
+
+    return { valid: true, ratio };
+  };
+
   const [selectedVideoMode, setSelectedVideoMode] = useState<
     "upload" | "uploadShorts" | ""
   >("");
@@ -138,6 +190,19 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   const [selectedImageMode, setSelectedImageMode] = useState<
     "upload" | "textToImage" | ""
   >("");
+
+  const getAcceptType = () => {
+    if (selectedPostType === "image") return "image/*";
+
+    if (selectedPostType === "video") {
+      if (selectedVideoMode === "uploadShorts") {
+        return "video/mp4,video/webm"; // restrict shorts formats
+      }
+      return "video/*";
+    }
+
+    return undefined; // 👈 important (not "")
+  };
 
   const [videoThumbnailUrl, setVideoThumbnailUrl] = useState<string>("");
   const [originalVideoFile, setOriginalVideoFile] = useState<File | null>(null);
@@ -302,6 +367,14 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   };
 
   useEffect(() => {
+    if (formData.media && formData.media.type.startsWith("video/")) {
+      validateVideo(formData.media, selectedVideoMode).then((res: any) => {
+        setVideoAspectRatioWarning(res.valid ? "" : res.message);
+      });
+    }
+  }, [selectedVideoMode]);
+
+  useEffect(() => {
     const appropriatePlatforms = getAppropiatePlatforms(
       selectedPostType?.toLowerCase() as "text" | "image" | "video",
       selectedImageMode,
@@ -407,6 +480,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       setDragActive(false);
     }
   };
+  const warningTimeoutRef = useRef<any>(null);
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
@@ -421,7 +495,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
   const handleFileUpload = async (file: File) => {
     currentFileRef.current = file;
-
     setTemplatedImageUrl("");
     setSelectedTemplate(undefined);
     setImageAnalysis("");
@@ -430,6 +503,28 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     setVideoAspectRatio(null);
 
     const previewUrl = URL.createObjectURL(file);
+
+    if (file.type.startsWith("video/")) {
+      const result: any = await validateVideo(file, selectedVideoMode);
+
+      if (!result.valid) {
+        if (warningTimeoutRef.current) clearTimeout(warningTimeoutRef.current);
+
+        setVideoAspectRatioWarning("");
+        setTimeout(() => {
+          setVideoAspectRatioWarning(result.message);
+
+          warningTimeoutRef.current = setTimeout(() => {
+            setVideoAspectRatioWarning("");
+            warningTimeoutRef.current = null;
+          }, 2500);
+        }, 50);
+
+        return;
+      }
+
+      setVideoAspectRatioWarning("");
+    }
 
     setFormData((prev) => {
       if (prev.mediaUrl && prev.mediaUrl.startsWith("blob:")) {
@@ -538,126 +633,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         }
       }
     } catch (error) {}
-  };
-
-  const analyzeImage = async (file: File) => {
-    if (!file.type.startsWith("image/")) return;
-
-    setAnalyzingImage(true);
-    try {
-      const base64 = await fileToBase64(file);
-
-      const dataUrl = `data:${file.type};base64,${base64}`;
-
-      const apiUrl =
-        import.meta.env.VITE_API_URL ||
-        (typeof window !== "undefined"
-          ? `${window.location.protocol}//${window.location.host}`
-          : "http://localhost:5000/api");
-      const response = await fetch(`${apiUrl}/ai/analyze-image`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          image: dataUrl,
-          mimeType: file.type,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to analyze image");
-      }
-
-      const result = await response.json();
-
-      if (result.success && result.analysis) {
-        setImageAnalysis(result.analysis);
-      } else {
-        setImageAnalysis(
-          "Image uploaded successfully. Add a description for better content generation."
-        );
-      }
-    } catch (error: any) {
-      setImageAnalysis(
-        `Image uploaded successfully. ${
-          error.message?.includes("quota")
-            ? "AI analysis quota exceeded."
-            : "Add a description for better content generation."
-        }`
-      );
-    } finally {
-      setAnalyzingImage(false);
-    }
-  };
-
-  const analyzeImageFromUrl = async (imageUrl: string) => {
-    setAnalyzingImage(true);
-    try {
-      const imageResponse = await fetch(imageUrl);
-      if (!imageResponse.ok) {
-        throw new Error("Failed to fetch image from URL");
-      }
-
-      const blob = await imageResponse.blob();
-      const base64 = await new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(blob);
-        reader.onload = () => {
-          const result = reader.result;
-          if (typeof result === "string") {
-            resolve(result.split(",")[1]); // Get base64 part
-          } else {
-            reject(new Error("FileReader result is not a string"));
-          }
-        };
-        reader.onerror = (error) => reject(error);
-      });
-
-      const dataUrl = `data:${blob.type};base64,${base64}`;
-
-      const apiUrl =
-        import.meta.env.VITE_API_URL ||
-        (typeof window !== "undefined"
-          ? `${window.location.protocol}//${window.location.host}`
-          : "http://localhost:5000/api");
-      const response = await fetch(`${apiUrl}/ai/analyze-image`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          image: dataUrl,
-          mimeType: blob.type,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to analyze image");
-      }
-
-      const result = await response.json();
-
-      if (result.success && result.analysis) {
-        setImageAnalysis(result.analysis);
-      } else {
-        setImageAnalysis(
-          "AI-generated image analyzed. Add a description for better content generation."
-        );
-      }
-    } catch (error: any) {
-      setImageAnalysis(
-        `AI-generated image loaded successfully. ${
-          error.message?.includes("quota")
-            ? "AI analysis quota exceeded."
-            : "Add a description for better content generation."
-        }`
-      );
-    } finally {
-      setAnalyzingImage(false);
-    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -913,20 +888,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         `Image Analysis: ${imageAnalysis}`,
     }));
     setImageAnalysis("");
-  };
-
-  const performAIAnalysis = async () => {
-    if (formData.media && formData.media.type.startsWith("image/")) {
-      // Analyze uploaded image file
-      await analyzeImage(formData.media);
-    } else if (
-      formData.mediaUrl &&
-      !formData.media &&
-      !formData.mediaUrl.match(/\.(mp4|mov|avi|wmv|flv|webm|mkv|m4v)$/i)
-    ) {
-      // Analyze AI-generated image from URL
-      await analyzeImageFromUrl(formData.mediaUrl);
-    }
   };
 
   const [modelImage, setModelImage] = useState(false);
@@ -1384,13 +1345,10 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       setVideoThumbnailUrl(mediaUrl);
 
       const blankTemplate = getTemplateById("blank-template");
-     setVideoThumbnailForRegeneration(mediaUrl);
-          setVideoThumbnailGenerations([
-            ...videoThumbnailGenerations,
-            mediaUrl,
-          ]);
+      setVideoThumbnailForRegeneration(mediaUrl);
+      setVideoThumbnailGenerations([...videoThumbnailGenerations, mediaUrl]);
       if (blankTemplate) {
-     //   setSelectedTemplate(blankTemplate);
+        //   setSelectedTemplate(blankTemplate);
         //setShowTemplateEditor(true);
 
         const currentCampaignInfo = campaignInfo || {
@@ -1730,7 +1688,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       reader.onloadend = () => {
         const base64String = reader.result as string;
         setGeneratedImage(base64String);
-       // setAllGeneration([base64String]);
+        // setAllGeneration([base64String]);
       };
       reader.readAsDataURL(file);
     }
@@ -1809,48 +1767,48 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     generateVideoThumbnailAI,
     generationAmounts,
   ]);
-const resetAll = () => {
-  // Abort upload if running
-  if (uploadAbortControllerRef.current) {
-    uploadAbortControllerRef.current.abort();
-    uploadAbortControllerRef.current = null;
-  }
+  const resetAll = () => {
+    // Abort upload if running
+    if (uploadAbortControllerRef.current) {
+      uploadAbortControllerRef.current.abort();
+      uploadAbortControllerRef.current = null;
+    }
 
-  hideLoading();
+    hideLoading();
 
-  // File & refs
-  setSelectedFile(null);
-  setOriginalVideoFile(null);
-  currentFileRef.current = null;
+    // File & refs
+    setSelectedFile(null);
+    setOriginalVideoFile(null);
+    currentFileRef.current = null;
 
-  // UI states
-  setShowPreview(false);
-  setShowImageMenu(false);
-  setShowVideoMenu(false);
-  setSelectedVideoMode("");
+    // UI states
+    setShowPreview(false);
+    setShowImageMenu(false);
+    setShowVideoMenu(false);
+    setSelectedVideoMode("");
 
-  // Image states
-  setGeneratedImage(null);
-  setTemplatedImageUrl("");
-  setSelectedTemplate(undefined);
-  setImageAnalysis("");
+    // Image states
+    setGeneratedImage(null);
+    setTemplatedImageUrl("");
+    setSelectedTemplate(undefined);
+    setImageAnalysis("");
 
-  // Video states
-  setVideoAspectRatio(null);
-  setVideoThumbnailUrl("");
-  setVideoAspectRatioWarning("");
+    // Video states
+    setVideoAspectRatio(null);
+    setVideoThumbnailUrl("");
+    setVideoAspectRatioWarning("");
 
-  // Form data (single update 👇)
-  setFormData((prev) => ({
-    ...prev,
-    media: undefined,
-    mediaUrl: undefined,
-    selectedPlatforms: [],
-    prompt: "",
-  }));
-  setModelImage(false);
-      setAllGeneration([]);
-};
+    // Form data (single update 👇)
+    setFormData((prev) => ({
+      ...prev,
+      media: undefined,
+      mediaUrl: undefined,
+      selectedPlatforms: [],
+      prompt: "",
+    }));
+    setModelImage(false);
+    setAllGeneration([]);
+  };
 
   return (
     <div className="w-full mx-auto rounded-md border border-white/10  md:p-5 p-3 ">
@@ -2036,7 +1994,7 @@ const resetAll = () => {
                               uploadAbortControllerRef.current.abort();
                               uploadAbortControllerRef.current = null;
                             }
-                           resetAll();
+                            resetAll();
                             setSelectedImageMode("upload");
                           }}
                           className={`p-3 rounded-md border transition shadow-md backdrop-blur-md border-slate-200/70 transition-all duration-200 text-center 
@@ -2068,9 +2026,8 @@ const resetAll = () => {
                         <button
                           type="button"
                           onClick={() => {
-                          resetAll();
+                            resetAll();
                             setSelectedImageMode("textToImage");
-                           
                           }}
                           className={`p-3   border rounded-md transition-all duration-200 text-center 
                         ${selectedPostType === "image" ? "" : "hidden"}
@@ -2102,24 +2059,22 @@ const resetAll = () => {
                     </div>
                   </div>
 
-                  {/* Video Post */}
                   <div
                     onClick={() => {
                       if (selectedPostType !== "video") {
-                         setFormData((prev) => ({
-                                ...prev,
-                                media: undefined,
-                                selectedPlatforms: [],
-                                mediaUrl: undefined,
-                              }));
-                          setSelectedFile(null);
-                         currentFileRef.current = null;
+                        setFormData((prev) => ({
+                          ...prev,
+                          media: undefined,
+                          selectedPlatforms: [],
+                          mediaUrl: undefined,
+                        }));
+                        setSelectedFile(null);
+                        currentFileRef.current = null;
                         setShowVideoMenu(true);
-                           setTemplatedImageUrl("");
-                            setSelectedTemplate(undefined);
+                        setTemplatedImageUrl("");
+                        setSelectedTemplate(undefined);
                         setSelectedPostType("video");
                       } else {
-                            
                         setShowVideoMenu(!showVideoMenu);
                       }
                       setShowPreview(false);
@@ -2224,10 +2179,10 @@ const resetAll = () => {
                               setVideoThumbnailUrl("");
                               setVideoAspectRatioWarning("");
 
-                          setSelectedFile(null);
-                         currentFileRef.current = null;
-                           setTemplatedImageUrl("");
-                            setSelectedTemplate(undefined);
+                              setSelectedFile(null);
+                              currentFileRef.current = null;
+                              setTemplatedImageUrl("");
+                              setSelectedTemplate(undefined);
                               setSelectedFile(null);
                               setGeneratedImage(null);
                               currentFileRef.current = null;
@@ -2296,12 +2251,7 @@ const resetAll = () => {
                           <input
                             ref={fileInputRef}
                             type="file"
-                            accept={
-                              selectedImageMode === "upload" ? "image/*" : selectedVideoMode === "uploadShorts" ||
-                              selectedVideoMode === "upload"
-                                ? "video/*"
-                                : "image/*"
-                            }
+                            accept={getAcceptType()}
                             onChange={handleFileChange}
                             className="hidden"
                           />
@@ -2312,7 +2262,6 @@ const resetAll = () => {
                           generatedImage ? (
                             <div className="space-y-4">
                               <div className="relative">
-                                {/* Debug info for upload preview */}
                                 {(() => {
                                   const imageSrc =
                                     templatedImageUrl ||
@@ -2323,8 +2272,18 @@ const resetAll = () => {
                                       : selectedFile
                                         ? URL.createObjectURL(selectedFile)
                                         : "");
-                                    console.log( "formData.mediaUrl",formData.mediaUrl, "generatedImage", generatedImage, "formData.media", formData.media,
-                                    "selectedFile", selectedFile,  imageSrc, "imageSrc");
+                                  console.log(
+                                    "formData.mediaUrl",
+                                    formData.mediaUrl,
+                                    "generatedImage",
+                                    generatedImage,
+                                    "formData.media",
+                                    formData.media,
+                                    "selectedFile",
+                                    selectedFile,
+                                    imageSrc,
+                                    "imageSrc"
+                                  );
                                   return (
                                     <img
                                       src={imageSrc}
@@ -2590,13 +2549,7 @@ const resetAll = () => {
                       <input
                         ref={fileInputRef}
                         type="file"
-                        accept={
-                          selectedPostType === "image"
-                            ? "image/*"
-                            : selectedPostType === "video"
-                              ? "video/*"
-                              : "image/*,video/*"
-                        }
+                        accept={getAcceptType()}
                         onChange={handleFileChange}
                         className="hidden"
                       />
