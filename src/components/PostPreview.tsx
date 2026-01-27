@@ -494,13 +494,12 @@ export const PostPreview = ({
   );
 
   const renderPlatformPreview = (post: GeneratedPost) => {
-    console.log("post", post);
     const mediaUrl = post.mediaUrl || post.imageUrl;
 
     switch (post.platform) {
       case "facebook":
         return (
-          <div className="bg-white border border-gray-200 rounded-md overflow-hidden shadow-md max-w-lg">
+          <div className="bg-white border border-gray-200 rounded-md overflow-hidden shadow-md max-w-xl w-full">
             <div className="p-4 border-b border-gray-100">
               <div className="flex items-center space-x-3">
                 <div
@@ -605,7 +604,7 @@ export const PostPreview = ({
 
       case "instagram":
         return (
-          <div className="bg-white border border-gray-200 rounded-md overflow-hidden w-full max-w-lg shadow-md">
+          <div className="bg-white border border-gray-200 rounded-md overflow-hidden w-full max-w-xl w-full shadow-md">
             <div className="p-3 border-b border-gray-100">
               <div className="flex items-center space-x-3">
                 <div
@@ -738,7 +737,7 @@ export const PostPreview = ({
 
       case "twitter":
         return (
-          <div className="bg-white border border-gray-200 rounded-md overflow-hidden max-w-lg shadow-md">
+          <div className="bg-white border border-gray-200 rounded-md overflow-hidden max-w-xl w-full shadow-md">
             <div className="p-4">
               <div className="flex items-start space-x-3">
                 <div
@@ -825,7 +824,7 @@ export const PostPreview = ({
 
       case "linkedin":
         return (
-          <div className="bg-white border border-gray-200 rounded-md overflow-hidden shadow-md max-w-lg">
+          <div className="bg-white border border-gray-200 rounded-md overflow-hidden shadow-md max-w-xl w-full">
             <div className="p-4">
               <div className="flex items-center space-x-3 mb-4">
                 <div
@@ -1024,7 +1023,7 @@ export const PostPreview = ({
 
       case "youtube":
         return (
-          <div className="bg-white border border-gray-200 rounded-md overflow-hidden shadow-md max-w-lg">
+          <div className="bg-white border border-gray-200 rounded-md overflow-hidden shadow-md max-w-xl w-full">
             {renderMedia(
               { ...post, mediaUrl },
               "rounded-md max-h-96 object-contain w-full",
@@ -1115,125 +1114,125 @@ export const PostPreview = ({
   };
 
   const selectedPost = posts.find((post) => post.platform === selectedPlatform);
-  console.log("selectedPost", selectedPost);
   return (
-    <div className="preview w-full mx-auto bg-transparent  md:rounded-md p-4 md:shadow-md md:px-8  md:py-6 md:my-5 bg-white ">
-      <h2 className="text-3xl font-semibold theme-text-primary mb-1">
-        {t("ai_generated_posts")}
-      </h2>
+    <div className="flex flex-col min-h-[90vh] items-center justify-center">
+      <div className="preview   w-full mx-auto bg-transparent  md:rounded-md p-4 md:shadow-md md:px-8  md:py-6 md:my-5 bg-white ">
+        <h2 className="text-3xl font-semibold theme-text-primary mb-1">
+          {t("ai_generated_posts")}
+        </h2>
 
-      <p className="text-sm theme-text-primary">{t("review_copy_share")}</p>
-      <div className="grid lg:grid-cols-1  gap-1">
-        <div className="lg:col-span-1 space-y-4">
-          <div>
-            <h3 className="text-lg font-semibold text-slate-900 mb-0 text-left lg:text-center mt-2">
-              {t("select_platform")}
-            </h3>
-          </div>
+        <p className="text-sm theme-text-primary">{t("review_copy_share")}</p>
+        <div className="grid lg:grid-cols-1  gap-y-2">
+          <div className="lg:col-span-1 space-y-2">
+            <div>
+              <h3 className="text-lg font-semibold text-slate-900 mb-0 text-left lg:text-center mt-2">
+                {t("select_platform")}
+              </h3>
+            </div>
 
-          <div className="flex flex-wrap gap-3 justify-center">
-            {generatedPosts.map((post, index) => {
-              const IconComponent = getPlatformIcon(post.platform);
-              return (
-                <button
-                  key={post.platform}
-                  onClick={() => setSelectedPlatform(post.platform)}
-                  className={`relative p-1 rounded-full transition-all duration-200 transform hover:scale-105 h-fit  ${
-                    selectedPlatform === post.platform
-                      ? "ring-4 ring-blue-200 shadow-md"
-                      : "hover:shadow-md"
-                  }`}
-                >
-                  {IconComponent && (
-                    <div
-                      className={`w-8 md:w-10 h-8 md:h-10 rounded-full flex items-center justify-center text-white ${getPlatformColors(
-                        post.platform
-                      )} shadow-md`}
-                    >
-                      <IconComponent className="w-4 md:w-5 h-4 md:h-5" />
-                    </div>
-                  )}
-
-                  {selectedPlatform === post.platform && (
-                    <div className="absolute inset-0 rounded-full border border-blue-500 animate-pulse"></div>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-        <div className="lg:col-span-2">
-          <h3 className="text-lg font-semibold text-slate-900 mb-1 px-1 text-left lg:text-center">
-            {t("preview")}
-          </h3>
-
-          <div className="flex justify-center mb-4">
-            {selectedPost && renderPlatformPreview(selectedPost)}
-          </div>
-
-          {selectedPost && (
-            <div className="flex justify-center mb-2">
-              <div className="max-w-lg w-full text-center space-y-3">
-                {editingMode ? (
-                  // Editing Mode - Show save/cancel buttons
-                  <div className="flex gap-3 justify-center">
-                    <button
-                      onClick={() => {
-                        discardChanges();
-                      }}
-                      className="flex items-center justify-center w-full gap-2 px-4 py-2.5 border border-purple-600 text-purple-600 rounded-md hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition-colors font-medium"
-                    >
-                      <X className="w-4 h-4" />
-                      {t("cancel")}
-                    </button>
-                    <button
-                      onClick={() => {
-                        saveChanges();
-                        setEditingMode(false);
-                      }}
-                      className="flex items-center justify-center w-full gap-2 px-4 py-2.5 bg-purple-600 text-white rounded-md border border-transparent hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition-colors font-medium"
-                    >
-                      <Save className="w-4 h-4" />
-                      {t("save_changes")}
-                    </button>
-                  </div>
-                ) : (
-                  // View Mode - Show edit button
+            <div className="flex flex-wrap gap-3 justify-center">
+              {generatedPosts.map((post, index) => {
+                const IconComponent = getPlatformIcon(post.platform);
+                return (
                   <button
-                    onClick={() => setEditingMode(true)}
-                    className="w-full py-2.5  text-base font-semibold rounded-md border flex items-center justify-center gap-2 transition  hover:bg-[#d7d7fc] text-[#7650e3] border-[#7650e3]"
+                    key={post.platform}
+                    onClick={() => setSelectedPlatform(post.platform)}
+                    className={`relative p-1 rounded-full transition-all duration-200 transform hover:scale-105 h-fit  ${
+                      selectedPlatform === post.platform
+                        ? "ring-4 ring-blue-200 shadow-md"
+                        : "hover:shadow-md"
+                    }`}
+                  >
+                    {IconComponent && (
+                      <div
+                        className={`w-8 md:w-10 h-8 md:h-10 rounded-full flex items-center justify-center text-white ${getPlatformColors(
+                          post.platform
+                        )} shadow-md`}
+                      >
+                        <IconComponent className="w-4 md:w-5 h-4 md:h-5" />
+                      </div>
+                    )}
+
+                    {selectedPlatform === post.platform && (
+                      <div className="absolute inset-0 rounded-full border border-blue-500 animate-pulse"></div>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+          <div className="lg:col-span-2">
+            <h3 className="text-lg font-semibold text-slate-900 mb-1 px-1 text-left lg:text-center">
+              {t("preview")}
+            </h3>
+
+            <div className="flex justify-center mb-4">
+              {selectedPost && renderPlatformPreview(selectedPost)}
+            </div>
+
+            {selectedPost && (
+              <div className="flex justify-center mb-2">
+                <div className="max-w-xl w-full w-full text-center space-y-3">
+                  {editingMode ? (
+                    // Editing Mode - Show save/cancel buttons
+                    <div className="flex gap-3 justify-center">
+                      <button
+                        onClick={() => {
+                          discardChanges();
+                        }}
+                        className="flex items-center justify-center w-full gap-2 px-4 py-2.5 border border-purple-600 text-purple-600 rounded-md hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition-colors font-medium"
+                      >
+                        <X className="w-4 h-4" />
+                        {t("cancel")}
+                      </button>
+                      <button
+                        onClick={() => {
+                          saveChanges();
+                          setEditingMode(false);
+                        }}
+                        className="flex items-center justify-center w-full gap-2 px-4 py-2.5 bg-purple-600 text-white rounded-md border border-transparent hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] transition-colors font-medium"
+                      >
+                        <Save className="w-4 h-4" />
+                        {t("save_changes")}
+                      </button>
+                    </div>
+                  ) : (
+                    // View Mode - Show edit button
+                    <button
+                      onClick={() => setEditingMode(true)}
+                      className="w-full py-2.5  text-base font-semibold rounded-md border flex items-center justify-center gap-2 transition  hover:bg-[#d7d7fc] text-[#7650e3] border-[#7650e3]"
+                    >
+                      <Edit className="w-5 h-5" />
+                      {t("edit_post_text")}
+                    </button>
+                  )}
+
+                  {editingMode && (
+                    <p className="text-sm text-blue-600">
+                      💡 {t("tooltip_edit_hint")}
+                    </p>
+                  )}
+
+                  {hasUnsavedChanges && (
+                    <p className="text-sm text-orange-600">
+                      ⚠️ {t("unsaved_changes_warning")}
+                    </p>
+                  )}
+                  <button
+                    onClick={handleRegenerateClick}
+                    className="w-full bg-purple-600 text-white hover:text-[#7650e3] flex items-center gap-2 justify-center hover:bg-[#d7d7fc] border border-[#7650e3] font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
                   >
                     <Edit className="w-5 h-5" />
-                    {t("edit_post_text")}
+                    {t("regenerate")}
                   </button>
-                )}
-
-                {editingMode && (
-                  <p className="text-sm text-blue-600">
-                    💡 {t("tooltip_edit_hint")}
-                  </p>
-                )}
-
-                {hasUnsavedChanges && (
-                  <p className="text-sm text-orange-600">
-                    ⚠️ {t("unsaved_changes_warning")}
-                  </p>
-                )}
-                <button
-                  onClick={handleRegenerateClick}
-                  className="w-full bg-purple-600 text-white hover:text-[#7650e3] flex items-center gap-2 justify-center hover:bg-[#d7d7fc] border border-[#7650e3] font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
-                >
-                  <Edit className="w-5 h-5" />
-                  {t("regenerate")}
-                </button>
-                <div ref={scrollAnchorRef} />
+                  <div ref={scrollAnchorRef} />
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {selectedPost && (
+            {/* {selectedPost && (
             <div className="flex justify-center w-full lg:block">
-              <div className="max-w-lg  mx-auto w-full space-y-4">
+              <div className="max-w-xl w-full  mx-auto w-full space-y-4">
                 <div className="bg-gray-50 rounded-md p-4">
                   <h4 className="font-medium text-slate-900 mb-3 flex items-center gap-2">
                     {(() => {
@@ -1379,100 +1378,101 @@ export const PostPreview = ({
                 </div>
               </div>
             </div>
+          )} */}
+          </div>
+        </div>
+
+        <div className="pt-1 mt-2 flex flex-row-reverse gap-2">
+          {!isRegeneratingMode ? (
+            <>
+              <button
+                onClick={onPublish}
+                className="w-full bg-purple-600 text-white hover:text-[#7650e3] flex items-center gap-2 justify-center hover:bg-[#d7d7fc] border border-[#7650e3] font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
+              >
+                {t("continue")}
+              </button>
+
+              <button
+                onClick={handleDiscardClick}
+                className="w-full bg-transparent border-purple-600 border text-purple-600 flex items-center gap-2 justify-center hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
+              >
+                {/* <Edit className="w-5 h-5" /> */}
+                {t("discard_post")}
+              </button>
+            </>
+          ) : (
+            // Regeneration mode - show textarea and generate button
+            <div className="theme-bg-quaternary rounded-md lg:p-5 p-3 border border-purple-200 w-full">
+              <h4 className="text-lg font-semibold theme-text-secondary mb-3 text-left ">
+                {t("generate_post_text")}
+              </h4>
+
+              {/* Text Area */}
+              <div className="mb-4">
+                <textarea
+                  value={regenerationPrompt}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setRegenerationPrompt(value);
+                    // Keep the selected post's generationPrompt in sync while typing
+                    setPosts((prev) => {
+                      const idx = prev.findIndex(
+                        (p) => p.platform === selectedPlatform
+                      );
+                      if (idx === -1) return prev;
+                      const updated = [...prev];
+                      updated[idx] = {
+                        ...updated[idx],
+                        generationPrompt: value,
+                      } as any;
+                      return updated;
+                    });
+                  }}
+                  placeholder="Enter your prompt to regenerate the post text for the selected platform..."
+                  className="w-full h-32 p-4 border border-gray-300 rounded-md resize-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-black"
+                />
+              </div>
+
+              {/* Generate Button with Coin Counter - Match ContentInput styling */}
+              <button
+                onClick={handleRegenerateSubmit}
+                disabled={isRegenerating}
+                className={`group rounded-md w-full flex-1 flex items-center justify-between theme-bg-trinary theme-text-light border border-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] transition-colors duration-200 py-2.5 px-3 font-semibold text-base ${
+                  isRegenerating
+                    ? "opacity-70 cursor-not-allowed"
+                    : "hover:opacity-90"
+                }`}
+              >
+                <div className="flex items-center">
+                  {isRegenerating ? (
+                    <Loader className="w-6 h-6 mr-1 animate-spin" />
+                  ) : (
+                    <Wand2 className="w-[23px] h-[23px] mr-1" />
+                  )}
+                  {isRegenerating ? t("regenerating") : t("generate_post_text")}
+                </div>
+                <div className="sm:inline-block px-2 py-1 flex items-center">
+                  <Icon
+                    name="spiral-logo"
+                    size={20}
+                    className="inline mr-1 mt-[-1px] brightness-[1000%] transition group-hover:brightness-100"
+                  />
+                  {generationAmounts?.text}
+                </div>
+              </button>
+
+              {/* Cancel Button */}
+              <div className="flex justify-center mt-4">
+                <button
+                  onClick={handleRegenerateCancel}
+                  className="w-full py-2.5  text-base font-semibold rounded-md border flex items-center justify-center gap-2 transition  hover:bg-[#d7d7fc] text-[#7650e3] border-[#7650e3]"
+                >
+                  {t("cancel")}
+                </button>
+              </div>
+            </div>
           )}
         </div>
-      </div>
-
-      <div className="pt-1 mt-2 flex flex-row-reverse gap-2">
-        {!isRegeneratingMode ? (
-          <>
-            <button
-              onClick={onPublish}
-              className="w-full bg-purple-600 text-white hover:text-[#7650e3] flex items-center gap-2 justify-center hover:bg-[#d7d7fc] border border-[#7650e3] font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
-            >
-              {t("continue")}
-            </button>
-
-            <button
-              onClick={handleDiscardClick}
-              className="w-full bg-transparent border-purple-600 border text-purple-600 flex items-center gap-2 justify-center hover:bg-[#d7d7fc] hover:text-[#7650e3] hover:border-[#7650e3] font-semibold py-2.5 text-base rounded-md transition disabled:opacity-50"
-            >
-              {/* <Edit className="w-5 h-5" /> */}
-              {t("discard_post")}
-            </button>
-          </>
-        ) : (
-          // Regeneration mode - show textarea and generate button
-          <div className="theme-bg-quaternary rounded-md lg:p-5 p-3 border border-purple-200 w-full">
-            <h4 className="text-lg font-semibold theme-text-secondary mb-3 text-left ">
-              {t("generate_post_text")}
-            </h4>
-
-            {/* Text Area */}
-            <div className="mb-4">
-              <textarea
-                value={regenerationPrompt}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  setRegenerationPrompt(value);
-                  // Keep the selected post's generationPrompt in sync while typing
-                  setPosts((prev) => {
-                    const idx = prev.findIndex(
-                      (p) => p.platform === selectedPlatform
-                    );
-                    if (idx === -1) return prev;
-                    const updated = [...prev];
-                    updated[idx] = {
-                      ...updated[idx],
-                      generationPrompt: value,
-                    } as any;
-                    return updated;
-                  });
-                }}
-                placeholder="Enter your prompt to regenerate the post text for the selected platform..."
-                className="w-full h-32 p-4 border border-gray-300 rounded-md resize-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-black"
-              />
-            </div>
-
-            {/* Generate Button with Coin Counter - Match ContentInput styling */}
-            <button
-              onClick={handleRegenerateSubmit}
-              disabled={isRegenerating}
-              className={`group rounded-md w-full flex-1 flex items-center justify-between theme-bg-trinary theme-text-light border border-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] transition-colors duration-200 py-2.5 px-3 font-semibold text-base ${
-                isRegenerating
-                  ? "opacity-70 cursor-not-allowed"
-                  : "hover:opacity-90"
-              }`}
-            >
-              <div className="flex items-center">
-                {isRegenerating ? (
-                  <Loader className="w-6 h-6 mr-1 animate-spin" />
-                ) : (
-                  <Wand2 className="w-[23px] h-[23px] mr-1" />
-                )}
-                {isRegenerating ? t("regenerating") : t("generate_post_text")}
-              </div>
-              <div className="sm:inline-block px-2 py-1 flex items-center">
-                <Icon
-                  name="spiral-logo"
-                  size={20}
-                  className="inline mr-1 mt-[-1px] brightness-[1000%] transition group-hover:brightness-100"
-                />
-                {generationAmounts?.text}
-              </div>
-            </button>
-
-            {/* Cancel Button */}
-            <div className="flex justify-center mt-4">
-              <button
-                onClick={handleRegenerateCancel}
-                className="w-full py-2.5  text-base font-semibold rounded-md border flex items-center justify-center gap-2 transition  hover:bg-[#d7d7fc] text-[#7650e3] border-[#7650e3]"
-              >
-                {t("cancel")}
-              </button>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

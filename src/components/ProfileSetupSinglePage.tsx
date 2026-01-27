@@ -137,6 +137,20 @@ const getProfileFormConfig = (t: (key: string) => string) => {
           ],
           required: false,
         },
+        {
+          name: "isBrandLogo",
+          label: "Brand Logo",
+          type: "checkbox",
+          required: false,
+          helperText: t("enable_logo_for_posts"),
+        },
+        {
+          name: "isBrandTheme",
+          label: "Brand Theme ",
+          type: "checkbox",
+          required: false,
+          helperText: t("enable_theme_colors_for_posts"),
+        },
       ],
     },
     {
@@ -313,6 +327,8 @@ const ProfileSetupSinglePage: React.FC = () => {
 
       return {
         email: profile.email || user.email || "",
+        isBrandTheme: profile.isBrandTheme || false,
+        isBrandLogo: profile.isBrandLogo || false,
         fullName: profile.fullName || user.full_name || "",
         phoneNumber: profile.phoneNumber || "",
         publicUrl: profile.publicUrl || "",
@@ -456,6 +472,8 @@ const ProfileSetupSinglePage: React.FC = () => {
         const updatedData: ProfileFormData = {
           email: formData.email,
           fullName: profile.fullName?.trim() || formData.fullName,
+          isBrandTheme: profile.isBrandTheme,
+          isBrandLogo: profile.isBrandLogo,
           phoneNumber: formData.phoneNumber,
           publicUrl: url,
           brandName: profile.brandName || formData.brandName,
@@ -996,6 +1014,39 @@ const ProfileSetupSinglePage: React.FC = () => {
                               )}
                             </div>
                           );
+                        case "checkbox": {
+                          const isChecked = watch(fieldName);
+
+                          return (
+                            <div key={field.name}>
+                              <label
+                                className={`flex items-center gap-2 p-2 border rounded-md cursor-pointer transition-all
+          ${
+            isChecked
+              ? "theme-border-trinary theme-text-secondary"
+              : "border-gray-200"
+          }
+        `}
+                              >
+                                <input
+                                  type="checkbox"
+                                  {...register(fieldName)}
+                                  className="h-4 w-4 border-slate-300 rounded theme-checkbox"
+                                />
+
+                                <span className="text-sm font-medium theme-text-primary">
+                                  {field.label} {field.required && "*"}
+                                </span>
+                              </label>
+
+                              {fieldError && (
+                                <p className="mt-1 text-sm text-red-600">
+                                  {String(fieldError.message || "")}
+                                </p>
+                              )}
+                            </div>
+                          );
+                        }
 
                         case "tags":
                           return (
@@ -1118,67 +1169,7 @@ const ProfileSetupSinglePage: React.FC = () => {
                   </div>
                 </section>
               ))}
-              <div>
-                <div className="space-y-4 bg-gray-100 p-4 rounded-lg shadow-md">
-                  <div className=" flex flex-row justify-start gap-10">
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        id="useBrandLogo"
-                        checked={useLogo}
-                        onChange={(e) => setUseLogo(e.target.checked)}
-                        disabled={!hasLogo}
-                        className="h-4 w-4 theme-checkbox rounded  m-0 disabled:opacity-50 disabled:cursor-not-allowed"
-                      />
-                      <>
-                        <label
-                          htmlFor="useBrandLogo"
-                          className={` text-xs  md:text-sm font-medium theme-text-primary ${
-                            hasLogo
-                              ? "cursor-pointer"
-                              : "cursor-not-allowed opacity-60"
-                          }`}
-                        >
-                          {t("brand_logo")}
-                        </label>
-                        <p className=" hidden md:block  text-xs theme-text-secondary mt-0.5">
-                          {hasLogo
-                            ? t("include_brand_logo_generation")
-                            : t("no_brand_logo_set_profile")}
-                        </p>
-                      </>
-                    </div>
 
-                    <div className="flex items-center gap-2 ">
-                      <input
-                        type="checkbox"
-                        id="useBrandTheme"
-                        checked={useTheme}
-                        onChange={(e) => setUseTheme(e.target.checked)}
-                        disabled={!hasTheme}
-                        className="h-4 w-4 theme-checkbox rounded  m-0 disabled:opacity-50 disabled:cursor-not-allowed"
-                      />
-                      <>
-                        <label
-                          htmlFor="useBrandTheme"
-                          className={` text-xs  md:text-sm font-medium theme-text-primary ${
-                            hasTheme
-                              ? "cursor-pointer"
-                              : "cursor-not-allowed opacity-60"
-                          }`}
-                        >
-                          {t("brand_theme")}
-                        </label>
-                        <p className=" hidden md:block text-xs theme-text-secondary mt-0.5">
-                          {hasTheme
-                            ? t("use_website_theme") + ": " + themeUrl
-                            : t("no_website_url_set_profile")}
-                        </p>
-                      </>
-                    </div>
-                  </div>
-                </div>
-              </div>
               <button
                 type="submit"
                 disabled={loading}

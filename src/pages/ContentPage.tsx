@@ -54,13 +54,13 @@ export const ContentPage: React.FC = () => {
       return processedPost;
     });
 
+    navigate("/content/preview", { replace: true });
     dispatch({ type: "SET_GENERATED_POSTS", payload: processedPosts });
-    navigate("/content/preview");
     setTimeout(() => {
       setShowGenerateModal(false);
       document.body.classList.remove("modal-open");
       document.documentElement.classList.remove("modal-open");
-    }, 800);
+    }, 500);
     // if (user?.id && state.selectedProfile && state.contentData) {
     //   try {
     //     await savePost(
@@ -234,7 +234,7 @@ export const ContentPage: React.FC = () => {
 
       {showGenerateModal && state.contentData && (
         <div className="fixed inset-0 bg-[#fafafa] z-50 h-full">
-          <div className="  w-full h-full overflow-y-auto modal-content">
+          <div className="flex flex-col  w-full min-h-[80vh] h-full justify-center modal-content">
             <div className="max-w-5xl m-auto">
               <AIGenerator
                 contentData={state.contentData}

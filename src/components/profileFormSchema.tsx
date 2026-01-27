@@ -80,6 +80,8 @@ export const useProfileFormSchema = () => {
       keyOutcomes: z.array(z.string().min(1)).optional(),
 
       postingStyle: z.string().optional(),
+      isBrandLogo: z.boolean().optional(),
+      isBrandTheme: z.boolean().optional(),
     });
   }, [t]);
 
