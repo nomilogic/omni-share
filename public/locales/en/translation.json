@@ -1057,6 +1057,7 @@
   "security_questions_are_protected": "Security questions are protected",
   "please_set_security_questions_first": "Please set up security questions first",
   "processing": "Processing...",
+  "processing1": "Processing",
   "disable_2fa": "Disable 2FA",
   "enable_2fa": "Enable 2FA",
   "must_set_security_questions_before_2fa": "You must set up security questions before enabling two-factor authentication.",
