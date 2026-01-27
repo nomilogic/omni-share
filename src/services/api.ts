@@ -136,6 +136,7 @@ interface APIInstance extends AxiosInstance {
   facebookPost: (data: any) => Promise<any>;
   facebookPages: (token: any) => Promise<any>;
   linkedinPages: (token: any) => Promise<any>;
+  youtubePages: (token: any) => Promise<any>;
   instagramPost: (data: any) => Promise<any>;
   linkedinPost: (data: any) => Promise<any>;
   twitterPost: (data: any) => Promise<any>;
@@ -328,12 +329,15 @@ API.facebookPages = (token) =>
   API.get(`/client/facebook/pages?access_token=${token}`);
 API.linkedinPages = (token) =>
   API.get(`/client/linkedin/pages?access_token=${token}`);
+API.youtubePages = (token) =>
+  API.get(`/client/youtube/channels?access_token=${token}`);
 API.instagramPost = (data) => API.post("/client/instagram/post", data);
 API.linkedinPost = (data) => API.post("/client/linkedin/post", data);
 API.twitterPost = (data) => API.post("/client/twitter/post", data);
 API.tiktokPost = (data) => API.post("/client/tiktok/post", data);
 API.youtubePost = (data) => API.post("/client/youtube/post", data);
-API.youtubeSetThumbnail = (data) => API.post("/client/youtube/set-thumbnail", data);
+API.youtubeSetThumbnail = (data) =>
+  API.post("/client/youtube/set-thumbnail", data);
 
 API.savePublishedUrls = (data) =>
   API.post("/client/post-history/save-published-urls", data);

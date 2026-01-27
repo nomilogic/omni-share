@@ -394,7 +394,7 @@ function HomePage() {
                     />
                     <div className="flex-1 min-w-0 text-left">
                       <div className="text-md font-medium text-white truncate">
-                        {user?.name || user?.email || "User"}
+                        {user?.profile?.fullName || user?.email || "User"}
                       </div>
                       <div className="text-sm text-white/80 truncate">
                         {user?.email}

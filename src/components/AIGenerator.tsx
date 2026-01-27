@@ -150,7 +150,7 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
   };
 
   return (
-    <div className="max-w-full mx-auto bg-white md:border md:border-gray-100  rounded-md shadow-md md:m-6 h-fit md:px-6 px-4 md:py-8 py-4">
+    <div className="max-w-full mx-auto bg-white md:border md:border-gray-100  md:rounded-md md:shadow-md md:m-6 h-fit md:px-6 px-4 md:py-8 py-4">
       <div className="text-center mb-8">
         <div className="w-12 h-12 aspect-square bg-gradient-to-r from-blue-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
           <Brain className="w-8 h-8 text-blue-600" />
@@ -245,7 +245,7 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
 
         <div className="text-center text-sm text-gray-500 font-medium">
           <p>
-            {t("processing")}{" "}
+            {t("processing1")}{" "}
             {contentData?.selectedPlatforms?.length ||
               contentData?.platforms?.length ||
               1}{" "}

@@ -275,6 +275,17 @@ interface AppContextType {
   refreshBalance: () => Promise<void>;
   checkConnectedPlatforms: () => Promise<void>;
   fetchAnalytics: () => Promise<void>;
+  linkedinPages: any[];
+  facebookPages: any[];
+  youtubeChannels: any[];
+
+  selectedLinkedinPage: string;
+  selectedFacebookPage: string;
+  selectedYoutubeChannel: string;
+
+  setSelectedLinkedinPage: (id: string) => void;
+  setSelectedFacebookPage: (id: string) => void;
+  setSelectedYoutubeChannel: (id: string) => void;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -285,6 +296,194 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   const [state, dispatch] = useReducer(appReducer, initialState);
   const [processing, setProcessing] = useState(false);
   const [generationAmounts, setGenerationAmounts] = useState<any>({});
+  const { setUser } = useUser();
+
+  const [linkedinPages, setLinkedinPages] = useState<any[]>([]);
+  const [facebookPages, setFacebookPages] = useState<any[]>([]);
+  const [youtubeChannels, setYoutubeChannels] = useState<any[]>([]);
+  const [selectedLinkedinPage, setSelectedLinkedinPage] = useState<string>(
+    localStorage.getItem("selectedlinkedinPage") || ""
+  );
+  const [selectedFacebookPage, setSelectedFacebookPage] = useState<string>(
+    localStorage.getItem("selectedFacebookPage") || ""
+  );
+  const [selectedYoutubeChannel, setSelectedYoutubeChannel] = useState<string>(
+    localStorage.getItem("selectedYoutubeChannel") || ""
+  );
+
+  const fetchYouTubeChannels = async () => {
+    try {
+      const token = Cookies.get("auth_token");
+      if (!token) {
+        return;
+      }
+
+      const tokenResponse = await API.tokenForPlatform("youtube");
+
+      if (tokenResponse.data) {
+        const tokenData = await tokenResponse.data;
+        if (tokenData.connected && tokenData.token?.access_token) {
+          const channelsResponse = await API.youtubePages(
+            tokenData.token?.access_token
+          );
+
+          const channelsData = (await channelsResponse.data) || [];
+          setYoutubeChannels(channelsData.channels || []);
+
+          const savedYoutubeChannel = localStorage.getItem(
+            "selectedYoutubeChannel"
+          );
+          if (
+            savedYoutubeChannel &&
+            channelsData.channels?.some(
+              (c: any) => c.id === savedYoutubeChannel
+            )
+          ) {
+            setSelectedYoutubeChannel(savedYoutubeChannel);
+            console.log("Restored saved YouTube channel:", savedYoutubeChannel);
+          } else if (
+            channelsData.channels &&
+            channelsData.channels.length > 0
+          ) {
+            setSelectedYoutubeChannel(channelsData.channels[0].id);
+            localStorage.setItem(
+              "selectedYoutubeChannel",
+              channelsData.channels[0].id
+            );
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Failed to fetch YouTube channels:", error);
+    }
+  };
+
+  const fetchLinkedPages = async () => {
+    try {
+      const token = Cookies.get("auth_token");
+      if (!token) {
+        return;
+      }
+
+      const tokenResponse = await API.tokenForPlatform("linkedin");
+
+      if (tokenResponse?.data) {
+        const tokenData = await tokenResponse?.data;
+        if (tokenData.connected && tokenData.token?.access_token) {
+          const res = await API.linkedinPages(tokenData.token?.access_token);
+          if (res?.data) {
+            const pagesData = await res.data;
+            setLinkedinPages(pagesData.data || []);
+
+            const savedLinkedInPage = localStorage.getItem(
+              "selectedlinkedinPage"
+            );
+            if (
+              savedLinkedInPage &&
+              pagesData.data?.some((p: any) => p.urn === savedLinkedInPage)
+            ) {
+              setSelectedLinkedinPage(savedLinkedInPage);
+              console.log("Restored saved LinkedIn page:", savedLinkedInPage);
+            } else if (pagesData?.data?.[0]?.urn) {
+              setSelectedLinkedinPage(pagesData.data[0].urn);
+              localStorage.setItem(
+                "selectedlinkedinPage",
+                pagesData.data[0].urn
+              );
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Failed to fetch LinkedIn pages:", error);
+    }
+  };
+  const fetchFacebookPages = async () => {
+    try {
+      const token = Cookies.get("auth_token");
+      if (!token) {
+        return;
+      }
+
+      const tokenResponse = await API.tokenForPlatform("facebook");
+
+      if (tokenResponse?.data) {
+        const tokenData = await tokenResponse.data;
+
+        if (tokenData.connected && tokenData.token?.access_token) {
+          const pagesResponse = await API.facebookPages(
+            tokenData.token.access_token
+          );
+
+          let pagesData = [];
+
+          if (pagesResponse?.data?.data) {
+            pagesData = Array.isArray(pagesResponse.data.data)
+              ? pagesResponse.data.data
+              : [];
+          } else if (pagesResponse?.pages) {
+            pagesData = Array.isArray(pagesResponse.pages)
+              ? pagesResponse.pages
+              : [];
+          } else if (pagesResponse?.data?.pages) {
+            pagesData = Array.isArray(pagesResponse.data.pages)
+              ? pagesResponse.data.pages
+              : [];
+          }
+
+          setFacebookPages(pagesData);
+
+          const savedFacebookPage = localStorage.getItem(
+            "selectedFacebookPage"
+          );
+          if (
+            savedFacebookPage &&
+            pagesData.some((p: any) => p.id === savedFacebookPage)
+          ) {
+            setSelectedFacebookPage(savedFacebookPage);
+            console.log("Restored saved page:", savedFacebookPage);
+          } else if (pagesData && pagesData.length > 0) {
+            setSelectedFacebookPage(pagesData[0].id);
+            localStorage.setItem("selectedFacebookPage", pagesData[0].id);
+            console.log("Set initial page:", pagesData[0].id);
+          }
+        } else {
+          console.warn("Facebook not connected or no access token");
+        }
+      } else {
+        console.warn("No token response data");
+      }
+    } catch (error) {
+      console.error("Failed to fetch Facebook pages:", error);
+    } finally {
+    }
+  };
+
+  useEffect(() => {
+    if (selectedFacebookPage) {
+      localStorage.setItem("selectedFacebookPage", selectedFacebookPage);
+    }
+  }, [selectedFacebookPage]);
+
+  useEffect(() => {
+    if (selectedLinkedinPage) {
+      localStorage.setItem("selectedlinkedinPage", selectedLinkedinPage);
+    }
+  }, [selectedLinkedinPage]);
+
+  useEffect(() => {
+    if (selectedYoutubeChannel) {
+      localStorage.setItem("selectedYoutubeChannel", selectedYoutubeChannel);
+    }
+  }, [selectedYoutubeChannel]);
+
+  useEffect(() => {
+    Promise.all([
+      fetchFacebookPages(),
+      fetchLinkedPages(),
+      fetchYouTubeChannels(),
+    ]).finally(() => {});
+  }, []);
 
   const pusher = useMemo(
     () =>
@@ -375,8 +574,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     refreshToken();
   }, []);
-
-  const { setUser } = useUser();
 
   const fetchBalance = useCallback(async () => {
     try {
@@ -477,7 +674,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     } finally {
       setTimeout(() => {
         dispatch({ type: "SET_LOADER", payload: false });
-      }, 1000);
+      }, 1500);
     }
   };
 
@@ -626,6 +823,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       fetchAnalytics,
       fetchPostHistory,
       initUser,
+
+      linkedinPages,
+      facebookPages,
+      youtubeChannels,
+
+      selectedLinkedinPage,
+      selectedFacebookPage,
+      selectedYoutubeChannel,
+
+      setSelectedLinkedinPage,
+      setSelectedFacebookPage,
+      setSelectedYoutubeChannel,
     }),
     [
       state,
@@ -672,6 +881,15 @@ export const useAppContext = () => {
     fetchAnalytics,
     fetchPostHistory,
     initUser,
+    linkedinPages,
+    facebookPages,
+    youtubeChannels,
+    selectedLinkedinPage,
+    selectedFacebookPage,
+    selectedYoutubeChannel,
+    setSelectedLinkedinPage,
+    setSelectedFacebookPage,
+    setSelectedYoutubeChannel,
   } = context;
 
   const setUnreadCount = useCallback(
@@ -773,6 +991,15 @@ export const useAppContext = () => {
     state: state,
     setUseLogo,
     setUseTheme,
+    linkedinPages,
+    facebookPages,
+    youtubeChannels,
+    selectedLinkedinPage,
+    selectedFacebookPage,
+    selectedYoutubeChannel,
+    setSelectedLinkedinPage,
+    setSelectedFacebookPage,
+    setSelectedYoutubeChannel,
     useLogo,
     useTheme,
     security_question: state.security_question,

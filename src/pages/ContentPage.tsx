@@ -26,7 +26,7 @@ export const ContentPage: React.FC = () => {
   };
 
   const handleGenerationComplete = async (posts: any[]) => {
-    const processedPosts = posts.map((post) => {
+    const processedPosts = posts?.map((post) => {
       const processedPost = { ...post };
 
       if (
@@ -54,21 +54,25 @@ export const ContentPage: React.FC = () => {
       return processedPost;
     });
 
-    if (user?.id && state.selectedProfile && state.contentData) {
-      try {
-        await savePost(
-          state.selectedProfile.id,
-          state.contentData,
-          processedPosts,
-          user?.id
-        );
-      } catch (error) {
-        console.error("Error saving post:", error);
-      }
-    }
-
+    navigate("/content/preview", { replace: true });
     dispatch({ type: "SET_GENERATED_POSTS", payload: processedPosts });
-    navigate("/content/preview");
+    setTimeout(() => {
+      setShowGenerateModal(false);
+      document.body.classList.remove("modal-open");
+      document.documentElement.classList.remove("modal-open");
+    }, 500);
+    // if (user?.id && state.selectedProfile && state.contentData) {
+    //   try {
+    //     await savePost(
+    //       state.selectedProfile.id,
+    //       state.contentData,
+    //       processedPosts,
+    //       user?.id
+    //     );
+    //   } catch (error) {
+    //     console.error("Error saving post:", error);
+    //   }
+    // }
   };
 
   const handleGoToPublish = () => {
@@ -230,17 +234,12 @@ export const ContentPage: React.FC = () => {
 
       {showGenerateModal && state.contentData && (
         <div className="fixed inset-0 bg-[#fafafa] z-50 h-full">
-          <div className="  w-full h-full overflow-y-auto modal-content">
+          <div className="md:flex flex-col  w-full min-h-[75vh] overflow-y-auto  justify-center modal-content">
             <div className="max-w-5xl m-auto">
               <AIGenerator
                 contentData={state.contentData}
                 onComplete={(posts) => {
                   handleGenerationComplete(posts);
-                  setTimeout(() => {
-                    setShowGenerateModal(false);
-                    document.body.classList.remove("modal-open");
-                    document.documentElement.classList.remove("modal-open");
-                  }, 500);
                 }}
                 onBack={() => {
                   setShowGenerateModal(false);
