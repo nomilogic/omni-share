@@ -1423,10 +1423,17 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         ...(image && modifyMode === true && { imageUrl: image }),
         aspectRatio: String(aspectRatio),
         ...(image && modifyMode === true && { modifyMode: true }),
-        ...(useLogo && logoUrl && { logoUrl: logoUrl }),
-        ...(useTheme && themeUrl && { useTheme: useTheme }),
-        ...(useLogo && logoUrl && { useLogo: useLogo }),
-        ...(useTheme && themeUrl && { themeUrl: themeUrl }),
+        ...(user?.profile?.isBrandLogo &&
+          logoUrl && {
+            logoUrl,
+            useLogo: true,
+          }),
+
+        ...(user?.profile?.isBrandTheme &&
+          themeUrl && {
+            themeUrl,
+            useTheme: true,
+          }),
       });
 
       const result = response.data;
