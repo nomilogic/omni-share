@@ -146,6 +146,7 @@
   "back_discard_post": "BackDiscard Post",
   "select_platform_warning": "Please select at least one connected platform to publish.",
   "discard_post_question": "Discard Post?",
+  "discard_changes_question": "Discard Changes?",
   "cancel": "Cancel",
   "confirm": "Confirm",
   "remove": "Remove",
@@ -1495,5 +1496,6 @@
   "connecting_to_server": "Connecting to server",
   "uploading_data": "Uploading data",
   "processing_on_server": "Processing on server",
-  "finalizing": "Finalizing"
+  "finalizing": "Finalizing",
+  "How_to_use": "How to use"
 }

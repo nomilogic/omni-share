@@ -2104,6 +2104,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         setTemplatedImageUrl("");
                         setSelectedTemplate(undefined);
                         setImageAnalysis("");
+                        setSelectedImageMode("");
                       } else {
                         setShowVideoMenu(!showVideoMenu);
                       }

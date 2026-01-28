@@ -404,6 +404,8 @@
   "personal_information": "Información personal",
   "personal_information_message": "Comencemos con lo básico: cuéntanos un poco sobre ti para personalizar tu experiencia.",
   "full_name": "Nombre completo",
+  "discard_changes_question": "Discard Changes?",
+
   "email_address": "Dirección de correo electrónico",
   "error_full_name": "El nombre completo debe tener al menos 2 caracteres",
   "error_phone_number": "Por favor ingresa un número de teléfono válido",
@@ -1457,5 +1459,6 @@
   "connecting_to_server": "Conectando al servidor",
   "uploading_data": "Subiendo datos",
   "processing_on_server": "Procesando en servidor",
-  "finalizing": "Finalizando"
+  "finalizing": "Finalizando",
+  "How_to_use": "Cómo usar"
 }

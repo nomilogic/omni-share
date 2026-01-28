@@ -979,6 +979,8 @@
   "be_specific_prompt_tip": "提示：要具体（风格、照明、背景等）",
   "use_for_generation": "用于生成",
   "brand_logo": "品牌标志",
+  "discard_changes_question": "Discard Changes?",
+
   "include_brand_logo_generation": "在图像生成中包含您的品牌标志",
   "no_brand_logo_set_profile": "个人资料中未设置品牌标志",
   "brand_theme": "品牌主题",
@@ -1456,5 +1458,6 @@
   "connecting_to_server": "连接到服务器",
   "uploading_data": "上传数据",
   "processing_on_server": "在服务器上处理",
-  "finalizing": "最终化"
+  "finalizing": "最终化",
+  "How_to_use": "如何使用"
 }
