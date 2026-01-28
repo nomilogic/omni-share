@@ -3013,10 +3013,13 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             !formData.prompt.trim() ||
                             !formData.selectedPlatforms?.length ||
                             isGeneratingBoth ||
-                            selectedImageMode === "upload" ||
                             (selectedPostType == "video" && !formData.mediaUrl)
                               ? true
-                              : false
+                              : false ||
+                                  (selectedImageMode === "upload" &&
+                                    !formData.mediaUrl)
+                                ? true
+                                : false
                           }
                           className="group flex-1 py-2.5 font-semibold text-base  min-w-0 rounded-md flex items-center justify-between theme-bg-trinary theme-text-light border border-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] transition-colors duration-200  px-3  disabled:opacity-50 disabled:cursor-not-allowed "
                         >

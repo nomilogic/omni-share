@@ -43,8 +43,6 @@ import { useUser } from "@/store/useUser";
 import user from "pusher-js/types/src/core/user";
 import VideoModal from "../components/modals/VideoModal";
 
-
-
 function HomePage() {
   const { openModal } = useModal();
   const { t } = useTranslation();
@@ -66,8 +64,6 @@ function HomePage() {
     stiffness: 100,
     damping: 30,
   });
-
-
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
@@ -103,9 +99,6 @@ function HomePage() {
         },
       ],
     };
-
-    
-
 
     let schemaScript: any = document.querySelector(
       'script[data-type="breadcrumb-schema"]'
@@ -1047,76 +1040,70 @@ function HomePage() {
             </div>
           </motion.div>
 
-            <div className="flex-1 md:flex space-y-3 md:space-y-0 gap-4 justify-center">
+          <div className="flex-1 flex sm:flex-row flex-col items-center  gap-4 justify-center">
+            <motion.button
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: 0.2,
+                delay: 0.8,
+                type: "spring",
+                stiffness: 100,
+              }}
+              onClick={() => openModal(VideoModal)}
+              className="bg-transparent text-white border-2 border-white  px-8 py-3 rounded-full text-lg font-semibold shadow-2xl inline-flex items-center space-x-2 min-w-[200px] justify-center"
+              whileHover={{
+                scale: 1.05,
+                transition: { delay: 0.1 },
+                boxShadow: "0 10px 30px rgba(118, 80, 227, 0.3)",
+              }}
+              whileTap={{ scale: 0.95 }}
+            >
+              {t("How_to_use")}
+            </motion.button>
+            <motion.button
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: 0.2,
+                delay: 0.8,
+                type: "spring",
+                stiffness: 100,
+              }}
+              onClick={() => {
+                if (Cookies.get("auth_token")) {
+                  navigate("/content");
+                } else {
+                  navigate("/auth");
+                }
+              }}
+              className="bg-white text-[#7650e3]  border-2 border-white px-8 py-3 rounded-full text-lg font-semibold shadow-2xl inline-flex items-center space-x-2 min-w-[200px] justify-center"
+              whileHover={{
+                scale: 1.05,
+                transition: { delay: 0.1 },
 
-  {/* LOAD MORE: page-load + hover/tap dono */}
-  <motion.button
-    initial={{ opacity: 0, y: 30 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{
-      duration: 0.2,
-      delay: 0.8,
-      type: "spring",
-      stiffness: 100,
-    }}
-    onClick={() => openModal(VideoModal)}
-    className="bg-white text-[#7650e3] px-8 py-3 rounded-full text-lg font-semibold shadow-2xl inline-flex items-center space-x-2 h-14 min-w-[200px] justify-center"
-    whileHover={{
-      scale: 1.05,
-      transition: { delay: 0.1 },
-      boxShadow: "0 10px 30px rgba(118, 80, 227, 0.3)",
-    }}
-    whileTap={{ scale: 0.95 }}
-  >
-    {t("How_to_use")}
-   
-  </motion.button>
-
-  {/* GET STARTED: page-load + hover/tap dono */}
-  <motion.button
-    initial={{ opacity: 0, y: 30 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{
-      duration: 0.2,
-      delay: 0.8,
-      type: "spring",
-      stiffness: 100,
-    }}
-    onClick={() => {
-      if (Cookies.get("auth_token")) {
-        navigate("/content");
-      } else {
-        navigate("/auth");
-      }
-    }}
-    className="bg-white text-[#7650e3] px-8 py-3 rounded-full text-lg font-semibold shadow-2xl inline-flex items-center space-x-2 h-14 min-w-[200px] justify-center"
-    whileHover={{
-      scale: 1.05,
-      transition: { delay: 0.1 },
-      
-      boxShadow: "0 10px 30px rgba(118, 80, 227, 0.3)",
-    }}
-    whileTap={{ scale: 0.95 }}
-  >
-    <AnimatePresence mode="wait">
-      <motion.span
-        key={Cookies.get("auth_token") ? "create" : "signup"}
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -10 }}
-        transition={{ duration: 0.2 }}
-        className="flex items-center space-x-2"
-      >
-        <span>
-          {Cookies.get("auth_token")
-            ? t("create_post")
-            : t("get_started_free")}
-        </span>
-      </motion.span>
-    </AnimatePresence>
-  </motion.button>
-
-</div>
+                boxShadow: "0 10px 30px rgba(118, 80, 227, 0.3)",
+              }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={Cookies.get("auth_token") ? "create" : "signup"}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                  className="flex items-center space-x-2"
+                >
+                  <span>
+                    {Cookies.get("auth_token")
+                      ? t("create_post")
+                      : t("get_started_free")}
+                  </span>
+                </motion.span>
+              </AnimatePresence>
+            </motion.button>
+          </div>
         </motion.div>
 
         <motion.div
