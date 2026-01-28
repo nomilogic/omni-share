@@ -1522,6 +1522,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       };
       setPendingPostGeneration(postGenerationData);
       setIsGeneratingBoth(false);
+      setPrompt("");
     } catch (error) {
       setFormData((prev) => {
         const newData = {
