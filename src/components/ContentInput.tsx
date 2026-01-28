@@ -2877,7 +2877,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             prompt: e.target.value,
                           }))
                         }
-                        className="w-full px-3  border shadow-md backdrop-blur-md py-2.5 bg-white text-sm rounded-md placeholder-gray-500
+                        className="w-full px-3   shadow-md backdrop-blur-md py-2.5 bg-white text-sm rounded-md placeholder-gray-500
              min-h-[160px] lg:min-h-[180px]
              border-0 outline-none ring-0
              focus:border-0 focus:outline-none focus:ring-0
@@ -3002,7 +3002,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                           </div>
                         </Link>
                       ) : (
-                        // Generate button shown when coins >= 6
                         <button
                           type="submit"
                           disabled={
@@ -3010,8 +3009,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             !formData.prompt.trim() ||
                             !formData.selectedPlatforms?.length ||
                             isGeneratingBoth ||
-                            (selectedImageMode === "upload" &&
-                              !formData.mediaUrl)
+                            selectedImageMode === "upload" ||
+                            (selectedPostType == "video" && !formData.mediaUrl)
                               ? true
                               : false
                           }
@@ -3043,41 +3042,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
               ) : (
                 <></>
               )}
-              {/* {selectedImageMode === "" &&
-                selectedVideoMode === "" &&
-                selectedPostType !== "text" && (
-                  <motion.div
-                    className="flex-1 w-full"
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-100px" }}
-                    transition={{
-                      duration: 0.6,
-                      type: "spring",
-                      stiffness: 80,
-                    }}
-                  >
-                    <div className="relative  rounded-md overflow-hidden aspect-video w-full  border shadow-md backdrop-blur-md border-slate-200/70">
-                      <motion.video
-                        src={IntroVideo}
-                        muted
-                        loop
-                        playsInline
-                        controls
-                        preload="none"
-                        poster={VideoPoster}
-                        className="absolute w-full h-full object-cover"
-                        initial={{ scale: 0.95, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{
-                          duration: 0.6,
-                          type: "spring",
-                          stiffness: 80,
-                        }}
-                      />
-                    </div>
-                  </motion.div>
-                )} */}
             </div>
           </form>
         </>
