@@ -184,11 +184,11 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
   const [selectedPostType, setSelectedPostType] = useState<
     "text" | "image" | "video" | ""
-  >("");
+  >("image");
 
   const [selectedImageMode, setSelectedImageMode] = useState<
     "upload" | "textToImage" | ""
-  >("");
+  >("textToImage");
 
   const getAcceptType = () => {
     if (selectedPostType === "image") return "image/*";
@@ -1665,6 +1665,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       }
     }
   };
+  const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -1672,6 +1673,12 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     const files = event.currentTarget.files;
     if (!files || files.length === 0) return;
     const file = files[0];
+
+    if (file.size > MAX_FILE_SIZE) {
+      notify("error", "File size must be less than 50MB.");
+      event.target.value = ""; // reset input
+      return;
+    }
 
     // Reset image-related state
     setTemplatedImageUrl("");
@@ -1798,7 +1805,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     setShowPreview(false);
     setShowImageMenu(false);
     setShowVideoMenu(false);
-    setSelectedVideoMode("");
+    // setSelectedVideoMode("");
 
     // Image states
     setGeneratedImage(null);
@@ -1921,9 +1928,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         setShowPreview(false);
                         currentFileRef.current = null;
                       }
-                      setSelectedPostType(
-                        selectedPostType === "text" ? "" : "text"
-                      );
+                      setSelectedPostType("text");
                     }}
                     className={`  border  duration-200 text-center px-2 py-3 rounded-md  ${
                       selectedPostType === "text"
@@ -1954,16 +1959,22 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                   {/* Image Post */}
                   <div
                     onClick={() => {
+                      setSelectedVideoMode("");
+                      setShowPreview(false);
                       if (selectedPostType !== "image") {
+                        if (uploadAbortControllerRef.current) {
+                          uploadAbortControllerRef.current.abort();
+                          uploadAbortControllerRef.current = null;
+                        }
+                        resetAll();
+                        setSelectedPostType("image");
+                        setSelectedImageMode("textToImage");
                         setSelectedFile(null);
-                        setShowImageMenu(true);
                       } else {
+                        setShowImageMenu(true);
                         setSelectedFile(null);
-
                         setShowImageMenu(!showImageMenu);
                       }
-                      setShowPreview(false);
-                      setSelectedPostType("image");
                     }}
                     className={` relative cursor-pointer border shadow-md backdrop-blur-md border-slate-200/70 transition-all duration-200  text-center px-2 py-3 rounded-md ${
                       selectedPostType === "image"
@@ -2088,6 +2099,11 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         setTemplatedImageUrl("");
                         setSelectedTemplate(undefined);
                         setSelectedPostType("video");
+                        setSelectedVideoMode("uploadShorts");
+                        setShowVideoMenu(false);
+                        setTemplatedImageUrl("");
+                        setSelectedTemplate(undefined);
+                        setImageAnalysis("");
                       } else {
                         setShowVideoMenu(!showVideoMenu);
                       }
@@ -2150,7 +2166,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             setTemplatedImageUrl("");
                             setSelectedTemplate(undefined);
                             setImageAnalysis("");
-                            setSelectedImageMode("");
+                            // setSelectedImageMode("");
                           }}
                           className={`p-3 border transition rounded-md duration-200 text-center
                             ${selectedPostType === "video" ? "" : "hidden"}
@@ -2206,7 +2222,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             setTemplatedImageUrl("");
                             setSelectedTemplate(undefined);
                             setImageAnalysis("");
-                            setSelectedImageMode("");
+                            // setSelectedImageMode("");
                           }}
                           className={`p-3 border transition rounded-md duration-200 text-center
                             ${selectedPostType === "video" ? "" : "hidden"}
@@ -2437,10 +2453,10 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         {/* Generate Image from Main Content - Only show when combined generation is checked */}
                         {generateImageWithPost && (
                           <div className="space-y-4">
-                            <div className="p-3 bg-green-500/10 border border-green-400/20 rounded-md">
+                            <div className="p-3 bg-green-500/10 border border-purple-400/20 rounded-md">
                               <div className="flex items-center space-x-2">
-                                <CheckCircle className="w-4 h-4 text-green-400" />
-                                <span className="text-sm font-medium text-green-300">
+                                <CheckCircle className="w-4 h-4 text-purple-400" />
+                                <span className="text-sm font-medium text-purple-600">
                                   Using your main content description to
                                   generate the image
                                 </span>
@@ -2652,9 +2668,11 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               </div>
                             </div>
                           ) : videoAspectRatio ? (
-                            <div className="flex items-center justify-center p-2 bg-green-500/10 border border-green-400/20 rounded text-xs">
-                              <CheckCircle className="w-3 h-3 mr-2 text-green-400" />
-                              <span className="text-green-300">
+                            <div className="flex md:items-center justify-center p-2 bg-purple-500/10 border border-purple-400/20 rounded text-xs">
+                              <div>
+                                <CheckCircle className="w-3 h-3 mr-1 mt-1 text-purple-600" />
+                              </div>
+                              <span className="text-purple-600 md:text-center text-left">
                                 {is9x16Video(videoAspectRatio)
                                   ? t(
                                       "vertical_video_ready_stories_format_no_thumbnail_needed"
@@ -2671,7 +2689,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                           ) : null}
 
                           {!is9x16Video(videoAspectRatio || 0) && (
-                            <div className="mt-2 flex items-center justify-center gap-3">
+                            <div className="mt-2 flex md:items-center md:justify-center gap-3">
                               <label className="flex items-center space-x-2 cursor-pointer">
                                 <input
                                   type="checkbox"
@@ -2681,9 +2699,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                       e.target.checked
                                     )
                                   }
-                                  className="w-4 h-4"
+                                  className="md:w-4 md:h-4 w-3 h-3"
                                 />
-                                <span className="text-sm theme-text-secondary">
+                                <span className="md:text-sm text-xs theme-text-secondary">
                                   {t("generate_thumbnail_with_ai")}
                                 </span>
                               </label>
@@ -3024,7 +3042,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
               ) : (
                 <></>
               )}
-              {selectedImageMode === "" &&
+              {/* {selectedImageMode === "" &&
                 selectedVideoMode === "" &&
                 selectedPostType !== "text" && (
                   <motion.div
@@ -3058,7 +3076,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                       />
                     </div>
                   </motion.div>
-                )}
+                )} */}
             </div>
           </form>
         </>

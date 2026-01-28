@@ -295,14 +295,7 @@ const ProfileSetupSinglePage: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [urlAnalysisLoading, setUrlAnalysisLoading] = useState(false);
   const [urlAnalysisError, setUrlAnalysisError] = useState<string | null>(null);
-  const {
-    setProfileEditing,
-    refreshUser,
-    setUseLogo,
-    useLogo,
-    setUseTheme,
-    useTheme,
-  } = useAppContext();
+  const { setProfileEditing, refreshUser } = useAppContext();
   const { user } = useUser();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -435,10 +428,9 @@ const ProfileSetupSinglePage: React.FC = () => {
 
       const res = await fetch(normalized, {
         method: "HEAD",
-        mode: "no-cors", // avoids CORS crash
+        mode: "no-cors",
       });
 
-      // If fetch doesn't throw, URL likely exists
       return true;
     } catch {
       return false;
@@ -468,7 +460,6 @@ const ProfileSetupSinglePage: React.FC = () => {
         const profile = response.data.profile;
         console.log("Profile data:", profile);
 
-        // FIX 4: Ensure arrays are never undefined
         const updatedData: ProfileFormData = {
           email: formData.email,
           fullName: profile.fullName?.trim() || formData.fullName,
@@ -504,7 +495,6 @@ const ProfileSetupSinglePage: React.FC = () => {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedData));
       }
     } catch (err: any) {
-      // setUrlAnalysisError(err?.response?.data?.message || t("url_failed"));
     } finally {
       setUrlAnalysisLoading(false);
     }
@@ -512,8 +502,7 @@ const ProfileSetupSinglePage: React.FC = () => {
 
   const onSubmit = async (data: ProfileFormData) => {
     setLoading(true);
-    localStorage.setItem("useLogo", useLogo ? "true" : "false");
-    localStorage.setItem("useTheme", useTheme ? "true" : "false");
+
     try {
       const submitData = { ...data };
 
@@ -634,6 +623,25 @@ const ProfileSetupSinglePage: React.FC = () => {
       return `rgb(${red}, ${green}, ${blue})`;
     }
   };
+
+  const publicUrl = watch("publicUrl");
+  const brandLogo = watch("brandLogo");
+
+  useEffect(() => {
+    if (!publicUrl?.trim()) {
+      setValue("isBrandTheme", false);
+    } else {
+      setValue("isBrandTheme", true);
+    }
+  }, [publicUrl, setValue]);
+
+  useEffect(() => {
+    if (!brandLogo) {
+      setValue("isBrandLogo", false);
+    } else {
+      setValue("isBrandLogo", true);
+    }
+  }, [brandLogo, setValue]);
   return (
     <div className="bg-transparent md:px-0">
       <div className="flex flex-col md:flex-row-reverse justify-between items-between md:pb-4 pb-3">
@@ -1014,25 +1022,34 @@ const ProfileSetupSinglePage: React.FC = () => {
                             </div>
                           );
                         case "checkbox": {
-                          const isChecked = watch(fieldName);
+                          const isChecked = watch(fieldName) as boolean;
+                          const isDisabled =
+                            (field.name === "isBrandTheme" &&
+                              !formData.publicUrl?.trim()) ||
+                            (field.name === "isBrandLogo" &&
+                              !formData.brandLogo);
 
                           return (
                             <div key={field.name}>
                               <label
-                                className={`flex items-center gap-2 p-2 border rounded-md cursor-pointer transition-all
+                                className={`flex items-center gap-2 p-2 border rounded-md transition-all
           ${
-            isChecked
+            isChecked && !isDisabled
               ? "theme-border-trinary theme-text-secondary"
               : "border-gray-200"
           }
-        `}
+          ${
+            isDisabled
+              ? "opacity-50 cursor-not-allowed pointer-events-none"
+              : "cursor-pointer"
+          }`}
                               >
                                 <input
                                   type="checkbox"
                                   {...register(fieldName)}
+                                  disabled={isDisabled}
                                   className="h-4 w-4 border-slate-300 rounded theme-checkbox"
                                 />
-
                                 <span className="text-sm font-medium theme-text-primary">
                                   {field.label} {field.required && "*"}
                                 </span>
