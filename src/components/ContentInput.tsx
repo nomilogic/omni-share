@@ -389,7 +389,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       selectedPlatforms: appropriatePlatforms,
     }));
     setShowPublishModal(false);
-    setShowGenerateModal(false);
     if (selectedPostType === "video") {
       if (videoAspectRatio) {
         let shouldClearWarning = false;
