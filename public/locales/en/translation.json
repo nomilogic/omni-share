@@ -1495,5 +1495,6 @@
   "connecting_to_server": "Connecting to server",
   "uploading_data": "Uploading data",
   "processing_on_server": "Processing on server",
-  "finalizing": "Finalizing"
+  "finalizing": "Finalizing",
+  "How_to_use": "How to use"
 }
