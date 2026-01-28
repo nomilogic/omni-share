@@ -1456,5 +1456,6 @@
   "connecting_to_server": "连接到服务器",
   "uploading_data": "上传数据",
   "processing_on_server": "在服务器上处理",
-  "finalizing": "最终化"
+  "finalizing": "最终化",
+  "How_to_use": "如何使用"
 }
