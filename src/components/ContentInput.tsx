@@ -84,7 +84,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   } = useLoadingAPI();
   const { t } = useTranslation();
 
-  // Get confirm dialog from context
   const { showConfirm, closeConfirm } = useConfirmDialog();
 
   const [formData, setFormData] = useState<any>({
@@ -95,8 +94,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     media: initialData?.media || undefined,
     mediaUrl: initialData?.mediaUrl || undefined,
   });
-  const [dragActive, setDragActive] = useState(false);
 
+  const [dragActive, setDragActive] = useState(false);
   const [analyzingImage, setAnalyzingImage] = useState(false);
   const [imageAnalysis, setImageAnalysis] = useState("");
 
@@ -375,6 +374,11 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   }, [selectedVideoMode]);
 
   useEffect(() => {
+    setFormData((prev: any) => ({
+      ...prev,
+      selectedPlatforms: initialData?.selectedPlatforms ||
+        selectedPlatforms || ["linkedin"],
+    }));
     const appropriatePlatforms = getAppropiatePlatforms(
       selectedPostType?.toLowerCase() as "text" | "image" | "video",
       selectedImageMode,
@@ -412,6 +416,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       }
     }
   }, [
+    formData.prompt,
     selectedPostType,
     selectedImageMode,
     selectedVideoMode,
@@ -1423,10 +1428,17 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         ...(image && modifyMode === true && { imageUrl: image }),
         aspectRatio: String(aspectRatio),
         ...(image && modifyMode === true && { modifyMode: true }),
-        ...(useLogo && logoUrl && { logoUrl: logoUrl }),
-        ...(useTheme && themeUrl && { useTheme: useTheme }),
-        ...(useLogo && logoUrl && { useLogo: useLogo }),
-        ...(useTheme && themeUrl && { themeUrl: themeUrl }),
+        ...(user?.profile?.isBrandLogo &&
+          logoUrl && {
+            logoUrl,
+            useLogo: true,
+          }),
+
+        ...(user?.profile?.isBrandTheme &&
+          themeUrl && {
+            themeUrl,
+            useTheme: true,
+          }),
       });
 
       const result = response.data;
@@ -1761,6 +1773,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
     setCost(finalCost);
   }, [
+    formData.prompt,
     selectedPostType,
     selectedImageMode,
     selectedVideoMode,
@@ -2066,6 +2079,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                           ...prev,
                           media: undefined,
                           selectedPlatforms: [],
+                          prompt: "",
                           mediaUrl: undefined,
                         }));
                         setSelectedFile(null);
@@ -2976,7 +2990,11 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             cost === 0 ||
                             !formData.prompt.trim() ||
                             !formData.selectedPlatforms?.length ||
-                            isGeneratingBoth
+                            isGeneratingBoth ||
+                            (selectedImageMode === "upload" &&
+                              !formData.mediaUrl)
+                              ? true
+                              : false
                           }
                           className="group flex-1 py-2.5 font-semibold text-base  min-w-0 rounded-md flex items-center justify-between theme-bg-trinary theme-text-light border border-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] transition-colors duration-200  px-3  disabled:opacity-50 disabled:cursor-not-allowed "
                         >
