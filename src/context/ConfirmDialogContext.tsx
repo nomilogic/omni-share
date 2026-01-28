@@ -27,9 +27,9 @@ interface ConfirmDialogContextType {
   setSidebarCloseFn: (fn: () => void) => void;
 }
 
-const ConfirmDialogContext = createContext<ConfirmDialogContextType | undefined>(
-  undefined
-);
+const ConfirmDialogContext = createContext<
+  ConfirmDialogContextType | undefined
+>(undefined);
 
 export const ConfirmDialogProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -41,7 +41,9 @@ export const ConfirmDialogProvider: React.FC<{ children: React.ReactNode }> = ({
     onConfirm: () => {},
     isDangerous: false,
   });
-  const [sidebarCloseFn, setSidebarCloseFn] = useState<(() => void) | null>(null);
+  const [sidebarCloseFn, setSidebarCloseFn] = useState<(() => void) | null>(
+    null
+  );
   const { t } = useTranslation();
 
   const showConfirm = (
@@ -79,12 +81,18 @@ export const ConfirmDialogProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <ConfirmDialogContext.Provider
-      value={{ confirmDialog, setConfirmDialog, showConfirm, closeConfirm, setSidebarCloseFn }}
+      value={{
+        confirmDialog,
+        setConfirmDialog,
+        showConfirm,
+        closeConfirm,
+        setSidebarCloseFn,
+      }}
     >
       {children}
       <ConfirmDialog
         isOpen={confirmDialog.isOpen}
-        title={confirmDialog.title}
+        title={t("discard_changes_question")}
         message={confirmDialog.message}
         confirmText={t("leave")}
         cancelText={t("stay")}
