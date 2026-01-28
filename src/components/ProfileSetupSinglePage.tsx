@@ -923,6 +923,11 @@ const ProfileSetupSinglePage: React.FC = () => {
                                       type="button"
                                       onClick={() => {
                                         setValue(fieldName, "" as any);
+                                        if (
+                                          fileInputRef &&
+                                          fileInputRef.current
+                                        )
+                                          fileInputRef.current.value = "";
                                       }}
                                       className="text-xs text-red-500 hover:underline"
                                     >

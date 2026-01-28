@@ -2341,6 +2341,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                       selectedPlatforms: [],
                                       mediaUrl: undefined,
                                     }));
+                                    if (fileInputRef && fileInputRef.current)
+                                      fileInputRef.current.value = "";
                                     setSelectedFile(null);
                                     setGeneratedImage(null);
                                     setAllGeneration([]);
@@ -2785,6 +2787,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             setTemplatedImageUrl("");
                             setSelectedTemplate(undefined);
                             setImageAnalysis("");
+                            if (fileInputRef && fileInputRef.current)
+                              fileInputRef.current.value = "";
                           }}
                           className="text-red-400 hover:text-red-300 text-xs font-medium text-center w-full flex items-center justify-center space-x-1  "
                         >
