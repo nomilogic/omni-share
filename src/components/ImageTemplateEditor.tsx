@@ -207,22 +207,31 @@ export const ImageTemplateEditor = ({
     }
   };
 
-  // Keyboard shortcuts for undo/redo (Ctrl/Cmd+Z and Ctrl/Cmd+Shift+Z)
+  // Keyboard shortcuts for undo/redo (Ctrl/Cmd+Z, Ctrl/Cmd+Shift+Z, and Ctrl/Cmd+Y)
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z") {
-        e.preventDefault();
-        if (e.shiftKey) {
+      if ((e.ctrlKey || e.metaKey)) {
+        const key = e.key.toLowerCase();
+        // Ctrl/Cmd+Z = Undo
+        if (key === "z") {
+          e.preventDefault();
+          if (e.shiftKey) {
+            handleRedo();
+          } else {
+            handleUndo();
+          }
+        }
+        // Ctrl/Cmd+Y = Redo
+        else if (key === "y") {
+          e.preventDefault();
           handleRedo();
-        } else {
-          handleUndo();
         }
       }
     };
 
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, []);
+  }, [handleUndo, handleRedo]);
 
   // Load history from localStorage on component mount
   useEffect(() => {
@@ -2490,10 +2499,10 @@ export const ImageTemplateEditor = ({
         }  md:h-full bg-white border-b md:border-b-0 md:border-r border-gray-200 flex flex-col`}
       >
         <div className="flex w-full overflow-y-auto p-3 md:p-4 min-h-0">
-          <div className="space-y-3 pb-20 overflow-y-auto h-[50vh] md:h-auto md:pb-2 md:overflow-hidden  md:space-y-4 w-full">
+          <div className="space-y-1 pb-20 overflow-y-auto h-[50vh] md:h-auto md:pb-2 md:overflow-hidden  md:space-y-4 w-full">
             {/* Clear All Elements */}
             {
-              <div className="flex items-center justify-between gap-1">
+              <div className="flex items-center justify-between ">
                 <label className="flex items-center gap-1 text-xs text-slate-700 select-none">
                   <input
                     type="checkbox"
@@ -2515,7 +2524,7 @@ export const ImageTemplateEditor = ({
                   {t("show_grid")}
                 </label>
                 {showGrid && (
-                  <div className="flex items-center gap-1 flex-1">
+                  <div className="flex items-center gap-1"> 
                     <input
                       type="range"
                       min="1"
@@ -2523,17 +2532,17 @@ export const ImageTemplateEditor = ({
                       step="1"
                       value={gridSize}
                       onChange={(e) => setGridSize(parseInt(e.target.value))}
-                      className="flex-1 template-range"
+                      className="w-20 template-range"
                     />
                     <span className="text-xs text-gray-600 font-medium min-w-10">
                       {gridSize}px
-                    </span>
+                    </span> 
                   </div>
                 )}
                 <div className="flex items-center gap-2">
                   <button
                     onClick={clearAllElements}
-                    className="inline-flex items-center justify-center gap-1 px-1.5 py-1 bg-red-50 text-red-700 rounded-md hover:bg-red-100 transition-colors text-xs font-medium"
+                    className="inline-flex items-center justify-center gap-1 p-1 bg-red-50 text-red-700 rounded-md hover:bg-red-100 transition-colors text-xs font-medium"
                     title={t("delete_all_elements")}
                     type="button"
                   >
@@ -2544,23 +2553,21 @@ export const ImageTemplateEditor = ({
                   <button
                     onClick={handleUndo}
                     disabled={!canUndo}
-                    className="inline-flex items-center justify-center gap-1 px-2 py-1 bg-white text-[#7650e3] border border-[#7650e3] rounded-md hover:bg-[#d7d7fc] disabled:opacity-50 transition-colors text-xs font-medium"
+                    className="inline-flex items-center justify-center gap-1 p-1 bg-white text-[#7650e3] border border-[#7650e3] rounded-md hover:bg-[#d7d7fc] disabled:opacity-50 transition-colors text-xs font-medium"
                     title={t("undo")}
                     type="button"
                   >
                     <Undo className="w-3 h-3" />
-                    <span>{t("undo")}</span>
                   </button>
 
                   <button
                     onClick={handleRedo}
                     disabled={!canRedo}
-                    className="inline-flex items-center justify-center gap-1 px-2 py-1 bg-white text-[#7650e3] border border-[#7650e3] rounded-md hover:bg-[#d7d7fc] disabled:opacity-50 transition-colors text-xs font-medium"
+                    className="inline-flex items-center justify-center gap-1 p-1 bg-white text-[#7650e3] border border-[#7650e3] rounded-md hover:bg-[#d7d7fc] disabled:opacity-50 transition-colors text-xs font-medium"
                     title={t("redo")}
                     type="button"
                   >
                     <Redo className="w-3 h-3" />
-                    <span>{t("redo")}</span>
                   </button>
                 </div>
               </div>
