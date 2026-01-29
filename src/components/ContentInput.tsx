@@ -749,6 +749,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
               };
 
               setPendingPostGeneration(postGenerationData);
+              // Clear the main post prompt after image generation to keep modal prompt separate
+              setFormData((prev: any) => ({ ...prev, prompt: "" }));
               return;
             }
           }
@@ -1378,6 +1380,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         };
 
         setPendingPostGeneration(postGenerationData);
+        // Clear the main post prompt since we've captured it as basePrompt
+        setFormData((prev: any) => ({ ...prev, prompt: "" }));
       }
     } catch (err) {
       notify("error", t("failed_upload_thumbnail"));
@@ -1548,6 +1552,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         formData,
       };
       setPendingPostGeneration(postGenerationData);
+      // Clear the main post prompt to avoid using regen prompt for post generation
+      setFormData((prev: any) => ({ ...prev, prompt: "" }));
       setIsGeneratingBoth(false);
       setPrompt("");
     } catch (error) {
@@ -1685,6 +1691,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           };
 
           setPendingPostGeneration(postGenerationData);
+          // Clear the main post prompt after scheduling post generation
+          setFormData((prev: any) => ({ ...prev, prompt: "" }));
         }, 500);
       }
     } catch (error) {
