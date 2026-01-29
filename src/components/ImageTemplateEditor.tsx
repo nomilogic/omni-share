@@ -2347,8 +2347,14 @@ export const ImageTemplateEditor = ({
 
   const handleUndo = () => {
     if (undoSnapshotRef.current) {
-      // Create a new array reference to ensure React detects the change
-      setElements([...undoSnapshotRef.current]);
+      try {
+        // Deep copy to ensure React detects the state change
+        const restoredElements = JSON.parse(JSON.stringify(undoSnapshotRef.current));
+        setElements(restoredElements);
+      } catch (e) {
+        // Fallback to shallow copy
+        setElements([...undoSnapshotRef.current]);
+      }
       undoSnapshotRef.current = null;
       setCanUndo(false);
     }
