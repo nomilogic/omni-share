@@ -866,20 +866,36 @@ export const ImageTemplateEditor = ({
 
       console.log("🗑️ Attempting to delete template:", { id, source: tpl.source, name: tpl.name });
 
-      if (tpl.source === "user") {
-        // Delete user-saved template via API
-        const deleteResponse = await templateService.deleteTemplate(id);
-        console.log("✅ User template deleted from server", { id, response: deleteResponse });
-      } else if (tpl.source === "local") {
-        // Delete local template from storage
-        const templates = readTemplatesFromLocalStorage();
-        const next = templates.filter((t) => t.id !== id);
-        writeTemplatesToLocalStorage(next);
-        console.log("✅ Local template deleted from storage", id);
-      } else {
+      // Server-side deletion for user templates and attempt API first for local templates
+      console.log("🛰️ Calling templateService.deleteTemplate for id:", id, "source:", tpl.source);
+
+      if (tpl.source === "global") {
         console.warn("⚠️ Delete not supported for global templates");
         setIsDeleting(false);
         return;
+      }
+
+      try {
+        const deleteResponse = await templateService.deleteTemplate(id);
+        console.log("✅ templateService.deleteTemplate response:", deleteResponse);
+      } catch (apiError) {
+        console.error("❌ templateService.deleteTemplate failed:", apiError);
+
+        // If it's a local template, remove from local storage as a fallback
+        if (tpl.source === "local") {
+          try {
+            const templates = readTemplatesFromLocalStorage();
+            const next = templates.filter((t) => t.id !== id);
+            writeTemplatesToLocalStorage(next);
+            console.log("✅ Local template deleted from storage (API fallback)", id);
+          } catch (localErr) {
+            console.error("❌ Failed to remove local template as fallback:", localErr);
+            throw apiError; // surface original API error
+          }
+        } else {
+          // For user templates, bubble API error so we can inform the user
+          throw apiError;
+        }
       }
 
       console.log("🗑️ Template deletion successful, reloading templates...", id);
