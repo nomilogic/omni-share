@@ -331,7 +331,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
         channelsData.channels?.some((c: any) => c.id === savedYoutubeChannel)
       ) {
         setSelectedYoutubeChannel(savedYoutubeChannel);
-        console.log("Restored saved YouTube channel:", savedYoutubeChannel);
       } else if (channelsData.channels && channelsData.channels.length > 0) {
         setSelectedYoutubeChannel(channelsData.channels[0].id);
         localStorage.setItem(
@@ -358,7 +357,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
           pagesData.data?.some((p: any) => p.urn === savedLinkedInPage)
         ) {
           setSelectedLinkedinPage(savedLinkedInPage);
-          console.log("Restored saved LinkedIn page:", savedLinkedInPage);
         } else if (pagesData?.data?.[0]?.urn) {
           setSelectedLinkedinPage(pagesData.data[0].urn);
           localStorage.setItem("selectedlinkedinPage", pagesData.data[0].urn);
@@ -397,14 +395,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
         pagesData.some((p: any) => p.id === savedFacebookPage)
       ) {
         setSelectedFacebookPage(savedFacebookPage);
-        console.log("Restored saved page:", savedFacebookPage);
       } else if (pagesData && pagesData.length > 0) {
         setSelectedFacebookPage(pagesData[0].id);
         localStorage.setItem("selectedFacebookPage", pagesData[0].id);
-        console.log("Set initial page:", pagesData[0].id);
       }
     } catch (error) {
-      console.log("error", error);
     } finally {
     }
   };
