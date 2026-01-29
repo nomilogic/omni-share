@@ -2357,16 +2357,14 @@ export const ImageTemplateEditor = ({
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z") {
-        if (canUndo) {
-          e.preventDefault();
-          handleUndo();
-        }
+        e.preventDefault();
+        handleUndo();
       }
     };
 
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [canUndo]);
+  }, [canUndo, handleUndo]);
 
   const selectedElementData = elements.find((el) => el.id === selectedElement);
 
