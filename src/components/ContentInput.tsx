@@ -1025,15 +1025,10 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         videoAspectRatio,
       } = pendingPostGeneration;
 
-      // Merge base prompt (the original post prompt) with the regeneration prompt.
+      // Use the original base prompt for post generation; ignore regeneration prompt.
       const base = basePrompt || originalFormData?.prompt || "";
       const regen = prompt || "";
-      let finalPrompt = "";
-      if (base && regen) {
-        finalPrompt = base.includes(regen) ? base : `${base} ${regen}`;
-      } else {
-        finalPrompt = base || regen;
-      }
+      const finalPrompt = base || regen;
 
       let currentFormData;
       let mediaAssets;
