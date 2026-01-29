@@ -2347,7 +2347,8 @@ export const ImageTemplateEditor = ({
 
   const handleUndo = () => {
     if (undoSnapshotRef.current) {
-      setElements(undoSnapshotRef.current);
+      // Create a new array reference to ensure React detects the change
+      setElements([...undoSnapshotRef.current]);
       undoSnapshotRef.current = null;
       setCanUndo(false);
     }
