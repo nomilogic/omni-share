@@ -2467,49 +2467,6 @@ export const ImageTemplateEditor = ({
     }
   };
 
-  // Clear All with undo snapshot support
-  const clearAllElements = () => {
-    try {
-      // store a deep copy for undo
-      undoSnapshotRef.current = JSON.parse(JSON.stringify(elements || []));
-      setCanUndo(true);
-    } catch (e) {
-      // fallback shallow copy
-      undoSnapshotRef.current = (elements || []).slice();
-      setCanUndo(true);
-    }
-
-    setElements((prevElements) =>
-      prevElements.filter((el) => el.id === "background-image"),
-    );
-    setSelectedElement(null);
-  };
-
-  const handleUndo = () => {
-    if (undoSnapshotRef.current) {
-      try {
-        // Deep copy to ensure React detects the state change
-        const restoredElements = JSON.parse(JSON.stringify(undoSnapshotRef.current));
-        setElements(restoredElements);
-      } catch (e) {
-        // Fallback to shallow copy
-        setElements([...undoSnapshotRef.current]);
-      }
-      undoSnapshotRef.current = null;
-      setCanUndo(false);
-  // Keyboard shortcut for undo (Ctrl/Cmd+Z)
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z") {
-        e.preventDefault();
-        handleUndo();
-      }
-    };
-
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [canUndo, handleUndo]);
-
   const selectedElementData = elements.find((el) => el.id === selectedElement);
 
   if (isLoading) {
