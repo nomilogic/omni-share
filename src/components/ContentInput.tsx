@@ -736,7 +736,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
               const postGenerationData = {
                 prompt: formData.prompt,
-                basePrompt: formData.prompt,
+                basePrompt: basePrompt,
                 originalImageUrl: videoThumbnailUrl,
                 originalVideoUrl: formData.mediaUrl,
                 originalVideoFile: originalVideoFile,
@@ -1367,7 +1367,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
         const postGenerationData = {
         prompt: formData.prompt,
-        basePrompt: formData.prompt,
+        basePrompt: basePrompt,
           originalImageUrl: mediaUrl,
           originalVideoUrl: formData.mediaUrl,
           originalVideoFile: originalVideoFile,
@@ -1465,12 +1465,15 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     }
   };
   const [prompt, setPrompt] = useState("");
+  // basePrompt holds the original post prompt when opening regeneration modal
+  const [basePrompt, setBasePrompt] = useState("");
 
   // When opening the image regeneration modal, initialize the modal prompt
   // with the base post prompt so users see and can edit it while regenerating.
   useEffect(() => {
     if (modelImage) {
       const base = formData?.prompt || "";
+      setBasePrompt(base);
       if (!prompt || prompt.trim() === "") {
         setPrompt(base);
       } else if (base && !prompt.includes(base)) {
@@ -1544,7 +1547,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
       const postGenerationData = {
         prompt: newPrompt,
-        basePrompt: formData.prompt,
+        basePrompt: basePrompt,
         originalImageUrl: finalImageUrl,
         campaignInfo: currentCampaignInfo,
         selectedPlatforms: formData.selectedPlatforms,
@@ -1674,7 +1677,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
           const postGenerationData = {
             prompt: formData.prompt,
-            basePrompt: formData.prompt,
+            basePrompt: basePrompt,
             originalImageUrl: thumbnailToUse, // Use confirmed video thumbnail
             originalVideoUrl: formData.mediaUrl,
             originalVideoFile: originalVideoFile,
