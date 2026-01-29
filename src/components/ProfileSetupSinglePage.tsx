@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useMemo } from "react";
-import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import {
   Loader2,
@@ -21,7 +20,6 @@ import API from "../services/api";
 import { useProfileFormSchema, ProfileFormData } from "./profileFormSchema";
 import { useAppContext } from "../context/AppContext";
 import { useTranslation } from "react-i18next";
-import { useUser } from "@/store/useUser";
 
 const STORAGE_KEY = "profile_form_data";
 
@@ -291,38 +289,27 @@ const getProfileFormConfig = (t: (key: string) => string) => {
   };
 };
 
-const ProfileSetupSinglePage: React.FC = () => {
+const ProfileSetupSinglePage = ({ user }: any) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [urlAnalysisLoading, setUrlAnalysisLoading] = useState(false);
   const [urlAnalysisError, setUrlAnalysisError] = useState<string | null>(null);
   const { setProfileEditing, refreshUser } = useAppContext();
-  const { user } = useUser();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
   const schema = useProfileFormSchema();
-  const logoUrl = user?.profile?.brandLogo || "";
-  const themeUrl = user?.profile?.publicUrl || "";
 
   const { profileFormConfig } = useMemo(() => getProfileFormConfig(t), [t]);
-  const isValidUrlP = (u?: string | null) => {
-    if (!u) return false;
-    const s = u.trim();
-    return true;
-  };
 
-  const hasLogo = isValidUrlP(logoUrl);
-  const hasTheme = isValidUrlP(themeUrl);
   const getDefaultValues = (): ProfileFormData => {
-    // Prefer live user profile first
     if (user?.profile) {
       const profile = user.profile;
 
       return {
-        email: profile.email || user.email || "",
+        email: user.email || "",
         isBrandTheme: profile.isBrandTheme || false,
         isBrandLogo: profile.isBrandLogo || false,
-        fullName: profile.fullName || user.full_name || "",
+        fullName: profile.fullName || user.name || "",
         phoneNumber: profile.phoneNumber || "",
         publicUrl: profile.publicUrl || "",
         brandName: profile.brandName || "",
@@ -341,29 +328,8 @@ const ProfileSetupSinglePage: React.FC = () => {
       };
     }
 
-    // Fallback to localStorage
-    const savedData = localStorage.getItem(STORAGE_KEY);
-    if (savedData) {
-      try {
-        const parsed = JSON.parse(savedData);
-        return {
-          ...parsed,
-          audienceAgeRange: parsed.audienceAgeRange || [],
-          audienceRegions: parsed.audienceRegions || [],
-          audienceInterests: parsed.audienceInterests || [],
-          audienceSegments: parsed.audienceSegments || [],
-          contentCategories: parsed.contentCategories || [],
-          preferredPlatforms: parsed.preferredPlatforms || [],
-          primaryPurpose: parsed.primaryPurpose || [],
-          keyOutcomes: parsed.keyOutcomes || [],
-        };
-      } catch (e) {
-        console.error("Error parsing saved data:", e);
-      }
-    }
-
     return {
-      fullName: user?.full_name || "",
+      fullName: user?.name || "",
       email: user?.email || "",
       phoneNumber: "",
       publicUrl: "",
@@ -388,12 +354,20 @@ const ProfileSetupSinglePage: React.FC = () => {
     handleSubmit,
     watch,
     setValue,
+    reset,
+
     formState: { errors },
   } = useForm<ProfileFormData>({
     resolver: zodResolver(schema),
     mode: "onBlur",
     defaultValues: getDefaultValues(),
   });
+
+  useEffect(() => {
+    if (user) {
+      reset(getDefaultValues());
+    }
+  }, [user]);
 
   const formData = watch();
 

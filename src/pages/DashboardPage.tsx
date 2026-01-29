@@ -134,7 +134,7 @@ export const DashboardPage: React.FC = () => {
         <div className=" mb-4 md:my-10">
           <main className="max-w-8xl mx-auto  flex flex-col gap-y-4 md:gap-y-8 ">
             <div className="bg-gray-100  lg:px-4 px-3 py-4 rounded-md flex flex-col gap-4">
-              <ProfileCard />
+              <ProfileCard user={user} />
               {progress !== 100 && (
                 <div
                   onClick={() => setProfileEditing(true)}
@@ -239,7 +239,7 @@ export const DashboardPage: React.FC = () => {
       {isEditing && (
         <div className="relative w-full md:my-10">
           <div className="p-0 w-full   lg:px-4 px-3 py-4 rounded-md">
-            <ProfileSetupSinglePage />
+            <ProfileSetupSinglePage user={user} />
           </div>
         </div>
       )}

@@ -25,12 +25,12 @@ export default function ImageRegenerationModal({
   themeUrl,
   prompt,
   setPrompt,
+  user,
 }: any) {
   const [activeImage, setActiveImage] = useState(imageUrl);
   const { t } = useTranslation();
   const { showConfirm, closeConfirm } = useConfirmDialog();
 
-  // Check if there's active regeneration or unsaved changes
   const hasActiveOperation = () => {
     return (
       isLoading ||
@@ -39,7 +39,6 @@ export default function ImageRegenerationModal({
     );
   };
 
-  // Guard navigation when there are unsaved changes or regeneration in progress
   useNavigationGuard({
     isActive: hasActiveOperation(),
     title: t("confirm_navigation") || "Confirm Navigation",
@@ -50,15 +49,12 @@ export default function ImageRegenerationModal({
         "You have unsaved changes. Are you sure you want to leave?",
   });
 
-  // Intercept all navigation attempts (including link clicks and React Router links)
   useEffect(() => {
     const handleClickCapture = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      // Check for both regular links and React Router Link components
       const link = target.closest("a") as HTMLAnchorElement;
 
       if (link) {
-        // Only intercept internal links (not external URLs and not downloads)
         const href = link.getAttribute("href");
         if (href && !href.includes("://") && !link.download) {
           if (hasActiveOperation()) {
@@ -81,7 +77,6 @@ export default function ImageRegenerationModal({
       }
     };
 
-    // Use capture phase to intercept before default behavior
     document.addEventListener("click", handleClickCapture, true);
     return () => {
       document.removeEventListener("click", handleClickCapture, true);
@@ -98,7 +93,6 @@ export default function ImageRegenerationModal({
     setModify(e.target.checked);
   };
 
-  // Convert blob URL to base64
   const blobUrlToBase64 = async (blobUrl: string): Promise<string> => {
     try {
       const response = await fetch(blobUrl);
@@ -125,7 +119,6 @@ export default function ImageRegenerationModal({
 
     let payload = null;
     if (modifyMode && activeImage) {
-      // Convert blob URL to base64 if needed
       if (isBlobUrl(activeImage)) {
         payload = await blobUrlToBase64(activeImage);
       } else {
@@ -133,7 +126,6 @@ export default function ImageRegenerationModal({
       }
     }
 
-    // Pass just prompt and payload - checkboxes are already bound to parent state
     onRegenerate(prompt, payload);
   };
 
@@ -146,7 +138,6 @@ export default function ImageRegenerationModal({
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm">
       <div className="absolute inset-0 bg-white flex flex-col">
-        {/* Header */}
         <div className="sticky top-0 z-10 border-b border-gray-200 bg-white/80 backdrop-blur px-4 sm:px-6 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div>
@@ -198,17 +189,15 @@ export default function ImageRegenerationModal({
               <div className="flex-1 min-h-0 rounded-md border border-gray-200 bg-gray-50 overflow-hidden shadow-sm relative group">
                 {activeImage ? (
                   <>
-                    {/* Image area (reserve space for the mobile thumbnails overlay) */}
                     <div className="h-full w-full flex items-center justify-center p-3 sm:p-4 pb-16 lg:pb-4 relative">
                       <img
                         src={activeImage}
                         alt="Generated preview"
                         className="w-full h-full object-contain"
                       />
-                      {/* Download button */}
                       <button
                         onClick={() => {
-                          const link = document.createElement('a');
+                          const link = document.createElement("a");
                           link.href = activeImage;
                           link.download = `image-${Date.now()}.png`;
                           document.body.appendChild(link);
@@ -216,14 +205,11 @@ export default function ImageRegenerationModal({
                           document.body.removeChild(link);
                         }}
                         className="absolute top-3 right-3 sm:top-4 sm:right-4 p-2 rounded-md  hover:bg-[#d7d7fc] border border-purple-600 flex items-center justify-between text-base font-semibold  text-[#7650e3] transition-colors duration-200 "
-                        // title={t("download") || "Download image"}
-                        // aria-label={t("download") || "Download image"}
                       >
                         <Download className="w-5 h-5" />
                       </button>
                     </div>
 
-                    {/* Previous Generations: MOBILE ONLY, inside preview at bottom */}
                     {allGeneration.length > 0 && (
                       <div className="block sm:hidden absolute left-0 right-0 bottom-0 border-t border-gray-200 bg-white/85 backdrop-blur px-3 py-2">
                         <div className="flex items-center justify-between mb-1">
@@ -243,8 +229,8 @@ export default function ImageRegenerationModal({
                                 }}
                                 className={`group relative h-12 w-12 flex-shrink-0 rounded-md overflow-hidden border-2 transition ${
                                   activeImage === img
-                                    ? 'border-purple-600 shadow-md'
-                                    : 'border-gray-200 hover:border-gray-300'
+                                    ? "border-purple-600 shadow-md"
+                                    : "border-gray-200 hover:border-gray-300"
                                 }`}
                                 aria-label={`Select generation ${index + 1}`}
                                 title={`Generation ${index + 1}`}
@@ -302,8 +288,8 @@ export default function ImageRegenerationModal({
                           }}
                           className={`group relative h-16 w-16 flex-shrink-0 rounded-md overflow-hidden border-2 transition ${
                             activeImage === img
-                              ? 'border-purple-600 shadow-md'
-                              : 'border-gray-200 hover:border-gray-300'
+                              ? "border-purple-600 shadow-md"
+                              : "border-gray-200 hover:border-gray-300"
                           }`}
                           aria-label={`Select generation ${index + 1}`}
                           title={`Generation ${index + 1}`}
@@ -367,7 +353,12 @@ export default function ImageRegenerationModal({
                 <div className="hidden sm:flex gap-3 pt-1 justify-between">
                   <button
                     onClick={handleSubmit}
-                    disabled={isLoading || !prompt?.trim()}
+                    disabled={
+                      isLoading ||
+                      !prompt?.trim() ||
+                      user?.wallet?.coins + user?.wallet?.referralCoin <
+                        generationAmounts
+                    }
                     className="group w-full rounded-md  hover:bg-[#d7d7fc] border border-purple-600 flex items-center justify-between text-base font-semibold  text-[#7650e3] transition-colors duration-200 py-2.5 px-4 disabled:opacity-50 disabled:cursor-not-allowed text-md"
                   >
                     {isLoading
@@ -386,7 +377,12 @@ export default function ImageRegenerationModal({
                     onClick={() => {
                       selectedFile ? onFileSave() : confirmImage(activeImage);
                     }}
-                    disabled={isLoading || !activeImage}
+                    disabled={
+                      isLoading ||
+                      !activeImage ||
+                      user?.wallet?.coins + user?.wallet?.referralCoin <
+                        generationAmounts
+                    }
                     className="px-4 rounded-md w-full text-base font-semibold  py-2.5  text-purple-700 border border-[#7650e3] theme-bg-trinary theme-text-light hover:bg-[#d7d7fc] hover:text-[#7650e3]  disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {t("continue")}

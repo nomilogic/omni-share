@@ -25,9 +25,7 @@ import { TemplateSelector } from "./TemplateSelector";
 import { ImageTemplateEditor } from "./ImageTemplateEditor";
 import { Template } from "../types/templates";
 import { getTemplateById } from "../utils/templates";
-import IntroVideo from "../assets/Omnishare Tutorial.Final.00.mp4";
 
-import { motion } from "framer-motion";
 import {
   isVideoFile,
   getVideoAspectRatio,
@@ -35,7 +33,6 @@ import {
   is9x16Video,
 } from "../utils/videoUtils";
 import { useLoadingAPI } from "../hooks/useLoadingAPI";
-import VideoPoster from "../assets/omnishare-02 (6).jpg";
 import API from "@/services/api";
 import { notify } from "@/utils/toast";
 import { useTranslation } from "react-i18next";
@@ -61,7 +58,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   initialData,
   selectedPlatforms,
   editMode,
-  setShowGenerateModal,
   setShowPublishModal,
 }) => {
   const {
@@ -210,7 +206,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     useState<string>("");
   const [warningTimeoutId, setWarningTimeoutId] = useState<any | null>(null);
 
-  const [aspectRatio, setAspectRatio] = useState<string>("16:9");
+  const [aspectRatio, setAspectRatio] = useState<string>("1:1");
   const [imageDescription, setImageDescription] = useState<string>("");
   const [generateImageWithPost, setGenerateImageWithPost] = useState(true);
   const [isGeneratingBoth, setIsGeneratingBoth] = useState(false);
@@ -642,9 +638,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // const cost = getCost();
-
-    // if (balance < cost) {
+    // if (user?.balance < cost) {
     //   navigate("/pricing");
     //   return;
     // }
@@ -1737,58 +1731,46 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     }
   };
 
-  useEffect(() => {
-    if (!selectedPostType || !generationAmounts) {
-      setCost(0);
-      return;
-    }
+  const calculateCost = () => {
+    if (!selectedPostType || !generationAmounts) return 0;
 
-    const textPrice = Number(generationAmounts.text || 0);
-    const imagePrice = Number(generationAmounts.image || 0);
-    const videoPrice = Number(generationAmounts.video || 0);
-
-    let finalCost = 0;
+    const textPrice = Number(generationAmounts?.text || 0);
+    const imagePrice = Number(generationAmounts?.image || 0);
+    const videoPrice = Number(generationAmounts?.video || 0);
 
     switch (selectedPostType) {
       case "text":
-        finalCost = textPrice * 2;
-        break;
+        return textPrice * 2;
 
       case "image":
-        if (selectedImageMode === "textToImage") {
-          finalCost = imagePrice + textPrice * 3;
-        } else {
-          finalCost = textPrice * 3;
-        }
-        break;
+        return selectedImageMode === "textToImage"
+          ? imagePrice + textPrice * 3
+          : textPrice * 3;
 
       case "video":
-        if (selectedVideoMode === "uploadShorts") {
-          finalCost = textPrice * 5;
-        } else if (selectedVideoMode === "upload") {
-          finalCost = generateVideoThumbnailAI
+        if (selectedVideoMode === "uploadShorts") return textPrice * 5;
+        if (selectedVideoMode === "upload")
+          return generateVideoThumbnailAI
             ? imagePrice + textPrice * 3
             : textPrice * 3;
-        } else {
-          finalCost = videoPrice + textPrice * 5;
-        }
-        break;
+        return videoPrice + textPrice * 5;
 
       default:
-        finalCost = textPrice;
+        return textPrice;
     }
+  };
 
-    setCost(finalCost);
+  useEffect(() => {
+    setCost(calculateCost());
   }, [
-    formData.prompt,
     selectedPostType,
     selectedImageMode,
     selectedVideoMode,
     generateVideoThumbnailAI,
     generationAmounts,
   ]);
+  console.log("cost", cost);
   const resetAll = () => {
-    // Abort upload if running
     if (uploadAbortControllerRef.current) {
       uploadAbortControllerRef.current.abort();
       uploadAbortControllerRef.current = null;
@@ -1834,6 +1816,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     <div className="w-full mx-auto rounded-md border border-white/10  md:p-5 p-3 ">
       {modelImage && (
         <ImageRegenerationModal
+          user={user}
           imageUrl={generatedImage}
           prompt={prompt}
           setPrompt={setPrompt}
@@ -1858,6 +1841,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       )}
       {showVideoThumbnailModal && videoThumbnailForRegeneration && (
         <ImageRegenerationModal
+          user={user}
           imageUrl={videoThumbnailForRegeneration}
           isLoading={isGeneratingThumbnail}
           allGeneration={videoThumbnailGenerations}
@@ -2991,7 +2975,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                       {t("back")}
                     </button>
                     <div className="flex w-full">
-                      {user?.wallet?.coins < 6 ? (
+                      {user?.wallet?.coins + user?.wallet?.referralCoin < 6 ? (
                         <Link
                           to="/pricing"
                           className="group flex-1 min-w-0 rounded-md px-3 py-2.5 font-semibold text-md flex items-center justify-center gap-2 text-white bg-[#7650e3] hover:bg-[#d7d7fc] hover:text-[#7650e3] border border-[#7650e3]"

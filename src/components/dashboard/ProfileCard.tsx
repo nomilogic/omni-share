@@ -2,17 +2,14 @@ import { PenLine, Settings } from "lucide-react";
 import { useAppContext } from "../../context/AppContext";
 import { useTranslation } from "react-i18next";
 import { AvatarWithProgress } from "../AvatarWithProgress";
-import { useUser } from "@/store/useUser";
 
-function ProfileCard() {
+function ProfileCard({ user }: any) {
   const { setProfileEditing, setPasswordEditing } = useAppContext();
-  const { user } = useUser();
   const { t } = useTranslation();
 
   const fullName =
     user?.profile?.fullName || user?.user_metadata?.name || "User";
   const email = user?.email || "user@example.com";
-
   return (
     <div className="flex md:flex-row flex-col-reverse md:items-center gap-5 md:justify-between">
       <div className="flex items-center gap-2">
