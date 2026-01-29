@@ -2658,9 +2658,9 @@ export const ImageTemplateEditor = ({
                       step="1"
                       value={gridSize}
                       onChange={(e) => setGridSize(parseInt(e.target.value))}
-                      className="w-20 template-range"
+                      className="w-full  template-range mr-0"
                     />
-                    <span className="text-xs text-gray-600 font-medium min-w-10">
+                    <span className="text-xs text-gray-600 font-medium ">
                       {gridSize}px
                     </span> 
                   </div>
@@ -2668,7 +2668,7 @@ export const ImageTemplateEditor = ({
                 <div className="flex items-center gap-2">
                   <button
                     onClick={clearAllElements}
-                    className="inline-flex items-center justify-center gap-1 p-1 bg-red-50 text-red-700 rounded-md hover:bg-red-100 transition-colors text-xs font-medium"
+                    className="inline-flex items-center justify-center gap-1 p-1.5 bg-red-50 text-red-700 rounded-md hover:bg-red-100 transition-colors text-xs font-medium"
                     title={t("delete_all_elements")}
                     type="button"
                   >
@@ -2770,7 +2770,7 @@ export const ImageTemplateEditor = ({
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => void refreshSavedTemplates()}
-                        className="text-xs text-purple-600 font-medium hover:underline disabled:opacity-60"
+                        className="text-xs text-purple-600 font-medium hover:underline disabled:opacity-60 hidden "
                         type="button"
                         disabled={isTemplatesLoading}
                       >
