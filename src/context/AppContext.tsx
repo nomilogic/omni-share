@@ -479,6 +479,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     setUser(null);
     dispatch({ type: "RESET_STATE" });
     dispatch({ type: "SET_LOADER", payload: false });
+    loadSecurityQuestion();
   };
 
   const refreshToken = useCallback(async () => {
