@@ -86,9 +86,149 @@ export const ImageTemplateEditor = ({
   const addElementLogoInputRef = useRef<HTMLInputElement>(null);
   const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>(null);
   const [elements, setElements] = useState<TemplateElement[]>([]);
-  // Undo snapshot for operations like Clear All
-  const undoSnapshotRef = useRef<TemplateElement[] | null>(null);
+  // Undo/Redo history with localStorage persistence
+  const HISTORY_STORAGE_KEY = "image-template-editor.history.v1";
+  const historyStackRef = useRef<TemplateElement[][]>([]);
+  const historyIndexRef = useRef<number>(-1);
   const [canUndo, setCanUndo] = useState(false);
+  const [canRedo, setCanRedo] = useState(false);
+  const isUndoRedoActionRef = useRef<boolean>(false);
+
+  // Save history to localStorage
+  const saveHistoryToStorage = (stack: TemplateElement[][], index: number) => {
+    try {
+      const payload = {
+        version: 1,
+        stack,
+        index,
+      };
+      localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(payload));
+    } catch (e) {
+      console.warn("Failed to save history to localStorage:", e);
+    }
+  };
+
+  // Load history from localStorage
+  const loadHistoryFromStorage = () => {
+    try {
+      const stored = localStorage.getItem(HISTORY_STORAGE_KEY);
+      if (stored) {
+        const payload = JSON.parse(stored);
+        if (payload?.stack && Array.isArray(payload.stack)) {
+          historyStackRef.current = payload.stack;
+          historyIndexRef.current = payload.index ?? -1;
+          setCanUndo(historyIndexRef.current > 0);
+          setCanRedo(historyIndexRef.current < historyStackRef.current.length - 1);
+        }
+      }
+    } catch (e) {
+      console.warn("Failed to load history from localStorage:", e);
+    }
+  };
+
+  // Add state to undo history and save to localStorage
+  const addToHistory = (newElements: TemplateElement[]) => {
+    if (isUndoRedoActionRef.current) return;
+
+    try {
+      const stack = historyStackRef.current;
+      const currentIndex = historyIndexRef.current;
+
+      // Remove any redo history if we're making a new action
+      if (currentIndex < stack.length - 1) {
+        historyStackRef.current = stack.slice(0, currentIndex + 1);
+      }
+
+      // Add new state to history
+      const deepCopy = JSON.parse(JSON.stringify(newElements));
+      historyStackRef.current.push(deepCopy);
+      historyIndexRef.current = historyStackRef.current.length - 1;
+
+      // Save to localStorage
+      saveHistoryToStorage(historyStackRef.current, historyIndexRef.current);
+
+      setCanUndo(historyIndexRef.current > 0);
+      setCanRedo(false);
+    } catch (e) {
+      console.error("Failed to add to history:", e);
+    }
+  };
+
+  // Monitor elements changes and save to history
+  useEffect(() => {
+    if (!isUndoRedoActionRef.current && elements.length > 0) {
+      addToHistory(elements);
+    }
+  }, [elements]);
+
+  // Clear All with undo support
+  const clearAllElements = () => {
+    setElements((prevElements) => {
+      const filtered = prevElements.filter((el) => el.id === "background-image");
+      addToHistory(filtered);
+      return filtered;
+    });
+    setSelectedElement(null);
+  };
+
+  // Handle undo
+  const handleUndo = () => {
+    if (historyIndexRef.current > 0) {
+      isUndoRedoActionRef.current = true;
+      historyIndexRef.current--;
+      const restoredElements = JSON.parse(
+        JSON.stringify(historyStackRef.current[historyIndexRef.current])
+      );
+      setElements(restoredElements);
+      saveHistoryToStorage(historyStackRef.current, historyIndexRef.current);
+      setCanUndo(historyIndexRef.current > 0);
+      setCanRedo(true);
+      setTimeout(() => {
+        isUndoRedoActionRef.current = false;
+      }, 0);
+    }
+  };
+
+  // Handle redo
+  const handleRedo = () => {
+    if (historyIndexRef.current < historyStackRef.current.length - 1) {
+      isUndoRedoActionRef.current = true;
+      historyIndexRef.current++;
+      const restoredElements = JSON.parse(
+        JSON.stringify(historyStackRef.current[historyIndexRef.current])
+      );
+      setElements(restoredElements);
+      saveHistoryToStorage(historyStackRef.current, historyIndexRef.current);
+      setCanUndo(true);
+      setCanRedo(historyIndexRef.current < historyStackRef.current.length - 1);
+      setTimeout(() => {
+        isUndoRedoActionRef.current = false;
+      }, 0);
+    }
+  };
+
+  // Keyboard shortcuts for undo/redo (Ctrl/Cmd+Z and Ctrl/Cmd+Shift+Z)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z") {
+        e.preventDefault();
+        if (e.shiftKey) {
+          handleRedo();
+        } else {
+          handleUndo();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  // Load history from localStorage on component mount
+  useEffect(() => {
+    loadHistoryFromStorage();
+  }, []);
+
   const { openModal } = useModal();
   const [selectedElement, setSelectedElement] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -2357,9 +2497,6 @@ export const ImageTemplateEditor = ({
       }
       undoSnapshotRef.current = null;
       setCanUndo(false);
-    }
-  };
-
   // Keyboard shortcut for undo (Ctrl/Cmd+Z)
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -2459,9 +2596,9 @@ export const ImageTemplateEditor = ({
                   </button>
 
                   <button
-                    onClick={() => {}}
-                    disabled={true}
-                    className="inline-flex items-center justify-center gap-1 px-2 py-1 bg-white text-slate-600 border border-slate-200 rounded-md disabled:opacity-50 transition-colors text-xs font-medium"
+                    onClick={handleRedo}
+                    disabled={!canRedo}
+                    className="inline-flex items-center justify-center gap-1 px-2 py-1 bg-white text-[#7650e3] border border-[#7650e3] rounded-md hover:bg-[#d7d7fc] disabled:opacity-50 transition-colors text-xs font-medium"
                     title={t("redo")}
                     type="button"
                   >
