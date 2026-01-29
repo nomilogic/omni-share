@@ -86,6 +86,9 @@ export const ImageTemplateEditor = ({
   const addElementLogoInputRef = useRef<HTMLInputElement>(null);
   const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>(null);
   const [elements, setElements] = useState<TemplateElement[]>([]);
+  // Undo snapshot for operations like Clear All
+  const undoSnapshotRef = useRef<TemplateElement[] | null>(null);
+  const [canUndo, setCanUndo] = useState(false);
   const { openModal } = useModal();
   const [selectedElement, setSelectedElement] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -2324,6 +2327,47 @@ export const ImageTemplateEditor = ({
     }
   };
 
+  // Clear All with undo snapshot support
+  const clearAllElements = () => {
+    try {
+      // store a deep copy for undo
+      undoSnapshotRef.current = JSON.parse(JSON.stringify(elements || []));
+      setCanUndo(true);
+    } catch (e) {
+      // fallback shallow copy
+      undoSnapshotRef.current = (elements || []).slice();
+      setCanUndo(true);
+    }
+
+    setElements((prevElements) =>
+      prevElements.filter((el) => el.id === "background-image"),
+    );
+    setSelectedElement(null);
+  };
+
+  const handleUndo = () => {
+    if (undoSnapshotRef.current) {
+      setElements(undoSnapshotRef.current);
+      undoSnapshotRef.current = null;
+      setCanUndo(false);
+    }
+  };
+
+  // Keyboard shortcut for undo (Ctrl/Cmd+Z)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z") {
+        if (canUndo) {
+          e.preventDefault();
+          handleUndo();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [canUndo]);
+
   const selectedElementData = elements.find((el) => el.id === selectedElement);
 
   if (isLoading) {
@@ -2387,20 +2431,28 @@ export const ImageTemplateEditor = ({
                     </span>
                   </div>
                 )}
-                <button
-                  onClick={() => {
-                    setElements((prevElements) =>
-                      prevElements.filter((el) => el.id === "background-image"),
-                    );
-                    setSelectedElement(null);
-                  }}
-                  className="inline-flex items-center justify-center gap-1 px-1.5 py-1 bg-red-50 text-red-700 rounded-md hover:bg-red-100 transition-colors text-xs font-medium"
-                  title={t("delete_all_elements")}
-                  type="button"
-                >
-                  <Trash className="w-3 h-3" />
-                  <span>{t("clear_all")}</span>
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={clearAllElements}
+                    className="inline-flex items-center justify-center gap-1 px-1.5 py-1 bg-red-50 text-red-700 rounded-md hover:bg-red-100 transition-colors text-xs font-medium"
+                    title={t("delete_all_elements")}
+                    type="button"
+                  >
+                    <Trash className="w-3 h-3" />
+                    <span>{t("clear_all")}</span>
+                  </button>
+
+                  <button
+                    onClick={handleUndo}
+                    disabled={!canUndo}
+                    className="inline-flex items-center justify-center gap-1 px-2 py-1 bg-white text-[#7650e3] border border-[#7650e3] rounded-md hover:bg-[#d7d7fc] disabled:opacity-50 transition-colors text-xs font-medium"
+                    title={t("undo")}
+                    type="button"
+                  >
+                    <Undo className="w-3 h-3" />
+                    <span>{t("undo")}</span>
+                  </button>
+                </div>
               </div>
             }
 
