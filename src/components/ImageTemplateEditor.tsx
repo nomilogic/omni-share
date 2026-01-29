@@ -86,6 +86,158 @@ export const ImageTemplateEditor = ({
   const addElementLogoInputRef = useRef<HTMLInputElement>(null);
   const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>(null);
   const [elements, setElements] = useState<TemplateElement[]>([]);
+  // Undo/Redo history with localStorage persistence
+  const HISTORY_STORAGE_KEY = "image-template-editor.history.v1";
+  const historyStackRef = useRef<TemplateElement[][]>([]);
+  const historyIndexRef = useRef<number>(-1);
+  const [canUndo, setCanUndo] = useState(false);
+  const [canRedo, setCanRedo] = useState(false);
+  const isUndoRedoActionRef = useRef<boolean>(false);
+
+  // Save history to localStorage
+  const saveHistoryToStorage = (stack: TemplateElement[][], index: number) => {
+    try {
+      const payload = {
+        version: 1,
+        stack,
+        index,
+      };
+      localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(payload));
+    } catch (e) {
+      console.warn("Failed to save history to localStorage:", e);
+    }
+  };
+
+  // Load history from localStorage
+  const loadHistoryFromStorage = () => {
+    try {
+      const stored = localStorage.getItem(HISTORY_STORAGE_KEY);
+      if (stored) {
+        const payload = JSON.parse(stored);
+        if (payload?.stack && Array.isArray(payload.stack)) {
+          historyStackRef.current = payload.stack;
+          historyIndexRef.current = payload.index ?? -1;
+          setCanUndo(historyIndexRef.current > 0);
+          setCanRedo(historyIndexRef.current < historyStackRef.current.length - 1);
+        }
+      }
+    } catch (e) {
+      console.warn("Failed to load history from localStorage:", e);
+    }
+  };
+
+  // Add state to undo history and save to localStorage
+  const addToHistory = (newElements: TemplateElement[]) => {
+    if (isUndoRedoActionRef.current) return;
+
+    try {
+      const stack = historyStackRef.current;
+      const currentIndex = historyIndexRef.current;
+
+      // Remove any redo history if we're making a new action
+      if (currentIndex < stack.length - 1) {
+        historyStackRef.current = stack.slice(0, currentIndex + 1);
+      }
+
+      // Add new state to history
+      const deepCopy = JSON.parse(JSON.stringify(newElements));
+      historyStackRef.current.push(deepCopy);
+      historyIndexRef.current = historyStackRef.current.length - 1;
+
+      // Save to localStorage
+      saveHistoryToStorage(historyStackRef.current, historyIndexRef.current);
+
+      setCanUndo(historyIndexRef.current > 0);
+      setCanRedo(false);
+    } catch (e) {
+      console.error("Failed to add to history:", e);
+    }
+  };
+
+  // Monitor elements changes and save to history
+  useEffect(() => {
+    if (!isUndoRedoActionRef.current && elements.length > 0) {
+      addToHistory(elements);
+    }
+  }, [elements]);
+
+  // Clear All with undo support
+  const clearAllElements = () => {
+    setElements((prevElements) => {
+      const filtered = prevElements.filter((el) => el.id === "background-image");
+      addToHistory(filtered);
+      return filtered;
+    });
+    setSelectedElement(null);
+  };
+
+  // Handle undo
+  const handleUndo = () => {
+    if (historyIndexRef.current > 0) {
+      isUndoRedoActionRef.current = true;
+      historyIndexRef.current--;
+      const restoredElements = JSON.parse(
+        JSON.stringify(historyStackRef.current[historyIndexRef.current])
+      );
+      setElements(restoredElements);
+      saveHistoryToStorage(historyStackRef.current, historyIndexRef.current);
+      setCanUndo(historyIndexRef.current > 0);
+      setCanRedo(true);
+      setTimeout(() => {
+        isUndoRedoActionRef.current = false;
+      }, 0);
+    }
+  };
+
+  // Handle redo
+  const handleRedo = () => {
+    if (historyIndexRef.current < historyStackRef.current.length - 1) {
+      isUndoRedoActionRef.current = true;
+      historyIndexRef.current++;
+      const restoredElements = JSON.parse(
+        JSON.stringify(historyStackRef.current[historyIndexRef.current])
+      );
+      setElements(restoredElements);
+      saveHistoryToStorage(historyStackRef.current, historyIndexRef.current);
+      setCanUndo(true);
+      setCanRedo(historyIndexRef.current < historyStackRef.current.length - 1);
+      setTimeout(() => {
+        isUndoRedoActionRef.current = false;
+      }, 0);
+    }
+  };
+
+  // Keyboard shortcuts for undo/redo (Ctrl/Cmd+Z, Ctrl/Cmd+Shift+Z, and Ctrl/Cmd+Y)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey)) {
+        const key = e.key.toLowerCase();
+        // Ctrl/Cmd+Z = Undo
+        if (key === "z") {
+          e.preventDefault();
+          if (e.shiftKey) {
+            handleRedo();
+          } else {
+            handleUndo();
+          }
+        }
+        // Ctrl/Cmd+Y = Redo
+        else if (key === "y") {
+          e.preventDefault();
+          handleRedo();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [handleUndo, handleRedo]);
+
+  // Load history from localStorage on component mount
+  useEffect(() => {
+    loadHistoryFromStorage();
+  }, []);
+
   const { openModal } = useModal();
   const [selectedElement, setSelectedElement] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -2347,10 +2499,10 @@ export const ImageTemplateEditor = ({
         }  md:h-full bg-white border-b md:border-b-0 md:border-r border-gray-200 flex flex-col`}
       >
         <div className="flex w-full overflow-y-auto p-3 md:p-4 min-h-0">
-          <div className="space-y-3 pb-20 overflow-y-auto h-[50vh] md:h-auto md:pb-2 md:overflow-hidden  md:space-y-4 w-full">
+          <div className="space-y-1 pb-20 overflow-y-auto h-[50vh] md:h-auto md:pb-2 md:overflow-hidden  md:space-y-4 w-full">
             {/* Clear All Elements */}
             {
-              <div className="flex items-center justify-between gap-1">
+              <div className="flex items-center justify-between ">
                 <label className="flex items-center gap-1 text-xs text-slate-700 select-none">
                   <input
                     type="checkbox"
@@ -2372,7 +2524,7 @@ export const ImageTemplateEditor = ({
                   {t("show_grid")}
                 </label>
                 {showGrid && (
-                  <div className="flex items-center gap-1 flex-1">
+                  <div className="flex items-center gap-1"> 
                     <input
                       type="range"
                       min="1"
@@ -2380,27 +2532,44 @@ export const ImageTemplateEditor = ({
                       step="1"
                       value={gridSize}
                       onChange={(e) => setGridSize(parseInt(e.target.value))}
-                      className="flex-1 template-range"
+                      className="w-20 template-range"
                     />
                     <span className="text-xs text-gray-600 font-medium min-w-10">
                       {gridSize}px
-                    </span>
+                    </span> 
                   </div>
                 )}
-                <button
-                  onClick={() => {
-                    setElements((prevElements) =>
-                      prevElements.filter((el) => el.id === "background-image"),
-                    );
-                    setSelectedElement(null);
-                  }}
-                  className="inline-flex items-center justify-center gap-1 px-1.5 py-1 bg-red-50 text-red-700 rounded-md hover:bg-red-100 transition-colors text-xs font-medium"
-                  title={t("delete_all_elements")}
-                  type="button"
-                >
-                  <Trash className="w-3 h-3" />
-                  <span>{t("clear_all")}</span>
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={clearAllElements}
+                    className="inline-flex items-center justify-center gap-1 p-1 bg-red-50 text-red-700 rounded-md hover:bg-red-100 transition-colors text-xs font-medium"
+                    title={t("delete_all_elements")}
+                    type="button"
+                  >
+                    <Trash className="w-3 h-3" />
+                    <span>{t("clear_all")}</span>
+                  </button>
+
+                  <button
+                    onClick={handleUndo}
+                    disabled={!canUndo}
+                    className="inline-flex items-center justify-center gap-1 p-1 bg-white text-[#7650e3] border border-[#7650e3] rounded-md hover:bg-[#d7d7fc] disabled:opacity-50 transition-colors text-xs font-medium"
+                    title={t("undo")}
+                    type="button"
+                  >
+                    <Undo className="w-3 h-3" />
+                  </button>
+
+                  <button
+                    onClick={handleRedo}
+                    disabled={!canRedo}
+                    className="inline-flex items-center justify-center gap-1 p-1 bg-white text-[#7650e3] border border-[#7650e3] rounded-md hover:bg-[#d7d7fc] disabled:opacity-50 transition-colors text-xs font-medium"
+                    title={t("redo")}
+                    type="button"
+                  >
+                    <Redo className="w-3 h-3" />
+                  </button>
+                </div>
               </div>
             }
 
