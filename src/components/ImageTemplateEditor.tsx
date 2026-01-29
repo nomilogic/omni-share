@@ -866,20 +866,28 @@ export const ImageTemplateEditor = ({
 
       console.log("🗑️ Attempting to delete template:", { id, source: tpl.source, name: tpl.name });
 
-      if (tpl.source === "user") {
-        // Delete user-saved template via API
+      // Prefer server-side deletion via service endpoint
+      try {
         const deleteResponse = await templateService.deleteTemplate(id);
-        console.log("✅ User template deleted from server", { id, response: deleteResponse });
-      } else if (tpl.source === "local") {
-        // Delete local template from storage
-        const templates = readTemplatesFromLocalStorage();
-        const next = templates.filter((t) => t.id !== id);
-        writeTemplatesToLocalStorage(next);
-        console.log("✅ Local template deleted from storage", id);
-      } else {
-        console.warn("⚠️ Delete not supported for global templates");
-        setIsDeleting(false);
-        return;
+        console.log("✅ Template deleted via API", { id, response: deleteResponse });
+      } catch (apiError) {
+        console.warn("⚠️ API delete failed for template, attempting local fallback:", apiError);
+
+        // If it's a local template, remove from local storage as a fallback
+        if (tpl.source === "local") {
+          const templates = readTemplatesFromLocalStorage();
+          const next = templates.filter((t) => t.id !== id);
+          writeTemplatesToLocalStorage(next);
+          console.log("✅ Local template deleted from storage (API fallback)", id);
+        } else if (tpl.source === "global") {
+          // Do not allow deleting global templates locally
+          console.warn("⚠️ Delete not supported for global templates");
+          setIsDeleting(false);
+          return;
+        } else {
+          // For user templates, if API failed, surface error
+          throw apiError;
+        }
       }
 
       console.log("🗑️ Template deletion successful, reloading templates...", id);
