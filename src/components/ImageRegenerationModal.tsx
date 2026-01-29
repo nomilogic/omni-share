@@ -4,6 +4,7 @@ import Icon from "./Icon";
 import { useConfirmDialog } from "../context/ConfirmDialogContext";
 import { useNavigationGuard } from "../hooks/useNavigationGuard";
 import { Download } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function ImageRegenerationModal({
   imageUrl,
@@ -356,8 +357,7 @@ export default function ImageRegenerationModal({
                     disabled={
                       isLoading ||
                       !prompt?.trim() ||
-                      user?.wallet?.coins + user?.wallet?.referralCoin <
-                        generationAmounts
+                      user?.wallet?.coins + user?.wallet?.referralCoin < 6
                     }
                     className="group w-full rounded-md  hover:bg-[#d7d7fc] border border-purple-600 flex items-center justify-between text-base font-semibold  text-[#7650e3] transition-colors duration-200 py-2.5 px-4 disabled:opacity-50 disabled:cursor-not-allowed text-md"
                   >
@@ -373,20 +373,31 @@ export default function ImageRegenerationModal({
                     </div>
                   </button>
 
-                  <button
-                    onClick={() => {
-                      selectedFile ? onFileSave() : confirmImage(activeImage);
-                    }}
-                    disabled={
-                      isLoading ||
-                      !activeImage ||
-                      user?.wallet?.coins + user?.wallet?.referralCoin <
-                        generationAmounts
-                    }
-                    className="px-4 rounded-md w-full text-base font-semibold  py-2.5  text-purple-700 border border-[#7650e3] theme-bg-trinary theme-text-light hover:bg-[#d7d7fc] hover:text-[#7650e3]  disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {t("continue")}
-                  </button>
+                  {user?.wallet?.coins + user?.wallet?.referralCoin < 6 ? (
+                    <Link
+                      to="/pricing"
+                      className="px-4 group rounded-md w-full text-base font-semibold  py-2.5  text-purple-700 border border-[#7650e3] theme-bg-trinary theme-text-light hover:bg-[#d7d7fc] hover:text-[#7650e3]  disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <div className="flex items-center">
+                        <Icon name="white-diamond" size={20} className="mr-2" />
+                        {t("upgrade")}
+                      </div>
+                    </Link>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        selectedFile ? onFileSave() : confirmImage(activeImage);
+                      }}
+                      disabled={
+                        isLoading ||
+                        !activeImage ||
+                        user?.wallet?.coins + user?.wallet?.referralCoin < 6
+                      }
+                      className="px-4 rounded-md w-full text-base font-semibold  py-2.5  text-purple-700 border border-[#7650e3] theme-bg-trinary theme-text-light hover:bg-[#d7d7fc] hover:text-[#7650e3]  disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {t("continue")}
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
