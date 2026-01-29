@@ -742,6 +742,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
               const postGenerationData = {
                 prompt: formData.prompt,
+                basePrompt: formData.prompt,
                 originalImageUrl: videoThumbnailUrl,
                 originalVideoUrl: formData.mediaUrl,
                 originalVideoFile: originalVideoFile,
@@ -1013,6 +1014,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     if (pendingPostGeneration) {
       const {
         prompt,
+        basePrompt,
         campaignInfo: currentCampaignInfo,
         selectedPlatforms,
         imageAnalysis,
@@ -1022,6 +1024,16 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         originalVideoFile,
         videoAspectRatio,
       } = pendingPostGeneration;
+
+      // Merge base prompt (the original post prompt) with the regeneration prompt.
+      const base = basePrompt || originalFormData?.prompt || "";
+      const regen = prompt || "";
+      let finalPrompt = "";
+      if (base && regen) {
+        finalPrompt = base.includes(regen) ? base : `${base} ${regen}`;
+      } else {
+        finalPrompt = base || regen;
+      }
 
       let currentFormData;
       let mediaAssets;
@@ -1056,7 +1068,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
       const postData = {
         ...currentFormData,
-        prompt: prompt,
+        prompt: finalPrompt,
         selectedPlatforms: selectedPlatforms,
         platforms: selectedPlatforms,
         campaignName: currentCampaignInfo?.name || "",
@@ -1086,16 +1098,15 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       setPendingPostGeneration(null);
       setIsGeneratingBoth(false);
       setAllGeneration([]);
-      if (onNext && typeof onNext === "function") {
+        if (onNext && typeof onNext === "function") {
         onNext(postData);
       } else {
         setShowPreview(true);
-
         const simulatedGeneratedPosts = [
           {
             platform: (selectedPlatforms && selectedPlatforms[0]) || "linkedin",
-            content: prompt,
-            caption: prompt,
+            content: finalPrompt,
+            caption: finalPrompt,
             hashtags: originalFormData.tags,
             engagement: Math.floor(Math.random() * 1000),
           },
@@ -1364,7 +1375,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         };
 
         const postGenerationData = {
-          prompt: formData.prompt,
+        prompt: formData.prompt,
+        basePrompt: formData.prompt,
           originalImageUrl: mediaUrl,
           originalVideoUrl: formData.mediaUrl,
           originalVideoFile: originalVideoFile,
@@ -1461,6 +1473,31 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   };
   const [prompt, setPrompt] = useState("");
 
+  // When opening the image regeneration modal, initialize the modal prompt
+  // with the base post prompt so users see and can edit it while regenerating.
+  useEffect(() => {
+    if (modelImage) {
+      const base = formData?.prompt || "";
+      if (!prompt || prompt.trim() === "") {
+        setPrompt(base);
+      } else if (base && !prompt.includes(base)) {
+        setPrompt(`${base} ${prompt}`);
+      }
+    }
+  }, [modelImage, formData?.prompt]);
+
+  // Same behavior for video thumbnail regeneration modal
+  useEffect(() => {
+    if (showVideoThumbnailModal) {
+      const base = formData?.prompt || "";
+      if (!videoThumbnailPrompt || videoThumbnailPrompt.trim() === "") {
+        setVideoThumbnailPrompt(base);
+      } else if (base && !videoThumbnailPrompt.includes(base)) {
+        setVideoThumbnailPrompt(`${base} ${videoThumbnailPrompt}`);
+      }
+    }
+  }, [showVideoThumbnailModal, formData?.prompt]);
+
   const urlToBase64 = async (url: string): Promise<string> => {
     const response = await fetch(url);
     const blob = await response.blob();
@@ -1514,6 +1551,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
       const postGenerationData = {
         prompt: newPrompt,
+        basePrompt: formData.prompt,
         originalImageUrl: finalImageUrl,
         campaignInfo: currentCampaignInfo,
         selectedPlatforms: formData.selectedPlatforms,
@@ -1641,6 +1679,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
           const postGenerationData = {
             prompt: formData.prompt,
+            basePrompt: formData.prompt,
             originalImageUrl: thumbnailToUse, // Use confirmed video thumbnail
             originalVideoUrl: formData.mediaUrl,
             originalVideoFile: originalVideoFile,
