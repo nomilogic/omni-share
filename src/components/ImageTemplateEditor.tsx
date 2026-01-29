@@ -2452,6 +2452,17 @@ export const ImageTemplateEditor = ({
                     <Undo className="w-3 h-3" />
                     <span>{t("undo")}</span>
                   </button>
+
+                  <button
+                    onClick={() => {}}
+                    disabled={true}
+                    className="inline-flex items-center justify-center gap-1 px-2 py-1 bg-white text-slate-600 border border-slate-200 rounded-md disabled:opacity-50 transition-colors text-xs font-medium"
+                    title={t("redo")}
+                    type="button"
+                  >
+                    <Redo className="w-3 h-3" />
+                    <span>{t("redo")}</span>
+                  </button>
                 </div>
               </div>
             }
