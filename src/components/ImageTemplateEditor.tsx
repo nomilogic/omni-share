@@ -246,6 +246,7 @@ export const ImageTemplateEditor = ({
     useState<HTMLImageElement | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [lockedElements, setLockedElements] = useState<Set<string>>(new Set());
   const [logoUploading, setLogoUploading] = useState(false);
   const [logoImages, setLogoImages] = useState<{
@@ -652,66 +653,71 @@ export const ImageTemplateEditor = ({
   };
 
   const saveCurrentTemplate = async () => {
-    const name = templateName.trim() || `Template ${new Date().toISOString()}`;
-
-    const templates = readTemplatesFromLocalStorage();
-    const existing = templates.find(
-      (t) => t.name.toLowerCase() === name.toLowerCase(),
-    );
-
-    const payload: SavedTemplateV1 = {
-      version: 1,
-      id: existing?.id || generateTemplateId(),
-      name,
-      savedAt: new Date().toISOString(),
-      aspectRatio,
-      canvasDimensions,
-      elements,
-      lockedElementIds: Array.from(lockedElements),
-      thumbnailDataUrl: createTemplateThumbnailDataUrl(),
-      source: "local",
-    };
-
-    // Try saving to server first
+    setIsSaving(true);
     try {
-      await templateService.saveTemplate({
-        name,
-        json: payload,
-        isPublic: saveAsGlobal ? true : undefined,
-      });
-      console.log("✅ Template saved to server", name);
-      await refreshSavedTemplates();
-      return;
-    } catch (error) {
-      console.warn(
-        "⚠️ Failed to save template to server, saving locally",
-        error,
+      const name = templateName.trim() || `Template ${new Date().toISOString()}`;
+
+      const templates = readTemplatesFromLocalStorage();
+      const existing = templates.find(
+        (t) => t.name.toLowerCase() === name.toLowerCase(),
       );
-    }
 
-    // Fallback: save locally
-    try {
-      const next = existing
-        ? templates.map((t) => (t.id === existing.id ? payload : t))
-        : [payload, ...templates];
+      const payload: SavedTemplateV1 = {
+        version: 1,
+        id: existing?.id || generateTemplateId(),
+        name,
+        savedAt: new Date().toISOString(),
+        aspectRatio,
+        canvasDimensions,
+        elements,
+        lockedElementIds: Array.from(lockedElements),
+        thumbnailDataUrl: createTemplateThumbnailDataUrl(),
+        source: "local",
+      };
 
-      writeTemplatesToLocalStorage(next);
-      setTemplateName(name);
-      setSavedTemplates((prev) => {
-        // keep any remote templates already loaded
-        const remote = prev.filter(
-          (t) => t.source === "user" || t.source === "global",
+      // Try saving to server first
+      try {
+        await templateService.saveTemplate({
+          name,
+          json: payload,
+          isPublic: saveAsGlobal ? true : undefined,
+        });
+        console.log("✅ Template saved to server", name);
+        await refreshSavedTemplates();
+        return;
+      } catch (error) {
+        console.warn(
+          "⚠️ Failed to save template to server, saving locally",
+          error,
         );
-        return [
-          ...remote,
-          ...next.map((t) => ({ ...t, source: "local" as const })),
-        ];
-      });
-      setSelectedTemplateId(payload.id);
+      }
 
-      console.log("✅ Template saved to localStorage", payload);
-    } catch (error) {
-      console.error("❌ Failed to save template to localStorage", error);
+      // Fallback: save locally
+      try {
+        const next = existing
+          ? templates.map((t) => (t.id === existing.id ? payload : t))
+          : [payload, ...templates];
+
+        writeTemplatesToLocalStorage(next);
+        setTemplateName(name);
+        setSavedTemplates((prev) => {
+          // keep any remote templates already loaded
+          const remote = prev.filter(
+            (t) => t.source === "user" || t.source === "global",
+          );
+          return [
+            ...remote,
+            ...next.map((t) => ({ ...t, source: "local" as const })),
+          ];
+        });
+        setSelectedTemplateId(payload.id);
+
+        console.log("✅ Template saved to localStorage", payload);
+      } catch (error) {
+        console.error("❌ Failed to save template to localStorage", error);
+      }
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -785,7 +791,62 @@ export const ImageTemplateEditor = ({
       setSelectedElement(null);
       setSelectedTemplateId(tpl.id);
       setTemplateName(tpl.name);
-      setTemplatesOpen(false);
+
+      // Adjust logo placeholders for all logo elements in the template
+      elementsWithBindings.forEach((element: TemplateElement) => {
+        if (element.type === "logo") {
+          const logoElement = element as LogoElement;
+          const src = (logoElement as any).src;
+          
+          if (src) {
+            console.log("📐 Adjusting logo placeholder for template element:", logoElement.id);
+            
+            // Load image to get aspect ratio and adjust placeholder
+            const img = new Image();
+            img.onload = () => {
+              const imageAspect = img.width / img.height;
+              const fixedWidth = logoElement.width;
+              const newHeight = fixedWidth / imageAspect;
+              
+              console.log("📐 Logo aspect ratio from template:", {
+                imageDimensions: `${img.width}x${img.height}`,
+                imageAspect: imageAspect.toFixed(2),
+                fixedWidth,
+                currentHeight: logoElement.height,
+                newHeight: newHeight.toFixed(0),
+              });
+              
+              // Update the element height
+              updateElementById(logoElement.id, { height: newHeight });
+              
+              // Add to logo cache
+              setLogoImages((prev) => ({
+                ...prev,
+                [src]: img,
+              }));
+              
+              // Trigger redraw
+              setTimeout(() => {
+                setLogoImages((prev) => ({ ...prev }));
+              }, 50);
+            };
+            
+            img.onerror = (error) => {
+              console.error("❌ Failed to load logo image for template:", src, error);
+            };
+            
+            // Set crossOrigin for external URLs
+            if (
+              !src.startsWith("blob:") &&
+              !src.startsWith("data:")
+            ) {
+              img.crossOrigin = "anonymous";
+            }
+            
+            img.src = src;
+          }
+        }
+      });
 
       console.log("✅ Template loaded:", elementsWithBindings);
     } catch (error) {
@@ -794,41 +855,43 @@ export const ImageTemplateEditor = ({
   };
 
   const deleteTemplateById = async (id: string) => {
+    setIsDeleting(true);
     try {
       const tpl = savedTemplates.find((t) => t.id === id);
       if (!tpl) {
         console.warn("⚠️ Template not found", id);
+        setIsDeleting(false);
         return;
       }
 
+      console.log("🗑️ Attempting to delete template:", { id, source: tpl.source, name: tpl.name });
+
       if (tpl.source === "user") {
         // Delete user-saved template via API
-        await templateService.deleteTemplate(id);
-        console.log("✅ User template deleted from server", id);
+        const deleteResponse = await templateService.deleteTemplate(id);
+        console.log("✅ User template deleted from server", { id, response: deleteResponse });
       } else if (tpl.source === "local") {
         // Delete local template from storage
         const templates = readTemplatesFromLocalStorage();
         const next = templates.filter((t) => t.id !== id);
         writeTemplatesToLocalStorage(next);
-        console.log("✅ Local template deleted", id);
+        console.log("✅ Local template deleted from storage", id);
       } else {
         console.warn("⚠️ Delete not supported for global templates");
+        setIsDeleting(false);
         return;
       }
 
-      // Update state
-      setSavedTemplates((prev) => prev.filter((t) => t.id !== id));
-
-      setSelectedTemplateId((prev) => {
-        if (prev !== id) return prev;
-        // Select the next available template
-        const remaining = savedTemplates.filter((t) => t.id !== id);
-        return remaining.length > 0 ? remaining[0].id : "";
-      });
-
-      console.log("🗑️ Template deleted", id);
+      console.log("🗑️ Template deletion successful, reloading templates...", id);
+      
+      // Reload templates after deletion
+      await refreshSavedTemplates();
+      console.log("✅ Templates reloaded after deletion");
     } catch (error) {
       console.error("❌ Failed to delete template", error);
+      alert("Failed to delete template. Please try again.");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -1468,46 +1531,14 @@ export const ImageTemplateEditor = ({
       if (logoImg) {
         console.log("✅ Drawing actual logo image from cache");
 
-        // Create clipping path for border radius if specified
-        if (element.borderRadius && element.borderRadius > 0) {
-          context.beginPath();
-          const x = element.x - element.width / 2;
-          const y = element.y - element.height / 2;
-          const radius = element.borderRadius;
+        // Draw image to fill the entire placeholder (dimensions already adjusted for aspect ratio)
+        const x = element.x - element.width / 2;
+        const y = element.y - element.height / 2;
 
-          context.moveTo(x + radius, y);
-          context.lineTo(x + element.width - radius, y);
-          context.quadraticCurveTo(
-            x + element.width,
-            y,
-            x + element.width,
-            y + radius,
-          );
-          context.lineTo(x + element.width, y + element.height - radius);
-          context.quadraticCurveTo(
-            x + element.width,
-            y + element.height,
-            x + element.width - radius,
-            y + element.height,
-          );
-          context.lineTo(x + radius, y + element.height);
-          context.quadraticCurveTo(
-            x,
-            y + element.height,
-            x,
-            y + element.height - radius,
-          );
-          context.lineTo(x, y + radius);
-          context.quadraticCurveTo(x, y, x + radius, y);
-          context.closePath();
-          context.clip();
-        }
-
-        // Draw the image
         context.drawImage(
           logoImg,
-          element.x - element.width / 2,
-          element.y - element.height / 2,
+          x,
+          y,
           element.width,
           element.height,
         );
@@ -1532,6 +1563,25 @@ export const ImageTemplateEditor = ({
               "✅ Logo image loaded successfully, adding to cache:",
               element.src,
             );
+            
+            // Keep width fixed, adjust height based on image aspect ratio
+            const imageAspect = img.width / img.height;
+            const fixedWidth = element.width;
+            const newHeight = fixedWidth / imageAspect;
+            
+            console.log("📐 Adjusting height based on image aspect ratio:", {
+              imageDimensions: `${img.width}x${img.height}`,
+              imageAspect: imageAspect.toFixed(2),
+              fixedWidth,
+              oldHeight: element.height,
+              newHeight: newHeight.toFixed(0),
+            });
+            
+            // Update element height only
+            updateElementById(element.id, { 
+              height: newHeight
+            });
+            
             setLogoImages((prev) => {
               const newLogoImages = { ...prev };
               // Remove loading marker and add actual image
@@ -2346,35 +2396,75 @@ export const ImageTemplateEditor = ({
           console.log("📤 Uploading logo to server...");
           const logoUrl = await uploadMedia(file, user.user?.id);
           console.log("✅ Logo uploaded successfully:", logoUrl);
+          
+          // Adjust height based on image aspect ratio
+          const imageAspect = img.width / img.height;
+          const fixedWidth = finalWidth;
+          const adjustedHeight = fixedWidth / imageAspect;
+          
+          console.log("📐 Adjusting logo height based on image aspect ratio:", {
+            imageDimensions: `${img.width}x${img.height}`,
+            imageAspect: imageAspect.toFixed(2),
+            fixedWidth,
+            originalHeight: finalHeight,
+            adjustedHeight: adjustedHeight.toFixed(0),
+          });
+          
           setElements((prev) =>
             prev.map((el) =>
               el.id === elementId
                 ? {
                     ...el,
                     src: logoUrl,
-                    width: finalWidth,
-                    height: finalHeight,
+                    width: fixedWidth,
+                    height: adjustedHeight,
                   }
                 : el,
             ),
           );
+          
+          // Add to logo cache
+          setLogoImages((prev) => ({
+            ...prev,
+            [logoUrl]: img,
+          }));
         } else {
           // Fallback to local URL
           console.log("🔄 No user found, using local URL fallback");
           const localUrl = URL.createObjectURL(file);
           console.log("📎 Created local URL:", localUrl);
+          
+          // Adjust height based on image aspect ratio
+          const imageAspect = img.width / img.height;
+          const fixedWidth = finalWidth;
+          const adjustedHeight = fixedWidth / imageAspect;
+          
+          console.log("📐 Adjusting logo height based on image aspect ratio:", {
+            imageDimensions: `${img.width}x${img.height}`,
+            imageAspect: imageAspect.toFixed(2),
+            fixedWidth,
+            originalHeight: finalHeight,
+            adjustedHeight: adjustedHeight.toFixed(0),
+          });
+          
           setElements((prev) =>
             prev.map((el) =>
               el.id === elementId
                 ? {
                     ...el,
                     src: localUrl,
-                    width: finalWidth,
-                    height: finalHeight,
+                    width: fixedWidth,
+                    height: adjustedHeight,
                   }
                 : el,
             ),
           );
+          
+          // Add to logo cache
+          setLogoImages((prev) => ({
+            ...prev,
+            [localUrl]: img,
+          }));
         }
       } catch (error) {
         console.error("❌ Error uploading logo:", error);
@@ -2382,13 +2472,33 @@ export const ImageTemplateEditor = ({
         console.log("🔄 Using local URL fallback due to upload error");
         const localUrl = URL.createObjectURL(file);
         console.log("📎 Created fallback local URL:", localUrl);
+        
+        // Adjust height based on image aspect ratio
+        const imageAspect = img.width / img.height;
+        const fixedWidth = finalWidth;
+        const adjustedHeight = fixedWidth / imageAspect;
+        
+        console.log("📐 Adjusting logo height based on image aspect ratio:", {
+          imageDimensions: `${img.width}x${img.height}`,
+          imageAspect: imageAspect.toFixed(2),
+          fixedWidth,
+          originalHeight: finalHeight,
+          adjustedHeight: adjustedHeight.toFixed(0),
+        });
+        
         setElements((prev) =>
           prev.map((el) =>
             el.id === elementId
-              ? { ...el, src: localUrl, width: finalWidth, height: finalHeight }
+              ? { ...el, src: localUrl, width: fixedWidth, height: adjustedHeight }
               : el,
           ),
         );
+        
+        // Add to logo cache
+        setLogoImages((prev) => ({
+          ...prev,
+          [localUrl]: img,
+        }));
       } finally {
         setLogoUploading(false);
         console.log("🏁 Logo upload process completed");
@@ -2593,11 +2703,11 @@ export const ImageTemplateEditor = ({
               {templatesOpen && (
                 <div className="mt-2 space-y-2 flex flex-col min-h-0 flex-1 relative">
                   {/* Loader overlay */}
-                  {isTemplatesLoading && (
+                  {(isTemplatesLoading || isSaving || isDeleting) && (
                     <div className="absolute inset-0 z-10 bg-white/70 backdrop-blur-[1px] rounded-md flex items-center justify-center">
                       <div className="flex items-center gap-2 text-sm text-slate-700">
                         <span className="h-4 w-4 rounded-full border border-slate-300 border-t-purple-600 animate-spin" />
-                        {t("loading_templates")}
+                        {isDeleting ? t("deleting") : isSaving ? t("saving") : t("loading_templates")}
                       </div>
                     </div>
                   )}
@@ -2619,7 +2729,7 @@ export const ImageTemplateEditor = ({
                           : t("save_template_personal")
                       }
                       type="button"
-                      disabled={isTemplatesLoading}
+                      disabled={isTemplatesLoading || isSaving}
                     >
                       <Download className="w-4 h-4" />
                       <span className="text-sm">{t("save")}</span>
@@ -2657,6 +2767,7 @@ export const ImageTemplateEditor = ({
                         }
                         disabled={
                           isTemplatesLoading ||
+                          isDeleting ||
                           !selectedTemplateId ||
                           !["local", "user"].includes(
                             savedTemplates.find(
