@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import Icon from "./Icon";
 import { useConfirmDialog } from "../context/ConfirmDialogContext";
 import { useNavigationGuard } from "../hooks/useNavigationGuard";
+import { Download } from "lucide-react";
 
 export default function ImageRegenerationModal({
   imageUrl,
@@ -194,16 +195,32 @@ export default function ImageRegenerationModal({
           <div className="h-full grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] grid-rows-[65%_35%] lg:grid-rows-1">
             {/* Left: Preview (NO SCROLL) */}
             <div className="min-h-0 overflow-hidden p-4 sm:p-6 flex flex-col h-full">
-              <div className="flex-1 min-h-0 rounded-md border border-gray-200 bg-gray-50 overflow-hidden shadow-sm relative">
+              <div className="flex-1 min-h-0 rounded-md border border-gray-200 bg-gray-50 overflow-hidden shadow-sm relative group">
                 {activeImage ? (
                   <>
                     {/* Image area (reserve space for the mobile thumbnails overlay) */}
-                    <div className="h-full w-full flex items-center justify-center p-3 sm:p-4 pb-16 lg:pb-4">
+                    <div className="h-full w-full flex items-center justify-center p-3 sm:p-4 pb-16 lg:pb-4 relative">
                       <img
                         src={activeImage}
                         alt="Generated preview"
                         className="w-full h-full object-contain"
                       />
+                      {/* Download button */}
+                      <button
+                        onClick={() => {
+                          const link = document.createElement('a');
+                          link.href = activeImage;
+                          link.download = `image-${Date.now()}.png`;
+                          document.body.appendChild(link);
+                          link.click();
+                          document.body.removeChild(link);
+                        }}
+                        className="absolute top-3 right-3 sm:top-4 sm:right-4 p-2 rounded-md  hover:bg-[#d7d7fc] border border-purple-600 flex items-center justify-between text-base font-semibold  text-[#7650e3] transition-colors duration-200 "
+                        // title={t("download") || "Download image"}
+                        // aria-label={t("download") || "Download image"}
+                      >
+                        <Download className="w-5 h-5" />
+                      </button>
                     </div>
 
                     {/* Previous Generations: MOBILE ONLY, inside preview at bottom */}
@@ -224,7 +241,11 @@ export default function ImageRegenerationModal({
                                 onClick={() => {
                                   setActiveImage(img);
                                 }}
-                                className="group relative h-12 w-12 flex-shrink-0 rounded-md overflow-hidden border border-gray-200 hover:border-gray-300 transition"
+                                className={`group relative h-12 w-12 flex-shrink-0 rounded-md overflow-hidden border-2 transition ${
+                                  activeImage === img
+                                    ? 'border-purple-600 shadow-md'
+                                    : 'border-gray-200 hover:border-gray-300'
+                                }`}
                                 aria-label={`Select generation ${index + 1}`}
                                 title={`Generation ${index + 1}`}
                               >
@@ -279,7 +300,11 @@ export default function ImageRegenerationModal({
                           onClick={() => {
                             setActiveImage(img);
                           }}
-                          className="group relative h-16 w-16 flex-shrink-0 rounded-md overflow-hidden border border-gray-200 hover:border-gray-300 transition"
+                          className={`group relative h-16 w-16 flex-shrink-0 rounded-md overflow-hidden border-2 transition ${
+                            activeImage === img
+                              ? 'border-purple-600 shadow-md'
+                              : 'border-gray-200 hover:border-gray-300'
+                          }`}
                           aria-label={`Select generation ${index + 1}`}
                           title={`Generation ${index + 1}`}
                         >
