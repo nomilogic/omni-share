@@ -286,6 +286,10 @@ interface AppContextType {
   setSelectedLinkedinPage: (id: string) => void;
   setSelectedFacebookPage: (id: string) => void;
   setSelectedYoutubeChannel: (id: string) => void;
+
+  fetchFacebookPages: () => Promise<void>;
+  fetchLinkedPages: () => Promise<void>;
+  fetchYouTubeChannels: () => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -296,7 +300,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   const [state, dispatch] = useReducer(appReducer, initialState);
   const [processing, setProcessing] = useState(false);
   const [generationAmounts, setGenerationAmounts] = useState<any>({});
-  const { setUser } = useUser();
+  const { setUser, user } = useUser();
 
   const [linkedinPages, setLinkedinPages] = useState<any[]>([]);
   const [facebookPages, setFacebookPages] = useState<any[]>([]);
@@ -312,46 +316,28 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 
   const fetchYouTubeChannels = async () => {
+    if (!state.connectedPlatforms?.includes("youtube")) return;
     try {
-      const token = Cookies.get("auth_token");
-      if (!token) {
-        return;
-      }
+      const channelsResponse = await API.youtubePages();
 
-      const tokenResponse = await API.tokenForPlatform("youtube");
+      const channelsData = (await channelsResponse.data) || [];
+      setYoutubeChannels(channelsData.channels || []);
 
-      if (tokenResponse.data) {
-        const tokenData = await tokenResponse.data;
-        if (tokenData.connected && tokenData.token?.access_token) {
-          const channelsResponse = await API.youtubePages(
-            tokenData.token?.access_token
-          );
-
-          const channelsData = (await channelsResponse.data) || [];
-          setYoutubeChannels(channelsData.channels || []);
-
-          const savedYoutubeChannel = localStorage.getItem(
-            "selectedYoutubeChannel"
-          );
-          if (
-            savedYoutubeChannel &&
-            channelsData.channels?.some(
-              (c: any) => c.id === savedYoutubeChannel
-            )
-          ) {
-            setSelectedYoutubeChannel(savedYoutubeChannel);
-            console.log("Restored saved YouTube channel:", savedYoutubeChannel);
-          } else if (
-            channelsData.channels &&
-            channelsData.channels.length > 0
-          ) {
-            setSelectedYoutubeChannel(channelsData.channels[0].id);
-            localStorage.setItem(
-              "selectedYoutubeChannel",
-              channelsData.channels[0].id
-            );
-          }
-        }
+      const savedYoutubeChannel = localStorage.getItem(
+        "selectedYoutubeChannel"
+      );
+      if (
+        savedYoutubeChannel &&
+        channelsData.channels?.some((c: any) => c.id === savedYoutubeChannel)
+      ) {
+        setSelectedYoutubeChannel(savedYoutubeChannel);
+        console.log("Restored saved YouTube channel:", savedYoutubeChannel);
+      } else if (channelsData.channels && channelsData.channels.length > 0) {
+        setSelectedYoutubeChannel(channelsData.channels[0].id);
+        localStorage.setItem(
+          "selectedYoutubeChannel",
+          channelsData.channels[0].id
+        );
       }
     } catch (error) {
       console.error("Failed to fetch YouTube channels:", error);
@@ -359,39 +345,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const fetchLinkedPages = async () => {
+    if (!state.connectedPlatforms?.includes("linkedin")) return;
     try {
-      const token = Cookies.get("auth_token");
-      if (!token) {
-        return;
-      }
+      const res = await API.linkedinPages();
+      if (res?.data) {
+        const pagesData = await res.data;
+        setLinkedinPages(pagesData.data || []);
 
-      const tokenResponse = await API.tokenForPlatform("linkedin");
-
-      if (tokenResponse?.data) {
-        const tokenData = await tokenResponse?.data;
-        if (tokenData.connected && tokenData.token?.access_token) {
-          const res = await API.linkedinPages(tokenData.token?.access_token);
-          if (res?.data) {
-            const pagesData = await res.data;
-            setLinkedinPages(pagesData.data || []);
-
-            const savedLinkedInPage = localStorage.getItem(
-              "selectedlinkedinPage"
-            );
-            if (
-              savedLinkedInPage &&
-              pagesData.data?.some((p: any) => p.urn === savedLinkedInPage)
-            ) {
-              setSelectedLinkedinPage(savedLinkedInPage);
-              console.log("Restored saved LinkedIn page:", savedLinkedInPage);
-            } else if (pagesData?.data?.[0]?.urn) {
-              setSelectedLinkedinPage(pagesData.data[0].urn);
-              localStorage.setItem(
-                "selectedlinkedinPage",
-                pagesData.data[0].urn
-              );
-            }
-          }
+        const savedLinkedInPage = localStorage.getItem("selectedlinkedinPage");
+        if (
+          savedLinkedInPage &&
+          pagesData.data?.some((p: any) => p.urn === savedLinkedInPage)
+        ) {
+          setSelectedLinkedinPage(savedLinkedInPage);
+          console.log("Restored saved LinkedIn page:", savedLinkedInPage);
+        } else if (pagesData?.data?.[0]?.urn) {
+          setSelectedLinkedinPage(pagesData.data[0].urn);
+          localStorage.setItem("selectedlinkedinPage", pagesData.data[0].urn);
         }
       }
     } catch (error) {
@@ -399,62 +369,42 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
   const fetchFacebookPages = async () => {
+    if (!state.connectedPlatforms?.includes("facebook")) return;
     try {
-      const token = Cookies.get("auth_token");
-      if (!token) {
-        return;
+      const pagesResponse = await API.facebookPages();
+
+      let pagesData = [];
+
+      if (pagesResponse?.data?.data) {
+        pagesData = Array.isArray(pagesResponse.data.data)
+          ? pagesResponse.data.data
+          : [];
+      } else if (pagesResponse?.pages) {
+        pagesData = Array.isArray(pagesResponse.pages)
+          ? pagesResponse.pages
+          : [];
+      } else if (pagesResponse?.data?.pages) {
+        pagesData = Array.isArray(pagesResponse.data.pages)
+          ? pagesResponse.data.pages
+          : [];
       }
 
-      const tokenResponse = await API.tokenForPlatform("facebook");
+      setFacebookPages(pagesData);
 
-      if (tokenResponse?.data) {
-        const tokenData = await tokenResponse.data;
-
-        if (tokenData.connected && tokenData.token?.access_token) {
-          const pagesResponse = await API.facebookPages(
-            tokenData.token.access_token
-          );
-
-          let pagesData = [];
-
-          if (pagesResponse?.data?.data) {
-            pagesData = Array.isArray(pagesResponse.data.data)
-              ? pagesResponse.data.data
-              : [];
-          } else if (pagesResponse?.pages) {
-            pagesData = Array.isArray(pagesResponse.pages)
-              ? pagesResponse.pages
-              : [];
-          } else if (pagesResponse?.data?.pages) {
-            pagesData = Array.isArray(pagesResponse.data.pages)
-              ? pagesResponse.data.pages
-              : [];
-          }
-
-          setFacebookPages(pagesData);
-
-          const savedFacebookPage = localStorage.getItem(
-            "selectedFacebookPage"
-          );
-          if (
-            savedFacebookPage &&
-            pagesData.some((p: any) => p.id === savedFacebookPage)
-          ) {
-            setSelectedFacebookPage(savedFacebookPage);
-            console.log("Restored saved page:", savedFacebookPage);
-          } else if (pagesData && pagesData.length > 0) {
-            setSelectedFacebookPage(pagesData[0].id);
-            localStorage.setItem("selectedFacebookPage", pagesData[0].id);
-            console.log("Set initial page:", pagesData[0].id);
-          }
-        } else {
-          console.warn("Facebook not connected or no access token");
-        }
-      } else {
-        console.warn("No token response data");
+      const savedFacebookPage = localStorage.getItem("selectedFacebookPage");
+      if (
+        savedFacebookPage &&
+        pagesData.some((p: any) => p.id === savedFacebookPage)
+      ) {
+        setSelectedFacebookPage(savedFacebookPage);
+        console.log("Restored saved page:", savedFacebookPage);
+      } else if (pagesData && pagesData.length > 0) {
+        setSelectedFacebookPage(pagesData[0].id);
+        localStorage.setItem("selectedFacebookPage", pagesData[0].id);
+        console.log("Set initial page:", pagesData[0].id);
       }
     } catch (error) {
-      console.error("Failed to fetch Facebook pages:", error);
+      console.log("error", error);
     } finally {
     }
   };
@@ -483,7 +433,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       fetchLinkedPages(),
       fetchYouTubeChannels(),
     ]).finally(() => {});
-  }, []);
+  }, [user?.id, state?.connectedPlatforms]);
 
   const pusher = useMemo(
     () =>
@@ -697,14 +647,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       }
     };
 
-    if (state.user?.id) {
+    if (user?.id) {
       loadExtras();
     }
-  }, [state.user?.id]);
+  }, [user?.id]);
 
   const loadSecurityQuestion = async () => {
     try {
-      const [question] = await Promise.all([API.securityQuestion()]);
+      const question = await API.securityQuestion();
       dispatch({
         type: "SET_SECURITY_QUESTIONS",
         payload: question.data?.data || [],
@@ -713,13 +663,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   useEffect(() => {
-    if (state?.security_question?.length == 0) {
-      loadSecurityQuestion();
-    }
-  }, [state?.user?.id, logout]);
+    loadSecurityQuestion();
+  }, [user?.id]);
 
   useEffect(() => {
-    const userId = state.user?.id;
+    const userId = user?.id;
     if (!userId) return;
 
     const userChannel = pusher.subscribe(`user-${userId}`);
@@ -754,7 +702,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       pusher.unsubscribe(`user-${userId}`);
       pusher.unsubscribe(`wallet-${userId}`);
     };
-  }, [state.user?.id, pusher, fetchBalance, fetchUnreadCount]);
+  }, [user?.id, pusher, fetchBalance, fetchUnreadCount]);
 
   const checkConnectedPlatforms = useCallback(async () => {
     try {
@@ -792,13 +740,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   useEffect(() => {
-    if (state.user?.id) {
+    if (user?.id) {
       checkConnectedPlatforms();
       fetchPostHistory();
       fetchAnalytics();
       fetchExchangeRates();
     }
-  }, [state.user?.id]);
+  }, [user?.id]);
 
   const contextValue = useMemo(
     () => ({
@@ -831,7 +779,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       selectedLinkedinPage,
       selectedFacebookPage,
       selectedYoutubeChannel,
-
+      fetchFacebookPages,
+      fetchLinkedPages,
+      fetchYouTubeChannels,
       setSelectedLinkedinPage,
       setSelectedFacebookPage,
       setSelectedYoutubeChannel,
@@ -890,6 +840,10 @@ export const useAppContext = () => {
     setSelectedLinkedinPage,
     setSelectedFacebookPage,
     setSelectedYoutubeChannel,
+
+    fetchFacebookPages,
+    fetchLinkedPages,
+    fetchYouTubeChannels,
   } = context;
 
   const setUnreadCount = useCallback(
@@ -951,10 +905,24 @@ export const useAppContext = () => {
             clearInterval(checkClosed);
             window.removeEventListener("message", messageListener);
             checkConnectedPlatforms();
+            if (platform == "facebook") {
+              fetchFacebookPages();
+            } else if (platform == "linkedin") {
+              fetchLinkedPages();
+            } else if (platform == "youtube") {
+              fetchYouTubeChannels();
+            }
           }
         }, 800);
       } catch (error: any) {
         checkConnectedPlatforms();
+        if (platform == "facebook") {
+          fetchFacebookPages();
+        } else if (platform == "linkedin") {
+          fetchLinkedPages();
+        } else if (platform == "youtube") {
+          fetchYouTubeChannels();
+        }
       } finally {
         dispatch({
           type: "SET_CONNECTING_PLATFORMS",

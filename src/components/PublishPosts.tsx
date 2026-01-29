@@ -870,6 +870,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
           )}
 
         {connectedPlatforms.includes("linkedin") &&
+          selectedPlatforms.includes("linkedin") &&
           linkedinPages.length > 0 && (
             <div className="mb-6 p-3 bg-white border border-blue-600  rounded-md">
               <h4 className="font-medium text-black mb-2">

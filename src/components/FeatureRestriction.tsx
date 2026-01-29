@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Lock, Zap, Crown, X } from "lucide-react";
 import { useAppContext } from "../context/AppContext";
+import { useUser } from "@/store/useUser";
 
 interface FeatureRestrictionProps {
   feature: string;
@@ -16,6 +17,7 @@ export const FeatureRestriction: React.FC<FeatureRestrictionProps> = ({
   onUpgrade,
 }) => {
   const { state } = useAppContext();
+  const { user } = useUser();
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   const isBusinessAccount =

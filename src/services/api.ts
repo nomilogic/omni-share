@@ -134,9 +134,9 @@ interface APIInstance extends AxiosInstance {
   updateUser: (data: UserPayload) => Promise<any>;
   getWallet: () => Promise<any>;
   facebookPost: (data: any) => Promise<any>;
-  facebookPages: (token: any) => Promise<any>;
-  linkedinPages: (token: any) => Promise<any>;
-  youtubePages: (token: any) => Promise<any>;
+  facebookPages: () => Promise<any>;
+  linkedinPages: () => Promise<any>;
+  youtubePages: () => Promise<any>;
   instagramPost: (data: any) => Promise<any>;
   linkedinPost: (data: any) => Promise<any>;
   twitterPost: (data: any) => Promise<any>;
@@ -325,12 +325,9 @@ API.getUserClient = () => API.get("/client/user");
 API.updateUser = (data) => API.patch("/client/user", data);
 API.getWallet = () => API.get("/client/wallet");
 API.facebookPost = (data) => API.post("/client/facebook/post", data);
-API.facebookPages = (token) =>
-  API.get(`/client/facebook/pages?access_token=${token}`);
-API.linkedinPages = (token) =>
-  API.get(`/client/linkedin/pages?access_token=${token}`);
-API.youtubePages = (token) =>
-  API.get(`/client/youtube/channels?access_token=${token}`);
+API.facebookPages = () => API.get(`/client/facebook/pages`);
+API.linkedinPages = () => API.get(`/client/linkedin/pages`);
+API.youtubePages = () => API.get(`/client/youtube/channels`);
 API.instagramPost = (data) => API.post("/client/instagram/post", data);
 API.linkedinPost = (data) => API.post("/client/linkedin/post", data);
 API.twitterPost = (data) => API.post("/client/twitter/post", data);
