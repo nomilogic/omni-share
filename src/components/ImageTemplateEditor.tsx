@@ -866,26 +866,34 @@ export const ImageTemplateEditor = ({
 
       console.log("🗑️ Attempting to delete template:", { id, source: tpl.source, name: tpl.name });
 
-      // Prefer server-side deletion via service endpoint
+      // Server-side deletion for user templates and attempt API first for local templates
+      console.log("🛰️ Calling templateService.deleteTemplate for id:", id, "source:", tpl.source);
+
+      if (tpl.source === "global") {
+        console.warn("⚠️ Delete not supported for global templates");
+        setIsDeleting(false);
+        return;
+      }
+
       try {
         const deleteResponse = await templateService.deleteTemplate(id);
-        console.log("✅ Template deleted via API", { id, response: deleteResponse });
+        console.log("✅ templateService.deleteTemplate response:", deleteResponse);
       } catch (apiError) {
-        console.warn("⚠️ API delete failed for template, attempting local fallback:", apiError);
+        console.error("❌ templateService.deleteTemplate failed:", apiError);
 
         // If it's a local template, remove from local storage as a fallback
         if (tpl.source === "local") {
-          const templates = readTemplatesFromLocalStorage();
-          const next = templates.filter((t) => t.id !== id);
-          writeTemplatesToLocalStorage(next);
-          console.log("✅ Local template deleted from storage (API fallback)", id);
-        } else if (tpl.source === "global") {
-          // Do not allow deleting global templates locally
-          console.warn("⚠️ Delete not supported for global templates");
-          setIsDeleting(false);
-          return;
+          try {
+            const templates = readTemplatesFromLocalStorage();
+            const next = templates.filter((t) => t.id !== id);
+            writeTemplatesToLocalStorage(next);
+            console.log("✅ Local template deleted from storage (API fallback)", id);
+          } catch (localErr) {
+            console.error("❌ Failed to remove local template as fallback:", localErr);
+            throw apiError; // surface original API error
+          }
         } else {
-          // For user templates, if API failed, surface error
+          // For user templates, bubble API error so we can inform the user
           throw apiError;
         }
       }
