@@ -80,7 +80,7 @@ const discardRef = useRef<null | (() => void)>(null);
   setShowPublishModal(true);
 
   // ✅ ensures next browser-back triggers popstate while staying on same URL
-  // window.history.pushState({ __publish_modal__: true }, "", window.location.href);
+  window.history.pushState({ __publish_modal__: true }, "", window.location.href);
 };
 
   useEffect(() => {
