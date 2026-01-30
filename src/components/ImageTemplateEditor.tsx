@@ -397,6 +397,7 @@ export const ImageTemplateEditor = ({
   const [savedTemplates, setSavedTemplates] = useState<SavedTemplateV1[]>([]);
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>("");
   const [templatesOpen, setTemplatesOpen] = useState<boolean>(true);
+  const [isTemplateEditing, setIsTemplateEditing] = useState<boolean>(true);
   const [elementsOpen, setElementsOpen] = useState<boolean>(true);
   const [propertiesOpen, setPropertiesOpen] = useState<boolean>(true);
 
@@ -2720,7 +2721,7 @@ export const ImageTemplateEditor = ({
                   {t("show_grid")}
                 </label>
                 {showGrid && (
-                  <div className="flex items-center gap-1"> 
+                  <div className="flex items-center gap-1 pl-1 pr-3 w-full"> 
                     <input
                       type="range"
                       min="1"
@@ -2822,7 +2823,7 @@ export const ImageTemplateEditor = ({
                     </button>
                   </div>
                   {/* isGlobal check start */}
-                  <label className="flex items-center gap-2 text-xs text-slate-700 select-none flex-shrink-0">
+                 {isTemplateEditing && <label className="flex items-center gap-2 text-xs text-slate-700 select-none flex-shrink-0">
                   <input
                     type="checkbox"
                     checked={saveAsGlobal}
@@ -2831,9 +2832,9 @@ export const ImageTemplateEditor = ({
                     disabled={isTemplatesLoading}
                   />
                   Global
-                </label>
+                </label>}
 
-                 <button
+                {isTemplateEditing && <button
                       onClick={() => void updateTemplateById()}
                       className="h-8 bg-purple-600 text-white font-medium flex items-center gap-2 justify-center px-3 rounded-md border border-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3] whitespace-nowrap disabled:opacity-60"
                       title={
@@ -2845,7 +2846,7 @@ export const ImageTemplateEditor = ({
                     >
                       <LucideTabletSmartphone className="w-4 h-4" />
                       <span className="text-sm">{t("update")}</span>
-                    </button>
+                    </button>}
                 {/* isGlobal check end */}
 
                   <div className="flex items-center justify-between flex-shrink-0">
@@ -3133,7 +3134,7 @@ export const ImageTemplateEditor = ({
                     </div>
 
                     {/* Profile Field Binding - Logo elements only (excluding background) */}
-                    {
+                    {isTemplateEditing &&
                       selectedElementData.type === "logo" && selectedElement !== "background-image" && (
                         <div className="mb-2 md:mb-3">
                           <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5 md:mb-2">
@@ -3159,7 +3160,7 @@ export const ImageTemplateEditor = ({
                               </p>
                               {selectedElementData.type === "logo" && (
                                 <div>
-                                  {profileBindingData.logo ? (
+                                  { isTemplateEditing && profileBindingData.logo ? (
                                     <>
                                       <p className="text-blue-700 mb-1">
                                         Logo URL:
