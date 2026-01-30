@@ -1,4 +1,8 @@
 ﻿import React, { useState, useRef, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+
+// Icons
 import {
   Wand2,
   Eye,
@@ -11,36 +15,44 @@ import {
   Edit3,
   Trash2,
 } from "lucide-react";
-import Icon from "./Icon";
+
+// Assets
 import TextPostIcon from "../assets/create-text-post-icon-01.svg";
 import ImagePostIcon from "../assets/create-image-post-icon-01.svg";
 import VideoPostIcon from "../assets/create-video-post-icon-01.svg";
-import { PostContent, Platform } from "../types";
-import { uploadMedia, getCurrentUser } from "../lib/database";
+
+// Components
+import Icon from "./Icon";
 import { PostPreview } from "./PostPreview";
-import { getPlatformColors, platformOptions } from "../utils/platformIcons";
-import { getCampaignById } from "../lib/database";
-import { useAppContext } from "../context/AppContext";
 import { TemplateSelector } from "./TemplateSelector";
 import { ImageTemplateEditor } from "./ImageTemplateEditor";
-import { Template } from "../types/templates";
-import { getTemplateById } from "../utils/templates";
+import ImageRegenerationModal from "./ImageRegenerationModal";
 
+// Hooks & Context
+import { useAppContext } from "../context/AppContext";
+import { useConfirmDialog } from "../context/ConfirmDialogContext";
+import { useLoadingAPI } from "../hooks/useLoadingAPI";
+import { useNavigationGuard } from "../hooks/useNavigationGuard";
+import { useUser } from "@/store/useUser";
+
+// Utils & Services
+import { getPlatformColors, platformOptions } from "../utils/platformIcons";
+import { getTemplateById } from "../utils/templates";
 import {
   isVideoFile,
   getVideoAspectRatio,
   is16x9Video,
   is9x16Video,
 } from "../utils/videoUtils";
-import { useLoadingAPI } from "../hooks/useLoadingAPI";
 import API from "@/services/api";
 import { notify } from "@/utils/toast";
-import { useTranslation } from "react-i18next";
-import ImageRegenerationModal from "./ImageRegenerationModal";
-import { Link, useNavigate } from "react-router-dom";
-import { useConfirmDialog } from "../context/ConfirmDialogContext";
-import { useNavigationGuard } from "../hooks/useNavigationGuard";
-import { useUser } from "@/store/useUser";
+
+// Types
+import { PostContent, Platform } from "../types";
+import { Template } from "../types/templates";
+
+// Database
+import { uploadMedia, getCurrentUser, getCampaignById } from "../lib/database";
 
 interface ContentInputProps {
   onNext: (data: PostContent) => void;
@@ -48,9 +60,26 @@ interface ContentInputProps {
   initialData?: Partial<PostContent>;
   selectedPlatforms?: Platform[];
   editMode?: boolean;
-  setShowGenerateModal: any;
-  setShowPublishModal: any;
 }
+
+// Constants
+const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+const MAX_IMAGES = 3;
+
+const VIDEO_DIMENSIONS = {
+  upload: {
+    ratios: ["16:9", "1:1"],
+    minWidth: 640,
+    minHeight: 360,
+  },
+  uploadShorts: {
+    ratios: ["9:16"],
+    minWidth: 720,
+    minHeight: 1280,
+  },
+};
+
+type VideoMode = "upload" | "uploadShorts" | "";
 
 export const ContentInput: React.FC<ContentInputProps> = ({
   onNext,
@@ -58,8 +87,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   initialData,
   selectedPlatforms,
   editMode,
-  setShowPublishModal,
 }) => {
+  // ============== HOOKS & CONTEXT ==============
   const {
     state,
     generationAmounts,
@@ -70,7 +99,12 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     setUseTheme,
     useTheme,
   }: any = useAppContext();
+
   const { user } = useUser();
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { showConfirm, closeConfirm } = useConfirmDialog();
+
   const {
     executeVideoThumbnailGeneration,
     executeImageGeneration,
@@ -78,10 +112,10 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     showLoading,
     hideLoading,
   } = useLoadingAPI();
-  const { t } = useTranslation();
 
-  const { showConfirm, closeConfirm } = useConfirmDialog();
+  // ============== STATE MANAGEMENT ==============
 
+  // Form Data
   const [formData, setFormData] = useState<any>({
     prompt: initialData?.prompt || "",
     tags: [],
@@ -91,37 +125,132 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     mediaUrl: initialData?.mediaUrl || undefined,
   });
 
+  // UI States
   const [dragActive, setDragActive] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [showImageMenu, setShowImageMenu] = useState(false);
+  const [showVideoMenu, setShowVideoMenu] = useState(false);
+  const [showTemplateSelector, setShowTemplateSelector] = useState(false);
+  const [showTemplateEditor, setShowTemplateEditor] = useState(false);
+  const [showVideoThumbnailModal, setShowVideoThumbnailModal] = useState(false);
+
+  // Post Type States
+  const [selectedPostType, setSelectedPostType] = useState<
+    "text" | "image" | "video" | ""
+  >("image");
+  const [selectedImageMode, setSelectedImageMode] = useState<
+    "upload" | "textToImage" | ""
+  >("textToImage");
+  const [selectedVideoMode, setSelectedVideoMode] = useState<VideoMode>("");
+
+  // Image States
+  const [modelImage, setModelImage] = useState(false);
+  const [generatedImage, setGeneratedImage] = useState<string | null>(null);
+  const [selectedConfirmedImage, setSelectedConfirmedImage] = useState<
+    string | null
+  >(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [allGeneration, setAllGeneration] = useState<any>([]);
+  const [aspectRatio, setAspectRatio] = useState<string>("1:1");
+  const [imageDescription, setImageDescription] = useState<string>("");
+  const [generateImageWithPost, setGenerateImageWithPost] = useState(true);
   const [analyzingImage, setAnalyzingImage] = useState(false);
   const [imageAnalysis, setImageAnalysis] = useState("");
 
-  const [generatedResults, setGeneratedResults] = useState<any[]>([]);
-  const [showPreview, setShowPreview] = useState(false);
-  const [campaignInfo, setCampaignInfo] = useState<any>(null);
-  const [loadingCampaign, setLoadingCampaign] = useState(false);
-
-  const [showTemplateSelector, setShowTemplateSelector] = useState(false);
-  const [showTemplateEditor, setShowTemplateEditor] = useState(false);
+  // Template States
   const [selectedTemplate, setSelectedTemplate] = useState<
     Template | undefined
   >();
   const [templatedImageUrl, setTemplatedImageUrl] = useState<string>("");
-  const [showImageMenu, setShowImageMenu] = useState(false);
-  const [showVideoMenu, setShowVideoMenu] = useState(false);
 
-  type VideoMode = "upload" | "uploadShorts" | "";
+  // Video States
+  const [videoThumbnailUrl, setVideoThumbnailUrl] = useState<string>("");
+  const [originalVideoFile, setOriginalVideoFile] = useState<File | null>(null);
+  const [videoAspectRatio, setVideoAspectRatio] = useState<number | null>(null);
+  const [videoAspectRatioWarning, setVideoAspectRatioWarning] =
+    useState<string>("");
+  const [videoThumbnailForRegeneration, setVideoThumbnailForRegeneration] =
+    useState<string>("");
+  const [videoThumbnailGenerations, setVideoThumbnailGenerations] = useState<
+    string[]
+  >([]);
+  const [videoThumbnailPrompt, setVideoThumbnailPrompt] = useState("");
+  const [videoModifyMode, setVideoModify] = useState(false);
+  const [generateVideoThumbnailAI, setGenerateVideoThumbnailAI] =
+    useState(true);
+  const [videoUseLogo, setVideoUseLogo] = useState(false);
+  const [videoUseTheme, setVideoUseTheme] = useState(false);
+  const [customThumbnailUploading, setCustomThumbnailUploading] =
+    useState(false);
 
-  const VIDEO_DIMENSIONS = {
-    upload: {
-      ratios: ["16:9", "1:1"],
-      minWidth: 640,
-      minHeight: 360,
-    },
-    uploadShorts: {
-      ratios: ["9:16"],
-      minWidth: 720,
-      minHeight: 1280,
-    },
+  // Loading States
+  const [isGeneratingBoth, setIsGeneratingBoth] = useState(false);
+  const [isGeneratingThumbnail, setIsGeneratingThumbnail] = useState(false);
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+  const [isGeneratingImageUpload, setIsGeneratingImageUpload] = useState("");
+  const [loadingCampaign, setLoadingCampaign] = useState(false);
+
+  // Other States
+  const [campaignInfo, setCampaignInfo] = useState<any>(null);
+  const [generatedResults, setGeneratedResults] = useState<any[]>([]);
+  const [pendingPostGeneration, setPendingPostGeneration] = useState<any>(null);
+  const [modifyMode, setModify] = useState(false);
+  const [prompt, setPrompt] = useState("");
+  const [basePrompt, setBasePrompt] = useState("");
+  const [warningTimeoutId, setWarningTimeoutId] = useState<any | null>(null);
+
+  // ============== REFS ==============
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const thumbnailInputRef = useRef<HTMLInputElement>(null);
+  const warningTimeoutRef = useRef<any>(null);
+  const uploadAbortControllerRef = useRef<AbortController | null>(null);
+  const currentFileRef = useRef<File | null>(null);
+
+  // ============== CONSTANTS ==============
+  const logoUrl = user?.profile?.brandLogo || "";
+  const themeUrl = user?.profile?.publicUrl || "";
+
+  // ============== UTILITY FUNCTIONS ==============
+
+  const isValidUrl = (u?: string | null) => {
+    if (!u) return false;
+    const s = u.trim();
+    return true;
+  };
+
+  const hasLogo = isValidUrl(logoUrl);
+  const hasTheme = isValidUrl(themeUrl);
+
+  const isUrl = (value: string) => {
+    try {
+      new URL(value);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  const urlToBase64 = async (url: string): Promise<string> => {
+    const response = await fetch(url);
+    const blob = await response.blob();
+
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  };
+
+  const getAcceptType = () => {
+    if (selectedPostType === "image") return "image/*";
+    if (selectedPostType === "video") {
+      if (selectedVideoMode === "uploadShorts") {
+        return "video/mp4,video/webm";
+      }
+      return "video/*";
+    }
+    return undefined;
   };
 
   const getVideoDimensions = (
@@ -155,7 +284,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
     const { width, height } = await getVideoDimensions(file);
     const ratio = getRatio(width, height);
-
     const rules = VIDEO_DIMENSIONS[selectedVideoMode];
 
     const validRatio = rules.ratios.includes(ratio);
@@ -173,171 +301,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
     return { valid: true, ratio };
   };
-
-  const [selectedVideoMode, setSelectedVideoMode] = useState<
-    "upload" | "uploadShorts" | ""
-  >("");
-
-  const [selectedPostType, setSelectedPostType] = useState<
-    "text" | "image" | "video" | ""
-  >("image");
-
-  const [selectedImageMode, setSelectedImageMode] = useState<
-    "upload" | "textToImage" | ""
-  >("textToImage");
-
-  const getAcceptType = () => {
-    if (selectedPostType === "image") return "image/*";
-
-    if (selectedPostType === "video") {
-      if (selectedVideoMode === "uploadShorts") {
-        return "video/mp4,video/webm"; // restrict shorts formats
-      }
-      return "video/*";
-    }
-
-    return undefined; // 👈 important (not "")
-  };
-
-  const [videoThumbnailUrl, setVideoThumbnailUrl] = useState<string>("");
-  const [originalVideoFile, setOriginalVideoFile] = useState<File | null>(null);
-  const [videoAspectRatio, setVideoAspectRatio] = useState<number | null>(null);
-  const [videoAspectRatioWarning, setVideoAspectRatioWarning] =
-    useState<string>("");
-  const [warningTimeoutId, setWarningTimeoutId] = useState<any | null>(null);
-
-  const [aspectRatio, setAspectRatio] = useState<string>("1:1");
-  const [imageDescription, setImageDescription] = useState<string>("");
-  const [generateImageWithPost, setGenerateImageWithPost] = useState(true);
-  const [isGeneratingBoth, setIsGeneratingBoth] = useState(false);
-  const [isGeneratingThumbnail, setIsGeneratingThumbnail] = useState(false);
-  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
-
-  // Guard navigation when there are unsaved changes or active generation
-  const hasUnsavedChanges =
-    formData.prompt.trim() || formData.media || formData.mediaUrl;
-  const isProcessing =
-    isGeneratingBoth || isGeneratingThumbnail || isGeneratingImage;
-
-  // Check if there's unsaved content (moved before useNavigationGuard)
-  const checkUnsavedContent = () => {
-    return (
-      (formData?.prompt?.trim?.()?.length ?? 0) > 0 ||
-      !!formData?.media ||
-      !!formData?.mediaUrl ||
-      (generatedResults?.length ?? 0) > 0 ||
-      showPreview
-    );
-  };
-
-  useNavigationGuard({
-    isActive: isProcessing || checkUnsavedContent(),
-  });
-
-  const logoUrl = user?.profile?.brandLogo || "";
-  const themeUrl = user?.profile?.publicUrl || "";
-
-  // Video thumbnail specific logo and theme states
-  const [videoUseLogo, setVideoUseLogo] = useState(false);
-  const [videoUseTheme, setVideoUseTheme] = useState(false);
-
-  const [generateVideoThumbnailAI, setGenerateVideoThumbnailAI] =
-    useState(true);
-  const [showVideoThumbnailModal, setShowVideoThumbnailModal] = useState(false);
-  const [videoThumbnailForRegeneration, setVideoThumbnailForRegeneration] =
-    useState<string>("");
-  const [videoThumbnailGenerations, setVideoThumbnailGenerations] = useState<
-    string[]
-  >([]);
-  const [videoThumbnailPrompt, setVideoThumbnailPrompt] = useState("");
-  const [videoModifyMode, setVideoModify] = useState(false);
-  const thumbnailInputRef = useRef<HTMLInputElement>(null);
-  const [customThumbnailUploading, setCustomThumbnailUploading] =
-    useState(false);
-
-  const uploadAbortControllerRef = useRef<AbortController | null>(null);
-
-  const currentFileRef = useRef<File | null>(null);
-
-  const [pendingPostGeneration, setPendingPostGeneration] = useState<any>(null);
-
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const navigate = useNavigate();
-  const isValidUrl = (u?: string | null) => {
-    if (!u) return false;
-    const s = u.trim();
-    return true;
-  };
-
-  const hasLogo = isValidUrl(logoUrl);
-  const hasTheme = isValidUrl(themeUrl);
-
-  useEffect(() => {
-    if (!hasLogo && useLogo) setUseLogo(false);
-  }, [hasLogo, useLogo, setUseLogo]);
-
-  useEffect(() => {
-    if (!hasTheme && useTheme) setUseTheme(false);
-  }, [hasTheme, useTheme, setUseTheme]);
-
-  // Check if there's unsaved content
-  const hasUnsavedContent = () => {
-    return (
-      (formData?.prompt?.trim?.()?.length ?? 0) > 0 ||
-      !!formData?.media ||
-      !!formData?.mediaUrl ||
-      (generatedResults?.length ?? 0) > 0 ||
-      showPreview
-    );
-  };
-
-  // Helper to show confirm dialog and navigate
-  const showConfirmAndNavigate = (path: string, isDangerous = false) => {
-    if (hasUnsavedContent()) {
-      showConfirm(
-        t("confirm_navigation") || "Confirm",
-        t("unsaved_changes_warning") ||
-          "You have unsaved changes. Are you sure you want to leave?",
-        () => {
-          closeConfirm();
-          setTimeout(() => navigate(path), 100);
-        },
-        isDangerous
-      );
-    } else {
-      navigate(path);
-    }
-  };
-
-  // Note: Browser's beforeunload dialog cannot be customized due to security restrictions
-  // Our custom ConfirmDialog handles all navigation within the app
-
-  // Intercept link clicks
-  useEffect(() => {
-    const handleClickCapture = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      const link = target.closest("a") as HTMLAnchorElement;
-
-      if (link && hasUnsavedContent()) {
-        const href = link.getAttribute("href");
-        if (
-          href &&
-          !href.includes("://") &&
-          !href.startsWith("mailto:") &&
-          !link.download
-        ) {
-          e.preventDefault();
-          e.stopPropagation();
-          showConfirmAndNavigate(href);
-        }
-      }
-    };
-
-    document.addEventListener("click", handleClickCapture, true);
-    return () => {
-      document.removeEventListener("click", handleClickCapture, true);
-    };
-  }, [hasUnsavedContent, navigate, t]);
 
   const getAppropiatePlatforms = (
     postType: "text" | "image" | "video",
@@ -361,13 +324,37 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     }
   };
 
-  useEffect(() => {
-    if (formData.media && formData.media.type.startsWith("video/")) {
-      validateVideo(formData.media, selectedVideoMode).then((res: any) => {
-        setVideoAspectRatioWarning(res.valid ? "" : res.message);
-      });
+  const saveGeneratedImage = (imageUrl: string) => {
+    let images: string[] = [];
+
+    try {
+      images = JSON.parse(localStorage.getItem("ai-generated-image") || "[]");
+    } catch {
+      images = [];
     }
-  }, [selectedVideoMode]);
+
+    images.unshift(imageUrl);
+    images = images.slice(0, MAX_IMAGES);
+
+    try {
+      localStorage.setItem("ai-generated-image", JSON.stringify(images));
+    } catch (err) {
+      localStorage.removeItem("ai-generated-image");
+      localStorage.setItem("ai-generated-image", JSON.stringify([imageUrl]));
+    }
+
+    return images;
+  };
+
+  // ============== EFFECTS ==============
+
+  useEffect(() => {
+    if (!hasLogo && useLogo) setUseLogo(false);
+  }, [hasLogo, useLogo, setUseLogo]);
+
+  useEffect(() => {
+    if (!hasTheme && useTheme) setUseTheme(false);
+  }, [hasTheme, useTheme, setUseTheme]);
 
   useEffect(() => {
     setFormData((prev: any) => ({
@@ -375,16 +362,18 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       selectedPlatforms: initialData?.selectedPlatforms ||
         selectedPlatforms || ["linkedin"],
     }));
+
     const appropriatePlatforms = getAppropiatePlatforms(
       selectedPostType?.toLowerCase() as "text" | "image" | "video",
       selectedImageMode,
       selectedVideoMode
     );
+
     setFormData((prev: any) => ({
       ...prev,
       selectedPlatforms: appropriatePlatforms,
     }));
-    setShowPublishModal(false);
+
     if (selectedPostType === "video") {
       if (videoAspectRatio) {
         let shouldClearWarning = false;
@@ -430,6 +419,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         media: initialData.media,
         mediaUrl: initialData.mediaUrl,
       }));
+
       if (initialData.imageAnalysis) {
         setImageAnalysis(initialData.imageAnalysis);
       }
@@ -441,7 +431,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       if (state.selectedCampaign && user?.id) {
         try {
           setLoadingCampaign(true);
-
           const campaign = await getCampaignById(
             state.selectedCampaign.id,
             user.id
@@ -471,6 +460,113 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     fetchCampaignInfo();
   }, [state.selectedCampaign, user?.id]);
 
+  useEffect(() => {
+    if (modelImage) {
+      const base = formData?.prompt || "";
+      setBasePrompt(base);
+      if (!prompt || prompt.trim() === "") {
+        setPrompt(base);
+      } else if (base && !prompt.includes(base)) {
+        setPrompt(`${base} ${prompt}`);
+      }
+    }
+  }, [modelImage, formData?.prompt]);
+
+  useEffect(() => {
+    if (showVideoThumbnailModal) {
+      const base = formData?.prompt || "";
+      if (!videoThumbnailPrompt || videoThumbnailPrompt.trim() === "") {
+        setVideoThumbnailPrompt(base);
+      } else if (base && !videoThumbnailPrompt.includes(base)) {
+        setVideoThumbnailPrompt(`${base} ${videoThumbnailPrompt}`);
+      }
+    }
+  }, [showVideoThumbnailModal, formData?.prompt]);
+
+  useEffect(() => {
+    if (formData.media && formData.media.type.startsWith("video/")) {
+      validateVideo(formData.media, selectedVideoMode).then((res: any) => {
+        setVideoAspectRatioWarning(res.valid ? "" : res.message);
+      });
+    }
+  }, [selectedVideoMode]);
+
+  useEffect(() => {
+    setCost(calculateCost());
+  }, [
+    selectedPostType,
+    selectedImageMode,
+    selectedVideoMode,
+    generateVideoThumbnailAI,
+    generationAmounts,
+  ]);
+
+  // ============== NAVIGATION GUARD ==============
+
+  const checkUnsavedContent = () => {
+    return (
+      (formData?.prompt?.trim?.()?.length ?? 0) > 0 ||
+      !!formData?.media ||
+      !!formData?.mediaUrl ||
+      (generatedResults?.length ?? 0) > 0 ||
+      showPreview
+    );
+  };
+
+  const hasUnsavedChanges =
+    formData.prompt.trim() || formData.media || formData.mediaUrl;
+  const isProcessing =
+    isGeneratingBoth || isGeneratingThumbnail || isGeneratingImage;
+
+  useNavigationGuard({
+    isActive: isProcessing || checkUnsavedContent(),
+  });
+
+  const showConfirmAndNavigate = (path: string, isDangerous = false) => {
+    if (checkUnsavedContent()) {
+      showConfirm(
+        t("confirm_navigation") || "Confirm",
+        t("unsaved_changes_warning") ||
+          "You have unsaved changes. Are you sure you want to leave?",
+        () => {
+          closeConfirm();
+          setTimeout(() => navigate(path), 100);
+        },
+        isDangerous
+      );
+    } else {
+      navigate(path);
+    }
+  };
+
+  useEffect(() => {
+    const handleClickCapture = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const link = target.closest("a") as HTMLAnchorElement;
+
+      if (link && checkUnsavedContent()) {
+        const href = link.getAttribute("href");
+        if (
+          href &&
+          !href.includes("://") &&
+          !href.startsWith("mailto:") &&
+          !link.download
+        ) {
+          e.preventDefault();
+          e.stopPropagation();
+          showConfirmAndNavigate(href);
+        }
+      }
+    };
+
+    document.addEventListener("click", handleClickCapture, true);
+    return () => {
+      document.removeEventListener("click", handleClickCapture, true);
+    };
+  }, [checkUnsavedContent, navigate, t]);
+
+  // ============== EVENT HANDLERS ==============
+
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -480,7 +576,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       setDragActive(false);
     }
   };
-  const warningTimeoutRef = useRef<any>(null);
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
@@ -531,14 +626,12 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         URL.revokeObjectURL(prev.mediaUrl);
       }
       const newData = { ...prev, media: file, mediaUrl: previewUrl };
-
       return newData;
     });
 
     if (isVideoFile(file)) {
       try {
         setOriginalVideoFile(file);
-
         const aspectRatio = await getVideoAspectRatio(file);
         setVideoAspectRatio(aspectRatio);
       } catch (error) {}
@@ -570,7 +663,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
             abortSignal: abortController.signal,
             onCancel: () => {
               uploadAbortControllerRef.current = null;
-              // Optionally clean up the preview if user cancels
               setFormData((prev) => {
                 if (prev.mediaUrl && prev.mediaUrl.startsWith("blob:")) {
                   URL.revokeObjectURL(prev.mediaUrl);
@@ -583,7 +675,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                   serverUrl: undefined,
                 };
               });
-              // Clear related state
               setTemplatedImageUrl("");
               setSelectedTemplate(undefined);
               setImageAnalysis("");
@@ -594,24 +685,21 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           }
         );
 
-        // If mediaUrl is null, upload was aborted - don't proceed
         if (!mediaUrl) {
           uploadAbortControllerRef.current = null;
           return;
         }
 
-        // Double-check: if abort controller was cleared (mode was switched), don't add the image
         if (!uploadAbortControllerRef.current) {
           return;
         }
 
-        // Triple-check: verify this is still the current file being processed
         if (currentFileRef.current !== file) {
           return;
         }
 
-        uploadAbortControllerRef.current = null; // Clear abort controller after successful upload
-        currentFileRef.current = null; // Clear current file ref
+        uploadAbortControllerRef.current = null;
+        currentFileRef.current = null;
 
         setFormData((prev) => {
           if (prev.mediaUrl && prev.mediaUrl.startsWith("blob:")) {
@@ -635,13 +723,52 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     } catch (error) {}
   };
 
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const files = event.currentTarget.files;
+    if (!files || files.length === 0) return;
+    const file = files[0];
+
+    if (file.size > MAX_FILE_SIZE) {
+      notify("error", "File size must be less than 50MB.");
+      event.target.value = "";
+      return;
+    }
+
+    setTemplatedImageUrl("");
+    setSelectedTemplate(undefined);
+    setImageAnalysis("");
+
+    if (isVideoFile(file)) {
+      handleFileUpload(file);
+      return;
+    }
+
+    setSelectedFile(file);
+    setAllGeneration([]);
+    setIsGeneratingImageUpload("");
+    setModelImage(false);
+
+    const previewUrl = URL.createObjectURL(file);
+    setFormData((prev) => ({
+      ...prev,
+      media: file,
+      mediaUrl: previewUrl,
+    }));
+
+    if (file.type.startsWith("image/")) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        setGeneratedImage(base64String);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // if (user?.balance < cost) {
-    //   navigate("/pricing");
-    //   return;
-    // }
 
     if (formData?.prompt?.trim()) {
       if (
@@ -650,7 +777,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         !formData.mediaUrl
       ) {
         await handleRegenerate(formData.prompt);
-
         return;
       }
 
@@ -681,7 +807,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           (formData.media ? URL.createObjectURL(formData.media) : "");
 
         setSelectedFile(null);
-
         await handleRegenerate(formData.prompt, imageUrl);
         return;
       }
@@ -696,7 +821,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         return;
       }
 
-      // Proceed only if we have a video (either uploaded file or URL)
       if (
         (selectedVideoMode === "upload" ||
           selectedVideoMode === "uploadShorts") &&
@@ -749,7 +873,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
               };
 
               setPendingPostGeneration(postGenerationData);
-              // Clear the main post prompt after image generation to keep modal prompt separate
               setFormData((prev: any) => ({ ...prev, prompt: "" }));
               return;
             }
@@ -758,7 +881,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       }
 
       const currentFormData: any = formData;
-
       const currentCampaignInfo = campaignInfo || {
         name: "",
         industry: t("general"),
@@ -800,16 +922,16 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       } else if (isVideoContent && currentFormData.serverUrl) {
         finalPostData = {
           ...currentFormData,
-          mediaUrl: currentFormData.serverUrl, // Override with server URL for videos
-          imageUrl: currentFormData.serverUrl, // Also set imageUrl for compatibility
-          videoUrl: currentFormData.serverUrl, // Also set videoUrl for video posts
+          mediaUrl: currentFormData.serverUrl,
+          imageUrl: currentFormData.serverUrl,
+          videoUrl: currentFormData.serverUrl,
         };
       } else {
         finalPostData = currentFormData;
       }
 
       const postData = {
-        ...finalPostData, // Use the updated form data with proper URLs
+        ...finalPostData,
         prompt: formData.prompt,
         selectedPlatforms: formData.selectedPlatforms,
         platforms: formData.selectedPlatforms,
@@ -837,7 +959,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         onNext(postData);
       } else {
         setShowPreview(true);
-
         const isVideoContent = !!(
           originalVideoFile ||
           (formData.media && isVideoFile(formData.media))
@@ -858,9 +979,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
             hashtags: formData.tags,
             mediaUrl: finalMediaUrl,
             imageUrl: finalMediaUrl,
-            videoUrl: isVideoContent ? finalMediaUrl : undefined, // Add explicit videoUrl for video content
+            videoUrl: isVideoContent ? finalMediaUrl : undefined,
             thumbnailUrl:
-              templatedImageUrl || (currentFormData as any).thumbnailUrl, // Use templated image as poster for videos
+              templatedImageUrl || (currentFormData as any).thumbnailUrl,
             isVideoContent: isVideoContent,
             videoAspectRatio: videoAspectRatio,
             engagement: Math.floor(Math.random() * 1000),
@@ -891,40 +1012,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     setImageAnalysis("");
   };
 
-  const [modelImage, setModelImage] = useState(false);
-  const [generatedImage, setGeneratedImage] = useState<string | null>(null);
-  const [selectedConfirmedImage, setSelectedConfirmedImage] = useState<
-    string | null
-  >(null);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null); // For actual upload
-  const [allGeneration, setAllGeneration] = useState<any>([]);
-  const MAX_IMAGES = 3;
-
-  const saveGeneratedImage = (imageUrl: string) => {
-    let images: string[] = [];
-
-    try {
-      images = JSON.parse(localStorage.getItem("ai-generated-image") || "[]");
-    } catch {
-      images = [];
-    }
-
-    // Add new image at start
-    images.unshift(imageUrl);
-
-    // Keep only last N images
-    images = images.slice(0, MAX_IMAGES);
-
-    try {
-      localStorage.setItem("ai-generated-image", JSON.stringify(images));
-    } catch (err) {
-      localStorage.removeItem("ai-generated-image");
-      localStorage.setItem("ai-generated-image", JSON.stringify([imageUrl]));
-    }
-
-    return images;
-  };
-
   const handleAIImageGenerated = async (imageUrl: string) => {
     try {
       const response = await fetch(imageUrl);
@@ -944,13 +1031,11 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           mediaUrl: imageUrl,
           serverUrl: imageUrl,
         };
-
         return newData;
       });
     } catch (error) {
       setFormData((prev) => {
         const newData = { ...prev, mediaUrl: imageUrl };
-
         return newData;
       });
     }
@@ -1021,7 +1106,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         videoAspectRatio,
       } = pendingPostGeneration;
 
-      // Use the original base prompt for post generation; ignore regeneration prompt.
       const base = basePrompt || originalFormData?.prompt || "";
       const regen = prompt || "";
       const finalPrompt = base || regen;
@@ -1089,7 +1173,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       setPendingPostGeneration(null);
       setIsGeneratingBoth(false);
       setAllGeneration([]);
-        if (onNext && typeof onNext === "function") {
+      if (onNext && typeof onNext === "function") {
         onNext(postData);
       } else {
         setShowPreview(true);
@@ -1120,8 +1204,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         if (isCurrentVideoContent) {
           postData = {
             ...formData,
-            mediaUrl: formData.mediaUrl, // Keep original video URL
-            thumbnailUrl: videoThumbnailUrl, // Use videoThumbnailUrl state which has the uploaded URL
+            mediaUrl: formData.mediaUrl,
+            thumbnailUrl: videoThumbnailUrl,
             videoFile: originalVideoFile,
             videoAspectRatio: videoAspectRatio,
             isVideoContent: true,
@@ -1152,7 +1236,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         } else {
           postData = {
             ...formData,
-            mediaUrl: templatedImageUrl, // Use templatedImageUrl state which has the uploaded URL
+            mediaUrl: templatedImageUrl,
             imageUrl: templatedImageUrl,
             serverUrl: templatedImageUrl,
             campaignName: currentCampaignInfo.name,
@@ -1184,9 +1268,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       setShowTemplateEditor(false);
     }, 500);
   };
+
   const handleTemplateEditorCancel = () => {
     setImageDescription("");
-
     setGeneratedImage(null);
     setSelectedConfirmedImage(null);
     setModify(false);
@@ -1221,7 +1305,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       ...prev,
       media: undefined,
       selectedPlatforms: [],
-
       mediaUrl: undefined,
     }));
     setSelectedFile(null);
@@ -1311,7 +1394,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     }
   };
 
-  // Handle user-uploaded custom thumbnail for video posts
   const handleCustomThumbnailChange = async (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -1325,7 +1407,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         return;
       }
 
-      // Create abort controller for custom thumbnail upload
       const thumbnailAbortController = new AbortController();
       uploadAbortControllerRef.current = thumbnailAbortController;
 
@@ -1354,9 +1435,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       setVideoThumbnailForRegeneration(mediaUrl);
       setVideoThumbnailGenerations([...videoThumbnailGenerations, mediaUrl]);
       if (blankTemplate) {
-        //   setSelectedTemplate(blankTemplate);
-        //setShowTemplateEditor(true);
-
         const currentCampaignInfo = campaignInfo || {
           name: "",
           industry: t("general"),
@@ -1366,8 +1444,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         };
 
         const postGenerationData = {
-        prompt: formData.prompt,
-        basePrompt: basePrompt,
+          prompt: formData.prompt,
+          basePrompt: basePrompt,
           originalImageUrl: mediaUrl,
           originalVideoUrl: formData.mediaUrl,
           originalVideoFile: originalVideoFile,
@@ -1380,7 +1458,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         };
 
         setPendingPostGeneration(postGenerationData);
-        // Clear the main post prompt since we've captured it as basePrompt
         setFormData((prev: any) => ({ ...prev, prompt: "" }));
       }
     } catch (err) {
@@ -1391,7 +1468,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     }
   };
 
-  // Inline image generation function
   const handleGenerateImage = async () => {
     if (!imageDescription.trim()) return;
 
@@ -1420,7 +1496,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       setIsGeneratingImage(false);
     }
   };
-  const [modifyMode, setModify] = useState(false);
+
   const handleCombinedGeneration = async (
     prompt: string,
     image?: any
@@ -1455,56 +1531,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       }
     }, "Creating your custom image");
   };
-  const [isGeneratingImageUpload, setIsGeneratingImageUpload] = useState("");
-  const isUrl = (value: string) => {
-    try {
-      new URL(value);
-      return true;
-    } catch {
-      return false;
-    }
-  };
-  const [prompt, setPrompt] = useState("");
-  // basePrompt holds the original post prompt when opening regeneration modal
-  const [basePrompt, setBasePrompt] = useState("");
 
-  // When opening the image regeneration modal, initialize the modal prompt
-  // with the base post prompt so users see and can edit it while regenerating.
-  useEffect(() => {
-    if (modelImage) {
-      const base = formData?.prompt || "";
-      setBasePrompt(base);
-      if (!prompt || prompt.trim() === "") {
-        setPrompt(base);
-      } else if (base && !prompt.includes(base)) {
-        setPrompt(`${base} ${prompt}`);
-      }
-    }
-  }, [modelImage, formData?.prompt]);
-
-  // Same behavior for video thumbnail regeneration modal
-  useEffect(() => {
-    if (showVideoThumbnailModal) {
-      const base = formData?.prompt || "";
-      if (!videoThumbnailPrompt || videoThumbnailPrompt.trim() === "") {
-        setVideoThumbnailPrompt(base);
-      } else if (base && !videoThumbnailPrompt.includes(base)) {
-        setVideoThumbnailPrompt(`${base} ${videoThumbnailPrompt}`);
-      }
-    }
-  }, [showVideoThumbnailModal, formData?.prompt]);
-
-  const urlToBase64 = async (url: string): Promise<string> => {
-    const response = await fetch(url);
-    const blob = await response.blob();
-
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    });
-  };
   const handleRegenerate = async (newPrompt: string, Url?: string) => {
     try {
       setIsGeneratingBoth(true);
@@ -1519,8 +1546,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       };
 
       let finalImageUrl: string | null = null;
-
-      // Determine which image to use: provided URL (upload), or generatedImage (modify mode), or none (textToImage)
       const imageToModify = Url || generatedImage;
 
       if (modifyMode && imageToModify) {
@@ -1533,7 +1558,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         setAllGeneration([...allGeneration, finalImageUrl]);
       } else if (Url && !modifyMode) {
         finalImageUrl = Url;
-
         setGeneratedImage(finalImageUrl);
         setAllGeneration([...allGeneration, finalImageUrl]);
       } else {
@@ -1555,7 +1579,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         formData,
       };
       setPendingPostGeneration(postGenerationData);
-      // Clear the main post prompt to avoid using regen prompt for post generation
       setFormData((prev: any) => ({ ...prev, prompt: "" }));
       setIsGeneratingBoth(false);
       setPrompt("");
@@ -1566,10 +1589,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           mediaUrl: undefined,
           serverUrl: undefined,
         };
-
         return newData;
       });
-      notify("error", "We couldn’t generate the image.");
+      notify("error", "We couldn't generate the image.");
       setIsGeneratingBoth(false);
       setPrompt("");
     }
@@ -1629,12 +1651,11 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
   const confirmImage = async (selectedImageUrl?: string) => {
     try {
-      // Use the selected image if provided, otherwise fall back to generatedImage
       const imageToUse = selectedImageUrl || generatedImage;
 
       if (imageToUse) {
         setGeneratedImage(imageToUse);
-        setSelectedConfirmedImage(imageToUse); // Store the confirmed image separately
+        setSelectedConfirmedImage(imageToUse);
       }
 
       const blankTemplate = getTemplateById("blank-template");
@@ -1653,11 +1674,10 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
   const confirmVideoThumbnail = async (selectedImageUrl?: string) => {
     try {
-      // Use the selected image if provided, otherwise fall back to videoThumbnailForRegeneration
       const thumbnailToUse = selectedImageUrl || videoThumbnailForRegeneration;
 
       setVideoThumbnailUrl(thumbnailToUse);
-      setSelectedConfirmedImage(thumbnailToUse); // Store the confirmed image separately
+      setSelectedConfirmedImage(thumbnailToUse);
 
       setShowVideoThumbnailModal(false);
       const blankTemplate = getTemplateById("blank-template");
@@ -1666,7 +1686,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           setSelectedTemplate(blankTemplate);
           setShowTemplateEditor(true);
 
-          // Store post generation data for template editor
           const currentCampaignInfo = campaignInfo || {
             name: "",
             industry: t("general"),
@@ -1678,7 +1697,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           const postGenerationData = {
             prompt: formData.prompt,
             basePrompt: basePrompt,
-            originalImageUrl: thumbnailToUse, // Use confirmed video thumbnail
+            originalImageUrl: thumbnailToUse,
             originalVideoUrl: formData.mediaUrl,
             originalVideoFile: originalVideoFile,
             videoAspectRatio: videoAspectRatio,
@@ -1694,7 +1713,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           };
 
           setPendingPostGeneration(postGenerationData);
-          // Clear the main post prompt after scheduling post generation
           setFormData((prev: any) => ({ ...prev, prompt: "" }));
         }, 500);
       }
@@ -1702,53 +1720,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       if (error instanceof Error) {
         notify("error", `Failed to proceed: ${error.message}`);
       }
-    }
-  };
-  const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
-
-  const handleFileChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const files = event.currentTarget.files;
-    if (!files || files.length === 0) return;
-    const file = files[0];
-
-    if (file.size > MAX_FILE_SIZE) {
-      notify("error", "File size must be less than 50MB.");
-      event.target.value = ""; // reset input
-      return;
-    }
-
-    // Reset image-related state
-    setTemplatedImageUrl("");
-    setSelectedTemplate(undefined);
-    setImageAnalysis("");
-
-    if (isVideoFile(file)) {
-      handleFileUpload(file);
-      return;
-    }
-
-    setSelectedFile(file);
-    setAllGeneration([]); // Reset previous generations
-    setIsGeneratingImageUpload(""); // Clear any previous generation URL
-    setModelImage(false); // Don't open modal yet
-
-    const previewUrl = URL.createObjectURL(file);
-    setFormData((prev) => ({
-      ...prev,
-      media: file,
-      mediaUrl: previewUrl,
-    }));
-
-    if (file.type.startsWith("image/")) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64String = reader.result as string;
-        setGeneratedImage(base64String);
-        // setAllGeneration([base64String]);
-      };
-      reader.readAsDataURL(file);
     }
   };
 
@@ -1759,9 +1730,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         mediaUrl: undefined,
         serverUrl: undefined,
       };
-
       return newData;
     });
+
     if (isGeneratingImageUpload) {
       setFormData((prev) => {
         const newData = {
@@ -1805,16 +1776,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     }
   };
 
-  useEffect(() => {
-    setCost(calculateCost());
-  }, [
-    selectedPostType,
-    selectedImageMode,
-    selectedVideoMode,
-    generateVideoThumbnailAI,
-    generationAmounts,
-  ]);
-  console.log("cost", cost);
   const resetAll = () => {
     if (uploadAbortControllerRef.current) {
       uploadAbortControllerRef.current.abort();
@@ -1822,30 +1783,20 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     }
 
     hideLoading();
-
-    // File & refs
     setSelectedFile(null);
     setOriginalVideoFile(null);
     currentFileRef.current = null;
-
-    // UI states
     setShowPreview(false);
     setShowImageMenu(false);
     setShowVideoMenu(false);
-    // setSelectedVideoMode("");
-
-    // Image states
     setGeneratedImage(null);
     setTemplatedImageUrl("");
     setSelectedTemplate(undefined);
     setImageAnalysis("");
-
-    // Video states
     setVideoAspectRatio(null);
     setVideoThumbnailUrl("");
     setVideoAspectRatioWarning("");
 
-    // Form data (single update 👇)
     setFormData((prev) => ({
       ...prev,
       media: undefined,
@@ -1853,12 +1804,609 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       selectedPlatforms: [],
       prompt: "",
     }));
+
     setModelImage(false);
     setAllGeneration([]);
   };
 
+  // ============== RENDER FUNCTIONS ==============
+
+  const renderImageUploadSection = () => (
+    <>
+      {selectedImageMode === "upload" && (
+        <div>
+          <h4 className="text-sm font-medium theme-text-primary  mb-2 flex items-center">
+            {t("upload_image")}
+          </h4>
+          <div className=" theme-bg-primary  border border-slate-200/70 backdrop-blur-sm rounded-md shadow-md p-6">
+            <div
+              className={`  text-center transition-all duration-200 cursor-pointer ${
+                dragActive
+                  ? "border-blue-400/50 bg-blue-500/10"
+                  : "border-white/20 hover:border-white/30"
+              }`}
+              onDragEnter={handleDrag}
+              onDragLeave={handleDrag}
+              onDragOver={handleDrag}
+              onDrop={handleDrop}
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept={getAcceptType()}
+                onChange={handleFileChange}
+                className="hidden"
+              />
+
+              {formData.media ||
+              formData.mediaUrl ||
+              selectedFile ||
+              generatedImage ? (
+                <div className="space-y-4">
+                  <div className="relative">
+                    {(() => {
+                      const imageSrc =
+                        templatedImageUrl ||
+                        formData.mediaUrl ||
+                        generatedImage ||
+                        (formData.media
+                          ? URL.createObjectURL(formData.media)
+                          : selectedFile
+                            ? URL.createObjectURL(selectedFile)
+                            : "");
+                      return (
+                        <img
+                          src={imageSrc}
+                          alt="Preview"
+                          className="max-h-32 mx-auto  shadow-md"
+                        />
+                      );
+                    })()}
+                  </div>
+                  <div className="flex items-center justify-center flex-col space-y-1">
+                    <p className="text-xs theme-text-secondary">
+                      {formData.media?.name ||
+                        selectedFile?.name ||
+                        "Uploaded Image"}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setFormData((prev) => ({
+                          ...prev,
+                          media: undefined,
+                          selectedPlatforms: [],
+                          mediaUrl: undefined,
+                        }));
+                        if (fileInputRef && fileInputRef.current)
+                          fileInputRef.current.value = "";
+                        setSelectedFile(null);
+                        setGeneratedImage(null);
+                        setAllGeneration([]);
+                        setTemplatedImageUrl("");
+                        setSelectedTemplate(undefined);
+                        setImageAnalysis("");
+                      }}
+                      className="text-red-400 hover:text-red-300 text-xs font-medium flex items-center space-x-1"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                      <span>{t("remove")}</span>
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="">
+                  <Icon name="upload" size={44} />
+                  <div>
+                    <p className="font-medium theme-text-primary text-sm mb-1">
+                      {t("click_browse_image")}
+                    </p>
+                    <p className="theme-text-secondary text-xs"></p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+
+  const renderTextToImageSection = () => (
+    <>
+      <div
+        className={`space-y-4 ${generateImageWithPost ? "hidden" : "hidden"}`}
+      >
+        <div className="p-3 bg-gradient-to-r from-blue-500/5 to-purple-500/5 border border-blue-400/20 rounded-md">
+          <div className="flex items-center space-x-3">
+            <input
+              type="checkbox"
+              id="generateImageWithPostTextToImage"
+              checked={generateImageWithPost}
+              onChange={(e) => setGenerateImageWithPost(e.target.checked)}
+              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+            />
+            <div className="flex-1">
+              <label
+                htmlFor="generateImageWithPostTextToImage"
+                className="flex items-center cursor-pointer"
+              >
+                <Sparkles className="w-4 h-4 mr-2 text-blue-400" />
+                <span className="text-sm font-medium theme-text-primary ">
+                  Use main content description as image prompt
+                </span>
+              </label>
+              <p className="text-xs theme-text-secondary mt-1">
+                Instead of using the image description below, use your main post
+                content to generate the image
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {!generateImageWithPost && (
+          <div>
+            <label className="text-sm font-medium theme-text-primary  mb-2 flex items-center">
+              Image Description *
+            </label>
+            <textarea
+              value={imageDescription}
+              onChange={(e) => setImageDescription(e.target.value)}
+              className="w-full px-3 py-2.5 theme-bg-primary/20 border border-grey/10 focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400/50 transition-all duration-200 min-h-[40px] text-sm placeholder-gray-400"
+              placeholder="Describe the image you want to generate... (e.g., 'A professional product photo of eco-friendly water bottles')"
+              required
+            />
+          </div>
+        )}
+
+        {!generateImageWithPost && (
+          <button
+            type="button"
+            onClick={handleGenerateImage}
+            disabled={isGeneratingImage || !imageDescription.trim()}
+            className="w-full bg-gradient-to-r from-blue-500/80 to-indigo-500/80 text-white py-3 px-4 rounded font-medium hover:from-blue-600/80 hover:to-indigo-600/80 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+          >
+            {isGeneratingImage ? (
+              <>
+                <Loader className="w-4 h-4 animate-spin" />
+                <span>Generating Image...</span>
+              </>
+            ) : (
+              <>
+                <Sparkles className="w-4 h-4" />
+                <span>Generate Image</span>
+              </>
+            )}
+          </button>
+        )}
+
+        {generateImageWithPost && (
+          <div className="space-y-4">
+            <div className="p-3 bg-green-500/10 border border-purple-400/20 rounded-md">
+              <div className="flex items-center space-x-2">
+                <CheckCircle className="w-4 h-4 text-purple-400" />
+                <span className="text-sm font-medium text-purple-600">
+                  Using your main content description to generate the image
+                </span>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => handleRegenerate(formData.prompt)}
+              disabled={isGeneratingBoth || !formData.prompt.trim()}
+              className="w-full bg-gradient-to-r from-green-500/80 to-teal-500/80 text-white py-3 px-4 rounded font-medium hover:from-green-600/80 hover:to-teal-600/80 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+            >
+              {isGeneratingBoth ? (
+                <>
+                  <Loader className="w-4 h-4 animate-spin" />
+                  <span>Generating Image & Post...</span>
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-4 h-4" />
+                  <span>Generate Image & Post</span>
+                </>
+              )}
+            </button>
+          </div>
+        )}
+      </div>
+      {(formData.media || formData.mediaUrl) && (
+        <div className="mt-4">
+          <div className="border border-white/20 rounded p-4">
+            <div className="relative">
+              {(() => {
+                const imageSrc =
+                  templatedImageUrl ||
+                  formData.mediaUrl ||
+                  (formData.media ? URL.createObjectURL(formData.media) : "");
+                return (
+                  <img
+                    src={imageSrc}
+                    alt="Generated Image"
+                    className="max-h-32 mx-auto shadow-md rounded"
+                  />
+                );
+              })()}
+              <button
+                type="button"
+                onClick={() => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    media: undefined,
+                    selectedPlatforms: [],
+                    mediaUrl: undefined,
+                  }));
+                  setTemplatedImageUrl("");
+                  setSelectedTemplate(undefined);
+                  setImageAnalysis("");
+                }}
+                className="absolute top-2 right-2 bg-purple-500 hover:bg-purple-600 text-white rounded-md p-1.5 shadow-md transition-colors duration-200"
+                title="Remove image"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            </div>
+            <div className="flex items-center justify-between mt-1">
+              <p className="text-xs theme-text-secondary">
+                {formData.media?.name || "AI Generated Image"}
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    media: undefined,
+                    selectedPlatforms: [],
+                    mediaUrl: undefined,
+                  }));
+                  setTemplatedImageUrl("");
+                  setSelectedTemplate(undefined);
+                  setImageAnalysis("");
+                }}
+                className="text-red-400 hover:text-red-300 text-xs font-medium flex items-center space-x-1"
+              >
+                <Trash2 className="w-3 h-3" />
+                <span>{t("remove")}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+
+  const renderVideoUploadSection = () => (
+    <div>
+      <label className="block text-sm font-medium theme-text-primary  mb-2">
+        {selectedVideoMode === "uploadShorts" ? (
+          <span>{t("upload_shorts_video")}</span>
+        ) : (
+          <span>{t("upload_video")}</span>
+        )}
+      </label>
+      <div className="  theme-bg-primary  border border-slate-200/70 backdrop-blur-sm rounded-md shadow-md p-6">
+        <div
+          className={` border border-dashed  p-0 text-center transition-all duration-200 ${
+            dragActive
+              ? "border-blue-400/50 bg-blue-500/10"
+              : "border-white/20 hover:border-white/30"
+          }`}
+          onDragEnter={handleDrag}
+          onDragLeave={handleDrag}
+          onDragOver={handleDrag}
+          onDrop={handleDrop}
+        >
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept={getAcceptType()}
+            onChange={handleFileChange}
+            className="hidden"
+          />
+        </div>
+
+        {formData.media || formData.mediaUrl ? (
+          <div className="space-y-4">
+            <div className="relative">
+              {formData.media?.type.startsWith("image/") ||
+              (formData.mediaUrl &&
+                !formData.media &&
+                !formData.mediaUrl.match(
+                  /\.(mp4|mov|avi|wmv|flv|webm|mkv|m4v)$/i
+                )) ? (
+                <div className="relative">
+                  <img
+                    src={
+                      templatedImageUrl ||
+                      formData.mediaUrl ||
+                      (formData.media
+                        ? URL.createObjectURL(formData.media)
+                        : "")
+                    }
+                    alt="Preview"
+                    className="max-h-40 mx-auto  shadow-md"
+                  />
+                  <div className="absolute top-2 left-2 bg-black/60 text-white px-2 py-1 rounded text-xs flex items-center">
+                    <Icon name="image-post" size={12} className="mr-1" />
+                    Image
+                  </div>
+                </div>
+              ) : (
+                <div className="relative">
+                  <video
+                    src={
+                      formData.mediaUrl
+                        ? formData.mediaUrl
+                        : formData.media
+                          ? URL.createObjectURL(formData.media)
+                          : undefined
+                    }
+                    className="max-h-40 mx-auto shadow-md rounded"
+                    controls
+                    preload="metadata"
+                  >
+                    {t("browser_no_video_support")}
+                  </video>
+                </div>
+              )}
+            </div>
+            <div className="text-sm theme-text-secondary space-y-2 text-center">
+              <div>
+                <p className="font-medium theme-text-primary text-sm">
+                  {formData.media?.name || "Uploaded Media"}
+                </p>
+                {formData.media && (
+                  <p className="text-xs">
+                    {(formData.media.size / 1024 / 1024).toFixed(2)} MB
+                  </p>
+                )}
+              </div>
+
+              {analyzingImage && (
+                <div className="flex items-center justify-center p-2 bg-blue-500/10 border border-blue-400/20 rounded text-xs">
+                  <Loader className="w-3 h-3 animate-spin mr-2 text-blue-400" />
+                  <span className="text-blue-300">{t("ai_analyzing")}</span>
+                </div>
+              )}
+              {videoAspectRatioWarning ? (
+                <div className="flex items-center justify-start p-3 bg-red-500/10 border border-red-400/20 rounded text-xs">
+                  <AlertCircle className="w-4 h-4 mr-2 text-red-400 flex-shrink-0" />
+                  <div className="text-left">
+                    <div className="font-medium text-red-300 mb-1">
+                      {t("aspect_ratio_warning")}
+                    </div>
+                    <div className="text-red-200">
+                      {videoAspectRatioWarning}
+                    </div>
+                  </div>
+                </div>
+              ) : videoAspectRatio ? (
+                <div className="flex md:items-center justify-center p-2 bg-purple-500/10 border border-purple-400/20 rounded text-xs">
+                  <div>
+                    <CheckCircle className="w-3 h-3 mr-1 mt-1 text-purple-600" />
+                  </div>
+                  <span className="text-purple-600 md:text-center text-left">
+                    {is9x16Video(videoAspectRatio)
+                      ? t(
+                          "vertical_video_ready_stories_format_no_thumbnail_needed"
+                        )
+                      : is16x9Video(videoAspectRatio)
+                        ? t(
+                            "horizontal_video_ready_thumbnail_generated_when_click_generate_post"
+                          )
+                        : t(
+                            "video_processed_ready_thumbnail_generated_when_click_generate_post"
+                          )}
+                  </span>
+                </div>
+              ) : null}
+
+              {!is9x16Video(videoAspectRatio || 0) && (
+                <div className="mt-2 flex md:items-center md:justify-center gap-3">
+                  <label className="flex items-center space-x-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={generateVideoThumbnailAI}
+                      onChange={(e) =>
+                        setGenerateVideoThumbnailAI(e.target.checked)
+                      }
+                      className="md:w-4 md:h-4 w-3 h-3"
+                    />
+                    <span className="md:text-sm text-xs theme-text-secondary">
+                      {t("generate_thumbnail_with_ai")}
+                    </span>
+                  </label>
+
+                  {!generateVideoThumbnailAI && (
+                    <>
+                      <input
+                        ref={thumbnailInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleCustomThumbnailChange}
+                        className="hidden"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => thumbnailInputRef.current?.click()}
+                        className="px-3 py-1 border rounded text-sm"
+                      >
+                        {t("upload_custom_thumbnail")}
+                      </button>
+                      {customThumbnailUploading && (
+                        <span className="text-xs text-blue-300 ml-2">
+                          {t("uploading")}
+                        </span>
+                      )}
+                    </>
+                  )}
+                </div>
+              )}
+
+              {templatedImageUrl && selectedTemplate && (
+                <div className="bg-purple-500/10 border border-purple-400/20  p-2">
+                  <div className="flex justify-between mb-2">
+                    <h4 className="font-medium text-purple-300 flex  text-xs">
+                      <Palette className="w-3 h-3 mr-1" />
+                      {t("image_updated")}: {selectedTemplate.name}
+                    </h4>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={handleEditTemplate}
+                      className="flex-1 bg-purple-500/80 text-white px-3 py-1.5 rounded text-xs hover:bg-purple-600/80 transition-colors flex items-center justify-center space-x-1"
+                    >
+                      <Edit3 className="w-3 h-3" />
+                      <span>{t("edit")}</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleDeleteTemplate}
+                      className="flex-1 bg-red-500/80 text-white px-3 py-1.5 rounded text-xs hover:bg-red-600/80 transition-colors flex items-center justify-center space-x-1"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                      <span>{t("remove")}</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                setFormData((prev) => ({
+                  ...prev,
+                  media: undefined,
+                  selectedPlatforms: [],
+                  mediaUrl: undefined,
+                }));
+                setTemplatedImageUrl("");
+                setSelectedTemplate(undefined);
+                setImageAnalysis("");
+                if (fileInputRef && fileInputRef.current)
+                  fileInputRef.current.value = "";
+              }}
+              className="text-red-400 hover:text-red-300 text-xs font-medium text-center w-full flex items-center justify-center space-x-1  "
+            >
+              {t("remove")}
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <div
+              className={`${
+                selectedVideoMode ? "" : "filter grayscale opacity-50"
+              } flex gap-2 justify-center`}
+            >
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="bg-transparent"
+                disabled={!selectedVideoMode}
+              >
+                <div className="">
+                  <Icon name="upload-video" size={44} />
+                  <div>
+                    <p className="font-medium theme-text-primary text-sm mb-1">
+                      {t("click_browse_video")}
+                    </p>
+                    <p className="theme-text-secondary text-xs">
+                      {!selectedVideoMode && "Select a video mode above first"}
+                    </p>
+                  </div>
+                </div>
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {videoAspectRatioWarning && (
+        <div className="flex items-center justify-start p-3 theme-bg-danger border rounded-md text-xs mb-1 theme-text-light">
+          <AlertCircle className="w-4 h-4 mr-2 flex-shrink-0" />{" "}
+          {videoAspectRatioWarning}
+        </div>
+      )}
+
+      {imageAnalysis && (
+        <div className="bg-blue-500/10 border border-blue-400/20  p-3">
+          <div className="space-y-2">
+            <h4 className="font-medium text-blue-300 flex items-center text-xs">
+              <Eye className="w-3 h-3 mr-1" />
+              {t("ai_analysis_complete")}
+            </h4>
+            <div className="max-h-24 overflow-y-auto">
+              <p className="text-blue-200 text-xs leading-[1.05rem]elaxed">
+                {imageAnalysis}
+              </p>
+            </div>
+            <button
+              onClick={useImageAnalysis}
+              className="bg-gradient-to-r from-blue-500/80 to-indigo-500/80 text-white px-3 py-1.5 rounded text-xs hover:from-blue-600/80 hover:to-indigo-600/80 transition-all duration-200 flex items-center space-x-1"
+            >
+              <span>{t("add_to_description")}</span>
+              <Sparkles className="w-3 h-3" />
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
+  const renderAspectRatioSelector = () => (
+    <div className="">
+      <label className="text-sm font-medium theme-text-primary  mb-2 flex items-center">
+        {t("image_dimensions")}
+      </label>
+      <div className="grid grid-cols-3 gap-4">
+        {[
+          { label: "1:1", value: "1:1", icon: "⬜" },
+          { label: "16:9", value: "16:9", icon: "▬" },
+          { label: "9:16", value: "9:16", icon: "▫" },
+        ].map((ratio) => (
+          <button
+            key={ratio.value}
+            type="button"
+            onClick={() => handleAspectRatioChange(ratio.value)}
+            className={`w-full h-24 p-2 border transition-all   theme-bg-primary shadow-md  rounded-md duration-200 flex flex-col items-center justify-center ${
+              aspectRatio === ratio.value
+                ? "theme-bg-quaternary shadow-md theme-text-secondary"
+                : "theme-bg-primary hover:theme-bg-primary/50"
+            }`}
+          >
+            <div
+              className={`border mx-auto mb-1  ${
+                ratio.value === "1:1"
+                  ? "w-8 h-8 border-1 border-purple-600 "
+                  : ratio.value === "16:9"
+                    ? "w-10 h-6 border-1"
+                    : ratio.value === "9:16"
+                      ? "w-6 h-10 border-1 border-purple-600"
+                      : "w-8 h-8 border-1"
+              } ${
+                aspectRatio === ratio.value
+                  ? "border-purple-600 border"
+                  : "theme-border-dark border-1"
+              }`}
+            ></div>
+            <div className="text-md font-medium whitespace-pre-line ">
+              {ratio.label}
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+
+  // ============== MAIN RENDER ==============
   return (
     <div className="w-full mx-auto rounded-md border border-white/10  md:p-5 p-3 ">
+      {/* Modals */}
       {modelImage && (
         <ImageRegenerationModal
           user={user}
@@ -1884,6 +2432,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           themeUrl={themeUrl}
         />
       )}
+
       {showVideoThumbnailModal && videoThumbnailForRegeneration && (
         <ImageRegenerationModal
           user={user}
@@ -1917,6 +2466,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           themeUrl={themeUrl}
         />
       )}
+
       {!showTemplateEditor && (
         <>
           <div className="text-left mb-4">
@@ -1935,6 +2485,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                   {t("select_post_type")}
                 </label>
                 <div className="grid grid-cols-3 gap-4 text-sm md:text-base">
+                  {/* Text Post Button */}
                   <button
                     type="button"
                     onClick={() => {
@@ -2042,7 +2593,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         <button
                           type="button"
                           onClick={() => {
-                            // Abort any in-progress upload
                             if (uploadAbortControllerRef.current) {
                               uploadAbortControllerRef.current.abort();
                               uploadAbortControllerRef.current = null;
@@ -2112,6 +2662,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                     </div>
                   </div>
 
+                  {/* Video Post */}
                   <div
                     onClick={() => {
                       if (selectedPostType !== "video") {
@@ -2196,7 +2747,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             setTemplatedImageUrl("");
                             setSelectedTemplate(undefined);
                             setImageAnalysis("");
-                            // setSelectedImageMode("");
                           }}
                           className={`p-3 border transition rounded-md duration-200 text-center
                             ${selectedPostType === "video" ? "" : "hidden"}
@@ -2238,7 +2788,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               setVideoAspectRatio(null);
                               setVideoThumbnailUrl("");
                               setVideoAspectRatioWarning("");
-
                               setSelectedFile(null);
                               currentFileRef.current = null;
                               setTemplatedImageUrl("");
@@ -2252,7 +2801,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             setTemplatedImageUrl("");
                             setSelectedTemplate(undefined);
                             setImageAnalysis("");
-                            // setSelectedImageMode("");
                           }}
                           className={`p-3 border transition rounded-md duration-200 text-center
                             ${selectedPostType === "video" ? "" : "hidden"}
@@ -2286,689 +2834,53 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                 </div>
               </div>
 
-              {selectedImageMode === "upload" && (
-                <>
-                  {selectedImageMode === "upload" && (
-                    <div>
-                      <h4 className="text-sm font-medium theme-text-primary  mb-2 flex items-center">
-                        {t("upload_image")}
-                      </h4>
+              {/* Image Upload Section */}
+              {selectedImageMode === "upload" && renderImageUploadSection()}
 
-                      {/* Upload Area */}
-                      <div className=" theme-bg-primary  border border-slate-200/70 backdrop-blur-sm rounded-md shadow-md p-6">
-                        <div
-                          className={`  text-center transition-all duration-200 cursor-pointer ${
-                            dragActive
-                              ? "border-blue-400/50 bg-blue-500/10"
-                              : "border-white/20 hover:border-white/30"
-                          }`}
-                          onDragEnter={handleDrag}
-                          onDragLeave={handleDrag}
-                          onDragOver={handleDrag}
-                          onDrop={handleDrop}
-                          onClick={() => fileInputRef.current?.click()}
-                        >
-                          <input
-                            ref={fileInputRef}
-                            type="file"
-                            accept={getAcceptType()}
-                            onChange={handleFileChange}
-                            className="hidden"
-                          />
+              {/* Text to Image Section */}
+              {selectedImageMode === "textToImage" &&
+                renderTextToImageSection()}
 
-                          {formData.media ||
-                          formData.mediaUrl ||
-                          selectedFile ||
-                          generatedImage ? (
-                            <div className="space-y-4">
-                              <div className="relative">
-                                {(() => {
-                                  const imageSrc =
-                                    templatedImageUrl ||
-                                    formData.mediaUrl ||
-                                    generatedImage ||
-                                    (formData.media
-                                      ? URL.createObjectURL(formData.media)
-                                      : selectedFile
-                                        ? URL.createObjectURL(selectedFile)
-                                        : "");
-                                  console.log(
-                                    "formData.mediaUrl",
-                                    formData.mediaUrl,
-                                    "generatedImage",
-                                    generatedImage,
-                                    "formData.media",
-                                    formData.media,
-                                    "selectedFile",
-                                    selectedFile,
-                                    imageSrc,
-                                    "imageSrc"
-                                  );
-                                  return (
-                                    <img
-                                      src={imageSrc}
-                                      alt="Preview"
-                                      className="max-h-32 mx-auto  shadow-md"
-                                    />
-                                  );
-                                })()}
-                              </div>
-                              <div className="flex items-center justify-center flex-col space-y-1">
-                                <p className="text-xs theme-text-secondary">
-                                  {formData.media?.name ||
-                                    selectedFile?.name ||
-                                    "Uploaded Image"}
-                                </p>
-                                <button
-                                  type="button"
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    setFormData((prev) => ({
-                                      ...prev,
-                                      media: undefined,
-                                      selectedPlatforms: [],
-                                      mediaUrl: undefined,
-                                    }));
-                                    if (fileInputRef && fileInputRef.current)
-                                      fileInputRef.current.value = "";
-                                    setSelectedFile(null);
-                                    setGeneratedImage(null);
-                                    setAllGeneration([]);
-                                    setTemplatedImageUrl("");
-                                    setSelectedTemplate(undefined);
-                                    setImageAnalysis("");
-                                  }}
-                                  className="text-red-400 hover:text-red-300 text-xs font-medium flex items-center space-x-1"
-                                >
-                                  <Trash2 className="w-3 h-3" />
-                                  <span>{t("remove")}</span>
-                                </button>
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="">
-                              <Icon name="upload" size={44} />
-                              <div>
-                                <p className="font-medium theme-text-primary text-sm mb-1">
-                                  {t("click_browse_image")}
-                                </p>
-                                <p className="theme-text-secondary text-xs"></p>
-                              </div>
-                            </div>
-                          )}
+              {/* Video Upload Section */}
+              {selectedVideoMode !== "" && renderVideoUploadSection()}
 
-                          {/* Upload preloader is now handled by enhanced preloader overlay */}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {selectedImageMode === "textToImage" && (
-                    <>
-                      <div
-                        className={`space-y-4 ${
-                          generateImageWithPost ? "hidden" : "hidden"
-                        }`}
-                      >
-                        <div className="p-3 bg-gradient-to-r from-blue-500/5 to-purple-500/5 border border-blue-400/20 rounded-md">
-                          <div className="flex items-center space-x-3">
-                            <input
-                              type="checkbox"
-                              id="generateImageWithPostTextToImage"
-                              checked={generateImageWithPost}
-                              onChange={(e) =>
-                                setGenerateImageWithPost(e.target.checked)
-                              }
-                              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-                            />
-
-                            <div className="flex-1">
-                              <label
-                                htmlFor="generateImageWithPostTextToImage"
-                                className="flex items-center cursor-pointer"
-                              >
-                                <Sparkles className="w-4 h-4 mr-2 text-blue-400" />
-                                <span className="text-sm font-medium theme-text-primary ">
-                                  Use main content description as image prompt
-                                </span>
-                              </label>
-                              <p className="text-xs theme-text-secondary mt-1">
-                                Instead of using the image description below,
-                                use your main post content to generate the image
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-
-                        {!generateImageWithPost && (
-                          <div>
-                            <label className="text-sm font-medium theme-text-primary  mb-2 flex items-center">
-                              Image Description *
-                            </label>
-                            <textarea
-                              value={imageDescription}
-                              onChange={(e) =>
-                                setImageDescription(e.target.value)
-                              }
-                              className="w-full px-3 py-2.5 theme-bg-primary/20 border border-grey/10 focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400/50 transition-all duration-200 min-h-[40px] text-sm placeholder-gray-400"
-                              placeholder="Describe the image you want to generate... (e.g., 'A professional product photo of eco-friendly water bottles')"
-                              required
-                            />
-                          </div>
-                        )}
-
-                        {/* Generate Button - Only show when combined generation is NOT checked */}
-                        {!generateImageWithPost && (
-                          <button
-                            type="button"
-                            onClick={handleGenerateImage}
-                            disabled={
-                              isGeneratingImage || !imageDescription.trim()
-                            }
-                            className="w-full bg-gradient-to-r from-blue-500/80 to-indigo-500/80 text-white py-3 px-4 rounded font-medium hover:from-blue-600/80 hover:to-indigo-600/80 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
-                          >
-                            {isGeneratingImage ? (
-                              <>
-                                <Loader className="w-4 h-4 animate-spin" />
-                                <span>Generating Image...</span>
-                              </>
-                            ) : (
-                              <>
-                                <Sparkles className="w-4 h-4" />
-                                <span>Generate Image</span>
-                              </>
-                            )}
-                          </button>
-                        )}
-
-                        {/* Generate Image from Main Content - Only show when combined generation is checked */}
-                        {generateImageWithPost && (
-                          <div className="space-y-4">
-                            <div className="p-3 bg-green-500/10 border border-purple-400/20 rounded-md">
-                              <div className="flex items-center space-x-2">
-                                <CheckCircle className="w-4 h-4 text-purple-400" />
-                                <span className="text-sm font-medium text-purple-600">
-                                  Using your main content description to
-                                  generate the image
-                                </span>
-                              </div>
-                            </div>
-                            <button
-                              type="button"
-                              onClick={() => handleRegenerate(formData.prompt)}
-                              disabled={
-                                isGeneratingBoth || !formData.prompt.trim()
-                              }
-                              className="w-full bg-gradient-to-r from-green-500/80 to-teal-500/80 text-white py-3 px-4 rounded font-medium hover:from-green-600/80 hover:to-teal-600/80 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
-                            >
-                              {isGeneratingBoth ? (
-                                <>
-                                  <Loader className="w-4 h-4 animate-spin" />
-                                  <span>Generating Image & Post...</span>
-                                </>
-                              ) : (
-                                <>
-                                  <Sparkles className="w-4 h-4" />
-                                  <span>Generate Image & Post</span>
-                                </>
-                              )}
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                      {(formData.media || formData.mediaUrl) && (
-                        <div className="mt-4">
-                          <div className="border border-white/20 rounded p-4">
-                            <div className="relative">
-                              {(() => {
-                                const imageSrc =
-                                  templatedImageUrl ||
-                                  formData.mediaUrl ||
-                                  (formData.media
-                                    ? URL.createObjectURL(formData.media)
-                                    : "");
-
-                                return (
-                                  <img
-                                    src={imageSrc}
-                                    alt="Generated Image"
-                                    className="max-h-32 mx-auto shadow-md rounded"
-                                  />
-                                );
-                              })()}
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setFormData((prev) => ({
-                                    ...prev,
-                                    media: undefined,
-                                    selectedPlatforms: [],
-                                    mediaUrl: undefined,
-                                  }));
-                                  setTemplatedImageUrl("");
-                                  setSelectedTemplate(undefined);
-                                  setImageAnalysis("");
-                                }}
-                                className="absolute top-2 right-2 bg-purple-500 hover:bg-purple-600 text-white rounded-md p-1.5 shadow-md transition-colors duration-200"
-                                title="Remove image"
-                              >
-                                <X className="w-3 h-3" />
-                              </button>
-                            </div>
-                            <div className="flex items-center justify-between mt-1">
-                              <p className="text-xs theme-text-secondary">
-                                {formData.media?.name || "AI Generated Image"}
-                              </p>
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setFormData((prev) => ({
-                                    ...prev,
-                                    media: undefined,
-                                    selectedPlatforms: [],
-                                    mediaUrl: undefined,
-                                  }));
-                                  setTemplatedImageUrl("");
-                                  setSelectedTemplate(undefined);
-                                  setImageAnalysis("");
-                                }}
-                                className="text-red-400 hover:text-red-300 text-xs font-medium flex items-center space-x-1"
-                              >
-                                <Trash2 className="w-3 h-3" />
-                                <span>{t("remove")}</span>
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </>
-                  )}
-                </>
-              )}
-
-              {selectedVideoMode !== "" && (
-                <div>
-                  <label className="block text-sm font-medium theme-text-primary  mb-2">
-                    {selectedVideoMode === "uploadShorts" ? (
-                      <span>{t("upload_shorts_video")}</span>
-                    ) : (
-                      <span>{t("upload_video")}</span>
-                    )}
-                  </label>
-                  <div className="  theme-bg-primary  border border-slate-200/70 backdrop-blur-sm rounded-md shadow-md p-6">
-                    <div
-                      className={` border border-dashed  p-0 text-center transition-all duration-200 ${
-                        dragActive
-                          ? "border-blue-400/50 bg-blue-500/10"
-                          : "border-white/20 hover:border-white/30"
-                      }`}
-                      onDragEnter={handleDrag}
-                      onDragLeave={handleDrag}
-                      onDragOver={handleDrag}
-                      onDrop={handleDrop}
-                    >
-                      <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept={getAcceptType()}
-                        onChange={handleFileChange}
-                        className="hidden"
-                      />
-                    </div>
-
-                    {formData.media || formData.mediaUrl ? (
-                      <div className="space-y-4">
-                        <div className="relative">
-                          {formData.media?.type.startsWith("image/") ||
-                          (formData.mediaUrl &&
-                            !formData.media &&
-                            !formData.mediaUrl.match(
-                              /\.(mp4|mov|avi|wmv|flv|webm|mkv|m4v)$/i
-                            )) ? (
-                            <div className="relative">
-                              <img
-                                src={
-                                  templatedImageUrl ||
-                                  formData.mediaUrl ||
-                                  (formData.media
-                                    ? URL.createObjectURL(formData.media)
-                                    : "")
-                                }
-                                alt="Preview"
-                                className="max-h-40 mx-auto  shadow-md"
-                              />
-                              <div className="absolute top-2 left-2 bg-black/60 text-white px-2 py-1 rounded text-xs flex items-center">
-                                <Icon
-                                  name="image-post"
-                                  size={12}
-                                  className="mr-1"
-                                />
-                                Image
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="relative">
-                              <video
-                                src={
-                                  formData.mediaUrl
-                                    ? formData.mediaUrl
-                                    : formData.media
-                                      ? URL.createObjectURL(formData.media)
-                                      : undefined
-                                }
-                                className="max-h-40 mx-auto shadow-md rounded"
-                                controls
-                                preload="metadata"
-                              >
-                                {t("browser_no_video_support")}
-                              </video>
-                            </div>
-                          )}
-                        </div>
-                        <div className="text-sm theme-text-secondary space-y-2 text-center">
-                          <div>
-                            <p className="font-medium theme-text-primary text-sm">
-                              {formData.media?.name || "Uploaded Media"}
-                            </p>
-                            {formData.media && (
-                              <p className="text-xs">
-                                {(formData.media.size / 1024 / 1024).toFixed(2)}{" "}
-                                MB{" "}
-                              </p>
-                            )}
-                          </div>
-
-                          {analyzingImage && (
-                            <div className="flex items-center justify-center p-2 bg-blue-500/10 border border-blue-400/20 rounded text-xs">
-                              <Loader className="w-3 h-3 animate-spin mr-2 text-blue-400" />
-                              <span className="text-blue-300">
-                                {t("ai_analyzing")}
-                              </span>
-                            </div>
-                          )}
-                          {videoAspectRatioWarning ? (
-                            <div className="flex items-center justify-start p-3 bg-red-500/10 border border-red-400/20 rounded text-xs">
-                              <AlertCircle className="w-4 h-4 mr-2 text-red-400 flex-shrink-0" />
-                              <div className="text-left">
-                                <div className="font-medium text-red-300 mb-1">
-                                  {t("aspect_ratio_warning")}
-                                </div>
-                                <div className="text-red-200">
-                                  {videoAspectRatioWarning}
-                                </div>
-                              </div>
-                            </div>
-                          ) : videoAspectRatio ? (
-                            <div className="flex md:items-center justify-center p-2 bg-purple-500/10 border border-purple-400/20 rounded text-xs">
-                              <div>
-                                <CheckCircle className="w-3 h-3 mr-1 mt-1 text-purple-600" />
-                              </div>
-                              <span className="text-purple-600 md:text-center text-left">
-                                {is9x16Video(videoAspectRatio)
-                                  ? t(
-                                      "vertical_video_ready_stories_format_no_thumbnail_needed"
-                                    )
-                                  : is16x9Video(videoAspectRatio)
-                                    ? t(
-                                        "horizontal_video_ready_thumbnail_generated_when_click_generate_post"
-                                      )
-                                    : t(
-                                        "video_processed_ready_thumbnail_generated_when_click_generate_post"
-                                      )}
-                              </span>
-                            </div>
-                          ) : null}
-
-                          {!is9x16Video(videoAspectRatio || 0) && (
-                            <div className="mt-2 flex md:items-center md:justify-center gap-3">
-                              <label className="flex items-center space-x-2 cursor-pointer">
-                                <input
-                                  type="checkbox"
-                                  checked={generateVideoThumbnailAI}
-                                  onChange={(e) =>
-                                    setGenerateVideoThumbnailAI(
-                                      e.target.checked
-                                    )
-                                  }
-                                  className="md:w-4 md:h-4 w-3 h-3"
-                                />
-                                <span className="md:text-sm text-xs theme-text-secondary">
-                                  {t("generate_thumbnail_with_ai")}
-                                </span>
-                              </label>
-
-                              {!generateVideoThumbnailAI && (
-                                <>
-                                  <input
-                                    ref={thumbnailInputRef}
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={handleCustomThumbnailChange}
-                                    className="hidden"
-                                  />
-                                  <button
-                                    type="button"
-                                    onClick={() =>
-                                      thumbnailInputRef.current?.click()
-                                    }
-                                    className="px-3 py-1 border rounded text-sm"
-                                  >
-                                    {t("upload_custom_thumbnail")}
-                                  </button>
-                                  {customThumbnailUploading && (
-                                    <span className="text-xs text-blue-300 ml-2">
-                                      {t("uploading")}
-                                    </span>
-                                  )}
-                                </>
-                              )}
-                            </div>
-                          )}
-
-                          {(formData.media || formData.mediaUrl) &&
-                            (formData.media?.type.startsWith("image/") ||
-                              (formData.mediaUrl &&
-                                !formData.media &&
-                                !formData.mediaUrl.match(
-                                  /\.(mp4|mov|avi|wmv|flv|webm|mkv|m4v)$/i
-                                ))) &&
-                            !analyzingImage && <></>}
-
-                          {templatedImageUrl && selectedTemplate && (
-                            <div className="bg-purple-500/10 border border-purple-400/20  p-2">
-                              <div className="flex justify-between mb-2">
-                                <h4 className="font-medium text-purple-300 flex  text-xs">
-                                  <Palette className="w-3 h-3 mr-1" />
-                                  {t("image_updated")}: {selectedTemplate.name}
-                                </h4>
-                              </div>
-                              <div className="flex gap-2">
-                                <button
-                                  type="button"
-                                  onClick={handleEditTemplate}
-                                  className="flex-1 bg-purple-500/80 text-white px-3 py-1.5 rounded text-xs hover:bg-purple-600/80 transition-colors flex items-center justify-center space-x-1"
-                                >
-                                  <Edit3 className="w-3 h-3" />
-                                  <span>{t("edit")}</span>
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={handleDeleteTemplate}
-                                  className="flex-1 bg-red-500/80 text-white px-3 py-1.5 rounded text-xs hover:bg-red-600/80 transition-colors flex items-center justify-center space-x-1"
-                                >
-                                  <Trash2 className="w-3 h-3" />
-                                  <span>{t("remove")}</span>
-                                </button>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setFormData((prev) => ({
-                              ...prev,
-                              media: undefined,
-                              selectedPlatforms: [],
-                              mediaUrl: undefined,
-                            }));
-                            setTemplatedImageUrl("");
-                            setSelectedTemplate(undefined);
-                            setImageAnalysis("");
-                            if (fileInputRef && fileInputRef.current)
-                              fileInputRef.current.value = "";
-                          }}
-                          className="text-red-400 hover:text-red-300 text-xs font-medium text-center w-full flex items-center justify-center space-x-1  "
-                        >
-                          {t("remove")}
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="space-y-4">
-                        <div
-                          className={`${
-                            selectedVideoMode
-                              ? ""
-                              : "filter grayscale opacity-50"
-                          } flex gap-2 justify-center`}
-                        >
-                          <button
-                            type="button"
-                            onClick={() => fileInputRef.current?.click()}
-                            className="bg-transparent"
-                            disabled={!selectedVideoMode}
-                          >
-                            <div className="">
-                              <Icon name="upload-video" size={44} />
-                              <div>
-                                <p className="font-medium theme-text-primary text-sm mb-1">
-                                  {t("click_browse_video")}
-                                </p>
-                                <p className="theme-text-secondary text-xs">
-                                  {!selectedVideoMode &&
-                                    "Select a video mode above first"}
-                                </p>
-                              </div>
-                            </div>
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {videoAspectRatioWarning && (
-                    <div className="flex items-center justify-start p-3 theme-bg-danger border rounded-md text-xs mb-1 theme-text-light">
-                      <AlertCircle className="w-4 h-4 mr-2 flex-shrink-0" />{" "}
-                      {videoAspectRatioWarning}
-                    </div>
-                  )}
-
-                  {imageAnalysis && (
-                    <div className="bg-blue-500/10 border border-blue-400/20  p-3">
-                      <div className="space-y-2">
-                        <h4 className="font-medium text-blue-300 flex items-center text-xs">
-                          <Eye className="w-3 h-3 mr-1" />
-                          {t("ai_analysis_complete")}
-                        </h4>
-                        <div className="max-h-24 overflow-y-auto">
-                          <p className="text-blue-200 text-xs leading-[1.05rem]elaxed">
-                            {imageAnalysis}
-                          </p>
-                        </div>
-                        <button
-                          onClick={useImageAnalysis}
-                          className="bg-gradient-to-r from-blue-500/80 to-indigo-500/80 text-white px-3 py-1.5 rounded text-xs hover:from-blue-600/80 hover:to-indigo-600/80 transition-all duration-200 flex items-center space-x-1"
-                        >
-                          <span>{t("add_to_description")}</span>
-                          <Sparkles className="w-3 h-3" />
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-
+              {/* Main Content Form */}
               {selectedPostType !== "" &&
               (selectedImageMode !== "" ||
                 selectedVideoMode !== "" ||
                 selectedPostType === "text") ? (
                 <>
-                  <>
-                    <div className="flex-1">
-                      <label className=" text-sm font-medium theme-text-primary  mb-2  flex items-center">
-                        {selectedImageMode === "textToImage"
-                          ? t("generate_image_post_ai")
-                          : t("content_description")}
-                      </label>
-
-                      <textarea
-                        value={formData.prompt}
-                        onChange={(e) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            prompt: e.target.value,
-                          }))
-                        }
-                        className="w-full px-3   shadow-md backdrop-blur-md py-2.5 bg-white text-sm rounded-md placeholder-gray-500
+                  <div className="flex-1">
+                    <label className=" text-sm font-medium theme-text-primary  mb-2  flex items-center">
+                      {selectedImageMode === "textToImage"
+                        ? t("generate_image_post_ai")
+                        : t("content_description")}
+                    </label>
+                    <textarea
+                      value={formData.prompt}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          prompt: e.target.value,
+                        }))
+                      }
+                      className="w-full px-3   shadow-md backdrop-blur-md py-2.5 bg-white text-sm rounded-md placeholder-gray-500
              min-h-[160px] lg:min-h-[180px]
              border-0 outline-none ring-0
              focus:border-0 focus:outline-none focus:ring-0
              focus-visible:border-0 focus-visible:outline-none focus-v  isible:ring-0
              transition-all duration-200"
-                        placeholder={t("describe_placeholder")}
-                        required
-                      />
-                    </div>
+                      placeholder={t("describe_placeholder")}
+                      required
+                    />
+                  </div>
 
-                    {(selectedImageMode === "textToImage" ||
-                      selectedImageMode === "upload") && (
-                      <div className="">
-                        <label className="text-sm font-medium theme-text-primary  mb-2 flex items-center">
-                          {t("image_dimensions")}
-                        </label>
-                        <div className="grid grid-cols-3 gap-4">
-                          {[
-                            { label: "1:1", value: "1:1", icon: "⬜" },
-                            { label: "16:9", value: "16:9", icon: "▬" },
-                            { label: "9:16", value: "9:16", icon: "▫" },
-                          ].map((ratio) => (
-                            <button
-                              key={ratio.value}
-                              type="button"
-                              onClick={() =>
-                                handleAspectRatioChange(ratio.value)
-                              }
-                              className={`w-full h-24 p-2 border transition-all   theme-bg-primary shadow-md  rounded-md duration-200 flex flex-col items-center justify-center ${
-                                aspectRatio === ratio.value
-                                  ? "theme-bg-quaternary shadow-md theme-text-secondary"
-                                  : "theme-bg-primary hover:theme-bg-primary/50"
-                              }`}
-                            >
-                              <div
-                                className={`border mx-auto mb-1  ${
-                                  ratio.value === "1:1"
-                                    ? "w-8 h-8 border-1 border-purple-600 "
-                                    : ratio.value === "16:9"
-                                      ? "w-10 h-6 border-1"
-                                      : ratio.value === "9:16"
-                                        ? "w-6 h-10 border-1 border-purple-600"
-                                        : "w-8 h-8 border-1"
-                                } ${
-                                  aspectRatio === ratio.value
-                                    ? "border-purple-600 border"
-                                    : "theme-border-dark border-1"
-                                }`}
-                              ></div>
-                              <div className="text-md font-medium whitespace-pre-line ">
-                                {ratio.label}
-                              </div>
-                            </button>
-                          ))}{" "}
-                        </div>
-                      </div>
-                    )}
-                  </>
+                  {/* Aspect Ratio Selector */}
+                  {(selectedImageMode === "textToImage" ||
+                    selectedImageMode === "upload") &&
+                    renderAspectRatioSelector()}
+
+                  {/* Platform Selector (Hidden) */}
                   <div className="hidden">
                     <label className="block text-sm font-medium theme-text-primary  mb-3">
                       {t("target_platforms")}
@@ -3011,6 +2923,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                       })}
                     </div>
                   </div>
+
+                  {/* Action Buttons */}
                   <div className="flex gap-4  -mt-[2px] border-t border-white/10">
                     <button
                       type="button"
@@ -3083,6 +2997,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         </>
       )}
 
+      {/* Template Selector */}
       {showTemplateSelector && (
         <TemplateSelector
           onSelectTemplate={handleTemplateSelect}
@@ -3090,6 +3005,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         />
       )}
 
+      {/* Template Editor */}
       {showTemplateEditor &&
         selectedTemplate &&
         (formData.media || formData.mediaUrl || videoThumbnailUrl) && (
@@ -3110,6 +3026,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           />
         )}
 
+      {/* Preview Section */}
       {showPreview && generatedResults && generatedResults.length > 0 && (
         <div className="mt-6">
           <PostPreview
