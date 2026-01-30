@@ -1,4 +1,10 @@
-﻿import React, { useState, useRef, useEffect, useCallback } from "react";
+﻿import React, {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  useLayoutEffect,
+} from "react";
 import {
   Wand2,
   Eye,
@@ -176,17 +182,48 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     return { valid: true, ratio };
   };
 
-  const [selectedVideoMode, setSelectedVideoMode] = useState<
-    "upload" | "uploadShorts" | ""
-  >("");
+  const packageFeatures =
+    user?.wallet?.package?.package_features?.postTypes || {};
 
   const [selectedPostType, setSelectedPostType] = useState<
     "text" | "image" | "video" | ""
-  >("image");
-
+  >("");
   const [selectedImageMode, setSelectedImageMode] = useState<
     "upload" | "textToImage" | ""
-  >("textToImage");
+  >("");
+  const [selectedVideoMode, setSelectedVideoMode] = useState<
+    "upload" | "uploadShorts" | ""
+  >("");
+  const canText = packageFeatures?.text ?? false;
+  const canImage = packageFeatures?.image ?? false;
+  const canVideoShort = packageFeatures?.video?.short ?? false;
+  const canVideoLandscape = packageFeatures?.video?.landscape ?? false;
+  const canVideo = canVideoShort || canVideoLandscape;
+  useLayoutEffect(() => {
+    const newPostType: "text" | "image" | "video" | "" = canImage
+      ? "image"
+      : canText
+        ? "text"
+        : canVideo
+          ? "video"
+          : "";
+
+    setSelectedPostType(newPostType);
+
+    if (newPostType === "image") {
+      setSelectedImageMode("textToImage");
+    } else {
+      setSelectedImageMode("");
+    }
+
+    if (newPostType === "video") {
+      setSelectedVideoMode(
+        canVideoShort ? "uploadShorts" : canVideoLandscape ? "upload" : ""
+      );
+    } else {
+      setSelectedVideoMode("");
+    }
+  }, [user]);
 
   const getAcceptType = () => {
     if (selectedPostType === "image") return "image/*";
@@ -1948,7 +1985,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                 <div className="grid grid-cols-3 gap-4 text-sm md:text-base">
                   <button
                     type="button"
+                    disabled={!canText}
                     onClick={() => {
+                      if (!canText) return;
                       if (selectedPostType !== "text") {
                         setFormData((prev) => ({
                           ...prev,
@@ -1974,7 +2013,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                       selectedPostType === "text"
                         ? "selected-main-button"
                         : "unselected-main-button"
-                    }`}
+                    } ${!canText ? "opacity-50 cursor-not-allowed" : ""}`}
                   >
                     <div className="flex flex-col items-center">
                       <div className={`  `}>
@@ -1997,8 +2036,11 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                   </button>
 
                   {/* Image Post */}
-                  <div
+                  <button
+                    type="button"
+                    disabled={!canImage}
                     onClick={() => {
+                      if (!canImage) return;
                       setSelectedVideoMode("");
                       setShowPreview(false);
                       if (selectedPostType !== "image") {
@@ -2020,7 +2062,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                       selectedPostType === "image"
                         ? "selected-main-button"
                         : "unselected-main-button"
-                    }`}
+                    } ${!canImage ? "opacity-50 cursor-not-allowed pointer-events-none" : ""}`}
                   >
                     <div className="flex flex-col items-center">
                       <div className={`   `}>
@@ -2061,7 +2103,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             resetAll();
                             setSelectedImageMode("upload");
                           }}
-                          className={`p-3 rounded-md border transition shadow-md backdrop-blur-md border-slate-200/70 transition-all duration-200 text-center 
+                          className={`p-3 rounded-md border transition shadow-md backdrop-blur-md border-slate-200/70 duration-200 text-center 
                         ${selectedPostType === "image" ? "" : "hidden"}
                         ${
                           selectedImageMode === "upload"
@@ -2121,10 +2163,13 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         </button>
                       </div>
                     </div>
-                  </div>
+                  </button>
 
-                  <div
+                  <button
+                    disabled={!canVideoLandscape && !canVideoShort}
+                    type="button"
                     onClick={() => {
+                      if (!canVideo) return;
                       if (selectedPostType !== "video") {
                         setFormData((prev) => ({
                           ...prev,
@@ -2139,7 +2184,13 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         setTemplatedImageUrl("");
                         setSelectedTemplate(undefined);
                         setSelectedPostType("video");
-                        setSelectedVideoMode("uploadShorts");
+                        setSelectedVideoMode(
+                          canVideoShort
+                            ? "uploadShorts"
+                            : canVideoLandscape
+                              ? "upload"
+                              : ""
+                        );
                         setShowVideoMenu(false);
                         setTemplatedImageUrl("");
                         setSelectedTemplate(undefined);
@@ -2154,7 +2205,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                       selectedPostType === "video"
                         ? "selected-main-button"
                         : "unselected-main-button"
-                    }`}
+                    } ${!canVideo || (!canVideoLandscape && !canVideoShort) ? "opacity-50 cursor-not-allowed pointer-events-none" : ""}`}
                   >
                     <div className="flex flex-col items-center">
                       <div>
@@ -2186,7 +2237,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                       >
                         <button
                           type="button"
+                          disabled={!canVideoLandscape}
                           onClick={() => {
+                            if (!canVideoLandscape) return;
                             if (selectedVideoMode !== "upload") {
                               setFormData((prev) => ({
                                 ...prev,
@@ -2215,7 +2268,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               selectedVideoMode === "upload"
                                 ? "selected-sub-button "
                                 : "unselected-sub-button"
-                            }
+                            } ${!canVideoLandscape ? "opacity-50 cursor-not-allowed" : ""}
                           `}
                         >
                           <div className="flex flex-col items-center space-y-0">
@@ -2237,7 +2290,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         </button>
                         <button
                           type="button"
+                          disabled={!canVideoShort}
                           onClick={() => {
+                            if (!canVideoShort) return;
                             if (selectedVideoMode !== "uploadShorts") {
                               setFormData((prev) => ({
                                 ...prev,
@@ -2271,7 +2326,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               selectedVideoMode === "uploadShorts"
                                 ? "selected-sub-button"
                                 : "unselected-sub-button"
-                            }
+                            } ${!canVideoShort ? "opacity-50 cursor-not-allowed" : ""}
                           `}
                         >
                           <div className="flex flex-col items-center space-y-0">
@@ -2293,7 +2348,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         </button>
                       </div>
                     </div>
-                  </div>
+                  </button>
                 </div>
               </div>
 
