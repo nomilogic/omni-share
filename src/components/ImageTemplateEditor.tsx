@@ -44,6 +44,7 @@ import {
   Youtube,
   Instagram,
   Twitter,
+  LucideTabletSmartphone,
 } from "lucide-react";
 import { uploadMedia, getCurrentUser } from "../lib/database";
 import { templateService } from "../services/templateService";
@@ -721,6 +722,75 @@ export const ImageTemplateEditor = ({
     }
   };
 
+  const updateTemplateById = async () => {
+    if (!selectedTemplateId) {
+      console.log("❌ No template selected to update");
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const name = templateName.trim() || `Template ${new Date().toISOString()}`;
+
+      const payload: SavedTemplateV1 = {
+        version: 1,
+        id: selectedTemplateId,
+        name,
+        savedAt: new Date().toISOString(),
+        aspectRatio,
+        canvasDimensions,
+        elements,
+        lockedElementIds: Array.from(lockedElements),
+        thumbnailDataUrl: createTemplateThumbnailDataUrl(),
+        source: "user",
+      };
+
+      // Try updating on server first
+      try {
+        await templateService.updateTemplate(selectedTemplateId, {
+          name,
+          json: payload,
+          isPublic: saveAsGlobal ? true : undefined,
+        });
+        console.log("✅ Template updated on server", selectedTemplateId);
+        await refreshSavedTemplates();
+        return;
+      } catch (error) {
+        console.warn(
+          "⚠️ Failed to update template on server, updating locally",
+          error,
+        );
+      }
+
+      // Fallback: update locally
+      try {
+        const templates = readTemplatesFromLocalStorage();
+        const updated = templates.map((t) =>
+          t.id === selectedTemplateId ? payload : t
+        );
+
+        writeTemplatesToLocalStorage(updated);
+        setTemplateName(name);
+        setSavedTemplates((prev) => {
+          // keep any remote templates already loaded
+          const remote = prev.filter(
+            (t) => t.source === "user" || t.source === "global",
+          );
+          return [
+            ...remote,
+            ...updated.map((t) => ({ ...t, source: "local" as const })),
+          ];
+        });
+
+        console.log("✅ Template updated in localStorage", payload);
+      } catch (error) {
+        console.error("❌ Failed to update template in localStorage", error);
+      }
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const selectTemplateById = (id: string) => {
     setSelectedTemplateId(id);
     const tpl = savedTemplates.find((t) => t.id === id);
@@ -869,7 +939,7 @@ export const ImageTemplateEditor = ({
       // Server-side deletion for user templates and attempt API first for local templates
       console.log("🛰️ Calling templateService.deleteTemplate for id:", id, "source:", tpl.source);
 
-      if (tpl.source === "global") {
+      if (tpl.source === "global" && !saveAsGlobal) {
         console.warn("⚠️ Delete not supported for global templates");
         setIsDeleting(false);
         return;
@@ -882,7 +952,7 @@ export const ImageTemplateEditor = ({
         console.error("❌ templateService.deleteTemplate failed:", apiError);
 
         // If it's a local template, remove from local storage as a fallback
-        if (tpl.source === "local") {
+        if (tpl.source === "local" || tpl.source === "user" ||  (saveAsGlobal && tpl.source === "global")) {
           try {
             const templates = readTemplatesFromLocalStorage();
             const next = templates.filter((t) => t.id !== id);
@@ -2760,17 +2830,32 @@ const hasUnsavedChanges = useMemo(() => {
                       <span className="text-sm">{t("save")}</span>
                     </button>
                   </div>
+                  {/* isGlobal check start */}
+                  <label className="flex items-center gap-2 text-xs text-slate-700 select-none flex-shrink-0">
+                  <input
+                    type="checkbox"
+                    checked={saveAsGlobal}
+                    onChange={(e) => setSaveAsGlobal(e.target.checked)}
+                    className="h-4 w-4"
+                    disabled={isTemplatesLoading}
+                  />
+                  Global
+                </label>
 
-                  {/* <label className="flex items-center gap-2 text-xs text-slate-700 select-none flex-shrink-0">
-      <input
-        type="checkbox"
-        checked={saveAsGlobal}
-        onChange={(e) => setSaveAsGlobal(e.target.checked)}
-        className="h-4 w-4"
-        disabled={isTemplatesLoading}
-      />
-      Save as global (isPublic)
-    </label> */}
+                 <button
+                      onClick={() => void updateTemplateById()}
+                      className="h-8 bg-purple-600 text-white font-medium flex items-center gap-2 justify-center px-3 rounded-md border border-purple-600 hover:bg-[#d7d7fc] hover:text-[#7650e3] whitespace-nowrap disabled:opacity-60"
+                      title={
+                          t("update")
+                        
+                      }
+                      type="button"
+                      disabled={isTemplatesLoading || isSaving || !selectedTemplateId}
+                    >
+                      <LucideTabletSmartphone className="w-4 h-4" />
+                      <span className="text-sm">{t("update")}</span>
+                    </button>
+                {/* isGlobal check end */}
 
                   <div className="flex items-center justify-between flex-shrink-0">
                     <p className="text-xs text-gray-600 font-medium">
@@ -2793,12 +2878,14 @@ const hasUnsavedChanges = useMemo(() => {
                         disabled={
                           isTemplatesLoading ||
                           isDeleting ||
-                          !selectedTemplateId ||
-                          !["local", "user"].includes(
+                          !selectedTemplateId 
+                          ||
+                        
+                          (["global"].includes(
                             savedTemplates.find(
                               (t) => t.id === selectedTemplateId,
                             )?.source || "",
-                          )
+                          ) && !saveAsGlobal)
                         }
                         className="h-8 px-2 flex items-center justify-center rounded-md bg-red-100 hover:bg-red-200 disabled:opacity-50 text-xs text-red-700"
                         title={t("delete_template_tooltip")}
@@ -3056,54 +3143,54 @@ const hasUnsavedChanges = useMemo(() => {
 
                     {/* Profile Field Binding - Logo elements only (excluding background) */}
                     {
-                      // selectedElementData.type === "logo" && selectedElement !== "background-image" && (
-                      //   <div className="mb-2 md:mb-3">
-                      //     <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5 md:mb-2">
-                      //       Bind to Profile Field
-                      //     </label>
-                      //     <select
-                      //       value={selectedElementData.name || ""}
-                      //       onChange={(e) =>
-                      //         updateSelectedElement({
-                      //           name: e.target.value || undefined,
-                      //         })
-                      //       }
-                      //       className="w-full px-3 py-2 border border-gray-300 rounded-md text-xs md:text-sm"
-                      //     >
-                      //       <option value="">No binding</option>
-                      //       <option value="logo">Logo</option>
-                      //     </select>
-                      //     {/* Show preview of bound data */}
-                      //     {selectedElementData.name && (
-                      //       <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded text-xs">
-                      //         <p className="font-medium text-blue-900 mb-1">
-                      //           Preview:
-                      //         </p>
-                      //         {selectedElementData.type === "logo" && (
-                      //           <div>
-                      //             {profileBindingData.logo ? (
-                      //               <>
-                      //                 <p className="text-blue-700 mb-1">
-                      //                   Logo URL:
-                      //                 </p>
-                      //                 <p className="text-blue-600 break-all text-xs font-mono max-h-12 overflow-y-auto">
-                      //                   {profileBindingData.logo}
-                      //                 </p>
-                      //               </>
-                      //             ) : (
-                      //               <p className="text-blue-700">
-                      //                 (no logo in profile)
-                      //               </p>
-                      //             )}
-                      //           </div>
-                      //         )}
-                      //       </div>
-                      //     )}
-                      //     <p className="text-xs text-gray-500 mt-1">
-                      //       Logo will auto-populate from profile
-                      //     </p>
-                      //   </div>
-                      // )
+                      selectedElementData.type === "logo" && selectedElement !== "background-image" && (
+                        <div className="mb-2 md:mb-3">
+                          <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5 md:mb-2">
+                            Bind to Profile Field
+                          </label>
+                          <select
+                            value={selectedElementData.name || ""}
+                            onChange={(e) =>
+                              updateSelectedElement({
+                                name: e.target.value || undefined,
+                              })
+                            }
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md text-xs md:text-sm"
+                          >
+                            <option value="">No binding</option>
+                            <option value="logo">Logo</option>
+                          </select>
+                          {/* Show preview of bound data */}
+                          {selectedElementData.name && (
+                            <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded text-xs">
+                              <p className="font-medium text-blue-900 mb-1">
+                                Preview:
+                              </p>
+                              {selectedElementData.type === "logo" && (
+                                <div>
+                                  {profileBindingData.logo ? (
+                                    <>
+                                      <p className="text-blue-700 mb-1">
+                                        Logo URL:
+                                      </p>
+                                      <p className="text-blue-600 break-all text-xs font-mono max-h-12 overflow-y-auto">
+                                        {profileBindingData.logo}
+                                      </p>
+                                    </>
+                                  ) : (
+                                    <p className="text-blue-700">
+                                      (no logo in profile)
+                                    </p>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          )}
+                          <p className="text-xs text-gray-500 mt-1">
+                            Logo will auto-populate from profile
+                          </p>
+                        </div>
+                      )
                     }
                     {/* Text Content last */}
                     {selectedElementData.type === "text" && (
@@ -3131,44 +3218,44 @@ const hasUnsavedChanges = useMemo(() => {
                     )}
                     {/* Profile Field Binding - Text elements */}
                     {
-                      // selectedElementData.type === "text" && (
-                      //   <div className="mb-2 md:mb-3">
-                      //     <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5 md:mb-2">
-                      //       Bind to Profile Field
-                      //     </label>
-                      //     <select
-                      //       value={selectedElementData.name || ""}
-                      //       onChange={(e) =>
-                      //         updateSelectedElement({
-                      //           name: e.target.value || undefined,
-                      //         })
-                      //       }
-                      //       className="w-full px-3 py-2 border border-gray-300 rounded-md text-xs md:text-sm"
-                      //     >
-                      //       <option value="">No binding</option>
-                      //       <option value="email">Email</option>
-                      //       <option value="website">Website</option>
-                      //       <option value="brandName">Brand Name</option>
-                      //       <option value="fullName">Full Name</option>
-                      //       <option value="phoneNumber">Phone Number</option>
-                      //     </select>
-                      //     {/* Show preview of bound data */}
-                      //     {selectedElementData.name && (
-                      //       <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded text-xs">
-                      //         <p className="font-medium text-blue-900 mb-1">
-                      //           Preview:
-                      //         </p>
-                      //         <p className="text-blue-700 break-words truncate max-w-xs">
-                      //           {profileBindingData[selectedElementData.name] ||
-                      //             "(empty)"}
-                      //         </p>
-                      //       </div>
-                      //     )}
-                      //     <p className="text-xs text-gray-500 mt-1">
-                      //       Element will auto-populate with profile data
-                      //     </p>
-                      //   </div>
-                      // )
+                      selectedElementData.type === "text" && (
+                        <div className="mb-2 md:mb-3">
+                          <label className="block text-xs md:text-sm font-medium text-slate-700 mb-1.5 md:mb-2">
+                            Bind to Profile Field
+                          </label>
+                          <select
+                            value={selectedElementData.name || ""}
+                            onChange={(e) =>
+                              updateSelectedElement({
+                                name: e.target.value || undefined,
+                              })
+                            }
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md text-xs md:text-sm"
+                          >
+                            <option value="">No binding</option>
+                            <option value="email">Email</option>
+                            <option value="website">Website</option>
+                            <option value="brandName">Brand Name</option>
+                            <option value="fullName">Full Name</option>
+                            <option value="phoneNumber">Phone Number</option>
+                          </select>
+                          {/* Show preview of bound data */}
+                          {selectedElementData.name && (
+                            <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded text-xs">
+                              <p className="font-medium text-blue-900 mb-1">
+                                Preview:
+                              </p>
+                              <p className="text-blue-700 break-words truncate max-w-xs">
+                                {profileBindingData[selectedElementData.name] ||
+                                  "(empty)"}
+                              </p>
+                            </div>
+                          )}
+                          <p className="text-xs text-gray-500 mt-1">
+                            Element will auto-populate with profile data
+                          </p>
+                        </div>
+                      )
                     }
 
                     {/* W H X Y Controls in one row */}
