@@ -45,6 +45,18 @@ export const templateService = {
     return API.saveTemplate(payload);
   },
 
+  async updateTemplate(id: string, data: SaveTemplateRequest) {
+    const payload = {
+      name: data.name,
+      json:
+        typeof data.json === "string" ? data.json : JSON.stringify(data.json),
+      ...(data.isPublic ? { isPublic: true } : {}),
+    };
+
+    // Token is attached by src/services/api.ts interceptor
+    return API.updateTemplate(id, payload);
+  },
+
   async getTemplates(): Promise<TemplateApiItem[]> {
     const res = await API.listTemplates();
     return extractTemplatesArray(res.data);

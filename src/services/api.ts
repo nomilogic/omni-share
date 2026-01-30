@@ -170,6 +170,7 @@ interface APIInstance extends AxiosInstance {
   OauthExchangeCode: (data: ExchangeCodePayload) => Promise<any>;
   subscribe: (data: ExchangeCodePayload) => Promise<any>;
   saveTemplate: (data: TemplatePayload) => Promise<any>;
+  updateTemplate: (id: string, data: TemplatePayload) => Promise<any>;
   deleteTemplate: (id: string) => Promise<any>;
   listTemplates: () => Promise<any>;
   listGlobalTemplates: () => Promise<any>;
@@ -383,6 +384,7 @@ API.subscribe = (data: any) => API.post("/client/subscribe", { email: data });
 
 // Templates
 API.saveTemplate = (data) => API.post("/client/template", data);
+API.updateTemplate = (id: string, data) => API.patch(`/client/template/${id}`, data);
 API.deleteTemplate = (id: string) => API.delete(`/client/template/${id}`);
 API.listTemplates = () => API.get("/client/template");
 API.listGlobalTemplates = () => API.get("/client/template/global");
