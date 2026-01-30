@@ -1891,6 +1891,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           logoUrl={logoUrl}
           themeUrl={themeUrl}
           hasOutput={Boolean(generatedImage)}
+          user={user}
         />
       )}
       {showVideoThumbnailModal && videoThumbnailForRegeneration && (

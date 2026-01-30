@@ -5,7 +5,6 @@ import { useConfirmDialog } from "../context/ConfirmDialogContext";
 import { useNavigationGuard } from "../hooks/useNavigationGuard";
 import { Download } from "lucide-react";
 import { Link } from "react-router-dom";
-import user from "pusher-js/types/src/core/user";
 
 export default function ImageRegenerationModal({
   imageUrl,
@@ -28,6 +27,7 @@ export default function ImageRegenerationModal({
   prompt,
   setPrompt,
   hasOutput: hasOutputProp = false,
+  user,
 }: any) {
   const [activeImage, setActiveImage] = useState(imageUrl);
   const { t } = useTranslation();
