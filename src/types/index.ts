@@ -1,14 +1,19 @@
 export interface ProfileInfo {
-  type: 'individual' | 'business';
+  type: "individual" | "business";
   name: string;
   website: string;
   industry: string;
   description: string;
   targetAudience: string;
-  brandTone: 'professional' | 'playful' | 'motivational' | 'casual' | 'authoritative';
+  brandTone:
+    | "professional"
+    | "playful"
+    | "motivational"
+    | "casual"
+    | "authoritative";
   goals: string[];
   platforms: Platform[];
-  plan?: 'free' | 'ipro' | 'business';
+  plan?: "free" | "ipro" | "business";
 }
 
 // CampaignInfo (renamed from CampaignInfo with additional campaign fields)
@@ -18,15 +23,26 @@ export interface CampaignInfo {
   industry?: string;
   description?: string;
   targetAudience?: string;
-  brandTone?: 'professional' | 'playful' | 'motivational' | 'casual' | 'authoritative';
+  brandTone?:
+    | "professional"
+    | "playful"
+    | "motivational"
+    | "casual"
+    | "authoritative";
   goals?: string[];
   platforms: Platform[];
   // Additional campaign-specific fields
-  objective?: 'awareness' | 'engagement' | 'conversions' | 'leads' | 'sales' | 'brand_building';
+  objective?:
+    | "awareness"
+    | "engagement"
+    | "conversions"
+    | "leads"
+    | "sales"
+    | "brand_building";
   startDate?: string;
   endDate?: string;
   budget?: number;
-  status?: 'active' | 'paused' | 'completed' | 'draft';
+  status?: "active" | "paused" | "completed" | "draft";
   keywords?: string[];
   hashtags?: string[];
   totalPosts?: number;
@@ -53,7 +69,7 @@ export interface GeneratedPost {
   hashtags: string[];
   emojis: string;
   characterCount: number;
-  engagement: 'high' | 'medium' | 'low';
+  engagement: "high" | "medium" | "low";
   imageUrl?: string;
   pageId?: string; // For Facebook/Instagram pages
   mediaUrl?: string; // URL of uploaded media
@@ -71,20 +87,31 @@ export interface GeneratedPost {
   tiktokVideoDurationSec?: number;
 }
 
-export type Platform = 'facebook' | 'instagram' | 'twitter' | 'linkedin' | 'tiktok' | 'youtube';
+export type Platform =
+  | "facebook"
+  | "instagram"
+  | "linkedin"
+  | "tiktok"
+  | "youtube";
 
 export interface Campaign {
   id?: string;
   profileId: string;
   name: string;
   description?: string;
-  objective?: 'awareness' | 'engagement' | 'conversions' | 'leads' | 'sales' | 'brand_building';
+  objective?:
+    | "awareness"
+    | "engagement"
+    | "conversions"
+    | "leads"
+    | "sales"
+    | "brand_building";
   startDate?: string;
   endDate?: string;
   targetAudience?: string;
   platforms: Platform[];
   budget?: number;
-  status: 'active' | 'paused' | 'completed' | 'draft';
+  status: "active" | "paused" | "completed" | "draft";
   brandVoice?: string;
   keywords?: string[];
   hashtags?: string[];
@@ -106,7 +133,13 @@ export interface StepData {
   userId?: string;
 }
 
-export type Step = 'auth' | 'campaign' | 'content' | 'generate' | 'preview' | 'publish';
+export type Step =
+  | "auth"
+  | "campaign"
+  | "content"
+  | "generate"
+  | "preview"
+  | "publish";
 
 export interface PublishResult {
   success: boolean;

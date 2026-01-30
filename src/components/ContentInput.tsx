@@ -93,8 +93,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   const [formData, setFormData] = useState<any>({
     prompt: initialData?.prompt || "",
     tags: [],
-    selectedPlatforms: initialData?.selectedPlatforms ||
-      selectedPlatforms || ["linkedin"],
+    selectedPlatforms: ["facebook", "instagram", "linkedin"],
     media: initialData?.media || undefined,
     mediaUrl: initialData?.mediaUrl || undefined,
   });
@@ -185,6 +184,12 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   const packageFeatures =
     user?.wallet?.package?.package_features?.postTypes || {};
 
+  const canText = packageFeatures?.text ?? false;
+  const canImage = packageFeatures?.image ?? false;
+  const canVideoShort = packageFeatures?.video?.short ?? false;
+  const canVideoLandscape = packageFeatures?.video?.landscape ?? false;
+  const canVideo = canVideoShort || canVideoLandscape;
+
   const [selectedPostType, setSelectedPostType] = useState<
     "text" | "image" | "video" | ""
   >("");
@@ -194,12 +199,10 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   const [selectedVideoMode, setSelectedVideoMode] = useState<
     "upload" | "uploadShorts" | ""
   >("");
-  const canText = packageFeatures?.text ?? false;
-  const canImage = packageFeatures?.image ?? false;
-  const canVideoShort = packageFeatures?.video?.short ?? false;
-  const canVideoLandscape = packageFeatures?.video?.landscape ?? false;
-  const canVideo = canVideoShort || canVideoLandscape;
-  useLayoutEffect(() => {
+
+  useEffect(() => {
+    if (!user?.id) return;
+
     const newPostType: "text" | "image" | "video" | "" = canImage
       ? "image"
       : canText
@@ -208,22 +211,95 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           ? "video"
           : "";
 
-    setSelectedPostType(newPostType);
+    setSelectedPostType((prev) => (prev === newPostType ? prev : newPostType));
 
-    if (newPostType === "image") {
-      setSelectedImageMode("textToImage");
-    } else {
-      setSelectedImageMode("");
+    setSelectedImageMode((prev) => {
+      const mode = newPostType === "image" ? "textToImage" : "";
+      return prev === mode ? prev : mode;
+    });
+
+    setSelectedVideoMode((prev) => {
+      const mode =
+        newPostType === "video"
+          ? canVideoShort
+            ? "uploadShorts"
+            : canVideoLandscape
+              ? "upload"
+              : ""
+          : "";
+      return prev === mode ? prev : mode;
+    });
+  }, [user?.id, canImage, canText, canVideo, canVideoShort, canVideoLandscape]);
+
+  const PLATFORM_MAP: Record<string, Platform[]> = {
+    text: ["facebook", "linkedin"],
+    image: ["facebook", "instagram", "linkedin"],
+    video_uploadShorts: [
+      "facebook",
+      "instagram",
+      "linkedin",
+      "tiktok",
+      "youtube",
+    ],
+    video_upload: ["facebook", "linkedin", "youtube"],
+    video_default: ["facebook", "instagram", "linkedin", "tiktok", "youtube"],
+  };
+
+  const getAppropriatePlatforms = (
+    postType: "text" | "image" | "video" | "",
+    videoMode?: string
+  ): Platform[] => {
+    if (!postType) return ["linkedin"];
+
+    if (postType === "video") {
+      return PLATFORM_MAP[`video_${videoMode}`] || PLATFORM_MAP.video_default;
     }
 
-    if (newPostType === "video") {
-      setSelectedVideoMode(
-        canVideoShort ? "uploadShorts" : canVideoLandscape ? "upload" : ""
-      );
-    } else {
-      setSelectedVideoMode("");
+    return PLATFORM_MAP[postType];
+  };
+  const isSameArray = (a: string[] = [], b: string[] = []) => {
+    if (a.length !== b.length) return false;
+    for (let i = 0; i < a.length; i++) {
+      if (a[i] !== b[i]) return false;
     }
-  }, [user]);
+    return true;
+  };
+
+  const initialAppliedRef = useRef(false);
+
+  useEffect(() => {
+    if (!selectedPostType) return;
+
+    const platforms = getAppropriatePlatforms(
+      selectedPostType,
+      selectedVideoMode
+    );
+
+    setFormData((prev: any) => {
+      let finalPlatforms = platforms;
+
+      // ✅ apply initialData only once
+      if (
+        !initialAppliedRef.current &&
+        initialData?.selectedPlatforms?.length
+      ) {
+        finalPlatforms = initialData.selectedPlatforms;
+        initialAppliedRef.current = true;
+      }
+
+      // 🚀 prevent useless updates
+      if (isSameArray(prev.selectedPlatforms, finalPlatforms)) {
+        return prev;
+      }
+
+      return {
+        ...prev,
+        selectedPlatforms: finalPlatforms,
+      };
+    });
+  }, [selectedPostType, selectedVideoMode]);
+
+  console.log("formData.selectedPlatforms", formData.selectedPlatforms);
 
   const getAcceptType = () => {
     if (selectedPostType === "image") return "image/*";
@@ -390,28 +466,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       document.removeEventListener("click", handleClickCapture, true);
   }, [checkUnsavedContent, showConfirmAndNavigate]);
 
-  const getAppropiatePlatforms = (
-    postType: "text" | "image" | "video",
-    imageMode?: string,
-    videoMode?: string
-  ): Platform[] => {
-    switch (postType) {
-      case "text":
-        return ["facebook", "linkedin"];
-      case "image":
-        return ["facebook", "instagram", "linkedin"];
-      case "video":
-        if (videoMode === "uploadShorts") {
-          return ["facebook", "instagram", "linkedin", "tiktok", "youtube"];
-        } else if (videoMode === "upload") {
-          return ["facebook", "linkedin", "youtube"];
-        }
-        return ["facebook", "instagram", "linkedin", "tiktok", "youtube"];
-      default:
-        return ["linkedin", "facebook"];
-    }
-  };
-
   useEffect(() => {
     if (formData.media && formData.media.type.startsWith("video/")) {
       validateVideo(formData.media, selectedVideoMode).then((res: any) => {
@@ -419,22 +473,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       });
     }
   }, [selectedVideoMode]);
-
   useEffect(() => {
-    setFormData((prev: any) => ({
-      ...prev,
-      selectedPlatforms: initialData?.selectedPlatforms ||
-        selectedPlatforms || ["linkedin"],
-    }));
-    const appropriatePlatforms = getAppropiatePlatforms(
-      selectedPostType?.toLowerCase() as "text" | "image" | "video",
-      selectedImageMode,
-      selectedVideoMode
-    );
-    setFormData((prev: any) => ({
-      ...prev,
-      selectedPlatforms: appropriatePlatforms,
-    }));
     setShowPublishModal(false);
     if (selectedPostType === "video") {
       if (videoAspectRatio) {
@@ -462,7 +501,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       }
     }
   }, [
-    formData.prompt,
     selectedPostType,
     selectedImageMode,
     selectedVideoMode,
@@ -629,7 +667,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                 return {
                   ...prev,
                   media: undefined,
-                  selectedPlatforms: [],
+
                   mediaUrl: undefined,
                   serverUrl: undefined,
                 };
@@ -688,11 +726,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // if (user?.balance < cost) {
-    //   navigate("/pricing");
-    //   return;
-    // }
 
     if (formData?.prompt?.trim()) {
       if (
@@ -1251,7 +1284,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       ...prev,
       prompt: "",
       media: undefined,
-      selectedPlatforms: [],
+
       mediaUrl: undefined,
       serverUrl: undefined,
       imageUrl: undefined,
@@ -1896,7 +1929,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       ...prev,
       media: undefined,
       mediaUrl: undefined,
-      selectedPlatforms: [],
+
       prompt: "",
     }));
     setModelImage(false);
@@ -1992,7 +2025,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         setFormData((prev) => ({
                           ...prev,
                           media: undefined,
-                          selectedPlatforms: [],
+
                           prompt: "",
                           mediaUrl: undefined,
                         }));
@@ -2174,7 +2207,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                         setFormData((prev) => ({
                           ...prev,
                           media: undefined,
-                          selectedPlatforms: [],
+
                           prompt: "",
                           mediaUrl: undefined,
                         }));
@@ -2244,7 +2277,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               setFormData((prev) => ({
                                 ...prev,
                                 media: undefined,
-                                selectedPlatforms: [],
+
                                 mediaUrl: undefined,
                               }));
                               setOriginalVideoFile(null);
@@ -2297,7 +2330,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                               setFormData((prev) => ({
                                 ...prev,
                                 media: undefined,
-                                selectedPlatforms: [],
+
                                 mediaUrl: undefined,
                               }));
                               setOriginalVideoFile(null);
@@ -2433,7 +2466,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                     setFormData((prev) => ({
                                       ...prev,
                                       media: undefined,
-                                      selectedPlatforms: [],
+
                                       mediaUrl: undefined,
                                     }));
                                     if (fileInputRef && fileInputRef.current)
@@ -2609,7 +2642,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                   setFormData((prev) => ({
                                     ...prev,
                                     media: undefined,
-                                    selectedPlatforms: [],
+
                                     mediaUrl: undefined,
                                   }));
                                   setTemplatedImageUrl("");
@@ -2632,7 +2665,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                                   setFormData((prev) => ({
                                     ...prev,
                                     media: undefined,
-                                    selectedPlatforms: [],
+
                                     mediaUrl: undefined,
                                   }));
                                   setTemplatedImageUrl("");
@@ -2876,7 +2909,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
                             setFormData((prev) => ({
                               ...prev,
                               media: undefined,
-                              selectedPlatforms: [],
+
                               mediaUrl: undefined,
                             }));
                             setTemplatedImageUrl("");
