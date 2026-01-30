@@ -59,6 +59,7 @@ export const ConfirmDialogProvider: React.FC<{ children: React.ReactNode }> = ({
       title,
       message,
       onConfirm,
+      onCancel,
       isDangerous,
       onClose,
     });
@@ -68,14 +69,15 @@ export const ConfirmDialogProvider: React.FC<{ children: React.ReactNode }> = ({
     setConfirmDialog((prev) => ({ ...prev, isOpen: false }));
   };
 
-  const handleConfirm = () => {
-    confirmDialog.onConfirm();
-    if (sidebarCloseFn) sidebarCloseFn();
-    closeConfirm();
-  };
+  const handleConfirm = async () => {
+  await Promise.resolve(confirmDialog.onConfirm());
+  if (sidebarCloseFn) sidebarCloseFn();
+  closeConfirm();
+};
 
   const handleCancel = () => {
-    if (sidebarCloseFn) sidebarCloseFn();
+    confirmDialog.onCancel?.();  // ✅ call cancel callback
+    sidebarCloseFn?.();
     closeConfirm();
   };
 

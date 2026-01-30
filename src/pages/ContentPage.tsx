@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ContentInput } from "../components/ContentInput";
@@ -14,11 +14,12 @@ import { useUser } from "@/store/useUser";
 export const ContentPage: React.FC = () => {
   const { state, dispatch } = useAppContext();
   const { user } = useUser();
-
+const discardRef = useRef<null | (() => void)>(null);
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [showPublishModal, setShowPublishModal] = useState(false);
   const [showGenerateModal, setShowGenerateModal] = useState(false);
+
 
   const handleContentNext = (contentData: any) => {
     dispatch({ type: "SET_CONTENT_DATA", payload: contentData });
@@ -26,8 +27,8 @@ export const ContentPage: React.FC = () => {
   };
 
   const handleGenerationComplete = async (posts: any[]) => {
-    const processedPosts = posts?.map((post) => {
-      const processedPost = { ...post };
+  const processedPosts = posts?.map((post) => {
+    const processedPost = { ...post };
 
       if (
         state.contentData?.serverUrl &&
@@ -54,13 +55,13 @@ export const ContentPage: React.FC = () => {
       return processedPost;
     });
 
-    navigate("/content/preview", { replace: true });
-    dispatch({ type: "SET_GENERATED_POSTS", payload: processedPosts });
+    dispatch({ type: "SET_GENERATED_POSTS", payload: processedPosts }); // ✅ first
+  navigate("/content/preview");  
     setTimeout(() => {
-      setShowGenerateModal(false);
-      document.body.classList.remove("modal-open");
-      document.documentElement.classList.remove("modal-open");
-    }, 500);
+    setShowGenerateModal(false);
+    document.body.classList.remove("modal-open");
+    document.documentElement.classList.remove("modal-open");
+  }, 500);
     // if (user?.id && state.selectedProfile && state.contentData) {
     //   try {
     //     await savePost(
@@ -76,8 +77,44 @@ export const ContentPage: React.FC = () => {
   };
 
   const handleGoToPublish = () => {
-    setShowPublishModal(true);
+  setShowPublishModal(true);
+
+  // ✅ ensures next browser-back triggers popstate while staying on same URL
+  window.history.pushState({ __publish_modal__: true }, "", window.location.href);
+};
+
+  useEffect(() => {
+  if (!showPublishModal) return;
+
+  // push one history entry so browser back closes publish first
+  window.history.pushState({ __publish_open__: true }, "", window.location.href);
+
+  const onPop = (e: PopStateEvent) => {
+    // close publish instead of leaving route
+    setShowPublishModal(false);
+    document.body.classList.remove("modal-open");
+    document.documentElement.classList.remove("modal-open");
   };
+
+  window.addEventListener("popstate", onPop);
+  return () => window.removeEventListener("popstate", onPop);
+}, [showPublishModal]);
+
+
+const discardFromPublish = useCallback(() => {
+  // clear global flow
+  dispatch({ type: "SET_GENERATED_POSTS", payload: [] });
+  dispatch({ type: "SET_CONTENT_DATA", payload: null });
+
+  setShowPublishModal(false);
+  setShowGenerateModal(false);
+
+  document.body.classList.remove("modal-open");
+  document.documentElement.classList.remove("modal-open");
+
+  navigate("/content", { replace: true }); // ✅ ensures leave does not keep preview on top
+}, [dispatch, navigate]);
+
 
   const handleRegeneratePlatform = async (
     platform: Platform,
@@ -175,6 +212,9 @@ export const ContentPage: React.FC = () => {
               onBack={() => navigate("/dashboard")}
               initialData={state.contentData}
               editMode={!!state.contentData}
+              setDiscardFn={(fn) => {
+              discardRef.current = fn; // ✅ store reset
+            }}
             />
           }
         />
@@ -220,6 +260,7 @@ export const ContentPage: React.FC = () => {
                         }}
                         onReset={handlePublishReset}
                         userId={user?.id || ""}
+                        onDiscardAll={discardFromPublish} 
                       />
                     </div>
                   </div>

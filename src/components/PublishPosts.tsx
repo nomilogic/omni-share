@@ -41,10 +41,11 @@ interface TikTokSettingsState {
 }
 
 interface PublishProps {
-  posts: GeneratedPost[];
-  userId?: string;
+  posts: any[];
   onBack: () => void;
-  onReset?: () => void;
+  onReset: () => void;
+  userId: string;
+  onDiscardAll?: () => void; // ✅ add this
 }
 
 export const PublishPosts: React.FC<PublishProps> = ({
@@ -52,6 +53,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
   userId,
   onBack,
   onReset,
+  onDiscardAll,
 }) => {
   const { t } = useTranslation();
   const { showConfirm, closeConfirm } = useConfirmDialog();
@@ -102,8 +104,11 @@ export const PublishPosts: React.FC<PublishProps> = ({
   const [tiktokPostingBlockedReason, setTiktokPostingBlockedReason] = useState<
     string | null
   >(null);
-
-  const hasActiveOperation = publishing || selectedPlatforms.length > 0;
+  
+const hasActiveOperation = publishing; 
+  const handleBackClick = useCallback(() => {
+  onBack();
+}, [onBack]);
 
   const navigateWithConfirm = useCallback(
     (path: string) => {
@@ -130,40 +135,39 @@ export const PublishPosts: React.FC<PublishProps> = ({
     [hasActiveOperation, publishing, t, navigate, showConfirm, closeConfirm]
   );
 
-  useNavigationGuard({
-    isActive: hasActiveOperation,
-    title: t("confirm_navigation") || "Confirm Navigation",
-    message: publishing
-      ? t("publishing_in_progress") ||
-        "Publishing is in progress. Are you sure you want to leave?"
-      : t("unsaved_changes_warning") ||
-        "You have unsaved changes. Are you sure you want to leave?",
-  });
+//  useNavigationGuard({
+//   isActive: true, // ✅ "lazmi modal" rule ke liye
+//   title: t("confirm_navigation") || "Confirm Navigation",
+//   message: t("unsaved_changes_warning") || "You have unsaved changes...",
+//   onConfirm: discardStateOnly,                       // ✅ template-style reset
+//   navigateTo: { to: "/content", replace: true },   // ✅ ALWAYS go content
+// });
 
-  useEffect(() => {
-    const handleClickCapture = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      const link = target.closest("a") as HTMLAnchorElement;
 
-      if (!link) return;
-      const href = link.getAttribute("href");
+  // useEffect(() => {
+  //   const handleClickCapture = (e: MouseEvent) => {
+  //     const target = e.target as HTMLElement;
+  //     const link = target.closest("a") as HTMLAnchorElement;
 
-      if (
-        href &&
-        !href.includes("://") &&
-        !link.download &&
-        hasActiveOperation
-      ) {
-        e.preventDefault();
-        e.stopPropagation();
-        navigateWithConfirm(href);
-      }
-    };
+  //     if (!link) return;
+  //     const href = link.getAttribute("href");
 
-    document.addEventListener("click", handleClickCapture, true);
-    return () =>
-      document.removeEventListener("click", handleClickCapture, true);
-  }, [hasActiveOperation, navigateWithConfirm]);
+  //     if (
+  //       href &&
+  //       !href.includes("://") &&
+  //       !link.download &&
+  //       hasActiveOperation
+  //     ) {
+  //       e.preventDefault();
+  //       e.stopPropagation();
+  //       navigateWithConfirm(href);
+  //     }
+  //   };
+
+  //   document.addEventListener("click", handleClickCapture, true);
+  //   return () =>
+  //     document.removeEventListener("click", handleClickCapture, true);
+  // }, [hasActiveOperation, navigateWithConfirm]);
 
   useEffect(() => {
     const hasTikTokPost = posts.some((p) => p.platform === "tiktok");
@@ -211,11 +215,14 @@ export const PublishPosts: React.FC<PublishProps> = ({
   }, [posts]);
 
   const handleDiscardClick = useCallback(() => {
-    openModal(DiscardWarningModal, {
-      t,
-      onConfirmAction: () => navigate("/content"),
-    });
-  }, [openModal, t, navigate]);
+  openModal(DiscardWarningModal, {
+    t,
+    onConfirmAction: () => {
+      onDiscardAll?.(); // ✅ call reset from ContentInput
+      // navigate("/content", { replace: true });
+    },
+  });
+}, [openModal, t, onDiscardAll]);
 
   const isTikTokSelectedAndConnected = useCallback(
     () =>
@@ -976,8 +983,7 @@ export const PublishPosts: React.FC<PublishProps> = ({
           {t("discard_post")}
         </button>
 
-        <button
-          onClick={onBack}
+        <button onClick={handleBackClick}
           className="mt-4 w-full rounded-md theme-bg-light px-4 py-2.5 text-center font-semibold text-base border border-[#7650e3] text-[#7650e3] hover:bg-[#d7d7fc] transition-colors"
         >
           {t("back")}

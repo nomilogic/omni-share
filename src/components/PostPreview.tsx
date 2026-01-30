@@ -71,6 +71,8 @@ export const PostPreview = ({
   const [isRegenerating, setIsRegenerating] = useState<boolean>(false);
   const scrollAnchorRef = useRef(null);
   const wasRegenerating = useRef(false);
+
+  
   const isMobile = () =>
     typeof window !== "undefined" &&
     window.matchMedia("(max-width: 1024px)").matches;
@@ -94,28 +96,30 @@ export const PostPreview = ({
   >(null);
   const navigate = useNavigate();
 
+  
+
   // Check if there's unsaved content or active operations (including unpublished posts)
-  const hasActiveOperation = useCallback(() => {
-    return (
-      hasUnsavedChanges ||
-      isRegenerating ||
-      editingMode ||
-      (posts?.length ?? 0) > 0
-    );
-  }, [hasUnsavedChanges, isRegenerating, editingMode, posts]);
+  const hasActiveOperation = useMemo(() => {
+  const hasGeneratedPosts = (generatedPosts?.length ?? 0) > 0; // ✅ source of truth
+
+  return (
+    hasUnsavedChanges ||
+    isRegenerating ||
+    editingMode ||
+    hasGeneratedPosts
+  );
+}, [hasUnsavedChanges, isRegenerating, editingMode, generatedPosts?.length]);
+
+
 
   // Guard navigation when there are unsaved changes or active operations
-  useNavigationGuard({
-    isActive: hasActiveOperation(),
-    title: t("confirm_navigation") || "Confirm Navigation",
-    message:
-      t("unsaved_changes_warning") ||
-      "You have unsaved changes. Are you sure you want to leave?",
-  });
+  
+
+
 
   // Create a navigation wrapper that checks for unsaved content
   const navigateWithConfirm = (path: string) => {
-    if (hasActiveOperation()) {
+    if (hasActiveOperation) {
       showConfirm(
         t("confirm_navigation") || "Confirm",
         t("unsaved_changes_warning") ||
@@ -133,37 +137,37 @@ export const PostPreview = ({
   // Note: Browser's beforeunload dialog cannot be customized due to security restrictions
 
   // Intercept all navigation attempts (including link clicks and React Router links)
-  useEffect(() => {
-    const handleClickCapture = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      // Check for both regular links and React Router Link components
-      const link = target.closest("a") as HTMLAnchorElement;
+  // useEffect(() => {
+  //   const handleClickCapture = (e: MouseEvent) => {
+  //     const target = e.target as HTMLElement;
+  //     // Check for both regular links and React Router Link components
+  //     const link = target.closest("a") as HTMLAnchorElement;
 
-      if (link && hasActiveOperation()) {
-        // Only intercept internal links (not external URLs and not downloads)
-        const href = link.getAttribute("href");
-        if (href && !href.includes("://") && !link.download) {
-          e.preventDefault();
-          e.stopPropagation();
-          showConfirm(
-            t("confirm_navigation") || "Confirm",
-            t("unsaved_changes_warning") ||
-              "You have unsaved changes. Are you sure you want to leave?",
-            () => {
-              closeConfirm();
-              navigate(href);
-            }
-          );
-        }
-      }
-    };
+  //     if (link && hasActiveOperation) {
+  //       // Only intercept internal links (not external URLs and not downloads)
+  //       const href = link.getAttribute("href");
+  //       if (href && !href.includes("://") && !link.download) {
+  //         e.preventDefault();
+  //         e.stopPropagation();
+  //         showConfirm(
+  //           t("confirm_navigation") || "Confirm",
+  //           t("unsaved_changes_warning") ||
+  //             "You have unsaved changes. Are you sure you want to leave?",
+  //           () => {
+  //             closeConfirm();
+  //             navigate(href);
+  //           }
+  //         );
+  //       }
+  //     }
+  //   };
 
-    // Use capture phase to intercept before default behavior
-    document.addEventListener("click", handleClickCapture, true);
-    return () => {
-      document.removeEventListener("click", handleClickCapture, true);
-    };
-  }, [hasActiveOperation, showConfirm, closeConfirm, t, navigate]);
+  //   // Use capture phase to intercept before default behavior
+  //   document.addEventListener("click", handleClickCapture, true);
+  //   return () => {
+  //     document.removeEventListener("click", handleClickCapture, true);
+  //   };
+  // }, [hasActiveOperation, showConfirm, closeConfirm, t, navigate]);
 
   // Calculate initial character counts for all posts
   useEffect(() => {
@@ -176,22 +180,39 @@ export const PostPreview = ({
     setPosts(postsWithCharacterCount);
   }, [generatedPosts]);
   const { dispatch, cost }: any = useAppContext();
-  const handleDiscardAction = useCallback(() => {
-    dispatch({ type: "SET_GENERATED_POSTS", payload: [] });
-    dispatch({ type: "SET_CONTENT_DATA", payload: null });
+  const discardStateOnly = useCallback(() => {
+  dispatch({ type: "SET_GENERATED_POSTS", payload: [] });
+  dispatch({ type: "SET_CONTENT_DATA", payload: null });
+  document.body.classList.remove("modal-open");
+  document.documentElement.classList.remove("modal-open");
+}, [dispatch]);
 
-    document.body.classList.remove("modal-open");
-    document.documentElement.classList.remove("modal-open");
-
-    navigate("/content");
-  }, [navigate]);
+const discardAndGoContent = useCallback(() => {
+  discardStateOnly();
+  navigate("/content");
+}, [discardStateOnly, navigate]);
 
   const handleDiscardClick = useCallback(() => {
-    openModal(DiscardPostModal, {
-      onConfirm: handleDiscardAction, // Jo action perform karna hai
-      t: t, // Translation function pass karein
-    });
-  }, [handleDiscardAction, t]);
+  openModal(DiscardPostModal, {
+    onConfirm: discardAndGoContent,
+    t,
+  });
+}, [openModal, discardAndGoContent, t]);
+
+console.log("[PREVIEW] hasActiveOperation =", hasActiveOperation, {
+  generatedPosts: generatedPosts?.length,
+  hasUnsavedChanges,
+  isRegenerating,
+  editingMode,
+});
+
+useNavigationGuard({
+  isActive: true, // ✅ "lazmi modal" rule ke liye
+  title: t("confirm_navigation") || "Confirm Navigation",
+  message: t("unsaved_changes_warning") || "You have unsaved changes...",
+  onConfirm: discardStateOnly,                     // ✅ template-style reset
+  navigateTo: { to: "/content", replace: true },   // ✅ ALWAYS go content
+});
 
   const copyToClipboard = async (text: string) => {
     try {

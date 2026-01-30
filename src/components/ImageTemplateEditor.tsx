@@ -1,6 +1,6 @@
 import { useModal } from "../context2/ModalContext";
 import DiscardImageModal from "../components/modals/DiscardImageModal";
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useMemo, useCallback, useEffect, useRef, useState } from "react";
 import Konva from "konva";
 import {
   Stage,
@@ -915,74 +915,78 @@ export const ImageTemplateEditor = ({
   const { showConfirm, closeConfirm } = useConfirmDialog();
 
   // Check if there's unsaved changes
-  const hasUnsavedChanges = () => {
-    return (
-      (elements?.length ?? 0) > 1 ||
-      !!selectedElement ||
-      (templateName?.trim?.()?.length ?? 0) > 0 ||
-      isSaving ||
-      logoUploading
-    );
-  };
+  
+const hasUnsavedChanges = useMemo(() => {
+  return (
+    (elements?.length ?? 0) > 1 ||
+    !!selectedElement ||
+    (templateName?.trim?.()?.length ?? 0) > 0 ||
+    isSaving ||
+    logoUploading
+  );
+}, [elements?.length, selectedElement, templateName, isSaving, logoUploading]);
 
   // Create a navigation wrapper that checks for unsaved content
-  const navigateWithConfirm = (path: string) => {
-    if (hasUnsavedChanges()) {
-      showConfirm(
-        t("confirm_navigation") || "Confirm",
-        t("unsaved_changes_warning") ||
-          "You have unsaved changes. Are you sure you want to leave?",
-        () => {
-          closeConfirm();
-          navigate(path);
-        },
-      );
-    } else {
-      navigate(path);
-    }
-  };
+  // const navigateWithConfirm = (path: string) => {
+  //   if (hasUnsavedChanges()) {
+  //     showConfirm(
+  //       t("confirm_navigation") || "Confirm",
+  //       t("unsaved_changes_warning") ||
+  //         "You have unsaved changes. Are you sure you want to leave?",
+  //       () => {
+  //         closeConfirm();
+  //         navigate(path);
+  //       },
+  //     );
+  //   } else {
+  //     navigate(path);
+  //   }
+  // };
+
+  
 
   // Guard navigation when there are unsaved changes
   useNavigationGuard({
-    isActive: hasUnsavedChanges(),
-    title: t("confirm_navigation") || "Confirm Navigation",
-    message:
-      t("unsaved_changes_warning") ||
-      "You have unsaved changes. Are you sure you want to leave?",
-  });
+  isActive: hasUnsavedChanges,
+  title: t("confirm_navigation") || "Confirm Navigation",
+  message:
+    t("unsaved_changes_warning") ||
+    "You have unsaved changes. Are you sure you want to leave?",
+  onConfirm: onCancel, // ✅ discard/reset then navigate back
+});
 
   // Intercept all navigation attempts (including link clicks and React Router links)
-  useEffect(() => {
-    const handleClickCapture = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      // Check for both regular links and React Router Link components
-      const link = target.closest("a") as HTMLAnchorElement;
+  // useEffect(() => {
+  //   const handleClickCapture = (e: MouseEvent) => {
+  //     const target = e.target as HTMLElement;
+  //     // Check for both regular links and React Router Link components
+  //     const link = target.closest("a") as HTMLAnchorElement;
 
-      if (link && hasUnsavedChanges()) {
-        // Only intercept internal links (not external URLs and not downloads)
-        const href = link.getAttribute("href");
-        if (href && !href.includes("://") && !link.download) {
-          e.preventDefault();
-          e.stopPropagation();
-          showConfirm(
-            t("confirm_navigation") || "Confirm",
-            t("unsaved_changes_warning") ||
-              "You have unsaved changes. Are you sure you want to leave?",
-            () => {
-              closeConfirm();
-              navigate(href);
-            },
-          );
-        }
-      }
-    };
+  //     if (link && hasUnsavedChanges()) {
+  //       // Only intercept internal links (not external URLs and not downloads)
+  //       const href = link.getAttribute("href");
+  //       if (href && !href.includes("://") && !link.download) {
+  //         e.preventDefault();
+  //         e.stopPropagation();
+  //         showConfirm(
+  //           t("confirm_navigation") || "Confirm",
+  //           t("unsaved_changes_warning") ||
+  //             "You have unsaved changes. Are you sure you want to leave?",
+  //           () => {
+  //             closeConfirm();
+  //             navigate(href);
+  //           },
+  //         );
+  //       }
+  //     }
+  //   };
 
-    // Use capture phase to intercept before default behavior
-    document.addEventListener("click", handleClickCapture, true);
-    return () => {
-      document.removeEventListener("click", handleClickCapture, true);
-    };
-  }, [hasUnsavedChanges, t, navigate, showConfirm, closeConfirm]);
+  //   // Use capture phase to intercept before default behavior
+  //   document.addEventListener("click", handleClickCapture, true);
+  //   return () => {
+  //     document.removeEventListener("click", handleClickCapture, true);
+  //   };
+  // }, [hasUnsavedChanges, t, navigate, showConfirm, closeConfirm]);
 
   // Utility function to convert hex color to rgba with opacity
   const hexToRgba = (hex: string, opacity: number = 1): string => {
@@ -1278,6 +1282,11 @@ export const ImageTemplateEditor = ({
     });
     // Ab pendingDiscardAction state ki zaroorat nahi.
   }, [t, onCancel]);
+
+  const requestClose = useCallback(() => {
+  if (!hasUnsavedChanges) return onCancel();
+  handleDiscardClick(); // ✅ reuse your discard modal flow
+}, [hasUnsavedChanges, onCancel, handleDiscardClick]);
 
   const redrawCanvas = (
     context: CanvasRenderingContext2D,

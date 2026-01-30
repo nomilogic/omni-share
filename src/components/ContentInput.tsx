@@ -1,4 +1,4 @@
-﻿import React, { useState, useRef, useEffect } from "react";
+﻿import React, { useState, useRef, useEffect, useCallback } from "react";
 import {
   Wand2,
   Eye,
@@ -45,6 +45,7 @@ import { useUser } from "@/store/useUser";
 interface ContentInputProps {
   onNext: (data: PostContent) => void;
   onBack: () => void;
+  setDiscardFn?: (fn: () => void) => void;
   initialData?: Partial<PostContent>;
   selectedPlatforms?: Platform[];
   editMode?: boolean;
@@ -56,6 +57,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   onNext,
   onBack,
   initialData,
+  setDiscardFn,
   selectedPlatforms,
   editMode,
   setShowPublishModal,
@@ -220,7 +222,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     isGeneratingBoth || isGeneratingThumbnail || isGeneratingImage;
 
   // Check if there's unsaved content (moved before useNavigationGuard)
-  const checkUnsavedContent = () => {
+
+  const checkUnsavedContent = useCallback(() => {
     return (
       (formData?.prompt?.trim?.()?.length ?? 0) > 0 ||
       !!formData?.media ||
@@ -228,10 +231,23 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       (generatedResults?.length ?? 0) > 0 ||
       showPreview
     );
-  };
+  }, [
+    formData?.prompt,
+    formData?.media,
+    formData?.mediaUrl,
+    generatedResults?.length,
+    showPreview,
+  ]);
 
   useNavigationGuard({
     isActive: isProcessing || checkUnsavedContent(),
+    onConfirm: () => {
+      // optional: agar upload/generation chal rahi ho to abort bhi yahan kar sakte ho
+      // uploadAbortControllerRef.current?.abort();
+      // hideLoading();
+
+      handleTemplateEditorCancel(); // ✅ tumhara proven discard/reset
+    },
   });
 
   const logoUrl = user?.profile?.brandLogo || "";
@@ -281,44 +297,43 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   }, [hasTheme, useTheme, setUseTheme]);
 
   // Check if there's unsaved content
-  const hasUnsavedContent = () => {
-    return (
-      (formData?.prompt?.trim?.()?.length ?? 0) > 0 ||
-      !!formData?.media ||
-      !!formData?.mediaUrl ||
-      (generatedResults?.length ?? 0) > 0 ||
-      showPreview
-    );
-  };
+  // const hasUnsavedContent = () => {
+  //   return (
+  //     (formData?.prompt?.trim?.()?.length ?? 0) > 0 ||
+  //     !!formData?.media ||
+  //     !!formData?.mediaUrl ||
+  //     (generatedResults?.length ?? 0) > 0 ||
+  //     showPreview
+  //   );
+  // };
 
   // Helper to show confirm dialog and navigate
-  const showConfirmAndNavigate = (path: string, isDangerous = false) => {
-    if (hasUnsavedContent()) {
-      showConfirm(
-        t("confirm_navigation") || "Confirm",
-        t("unsaved_changes_warning") ||
-          "You have unsaved changes. Are you sure you want to leave?",
-        () => {
-          closeConfirm();
-          setTimeout(() => navigate(path), 100);
-        },
-        isDangerous
-      );
-    } else {
-      navigate(path);
-    }
-  };
+  const showConfirmAndNavigate = useCallback(
+    (path: string, isDangerous = false) => {
+      if (checkUnsavedContent()) {
+        showConfirm(
+          t("confirm_navigation") || "Confirm",
+          t("unsaved_changes_warning") ||
+            "You have unsaved changes. Are you sure you want to leave?",
+          () => {
+            closeConfirm();
+            navigate(path); // setTimeout ki zaroorat nahi
+          },
+          isDangerous
+        );
+      } else {
+        navigate(path);
+      }
+    },
+    [checkUnsavedContent, showConfirm, closeConfirm, navigate, t]
+  );
 
-  // Note: Browser's beforeunload dialog cannot be customized due to security restrictions
-  // Our custom ConfirmDialog handles all navigation within the app
-
-  // Intercept link clicks
   useEffect(() => {
     const handleClickCapture = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       const link = target.closest("a") as HTMLAnchorElement;
 
-      if (link && hasUnsavedContent()) {
+      if (link && checkUnsavedContent()) {
         const href = link.getAttribute("href");
         if (
           href &&
@@ -334,10 +349,9 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     };
 
     document.addEventListener("click", handleClickCapture, true);
-    return () => {
+    return () =>
       document.removeEventListener("click", handleClickCapture, true);
-    };
-  }, [hasUnsavedContent, navigate, t]);
+  }, [checkUnsavedContent, showConfirmAndNavigate]);
 
   const getAppropiatePlatforms = (
     postType: "text" | "image" | "video",
@@ -1089,7 +1103,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
       setPendingPostGeneration(null);
       setIsGeneratingBoth(false);
       setAllGeneration([]);
-        if (onNext && typeof onNext === "function") {
+      if (onNext && typeof onNext === "function") {
         onNext(postData);
       } else {
         setShowPreview(true);
@@ -1186,7 +1200,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
   };
   const handleTemplateEditorCancel = () => {
     setImageDescription("");
-
     setGeneratedImage(null);
     setSelectedConfirmedImage(null);
     setModify(false);
@@ -1216,17 +1229,13 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     setShowPreview(false);
     setPendingPostGeneration(null);
     setIsGeneratingBoth(false);
-
-    setFormData((prev) => ({
-      ...prev,
-      media: undefined,
-      selectedPlatforms: [],
-
-      mediaUrl: undefined,
-    }));
     setSelectedFile(null);
     setGeneratedImage(null);
   };
+  useEffect(() => {
+    // ✅ expose the exact reset function to parent
+    setDiscardFn?.(handleTemplateEditorCancel);
+  }, [setDiscardFn, handleTemplateEditorCancel]);
 
   const handleTemplateSelectorCancel = () => {
     setShowTemplateSelector(false);
@@ -1366,8 +1375,8 @@ export const ContentInput: React.FC<ContentInputProps> = ({
         };
 
         const postGenerationData = {
-        prompt: formData.prompt,
-        basePrompt: basePrompt,
+          prompt: formData.prompt,
+          basePrompt: basePrompt,
           originalImageUrl: mediaUrl,
           originalVideoUrl: formData.mediaUrl,
           originalVideoFile: originalVideoFile,
@@ -1861,7 +1870,6 @@ export const ContentInput: React.FC<ContentInputProps> = ({
     <div className="w-full mx-auto rounded-md border border-white/10  md:p-5 p-3 ">
       {modelImage && (
         <ImageRegenerationModal
-          user={user}
           imageUrl={generatedImage}
           prompt={prompt}
           setPrompt={setPrompt}
@@ -1882,6 +1890,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           setUseTheme={setUseTheme}
           logoUrl={logoUrl}
           themeUrl={themeUrl}
+          hasOutput={Boolean(generatedImage)}
         />
       )}
       {showVideoThumbnailModal && videoThumbnailForRegeneration && (
@@ -1915,6 +1924,7 @@ export const ContentInput: React.FC<ContentInputProps> = ({
           setUseTheme={setVideoUseTheme}
           logoUrl={logoUrl}
           themeUrl={themeUrl}
+          hasOutput={Boolean(videoThumbnailForRegeneration)}
         />
       )}
       {!showTemplateEditor && (

@@ -3,151 +3,184 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useConfirmDialog } from "@/context/ConfirmDialogContext";
 
-// Global flag to prevent dialogs during navigation
-let isNavigatingAway = false;
+type NavigateTo = { to: string; replace?: boolean };
+
+type GuardEntry = {
+  id: string;
+  registeredAt: number;
+  getIsActive: () => boolean;
+  getTitle: () => string;
+  getMessage: () => string;
+  isDangerous: boolean;
+  onConfirm?: () => void | Promise<void>;
+  navigateTo?: NavigateTo;
+};
+
+const guards = new Map<string, GuardEntry>();
+let registerCounter = 0;
+
+let listenerAttached = false;
+let dialogOpen = false;
+let ignoreNextPop = false;
+
+const makeId = () =>
+  typeof crypto !== "undefined" && "randomUUID" in crypto
+    ? crypto.randomUUID()
+    : `guard_${Math.random().toString(36).slice(2)}_${Date.now()}`;
+
+const ensureBufferState = () => {
+  try {
+    const st: any = window.history.state;
+    if (!st || !st.__nav_guard__) {
+      window.history.pushState({ __nav_guard__: true }, "", window.location.href);
+    }
+  } catch {}
+};
+
+const attachOnce = (
+  showConfirm: (
+    title: string,
+    message: string,
+    onConfirm: () => void,
+    isDangerous?: boolean,
+    onCancel?: () => void
+  ) => void,
+  closeConfirm: () => void,
+  navigate: ReturnType<typeof useNavigate>
+) => {
+  if (listenerAttached) return;
+  listenerAttached = true;
+
+  window.addEventListener("popstate", () => {
+    if (ignoreNextPop) {
+      ignoreNextPop = false;
+      return;
+    }
+
+    const active = Array.from(guards.values()).filter((g) => g.getIsActive());
+    if (active.length === 0) return;
+
+    // Back pressed => buffer popped. Re-arm buffer immediately so URL stays stable.
+    ensureBufferState();
+
+    if (dialogOpen) return;
+    dialogOpen = true;
+
+    const newest = active.reduce((best, g) =>
+      g.registeredAt > best.registeredAt ? g : best
+    , active[0]);
+
+    showConfirm(
+      newest.getTitle(),
+      newest.getMessage(),
+      async () => {
+        try {
+          for (const g of active) {
+            if (g.onConfirm) await g.onConfirm();
+          }
+        } finally {
+          closeConfirm();
+          dialogOpen = false;
+
+          // Now we intentionally navigate (don’t let popstate re-trigger guard)
+          ignoreNextPop = true;
+
+          if (newest.navigateTo) {
+            navigate(newest.navigateTo.to, {
+              replace: newest.navigateTo.replace ?? false,
+            });
+          } else {
+            navigate(-1);
+          }
+        }
+      },
+      newest.isDangerous,
+      () => {
+        closeConfirm();
+        dialogOpen = false;
+        ensureBufferState();
+      }
+    );
+  });
+};
 
 interface UseNavigationGuardOptions {
   isActive: boolean;
   title?: string;
   message?: string;
   isDangerous?: boolean;
-  onConfirm?: () => void;
+  onConfirm?: () => void | Promise<void>;
+  navigateTo?: NavigateTo;
 }
 
-/**
- * Hook to guard navigation (back button, refresh, close) when there are unsaved changes
- * Automatically shows confirm dialog and prevents navigation until confirmed
- * 
- * @param options - Configuration for the guard
- * @param options.isActive - Whether the guard should be active (e.g., hasUnsavedChanges)
- * @param options.title - Dialog title (default: "Confirm Navigation")
- * @param options.message - Dialog message (default: "You have unsaved changes...")
- * @param options.isDangerous - Whether to show dangerous styling (default: false - uses purple button)
- * @param options.onConfirm - Optional callback when user confirms navigation
- */
 export const useNavigationGuard = ({
   isActive,
   title,
   message,
   isDangerous = false,
   onConfirm,
+  navigateTo,
 }: UseNavigationGuardOptions) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { showConfirm, closeConfirm } = useConfirmDialog();
-  const guardSetupRef = useRef(false);
-  const dialogOpenRef = useRef(false);
-  const listenerRef = useRef<((e: PopStateEvent) => void) | null>(null);
 
-  // Guard for page refresh and close
+  const idRef = useRef<string>(makeId());
+
+  // refresh/close tab
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (isActive) {
-        e.preventDefault(); 
-        // Modern browsers require a non-empty string to show the dialog
-        e.returnValue =
-          message ||
-          (t("unsaved_changes_warning") ||
-            "You have unsaved changes. Are you sure you want to leave?");
-        return e.returnValue;
-      }
+      if (!isActive) return;
+      e.preventDefault();
+      e.returnValue =
+        message ||
+        t("unsaved_changes_warning") ||
+        "You have unsaved changes. Are you sure you want to leave?";
+      return e.returnValue;
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, [isActive, message, t]);
 
-  // Guard for back button
+  // Ensure buffer when guard becomes active
   useEffect(() => {
-    // Only set up guard if active
-    if (!isActive) {
-      guardSetupRef.current = false;
-      // Remove listener when guard is deactivated
-      if (listenerRef.current) {
-        window.removeEventListener("popstate", listenerRef.current);
-        listenerRef.current = null;
-      }
-      return;
-    }
+    if (isActive) ensureBufferState();
+  }, [isActive]);
 
-    // Only set up once per component mount
-    if (guardSetupRef.current) {
-      return;
-    }
+  useEffect(() => {
+    const id = idRef.current;
 
-    guardSetupRef.current = true;
-
-    const handlePopState = (e: PopStateEvent) => {
-      // Skip dialog if already navigating away from another page
-      if (isNavigatingAway) {
-        return;
-      }
-
-      // Only show dialog once
-      if (!dialogOpenRef.current) {
-        dialogOpenRef.current = true;
-
-        const dialogTitle =
-          title || (t("confirm_navigation") || "Confirm Navigation");
-        const dialogMessage =
-          message ||
-          (t("unsaved_changes_warning") ||
-            "You have unsaved changes. Are you sure you want to leave?");
-
-        showConfirm(
-          dialogTitle,
-          dialogMessage,
-          () => {
-            // Set flag to prevent dialogs on other pages
-            isNavigatingAway = true;
-            
-            // Remove listener before navigating away
-            if (listenerRef.current) {
-              window.removeEventListener("popstate", listenerRef.current);
-              listenerRef.current = null;
-            }
-            
-            // User confirmed navigation
-            closeConfirm();
-            dialogOpenRef.current = false;
-            guardSetupRef.current = false;
-            if (onConfirm) {
-              onConfirm();
-            }
-            
-            // Navigate back using React Router
-            navigate(-1);
-            
-            // Clear flag after navigation completes
-            setTimeout(() => {
-              isNavigatingAway = false;
-            }, 100);
-          },
-          isDangerous,
-          () => {
-            // User cancelled - stay on page
-            closeConfirm();
-            dialogOpenRef.current = false;
-            // Push state to restore page position
-            window.history.pushState(null, "", window.location.href);
-          }
-        );
-      }
+    const entry: GuardEntry = {
+      id,
+      registeredAt: ++registerCounter,
+      getIsActive: () => isActive,
+      getTitle: () => title || t("confirm_navigation") || "Confirm Navigation",
+      getMessage: () =>
+        message ||
+        t("unsaved_changes_warning") ||
+        "You have unsaved changes. Are you sure you want to leave?",
+      isDangerous,
+      onConfirm,
+      navigateTo,
     };
 
-    // Push initial state to detect back button
-    window.history.pushState(null, "", window.location.href);
-
-    listenerRef.current = handlePopState;
-    window.addEventListener("popstate", handlePopState);
+    guards.set(id, entry);
+    attachOnce(showConfirm as any, closeConfirm, navigate);
 
     return () => {
-      if (listenerRef.current) {
-        window.removeEventListener("popstate", listenerRef.current);
-        listenerRef.current = null;
-      }
+      guards.delete(id);
     };
-  }, [isActive, title, message, isDangerous, t, showConfirm, closeConfirm, onConfirm, navigate]);
+  }, [
+    isActive,
+    title,
+    message,
+    isDangerous,
+    onConfirm,
+    navigateTo,
+    t,
+    showConfirm,
+    closeConfirm,
+    navigate,
+  ]);
 };
