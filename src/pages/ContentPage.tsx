@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ContentInput } from "../components/ContentInput";
@@ -80,7 +80,7 @@ const discardRef = useRef<null | (() => void)>(null);
   setShowPublishModal(true);
 
   // ✅ ensures next browser-back triggers popstate while staying on same URL
-  window.history.pushState({ __publish_modal__: true }, "", window.location.href);
+  // window.history.pushState({ __publish_modal__: true }, "", window.location.href);
 };
 
   useEffect(() => {
@@ -99,6 +99,21 @@ const discardRef = useRef<null | (() => void)>(null);
   window.addEventListener("popstate", onPop);
   return () => window.removeEventListener("popstate", onPop);
 }, [showPublishModal]);
+
+
+const discardFromPublish = useCallback(() => {
+  // clear global flow
+  dispatch({ type: "SET_GENERATED_POSTS", payload: [] });
+  dispatch({ type: "SET_CONTENT_DATA", payload: null });
+
+  setShowPublishModal(false);
+  setShowGenerateModal(false);
+
+  document.body.classList.remove("modal-open");
+  document.documentElement.classList.remove("modal-open");
+
+  navigate("/content", { replace: true }); // ✅ ensures leave does not keep preview on top
+}, [dispatch, navigate]);
 
 
   const handleRegeneratePlatform = async (
@@ -245,7 +260,7 @@ const discardRef = useRef<null | (() => void)>(null);
                         }}
                         onReset={handlePublishReset}
                         userId={user?.id || ""}
-                        onDiscardAll={() => discardRef.current?.()}
+                        onDiscardAll={discardFromPublish} 
                       />
                     </div>
                   </div>

@@ -219,10 +219,10 @@ const hasActiveOperation = publishing;
     t,
     onConfirmAction: () => {
       onDiscardAll?.(); // ✅ call reset from ContentInput
-      navigate("/content", { replace: true });
+      // navigate("/content", { replace: true });
     },
   });
-}, [openModal, t, navigate, onDiscardAll]);
+}, [openModal, t, onDiscardAll]);
 
   const isTikTokSelectedAndConnected = useCallback(
     () =>
