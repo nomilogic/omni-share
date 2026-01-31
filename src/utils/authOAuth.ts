@@ -27,19 +27,21 @@ export interface OAuthConfig {
 
 export const oauthConfig: OAuthConfig = {
   google: {
-    clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID || "",
+    clientId:
+      import.meta.env.VITE_GOOGLE_CLIENT_ID ||
+      "605175602696-m5j4fj5jg3l5k16jftb6v0j6ok7tdadt.apps.googleusercontent.com",
     redirectUri: `${window.location.origin}/auth/google/callback`,
   },
   facebook: {
-    appId: import.meta.env.VITE_FACEBOOK_APP_ID || "",
+    appId: import.meta.env.VITE_FACEBOOK_APP_ID || "1353314036535717",
     redirectUri: `${window.location.origin}/auth/facebook/callback`,
   },
   linkedin: {
-    clientId: import.meta.env.VITE_LINKEDIN_CLIENT_ID || "",
+    clientId: import.meta.env.VITE_LINKEDIN_CLIENT_ID || "7727suk58622d7",
     redirectUri: `${window.location.origin}/auth/linkedin/callback`,
   },
   instagram: {
-    appId: import.meta.env.VITE_INSTAGRAM_CLIENT_ID || "",
+    appId: import.meta.env.VITE_INSTAGRAM_CLIENT_ID || "1331166918330754",
     redirectUri: `${window.location.origin}/auth/instagram/callback`,
   },
 };
@@ -475,10 +477,10 @@ export const handleOAuthCallback = async (
           provider === "google"
             ? oauthConfig.google.redirectUri
             : provider === "facebook"
-            ? oauthConfig.facebook.redirectUri
-            : provider === "linkedin"
-            ? oauthConfig.linkedin.redirectUri
-            : oauthConfig.instagram.redirectUri,
+              ? oauthConfig.facebook.redirectUri
+              : provider === "linkedin"
+                ? oauthConfig.linkedin.redirectUri
+                : oauthConfig.instagram.redirectUri,
       }),
     });
 
