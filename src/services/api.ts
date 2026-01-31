@@ -5,8 +5,7 @@ import axios, {
 } from "axios";
 import Cookies from "js-cookie";
 
-const BASE_URL: string =
-  import.meta.env.VITE_API_URL || "https://omnishare.ai/server/api";
+const BASE_URL: string = "https://api.omnishare.ai/api";
 
 interface LoginPayload {
   email: string;
@@ -384,7 +383,8 @@ API.subscribe = (data: any) => API.post("/client/subscribe", { email: data });
 
 // Templates
 API.saveTemplate = (data) => API.post("/client/template", data);
-API.updateTemplate = (id: string, data) => API.patch(`/client/template/${id}`, data);
+API.updateTemplate = (id: string, data) =>
+  API.patch(`/client/template/${id}`, data);
 API.deleteTemplate = (id: string) => API.delete(`/client/template/${id}`);
 API.listTemplates = () => API.get("/client/template");
 API.listGlobalTemplates = () => API.get("/client/template/global");
