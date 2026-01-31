@@ -52,7 +52,7 @@ jobs:
             docker pull ${{ secrets.DOCKER_USERNAME }}/react-frontend:latest
             docker stop react-frontend || true
             docker rm react-frontend || true
-            docker run -d --name react-frontend -p 80:80 ${{ secrets.DOCKER_USERNAME }}/react-frontend:latest
+            docker run -d --name react-frontend -p 3000:80 ${{ secrets.DOCKER_USERNAME }}/react-frontend:latest
 
       - name: Done
         run: echo "✅ React Frontend deployed successfully!"
