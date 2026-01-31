@@ -49,34 +49,35 @@ jobs:
 
       # 7️⃣ Deploy to EC2 via SSH
       - name: Deploy to EC2
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            echo "🔹 Logging into Docker Hub on EC2..."
-            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+  uses: appleboy/ssh-action@v1.0.0
+  with:
+    host: ${{ secrets.EC2_HOST }}
+    username: ${{ secrets.EC2_USER }}
+    key: ${{ secrets.EC2_SSH_KEY }}
+    script: |
+      echo "🔹 Logging into Docker Hub on EC2..."
+      docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
-            echo "🔹 Pulling latest frontend image..."
-            docker pull ${{ secrets.DOCKER_USERNAME }}/react-frontend:latest
+      echo "🔹 Pulling latest frontend image..."
+      docker pull ${{ secrets.DOCKER_USERNAME }}/react-frontend:latest
 
-            echo "🔹 Stopping old container (if any)..."
-            docker stop react-frontend || echo "No running container to stop"
+      echo "🔹 Stopping old container (if any)..."
+      docker stop react-frontend || echo "No running container to stop"
 
-            echo "🔹 Removing old container (if any)..."
-            docker rm react-frontend || echo "No container to remove"
+      echo "🔹 Removing old container (if any)..."
+      docker rm react-frontend || echo "No container to remove"
 
-            echo "🔹 Running new container..."
-            docker run -d \
-              --name react-frontend \
-              -p 80:80 \
-              -p 443:443 \
-              --restart unless-stopped \
-              ${{ secrets.DOCKER_USERNAME }}/react-frontend:latest
+      echo "🔹 Running new container with SSL certificates mounted..."
+      docker run -d \
+        --name react-frontend \
+        -p 80:80 \
+        -p 443:443 \
+        --restart unless-stopped \
+        -v /etc/letsencrypt/live/omnishare.ai:/etc/letsencrypt/live/omnishare.ai:ro \
+        ${{ secrets.DOCKER_USERNAME }}/react-frontend:latest
 
-            echo "🔹 Checking if container is running..."
-            docker ps | grep react-frontend
+      echo "🔹 Checking if container is running..."
+      docker ps | grep react-frontend
 
       # 8️⃣ Deployment complete
       - name: Done
