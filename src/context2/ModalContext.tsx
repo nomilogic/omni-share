@@ -54,7 +54,6 @@ export const ModalProvider: FC<{ children: ReactNode }> = ({ children }) => {
     setModals((prev) => prev.filter((m) => m.key !== modalKey));
   }, []);
 
-  // ✅ scroll lock
   useEffect(() => {
     document.body.style.overflow = modals.length > 0 ? "hidden" : "unset";
     return () => {
@@ -63,7 +62,9 @@ export const ModalProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [modals.length]);
 
   return (
-    <ModalContext.Provider value={{ openModal: openModal as any, closeModal, modals }}>
+    <ModalContext.Provider
+      value={{ openModal: openModal as any, closeModal, modals }}
+    >
       {children}
       <ModalHost />
     </ModalContext.Provider>
@@ -108,25 +109,34 @@ const ModalHost: FC = () => {
         const modalZIndex = baseZIndex + 1 + index;
 
         return (
-    <div
-      key={modal.key}
-      style={{
-        position: "fixed",
-        inset: 0,
-        zIndex: modalZIndex,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",        // ✅ center vertically
-        padding: "16px",             // ✅ equal padding all sides
-        pointerEvents: "none",
-      }}
-    >
-      {/* ✅ scroll-safe wrapper (if modal gets tall on small screens) */}
-      <div style={{ pointerEvents: "auto", maxHeight: "calc(100vh - 32px)", overflowY: "auto" }}>
-        <modal.Component close={() => closeModal(modal.key)} {...modal.props} />
-      </div>
-    </div>
-  );
+          <div
+            key={modal.key}
+            style={{
+              position: "fixed",
+              inset: 0,
+              zIndex: modalZIndex,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center", // ✅ center vertically
+              padding: "16px", // ✅ equal padding all sides
+              pointerEvents: "none",
+            }}
+          >
+            {/* ✅ scroll-safe wrapper (if modal gets tall on small screens) */}
+            <div
+              style={{
+                pointerEvents: "auto",
+                maxHeight: "calc(100vh - 32px)",
+                overflowY: "auto",
+              }}
+            >
+              <modal.Component
+                close={() => closeModal(modal.key)}
+                {...modal.props}
+              />
+            </div>
+          </div>
+        );
       })}
     </>,
     modalRoot
