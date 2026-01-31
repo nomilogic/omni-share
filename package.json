@@ -5,9 +5,9 @@
   "type": "module",
   "license": "MIT",
   "scripts": {
-    "dev": "vite --port 5000",
+    "dev": "vite --port 80",
     "build": "vite build",
-    "preview": "vite preview --port 5000",
+    "preview": "vite preview --port 80",
     "start": "npm run preview ",
     "type-check": "tsc --noEmit"
   },
