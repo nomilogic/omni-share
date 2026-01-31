@@ -36,8 +36,8 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/omnishare-frontend:latest
-            ${{ secrets.DOCKER_USERNAME }}/omnishare-frontend:${{ github.sha }}
+            ${{ secrets.DOCKER_USERNAME }}/react-frontend:latest
+            ${{ secrets.DOCKER_USERNAME }}/react-frontend:${{ github.sha }}
           cache-from: type=inline
           cache-to: type=inline
 
@@ -49,10 +49,10 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-            docker pull ${{ secrets.DOCKER_USERNAME }}/omnishare-frontend:latest
-            docker stop omnishare-frontend || true
-            docker rm omnishare-frontend || true
-            docker run -d --name omnishare-frontend -p 80:80 ${{ secrets.DOCKER_USERNAME }}/omnishare-frontend:latest
+            docker pull ${{ secrets.DOCKER_USERNAME }}/react-frontend:latest
+            docker stop react-frontend || true
+            docker rm react-frontend || true
+            docker run -d --name react-frontend -p 80:80 ${{ secrets.DOCKER_USERNAME }}/react-frontend:latest
 
       - name: Done
         run: echo "✅ React Frontend deployed successfully!"
